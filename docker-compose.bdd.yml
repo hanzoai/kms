@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   nginx:
-    container_name: infisical-bdd-nginx
+    container_name: hanzokms-bdd-nginx
     image: nginx
     restart: "always"
     ports:
@@ -21,13 +21,13 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
     environment:
-      POSTGRES_PASSWORD: infisical
-      POSTGRES_USER: infisical
-      POSTGRES_DB: infisical
+      POSTGRES_PASSWORD: hanzokms
+      POSTGRES_USER: hanzokms
+      POSTGRES_DB: hanzokms
 
   redis:
     image: redis
-    container_name: infisical-bdd-redis
+    container_name: hanzokms-bdd-redis
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
@@ -37,7 +37,7 @@ services:
 
 
   backend:
-    container_name: infisical-bdd-api
+    container_name: hanzokms-bdd-api
     build:
       context: ./backend
       dockerfile: Dockerfile.dev
@@ -53,7 +53,7 @@ services:
       - 9464:9464 # for OTEL collection of Prometheus metrics
     environment:
       - NODE_ENV=development
-      - DB_CONNECTION_URI=postgres://infisical:infisical@db/infisical?sslmode=disable
+      - DB_CONNECTION_URI=postgres://hanzokms:hanzokms@db/hanzokms?sslmode=disable
       - TELEMETRY_ENABLED=false
       # This is needed to trust the Pebble CA certificate, which is used for the BDD tests
       - NODE_EXTRA_CA_CERTS=/usr/local/share/ca-certificates/pebble.minica.crt
@@ -67,7 +67,7 @@ services:
 
   # TODO: not really needed, but it seems like nginx needs it to be present
   frontend:
-    container_name: infisical-bdd-frontend
+    container_name: hanzokms-bdd-frontend
     restart: unless-stopped
     depends_on:
       - backend
@@ -99,7 +99,7 @@ services:
     ports:
       - "5380:5380/tcp"
     environment:
-      - DNS_SERVER_ADMIN_PASSWORD=infisical
+      - DNS_SERVER_ADMIN_PASSWORD=hanzokms
 
 volumes:
   postgres-data:

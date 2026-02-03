@@ -2,14 +2,14 @@ version: "3"
 
 services:
   backend:
-    container_name: infisical-backend
+    container_name: hanzo-kms-backend
     restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
       redis:
         condition: service_started
-    image: infisical/infisical:latest # PIN THIS TO A SPECIFIC TAG
+    image: hanzoai/kms:latest # PIN THIS TO A SPECIFIC TAG
     pull_policy: always
     env_file: .env
     ports:
@@ -17,29 +17,29 @@ services:
     environment:
       - NODE_ENV=production
     networks:
-      - infisical
+      - hanzo-kms
 
   redis:
     image: redis
-    container_name: infisical-dev-redis
+    container_name: hanzo-kms-redis
     env_file: .env
     restart: always
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     networks:
-      - infisical
+      - hanzo-kms
     volumes:
       - redis_data:/data
 
   db:
-    container_name: infisical-db
+    container_name: hanzo-kms-db
     image: postgres:14-alpine
     restart: always
     env_file: .env
     volumes:
       - pg_data:/var/lib/postgresql/data
     networks:
-      - infisical
+      - hanzo-kms
     healthcheck:
       test: "pg_isready --username=${POSTGRES_USER} && psql --username=${POSTGRES_USER} --list"
       interval: 5s
@@ -53,4 +53,4 @@ volumes:
     driver: local
 
 networks:
-  infisical:
+  hanzo-kms:

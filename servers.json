@@ -1,12 +1,12 @@
 {
   "Servers": {
     "1": {
-      "Name": "Infisical DB",
+      "Name": "Hanzo KMS DB",
       "Group": "Servers",
       "Host": "host.docker.internal",
       "Port": 5432,
-      "MaintenanceDB": "infisical",
-      "Username": "infisical",
+      "MaintenanceDB": "hanzokms",
+      "Username": "hanzokms",
       "PassFile": "/pgpass",
       "SSLMode": "disable",
       "SavePassword": true

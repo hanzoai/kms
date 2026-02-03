@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   nginx:
-    container_name: infisical-dev-nginx
+    container_name: hanzokms-dev-nginx
     image: nginx
     restart: always
     ports:
@@ -20,9 +20,9 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
     environment:
-      POSTGRESQL_PASSWORD: infisical
-      POSTGRESQL_USERNAME: infisical
-      POSTGRESQL_DATABASE: infisical
+      POSTGRESQL_PASSWORD: hanzokms
+      POSTGRESQL_USERNAME: hanzokms
+      POSTGRESQL_DATABASE: hanzokms
       POSTGRESQL_REPLICATION_MODE: master
       POSTGRESQL_REPLICATION_USER: repl_user
       POSTGRESQL_REPLICATION_PASSWORD: repl_password
@@ -36,9 +36,9 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
     environment:
-      POSTGRESQL_PASSWORD: infisical
-      POSTGRESQL_USERNAME: infisical
-      POSTGRESQL_DATABASE: infisical
+      POSTGRESQL_PASSWORD: hanzokms
+      POSTGRESQL_USERNAME: hanzokms
+      POSTGRESQL_DATABASE: hanzokms
       POSTGRESQL_REPLICATION_MODE: slave
       POSTGRESQL_REPLICATION_USER: repl_user
       POSTGRESQL_REPLICATION_PASSWORD: repl_password
@@ -48,7 +48,7 @@ services:
 
   redis:
     image: redis
-    container_name: infisical-dev-redis
+    container_name: hanzokms-dev-redis
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
@@ -57,7 +57,7 @@ services:
       - redis_data:/data
 
   redis-commander:
-    container_name: infisical-dev-redis-commander
+    container_name: hanzokms-dev-redis-commander
     image: rediscommander/redis-commander
     restart: always
     depends_on:
@@ -73,12 +73,12 @@ services:
     ports:
       - "5430:5432"
     environment:
-      POSTGRES_PASSWORD: infisical
-      POSTGRES_USER: infisical
-      POSTGRES_DB: infisical-test
+      POSTGRES_PASSWORD: hanzokms
+      POSTGRES_USER: hanzokms
+      POSTGRES_DB: hanzokms-test
 
   db-migration:
-    container_name: infisical-db-migration
+    container_name: hanzokms-db-migration
     depends_on:
       - db
     build:
@@ -86,13 +86,13 @@ services:
       dockerfile: Dockerfile.dev
     env_file: .env
     environment:
-      - DB_CONNECTION_URI=postgres://infisical:infisical@db/infisical?sslmode=disable
+      - DB_CONNECTION_URI=postgres://hanzokms:hanzokms@db/hanzokms?sslmode=disable
     command: npm run migration:latest
     volumes:
       - ./backend/src:/app/src
 
   backend:
-    container_name: infisical-dev-api
+    container_name: hanzokms-dev-api
     build:
       context: ./backend
       dockerfile: Dockerfile.dev
@@ -109,7 +109,7 @@ services:
       - 4000:4000
     environment:
       - NODE_ENV=development
-      - DB_CONNECTION_URI=postgres://infisical:infisical@db/infisical?sslmode=disable
+      - DB_CONNECTION_URI=postgres://hanzokms:hanzokms@db/hanzokms?sslmode=disable
       - TELEMETRY_ENABLED=false
     volumes:
       - ./backend/src:/app/src
@@ -117,7 +117,7 @@ services:
       - "host.docker.internal:host-gateway"
 
   frontend:
-    container_name: infisical-dev-frontend
+    container_name: hanzokms-dev-frontend
     restart: unless-stopped
     depends_on:
       - backend
@@ -144,7 +144,7 @@ services:
       - db
 
   smtp-server:
-    container_name: infisical-dev-smtp-server
+    container_name: hanzokms-dev-smtp-server
     image: lytrax/mailhog:latest # https://github.com/mailhog/MailHog/issues/353#issuecomment-821137362
     restart: always
     logging:

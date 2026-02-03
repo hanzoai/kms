@@ -38,7 +38,7 @@ export const CliRedirectPage = () => {
     <div className="flex flex-col justify-between bg-bunker-800 md:h-screen">
       <Helmet>
         <title>Infisical CLI | Login Successful!</title>
-        <link rel="icon" href="/infisical.ico" />
+        <link rel="icon" href="/hanzo.ico" />
       </Helmet>
       <div className="flex h-screen w-screen flex-col items-center justify-center space-y-4 text-gray-200">
         <div className="mb-4 flex justify-center">

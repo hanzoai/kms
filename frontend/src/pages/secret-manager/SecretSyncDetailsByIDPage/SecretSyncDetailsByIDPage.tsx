@@ -136,7 +136,7 @@ export const SecretSyncDetailsByIDPage = () => {
     <>
       <Helmet>
         <title>Secret Sync | Infisical</title>
-        <link rel="icon" href="/infisical.ico" />
+        <link rel="icon" href="/hanzo.ico" />
       </Helmet>
       <ProjectPermissionCan
         renderGuardBanner

@@ -372,12 +372,12 @@ export const McpEndpointFinalizePage = () => {
     <div className="flex min-h-screen flex-col items-center justify-center bg-bunker-800">
       <Helmet>
         <title>Authorize MCP Endpoint</title>
-        <link rel="icon" href="/infisical.ico" />
+        <link rel="icon" href="/hanzo.ico" />
       </Helmet>
 
       <div className="w-full max-w-md rounded-lg border border-mineshaft-600 bg-mineshaft-800 p-8 shadow-lg">
         <Link to="/" className="mb-6 block">
-          <img src="/images/gradientLogo.svg" className="mx-auto h-16" alt="Infisical logo" />
+          <img src="/images/gradientLogo.svg" className="mx-auto h-16" alt="Hanzo KMS logo" />
         </Link>
 
         <div className="mb-6 text-center">

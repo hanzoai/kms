@@ -188,7 +188,7 @@ export const MCPServerDetailPage = () => {
     <>
       <Helmet>
         <title>MCP Server | Infisical</title>
-        <link rel="icon" href="/infisical.ico" />
+        <link rel="icon" href="/hanzo.ico" />
       </Helmet>
       <PageContent />
     </>
