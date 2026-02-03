@@ -323,6 +323,7 @@ const aiRoutes = route("/organizations/$orgId/projects/ai/$projectId", [
 const kmsRoutes = route("/organizations/$orgId/projects/kms/$projectId", [
   layout("kms-layout", "kms/layout.tsx", [
     route("/overview", "kms/OverviewPage/route.tsx"),
+    route("/mpc", "kms/MpcPage/route.tsx"),
     route("/kmip", "kms/KmipPage/route.tsx"),
     route("/settings", "kms/SettingsPage/route.tsx"),
     route("/audit-logs", "project/AuditLogsPage/route-kms.tsx"),

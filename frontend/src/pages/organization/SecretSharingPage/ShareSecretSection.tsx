@@ -37,7 +37,7 @@ export const ShareSecretSection = () => {
     <div>
       <Helmet>
         <title>Secret Sharing</title>
-        <link rel="icon" href="/infisical.ico" />
+        <link rel="icon" href="/hanzo.ico" />
         <meta property="og:image" content="/images/message.png" />
       </Helmet>
 

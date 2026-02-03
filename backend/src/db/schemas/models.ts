@@ -252,7 +252,15 @@ export enum TableName {
   ApprovalRequestApprovals = "approval_request_approvals",
   ApprovalRequestGrants = "approval_request_grants",
 
-  QueueJobs = "queue_jobs"
+  QueueJobs = "queue_jobs",
+
+  // MPC (Multi-Party Computation) Integration
+  MpcNodes = "mpc_nodes",
+  MpcWallets = "mpc_wallets",
+  MpcSigningRequests = "mpc_signing_requests",
+  MpcSigningApprovals = "mpc_signing_approvals",
+  MpcWalletTokens = "mpc_wallet_tokens",
+  MpcTransactionHistory = "mpc_transaction_history"
 }
 
 export type TImmutableDBKeys = "id" | "createdAt" | "updatedAt" | "commitId";

@@ -13,7 +13,7 @@ export const AuditLogsPage = () => {
     <div className="mx-auto flex flex-col justify-between bg-bunker-800 text-white">
       <Helmet>
         <title>Project Audit Logs</title>
-        <link rel="icon" href="/infisical.ico" />
+        <link rel="icon" href="/hanzo.ico" />
       </Helmet>
       <div className="flex h-full w-full justify-center bg-bunker-800 text-white">
         <div className="w-full max-w-8xl">

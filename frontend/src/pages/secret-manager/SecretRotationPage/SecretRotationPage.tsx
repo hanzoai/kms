@@ -441,7 +441,7 @@ export const SecretRotationPage = () => {
     <div className="bg-bunker-800">
       <Helmet>
         <title>{t("common.head-title", { title: t("settings.project.title") })}</title>
-        <link rel="icon" href="/infisical.ico" />
+        <link rel="icon" href="/hanzo.ico" />
         <meta property="og:image" content="/images/message.png" />
       </Helmet>
       <ProjectPermissionCan

@@ -260,7 +260,7 @@ export const ViewSharedSecretByIDPage = () => {
                     src={logoUrl}
                     height={90}
                     width={120}
-                    alt="Infisical logo"
+                    alt="Hanzo KMS logo"
                     className="cursor-pointer"
                   />
                 </a>

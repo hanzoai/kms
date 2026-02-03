@@ -40,7 +40,7 @@ export const EmailDuplicationConfirmation = ({ onRemoveDuplicateLater }: Props) 
     <div className="flex max-h-screen min-h-screen flex-col justify-center overflow-y-auto bg-linear-to-tr from-mineshaft-600 via-mineshaft-800 to-bunker-700">
       <Helmet>
         <title>{t("common.head-title", { title: t("login.title") })}</title>
-        <link rel="icon" href="/infisical.ico" />
+        <link rel="icon" href="/hanzo.ico" />
         <meta property="og:image" content="/images/message.png" />
         <meta property="og:title" content={t("login.og-title") ?? ""} />
         <meta name="og:description" content={t("login.og-description") ?? ""} />
@@ -54,7 +54,7 @@ export const EmailDuplicationConfirmation = ({ onRemoveDuplicateLater }: Props) 
                 height: "90px",
                 width: "120px"
               }}
-              alt="Infisical logo"
+              alt="Hanzo KMS logo"
             />
           </div>
         </Link>

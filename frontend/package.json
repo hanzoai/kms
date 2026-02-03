@@ -1,7 +1,15 @@
 {
-  "name": "frontend-v2",
+  "name": "@hanzo/kms-frontend",
+  "description": "Hanzo KMS Frontend Dashboard",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hanzoai/kms.git",
+    "directory": "frontend"
+  },
+  "author": "Hanzo AI",
+  "homepage": "https://kms.hanzo.ai",
   "type": "module",
   "scripts": {
     "dev": "vite",
