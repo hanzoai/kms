@@ -1,6 +1,6 @@
 apiVersion: v2
-name: infisical-gateway
-description: A Helm chart to deploy Infisical Gateway
+name: hanzo-kms-gateway
+description: A Helm chart to deploy Hanzo KMS Gateway (fork of Infisical)
 
 # A chart can be either an 'application' or a 'library' chart.
 #

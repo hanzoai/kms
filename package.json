@@ -1,15 +1,16 @@
 {
-  "name": "infisical",
+  "name": "@hanzo/kms",
+  "description": "Hanzo Key Management Service - Open source secrets management platform (fork of Infisical)",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/infisical/infisical.git"
+    "url": "git+https://github.com/hanzoai/kms.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Hanzo AI",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/infisical/infisical/issues"
+    "url": "https://github.com/hanzoai/kms/issues"
   },
-  "homepage": "https://github.com/infisical/infisical#readme",
+  "homepage": "https://kms.hanzo.ai",
   "scripts": {
     "prepare": "husky install"
   },

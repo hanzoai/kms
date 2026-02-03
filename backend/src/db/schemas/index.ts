@@ -219,3 +219,11 @@ export * from "./vault-external-migration-configs";
 export * from "./webauthn-credentials";
 export * from "./webhooks";
 export * from "./workflow-integrations";
+
+// MPC (Multi-Party Computation)
+export * from "./mpc-nodes";
+export * from "./mpc-wallets";
+export * from "./mpc-signing-requests";
+export * from "./mpc-signing-approvals";
+export * from "./mpc-wallet-tokens";
+export * from "./mpc-transaction-history";

@@ -5,7 +5,7 @@ extensions:
   basicauth/server:
     htpasswd:
       inline: |
-        infisical:infisical
+        hanzokms:hanzokms
 
 receivers:
   otlp:

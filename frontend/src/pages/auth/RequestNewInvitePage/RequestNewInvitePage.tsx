@@ -16,7 +16,7 @@ export const RequestNewInvitePage = () => {
     <div className="flex flex-col justify-between bg-bunker-700 md:h-screen">
       <Helmet>
         <title>{isAlreadyMember ? "Already a Member" : "Request a New Invite"}</title>
-        <link rel="icon" href="/infisical.ico" />
+        <link rel="icon" href="/hanzo.ico" />
       </Helmet>
       <div className="mt-8 flex h-screen w-screen flex-col items-center justify-center text-bunker-200">
         {isAlreadyMember ? (

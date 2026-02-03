@@ -1,7 +1,9 @@
-# Contributing to Infisical
+# Contributing to Hanzo KMS
 
-Thanks for taking the time to contribute! 😃 🚀
+Thanks for taking the time to contribute!
 
-Please refer to our [Contributing Guide](https://infisical.com/docs/contributing/getting-started/overview) for instructions on how to contribute.
+Please refer to our [Contributing Guide](https://kms.hanzo.ai/docs/contributing/getting-started/overview) for instructions on how to contribute.
 
-We also have some 🔥amazing🔥 merch for our contributors. Please reach out to tony@infisical.com for more info 👀
+Hanzo KMS is a fork of [Infisical](https://github.com/Infisical/infisical). We encourage contributions that benefit both projects.
+
+For questions or discussions, join our [Discord](https://hanzo.ai/discord) or open an issue on [GitHub](https://github.com/hanzoai/kms/issues).

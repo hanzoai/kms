@@ -1,7 +1,14 @@
 {
-  "name": "backend",
+  "name": "@hanzo/kms-backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "Hanzo KMS Backend API Server",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hanzoai/kms.git",
+    "directory": "backend"
+  },
+  "author": "Hanzo AI",
+  "homepage": "https://kms.hanzo.ai",
   "main": "./dist/main.mjs",
   "scripts": {
     "assets:export": "./scripts/export-assets.sh",

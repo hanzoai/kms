@@ -16,9 +16,9 @@ const bootstrapCb = async () => {
   const serverCfg = await getServerCfg();
   const baseUrl = appCfg.SITE_URL || `http://localhost:${appCfg.PORT}`;
   if (!serverCfg.initialized) {
-    console.info(`Welcome to Infisical
+    console.info(`Welcome to Hanzo KMS
 
-Create your Infisical administrator account at:
+Create your Hanzo KMS administrator account at:
 ${baseUrl}/admin/signup
 `);
   } else {

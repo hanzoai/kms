@@ -10,19 +10,19 @@ services:
       - '6379:6379'
       - '8080:8080'
     networks:
-    - infisical
+    - hanzo-kms
     configs:
       - source: haproxy-config
         target: /usr/local/etc/haproxy/haproxy.cfg
     deploy:
       mode: global
           
-  infisical:
-    container_name: infisical-backend
-    image: infisical/infisical:v0.60.1-postgres
+  hanzo-kms:
+    container_name: hanzo-kms-backend
+    image: hanzo-kms/hanzo-kms:v0.60.1-postgres
     env_file: .env
     networks:
-      - infisical
+      - hanzo-kms
     secrets:
       - env_file
     deploy:
@@ -31,7 +31,7 @@ services:
   etcd1:
     image: ghcr.io/zalando/spilo-16:3.2-p2
     networks:
-      - infisical
+      - hanzo-kms
     environment:
       ETCD_UNSUPPORTED_ARCH: arm64
     container_name: demo-etcd1
@@ -52,7 +52,7 @@ services:
   etcd2:
     image: ghcr.io/zalando/spilo-16:3.2-p2
     networks:
-      - infisical
+      - hanzo-kms
     environment:
       ETCD_UNSUPPORTED_ARCH: arm64
     container_name: demo-etcd2
@@ -73,7 +73,7 @@ services:
   etcd3:
     image: ghcr.io/zalando/spilo-16:3.2-p2
     networks:
-      - infisical
+      - hanzo-kms
     environment:
       ETCD_UNSUPPORTED_ARCH: arm64
     container_name: demo-etcd3
@@ -95,13 +95,13 @@ services:
     image: ghcr.io/zalando/spilo-16:3.2-p2
     container_name: postgres-1
     networks:
-    - infisical
+    - hanzo-kms
     hostname: postgres-1
     environment:
         ETCD_HOSTS: etcd1:2379,etcd2:2379,etcd3:2379
         PGPASSWORD_SUPERUSER: "postgres"
         PGUSER_SUPERUSER: "postgres"
-        SCOPE: infisical
+        SCOPE: hanzo-kms
     volumes:
       - postgres_data1:/home/postgres/pgdata
     deploy:
@@ -113,13 +113,13 @@ services:
     image: ghcr.io/zalando/spilo-16:3.2-p2
     container_name: postgres-2
     networks:
-    - infisical
+    - hanzo-kms
     hostname: postgres-2
     environment:
         ETCD_HOSTS: etcd1:2379,etcd2:2379,etcd3:2379
         PGPASSWORD_SUPERUSER: "postgres"
         PGUSER_SUPERUSER: "postgres"
-        SCOPE: infisical
+        SCOPE: hanzo-kms
     volumes:
       - postgres_data2:/home/postgres/pgdata
     deploy:
@@ -131,13 +131,13 @@ services:
     image: ghcr.io/zalando/spilo-16:3.2-p2
     container_name: postgres-3
     networks:
-    - infisical
+    - hanzo-kms
     hostname: postgres-3
     environment:
         ETCD_HOSTS: etcd1:2379,etcd2:2379,etcd3:2379
         PGPASSWORD_SUPERUSER: "postgres"
         PGUSER_SUPERUSER: "postgres"
-        SCOPE: infisical
+        SCOPE: hanzo-kms
     volumes:
       - postgres_data3:/home/postgres/pgdata
     deploy:
@@ -152,7 +152,7 @@ services:
       - REDIS_REPLICATION_MODE=master
       - REDIS_PASSWORD=123456
     networks:
-      - infisical
+      - hanzo-kms
     deploy:
       placement:
         constraints:
@@ -167,7 +167,7 @@ services:
       - REDIS_MASTER_PASSWORD=123456
       - REDIS_PASSWORD=123456
     networks:
-      - infisical
+      - hanzo-kms
     deploy:
       placement:
         constraints:
@@ -182,7 +182,7 @@ services:
       - REDIS_MASTER_PASSWORD=123456
       - REDIS_PASSWORD=123456
     networks:
-      - infisical
+      - hanzo-kms
     deploy:
       placement:
         constraints:
@@ -199,7 +199,7 @@ services:
       - REDIS_MASTER_PORT_NUMBER=6379
       - REDIS_MASTER_PASSWORD=123456
     networks:
-      - infisical
+      - hanzo-kms
     deploy:
       placement:
         constraints:
@@ -216,7 +216,7 @@ services:
       - REDIS_MASTER_PORT_NUMBER=6379
       - REDIS_MASTER_PASSWORD=123456
     networks:
-      - infisical
+      - hanzo-kms
     deploy:
       placement:
         constraints:
@@ -233,14 +233,14 @@ services:
       - REDIS_MASTER_PORT_NUMBER=6379
       - REDIS_MASTER_PASSWORD=123456
     networks:
-      - infisical
+      - hanzo-kms
     deploy:
       placement:
         constraints:
           - node.labels.name == node3
 
 networks:
-  infisical:
+  hanzo-kms:
 
 
 volumes:

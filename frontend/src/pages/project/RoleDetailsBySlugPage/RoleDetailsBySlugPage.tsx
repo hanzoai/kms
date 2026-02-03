@@ -236,7 +236,7 @@ export const RoleDetailsBySlugPage = () => {
     <>
       <Helmet>
         <title>{t("common.head-title", { title: "Project Settings" })}</title>
-        <link rel="icon" href="/infisical.ico" />
+        <link rel="icon" href="/hanzo.ico" />
       </Helmet>
       <ProjectPermissionCan
         I={ProjectPermissionActions.Read}

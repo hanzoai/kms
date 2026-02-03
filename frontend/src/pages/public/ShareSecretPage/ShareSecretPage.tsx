@@ -9,7 +9,7 @@ export const ShareSecretPage = () => {
     <>
       <Helmet>
         <title>Securely Share Secrets | Infisical</title>
-        <link rel="icon" href="/infisical.ico" />
+        <link rel="icon" href="/hanzo.ico" />
         <meta property="og:image" content="/images/message.png" />
         <meta property="og:title" content="" />
         <meta name="og:description" content="" />
@@ -25,7 +25,7 @@ export const ShareSecretPage = () => {
                     src="/images/gradientLogo.svg"
                     height={90}
                     width={120}
-                    alt="Infisical logo"
+                    alt="Hanzo KMS logo"
                     className="cursor-pointer"
                   />
                 </a>

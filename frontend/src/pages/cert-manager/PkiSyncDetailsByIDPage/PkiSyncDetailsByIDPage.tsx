@@ -134,7 +134,7 @@ export const PkiSyncDetailsByIDPage = () => {
     <>
       <Helmet>
         <title>PKI Sync | Infisical</title>
-        <link rel="icon" href="/infisical.ico" />
+        <link rel="icon" href="/hanzo.ico" />
       </Helmet>
       <ProjectPermissionCan
         renderGuardBanner

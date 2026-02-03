@@ -78,7 +78,7 @@ export const ProjectsPage = () => {
     <div className="mx-auto flex max-w-8xl flex-col justify-start bg-bunker-800">
       <Helmet>
         <title>{t("common.head-title", { title: t("settings.members.title") })}</title>
-        <link rel="icon" href="/infisical.ico" />
+        <link rel="icon" href="/hanzo.ico" />
       </Helmet>
       <PageHeader
         scope={isSubOrganization ? "namespace" : "org"}
