@@ -37,26 +37,6 @@ export const KmsLayout = () => {
                   {({ isActive }) => <Tab value={isActive ? "selected" : ""}>Overview</Tab>}
                 </Link>
                 <Link
-                  to="/organizations/$orgId/projects/kms/$projectId/mpc"
-                  params={{
-                    orgId: currentOrg.id,
-                    projectId: currentProject.id
-                  }}
-                >
-                  {({ isActive }) => (
-                    <Tab
-                      value={
-                        isActive ||
-                        location.pathname.match(/\/mpc\//)
-                          ? "selected"
-                          : ""
-                      }
-                    >
-                      MPC Wallets
-                    </Tab>
-                  )}
-                </Link>
-                <Link
                   to="/organizations/$orgId/projects/kms/$projectId/kmip"
                   params={{
                     orgId: currentOrg.id,
