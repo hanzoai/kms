@@ -88,7 +88,7 @@ export const UpgradePrivilegeSystemModal = ({ isOpen, onOpenChange }: Props) => 
                     grant the new &apos;Grant Privileges&apos; permission. At the organization
                     level, this is available for the{" "}
                     <a
-                      href="https://infisical.com/docs/internals/permissions/organization-permissions#subject%3A-groups"
+                      href="https://hanzo.ai/docs/internals/permissions/organization-permissions#subject%3A-groups"
                       target="_blank"
                       rel="noreferrer"
                       className="underline hover:text-bunker-200 hover:decoration-primary-700"
@@ -97,7 +97,7 @@ export const UpgradePrivilegeSystemModal = ({ isOpen, onOpenChange }: Props) => 
                     </a>{" "}
                     and{" "}
                     <a
-                      href="https://infisical.com/docs/internals/permissions/organization-permissions#subject%3A-identity"
+                      href="https://hanzo.ai/docs/internals/permissions/organization-permissions#subject%3A-identity"
                       target="_blank"
                       rel="noreferrer"
                       className="underline hover:text-bunker-200 hover:decoration-primary-700"
@@ -106,7 +106,7 @@ export const UpgradePrivilegeSystemModal = ({ isOpen, onOpenChange }: Props) => 
                     </a>{" "}
                     subjects while at the project level, this is available for the{" "}
                     <a
-                      href="https://infisical.com/docs/internals/permissions/project-permissions#subject%3A-member"
+                      href="https://hanzo.ai/docs/internals/permissions/project-permissions#subject%3A-member"
                       target="_blank"
                       rel="noreferrer"
                       className="underline hover:text-bunker-200 hover:decoration-primary-700"
@@ -114,7 +114,7 @@ export const UpgradePrivilegeSystemModal = ({ isOpen, onOpenChange }: Props) => 
                       Member,
                     </a>{" "}
                     <a
-                      href="https://infisical.com/docs/internals/permissions/project-permissions#subject%3A-groups"
+                      href="https://hanzo.ai/docs/internals/permissions/project-permissions#subject%3A-groups"
                       target="_blank"
                       rel="noreferrer"
                       className="underline hover:text-bunker-200 hover:decoration-primary-700"
@@ -123,7 +123,7 @@ export const UpgradePrivilegeSystemModal = ({ isOpen, onOpenChange }: Props) => 
                     </a>{" "}
                     and{" "}
                     <a
-                      href="https://infisical.com/docs/internals/permissions/project-permissions#subject%3A-identity"
+                      href="https://hanzo.ai/docs/internals/permissions/project-permissions#subject%3A-identity"
                       target="_blank"
                       rel="noreferrer"
                       className="underline hover:text-bunker-200 hover:decoration-primary-700"

@@ -32,7 +32,7 @@ export const AppConnectionHeader = ({ app, isConnected, onBack }: Props) => {
         <div className="flex items-center gap-x-2 text-mineshaft-300">
           {appDetails.name}
           <DocumentationLinkBadge
-            href={`https://infisical.com/docs/integrations/app-connections/${app}`}
+            href={`https://hanzo.ai/docs/integrations/app-connections/${app}`}
           />
         </div>
         <p className="text-sm leading-4 text-mineshaft-400">

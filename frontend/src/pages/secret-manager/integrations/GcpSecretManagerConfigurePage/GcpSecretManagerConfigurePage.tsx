@@ -184,7 +184,7 @@ export const GcpSecretManagerConfigurePage = () => {
         </Helmet>
         <CardTitle
           className="mb-2 px-6 text-left text-xl"
-          subTitle="Select which environment or folder in Infisical you want to sync to GCP Secret Manager."
+          subTitle="Select which environment or folder in Hanzo KMS you want to sync to GCP Secret Manager."
         >
           <div className="flex flex-row items-center">
             <div className="flex items-center pb-0.5">
@@ -199,7 +199,7 @@ export const GcpSecretManagerConfigurePage = () => {
             <a
               target="_blank"
               rel="noopener noreferrer"
-              href="https://infisical.com/docs/integrations/cloud/gcp-secret-manager"
+              href="https://hanzo.ai/docs/integrations/cloud/gcp-secret-manager"
             >
               <div className="mb-1 ml-2 inline-block cursor-default rounded-md bg-yellow/20 px-1.5 pt-[0.04rem] pb-[0.03rem] text-sm text-yellow opacity-80 hover:opacity-100">
                 <FontAwesomeIcon icon={faBookOpen} className="mr-1.5" />
@@ -467,9 +467,9 @@ export const GcpSecretManagerConfigurePage = () => {
               className="inline cursor-pointer text-mineshaft-100 underline decoration-primary-500 underline-offset-4 opacity-80 duration-200 hover:opacity-100"
               target="_blank"
               rel="noopener noreferrer"
-              href="mailto:support@infisical.com"
+              href="mailto:support@hanzo.ai"
             >
-              support@infisical.com
+              support@hanzo.ai
             </a>{" "}
             if the issue persists.
           </p>

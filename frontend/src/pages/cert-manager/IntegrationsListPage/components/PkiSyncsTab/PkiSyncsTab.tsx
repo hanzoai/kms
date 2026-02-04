@@ -106,7 +106,7 @@ export const PkiSyncsTab = () => {
             <div className="flex items-start gap-1">
               <div className="flex items-center gap-x-2">
                 <p className="text-xl font-medium text-mineshaft-100">Certificate Syncs</p>
-                <DocumentationLinkBadge href="https://infisical.com/docs/documentation/platform/pki/certificate-syncs/overview" />
+                <DocumentationLinkBadge href="https://hanzo.ai/docs/documentation/platform/pki/certificate-syncs/overview" />
               </div>
             </div>
             <p className="text-sm text-bunker-300">

@@ -11,7 +11,7 @@ import {
   getAppConnectionMethodDetails,
   useGetAppConnectionOauthReturnUrl
 } from "@app/helpers/appConnections";
-import { isInfisicalCloud } from "@app/helpers/platform";
+import { isHanzoCloud } from "@app/helpers/platform";
 import {
   AzureAppConfigurationConnectionMethod,
   TAzureAppConfigurationConnection,
@@ -189,8 +189,8 @@ export const AzureAppConfigurationConnectionForm = ({
               errorText={
                 !isLoading && isMissingConfig
                   ? `Environment variables have not been configured. ${
-                      isInfisicalCloud()
-                        ? "Please contact Infisical."
+                      isHanzoCloud()
+                        ? "Please contact Hanzo."
                         : `See documentation to configure Azure ${methodDetails.name} Connections.`
                     }`
                   : error?.message

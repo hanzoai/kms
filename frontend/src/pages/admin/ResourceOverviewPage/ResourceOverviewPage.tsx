@@ -18,7 +18,7 @@ export const ResourceOverviewPage = () => {
           <PageHeader
             scope="instance"
             title="Resource Overview"
-            description="Manage resources within your Infisical instance."
+            description="Manage resources within your Hanzo KMS instance."
           />
           <Tabs orientation="vertical" defaultValue="tab-organizations">
             <TabList>

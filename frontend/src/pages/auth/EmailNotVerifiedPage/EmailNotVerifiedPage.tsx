@@ -10,7 +10,7 @@ export const EmailNotVerifiedPage = () => {
       </Helmet>
       <Link to="/">
         <div className="mt-20 mb-4 flex justify-center">
-          <img src="/images/gradientLogo.svg" className="h-[90px] w-[120px]" alt="Infisical Logo" />
+          <img src="/images/gradientLogo.svg" className="h-[90px] w-[120px]" alt="Hanzo KMS Logo" />
         </div>
       </Link>
       <div className="mx-auto flex w-full flex-col items-center justify-center">
@@ -19,7 +19,7 @@ export const EmailNotVerifiedPage = () => {
         </h1>
         <p className="w-max justify-center text-center text-sm text-gray-400">
           Please try again. <br /> Note: If it still doesn&apos;t work, please reach out to us at
-          support@infisical.com
+          support@hanzo.ai
         </p>
         <div className="mt-6 flex flex-row text-sm text-bunker-400">
           <Link to="/login">

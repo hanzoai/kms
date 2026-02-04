@@ -186,7 +186,7 @@ export const SqlConnectionFields = ({
                         className="max-w-md"
                         content={
                           <p>
-                            If enabled, Infisical will only connect to the server if it has a valid,
+                            If enabled, Hanzo KMS will only connect to the server if it has a valid,
                             trusted SSL certificate.
                           </p>
                         }
@@ -221,7 +221,7 @@ export const SqlConnectionFields = ({
                     className="max-w-md"
                     content={
                       <p>
-                        If enabled, Infisical will manage the credentials of this App Connection by
+                        If enabled, Hanzo KMS will manage the credentials of this App Connection by
                         updating the password on creation.
                       </p>
                     }

@@ -1,7 +1,7 @@
 {
   "activity": {
     "title": "Audit Logs",
-    "subtitle": "Event history for this Infisical project.",
+    "subtitle": "Event history for this Hanzo KMS project.",
     "event": {
       "readSecrets": "Secrets Viewed",
       "updateSecrets": "Secrets Updated",
@@ -39,7 +39,7 @@
     "schedule-demo": "Schedule a Demo"
   },
   "common": {
-    "head-title": "{{title}} | Infisical",
+    "head-title": "{{title}} | Hanzo KMS",
     "error_project-already-exists": "A project with this name already exists.",
     "email": "Email",
     "password": "Password",
@@ -74,7 +74,7 @@
   "dashboard": {
     "title": "Secrets",
     "og-title": "Manage your .env files in seconds",
-    "og-description": "Infisical a simple end-to-end encrypted platform that enables teams to sync and manage their .env files.",
+    "og-description": "Hanzo KMS is a simple end-to-end encrypted platform that enables teams to sync and manage their .env files.",
     "search-keys": "Search keys...",
     "add-key": "Add Key",
     "personal": "Personal",
@@ -109,30 +109,30 @@
   "approval": {
     "title": "Admin Panel",
     "og-title": "Manage your secret change management",
-    "og-description": "Infisical a simple end-to-end encrypted platform that enables teams to sync and manage their .env files."
+    "og-description": "Hanzo KMS is a simple end-to-end encrypted platform that enables teams to sync and manage their .env files."
   },
   "integrations": {
     "title": "Project Integrations",
-    "description": "Manage your integrations of Infisical with third-party services.",
+    "description": "Manage your integrations of Hanzo KMS with third-party services.",
     "no-integrations1": "You don't have any integrations set up yet. When you do, they will appear here.",
     "no-integrations2": "To start, click on any of the options below. It takes 5 clicks to set up.",
     "available": "Platform & Cloud Integrations",
     "available-text1": "Click on the integration you want to connect. This will let your environment variables flow automatically into selected third-party services.",
-    "available-text2": "Note: during an integration with Heroku, for security reasons, it is impossible to maintain end-to-end encryption. In theory, this lets Infisical decrypt yor environment variables. In practice, we can assure you that this will never be done, and it allows us to protect your secrets from bad actors online. The core Infisical service will always stay end-to-end encrypted. With any questions, reach out support@infisical.com.",
+    "available-text2": "Note: during an integration with Heroku, for security reasons, it is impossible to maintain end-to-end encryption. In theory, this lets Hanzo KMS decrypt your environment variables. In practice, we can assure you that this will never be done, and it allows us to protect your secrets from bad actors online. The core Hanzo KMS service will always stay end-to-end encrypted. With any questions, reach out support@hanzo.ai.",
     "cloud-integrations": "Native Integrations",
     "framework-integrations": "Framework Integrations",
     "click-to-start": "Click on an integration to begin syncing secrets to it.",
     "click-to-setup": "Click on a framework to get the setup instructions.",
-    "grant-access-to-secrets": "Grant Infisical access to your secrets",
-    "why-infisical-needs-access": "Most cloud integrations require Infisical to be able to decrypt your secrets so they can be forwarded over.",
+    "grant-access-to-secrets": "Grant Hanzo KMS access to your secrets",
+    "why-infisical-needs-access": "Most cloud integrations require Hanzo KMS to be able to decrypt your secrets so they can be forwarded over.",
     "grant-access-button": "Grant access"
   },
   "login": {
     "title": "Login",
-    "og-title": "Log In to Infisical",
-    "og-description": "Infisical a simple end-to-end encrypted platform that enables teams to sync and manage their .env files.",
+    "og-title": "Log In to Hanzo KMS",
+    "og-description": "Hanzo KMS is a simple end-to-end encrypted platform that enables teams to sync and manage their .env files.",
     "login": "Log In",
-    "need-account": "Need an Infisical account?",
+    "need-account": "Need a Hanzo KMS account?",
     "create-account": "Create an account",
     "forgot-password": "Forgot your password?",
     "error-login": "Wrong credentials.",
@@ -142,8 +142,8 @@
   },
   "mfa": {
     "title": "Sign Up",
-    "og-title": "Replace .env files with 1 line of code. Sign Up for Infisical in 3 minutes.",
-    "og-description": "Infisical a simple end-to-end encrypted platform that enables teams to sync and manage API-keys and environemntal variables. Works with Node.js, Next.js, Gatsby, Nest.js...",
+    "og-title": "Replace .env files with 1 line of code. Sign Up for Hanzo KMS in 3 minutes.",
+    "og-description": "Hanzo KMS is a simple end-to-end encrypted platform that enables teams to sync and manage API-keys and environmental variables. Works with Node.js, Next.js, Gatsby, Nest.js...",
     "signup": "Sign Up",
     "already-have-account": "Have an account? Log in",
     "forgot-password": "Forgot your password?",
@@ -165,7 +165,7 @@
     "step4-download": "Download PDF",
     "step5-send-invites": "Send Invites",
     "step5-invite-team": "Invite your team",
-    "step5-subtitle": "Infisical is meant to be used with your teammates. Invite them to test it out.",
+    "step5-subtitle": "Hanzo KMS is meant to be used with your teammates. Invite them to test it out.",
     "step5-skip": "Skip"
   },
   "nav": {
@@ -277,14 +277,14 @@
       "description": "View and manage your personal information here.",
       "emergency": {
         "name": "Emergency Kit",
-        "text1": "Your Emergency Kit contains the information you’ll need to sign in to your Infisical account.",
+        "text1": "Your Emergency Kit contains the information you'll need to sign in to your Hanzo KMS account.",
         "text2": "Only the latest issued Emergency Kit remains valid. To get a new Emergency Kit, verify your password.",
         "download": "Download Emergency Kit"
       },
       "change-language": "Change Language",
       "api-keys": {
         "title": "API Keys",
-        "description": "Manage your personal API Keys to access the Infisical API.",
+        "description": "Manage your personal API Keys to access the Hanzo KMS API.",
         "add-new": "Add new"
       }
     },
@@ -296,22 +296,22 @@
       "project-to-delete": "Project to be Deleted",
       "danger-zone-note": "As soon as you delete this project, you will not be able to undo it. This will immediately remove all the keys. If you still want to do that, please enter the name of the project below.",
       "delete-project-note": "Note: You can only delete a project in case you have more than one",
-      "project-id-description": "To integrate Infisical into your code base and get automatic injection of environmental variables, you should use the following Project ID.",
+      "project-id-description": "To integrate Hanzo KMS into your code base and get automatic injection of environmental variables, you should use the following Project ID.",
       "project-id-description2": "For more guidance, including code snipets for various languages and frameworks, see ",
       "auto-generated": "This is your project's auto-generated unique identifier. It can't be changed.",
-      "docs": "Infisical Docs",
+      "docs": "Hanzo KMS Docs",
       "enforce-capitalization": "Enforce Capitalization",
-      "enforce-capitalization-description": "According to standards, Infisical enforces uppercase secret keys. If you want to disable this feature, you can do so here."
+      "enforce-capitalization-description": "According to standards, Hanzo KMS enforces uppercase secret keys. If you want to disable this feature, you can do so here."
     }
   },
   "signup": {
     "title": "Sign Up",
-    "og-title": "Replace .env files with 1 line of code. Sign Up for Infisical in 3 minutes.",
-    "og-description": "Infisical a simple end-to-end encrypted platform that enables teams to sync and manage API-keys and environemntal variables. Works with Node.js, Next.js, Gatsby, Nest.js...",
+    "og-title": "Replace .env files with 1 line of code. Sign Up for Hanzo KMS in 3 minutes.",
+    "og-description": "Hanzo KMS is a simple end-to-end encrypted platform that enables teams to sync and manage API-keys and environmental variables. Works with Node.js, Next.js, Gatsby, Nest.js...",
     "signup": "Sign Up",
     "already-have-account": "Have an account? Log in",
     "forgot-password": "Forgot your password?",
-    "initial-title": "Create your Infisical account",
+    "initial-title": "Create your Hanzo KMS account",
     "continue-with-google": "Continue with Google",
     "continue-with-email": "Continue with Email",
     "create-policy": "By signing up, you agree to our Terms of Service and Privacy Policy.",
@@ -333,7 +333,7 @@
     "step4-download": "Download PDF",
     "step5-send-invites": "Send Invites",
     "step5-invite-team": "Invite your team",
-    "step5-subtitle": "Infisical is meant to be used with your teammates. Invite them to test it out.",
+    "step5-subtitle": "Hanzo KMS is meant to be used with your teammates. Invite them to test it out.",
     "step5-skip": "Skip"
   },
   "admin": {

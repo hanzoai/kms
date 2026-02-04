@@ -132,7 +132,7 @@ export const OrgMembersTable = ({
 
     if (isCustomRole && subscription && !subscription?.rbac) {
       handlePopUpOpen("upgradePlan", {
-        text: "Your current plan does not include access to assigning custom roles to members. To unlock this feature, please upgrade to Infisical Pro plan."
+        text: "Your current plan does not include access to assigning custom roles to members. To unlock this feature, please upgrade to Hanzo KMS Pro plan."
       });
       return;
     }
@@ -646,7 +646,7 @@ export const OrgMembersTable = ({
 
                                       if (currentOrg?.scimEnabled) {
                                         createNotification({
-                                          text: "You cannot manage users from Infisical when org-level auth is enforced for your organization",
+                                          text: "You cannot manage users from Hanzo KMS when org-level auth is enforced for your organization",
                                           type: "error"
                                         });
                                         return;
@@ -686,7 +686,7 @@ export const OrgMembersTable = ({
 
                                       if (currentOrg?.scimEnabled && isActive) {
                                         createNotification({
-                                          text: "You cannot manage users from Infisical when org-level auth is enforced for your organization",
+                                          text: "You cannot manage users from Hanzo KMS when org-level auth is enforced for your organization",
                                           type: "error"
                                         });
                                         return;

@@ -33,7 +33,7 @@ export const OrgGroupsSection = () => {
   const handleAddGroupModal = () => {
     if (!subscription?.groups) {
       handlePopUpOpen("upgradePlan", {
-        text: "Your current plan does not allow adding groups. To unlock this feature, please upgrade to Infisical Enterprise plan.",
+        text: "Your current plan does not allow adding groups. To unlock this feature, please upgrade to Hanzo KMS Enterprise plan.",
         isEnterpriseFeature: true
       });
     } else {
@@ -60,7 +60,7 @@ export const OrgGroupsSection = () => {
           <p className="text-xl font-medium text-mineshaft-100">
             {isSubOrganization ? "Sub-" : ""}Organization Groups
           </p>
-          <DocumentationLinkBadge href="https://infisical.com/docs/documentation/platform/groups" />
+          <DocumentationLinkBadge href="https://hanzo.ai/docs/documentation/platform/groups" />
         </div>
         <OrgPermissionCan I={OrgPermissionGroupActions.Create} a={OrgPermissionSubjects.Groups}>
           {(isAllowed) => (

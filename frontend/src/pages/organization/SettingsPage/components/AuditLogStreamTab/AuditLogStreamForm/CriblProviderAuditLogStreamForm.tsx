@@ -52,11 +52,11 @@ export const CriblProviderAuditLogStreamForm = ({ auditLogStream, onSubmit }: Pr
               tooltipText={
                 <>
                   To derive your Stream URL: Obtain your Cribl hostname (e.g. cribl.example.com),
-                  Infisical HTTP data source port (e.g. 20000), and HTTP event API path (e.g.
+                  Hanzo KMS HTTP data source port (e.g. 20000), and HTTP event API path (e.g.
                   /infisical).
                   <br />
                   <br />
-                  If your Infisical Data Source has TLS enabled, then use the https protocol.
+                  If your Hanzo KMS Data Source has TLS enabled, then use the https protocol.
                 </>
               }
             >

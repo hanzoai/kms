@@ -23,7 +23,7 @@ import {
   ModalTrigger,
   Tooltip
 } from "@app/components/v2";
-import { InfisicalSecretInput } from "@app/components/v2/InfisicalSecretInput";
+import { HanzoSecretInput } from "@app/components/v2/HanzoSecretInput";
 import {
   ProjectPermissionActions,
   ProjectPermissionSub,
@@ -283,7 +283,7 @@ export const SecretEditRow = ({
           control={control}
           name="value"
           render={({ field }) => (
-            <InfisicalSecretInput
+            <HanzoSecretInput
               {...field}
               isReadOnly={
                 isImportedSecret ||

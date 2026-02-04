@@ -92,7 +92,7 @@ const UnstableIconButton = forwardRef<HTMLButtonElement, UnstableIconButtonProps
         {children}
         {isPending && (
           <Lottie
-            icon={variant === "default" ? "infisical_loading_bw" : "infisical_loading_white"}
+            icon={variant === "default" ? "hanzo_loading_bw" : "hanzo_loading_white"}
             isAutoPlay
             className={twMerge(
               "absolute rounded-xl",

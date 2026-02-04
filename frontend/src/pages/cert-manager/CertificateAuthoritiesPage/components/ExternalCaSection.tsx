@@ -66,7 +66,7 @@ export const ExternalCaSection = () => {
       <div className="mb-4 flex justify-between">
         <div className="flex items-center gap-x-2">
           <p className="text-xl font-medium text-mineshaft-100">External Certificate Authorities</p>
-          <DocumentationLinkBadge href="https://infisical.com/docs/documentation/platform/pki/ca/external-ca" />
+          <DocumentationLinkBadge href="https://hanzo.ai/docs/documentation/platform/pki/ca/external-ca" />
         </div>
         <ProjectPermissionCan
           I={ProjectPermissionCertificateAuthorityActions.Create}

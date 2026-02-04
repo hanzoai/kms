@@ -18,7 +18,7 @@ export const IntegrationsPage = () => {
           <PageHeader
             scope="instance"
             title="Integrations"
-            description="Manage integrations for your Infisical instance."
+            description="Manage integrations for your Hanzo KMS instance."
           />
           <IntegrationsPageForm />
         </div>

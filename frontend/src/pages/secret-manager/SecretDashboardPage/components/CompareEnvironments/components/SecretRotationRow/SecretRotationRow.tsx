@@ -4,7 +4,7 @@ import { twMerge } from "tailwind-merge";
 
 import { IconButton, TableContainer, Tag, Td, Tooltip, Tr } from "@app/components/v2";
 import { Blur } from "@app/components/v2/Blur";
-import { InfisicalSecretInput } from "@app/components/v2/InfisicalSecretInput";
+import { HanzoSecretInput } from "@app/components/v2/HanzoSecretInput";
 import { SECRET_ROTATION_MAP } from "@app/helpers/secretRotationsV2";
 import { useToggle } from "@app/hooks";
 import { TSecretRotationV2 } from "@app/hooks/api/secretRotationsV2";
@@ -152,7 +152,7 @@ export const SecretRotationRow = ({
                                       tooltipText="You do not have permission to read the value of this secret."
                                     />
                                   ) : (
-                                    <InfisicalSecretInput
+                                    <HanzoSecretInput
                                       isReadOnly
                                       value={secret.value}
                                       isVisible={isSecretVisible}

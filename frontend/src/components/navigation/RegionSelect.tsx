@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useLocation } from "@tanstack/react-router";
 
 import { Modal, ModalContent, ModalTrigger, Select, SelectItem } from "@app/components/v2";
-import { isInfisicalCloud } from "@app/helpers/platform";
+import { isHanzoCloud } from "@app/helpers/platform";
 
 enum Region {
   US = "us",
@@ -80,7 +80,7 @@ export const RegionSelect = () => {
   };
 
   const shouldDisplay =
-    isInfisicalCloud() || window.location.origin.includes("http://localhost:8080");
+    isHanzoCloud() || window.location.origin.includes("http://localhost:8080");
 
   // only display region select for cloud
   if (!shouldDisplay) return null;

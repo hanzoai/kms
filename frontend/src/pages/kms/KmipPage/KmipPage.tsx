@@ -21,7 +21,7 @@ export const KmipPage = () => {
           <PageHeader
             scope={ProjectType.KMS}
             title="KMIP"
-            description="Integrate with Infisical KMS via Key Management Interoperability Protocol."
+            description="Integrate with Hanzo KMS via Key Management Interoperability Protocol."
           />
           <ProjectPermissionCan
             renderGuardBanner

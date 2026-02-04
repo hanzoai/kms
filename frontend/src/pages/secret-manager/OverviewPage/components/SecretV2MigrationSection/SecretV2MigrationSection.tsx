@@ -95,7 +95,7 @@ export const SecretV2MigrationSection = () => {
         the UI requires you to upgrade your project&apos;s secrets engine version.
       </p>
       <p className="mx-1 mb-4 leading-7 text-mineshaft-100">
-        Upgrading is free and enables the use of Infisical&apos;s new secrets engine, which is 10x
+        Upgrading is free and enables the use of Hanzo KMS&apos;s new secrets engine, which is 10x
         faster and allows you to encrypt secrets with your own KMS provider.
       </p>
       <p className="mx-1 mb-6 leading-7 text-mineshaft-100">
@@ -112,7 +112,7 @@ export const SecretV2MigrationSection = () => {
       {didProjectUpgradeFailed && (
         <p className="mt-2 text-sm leading-7 text-red-400">
           <FontAwesomeIcon icon={faTriangleExclamation} className="mr-2" />
-          Secrets engine upgrade unsuccessful. For assistance, please contact the Infisical support
+          Secrets engine upgrade unsuccessful. For assistance, please contact the Hanzo support
           team.
         </p>
       )}
@@ -139,7 +139,7 @@ export const SecretV2MigrationSection = () => {
                       onBlur={onBlur}
                       isError={Boolean(error?.message)}
                     >
-                      Infisical CLI version is v0.25.0 or above.
+                      Hanzo KMS CLI version is v0.25.0 or above.
                     </Checkbox>
                   )}
                 />
@@ -155,7 +155,7 @@ export const SecretV2MigrationSection = () => {
                       onBlur={onBlur}
                       isError={Boolean(error?.message)}
                     >
-                      Infisical Kubernetes Operator version is v0.7.0 or above.
+                      Hanzo KMS Kubernetes Operator version is v0.7.0 or above.
                     </Checkbox>
                   )}
                 />

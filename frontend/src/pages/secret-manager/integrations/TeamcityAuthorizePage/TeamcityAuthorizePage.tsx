@@ -69,7 +69,7 @@ export const TeamcityAuthorizePage = () => {
       <Card className="mb-12 max-w-lg rounded-md border border-mineshaft-600">
         <CardTitle
           className="px-6 text-left text-xl"
-          subTitle="After adding the details below, you will be prompted to set up an integration for a particular Infisical project and environment."
+          subTitle="After adding the details below, you will be prompted to set up an integration for a particular Hanzo KMS project and environment."
         >
           <div className="flex flex-row items-center">
             <div className="flex items-center pb-0.5">
@@ -83,7 +83,7 @@ export const TeamcityAuthorizePage = () => {
             <span className="ml-2">TeamCity Integration</span>
             <a
               target="_blank"
-              href="https://infisical.com/docs/integrations/cloud/teamcity"
+              href="https://hanzo.ai/docs/integrations/cloud/teamcity"
               rel="noopener noreferrer"
             >
               <div className="mb-1 ml-2 inline-block cursor-default rounded-md bg-yellow/20 px-1.5 pt-[0.04rem] pb-[0.03rem] text-sm text-yellow opacity-80 hover:opacity-100">

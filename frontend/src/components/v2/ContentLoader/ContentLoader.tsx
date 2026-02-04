@@ -36,7 +36,7 @@ export const ContentLoader = ({ text, frequency = 2000, className, lottieClassNa
     >
       <Lottie
         isAutoPlay
-        icon="infisical_loading"
+        icon="hanzo_loading"
         className={twMerge("h-32 w-32", lottieClassName)}
       />
       {text && isTextArray && (

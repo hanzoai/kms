@@ -133,7 +133,7 @@ export const PkiSyncDetailsByIDPage = () => {
   return (
     <>
       <Helmet>
-        <title>PKI Sync | Infisical</title>
+        <title>PKI Sync | Hanzo KMS</title>
         <link rel="icon" href="/hanzo.ico" />
       </Helmet>
       <ProjectPermissionCan

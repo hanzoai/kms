@@ -296,7 +296,7 @@ export const SecretSharingBrandingSection = () => {
             Custom branding for secret sharing pages is available on Enterprise plans.
           </p>
           <ButtonV3 size="xs" variant="org" asChild>
-            <a href="https://infisical.com/schedule-demo" target="_blank" rel="noreferrer">
+            <a href="https://hanzo.ai/contact" target="_blank" rel="noreferrer">
               Talk to Us
             </a>
           </ButtonV3>

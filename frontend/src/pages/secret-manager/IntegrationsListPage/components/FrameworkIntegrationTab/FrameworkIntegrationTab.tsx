@@ -41,7 +41,7 @@ export const FrameworkIntegrationTab = () => {
           </a>
         ))}
         <a
-          href="https://infisical.com/docs/cli/commands/run"
+          href="https://hanzo.ai/docs/cli/commands/run"
           rel="noopener noreferrer"
           target="_blank"
           className="relative flex h-32 cursor-pointer flex-col items-center justify-center rounded-md border border-mineshaft-600 bg-mineshaft-800 p-4 duration-200 hover:bg-mineshaft-700"
@@ -52,7 +52,7 @@ export const FrameworkIntegrationTab = () => {
           </div>
         </a>
         <a
-          href="https://infisical.com/docs/sdks/overview"
+          href="https://hanzo.ai/docs/sdks/overview"
           rel="noopener noreferrer"
           target="_blank"
           className="relative flex h-32 cursor-pointer flex-col items-center justify-center rounded-md border border-mineshaft-600 bg-mineshaft-800 p-4 duration-200 hover:bg-mineshaft-700"

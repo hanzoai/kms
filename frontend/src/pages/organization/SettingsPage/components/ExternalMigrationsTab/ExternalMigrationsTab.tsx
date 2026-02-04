@@ -21,7 +21,7 @@ export const ExternalMigrationsTab = () => {
         <div className="mb-4">
           <h2 className="text-xl font-medium text-mineshaft-100">In-Platform Migration Tooling</h2>
           <p className="mt-1 mb-6 text-sm text-gray-400">
-            Configure platform connections to enable migration features throughout Infisical, such
+            Configure platform connections to enable migration features throughout Hanzo KMS, such
             as importing policies and resources directly within the UI.
           </p>
         </div>
@@ -46,7 +46,7 @@ export const ExternalMigrationsTab = () => {
               <a
                 target="_blank"
                 rel="noopener noreferrer"
-                href="https://infisical.com/docs/documentation/platform/external-migrations/overview"
+                href="https://hanzo.ai/docs/documentation/platform/external-migrations/overview"
               >
                 <div className="inline-block rounded-md bg-yellow/20 px-1.5 pt-[0.04rem] pb-[0.03rem] text-sm text-yellow opacity-80 hover:opacity-100">
                   <FontAwesomeIcon icon={faBookOpen} className="mr-1.5" />
@@ -59,7 +59,7 @@ export const ExternalMigrationsTab = () => {
               </a>
             </div>
             <p className="mt-1 text-sm text-gray-400">
-              Import data from another platform to Infisical.
+              Import data from another platform to Hanzo KMS.
             </p>
           </div>
 

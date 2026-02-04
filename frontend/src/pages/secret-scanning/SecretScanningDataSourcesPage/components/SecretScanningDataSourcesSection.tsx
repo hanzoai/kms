@@ -43,7 +43,7 @@ export const SecretScanningDataSourcesSection = () => {
           <div>
             <div className="flex items-center gap-x-2">
               <p className="text-xl font-medium text-mineshaft-100">Data Sources</p>
-              <DocumentationLinkBadge href="https://infisical.com/docs/documentation/platform/secret-scanning/overview" />
+              <DocumentationLinkBadge href="https://hanzo.ai/docs/documentation/platform/secret-scanning/overview" />
             </div>
             <p className="text-sm text-bunker-300">
               Configure Data Sources to scan for secret leaks from third-party services.
@@ -84,7 +84,7 @@ export const SecretScanningDataSourcesSection = () => {
       <UpgradePlanModal
         isOpen={popUp.upgradePlan.isOpen}
         onOpenChange={(isOpen) => handlePopUpToggle("upgradePlan", isOpen)}
-        text="Creating data sources can be unlocked if you upgrade to Infisical Enterprise plan."
+        text="Creating data sources can be unlocked if you upgrade to Hanzo KMS Enterprise plan."
         isEnterpriseFeature={popUp.upgradePlan.data?.isEnterpriseFeature}
       />
     </>

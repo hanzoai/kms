@@ -5,7 +5,7 @@ import { Button } from "@app/components/v2";
 
 /**
  * This is the page that shows up when a user's invitation
- * to join a project/organization on Infisical has expired
+ * to join a project/organization on Hanzo KMS has expired
  * or when the user is already a member of the organization
  */
 export const RequestNewInvitePage = () => {
@@ -33,7 +33,7 @@ export const RequestNewInvitePage = () => {
             <p className="my-4 text-lg">Ask your admin for a new one.</p>
             <p className="max-w-xs px-7 text-center text-sm leading-tight text-bunker-400">
               <span className="rounded-md bg-primary-500/40 px-1 text-black">Note:</span> If it
-              still doesn&apos;t work, please reach out to us at support@infisical.com
+              still doesn&apos;t work, please reach out to us at support@hanzo.ai
             </p>
           </>
         )}

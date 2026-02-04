@@ -43,7 +43,7 @@ const initialSyncBehaviors = [
     value: IntegrationSyncBehavior.OVERWRITE_TARGET
   },
   {
-    label: "Import - Prefer values from Infisical",
+    label: "Import - Prefer values from Hanzo KMS",
     value: IntegrationSyncBehavior.PREFER_SOURCE
   }
 ];
@@ -178,7 +178,7 @@ export const VercelConfigurePage = () => {
       <Card className="max-w-lg rounded-md border border-mineshaft-600 p-0">
         <CardTitle
           className="px-6 text-left text-xl"
-          subTitle="Select which environment or folder in Infisical you want to sync to Vercel's environment variables."
+          subTitle="Select which environment or folder in Hanzo KMS you want to sync to Vercel's environment variables."
         >
           <div className="flex flex-row items-center">
             <div className="flex items-center">
@@ -187,7 +187,7 @@ export const VercelConfigurePage = () => {
             <span className="ml-2">Vercel Integration </span>
             <a
               target="_blank"
-              href="https://infisical.com/docs/integrations/cloud/vercel"
+              href="https://hanzo.ai/docs/integrations/cloud/vercel"
               rel="noopener noreferrer"
             >
               <div className="mb-1 ml-2 inline-block cursor-default rounded-md bg-yellow/20 px-1.5 pt-[0.04rem] pb-[0.03rem] text-sm text-yellow opacity-80 hover:opacity-100">
@@ -201,7 +201,7 @@ export const VercelConfigurePage = () => {
             </a>
           </div>
         </CardTitle>
-        <FormControl label="Infisical Project Environment" className="px-6">
+        <FormControl label="Hanzo KMS Project Environment" className="px-6">
           <Select
             value={selectedSourceEnvironment}
             onValueChange={(val) => setSelectedSourceEnvironment(val)}
@@ -229,7 +229,7 @@ export const VercelConfigurePage = () => {
           helperText={
             <Tooltip
               className="max-w-md"
-              content="Double check Infisical's access permissions in Vercel by navigating to Team > Integrations > Infisical > Settings > Manage Access."
+              content="Double check Hanzo KMS's access permissions in Vercel by navigating to Team > Integrations > Hanzo KMS > Settings > Manage Access."
             >
               <div>
                 <span>Don&#39;t see the project you&#39;re looking for?</span>{" "}
@@ -332,7 +332,7 @@ export const VercelConfigurePage = () => {
         </div>
         <span className="mt-4 text-sm text-mineshaft-300">
           After creating an integration, your secrets will start syncing immediately. This might
-          cause an unexpected override of current secrets in Vercel with secrets from Infisical.
+          cause an unexpected override of current secrets in Vercel with secrets from Hanzo KMS.
         </span>
       </div>
     </div>
@@ -357,9 +357,9 @@ export const VercelConfigurePage = () => {
               className="inline cursor-pointer text-mineshaft-100 underline decoration-primary-500 underline-offset-4 opacity-80 duration-200 hover:opacity-100"
               target="_blank"
               rel="noopener noreferrer"
-              href="mailto:support@infisical.com"
+              href="mailto:support@hanzo.ai"
             >
-              support@infisical.com
+              support@hanzo.ai
             </a>{" "}
             if the issue persists.
           </p>

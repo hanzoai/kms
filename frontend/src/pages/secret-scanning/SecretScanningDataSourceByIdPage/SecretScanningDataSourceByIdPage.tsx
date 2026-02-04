@@ -102,7 +102,7 @@ export const SecretScanningDataSourceByIdPage = () => {
   return (
     <>
       <Helmet>
-        <title>Secret Scanning Data Source | Infisical</title>
+        <title>Secret Scanning Data Source | Hanzo KMS</title>
         <link rel="icon" href="/hanzo.ico" />
       </Helmet>
       <ProjectPermissionCan

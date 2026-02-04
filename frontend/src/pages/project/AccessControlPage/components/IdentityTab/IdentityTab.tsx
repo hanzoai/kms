@@ -198,7 +198,7 @@ export const IdentityTab = withProjectPermission(
         <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-x-2">
             <p className="text-xl font-medium text-mineshaft-100">Project Machine Identities</p>
-            <DocumentationLinkBadge href="https://infisical.com/docs/documentation/platform/identities/machine-identities" />
+            <DocumentationLinkBadge href="https://hanzo.ai/docs/documentation/platform/identities/machine-identities" />
           </div>
           <div className="flex items-center">
             <ProjectPermissionCan

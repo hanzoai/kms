@@ -37,7 +37,7 @@ export const ProjectTemplatesSection = () => {
             <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-x-2">
                 <p className="text-xl font-medium text-mineshaft-100">Project Templates</p>
-                <DocumentationLinkBadge href="https://infisical.com/docs/documentation/platform/project-templates" />
+                <DocumentationLinkBadge href="https://hanzo.ai/docs/documentation/platform/project-templates" />
               </div>
               <OrgPermissionCan
                 I={OrgPermissionActions.Create}
@@ -75,7 +75,7 @@ export const ProjectTemplatesSection = () => {
             <UpgradePlanModal
               isOpen={popUp.upgradePlan.isOpen}
               onOpenChange={(isOpen) => handlePopUpToggle("upgradePlan", isOpen)}
-              text="Your current plan does not include access to project templates. To unlock this feature, please upgrade to Infisical Enterprise plan."
+              text="Your current plan does not include access to project templates. To unlock this feature, please upgrade to Hanzo KMS Enterprise plan."
               isEnterpriseFeature={popUp.upgradePlan.data?.isEnterpriseFeature}
             />
           </div>

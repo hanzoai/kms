@@ -35,7 +35,7 @@ export const AlertingPage = () => {
             <span className="inline-flex items-center gap-x-2">
               Alerting
               <span className="mt-0.5">
-                <DocumentationLinkBadge href="https://infisical.com/docs/documentation/platform/pki/alerting" />
+                <DocumentationLinkBadge href="https://hanzo.ai/docs/documentation/platform/pki/alerting" />
               </span>
             </span>
           }

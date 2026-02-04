@@ -77,7 +77,7 @@ const LogsSectionComponent = ({
           <div>
             <div className="flex items-center gap-x-2 whitespace-nowrap">
               <p className="text-xl font-medium text-mineshaft-100">Audit History</p>
-              <DocumentationLinkBadge href="https://infisical.com/docs/documentation/platform/audit-logs" />
+              <DocumentationLinkBadge href="https://hanzo.ai/docs/documentation/platform/audit-logs" />
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2 lg:justify-end">
@@ -123,7 +123,7 @@ const LogsSectionComponent = ({
             onOpenChange={(isOpen) => {
               handlePopUpToggle("upgradePlan", isOpen);
             }}
-            text="Your current plan does not include access to audit logs. To unlock this feature, please upgrade to Infisical Pro plan."
+            text="Your current plan does not include access to audit logs. To unlock this feature, please upgrade to Hanzo KMS Pro plan."
           />
         </div>
       </div>
@@ -167,7 +167,7 @@ const LogsSectionComponent = ({
         onOpenChange={(isOpen) => {
           handlePopUpToggle("upgradePlan", isOpen);
         }}
-        text="Your current plan does not include access to audit logs. To unlock this feature, please upgrade to Infisical Pro plan."
+        text="Your current plan does not include access to audit logs. To unlock this feature, please upgrade to Hanzo KMS Pro plan."
       />
     </div>
   );

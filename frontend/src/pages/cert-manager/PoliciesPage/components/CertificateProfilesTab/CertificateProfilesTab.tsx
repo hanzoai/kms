@@ -73,7 +73,7 @@ export const CertificateProfilesTab = () => {
         <div>
           <div className="flex items-center gap-x-2">
             <h2 className="text-xl font-semibold text-mineshaft-100">Certificate Profiles</h2>
-            <DocumentationLinkBadge href="https://infisical.com/docs/documentation/platform/pki/certificates/profiles" />
+            <DocumentationLinkBadge href="https://hanzo.ai/docs/documentation/platform/pki/certificates/profiles" />
           </div>
           <p className="text-sm text-bunker-300">
             Unified certificate issuance configurations combining CA, certificate policy, and
@@ -110,7 +110,7 @@ export const CertificateProfilesTab = () => {
         isOpen={popUp.upgradePlan.isOpen}
         onOpenChange={(isOpen) => handlePopUpToggle("upgradePlan", isOpen)}
         isEnterpriseFeature={popUp.upgradePlan.data?.isEnterpriseFeature}
-        text="Your current plan does not include access to managing template enrollment options for ACME. To unlock this feature, please upgrade to Infisical Enterprise plan."
+        text="Your current plan does not include access to managing template enrollment options for ACME. To unlock this feature, please upgrade to Hanzo KMS Enterprise plan."
       />
 
       {selectedProfile && (

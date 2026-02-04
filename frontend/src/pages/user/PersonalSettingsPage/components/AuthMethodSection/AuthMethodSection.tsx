@@ -96,7 +96,7 @@ export const AuthMethodSection = () => {
       <h2 className="mb-8 flex-1 text-xl font-medium text-mineshaft-100">Authentication methods</h2>
       <p className="mb-4 text-gray-400">
         By enabling a SSO provider, you are allowing an account with that provider which uses the
-        same email address as your existing Infisical account to be able to log in to Infisical.
+        same email address as your existing Hanzo KMS account to be able to log in to Hanzo KMS.
       </p>
       <div className="mb-4">
         {user &&

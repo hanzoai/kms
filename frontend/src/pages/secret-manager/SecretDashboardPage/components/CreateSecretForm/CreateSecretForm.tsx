@@ -8,7 +8,7 @@ import { z } from "zod";
 import { createNotification } from "@app/components/notifications";
 import { Button, FormControl, Input, PasswordGenerator, Tooltip } from "@app/components/v2";
 import { CreatableSelect } from "@app/components/v2/CreatableSelect";
-import { InfisicalSecretInput } from "@app/components/v2/InfisicalSecretInput";
+import { HanzoSecretInput } from "@app/components/v2/HanzoSecretInput";
 import { ProjectPermissionActions, ProjectPermissionSub, useProjectPermission } from "@app/context";
 import { getKeyValue } from "@app/helpers/parseEnvVar";
 import { useCreateSecretV3, useCreateWsTag, useGetWsTags } from "@app/hooks/api";
@@ -216,7 +216,7 @@ export const CreateSecretForm = ({
             errorText={errors?.value?.message}
           >
             <div className="flex items-center gap-2">
-              <InfisicalSecretInput
+              <HanzoSecretInput
                 {...field}
                 environment={environment}
                 secretPath={secretPath}

@@ -213,7 +213,7 @@ export const AppConnectionsTable = ({ projectId, projectType }: Props) => {
         <div>
           <div className="flex items-center gap-x-2">
             <p className="text-xl font-medium text-mineshaft-100">App Connections</p>
-            <DocumentationLinkBadge href="https://infisical.com/docs/integrations/app-connections/overview" />
+            <DocumentationLinkBadge href="https://hanzo.ai/docs/integrations/app-connections/overview" />
           </div>
           <p className="text-sm text-bunker-300">
             Create and configure connections with third-party apps for re-use across your project

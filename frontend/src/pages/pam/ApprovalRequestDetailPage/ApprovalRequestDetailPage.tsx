@@ -152,7 +152,7 @@ export const ApprovalRequestDetailPage = () => {
   return (
     <>
       <Helmet>
-        <title>Approval Request | Infisical</title>
+        <title>Approval Request | Hanzo KMS</title>
         <link rel="icon" href="/hanzo.ico" />
       </Helmet>
       <PageContent />

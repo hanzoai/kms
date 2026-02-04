@@ -178,7 +178,7 @@ export const InitialStep = ({
         className="mx-auto flex w-full flex-col items-center justify-center"
       >
         <h1 className="mb-8 bg-linear-to-b from-white to-bunker-200 bg-clip-text text-center text-xl font-medium text-transparent">
-          Login to Infisical
+          Login to Hanzo KMS
         </h1>
         <RegionSelect />
         {config.defaultAuthOrgAuthMethod === AuthMethod.SAML && (
@@ -217,7 +217,7 @@ export const InitialStep = ({
       className="mx-auto flex w-full flex-col items-center justify-center"
     >
       <h1 className="mb-8 bg-linear-to-b from-white to-bunker-200 bg-clip-text text-center text-xl font-medium text-transparent">
-        Login to Infisical
+        Login to Hanzo KMS
       </h1>
       <RegionSelect />
       {shouldDisplayLoginMethod(LoginMethod.SAML) && (

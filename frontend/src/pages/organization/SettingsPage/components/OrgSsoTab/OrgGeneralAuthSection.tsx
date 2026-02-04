@@ -338,7 +338,7 @@ export const OrgGeneralAuthSection = ({
                     <a
                       target="_blank"
                       className="underline underline-offset-2 hover:text-mineshaft-300"
-                      href="https://infisical.com/docs/documentation/platform/sso/overview#sso-break-glass"
+                      href="https://hanzo.ai/docs/documentation/platform/sso/overview#sso-break-glass"
                       rel="noreferrer"
                     >
                       Admin Login Portal
@@ -384,7 +384,7 @@ export const OrgGeneralAuthSection = ({
       <UpgradePlanModal
         isOpen={popUp.upgradePlan.isOpen}
         onOpenChange={(isOpen) => handlePopUpToggle("upgradePlan", isOpen)}
-        text="Your current plan does not include access to enforce SAML SSO. To unlock this feature, please upgrade to Infisical Pro plan."
+        text="Your current plan does not include access to enforce SAML SSO. To unlock this feature, please upgrade to Hanzo KMS Pro plan."
       />
       <Modal
         isOpen={popUp.enforceSamlSsoConfirmation.isOpen}

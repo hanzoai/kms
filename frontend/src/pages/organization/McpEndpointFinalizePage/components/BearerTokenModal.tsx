@@ -45,7 +45,7 @@ export const BearerTokenModal = ({
         >
           <FormControl
             label="Bearer Token"
-            helperText="This credential will be securely stored in Infisical"
+            helperText="This credential will be securely stored in Hanzo KMS"
             isError={Boolean(errorMessage)}
             errorText={errorMessage}
           >

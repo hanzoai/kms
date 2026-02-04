@@ -116,7 +116,7 @@ export const TeamcityConfigurePage = () => {
       <Card className="mb-12 max-w-lg rounded-md border border-mineshaft-600">
         <CardTitle
           className="px-6 text-left text-xl"
-          subTitle="Choose which environment or folders in Infisical you want to sync to which project in TeamCity."
+          subTitle="Choose which environment or folders in Hanzo KMS you want to sync to which project in TeamCity."
         >
           <div className="flex flex-row items-center">
             <div className="flex items-center pb-0.5">
@@ -129,7 +129,7 @@ export const TeamcityConfigurePage = () => {
             </div>
             <span className="ml-2">TeamCity Integration</span>
             <a
-              href="https://infisical.com/docs/integrations/cloud/teamcity"
+              href="https://hanzo.ai/docs/integrations/cloud/teamcity"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -246,9 +246,9 @@ export const TeamcityConfigurePage = () => {
               className="inline cursor-pointer text-mineshaft-100 underline decoration-primary-500 underline-offset-4 opacity-80 duration-200 hover:opacity-100"
               target="_blank"
               rel="noopener noreferrer"
-              href="mailto:support@infisical.com"
+              href="mailto:support@hanzo.ai"
             >
-              support@infisical.com
+              support@hanzo.ai
             </a>{" "}
             if the issue persists.
           </p>

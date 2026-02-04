@@ -33,7 +33,7 @@ const initialSyncBehaviors = [
     value: IntegrationSyncBehavior.PREFER_TARGET
   },
   {
-    label: "Import non-sensitive - Prefer values from Infisical",
+    label: "Import non-sensitive - Prefer values from Hanzo KMS",
     value: IntegrationSyncBehavior.PREFER_SOURCE
   }
 ];
@@ -128,7 +128,7 @@ export const TerraformCloudConfigurePage = () => {
       <Card className="max-w-lg rounded-md border border-mineshaft-600">
         <CardTitle
           className="px-6 text-left text-xl"
-          subTitle="Specify the encironment and path within Infisical that you want to push to which project in Terraform."
+          subTitle="Specify the encironment and path within Hanzo KMS that you want to push to which project in Terraform."
         >
           <div className="flex flex-row items-center">
             <div className="flex items-center">
@@ -143,7 +143,7 @@ export const TerraformCloudConfigurePage = () => {
             <a
               target="_blank"
               rel="noopener noreferrer"
-              href="https://infisical.com/docs/integrations/cloud/terraform-cloud"
+              href="https://hanzo.ai/docs/integrations/cloud/terraform-cloud"
             >
               <div className="mb-1 ml-2 inline-block cursor-default rounded-md bg-yellow/20 px-1.5 pt-[0.04rem] pb-[0.03rem] text-sm text-yellow opacity-80 hover:opacity-100">
                 <FontAwesomeIcon icon={faBookOpen} className="mr-1.5" />

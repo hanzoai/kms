@@ -87,7 +87,7 @@ export const OrgMembersSection = () => {
   const handleAddMemberModal = () => {
     if (currentOrg?.authEnforced) {
       createNotification({
-        text: "You cannot manage users from Infisical when org-level auth is enforced for your organization",
+        text: "You cannot manage users from Hanzo KMS when org-level auth is enforced for your organization",
         type: "error"
       });
       return;
@@ -95,7 +95,7 @@ export const OrgMembersSection = () => {
 
     if (!isMoreIdentitiesAllowed && !isEnterprise) {
       handlePopUpOpen("upgradePlan", {
-        text: "You have reached the maximum number of members allowed on your current plan. Upgrade to Infisical Pro plan to add more members."
+        text: "You have reached the maximum number of members allowed on your current plan. Upgrade to Hanzo KMS Pro plan to add more members."
       });
       return;
     }
@@ -174,7 +174,7 @@ export const OrgMembersSection = () => {
             renderTooltip
             allowedLabel={
               currentOrg?.scimEnabled
-                ? "You cannot manage users from Infisical when org-level auth is enforced for your organization"
+                ? "You cannot manage users from Hanzo KMS when org-level auth is enforced for your organization"
                 : undefined
             }
           >
@@ -208,7 +208,7 @@ export const OrgMembersSection = () => {
             <p className="text-xl font-medium text-mineshaft-100">
               {isSubOrganization ? "Sub-" : ""}Organization Users
             </p>
-            <DocumentationLinkBadge href="https://infisical.com/docs/documentation/platform/identities/user-identities" />
+            <DocumentationLinkBadge href="https://hanzo.ai/docs/documentation/platform/identities/user-identities" />
           </div>
           <OrgPermissionCan I={OrgPermissionActions.Create} a={OrgPermissionSubjects.Member}>
             {(isAllowed) => (

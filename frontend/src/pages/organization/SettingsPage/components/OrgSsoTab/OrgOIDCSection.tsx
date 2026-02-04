@@ -128,7 +128,7 @@ export const OrgOIDCSection = (): JSX.Element => {
             )}
           </div>
           <p className="text-sm text-mineshaft-300">
-            Allow members to authenticate into Infisical with OIDC
+            Allow members to authenticate into Hanzo KMS with OIDC
           </p>
         </div>
       )}
@@ -141,11 +141,11 @@ export const OrgOIDCSection = (): JSX.Element => {
               content={
                 <>
                   <p>
-                    When this feature is enabled, Infisical will automatically sync group
-                    memberships between the OIDC provider and Infisical. Users will be added to
-                    Infisical groups that match their OIDC group names, and removed from any
-                    Infisical groups not present in their groups claim. When enabled, manual
-                    management of Infisical group memberships will be disabled.
+                    When this feature is enabled, Hanzo KMS will automatically sync group
+                    memberships between the OIDC provider and Hanzo KMS. Users will be added to
+                    Hanzo KMS groups that match their OIDC group names, and removed from any
+                    Hanzo KMS groups not present in their groups claim. When enabled, manual
+                    management of Hanzo KMS group memberships will be disabled.
                   </p>
                   <p className="mt-4">
                     To use this feature you must include group claims in the OIDC token.
@@ -154,16 +154,16 @@ export const OrgOIDCSection = (): JSX.Element => {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="underline underline-offset-2 hover:text-mineshaft-300"
-                    href="https://infisical.com/docs/documentation/platform/sso/overview"
+                    href="https://hanzo.ai/docs/documentation/platform/sso/overview"
                   >
                     See your OIDC provider docs for details.
                   </a>
                   <p className="mt-4 text-yellow">
                     <FontAwesomeIcon className="mr-1" icon={faWarning} />
-                    Group membership changes in the OIDC provider only sync with Infisical when a
+                    Group membership changes in the OIDC provider only sync with Hanzo KMS when a
                     user logs in via OIDC. For example, if you remove a user from a group in the
-                    OIDC provider, this change will not be reflected in Infisical until their next
-                    OIDC login. To ensure this behavior, Infisical recommends enabling Enforce OIDC
+                    OIDC provider, this change will not be reflected in Hanzo KMS until their next
+                    OIDC login. To ensure this behavior, Hanzo KMS recommends enabling Enforce OIDC
                     SSO.
                   </p>
                 </>
@@ -188,7 +188,7 @@ export const OrgOIDCSection = (): JSX.Element => {
           </OrgPermissionCan>
         </div>
         <p className="text-sm text-mineshaft-300">
-          Infisical will manage user group memberships based on the OIDC provider
+          Hanzo KMS will manage user group memberships based on the OIDC provider
         </p>
       </div>
       <OIDCModal
@@ -199,7 +199,7 @@ export const OrgOIDCSection = (): JSX.Element => {
       <UpgradePlanModal
         isOpen={popUp.upgradePlan.isOpen}
         onOpenChange={(isOpen) => handlePopUpToggle("upgradePlan", isOpen)}
-        text="Your current plan does not include access to OIDC SSO. To unlock this feature, please upgrade to Infisical Pro plan."
+        text="Your current plan does not include access to OIDC SSO. To unlock this feature, please upgrade to Hanzo KMS Pro plan."
       />
     </div>
   );

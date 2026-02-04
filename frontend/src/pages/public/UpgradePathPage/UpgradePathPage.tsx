@@ -133,13 +133,13 @@ export const UpgradePathPage = () => {
   return (
     <>
       <Helmet>
-        <title>Infisical Upgrade Path Tool | Infisical</title>
+        <title>Hanzo KMS Upgrade Path Tool | Hanzo KMS</title>
         <link rel="icon" href="/hanzo.ico" />
         <meta property="og:image" content="/images/message.png" />
-        <meta property="og:title" content="Infisical Upgrade Path Tool" />
+        <meta property="og:title" content="Hanzo KMS Upgrade Path Tool" />
         <meta
           name="og:description"
-          content="Plan your Infisical upgrade path safely and efficiently."
+          content="Plan your Hanzo KMS upgrade path safely and efficiently."
         />
       </Helmet>
       <div className="dark h-full">
@@ -149,7 +149,7 @@ export const UpgradePathPage = () => {
             {/* Header */}
             <div className="mb-8 text-center">
               <div className="mb-4 flex justify-center pt-8">
-                <a target="_blank" rel="noopener noreferrer" href="https://infisical.com">
+                <a target="_blank" rel="noopener noreferrer" href="https://hanzo.ai">
                   <img
                     src="/images/gradientLogo.svg"
                     height={90}
@@ -160,7 +160,7 @@ export const UpgradePathPage = () => {
                 </a>
               </div>
               <h1 className="bg-linear-to-b from-white to-bunker-200 bg-clip-text text-center text-4xl font-medium text-transparent">
-                Upgrade your Infisical Version
+                Upgrade your Hanzo KMS Version
               </h1>
             </div>
 
@@ -438,7 +438,7 @@ export const UpgradePathPage = () => {
                               )}
                               {step.hasGithubRelease ? (
                                 <a
-                                  href={`https://github.com/Infisical/infisical/releases/tag/${step.version}`}
+                                  href={`https://github.com/hanzoai/kms/releases/tag/${step.version}`}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="inline-flex items-center space-x-1 text-xs text-primary transition-colors hover:text-primary/80"
@@ -539,12 +539,10 @@ export const UpgradePathPage = () => {
           </div>
           <div className="w-full bg-mineshaft-800 p-2">
             <p className="text-center text-sm text-bunker-400">
-              Made with ❤️ by{" "}
-              <a className="text-primary hover:text-primary/80" href="https://infisical.com">
-                Infisical
+              Made with love by{" "}
+              <a className="text-primary hover:text-primary/80" href="https://hanzo.ai">
+                Hanzo
               </a>
-              <br />
-              235 2nd st, San Francisco, California, 94105, United States. 🇺🇸
             </p>
           </div>
         </div>

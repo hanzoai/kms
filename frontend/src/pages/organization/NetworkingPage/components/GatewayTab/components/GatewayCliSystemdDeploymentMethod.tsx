@@ -232,12 +232,12 @@ export const GatewayCliSystemdDeploymentMethod = () => {
           </IconButton>
         </div>
         <a
-          href="https://infisical.com/docs/cli/overview"
+          href="https://hanzo.ai/docs/cli/overview"
           target="_blank"
           className="mt-2 flex h-4 w-fit items-center gap-2 border-b border-mineshaft-400 text-sm text-mineshaft-400 transition-colors duration-100 hover:border-yellow-400 hover:text-yellow-400"
           rel="noreferrer"
         >
-          <span>Install the Infisical CLI</span>
+          <span>Install the Hanzo KMS CLI</span>
           <FontAwesomeIcon icon={faUpRightFromSquare} className="size-3" />
         </a>
         <div className="mt-6 flex items-center">

@@ -29,7 +29,7 @@ export const SshHostGroupHostsSection = ({ sshHostGroupId }: Props) => {
   const handleAddSshHostModal = () => {
     if (!subscription?.sshHostGroups) {
       handlePopUpOpen("upgradePlan", {
-        text: "Managing SSH host groups can be unlocked if you upgrade to Infisical Enterprise plan.",
+        text: "Managing SSH host groups can be unlocked if you upgrade to Hanzo KMS Enterprise plan.",
         isEnterpriseFeature: true
       });
     } else {

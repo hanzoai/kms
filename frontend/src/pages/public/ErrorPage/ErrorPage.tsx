@@ -26,18 +26,18 @@ export const ErrorPage = ({ error }: ErrorComponentProps) => {
             className="inline cursor-pointer text-mineshaft-100 underline decoration-primary-500 underline-offset-4 opacity-80 duration-200 hover:opacity-100"
             target="_blank"
             rel="noopener noreferrer"
-            href="mailto:support@infisical.com"
+            href="mailto:support@hanzo.ai"
           >
-            support@infisical.com
+            support@hanzo.ai
           </a>
           , or{" "}
           <a
-            href="https://infisical.com/slack"
+            href="https://hanzo.ai/discord"
             className="inline cursor-pointer text-mineshaft-100 underline decoration-primary-500 underline-offset-4 opacity-80 duration-200 hover:opacity-100"
             target="_blank"
             rel="noopener noreferrer"
           >
-            join our Slack community
+            join our Discord community
           </a>{" "}
           if the issue persists.
         </p>

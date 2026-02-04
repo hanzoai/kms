@@ -314,7 +314,7 @@ export const EditDynamicSecretElasticSearchForm = ({
                   label="Roles"
                   tooltipText={
                     <div className="space-y-4">
-                      <p>Select which role(s) to assign the users provisioned by Infisical.</p>
+                      <p>Select which role(s) to assign the users provisioned by Hanzo KMS.</p>
                       <p>
                         There is a wide range of in-built roles in Elastic Search. Some include,
                         superuser, apm_user, kibana_admin, monitoring_user, and many more. You can{" "}

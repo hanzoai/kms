@@ -55,7 +55,7 @@ export const EncryptionPageForm = () => {
     if (!subscription.hsm) {
       handlePopUpOpen("upgradePlan", {
         isEnterpriseFeature: true,
-        text: "Your current plan does not include access to Hardware Security Module (HSM). To unlock this feature, please upgrade to Infisical Enterprise plan."
+        text: "Your current plan does not include access to Hardware Security Module (HSM). To unlock this feature, please upgrade to Hanzo KMS Enterprise plan."
       });
       return;
     }

@@ -11,9 +11,9 @@ export const PlatformManagedConfirmationModal = ({ isOpen, onOpenChange, onConfi
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent className="max-w-2xl" title="Platform Managed Credentials">
-        <NoticeBannerV2 title="Are you sure you want have Infisical manage the credentials of this connection?">
+        <NoticeBannerV2 title="Are you sure you want have Hanzo KMS manage the credentials of this connection?">
           <p className="my-1 text-sm text-mineshaft-300">
-            Once created, Infisical will update the password of this connection.
+            Once created, Hanzo KMS will update the password of this connection.
           </p>
           <p className="text-sm text-mineshaft-300">
             You will not be able to access the updated password.
@@ -28,7 +28,7 @@ export const PlatformManagedConfirmationModal = ({ isOpen, onOpenChange, onConfi
               type="submit"
               colorSchema="secondary"
             >
-              Grant Infisical Ownership
+              Grant Hanzo KMS Ownership
             </Button>
           </ModalClose>
           <ModalClose asChild>

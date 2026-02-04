@@ -58,7 +58,7 @@ export const CertificatePoliciesTab = () => {
         <div>
           <div className="flex items-center gap-x-2">
             <h2 className="text-xl font-semibold text-mineshaft-100">Certificate Policies</h2>
-            <DocumentationLinkBadge href="https://infisical.com/docs/documentation/platform/pki/certificates/policies" />
+            <DocumentationLinkBadge href="https://hanzo.ai/docs/documentation/platform/pki/certificates/policies" />
           </div>
           <p className="text-sm text-bunker-300">
             Define certificate policies, validation rules, and attribute constraints for certificate

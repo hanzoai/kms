@@ -53,7 +53,7 @@ import {
   useSubscription,
   useUser
 } from "@app/context";
-import { isInfisicalCloud } from "@app/helpers/platform";
+import { isHanzoCloud } from "@app/helpers/platform";
 import { useToggle } from "@app/hooks";
 import {
   projectKeys,
@@ -85,9 +85,9 @@ const getFormattedSupportEmailLink = (variables: {
   domain: string;
   root_org_id?: string;
 }) => {
-  const email = "support@infisical.com";
+  const email = "support@hanzo.ai";
 
-  const body = `Hello Infisical Support Team,
+  const body = `Hello Hanzo KMS Support Team,
 
 Issue Details:
 [What you did]
@@ -107,21 +107,21 @@ Thank you,
   return `mailto:${email}?body=${encodeURIComponent(body)}`;
 };
 
-export const INFISICAL_SUPPORT_OPTIONS = [
+export const HANZO_SUPPORT_OPTIONS = [
   [
     <FontAwesomeIcon key={1} className="pr-4 text-sm" icon={faSlack} />,
     "Support Forum",
-    () => "https://infisical.com/slack"
+    () => "https://hanzo.ai/slack"
   ],
   [
     <FontAwesomeIcon key={2} className="pr-4 text-sm" icon={faBook} />,
     "Read Docs",
-    () => "https://infisical.com/docs/documentation/getting-started/introduction"
+    () => "https://hanzo.ai/docs/kms/getting-started/introduction"
   ],
   [
     <FontAwesomeIcon key={3} className="pr-4 text-sm" icon={faGithub} />,
     "GitHub Issues",
-    () => "https://github.com/Infisical/infisical/issues"
+    () => "https://github.com/hanzoai/kms/issues"
   ],
   [
     <FontAwesomeIcon key={4} className="pr-4 text-sm" icon={faEnvelope} />,
@@ -343,7 +343,7 @@ export const Navbar = () => {
       <div className="mr-auto flex h-full min-w-34 items-center">
         <div className="mt-0.5 shrink-0">
           <Link to="/organizations/$orgId/projects" params={{ orgId: currentOrg.id }}>
-            <img alt="infisical logo" src="/images/logotransparent.png" className="h-4" />
+            <img alt="Hanzo KMS logo" src="/images/logotransparent.png" className="h-4" />
           </Link>
         </div>
         <ChevronRight size={18} className="mx-3 mt-[3px] text-mineshaft-400/70" />
@@ -682,7 +682,7 @@ export const Navbar = () => {
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" side="bottom" className="mt-3 p-1">
-          {INFISICAL_SUPPORT_OPTIONS.map(([icon, text, getUrl]) => {
+          {HANZO_SUPPORT_OPTIONS.map(([icon, text, getUrl]) => {
             const url =
               text === "Email Support"
                 ? getUrl({
@@ -692,10 +692,10 @@ export const Navbar = () => {
                   })
                 : getUrl();
 
-            if (url === "server-admins" && isInfisicalCloud()) {
+            if (url === "server-admins" && isHanzoCloud()) {
               return null;
             }
-            if (url === "upgrade-path" && isInfisicalCloud()) {
+            if (url === "upgrade-path" && isHanzoCloud()) {
               return null;
             }
             return (
@@ -780,7 +780,7 @@ export const Navbar = () => {
             }
           </OrgPermissionCan>
           <a
-            href="https://infisical.com/docs/documentation/getting-started/introduction"
+            href="https://hanzo.ai/docs/kms/getting-started/introduction"
             target="_blank"
             rel="noopener noreferrer"
             className="mt-3 w-full text-sm leading-[1.2rem] font-normal text-mineshaft-300 hover:text-mineshaft-100"
@@ -794,7 +794,7 @@ export const Navbar = () => {
             </DropdownMenuItem>
           </a>
           <a
-            href="https://infisical.com/slack"
+            href="https://hanzo.ai/slack"
             target="_blank"
             rel="noopener noreferrer"
             className="mt-3 w-full text-sm leading-[1.2rem] font-normal text-mineshaft-300 hover:text-mineshaft-100"

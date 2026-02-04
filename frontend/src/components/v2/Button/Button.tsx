@@ -194,8 +194,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           <Lottie
             icon={
               variant === "solid" && colorSchema === "primary"
-                ? "infisical_loading_bw"
-                : "infisical_loading"
+                ? "hanzo_loading_bw"
+                : "hanzo_loading"
             }
             isAutoPlay
             className="absolute w-8 rounded-xl opacity-80 shadow-xs"

@@ -212,7 +212,7 @@ export const AddOrgMemberModal = ({
               <div>An invite is specific to an email address and expires after 1 day.</div>
             )}
             {completeInviteLinks &&
-              "This Infisical instance does not have a email provider setup. Please share this invite link with the invitee manually"}
+              "This Hanzo KMS instance does not have a email provider setup. Please share this invite link with the invitee manually"}
           </div>
         }
       >

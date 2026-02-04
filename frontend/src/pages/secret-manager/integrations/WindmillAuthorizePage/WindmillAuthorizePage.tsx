@@ -3,7 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 
 import { Button, Card, CardTitle, FormControl, Input } from "@app/components/v2";
 import { useOrganization, useProject } from "@app/context";
-import { isInfisicalCloud } from "@app/helpers/platform";
+import { isHanzoCloud } from "@app/helpers/platform";
 import { useSaveIntegrationAccessToken } from "@app/hooks/api";
 
 export const WindmillAuthorizePage = () => {
@@ -60,7 +60,7 @@ export const WindmillAuthorizePage = () => {
           setApiUrlErrorText("API URL must start with http:// or https://");
           return;
         }
-        if (isInfisicalCloud() && isLocalOrPrivateIpAddress(apiUrl)) {
+        if (isHanzoCloud() && isLocalOrPrivateIpAddress(apiUrl)) {
           setApiUrlErrorText("Local IPs not allowed as URL");
           return;
         }

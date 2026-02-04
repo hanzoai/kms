@@ -891,6 +891,14 @@ export const OverviewPage = () => {
     };
   }, [tableRef, isTableEmpty]);
 
+  if (isProjectV3 && visibleEnvs.length > 0 && isOverviewLoading) {
+    return (
+      <div className="container mx-auto flex h-screen w-full items-center justify-center px-8 text-mineshaft-50 dark:scheme-dark">
+        <Lottie isAutoPlay icon="hanzo_loading" className="h-32 w-32" />
+      </div>
+    );
+  }
+
   // This is needed to also show imports from other paths – right now those are missing.
   // const combinedKeys = [...secKeys, ...secretImports.map((impSecrets) => impSecrets?.data?.map((impSec) => impSec.secrets?.map((impSecKey) => impSecKey.key))).flat().flat()];
 
@@ -919,34 +927,34 @@ export const OverviewPage = () => {
                 Inject your secrets using
                 <a
                   className="ml-1 text-mineshaft-200 underline decoration-mineshaft-400/65 underline-offset-3 duration-200 hover:text-mineshaft-100 hover:decoration-primary-600"
-                  href="https://infisical.com/docs/cli/overview"
+                  href="https://hanzo.ai/docs/cli/overview"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Infisical CLI
+                  Hanzo KMS CLI
                 </a>
                 ,
                 <a
                   className="ml-1 text-mineshaft-200 underline decoration-mineshaft-400/65 underline-offset-3 duration-200 hover:text-mineshaft-100 hover:decoration-primary-600"
-                  href="https://infisical.com/docs/documentation/getting-started/api"
+                  href="https://hanzo.ai/docs/documentation/getting-started/api"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Infisical API
+                  Hanzo KMS API
                 </a>
                 ,
                 <a
                   className="ml-1 text-mineshaft-200 underline decoration-mineshaft-400/65 underline-offset-3 duration-200 hover:text-mineshaft-100 hover:decoration-primary-600"
-                  href="https://infisical.com/docs/sdks/overview"
+                  href="https://hanzo.ai/docs/sdks/overview"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Infisical SDKs
+                  Hanzo KMS SDKs
                 </a>
                 , and
                 <a
                   className="ml-1 text-mineshaft-200 underline decoration-mineshaft-400/65 underline-offset-3 duration-200 hover:text-mineshaft-100 hover:decoration-primary-600"
-                  href="https://infisical.com/docs/documentation/getting-started/introduction"
+                  href="https://hanzo.ai/docs/documentation/getting-started/introduction"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -996,7 +1004,7 @@ export const OverviewPage = () => {
                       }
                       handlePopUpOpen("upgradePlan", {
                         isEnterpriseFeature: true,
-                        text: "Adding dynamic secrets can be unlocked if you upgrade to Infisical Enterprise plan."
+                        text: "Adding dynamic secrets can be unlocked if you upgrade to Hanzo KMS Enterprise plan."
                       });
                     }}
                     onAddSecretRotation={() => {
@@ -1005,7 +1013,7 @@ export const OverviewPage = () => {
                         return;
                       }
                       handlePopUpOpen("upgradePlan", {
-                        text: "Adding secret rotations can be unlocked if you upgrade to Infisical Pro plan."
+                        text: "Adding secret rotations can be unlocked if you upgrade to Hanzo KMS Pro plan."
                       });
                     }}
                     isDyanmicSecretAvailable={userAvailableDynamicSecretEnvs.length > 0}

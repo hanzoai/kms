@@ -36,7 +36,7 @@ export const AuditLogStreamHeader = ({ provider, logStreamExists, onBack }: Prop
       <div>
         <div className="mb-1 flex items-center gap-x-2 text-mineshaft-300">
           {providerDetails.name}
-          <DocumentationLinkBadge href="https://infisical.com/docs/documentation/platform/audit-log-streams/audit-log-streams#example-providers" />
+          <DocumentationLinkBadge href="https://hanzo.ai/docs/documentation/platform/audit-log-streams/audit-log-streams#example-providers" />
         </div>
         <p className="text-sm leading-4 text-mineshaft-400">
           {logStreamExists

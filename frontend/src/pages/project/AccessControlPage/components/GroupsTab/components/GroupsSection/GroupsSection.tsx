@@ -33,7 +33,7 @@ export const GroupsSection = () => {
   const handleAddGroupModal = () => {
     if (!subscription?.groups) {
       handlePopUpOpen("upgradePlan", {
-        text: "Managing groups can be unlocked if you upgrade to Infisical Enterprise plan.",
+        text: "Managing groups can be unlocked if you upgrade to Hanzo KMS Enterprise plan.",
         isEnterpriseFeature: true
       });
     } else {
@@ -60,7 +60,7 @@ export const GroupsSection = () => {
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-x-2">
           <p className="text-xl font-medium text-mineshaft-100">Project Groups</p>
-          <DocumentationLinkBadge href="https://infisical.com/docs/documentation/platform/groups#user-groups" />
+          <DocumentationLinkBadge href="https://hanzo.ai/docs/documentation/platform/groups#user-groups" />
         </div>
         <ProjectPermissionCan I={ProjectPermissionActions.Create} a={ProjectPermissionSub.Groups}>
           {(isAllowed) => (

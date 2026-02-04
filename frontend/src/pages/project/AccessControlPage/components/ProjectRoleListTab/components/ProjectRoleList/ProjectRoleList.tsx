@@ -165,7 +165,7 @@ export const ProjectRoleList = () => {
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-x-2">
           <p className="text-xl font-medium text-mineshaft-100">Project Roles</p>
-          <DocumentationLinkBadge href="https://infisical.com/docs/documentation/platform/access-controls/role-based-access-controls#project-level-access-controls" />
+          <DocumentationLinkBadge href="https://hanzo.ai/docs/documentation/platform/access-controls/role-based-access-controls#project-level-access-controls" />
         </div>
         <ProjectPermissionCan I={ProjectPermissionActions.Create} a={ProjectPermissionSub.Role}>
           {(isAllowed) => (

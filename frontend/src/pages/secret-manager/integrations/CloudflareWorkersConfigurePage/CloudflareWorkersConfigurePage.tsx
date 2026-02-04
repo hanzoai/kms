@@ -84,11 +84,11 @@ export const CloudflareWorkersConfigurePage = () => {
       <Card className="max-w-lg rounded-md border border-mineshaft-600 p-0">
         <CardTitle
           className="px-6 text-left"
-          subTitle="Choose which environment in Infisical you want to sync with your Cloudflare Workers project."
+          subTitle="Choose which environment in Hanzo KMS you want to sync with your Cloudflare Workers project."
         >
           Cloudflare Workers Integration
         </CardTitle>
-        <FormControl label="Infisical Project Environment" className="mt-2 px-6">
+        <FormControl label="Hanzo KMS Project Environment" className="mt-2 px-6">
           <Select
             value={selectedSourceEnvironment}
             onValueChange={(val) => setSelectedSourceEnvironment(val)}
@@ -104,7 +104,7 @@ export const CloudflareWorkersConfigurePage = () => {
             ))}
           </Select>
         </FormControl>
-        <FormControl label="Infisical Secret Path" className="mt-2 px-6">
+        <FormControl label="Hanzo KMS Secret Path" className="mt-2 px-6">
           <SecretPathInput
             value={secretPath}
             onChange={(value) => setSecretPath(value)}

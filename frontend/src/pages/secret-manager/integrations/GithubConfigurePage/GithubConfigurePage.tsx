@@ -297,7 +297,7 @@ export const GithubConfigurePage = () => {
         <form onSubmit={handleSubmit(onFormSubmit)} className="px-6">
           <CardTitle
             className="px-0 text-left text-xl"
-            subTitle="Choose which environment in Infisical you want to sync to environment variables in GitHub."
+            subTitle="Choose which environment in Hanzo KMS you want to sync to environment variables in GitHub."
           >
             <div className="flex flex-row items-center">
               <div className="flex items-center rounded-full bg-mineshaft-200">
@@ -312,7 +312,7 @@ export const GithubConfigurePage = () => {
               <a
                 target="_blank"
                 rel="noopener noreferrer"
-                href="https://infisical.com/docs/integrations/cicd/githubactions"
+                href="https://hanzo.ai/docs/integrations/cicd/githubactions"
               >
                 <div className="mb-1 ml-2 inline-block cursor-default rounded-md bg-yellow/20 px-1.5 pt-[0.04rem] pb-[0.03rem] text-sm text-yellow opacity-80 hover:opacity-100">
                   <FontAwesomeIcon icon={faBookOpen} className="mr-1.5" />
@@ -724,7 +724,7 @@ export const GithubConfigurePage = () => {
                         onCheckedChange={(isChecked) => onChange(isChecked)}
                         isChecked={value}
                       >
-                        Delete secrets in Github that are not in Infisical
+                        Delete secrets in Github that are not in Hanzo KMS
                       </Switch>
                     )}
                   />
@@ -770,7 +770,7 @@ export const GithubConfigurePage = () => {
         </div>
         <span className="mt-4 text-sm text-mineshaft-300">
           After creating an integration, your secrets will start syncing immediately. This might
-          cause an unexpected override of current secrets in GitHub with secrets from Infisical.
+          cause an unexpected override of current secrets in GitHub with secrets from Hanzo KMS.
         </span>
       </div>
     </div>
@@ -795,9 +795,9 @@ export const GithubConfigurePage = () => {
               className="inline cursor-pointer text-mineshaft-100 underline decoration-primary-500 underline-offset-4 opacity-80 duration-200 hover:opacity-100"
               target="_blank"
               rel="noopener noreferrer"
-              href="mailto:support@infisical.com"
+              href="mailto:support@hanzo.ai"
             >
-              support@infisical.com
+              support@hanzo.ai
             </a>{" "}
             if the issue persists.
           </p>

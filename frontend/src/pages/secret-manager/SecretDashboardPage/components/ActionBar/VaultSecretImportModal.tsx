@@ -104,7 +104,7 @@ const Content = ({ onClose, environment, secretPath, onImport }: ContentProps) =
             <div className="space-y-1.5 text-xs leading-relaxed">
               <p>
                 Select a Vault namespace and secret path to import secrets into the current
-                Infisical environment (<code className="text-xs">{environment}</code>) at path{" "}
+                Hanzo KMS environment (<code className="text-xs">{environment}</code>) at path{" "}
                 <code className="text-xs">{secretPath}</code>.
               </p>
             </div>
@@ -193,7 +193,7 @@ const Content = ({ onClose, environment, secretPath, onImport }: ContentProps) =
             className="w-full"
           />
           <p className="mt-1 text-xs text-mineshaft-400">
-            Choose a secret path from the selected mount to import into Infisical
+            Choose a secret path from the selected mount to import into Hanzo KMS
           </p>
         </>
       </FormControl>

@@ -1,7 +1,7 @@
 {
   "activity": {
     "title": "Registro de Atividade",
-    "subtitle": "Histórico de eventos para esse projeto Infisical.",
+    "subtitle": "Histórico de eventos para esse projeto Hanzo KMS.",
     "event": {
       "readSecrets": "Segredos Visualizados",
       "updateSecrets": "Segredos Atualizados",
@@ -39,7 +39,7 @@
     "schedule-demo": "Agende uma Demonstração"
   },
   "common": {
-    "head-title": "{{title}} | Infisical",
+    "head-title": "{{title}} | Hanzo KMS",
     "error_project-already-exists": "Já exite um projeto com este nome.",
     "email": "Email",
     "password": "Senha",
@@ -74,7 +74,7 @@
   "dashboard": {
     "title": "Segredos",
     "og-title": "Gerencie seus arquivos .env em segundos",
-    "og-description": "Infisical é uma plataforma simples e criptografada de ponta a ponta que permite que as equipes sincronizem e gerenciem seus arquivos .env.",
+    "og-description": "Hanzo KMS é uma plataforma simples e criptografada de ponta a ponta que permite que as equipes sincronizem e gerenciem seus arquivos .env.",
     "search-keys": "Pesquisar chaves...",
     "add-key": "Adicionar Chave",
     "personal": "Pessoal",
@@ -107,33 +107,33 @@
   },
   "integrations": {
     "title": "Integrações de Projetos",
-    "description": "Gerencie suas integrações da Infisical com serviços de terceiros.",
+    "description": "Gerencie suas integrações da Hanzo KMS com serviços de terceiros.",
     "no-integrations1": "Você ainda não tem integrações configuradas. Quando você fizer isso, elas aparecerão aqui.",
     "no-integrations2": "Para começar, clique em qualquer uma das opções abaixo. Leva 5 cliques para configurar.",
     "available": "Integrações de Plataforma e em Nuvem",
     "available-text1": "Clique na integração que deseja conectar. Isso permitirá que suas variáveis de ambiente fluam automaticamente para serviços de terceiros selecionados.",
-    "available-text2": "Observação: durante uma integração com o Heroku, por questões de segurança, é impossível manter a criptografia de ponta a ponta. Em teoria, isso permite que o Infisical descriptografe suas variáveis de ambiente. Na prática, podemos garantir que isso nunca será feito e nos permite proteger seus segredos de pessoas mal-intencionadas online. O serviço básico da Infisical sempre permanecerá criptografado de ponta a ponta. Em caso de dúvidas, entre em contato com support@infisical.com.",
+    "available-text2": "Observação: durante uma integração com o Heroku, por questões de segurança, é impossível manter a criptografia de ponta a ponta. Em teoria, isso permite que o Hanzo KMS descriptografe suas variáveis de ambiente. Na prática, podemos garantir que isso nunca será feito e nos permite proteger seus segredos de pessoas mal-intencionadas online. O serviço básico da Hanzo KMS sempre permanecerá criptografado de ponta a ponta. Em caso de dúvidas, entre em contato com support@hanzo.ai.",
     "cloud-integrations": "Integrações em Nuvem",
     "framework-integrations": "Integrações com framework",
     "click-to-start": "Clique em uma integração para começar a sincronizar segredos com ela.",
     "click-to-setup": "Clique em uma estrutura para obter as instruções de configuração.",
-    "grant-access-to-secrets": "Conceda acesso Infisical aos seus segredos",
-    "why-infisical-needs-access": "A maioria das integrações em Nuvem exige que o Infisical seja capaz de descriptografar seus segredos para que possam ser encaminhados.",
+    "grant-access-to-secrets": "Conceda acesso Hanzo KMS aos seus segredos",
+    "why-infisical-needs-access": "A maioria das integrações em Nuvem exige que o Hanzo KMS seja capaz de descriptografar seus segredos para que possam ser encaminhados.",
     "grant-access-button": "Garantir acesso"
   },
   "login": {
     "title": "Entrar",
-    "og-title": "Entrar no Infisical",
-    "og-description": "Infisical é uma plataforma simples e criptografada de ponta a ponta que permite que as equipes sincronizem e gerenciem seus arquivos .env.",
+    "og-title": "Entrar no Hanzo KMS",
+    "og-description": "Hanzo KMS é uma plataforma simples e criptografada de ponta a ponta que permite que as equipes sincronizem e gerenciem seus arquivos .env.",
     "login": "Entrar",
-    "need-account": "Precisa de uma conta Infisical?",
+    "need-account": "Precisa de uma conta Hanzo KMS?",
     "forgot-password": "Esqueceu sua senha?",
     "create-account": "Criar uma conta"
   },
   "mfa": {
     "title": "Criar uma conta",
-    "og-title": "Substitua os arquivos .env por 1 linha de código. Cadastre-se no Infisical em 3 minutos.",
-    "og-description": "Infisical é uma plataforma criptografada de ponta a ponta simples que permite que as equipes sincronizem e gerenciem chaves de API e variáveis ambientais. Funciona com Node.js, Next.js, Gatsby, Nest.js...",
+    "og-title": "Substitua os arquivos .env por 1 linha de código. Cadastre-se no Hanzo KMS em 3 minutos.",
+    "og-description": "Hanzo KMS é uma plataforma criptografada de ponta a ponta simples que permite que as equipes sincronizem e gerenciem chaves de API e variáveis ambientais. Funciona com Node.js, Next.js, Gatsby, Nest.js...",
     "signup": "Criar uma conta",
     "already-have-account": "Possui uma conta? Conecte-se",
     "forgot-password": "Esqueceu sua senha?",
@@ -152,7 +152,7 @@
     "step4-download": "Baixar PDF",
     "step5-send-invites": "Enviar convites",
     "step5-invite-team": "Convide sua equipe",
-    "step5-subtitle": "Infisical foi feito para ser usado com seus colegas. Convide-os para eles testarem também.",
+    "step5-subtitle": "Hanzo KMS foi feito para ser usado com seus colegas. Convide-os para eles testarem também.",
     "step5-skip": "Pular"
   },
   "nav": {
@@ -247,7 +247,7 @@
       "description": "Visualize e gerencie suas informações pessoais aqui.",
       "emergency": {
         "name": "Kit de emergência",
-        "text1": "Seu Kit de Emergência contém as informações necessárias para acessar sua conta Infisical.",
+        "text1": "Seu Kit de Emergência contém as informações necessárias para acessar sua conta Hanzo KMS.",
         "text2": "Apenas o último kit de emergência emitido permanece válido. Para obter um novo Kit de emergência, verifique sua senha.",
         "download": "Baixe o kit de emergência"
       },
@@ -261,18 +261,18 @@
       "project-to-delete": "Projeto a ser deletado",
       "danger-zone-note": "Assim que você excluir este projeto, não poderá desfazê-lo. Isso removerá imediatamente todas as chaves. Se você ainda quiser fazer isso, digite o nome do projeto abaixo.",
       "delete-project-note": "Observação: você só pode excluir um projeto caso tenha mais de um",
-      "project-id-description": "Para integrar Infisical em sua base de código e obter injeção automática de variáveis de ambiente, você deve usar o seguinte ID do projeto.",
+      "project-id-description": "Para integrar Hanzo KMS em sua base de código e obter injeção automática de variáveis de ambiente, você deve usar o seguinte ID do projeto.",
       "project-id-description2": "Para obter mais orientações, incluindo trechos de código para várias linguagens e frameworks, consulte ",
       "auto-generated": "Este é o identificador exclusivo - gerado automaticamente - do seu projeto. Não pode ser alterado.",
-      "docs": "Documentação do Infisical",
+      "docs": "Documentação do Hanzo KMS",
       "enforce-capitalization": "Aplicar capitalização",
-      "enforce-capitalization-description": "De acordo com os padrões, o Infisical impõe chaves secretas em letras maiúsculas. Se quiser desabilitar esse recurso, você pode fazer isso aqui."
+      "enforce-capitalization-description": "De acordo com os padrões, o Hanzo KMS impõe chaves secretas em letras maiúsculas. Se quiser desabilitar esse recurso, você pode fazer isso aqui."
     }
   },
   "signup": {
     "title": "Inscrever-se",
-    "og-title": "Substitua os arquivos .env por 1 linha de código. Cadastre-se no Infisical em 3 minutos.",
-    "og-description": "Infisical é uma plataforma simples e criptografada de ponta a ponta que permite que as equipes sincronizem e gerenciem chaves de API e variáveis de ambiente. Funciona com Node.js, Next.js, Gatsby, Nest.js...",
+    "og-title": "Substitua os arquivos .env por 1 linha de código. Cadastre-se no Hanzo KMS em 3 minutos.",
+    "og-description": "Hanzo KMS é uma plataforma simples e criptografada de ponta a ponta que permite que as equipes sincronizem e gerenciem chaves de API e variáveis de ambiente. Funciona com Node.js, Next.js, Gatsby, Nest.js...",
     "signup": "Inscrever-se",
     "already-have-account": "Possui uma conta? Conecte-se",
     "forgot-password": "Esqueceu sua senha?",
@@ -291,7 +291,7 @@
     "step4-download": "Baixar PDF",
     "step5-send-invites": "Enviar convites",
     "step5-invite-team": "Convide sua equipe",
-    "step5-subtitle": "Infisical foi feito para ser usado com seus colegas. Convide-os para testar também.",
+    "step5-subtitle": "Hanzo KMS foi feito para ser usado com seus colegas. Convide-os para testar também.",
     "step5-skip": "Pular"
   }
 }

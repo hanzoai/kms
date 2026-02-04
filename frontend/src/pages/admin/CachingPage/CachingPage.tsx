@@ -18,7 +18,7 @@ export const CachingPage = () => {
           <PageHeader
             scope="instance"
             title="Caching"
-            description="Manage caching for your Infisical instance."
+            description="Manage caching for your Hanzo KMS instance."
           />
           <CachingPageForm />
         </div>

@@ -196,7 +196,7 @@ export const UserInfoSSOStep = ({
               Organization Name
             </p>
             <Input
-              placeholder="Infisical"
+              placeholder="Hanzo"
               value={organizationName}
               onChange={(e) => setOrganizationName(e.target.value)}
               isRequired

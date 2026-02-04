@@ -32,7 +32,7 @@ export const SessionsSection = () => {
         </Button>
       </div>
       <p className="mb-8 text-gray-400">
-        Logging into Infisical via browser or CLI creates a session. Revoking all sessions logs your
+        Logging into Hanzo KMS via browser or CLI creates a session. Revoking all sessions logs your
         account out all active sessions across all browsers and CLIs.
       </p>
       <SessionsTable />

@@ -108,7 +108,7 @@ export const FlyioConfigurePage = () => {
       <Card className="max-w-lg rounded-md border border-mineshaft-600">
         <CardTitle
           className="px-6 text-left text-xl"
-          subTitle="Choose which environment or folder in Infisical you want to sync to Fly.io environment variables."
+          subTitle="Choose which environment or folder in Hanzo KMS you want to sync to Fly.io environment variables."
         >
           <div className="flex flex-row items-center">
             <div className="flex items-center pb-0.5">
@@ -116,7 +116,7 @@ export const FlyioConfigurePage = () => {
             </div>
             <span className="ml-2.5">Fly.io Integration </span>
             <a
-              href="https://infisical.com/docs/integrations/cloud/flyio"
+              href="https://hanzo.ai/docs/integrations/cloud/flyio"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -135,7 +135,7 @@ export const FlyioConfigurePage = () => {
           <Alert hideTitle variant="warning">
             <AlertDescription>
               All current secrets linked to the related Fly.io project will be deleted before
-              Infisical secrets are pushed to your Fly.io project.
+              Hanzo KMS secrets are pushed to your Fly.io project.
             </AlertDescription>
           </Alert>
         </div>
@@ -204,7 +204,7 @@ export const FlyioConfigurePage = () => {
         </div>
         <span className="mt-4 text-sm text-mineshaft-300">
           After creating an integration, your secrets will start syncing immediately. This might
-          cause an unexpected override of current secrets in Fly.io with secrets from Infisical.
+          cause an unexpected override of current secrets in Fly.io with secrets from Hanzo KMS.
         </span>
       </div>
     </div>
@@ -229,9 +229,9 @@ export const FlyioConfigurePage = () => {
               className="inline cursor-pointer text-mineshaft-100 underline decoration-primary-500 underline-offset-4 opacity-80 duration-200 hover:opacity-100"
               target="_blank"
               rel="noopener noreferrer"
-              href="mailto:support@infisical.com"
+              href="mailto:support@hanzo.ai"
             >
-              support@infisical.com
+              support@hanzo.ai
             </a>{" "}
             if the issue persists.
           </p>

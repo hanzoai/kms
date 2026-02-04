@@ -229,7 +229,7 @@ export const EnvironmentTabs = ({ secretPath }: Props) => {
       <UpgradePlanModal
         isOpen={popUp.upgradePlan.isOpen}
         onOpenChange={(isOpen) => handlePopUpToggle("upgradePlan", isOpen)}
-        text="Your current plan does not include access to adding custom environments. To unlock this feature, please upgrade to Infisical Pro plan."
+        text="Your current plan does not include access to adding custom environments. To unlock this feature, please upgrade to Hanzo KMS Pro plan."
       />
       <AddEnvironmentModal
         isOpen={popUp.createEnvironment.isOpen}

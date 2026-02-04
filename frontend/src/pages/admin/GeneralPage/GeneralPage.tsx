@@ -20,7 +20,7 @@ export const GeneralPage = () => {
           <PageHeader
             scope="instance"
             title="General"
-            description="Manage general settings for your Infisical instance."
+            description="Manage general settings for your Hanzo KMS instance."
           />
           <div className="space-y-6">
             <GeneralPageForm />

@@ -148,7 +148,7 @@ export const KmipClientTable = () => {
             <a
               target="_blank"
               rel="noopener noreferrer"
-              href="https://infisical.com/docs/documentation/platform/kms"
+              href="https://hanzo.ai/docs/documentation/platform/kms"
             >
               <span className="flex w-max cursor-pointer items-center rounded-md border border-mineshaft-500 bg-mineshaft-600 px-4 py-2 text-mineshaft-200 duration-200 hover:border-primary/40 hover:bg-primary/10 hover:text-white">
                 Documentation{" "}
@@ -344,7 +344,7 @@ export const KmipClientTable = () => {
         <UpgradePlanModal
           isOpen={popUp.upgradePlan.isOpen}
           onOpenChange={(isOpen) => handlePopUpToggle("upgradePlan", isOpen)}
-          text="Your current plan does not include access to KMIP. To unlock this feature, please upgrade to Infisical Enterprise plan."
+          text="Your current plan does not include access to KMIP. To unlock this feature, please upgrade to Hanzo KMS Enterprise plan."
           isEnterpriseFeature={popUp.upgradePlan.data?.isEnterpriseFeature}
         />
       </div>

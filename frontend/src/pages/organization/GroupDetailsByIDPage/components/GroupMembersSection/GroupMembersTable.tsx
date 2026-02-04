@@ -113,7 +113,7 @@ export const GroupMembersTable = ({ groupId, groupSlug, handlePopUpOpen }: Props
   if (isPending) {
     return (
       <div className="flex h-40 w-full items-center justify-center">
-        <Lottie icon="infisical_loading_white" isAutoPlay className="w-16" />
+        <Lottie icon="hanzo_loading_white" isAutoPlay className="w-16" />
       </div>
     );
   }

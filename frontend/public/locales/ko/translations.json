@@ -28,7 +28,7 @@
     "schedule-demo": "데모 예약하기"
   },
   "common": {
-    "head-title": "{{title}} | Infisical",
+    "head-title": "{{title}} | Hanzo KMS",
     "error_project-already-exists": "동일한 이름을 가진 프로젝트가 이미 존재해요.",
     "email": "메일",
     "password": "비밀번호",
@@ -55,7 +55,7 @@
   "dashboard": {
     "title": "시크릿",
     "og-title": "빠르게 .env 파일을 관리하세요",
-    "og-description": "Infisical은 팀원과 .env파일을 공유할 수 있는 심플한 end-to-end 암호화 플렛폼입니다.",
+    "og-description": "Hanzo KMS은 팀원과 .env파일을 공유할 수 있는 심플한 end-to-end 암호화 플렛폼입니다.",
     "search-keys": "키 검색하기...",
     "add-key": "키 추가하기",
     "personal": "개인",
@@ -85,8 +85,8 @@
   "integrations": {
     "available": "사용 가능한 연동",
     "available-text1": "연결하고 싶은 서비스를 클릭하세요. 환경 변수가 선택한 외부 서비스와 자동으로 연동됩니다.",
-    "available-text2": "참고: Heroku와의 연동에서는 보안상의 이유로 End-To-End 암호화를 유지하는 것이 불가능합니다. 이론적으로는 Infisical이 시크릿을 읽는것이 가능하지만, 절대 그러지 않는다고 확신할 수 있습니다. 핵심 Infisical 서비스는 항상 End-To-End 암호화 상태를 유지합니다. 질문이 있으면 support@infisical.com으로 문의하세요.",
-    "description": "외부 서비스와 함께 Infisical을 연동하고 관리하세요",
+    "available-text2": "참고: Heroku와의 연동에서는 보안상의 이유로 End-To-End 암호화를 유지하는 것이 불가능합니다. 이론적으로는 Hanzo KMS이 시크릿을 읽는것이 가능하지만, 절대 그러지 않는다고 확신할 수 있습니다. 핵심 Hanzo KMS 서비스는 항상 End-To-End 암호화 상태를 유지합니다. 질문이 있으면 support@hanzo.ai으로 문의하세요.",
+    "description": "외부 서비스와 함께 Hanzo KMS을 연동하고 관리하세요",
     "no-integrations1": "연동된 서비스가 없어요. 연동하게 된다면 이곳에서 표시돼요.",
     "no-integrations2": "시작하려면, 아래의 옵션을 클릭하세요. 대체로 5분 이내로 가능해요.",
     "title": "프로젝트 연동",
@@ -94,22 +94,22 @@
     "framework-integrations": "Framework Integrations",
     "click-to-start": "Click on an integration to begin syncing secrets to it.",
     "click-to-setup": "Click on a framework to get the setup instructions.",
-    "grant-access-to-secrets": "Grant Infisical access to your secrets",
-    "why-infisical-needs-access": "Most cloud integrations require Infisical to be able to decrypt your secrets so they can be forwarded over.",
+    "grant-access-to-secrets": "Grant Hanzo KMS access to your secrets",
+    "why-infisical-needs-access": "Most cloud integrations require Hanzo KMS to be able to decrypt your secrets so they can be forwarded over.",
     "grant-access-button": "Grant access"
   },
   "login": {
     "title": "로그인",
-    "og-title": "Infisical에 로그인하기",
-    "og-description": "Infisical a simple end-to-end encrypted platform that enables teams to sync and manage their .env files.",
+    "og-title": "Hanzo KMS에 로그인하기",
+    "og-description": "Hanzo KMS is a simple end-to-end encrypted platform that enables teams to sync and manage their .env files.",
     "login": "로그인",
-    "need-account": "Infisical계정이 필요하신가요?",
+    "need-account": "Hanzo KMS 계정이 필요하신가요?",
     "create-account": "회원가입 하기"
   },
   "mfa": {
     "title": "회원가입",
     "og-title": "한줄의 코드르 .env파일을 교체하세요. 3분이면 가입할 수 있어요.",
-    "og-description": "Infisical은 팀원과 .env파일을 공유하고 연동할 수 있는 심플한 end-to-end 암호화 플렛폼입니다. Node.js, Next.js, Gatsby, Nest.js 와 같은 다양한 플렛폼에서 작동해요.",
+    "og-description": "Hanzo KMS은 팀원과 .env파일을 공유하고 연동할 수 있는 심플한 end-to-end 암호화 플렛폼입니다. Node.js, Next.js, Gatsby, Nest.js 와 같은 다양한 플렛폼에서 작동해요.",
     "signup": "회원가입",
     "already-have-account": "이미 계정이 있나요? 로그인하기",
     "forgot-password": "비밀번호를 잊으셨나요?",
@@ -132,7 +132,7 @@
       "slack": "[NEW] 슬랙 포럼에 가입하기",
       "docs": "문서 보기",
       "issue": "깃허브 이슈 열기",
-      "email": "Infisical팀에게 메일 보내기"
+      "email": "Hanzo팀에게 메일 보내기"
     },
     "user": {
       "signed-in-as": "다음으로 로그인됨",
@@ -219,7 +219,7 @@
       "description": "계정 및 기본적인 설정을 확인하고 변경하세요.",
       "emergency": {
         "name": "긴급복구 키트",
-        "text1": "긴급복구 키트는 Infisical계정에 로그인 할 수 있는 정보를 가지고 있어요.",
+        "text1": "긴급복구 키트는 Hanzo KMS 계정에 로그인 할 수 있는 정보를 가지고 있어요.",
         "text2": "오직 마지막으로 발급한 긴급복구 키트만 사용 가능해요. 새로운 긴급복구 키트를 받으려면, 비밀번호를 입력하세요.",
         "download": "긴급복구 키트 다운로드"
       },
@@ -233,8 +233,8 @@
       "danger-zone-note": "프로젝트를 삭제한다면 모든 키가 즉시 삭제되며 다시는 되돌릴 수 없어요. 삭제를 원한다면 프로젝트 이름을 아래에 적어주세요.",
       "delete-project": "프로젝트 삭제",
       "delete-project-note": "노트: 최소 한개 이상의 프로젝트는 조직에 존재해야 해요.",
-      "docs": "Infisical 문서",
-      "project-id-description": "다른 코드에서 Infisical과 환경변수를 연동하기 위해서는 프로젝트 ID가 필요해요.",
+      "docs": "Hanzo KMS 문서",
+      "project-id-description": "다른 코드에서 Hanzo KMS과 환경변수를 연동하기 위해서는 프로젝트 ID가 필요해요.",
       "project-id-description2": "다양한 언어 및 프레임워크에 대한 가이드를 확인하고 싶다면, 다음을 확인하세요. ",
       "project-to-delete": "삭제할 프로젝트"
     }
@@ -242,7 +242,7 @@
   "signup": {
     "title": "회원가입",
     "og-title": "한줄의 코드르 .env파일을 교체하세요. 3분이면 가입할 수 있어요.",
-    "og-description": "Infisical은 팀원과 .env파일을 공유하고 연동할 수 있는 심플한 end-to-end 암호화 플렛폼입니다. Node.js, Next.js, Gatsby, Nest.js 와 같은 다양한 플렛폼에서 작동해요.",
+    "og-description": "Hanzo KMS은 팀원과 .env파일을 공유하고 연동할 수 있는 심플한 end-to-end 암호화 플렛폼입니다. Node.js, Next.js, Gatsby, Nest.js 와 같은 다양한 플렛폼에서 작동해요.",
     "signup": "회원가입",
     "already-have-account": "이미 계정이 있나요? 로그인하기",
     "forgot-password": "비밀번호를 잊으셨나요?",

@@ -18,7 +18,7 @@ export const EnvironmentPage = () => {
           <PageHeader
             scope="instance"
             title="Environment Variables"
-            description="Manage the environment variables for your Infisical instance."
+            description="Manage the environment variables for your Hanzo KMS instance."
           />
           <EnvironmentPageForm />
         </div>

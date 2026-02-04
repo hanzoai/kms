@@ -86,7 +86,7 @@ export const MicrosoftTeamsIntegrationForm = ({ adminIntegrationsConfig }: Props
               </div>
               <div className="mb-6">
                 <a
-                  href="https://infisical.com/docs/documentation/platform/workflow-integrations/microsoft-teams-integration"
+                  href="https://hanzo.ai/docs/documentation/platform/workflow-integrations/microsoft-teams-integration"
                   target="_blank"
                   rel="noopener noreferrer"
                 >

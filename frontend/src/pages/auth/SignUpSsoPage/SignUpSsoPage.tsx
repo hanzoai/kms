@@ -82,7 +82,7 @@ export const SignupSsoPage = () => {
             height: "90px",
             width: "120px"
           }}
-          alt="Infisical Logo"
+          alt="Hanzo KMS Logo"
         />
       </div>
       <div>{renderView()}</div>

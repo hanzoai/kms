@@ -316,7 +316,7 @@ export const EditDynamicSecretRabbitMqForm = ({
                   label="Tags"
                   tooltipText={
                     <div className="space-y-4">
-                      <p>Select which tag(s) to assign the users provisioned by Infisical.</p>
+                      <p>Select which tag(s) to assign the users provisioned by Hanzo KMS.</p>
                       <p>
                         There is a wide range of in-built roles in RabbitMQ. Some include,
                         management, policymaker, monitoring, administrator. <br />
