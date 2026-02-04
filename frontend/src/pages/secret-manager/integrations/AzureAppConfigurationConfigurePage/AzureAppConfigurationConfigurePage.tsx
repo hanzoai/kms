@@ -57,7 +57,7 @@ const initialSyncBehaviors = [
     label: "Import - Prefer values from Azure App Configuration",
     value: IntegrationSyncBehavior.PREFER_TARGET
   },
-  { label: "Import - Prefer values from Infisical", value: IntegrationSyncBehavior.PREFER_SOURCE }
+  { label: "Import - Prefer values from Hanzo KMS", value: IntegrationSyncBehavior.PREFER_SOURCE }
 ];
 
 export const AzureAppConfigurationConfigurePage = () => {
@@ -156,7 +156,7 @@ export const AzureAppConfigurationConfigurePage = () => {
       <Card className="max-w-lg rounded-md border border-mineshaft-600">
         <CardTitle
           className="text-left text-xl"
-          subTitle="Choose which environment in Infisical you want to sync to your Azure App Configuration."
+          subTitle="Choose which environment in Hanzo KMS you want to sync to your Azure App Configuration."
         >
           <div className="flex flex-row items-center">
             <div className="flex items-center">
@@ -169,7 +169,7 @@ export const AzureAppConfigurationConfigurePage = () => {
             </div>
             <span className="ml-1.5">Azure App Configuration</span>
             <a
-              href="https://infisical.com/docs/integrations/cloud/azure-app-configuration"
+              href="https://hanzo.ai/docs/integrations/cloud/azure-app-configuration"
               target="_blank"
               rel="noopener noreferrer"
             >

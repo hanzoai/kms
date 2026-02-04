@@ -52,7 +52,7 @@ const initialSyncBehaviors = [
     label: "No Import - Overwrite all values in GitLab",
     value: IntegrationSyncBehavior.OVERWRITE_TARGET
   },
-  { label: "Import - Prefer values from Infisical", value: IntegrationSyncBehavior.PREFER_SOURCE }
+  { label: "Import - Prefer values from Hanzo KMS", value: IntegrationSyncBehavior.PREFER_SOURCE }
 ];
 
 const schema = z.object({
@@ -215,7 +215,7 @@ export const GitlabConfigurePage = () => {
       <Card className="max-w-lg rounded-md border border-mineshaft-600">
         <CardTitle
           className="px-6 text-left text-xl"
-          subTitle="Select which environment or folder in Infisical you want to sync to GitLab's environment variables."
+          subTitle="Select which environment or folder in Hanzo KMS you want to sync to GitLab's environment variables."
         >
           <div className="flex flex-row items-center">
             <div className="flex items-center pb-0.5">
@@ -223,7 +223,7 @@ export const GitlabConfigurePage = () => {
             </div>
             <span className="ml-2.5">GitLab Integration </span>
             <a
-              href="https://infisical.com/docs/integrations/cicd/gitlab"
+              href="https://hanzo.ai/docs/integrations/cicd/gitlab"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -452,7 +452,7 @@ export const GitlabConfigurePage = () => {
                       isChecked={value}
                     >
                       <div className="max-w-md">
-                        Mark Infisical secrets in Gitlab as &apos;Masked&apos; secrets
+                        Mark Hanzo KMS secrets in Gitlab as &apos;Masked&apos; secrets
                       </div>
                     </Switch>
                   )}
@@ -468,7 +468,7 @@ export const GitlabConfigurePage = () => {
                       onCheckedChange={(isChecked) => onChange(isChecked)}
                       isChecked={value}
                     >
-                      Mark Infisical secrets in Gitlab as &apos;Protected&apos; secrets
+                      Mark Hanzo KMS secrets in Gitlab as &apos;Protected&apos; secrets
                     </Switch>
                   )}
                 />
@@ -564,9 +564,9 @@ export const GitlabConfigurePage = () => {
               className="inline cursor-pointer text-mineshaft-100 underline decoration-primary-500 underline-offset-4 opacity-80 duration-200 hover:opacity-100"
               target="_blank"
               rel="noopener noreferrer"
-              href="mailto:support@infisical.com"
+              href="mailto:support@hanzo.ai"
             >
-              support@infisical.com
+              support@hanzo.ai
             </a>{" "}
             if the issue persists.
           </p>

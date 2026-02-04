@@ -30,8 +30,8 @@ export const PersonalSettingsPage = () => {
             description="Configure settings for your account"
           >
             <div>
-              {window.location.origin.includes("https://app.infisical.com") ||
-                window.location.origin.includes("https://gamma.infisical.com") || <WishForm />}
+              {window.location.origin.includes("https://app.hanzo.ai") ||
+                window.location.origin.includes("https://kms.hanzo.ai") || <WishForm />}
             </div>
           </PageHeader>
           <PersonalTabGroup />

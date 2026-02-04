@@ -1,7 +1,7 @@
 {
   "activity": {
     "title": "Aktivite Günlükleri",
-    "subtitle": "Bu Infisical projesi için Olay Geçmişi.",
+    "subtitle": "Bu Hanzo KMS projesi için Olay Geçmişi.",
     "event": {
       "readSecrets": "Sırlar Görüntülendi",
       "updateSecrets": "Sırlar Güncellendi",
@@ -39,7 +39,7 @@
     "schedule-demo": "Bir Deneme Sürümü Planlayın "
   },
   "common": {
-    "head-title": "{{title}} | Infisical",
+    "head-title": "{{title}} | Hanzo KMS",
     "error_project-already-exists": "Bu isimle bir proje zaten mevcut.",
     "email": "Email",
     "password": "Şifre",
@@ -74,7 +74,7 @@
   "dashboard": {
     "title": "Sırlar",
     "og-title": "Saniyeler içerisinde .env dosyalarınızı yönetin",
-    "og-description": "Infisical takımların .env dosyalarını senkronize etmelerini ve yönetmelerini sağlayan uçtan uca şifrelenmiş basit bir platformdur",
+    "og-description": "Hanzo KMS takımların .env dosyalarını senkronize etmelerini ve yönetmelerini sağlayan uçtan uca şifrelenmiş basit bir platformdur",
     "search-keys": "Anahtarları ara...",
     "add-key": "Anahtar Ekle",
     "personal": "Kişisel",
@@ -108,34 +108,34 @@
   },
   "integrations": {
     "title": "Proje Entegrasyonları",
-    "description": "Infisical'ın üçüncü taraf hizmetlerle olan entegrasyonlarınızı yönetin.",
+    "description": "Hanzo KMS'nin üçüncü taraf hizmetlerle olan entegrasyonlarınızı yönetin.",
     "no-integrations1": "Henüz ayarlanmış bir entegrasyonunuz yok. Oluşturduğunuz zaman, burada görünecekler.",
     "no-integrations2": "Başlamak için aşağıdaki seçeneklerden herhangi birine tıklayın. Sadece 5 tıklama ile kurulumu halledin.",
     "available": "Platform & Cloud Entegrasyonları",
     "available-text1": "Bağlanmak istediğiniz entegrasyona tıklayın. Bu, ortam değişkenlerinizin seçilen üçüncü taraf hizmetlere otomatik olarak akmasını sağlar.",
-    "available-text2": "Not: Heroku ile entegrasyon sırasında güvenlik nedenleriyle uçtan uca şifrelemenin sürdürülmesi mümkün değildir. Teorik olarak bu, Infisical'ın ortam değişkenlerinin şifresini çözmesine izin verir. Pratikte biz bunun asla yapılmayacağının garantisini verebiliriz ve bu durum sırlarınızı çevrimiçi kötü niyetlilerden korumamıza olanak tanır. Çekirdek Infisical hizmeti her zaman uçtan uca şifreli kalacaktır. Sorularınız için support@infisical.com adresine ulaşın.",
+    "available-text2": "Not: Heroku ile entegrasyon sırasında güvenlik nedenleriyle uçtan uca şifrelemenin sürdürülmesi mümkün değildir. Teorik olarak bu, Hanzo KMS'nin ortam değişkenlerinin şifresini çözmesine izin verir. Pratikte biz bunun asla yapılmayacağının garantisini verebiliriz ve bu durum sırlarınızı çevrimiçi kötü niyetlilerden korumamıza olanak tanır. Çekirdek Hanzo KMS hizmeti her zaman uçtan uca şifreli kalacaktır. Sorularınız için support@hanzo.ai adresine ulaşın.",
     "cloud-integrations": "Cloud Entegrasyonları",
     "framework-integrations": "Framework Entegrasyonları",
     "click-to-start": "Sırlarınızı senkronize etmeye başlamak için bir entegrasyona tıklayın.",
     "click-to-setup": "Kurulum talimatlarını almak için bir frameworke tıklayın.",
-    "grant-access-to-secrets": "Infisical'a sırlarınıza erişim izni verin",
-    "why-infisical-needs-access": "Çoğu cloud entegrasyonu, Infisical'ın sırlarınızı aktarabilmek için sırlarınızı deşifre etmesini gerektirir.",
+    "grant-access-to-secrets": "Hanzo KMS'ye sırlarınıza erişim izni verin",
+    "why-infisical-needs-access": "Çoğu cloud entegrasyonu, Hanzo KMS'nin sırlarınızı aktarabilmek için sırlarınızı deşifre etmesini gerektirir.",
     "grant-access-button": "Erişim izni ver"
   },
   "login": {
     "title": "Giriş Yap",
-    "og-title": "Infisical'a Giriş Yap",
-    "og-description": "Infisical ekiplerin .env dosyalarını senkronize etmelerini ve yönetmelerini sağlayan uçtan uca şifrelenmiş basit bir platformdur",
+    "og-title": "Hanzo KMS'ye Giriş Yap",
+    "og-description": "Hanzo KMS ekiplerin .env dosyalarını senkronize etmelerini ve yönetmelerini sağlayan uçtan uca şifrelenmiş basit bir platformdur",
     "login": "Giriş Yap",
-    "need-account": "Bir Infisical hesabına mı ihtiyacınız var?",
+    "need-account": "Bir Hanzo KMS hesabına mı ihtiyacınız var?",
     "create-account": "Hesap oluşturun",
     "forgot-password": "Şifrenizi mi unuttunuz?",
     "error-login": "Kimlik bilgileri yanlış."
   },
   "mfa": {
     "title": "Kayıt olun",
-    "og-title": "Tek satır kodla .env dosyalarını değiştirin. 3 dakika içerinde Infisical'a kayıt olun.",
-    "og-description": "Infisical takımların API anahtarlarını ve ortam değişkenlerini yönetmelerini ve senkronize etmelerini sağlayan basit, uçtan uca şifrelenmiş bir platformdur. Node.js, Next.js, Gatsby, Nest.js ve daha fazlası ile çalışır.",
+    "og-title": "Tek satır kodla .env dosyalarını değiştirin. 3 dakika içerinde Hanzo KMS'ye kayıt olun.",
+    "og-description": "Hanzo KMS takımların API anahtarlarını ve ortam değişkenlerini yönetmelerini ve senkronize etmelerini sağlayan basit, uçtan uca şifrelenmiş bir platformdur. Node.js, Next.js, Gatsby, Nest.js ve daha fazlası ile çalışır.",
     "signup": "Kayıt ol",
     "already-have-account": "Hesabın var mı? Giriş yap",
     "forgot-password": "Şifreni mi unuttun?",
@@ -157,7 +157,7 @@
     "step4-download": "PDF'yi indir",
     "step5-send-invites": "Davetleri yolla",
     "step5-invite-team": "Takımını davet et",
-    "step5-subtitle": "Infisical takım arkadaşlarınız ile kullanılmak üzere yapılmıştır. Birlikte test etmek için onları davet edin.",
+    "step5-subtitle": "Hanzo KMS takım arkadaşlarınız ile kullanılmak üzere yapılmıştır. Birlikte test etmek için onları davet edin.",
     "step5-skip": "Atla"
   },
   "nav": {
@@ -265,14 +265,14 @@
       "description": "Kişisel bilgilerinizi burada görüntüleyin ve yönetin.",
       "emergency": {
         "name": "Acil Durum Kiti",
-        "text1": "Acil Durum Kitiniz, Infisical hesabınızda oturum açmak için ihtiyaç duyacağınız bilgileri içerir.",
+        "text1": "Acil Durum Kitiniz, Hanzo KMS hesabınızda oturum açmak için ihtiyaç duyacağınız bilgileri içerir.",
         "text2": "Yalnızca en son yayınlanan Acil Durum Kiti geçerliliğini korur. Yeni bir Acil Durum Kiti almak için parolanızı doğrulayın.",
         "download": "Acil Durum Kitini İndir"
       },
       "change-language": "Dili Değiştir",
       "api-keys": {
         "title": "API Anahtarları",
-        "description": "Infisical API'ye erişmek için kişisel API Anahtarlarınızı yönetin",
+        "description": "Hanzo KMS API'ye erişmek için kişisel API Anahtarlarınızı yönetin",
         "add-new": "Ekle yeni"
       }
     },
@@ -284,16 +284,16 @@
       "project-to-delete": "Silinmek Üzere Olan Proje",
       "danger-zone-note": "Bu projeyi sildiğiniz anda geri alamayacaksınız. Bu, tüm anahtarları hemen kaldıracaktır. Bunu hala yapmak istiyorsanız, lütfen aşağıya projenin adını girin.",
       "delete-project-note": "Not: Yalnızca birden fazla projeniz olması durumunda, bir projeyi silebilirsiniz.",
-      "project-id-description": "Infisical'ı kod tabanınıza entegre etmek ve çevresel değişkenlerin otomatik enjeksiyonunu almak için aşağıdaki Proje Kimliğini kullanmalısınız.",
+      "project-id-description": "Hanzo KMS'yi kod tabanınıza entegre etmek ve çevresel değişkenlerin otomatik enjeksiyonunu almak için aşağıdaki Proje Kimliğini kullanmalısınız.",
       "project-id-description2": "Çeşitli diller ve çerçeveler için kod parçaları da dahil olmak üzere daha fazla rehberlik için bkz.",
       "auto-generated": "Bu, projenizin otomatik olarak oluşturulan benzersiz tanımlayıcısıdır. Değiştirilemez..",
-      "docs": "Infisical Dokümanları"
+      "docs": "Hanzo KMS Dokümanları"
     }
   },
   "signup": {
     "title": "Kayıt olun",
-    "og-title": "Tek satır kodla .env dosyalarını değiştirin. 3 dakika içerinde Infisical'a kayıt olun.",
-    "og-description": "Infisical takımların API anahtarlarını ve ortam değişkenlerini yönetmelerini ve senkronize etmelerini sağlayan basit, uçtan uca şifrelenmiş bir platformdur. Node.js, Next.js, Gatsby, Nest.js ve daha fazlası ile çalışır.",
+    "og-title": "Tek satır kodla .env dosyalarını değiştirin. 3 dakika içerinde Hanzo KMS'ye kayıt olun.",
+    "og-description": "Hanzo KMS takımların API anahtarlarını ve ortam değişkenlerini yönetmelerini ve senkronize etmelerini sağlayan basit, uçtan uca şifrelenmiş bir platformdur. Node.js, Next.js, Gatsby, Nest.js ve daha fazlası ile çalışır.",
     "signup": "Kayıt ol",
     "already-have-account": "Hesabın var mı? Giriş yap",
     "forgot-password": "Şifreni mi unuttun?",
@@ -315,7 +315,7 @@
     "step4-download": "PDF'yi indir",
     "step5-send-invites": "Davetleri yolla",
     "step5-invite-team": "Takımını davet et",
-    "step5-subtitle": "Infisical takım arkadaşlarınız ile kullanılmak üzere yapılmıştır. Birlikte test etmek için onları davet edin.",
+    "step5-subtitle": "Hanzo KMS takım arkadaşlarınız ile kullanılmak üzere yapılmıştır. Birlikte test etmek için onları davet edin.",
     "step5-skip": "Atla"
   }
 }

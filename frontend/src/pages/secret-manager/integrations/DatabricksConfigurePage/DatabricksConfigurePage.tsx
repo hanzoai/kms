@@ -105,7 +105,7 @@ export const DatabricksConfigurePage = () => {
       <Card className="max-w-lg rounded-md border border-mineshaft-600">
         <CardTitle
           className="px-6 text-left text-xl"
-          subTitle="Choose which environment or folder in Infisical you want to sync to which Databricks secrets scope."
+          subTitle="Choose which environment or folder in Hanzo KMS you want to sync to which Databricks secrets scope."
         >
           <div className="flex flex-row items-center">
             <div className="flex items-center pb-0.5">
@@ -118,7 +118,7 @@ export const DatabricksConfigurePage = () => {
             </div>
             <span className="ml-1.5">Databricks Integration </span>
             <a
-              href="https://infisical.com/docs/integrations/cloud/databricks"
+              href="https://hanzo.ai/docs/integrations/cloud/databricks"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -203,12 +203,12 @@ export const DatabricksConfigurePage = () => {
           <span className="text-md ml-3 text-mineshaft-100">Pro Tip</span>
         </div>
         <span className="mt-4 text-sm text-mineshaft-300">
-          When integrating with Databricks, Infisical is intended to be the source of truth for the
+          When integrating with Databricks, Hanzo KMS is intended to be the source of truth for the
           secrets in the configured Databricks scope.
         </span>
         <span className="mt-4 text-sm text-mineshaft-300">
-          Any secrets not present in Infisical will be removed from the specified scope. To prevent
-          removal of secrets not managed by Infisical, Infisical recommends creating a designated
+          Any secrets not present in Hanzo KMS will be removed from the specified scope. To prevent
+          removal of secrets not managed by Hanzo KMS, Hanzo KMS recommends creating a designated
           secret scope for your integration.
         </span>
       </div>
@@ -234,9 +234,9 @@ export const DatabricksConfigurePage = () => {
               className="inline cursor-pointer text-mineshaft-100 underline decoration-primary-500 underline-offset-4 opacity-80 duration-200 hover:opacity-100"
               target="_blank"
               rel="noopener noreferrer"
-              href="mailto:support@infisical.com"
+              href="mailto:support@hanzo.ai"
             >
-              support@infisical.com
+              support@hanzo.ai
             </a>{" "}
             if the issue persists.
           </p>

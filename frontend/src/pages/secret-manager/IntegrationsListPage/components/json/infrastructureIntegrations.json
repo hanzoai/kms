@@ -30,7 +30,7 @@
         "docsLink": "https://infisical.com/docs/integrations/cicd/jenkins"
     },
     {
-        "name": "Infisical Agent",
+        "name": "Hanzo KMS Agent",
         "slug": "agent",
         "image": "Agent",
         "docsLink": "https://infisical.com/docs/integrations/platforms/infisical-agent"

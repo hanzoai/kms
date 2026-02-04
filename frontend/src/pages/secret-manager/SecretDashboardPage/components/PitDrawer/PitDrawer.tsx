@@ -45,7 +45,7 @@ export const PitDrawer = ({
               Snapshots will be replaced by{" "}
               <a
                 target="_blank"
-                href="https://infisical.com/docs/documentation/platform/pit-recovery"
+                href="https://hanzo.ai/docs/documentation/platform/pit-recovery"
                 rel="noopener noreferrer"
                 className="underline decoration-primary underline-offset-2 hover:text-mineshaft-200"
               >

@@ -97,7 +97,7 @@ export const SecretSyncsTab = () => {
           <div>
             <div className="flex items-center gap-1.5">
               <p className="text-lg font-medium text-mineshaft-100">Secret Syncs</p>
-              <DocumentationLinkBadge href="https://infisical.com/docs/integrations/secret-syncs/overview" />
+              <DocumentationLinkBadge href="https://hanzo.ai/docs/integrations/secret-syncs/overview" />
             </div>
             <p className="text-sm text-bunker-300">
               Use App Connections to sync secrets to third-party services.

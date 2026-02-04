@@ -58,7 +58,7 @@ export const RenderAuthorizePage = () => {
       <Card className="mb-12 max-w-lg rounded-md border border-mineshaft-600">
         <CardTitle
           className="px-6 text-left text-xl"
-          subTitle="After adding your API key, you will be prompted to set up an integration for a particular Infisical project and environment."
+          subTitle="After adding your API key, you will be prompted to set up an integration for a particular Hanzo KMS project and environment."
         >
           <div className="flex flex-row items-center">
             <div className="flex items-center pb-0.5">
@@ -66,7 +66,7 @@ export const RenderAuthorizePage = () => {
             </div>
             <span className="ml-2.5">Render Integration </span>
             <a
-              href="https://infisical.com/docs/integrations/cloud/render"
+              href="https://hanzo.ai/docs/integrations/cloud/render"
               target="_blank"
               rel="noopener noreferrer"
             >

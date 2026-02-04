@@ -62,7 +62,7 @@ export const CaSection = () => {
       <div className="mb-4 flex justify-between">
         <div className="flex items-center gap-x-2">
           <p className="text-xl font-medium text-mineshaft-100">Internal Certificate Authorities</p>
-          <DocumentationLinkBadge href="https://infisical.com/docs/documentation/platform/pki/private-ca" />
+          <DocumentationLinkBadge href="https://hanzo.ai/docs/documentation/platform/pki/private-ca" />
         </div>
         <ProjectPermissionCan
           I={ProjectPermissionCertificateAuthorityActions.Create}

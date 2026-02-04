@@ -101,7 +101,7 @@ export const GeneralPageForm = () => {
       <div className="flex flex-col justify-start">
         <div className="mb-2 text-xl font-medium text-mineshaft-100">Allow user signups</div>
         <div className="mb-4 max-w-sm text-sm text-mineshaft-400">
-          Select if you want users to be able to signup freely into your Infisical instance.
+          Select if you want users to be able to signup freely into your Hanzo KMS instance.
         </div>
         <Controller
           control={control}
@@ -191,8 +191,8 @@ export const GeneralPageForm = () => {
       <div className="flex flex-col justify-start">
         <div className="mb-2 text-xl font-medium text-mineshaft-100">Trust emails</div>
         <div className="mb-4 max-w-sm text-sm text-mineshaft-400">
-          Select if you want Infisical to trust external emails from SAML/LDAP/OIDC identity
-          providers. If set to false, then Infisical will prompt SAML/LDAP/OIDC provisioned users to
+          Select if you want Hanzo KMS to trust external emails from SAML/LDAP/OIDC identity
+          providers. If set to false, then Hanzo KMS will prompt SAML/LDAP/OIDC provisioned users to
           verify their email upon their first login.
         </div>
         <Controller

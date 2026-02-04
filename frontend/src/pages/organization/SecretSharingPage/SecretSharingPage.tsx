@@ -30,7 +30,7 @@ export const SecretSharingPage = () => {
             <a
               target="_blank"
               rel="noopener noreferrer"
-              href="https://infisical.com/docs/documentation/platform/secret-sharing"
+              href="https://hanzo.ai/docs/documentation/platform/secret-sharing"
             >
               <div className="flex w-max cursor-pointer items-center rounded-md border border-mineshaft-500 bg-mineshaft-600 px-4 py-2 text-mineshaft-200 duration-200 hover:border-primary/40 hover:bg-primary/10 hover:text-white">
                 Documentation{" "}

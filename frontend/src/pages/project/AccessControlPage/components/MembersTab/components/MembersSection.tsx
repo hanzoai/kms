@@ -50,7 +50,7 @@ export const MembersSection = () => {
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-x-2">
           <p className="text-xl font-medium text-mineshaft-100">Project Users</p>
-          <DocumentationLinkBadge href="https://infisical.com/docs/documentation/platform/identities/user-identities" />
+          <DocumentationLinkBadge href="https://hanzo.ai/docs/documentation/platform/identities/user-identities" />
         </div>
         <ProjectPermissionCan I={ProjectPermissionActions.Create} a={ProjectPermissionSub.Member}>
           {(isAllowed) => (

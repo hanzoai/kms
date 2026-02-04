@@ -67,7 +67,7 @@ export const HashicorpVaultAuthorizePage = () => {
       <Card className="mb-12 max-w-lg rounded-md border border-mineshaft-600">
         <CardTitle
           className="px-6 text-left text-xl"
-          subTitle="After connecting to Vault, you will be prompted to set up an integration for a particular Infisical project and environment."
+          subTitle="After connecting to Vault, you will be prompted to set up an integration for a particular Hanzo KMS project and environment."
         >
           <div className="flex flex-row items-center">
             <div className="inline-flex items-center">
@@ -80,7 +80,7 @@ export const HashicorpVaultAuthorizePage = () => {
             </div>
             <span className="ml-2.5">HashiCorp Vault Integration</span>
             <a
-              href="https://infisical.com/docs/integrations/cloud/hashicorp-vault"
+              href="https://hanzo.ai/docs/integrations/cloud/hashicorp-vault"
               target="_blank"
               rel="noopener noreferrer"
             >

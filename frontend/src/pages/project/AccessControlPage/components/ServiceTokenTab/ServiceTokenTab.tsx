@@ -16,7 +16,7 @@ export const ServiceTokenTab = () => {
               They will be removed in the future in accordance with the deprecation notice and
               timeline stated{" "}
               <a
-                href="https://infisical.com/blog/deprecating-api-keys"
+                href="https://hanzo.ai/blog/deprecating-api-keys"
                 target="_blank"
                 className="font-medium text-primary-400" rel="noreferrer"
               >
@@ -25,7 +25,7 @@ export const ServiceTokenTab = () => {
               .
               <br />
               <a
-                href="https://infisical.com/docs/documentation/platform/identities/overview"
+                href="https://hanzo.ai/docs/documentation/platform/identities/overview"
                 target="_blank"
                 className="font-medium text-primary-400" rel="noreferrer"
               >

@@ -94,7 +94,7 @@ export const RundeckConfigurePage = () => {
       <Card className="max-w-lg rounded-md border border-mineshaft-600">
         <CardTitle
           className="px-6 text-left text-xl"
-          subTitle="Choose which environment or folder in Infisical you want to sync to the Rundeck Key Storage."
+          subTitle="Choose which environment or folder in Hanzo KMS you want to sync to the Rundeck Key Storage."
         >
           <div className="flex flex-row items-center">
             <div className="flex items-center pb-0.5">
@@ -107,7 +107,7 @@ export const RundeckConfigurePage = () => {
             </div>
             <span className="ml-2.5">Rundeck Integration </span>
             <a
-              href="https://infisical.com/docs/integrations/cloud/flyio"
+              href="https://hanzo.ai/docs/integrations/cloud/flyio"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -215,9 +215,9 @@ export const RundeckConfigurePage = () => {
               className="inline cursor-pointer text-mineshaft-100 underline decoration-primary-500 underline-offset-4 opacity-80 duration-200 hover:opacity-100"
               target="_blank"
               rel="noopener noreferrer"
-              href="mailto:support@infisical.com"
+              href="mailto:support@hanzo.ai"
             >
-              support@infisical.com
+              support@hanzo.ai
             </a>{" "}
             if the issue persists.
           </p>

@@ -77,7 +77,7 @@ export const IntegrationDetailsByIDPage = () => {
   return (
     <>
       <Helmet>
-        <title>Integration Details | Infisical</title>
+        <title>Integration Details | Hanzo KMS</title>
         <meta property="og:image" content="/images/message.png" />
         <meta property="og:title" content="Manage your .env files in seconds" />
         <meta name="og:description" content={t("integrations.description") as string} />

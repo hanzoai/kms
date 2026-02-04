@@ -202,7 +202,7 @@ export const EnvironmentPageForm = () => {
         <div>
           <div className="flex items-center gap-x-2">
             <p className="text-xl font-medium text-mineshaft-100">Overrides</p>
-            <DocumentationLinkBadge href="https://infisical.com/docs/self-hosting/configuration/envars#environment-variable-overrides" />
+            <DocumentationLinkBadge href="https://hanzo.ai/docs/self-hosting/configuration/envars#environment-variable-overrides" />
           </div>
           <p className="text-sm text-bunker-300">
             Override specific environment variables. After saving, it may take up to 5 minutes for

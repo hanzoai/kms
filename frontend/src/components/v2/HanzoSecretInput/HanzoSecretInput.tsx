@@ -70,7 +70,7 @@ type ReferenceItem = {
   slug: string;
 };
 
-export const InfisicalSecretInput = forwardRef<HTMLTextAreaElement, Props>(
+export const HanzoSecretInput = forwardRef<HTMLTextAreaElement, Props>(
   (
     {
       value = "",
@@ -545,4 +545,4 @@ export const InfisicalSecretInput = forwardRef<HTMLTextAreaElement, Props>(
   }
 );
 
-InfisicalSecretInput.displayName = "InfisicalSecretInput";
+HanzoSecretInput.displayName = "HanzoSecretInput";

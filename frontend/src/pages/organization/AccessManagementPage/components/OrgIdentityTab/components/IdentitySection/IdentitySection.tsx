@@ -101,7 +101,7 @@ export const IdentitySection = withPermission(
               <p className="text-xl font-medium text-mineshaft-100">
                 {isSubOrganization ? "Sub-" : ""}Organization Machine Identities
               </p>
-              <DocumentationLinkBadge href="https://infisical.com/docs/documentation/platform/identities/machine-identities" />
+              <DocumentationLinkBadge href="https://hanzo.ai/docs/documentation/platform/identities/machine-identities" />
             </div>
             <div className="flex items-center">
               <OrgPermissionCan
@@ -117,7 +117,7 @@ export const IdentitySection = withPermission(
                       if (!isMoreIdentitiesAllowed && !isEnterprise) {
                         handlePopUpOpen("upgradePlan", {
                           description:
-                            "You can add more machine identities if you upgrade your Infisical Pro plan."
+                            "You can add more machine identities if you upgrade your Hanzo KMS Pro plan."
                         });
                         return;
                       }
@@ -147,7 +147,7 @@ export const IdentitySection = withPermission(
               <p className="text-xl font-medium text-mineshaft-100">
                 Machine Identity Auth Templates
               </p>
-              <DocumentationLinkBadge href="https://infisical.com/docs/documentation/platform/identities/auth-templates" />
+              <DocumentationLinkBadge href="https://hanzo.ai/docs/documentation/platform/identities/auth-templates" />
             </div>
             <OrgPermissionCan
               I={OrgPermissionMachineIdentityAuthTemplateActions.CreateTemplates}
@@ -162,7 +162,7 @@ export const IdentitySection = withPermission(
                     if (subscription && !subscription.machineIdentityAuthTemplates) {
                       handlePopUpOpen("upgradePlan", {
                         isEnterpriseFeature: true,
-                        text: "Your current plan does not include access to creating Machine Identity Auth Templates. To unlock this feature, please upgrade to Infisical Enterprise plan."
+                        text: "Your current plan does not include access to creating Machine Identity Auth Templates. To unlock this feature, please upgrade to Hanzo KMS Enterprise plan."
                       });
                       return;
                     }

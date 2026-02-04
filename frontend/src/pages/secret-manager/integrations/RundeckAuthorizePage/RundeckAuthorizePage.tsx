@@ -71,7 +71,7 @@ export const RundeckAuthorizePage = () => {
       <Card className="mb-12 max-w-lg rounded-md border border-mineshaft-600">
         <CardTitle
           className="px-6 text-left text-xl"
-          subTitle="After adding your URL and auth token, you will be prompted to set up an integration for a particular Infisical project and environment."
+          subTitle="After adding your URL and auth token, you will be prompted to set up an integration for a particular Hanzo KMS project and environment."
         >
           <div className="flex flex-row items-center">
             <div className="flex items-center pb-0.5">
@@ -84,7 +84,7 @@ export const RundeckAuthorizePage = () => {
             </div>
             <span className="ml-2.5">Rundeck Integration </span>
             <a
-              href="https://infisical.com/docs/integrations/cicd/rundeck"
+              href="https://hanzo.ai/docs/integrations/cicd/rundeck"
               target="_blank"
               rel="noopener noreferrer"
             >

@@ -27,7 +27,7 @@ const initialSyncBehaviors = [
     label: "Import - Prefer values from Azure Vault",
     value: IntegrationSyncBehavior.PREFER_TARGET
   },
-  { label: "Import - Prefer values from Infisical", value: IntegrationSyncBehavior.PREFER_SOURCE }
+  { label: "Import - Prefer values from Hanzo KMS", value: IntegrationSyncBehavior.PREFER_SOURCE }
 ];
 
 export const AzureKeyVaultConfigurePage = () => {

@@ -230,7 +230,7 @@ export const ReplicateFolderFromBoard = ({
         title={
           <div className="flex items-center gap-x-2 text-mineshaft-300">
             <span>Replicate Secrets</span>
-            <DocumentationLinkBadge href="https://infisical.com/docs/documentation/platform/folder#replicating-folder-contents" />
+            <DocumentationLinkBadge href="https://hanzo.ai/docs/documentation/platform/folder#replicating-folder-contents" />
           </div>
         }
         subTitle="Copy folder contents from other locations into this context"

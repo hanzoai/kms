@@ -16,7 +16,7 @@ import {
   Tooltip
 } from "@app/components/v2";
 import { CreatableSelect } from "@app/components/v2/CreatableSelect";
-import { InfisicalSecretInput } from "@app/components/v2/InfisicalSecretInput";
+import { HanzoSecretInput } from "@app/components/v2/HanzoSecretInput";
 import {
   ProjectPermissionActions,
   ProjectPermissionSub,
@@ -269,7 +269,7 @@ export const CreateSecretForm = ({ secretPath = "/", onClose }: Props) => {
             errorText={errors?.value?.message}
           >
             <div className="flex items-center gap-2">
-              <InfisicalSecretInput
+              <HanzoSecretInput
                 {...field}
                 containerClassName="text-bunker-300 hover:border-primary-400/50 border border-mineshaft-600 bg-mineshaft-900 px-2 py-1.5"
               />

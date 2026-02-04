@@ -107,7 +107,7 @@ export const GatewayTab = withPermission(
         <div className="mb-2 flex items-center justify-between">
           <div className="flex grow items-center gap-x-2">
             <h3 className="text-lg font-medium text-mineshaft-100">Gateways</h3>
-            <DocumentationLinkBadge href="https://infisical.com/docs/documentation/platform/gateways/overview" />
+            <DocumentationLinkBadge href="https://hanzo.ai/docs/documentation/platform/gateways/overview" />
             <div className="flex grow" />
             <Button
               variant="outline_bg"
@@ -119,7 +119,7 @@ export const GatewayTab = withPermission(
           </div>
         </div>
         <p className="mb-4 text-sm text-mineshaft-400">
-          Create and configure gateway to access private network resources from Infisical
+          Create and configure gateway to access private network resources from Hanzo KMS
         </p>
         <div>
           <div className="flex gap-2">

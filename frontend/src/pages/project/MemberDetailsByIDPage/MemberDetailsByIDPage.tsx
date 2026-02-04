@@ -236,7 +236,7 @@ export const Page = () => {
                 isMembershipDetailsLoading={isMembershipDetailsLoading}
                 onOpenUpgradeModal={() =>
                   handlePopUpOpen("upgradePlan", {
-                    text: "Assigning custom roles to members can be unlocked if you upgrade to Infisical Pro plan."
+                    text: "Assigning custom roles to members can be unlocked if you upgrade to Hanzo KMS Pro plan."
                   })
                 }
               />

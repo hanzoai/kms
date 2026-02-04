@@ -191,7 +191,7 @@ export const RedisResourceForm = ({ resource, onSubmit }: Props) => {
                           className="max-w-md"
                           content={
                             <p>
-                              If enabled, Infisical will only connect to the server if it has a
+                              If enabled, Hanzo KMS will only connect to the server if it has a
                               valid, trusted SSL certificate.
                             </p>
                           }

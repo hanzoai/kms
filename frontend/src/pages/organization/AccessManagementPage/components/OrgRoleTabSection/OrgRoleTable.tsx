@@ -99,7 +99,7 @@ export const OrgRoleTable = () => {
 
     if (isCustomRole && subscription && !subscription?.rbac) {
       handlePopUpOpen("upgradePlan", {
-        text: "Your current plan does not include access to set a custom default organization role. To unlock this feature, please upgrade to Infisical Pro plan."
+        text: "Your current plan does not include access to set a custom default organization role. To unlock this feature, please upgrade to Hanzo KMS Pro plan."
       });
       return;
     }
@@ -194,7 +194,7 @@ export const OrgRoleTable = () => {
           <p className="text-xl font-medium text-mineshaft-100">
             {isSubOrganization ? "Sub-" : ""}Organization Roles
           </p>
-          <DocumentationLinkBadge href="https://infisical.com/docs/documentation/platform/organization#roles-and-access-control" />
+          <DocumentationLinkBadge href="https://hanzo.ai/docs/documentation/platform/organization#roles-and-access-control" />
         </div>
         <OrgPermissionCan I={OrgPermissionActions.Create} a={OrgPermissionSubjects.Role}>
           {(isAllowed) => (

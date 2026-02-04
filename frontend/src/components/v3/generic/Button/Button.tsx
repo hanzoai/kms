@@ -91,7 +91,7 @@ const UnstableButton = forwardRef<HTMLButtonElement | HTMLAnchorElement, Unstabl
         {children}
         {isPending && (
           <Lottie
-            icon={variant === "default" ? "infisical_loading_bw" : "infisical_loading_white"}
+            icon={variant === "default" ? "hanzo_loading_bw" : "hanzo_loading_white"}
             isAutoPlay
             className="absolute w-8 rounded-xl"
           />

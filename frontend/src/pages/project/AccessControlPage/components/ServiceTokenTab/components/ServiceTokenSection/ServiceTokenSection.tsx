@@ -45,7 +45,7 @@ export const ServiceTokenSection = withProjectPermission(
           <div>
             <div className="flex items-center gap-x-2">
               <p className="text-xl font-medium text-mineshaft-100">Service Tokens</p>
-              <DocumentationLinkBadge href="https://infisical.com/docs/documentation/platform/token" />
+              <DocumentationLinkBadge href="https://hanzo.ai/docs/documentation/platform/token" />
             </div>
             <p className="text-sm text-bunker-300">
               {t("section.token.service-tokens-description")}

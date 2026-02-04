@@ -164,7 +164,7 @@ export const GroupMembersTable = ({ groupMembership }: Props) => {
     return (
       // scott: todo proper loader
       <div className="flex h-40 w-full items-center justify-center">
-        <Lottie icon="infisical_loading_white" isAutoPlay className="w-16" />
+        <Lottie icon="hanzo_loading_white" isAutoPlay className="w-16" />
       </div>
     );
   }

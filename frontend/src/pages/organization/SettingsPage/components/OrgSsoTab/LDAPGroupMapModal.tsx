@@ -156,7 +156,7 @@ export const LDAPGroupMapModal = ({ popUp, handlePopUpOpen, handlePopUpToggle }:
                   defaultValue=""
                   render={({ field: { onChange, ...field }, fieldState: { error } }) => (
                     <FormControl
-                      label="Infisical Group"
+                      label="Hanzo KMS Group"
                       errorText={error?.message}
                       isError={Boolean(error)}
                       className="ml-4 w-full"
@@ -194,7 +194,7 @@ export const LDAPGroupMapModal = ({ popUp, handlePopUpOpen, handlePopUpToggle }:
                 <THead>
                   <Tr>
                     <Th>LDAP Group CN</Th>
-                    <Th>Infisical Group</Th>
+                    <Th>Hanzo KMS Group</Th>
                     <Th className="w-5" />
                   </Tr>
                 </THead>
@@ -255,7 +255,7 @@ export const LDAPGroupMapModal = ({ popUp, handlePopUpOpen, handlePopUpToggle }:
         {groups && groups.length === 0 && (
           <div>
             <div>
-              You do not have any Infisical groups in your organization. Create one in order to
+              You do not have any Hanzo KMS groups in your organization. Create one in order to
               proceed.
             </div>
             <Button

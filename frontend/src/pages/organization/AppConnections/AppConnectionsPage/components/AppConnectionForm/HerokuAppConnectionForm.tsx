@@ -20,7 +20,7 @@ import {
   getAppConnectionMethodDetails,
   useGetAppConnectionOauthReturnUrl
 } from "@app/helpers/appConnections";
-import { isInfisicalCloud } from "@app/helpers/platform";
+import { isHanzoCloud } from "@app/helpers/platform";
 import { useGetAppConnectionOption } from "@app/hooks/api/appConnections";
 import { AppConnection } from "@app/hooks/api/appConnections/enums";
 import {
@@ -172,8 +172,8 @@ export const HerokuConnectionForm = ({ appConnection, onSubmit: formSubmit, proj
               errorText={
                 !isLoading && isMissingConfig && selectedMethod === HerokuConnectionMethod.OAuth
                   ? `Environment variables have not been configured. ${
-                      isInfisicalCloud()
-                        ? "Please contact Infisical."
+                      isHanzoCloud()
+                        ? "Please contact Hanzo."
                         : `See Docs to configure Heroku ${methodDetails.name} Connections.`
                     }`
                   : error?.message

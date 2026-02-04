@@ -42,7 +42,7 @@ import {
   TextArea,
   Tooltip
 } from "@app/components/v2";
-import { InfisicalSecretInput } from "@app/components/v2/InfisicalSecretInput";
+import { HanzoSecretInput } from "@app/components/v2/HanzoSecretInput";
 import {
   ProjectPermissionActions,
   ProjectPermissionSub,
@@ -323,7 +323,7 @@ export const SecretDetailSidebar = ({
         onOpenChange={(isUpgradeModalOpen) =>
           handlePopUpToggle("secretAccessUpgradePlan", isUpgradeModalOpen)
         }
-        text="Secret access analysis feature can be unlocked if you upgrade to Infisical Pro plan."
+        text="Secret access analysis feature can be unlocked if you upgrade to Hanzo KMS Pro plan."
       />
       <Modal
         isOpen={popUp.secretReferenceTree.isOpen}
@@ -399,7 +399,7 @@ export const SecretDetailSidebar = ({
                       label="Value"
                     >
                       <div className="flex items-start gap-x-2">
-                        <InfisicalSecretInput
+                        <HanzoSecretInput
                           isReadOnly={
                             isReadOnly ||
                             !isAllowed ||

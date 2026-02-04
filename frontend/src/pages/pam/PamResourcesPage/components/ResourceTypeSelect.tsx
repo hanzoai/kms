@@ -76,7 +76,7 @@ export const ResourceTypeSelect = ({ onSelect }: Props) => {
       resource === PamResourceType.DynamoDB
     ) {
       handlePopUpOpen("upgradePlan", {
-        text: "Your current plan does not include access to this resource type. To unlock this feature, please upgrade to Infisical Enterprise plan.",
+        text: "Your current plan does not include access to this resource type. To unlock this feature, please upgrade to Hanzo KMS Enterprise plan.",
         isEnterpriseFeature: true
       });
       return;
@@ -145,13 +145,13 @@ export const ResourceTypeSelect = ({ onSelect }: Props) => {
               className="max-w-sm py-4"
               content={
                 <>
-                  <p className="mb-2">Infisical is constantly adding support for more resources.</p>
+                  <p className="mb-2">Hanzo KMS is constantly adding support for more resources.</p>
                   <p>
                     {"If you don't see the resource you're looking for,"}{" "}
                     <a
                       target="_blank"
                       className="underline hover:text-mineshaft-300"
-                      href="https://infisical.com/slack"
+                      href="https://hanzo.ai/discord"
                       rel="noopener noreferrer"
                     >
                       let us know on Slack
@@ -160,7 +160,7 @@ export const ResourceTypeSelect = ({ onSelect }: Props) => {
                     <a
                       target="_blank"
                       className="underline hover:text-mineshaft-300"
-                      href="https://github.com/Infisical/infisical/discussions"
+                      href="https://github.com/hanzoai/kms/discussions"
                       rel="noopener noreferrer"
                     >
                       make a request on GitHub

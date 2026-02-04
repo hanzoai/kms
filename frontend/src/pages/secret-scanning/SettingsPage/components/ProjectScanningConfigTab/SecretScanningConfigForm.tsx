@@ -54,7 +54,7 @@ export const SecretScanningConfigForm = ({ config }: Props) => {
       <div className="mb-4">
         <div className="flex items-center gap-2">
           <h2 className="text-xl font-medium text-mineshaft-100">Project Configuration</h2>
-          <DocumentationLinkBadge href="https://infisical.com/docs/documentation/platform/secret-scanning/usage#configuration" />
+          <DocumentationLinkBadge href="https://hanzo.ai/docs/documentation/platform/secret-scanning/usage#configuration" />
         </div>
         <p className="leading-5 text-mineshaft-400">
           Configure rules and exceptions to customize scanning

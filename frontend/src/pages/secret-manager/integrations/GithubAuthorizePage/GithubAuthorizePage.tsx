@@ -49,7 +49,7 @@ export const GithubAuthorizePage = () => {
             </div>
             <span className="ml-2.5">GitHub Integration </span>
             <a
-              href="https://infisical.com/docs/integrations/cicd/githubactions"
+              href="https://hanzo.ai/docs/integrations/cicd/githubactions"
               target="_blank"
               rel="noopener noreferrer"
             >

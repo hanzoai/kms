@@ -18,7 +18,7 @@ export const AccessManagementPage = () => {
           <PageHeader
             scope="instance"
             title="Server Admin Access Control"
-            description="Manage server admins within your Infisical instance."
+            description="Manage server admins within your Hanzo KMS instance."
           />
           <ServerAdminsTable />
         </div>

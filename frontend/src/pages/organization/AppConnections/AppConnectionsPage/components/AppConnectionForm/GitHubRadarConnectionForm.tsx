@@ -11,7 +11,7 @@ import {
   getAppConnectionMethodDetails,
   useGetAppConnectionOauthReturnUrl
 } from "@app/helpers/appConnections";
-import { isInfisicalCloud } from "@app/helpers/platform";
+import { isHanzoCloud } from "@app/helpers/platform";
 import {
   GitHubRadarConnectionMethod,
   TGitHubRadarConnection,
@@ -119,8 +119,8 @@ export const GitHubRadarConnectionForm = ({ appConnection, projectId }: Props) =
               errorText={
                 !isLoading && isMissingConfig
                   ? `Environment variables have not been configured. ${
-                      isInfisicalCloud()
-                        ? "Please contact Infisical."
+                      isHanzoCloud()
+                        ? "Please contact Hanzo."
                         : `See Docs to configure GitHub Radar ${methodDetails.name} Connections.`
                     }`
                   : error?.message

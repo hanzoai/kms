@@ -58,7 +58,7 @@ export const QoveryAuthorizePage = () => {
       <Card className="mb-12 max-w-lg rounded-md border border-mineshaft-600">
         <CardTitle
           className="px-6 text-left text-xl"
-          subTitle="After adding your API key, you will be prompted to set up an integration for a particular Infisical project and environment."
+          subTitle="After adding your API key, you will be prompted to set up an integration for a particular Hanzo KMS project and environment."
         >
           <div className="flex flex-row items-center">
             <div className="flex items-center pb-0.5">
@@ -66,7 +66,7 @@ export const QoveryAuthorizePage = () => {
             </div>
             <span className="ml-2.5">Qovery Integration </span>
             <a
-              href="https://infisical.com/docs/integrations/cloud/qovery"
+              href="https://hanzo.ai/docs/integrations/cloud/qovery"
               target="_blank"
               rel="noopener noreferrer"
             >

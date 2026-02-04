@@ -160,7 +160,7 @@ export const ViewSecretRequestByIDPage = () => {
   if (isPending) {
     return (
       <div className="flex h-screen w-screen items-center justify-center bg-bunker-800">
-        <Lottie isAutoPlay icon="infisical_loading" className="h-32 w-32" />
+        <Lottie isAutoPlay icon="hanzo_loading" className="h-32 w-32" />
       </div>
     );
   }
@@ -168,7 +168,7 @@ export const ViewSecretRequestByIDPage = () => {
   return (
     <>
       <Helmet>
-        <title>Securely Share Secrets{hasCustomBranding ? "" : " | Infisical"}</title>
+        <title>Securely Share Secrets{hasCustomBranding ? "" : " | Hanzo KMS"}</title>
         <meta property="og:image" content="/images/message.png" />
         <meta property="og:title" content="" />
         <meta name="og:description" content="" />
@@ -193,7 +193,7 @@ export const ViewSecretRequestByIDPage = () => {
                   className="max-h-24 w-auto object-contain"
                 />
               ) : (
-                <a target="_blank" rel="noopener noreferrer" href="https://infisical.com">
+                <a target="_blank" rel="noopener noreferrer" href="https://hanzo.ai">
                   <img
                     src={logoUrl}
                     height={90}
@@ -229,12 +229,12 @@ export const ViewSecretRequestByIDPage = () => {
               <p className="text-md mt-2">
                 Powered by{" "}
                 <a
-                  href="https://github.com/infisical/infisical"
+                  href="https://hanzo.ai"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-bold bg-linear-to-tr from-yellow-500 to-primary-500 bg-clip-text text-transparent"
                 >
-                  Infisical &rarr;
+                  Hanzo KMS &rarr;
                 </a>
               </p>
             )}
@@ -285,20 +285,20 @@ export const ViewSecretRequestByIDPage = () => {
                 <div className="flex flex-col items-start sm:flex-row sm:items-center">
                   <p className="md:text-md text-md mr-4">
                     <a
-                      href="https://github.com/infisical/infisical"
+                      href="https://hanzo.ai"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-bold bg-linear-to-tr from-yellow-500 to-primary-500 bg-clip-text text-transparent"
                     >
-                      Infisical
+                      Hanzo KMS
                     </a>{" "}
                     is the all-in-one secret management platform to securely manage secrets,
                     configs, and certificates across your team and infrastructure.
                   </p>
                   <div className="mt-4 cursor-pointer sm:mt-0">
-                    <a target="_blank" rel="noopener noreferrer" href="https://infisical.com">
+                    <a target="_blank" rel="noopener noreferrer" href="https://hanzo.ai">
                       <div className="flex items-center justify-between rounded-md border border-mineshaft-400/40 bg-mineshaft-600 px-3 py-2 duration-200 hover:border-primary/60 hover:bg-primary/20 hover:text-white">
-                        <p className="mr-4 whitespace-nowrap">Try Infisical</p>
+                        <p className="mr-4 whitespace-nowrap">Try Hanzo KMS</p>
                         <FontAwesomeIcon icon={faArrowRight} />
                       </div>
                     </a>
@@ -313,12 +313,10 @@ export const ViewSecretRequestByIDPage = () => {
         ) : (
           <div className="w-full bg-mineshaft-600 p-2">
             <p className="text-center text-sm text-mineshaft-300">
-              Made with ❤️ by{" "}
-              <a className="text-primary" href="https://infisical.com">
-                Infisical
+              Made with love by{" "}
+              <a className="text-primary" href="https://hanzo.ai">
+                Hanzo
               </a>
-              <br />
-              235 2nd st, San Francisco, California, 94105, United States. 🇺🇸
             </p>
           </div>
         )}

@@ -69,7 +69,7 @@ export const IntegrationAuditLogsSection = ({ integration }: Props) => {
                 </Link>
               ) : (
                 <a
-                  href="https://infisical.com/scheduledemo"
+                  href="https://hanzo.ai/contact"
                   target="_blank"
                   rel="noopener noreferrer"
                 >

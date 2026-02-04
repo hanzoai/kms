@@ -88,7 +88,7 @@ export const AWSSecretManagerAuthorizePage = () => {
       <Card className="max-w-lg rounded-md border border-mineshaft-600">
         <CardTitle
           className="px-6 text-left text-xl"
-          subTitle="After adding the details below, you will be prompted to set up an integration for a particular Infisical project and environment."
+          subTitle="After adding the details below, you will be prompted to set up an integration for a particular Hanzo KMS project and environment."
         >
           <div className="flex flex-row items-center">
             <div className="flex items-center">
@@ -101,7 +101,7 @@ export const AWSSecretManagerAuthorizePage = () => {
             </div>
             <span className="ml-1.5">AWS Secrets Manager Integration </span>
             <a
-              href="https://infisical.com/docs/integrations/cloud/aws-secret-manager"
+              href="https://hanzo.ai/docs/integrations/cloud/aws-secret-manager"
               target="_blank"
               rel="noopener noreferrer"
             >

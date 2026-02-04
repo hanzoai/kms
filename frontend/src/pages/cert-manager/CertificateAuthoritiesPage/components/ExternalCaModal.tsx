@@ -567,7 +567,7 @@ export const ExternalCaModal = ({ popUp, handlePopUpToggle }: Props) => {
                     errorText={error?.message}
                     isRequired
                   >
-                    <Input {...field} placeholder="user@infisical.com" />
+                    <Input {...field} placeholder="user@hanzo.ai" />
                   </FormControl>
                 )}
               />

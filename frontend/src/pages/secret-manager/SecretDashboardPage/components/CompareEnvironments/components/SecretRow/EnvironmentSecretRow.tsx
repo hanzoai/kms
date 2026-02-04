@@ -2,7 +2,7 @@ import { faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { Tooltip } from "@app/components/v2";
-import { InfisicalSecretInput } from "@app/components/v2/InfisicalSecretInput";
+import { HanzoSecretInput } from "@app/components/v2/HanzoSecretInput";
 
 type Props = {
   defaultValue?: string | null;
@@ -31,7 +31,7 @@ export const EnvironmentSecretRow = ({
         </Tooltip>
       )}
       <div className="flex-1 pr-2 pl-3">
-        <InfisicalSecretInput
+        <HanzoSecretInput
           onChange={() => {}}
           isReadOnly
           value={defaultValue as string}

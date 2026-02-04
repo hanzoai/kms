@@ -23,7 +23,7 @@ import {
   TextArea,
   Tooltip
 } from "@app/components/v2";
-import { InfisicalSecretInput } from "@app/components/v2/InfisicalSecretInput";
+import { HanzoSecretInput } from "@app/components/v2/HanzoSecretInput";
 import {
   ProjectPermissionActions,
   ProjectPermissionSub,
@@ -538,7 +538,7 @@ export const SecretItem = memo(
                   key="secret-value"
                   control={control}
                   render={({ field }) => (
-                    <InfisicalSecretInput
+                    <HanzoSecretInput
                       isLoadingValue={isLoadingSecretValue}
                       isErrorLoadingValue={isErrorFetchingSecretValue}
                       isReadOnly={isReadOnlySecret}

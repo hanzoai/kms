@@ -92,7 +92,7 @@ export const HasuraCloudConfigurePage = () => {
       <Card className="max-w-lg rounded-md border border-mineshaft-600">
         <CardTitle
           className="px-6 text-left text-xl"
-          subTitle={`Choose which environment or folder in Infisical you want to sync to ${APP_NAME} environment variables.`}
+          subTitle={`Choose which environment or folder in Hanzo KMS you want to sync to ${APP_NAME} environment variables.`}
         >
           <div className="flex flex-row items-center">
             <div className="flex items-center pb-0.5">
@@ -107,7 +107,7 @@ export const HasuraCloudConfigurePage = () => {
             <a
               target="_blank"
               rel="noopener noreferrer"
-              href="https://infisical.com/docs/integrations/cloud/hasura-cloud"
+              href="https://hanzo.ai/docs/integrations/cloud/hasura-cloud"
             >
               <div className="mb-1 ml-2 inline-block cursor-default rounded-md bg-yellow/20 px-1.5 pt-[0.04rem] pb-[0.03rem] text-sm text-yellow opacity-80 hover:opacity-100">
                 <FontAwesomeIcon icon={faBookOpen} className="mr-1.5" />
@@ -221,9 +221,9 @@ export const HasuraCloudConfigurePage = () => {
               className="inline cursor-pointer text-mineshaft-100 underline decoration-primary-500 underline-offset-4 opacity-80 duration-200 hover:opacity-100"
               target="_blank"
               rel="noopener noreferrer"
-              href="mailto:support@infisical.com"
+              href="mailto:support@hanzo.ai"
             >
-              support@infisical.com
+              support@hanzo.ai
             </a>{" "}
             if the issue persists.
           </p>

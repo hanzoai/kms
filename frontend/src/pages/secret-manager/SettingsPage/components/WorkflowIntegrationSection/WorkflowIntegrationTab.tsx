@@ -101,7 +101,7 @@ export const WorkflowIntegrationTab = () => {
         </OrgPermissionCan>
       </div>
       <p className="mb-4 text-gray-400">
-        Connect Infisical to other platforms for notification and workflow integrations.
+        Connect Hanzo KMS to other platforms for notification and workflow integrations.
       </p>
       <TableContainer>
         {!!slackConfig || !!microsoftTeamsConfig ? (

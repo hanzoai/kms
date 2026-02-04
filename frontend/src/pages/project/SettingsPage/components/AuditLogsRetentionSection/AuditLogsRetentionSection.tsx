@@ -41,7 +41,7 @@ export const AuditLogsRetentionSection = () => {
   const handleAuditLogsRetentionSubmit = async ({ auditLogsRetentionDays }: TForm) => {
     if (!subscription?.auditLogs) {
       handlePopUpOpen("upgradePlan", {
-        text: "Configuring audit logs retention can be unlocked if you upgrade to Infisical Pro plan."
+        text: "Configuring audit logs retention can be unlocked if you upgrade to Hanzo KMS Pro plan."
       });
 
       return;
@@ -49,7 +49,7 @@ export const AuditLogsRetentionSection = () => {
 
     if (subscription && auditLogsRetentionDays > subscription?.auditLogsRetentionDays) {
       handlePopUpOpen("upgradePlan", {
-        text: "Updating audit logs retention period to a higher value can be unlocked if you upgrade to Infisical Pro plan."
+        text: "Updating audit logs retention period to a higher value can be unlocked if you upgrade to Hanzo KMS Pro plan."
       });
 
       return;
@@ -66,10 +66,10 @@ export const AuditLogsRetentionSection = () => {
     });
   };
 
-  // render only for dedicated/self-hosted instances of Infisical
+  // render only for dedicated/self-hosted instances of Hanzo KMS
   if (
-    window.location.origin.includes("https://app.infisical.com") ||
-    window.location.origin.includes("https://gamma.infisical.com")
+    window.location.origin.includes("https://app.hanzo.ai") ||
+    window.location.origin.includes("https://kms.hanzo.ai")
   ) {
     return null;
   }

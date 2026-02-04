@@ -298,7 +298,7 @@ export const AccessApprovalRequest = ({
           <div>
             <div className="flex items-center gap-x-2">
               <p className="text-xl font-medium text-mineshaft-100">Access Requests</p>
-              <DocumentationLinkBadge href="https://infisical.com/docs/documentation/platform/access-controls/access-requests" />
+              <DocumentationLinkBadge href="https://hanzo.ai/docs/documentation/platform/access-controls/access-requests" />
             </div>
             <p className="text-sm text-bunker-300">
               Request and review access to secrets in sensitive environments and folders
@@ -312,7 +312,7 @@ export const AccessApprovalRequest = ({
               onClick={() => {
                 if (subscription && !subscription?.secretApproval) {
                   handlePopUpOpen("upgradePlan", {
-                    text: "Access requests feature can be unlocked if you upgrade to Infisical Pro plan."
+                    text: "Access requests feature can be unlocked if you upgrade to Hanzo KMS Pro plan."
                   });
                   return;
                 }

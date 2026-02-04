@@ -9,7 +9,7 @@ import TotpRegistration from "@app/components/mfa/TotpRegistration";
 import { createNotification } from "@app/components/notifications";
 import SecurityClient from "@app/components/utilities/SecurityClient";
 import { Button, Input, Tooltip } from "@app/components/v2";
-import { isInfisicalCloud } from "@app/helpers/platform";
+import { isHanzoCloud } from "@app/helpers/platform";
 import { useLogoutUser, useSendMfaToken } from "@app/hooks/api";
 import {
   checkUserTotpMfa,
@@ -524,7 +524,7 @@ export const Mfa = ({ successCallback, closeMfa, hideLogo, email, method }: Prop
               position="bottom"
               content={
                 <div className="max-w-xs text-center text-xs">
-                  {isInfisicalCloud() ? (
+                  {isHanzoCloud() ? (
                     <>
                       <div className="mb-2">Account Recovery Required</div>
                       <div className="mb-2 text-gray-300">

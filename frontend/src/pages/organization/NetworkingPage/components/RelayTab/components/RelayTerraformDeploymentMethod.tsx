@@ -204,13 +204,13 @@ provider "aws" {
   region = "${awsRegion}"
 }
 
-# Security Group for the Infisical Relay instance
+# Security Group for the Hanzo KMS Relay instance
 resource "aws_security_group" "infisical_relay_sg" {
   name        = "${name}-relay-sg"
-  description = "Allows inbound traffic for Infisical Relay and SSH"
+  description = "Allows inbound traffic for Hanzo KMS Relay and SSH"
   vpc_id      = "${vpcId}"
 
-  # Inbound: Allows the Infisical platform to securely communicate with the Relay server.
+  # Inbound: Allows the Hanzo KMS platform to securely communicate with the Relay server.
   ingress {
     from_port   = 8443
     to_port     = 8443
@@ -218,7 +218,7 @@ resource "aws_security_group" "infisical_relay_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Inbound: Allows Infisical Gateway to securely communicate via the Relay.
+  # Inbound: Allows Hanzo KMS Gateway to securely communicate via the Relay.
   ingress {
     from_port   = 2222
     to_port     = 2222
@@ -234,7 +234,7 @@ resource "aws_security_group" "infisical_relay_sg" {
     cidr_blocks = ["0.0.0.0/0"] # Restrict this to your IP in production
   }
 
-  # Outbound: Allows the Relay server to make necessary outbound connections to the Infisical platform.
+  # Outbound: Allows the Relay server to make necessary outbound connections to the Hanzo KMS platform.
   egress {
     from_port   = 0
     to_port     = 0
@@ -254,7 +254,7 @@ resource "aws_eip" "infisical_relay_eip" {
   }
 }
 
-# EC2 instance to run Infisical Relay
+# EC2 instance to run Hanzo KMS Relay
 module "infisical_relay_instance" {
   source  = "terraform-aws-modules/ec2-instance/aws"
   version = "~> 5.6"
@@ -270,7 +270,7 @@ module "infisical_relay_instance" {
   user_data = <<-EOT
     #!/bin/bash
     set -e
-    # Install Infisical CLI
+    # Install Hanzo KMS CLI
     curl -1sLf 'https://artifacts-cli.infisical.com/setup.deb.sh' | bash
     apt-get update && apt-get install -y infisical
 

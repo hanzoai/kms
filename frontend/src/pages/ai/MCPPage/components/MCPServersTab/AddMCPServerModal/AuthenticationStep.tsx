@@ -274,7 +274,7 @@ export const AuthenticationStep = ({ onOAuthSuccess }: Props) => {
               isRequired
               isError={Boolean(error)}
               errorText={error?.message}
-              helperText="This credential will be securely stored in Infisical"
+              helperText="This credential will be securely stored in Hanzo KMS"
             >
               <Input {...field} type="password" placeholder="Enter bearer token" />
             </FormControl>
@@ -307,7 +307,7 @@ export const AuthenticationStep = ({ onOAuthSuccess }: Props) => {
                 isRequired
                 isError={Boolean(error)}
                 errorText={error?.message}
-                helperText="This credential will be securely stored in Infisical"
+                helperText="This credential will be securely stored in Hanzo KMS"
               >
                 <Input {...field} type="password" placeholder="Enter password" />
               </FormControl>

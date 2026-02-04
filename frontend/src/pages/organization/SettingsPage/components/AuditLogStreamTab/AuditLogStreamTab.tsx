@@ -47,7 +47,7 @@ export const AuditLogStreamsTab = withPermission(
           </OrgPermissionCan>
         </div>
         <p className="mb-8 text-gray-400">
-          Send audit logs from Infisical to external logging providers via HTTP
+          Send audit logs from Hanzo KMS to external logging providers via HTTP
         </p>
         <AuditLogStreamTable />
         <AddAuditLogStreamModal
@@ -57,7 +57,7 @@ export const AuditLogStreamsTab = withPermission(
         <UpgradePlanModal
           isOpen={popUp.upgradePlan.isOpen}
           onOpenChange={(isOpen) => handlePopUpToggle("upgradePlan", isOpen)}
-          text="Your current plan does not include access to audit log streams. To unlock this feature, please upgrade to Infisical Enterprise plan."
+          text="Your current plan does not include access to audit log streams. To unlock this feature, please upgrade to Hanzo KMS Enterprise plan."
           isEnterpriseFeature={popUp.upgradePlan.data?.isEnterpriseFeature}
         />
       </div>

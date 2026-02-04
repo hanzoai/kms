@@ -85,7 +85,7 @@ const BackupConfirmationModal = ({
       <ModalContent title="Create KMS backup">
         <p className="mb-6 text-bunker-300">
           In case of interruptions with your configured external KMS, you can load a backup to set
-          the project&apos;s KMS back to the default Infisical KMS.
+          the project&apos;s KMS back to the default Hanzo KMS.
         </p>
         <Button onClick={downloadKmsBackup} isLoading={isGeneratingBackup}>
           Generate
@@ -173,7 +173,7 @@ const LoadBackupModal = ({
     >
       <ModalContent title="Load KMS backup">
         <p className="mb-6 text-bunker-300">
-          By loading a backup, the project&apos;s KMS will be switched to the default Infisical KMS.
+          By loading a backup, the project&apos;s KMS will be switched to the default Hanzo KMS.
         </p>
         <div className="flex justify-center">
           <input
@@ -292,7 +292,7 @@ export const EncryptionTab = () => {
                       className="w-3/4 bg-mineshaft-600"
                     >
                       <SelectItem value={INTERNAL_KMS_KEY_ID} key="kms-internal">
-                        Default Infisical KMS
+                        Default Hanzo KMS
                       </SelectItem>
                       {externalKmsList?.map((kms) => (
                         <SelectItem value={kms.id} key={`kms-${kms.id}`}>

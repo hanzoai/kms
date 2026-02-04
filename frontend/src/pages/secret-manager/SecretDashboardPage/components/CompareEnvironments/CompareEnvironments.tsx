@@ -316,7 +316,7 @@ export const CompareEnvironments = ({ secretPath }: Props) => {
             <div className="flex h-full flex-col items-center justify-center">
               <Lottie
                 isAutoPlay
-                icon="infisical_loading"
+                icon="hanzo_loading"
                 className="h-10 place-self-center self-center"
               />
             </div>
