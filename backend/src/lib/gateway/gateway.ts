@@ -1,7 +1,7 @@
 /* eslint-disable no-await-in-loop */
 import net from "node:net";
 
-import quicDefault, * as quicModule from "@hanzo/kms-quic";
+import quicDefault, * as quicModule from "@infisical/quic";
 import axios from "axios";
 import https from "https";
 

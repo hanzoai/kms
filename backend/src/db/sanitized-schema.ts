@@ -54,7 +54,7 @@ const validateGeneratedSQL = (sql: string): void => {
 
 export const createSanitizedSchema = async ({ db, logger }: TArgs): Promise<void> => {
   // eslint-disable-next-line import/no-extraneous-dependencies, @typescript-eslint/no-unsafe-assignment
-  const { loadConfig, generateSQL } = await import("@hanzo/kms-pg-view-generator");
+  const { loadConfig, generateSQL } = await import("@infisical/pg-view-generator");
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const config = await loadConfig(path.join(__dirname, "sanitized-schema.yaml"));
@@ -83,7 +83,7 @@ export const grantSanitizedSchemaAccess = async ({ db, logger, role }: TGrantArg
   }
 
   // eslint-disable-next-line import/no-extraneous-dependencies, @typescript-eslint/no-unsafe-assignment
-  const { generateGrantReadAccessSQL } = await import("@hanzo/kms-pg-view-generator");
+  const { generateGrantReadAccessSQL } = await import("@infisical/pg-view-generator");
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const sql = generateGrantReadAccessSQL(SANITIZED_SCHEMA, role);
