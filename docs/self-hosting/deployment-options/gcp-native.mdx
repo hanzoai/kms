@@ -1,9 +1,9 @@
 ---
 title: "GCP (GKE with Cloud SQL & Memorystore)"
-description: "Deploy Infisical securely on Google Cloud Platform using GKE, Cloud SQL, and Memorystore."
+description: "Deploy Hanzo KMS securely on Google Cloud Platform using GKE, Cloud SQL, and Memorystore."
 ---
 
-Learn how to deploy **Infisical** on Google Cloud Platform using **Google Kubernetes Engine (GKE)** for container orchestration. This guide covers setting up Infisical in a production-ready GCP environment using **Cloud SQL** (PostgreSQL) for the database, **Memorystore** (Redis) for caching, and **Google Cloud Load Balancing** for routing traffic.
+Learn how to deploy **Hanzo KMS** on Google Cloud Platform using **Google Kubernetes Engine (GKE)** for container orchestration. This guide covers setting up Hanzo KMS in a production-ready GCP environment using **Cloud SQL** (PostgreSQL) for the database, **Memorystore** (Redis) for caching, and **Google Cloud Load Balancing** for routing traffic.
 
 ## Prerequisites
 
@@ -11,8 +11,8 @@ Learn how to deploy **Infisical** on Google Cloud Platform using **Google Kubern
 - Basic knowledge of GCP networking (VPC, subnets, firewall rules) and Kubernetes concepts
 - [gcloud CLI](https://cloud.google.com/sdk/docs/install) installed and configured
 - [kubectl](https://kubernetes.io/docs/tasks/tools/) installed for interacting with your GKE cluster
-- [Helm](https://helm.sh/docs/intro/install/) installed (version 3.x) for deploying the Infisical Helm chart
-- An Infisical Docker image tag from [Docker Hub](https://hub.docker.com/r/infisical/infisical/tags)
+- [Helm](https://helm.sh/docs/intro/install/) installed (version 3.x) for deploying the Hanzo KMS Helm chart
+- An Hanzo KMS Docker image tag from [Docker Hub](https://hub.docker.com/r/ghcr.io/hanzoai/kms/tags)
 
 <Warning>
   Do not use the `latest` tag in production. Always pin to a specific version to avoid unexpected changes during upgrades.
@@ -20,7 +20,7 @@ Learn how to deploy **Infisical** on Google Cloud Platform using **Google Kubern
 
 ## System Requirements
 
-The following are minimum requirements for running Infisical on GCP GKE:
+The following are minimum requirements for running Hanzo KMS on GCP GKE:
 
 | Component | Minimum | Recommended (Production) |
 |-----------|---------|--------------------------|
@@ -28,8 +28,8 @@ The following are minimum requirements for running Infisical on GCP GKE:
 | GKE Nodes per Zone | 1 | 2+ |
 | Cloud SQL Instance | db-f1-micro | db-n1-standard-2 or larger |
 | Memorystore Capacity | 1 GB | 2 GB or larger |
-| Infisical Pod Memory | 512 MB | 1 GB |
-| Infisical Pod CPU | 500m | 1000m |
+| Hanzo KMS Pod Memory | 512 MB | 1 GB |
+| Hanzo KMS Pod CPU | 500m | 1000m |
 
 For production deployments with many users or secrets, increase these values accordingly.
 
@@ -37,7 +37,7 @@ For production deployments with many users or secrets, increase these values acc
 
 <Steps>
 <Step title="Set up network infrastructure (VPC, subnets, firewall rules)">
-  Create a VPC network for hosting Infisical:
+  Create a VPC network for hosting Hanzo KMS:
 
   **VPC & Subnets:**
   - Create a **VPC-native network** that will host your GKE cluster, Cloud SQL instance, and Memorystore instance
@@ -49,11 +49,11 @@ For production deployments with many users or secrets, increase these values acc
 
   ```bash
   # Create VPC
-  gcloud compute networks create infisical-vpc --subnet-mode=custom
+  gcloud compute networks create kms-vpc --subnet-mode=custom
 
   # Create subnet with secondary ranges
-  gcloud compute networks subnets create infisical-subnet \
-    --network=infisical-vpc \
+  gcloud compute networks subnets create kms-subnet \
+    --network=kms-vpc \
     --region=us-central1 \
     --range=10.0.0.0/20 \
     --secondary-range=pods=10.4.0.0/14,services=10.8.0.0/20
@@ -64,13 +64,13 @@ For production deployments with many users or secrets, increase these values acc
 
   ```bash
   # Create Cloud Router
-  gcloud compute routers create infisical-router \
-    --network=infisical-vpc \
+  gcloud compute routers create kms-router \
+    --network=kms-vpc \
     --region=us-central1
 
   # Create Cloud NAT
-  gcloud compute routers nats create infisical-nat \
-    --router=infisical-router \
+  gcloud compute routers nats create kms-nat \
+    --router=kms-router \
     --region=us-central1 \
     --nat-all-subnet-ip-ranges \
     --auto-allocate-nat-external-ips
@@ -88,16 +88,16 @@ For production deployments with many users or secrets, increase these values acc
   ```bash
   # Allow health check traffic
   gcloud compute firewall-rules create allow-health-checks \
-    --network=infisical-vpc \
+    --network=kms-vpc \
     --allow=tcp:8080 \
     --source-ranges=130.211.0.0/22,35.191.0.0/16 \
-    --target-tags=gke-infisical
+    --target-tags=gke-kms
   ```
 
   **Enable Private Google Access:**
 
   ```bash
-  gcloud compute networks subnets update infisical-subnet \
+  gcloud compute networks subnets update kms-subnet \
     --region=us-central1 \
     --enable-private-ip-google-access
   ```
@@ -105,25 +105,25 @@ For production deployments with many users or secrets, increase these values acc
   **Verify:** Confirm your network infrastructure is created:
   ```bash
   # Verify VPC and subnet
-  gcloud compute networks describe infisical-vpc
-  gcloud compute networks subnets describe infisical-subnet --region=us-central1
+  gcloud compute networks describe kms-vpc
+  gcloud compute networks subnets describe kms-subnet --region=us-central1
 
   # Verify NAT gateway
-  gcloud compute routers nats describe infisical-nat --router=infisical-router --region=us-central1
+  gcloud compute routers nats describe kms-nat --router=kms-router --region=us-central1
   ```
 </Step>
 
 <Step title="Provision Google Kubernetes Engine (GKE) cluster">
-  Create a GKE cluster to host your Infisical deployment:
+  Create a GKE cluster to host your Hanzo KMS deployment:
 
   ```bash
-  gcloud container clusters create infisical-cluster \
+  gcloud container clusters create kms-cluster \
     --region us-central1 \
     --machine-type n2-standard-2 \
     --num-nodes 1 \
     --enable-ip-alias \
-    --network infisical-vpc \
-    --subnetwork infisical-subnet \
+    --network kms-vpc \
+    --subnetwork kms-subnet \
     --cluster-secondary-range-name pods \
     --services-secondary-range-name services \
     --enable-private-nodes \
@@ -143,7 +143,7 @@ For production deployments with many users or secrets, increase these values acc
   **Connect to the cluster:**
 
   ```bash
-  gcloud container clusters get-credentials infisical-cluster --region us-central1
+  gcloud container clusters get-credentials kms-cluster --region us-central1
   ```
 
   **Verify:** Confirm cluster is ready:
@@ -163,7 +163,7 @@ For production deployments with many users or secrets, increase these values acc
 </Step>
 
 <Step title="Provision Cloud SQL for PostgreSQL">
-  Set up the PostgreSQL database for Infisical:
+  Set up the PostgreSQL database for Hanzo KMS:
 
   ```bash
   # Enable required APIs
@@ -171,24 +171,24 @@ For production deployments with many users or secrets, increase these values acc
   gcloud services enable servicenetworking.googleapis.com
 
   # Allocate IP range for private services
-  gcloud compute addresses create google-managed-services-infisical-vpc \
+  gcloud compute addresses create google-managed-services-kms-vpc \
     --global \
     --purpose=VPC_PEERING \
     --prefix-length=16 \
-    --network=infisical-vpc
+    --network=kms-vpc
 
   # Create private connection
   gcloud services vpc-peerings connect \
     --service=servicenetworking.googleapis.com \
-    --ranges=google-managed-services-infisical-vpc \
-    --network=infisical-vpc
+    --ranges=google-managed-services-kms-vpc \
+    --network=kms-vpc
 
   # Create Cloud SQL instance
-  gcloud sql instances create infisical-db \
+  gcloud sql instances create kms-db \
     --database-version=POSTGRES_15 \
     --tier=db-n1-standard-2 \
     --region=us-central1 \
-    --network=infisical-vpc \
+    --network=kms-vpc \
     --no-assign-ip \
     --availability-type=REGIONAL \
     --storage-type=SSD \
@@ -204,45 +204,45 @@ For production deployments with many users or secrets, increase these values acc
   ```bash
   # Set root password
   gcloud sql users set-password postgres \
-    --instance=infisical-db \
+    --instance=kms-db \
     --password=<your-secure-password>
 
   # Create database
-  gcloud sql databases create infisical --instance=infisical-db
+  gcloud sql databases create kms --instance=kms-db
 
   # Create user
-  gcloud sql users create infisical_user \
-    --instance=infisical-db \
+  gcloud sql users create kms_user \
+    --instance=kms-db \
     --password=<your-secure-password>
   ```
 
   **Verify:** Confirm Cloud SQL is ready:
   ```bash
   # Check instance status
-  gcloud sql instances describe infisical-db --format="value(state)"
+  gcloud sql instances describe kms-db --format="value(state)"
 
   # Get private IP address
-  gcloud sql instances describe infisical-db --format="value(ipAddresses[0].ipAddress)"
+  gcloud sql instances describe kms-db --format="value(ipAddresses[0].ipAddress)"
   ```
 
   Note the **private IP address** for your connection string:
   ```
-  postgresql://infisical_user:<password>@<private-ip>:5432/infisical
+  postgresql://kms_user:<password>@<private-ip>:5432/kms
   ```
 </Step>
 
 <Step title="Provision Memorystore for Redis">
-  Set up Redis caching for Infisical:
+  Set up Redis caching for Hanzo KMS:
 
   ```bash
   # Enable Memorystore API
   gcloud services enable redis.googleapis.com
 
   # Create Memorystore instance
-  gcloud redis instances create infisical-redis \
+  gcloud redis instances create kms-redis \
     --size=1 \
     --region=us-central1 \
-    --network=infisical-vpc \
+    --network=kms-vpc \
     --tier=STANDARD_HA \
     --redis-version=redis_7_0
   ```
@@ -250,10 +250,10 @@ For production deployments with many users or secrets, increase these values acc
   **Verify:** Confirm Memorystore is ready:
   ```bash
   # Check instance status
-  gcloud redis instances describe infisical-redis --region=us-central1 --format="value(state)"
+  gcloud redis instances describe kms-redis --region=us-central1 --format="value(state)"
 
   # Get host IP
-  gcloud redis instances describe infisical-redis --region=us-central1 --format="value(host)"
+  gcloud redis instances describe kms-redis --region=us-central1 --format="value(host)"
   ```
 
   Note the **host IP** for your connection string:
@@ -266,7 +266,7 @@ For production deployments with many users or secrets, increase these values acc
   </Warning>
 </Step>
 
-<Step title="Securely store Infisical secrets and configuration">
+<Step title="Securely store Hanzo KMS secrets and configuration">
   Generate and store the required secrets:
 
   **Generate secrets:**
@@ -291,36 +291,36 @@ For production deployments with many users or secrets, increase these values acc
       gcloud services enable secretmanager.googleapis.com
 
       # Store each secret
-      echo -n "$ENCRYPTION_KEY" | gcloud secrets create infisical-encryption-key --data-file=-
-      echo -n "$AUTH_SECRET" | gcloud secrets create infisical-auth-secret --data-file=-
-      echo -n "postgresql://infisical_user:<password>@<cloud-sql-ip>:5432/infisical" | gcloud secrets create infisical-db-uri --data-file=-
-      echo -n "redis://<memorystore-ip>:6379" | gcloud secrets create infisical-redis-url --data-file=-
+      echo -n "$ENCRYPTION_KEY" | gcloud secrets create kms-encryption-key --data-file=-
+      echo -n "$AUTH_SECRET" | gcloud secrets create kms-auth-secret --data-file=-
+      echo -n "postgresql://kms_user:<password>@<cloud-sql-ip>:5432/kms" | gcloud secrets create kms-db-uri --data-file=-
+      echo -n "redis://<memorystore-ip>:6379" | gcloud secrets create kms-redis-url --data-file=-
       ```
 
       **Verify:** Confirm secrets are stored:
       ```bash
-      gcloud secrets list --filter="name:infisical"
+      gcloud secrets list --filter="name:kms"
       ```
     </Tab>
 
     <Tab title="Kubernetes Secrets">
       ```bash
       # Create namespace
-      kubectl create namespace infisical
+      kubectl create namespace kms
 
       # Create the secret
-      kubectl create secret generic infisical-secrets \
+      kubectl create secret generic kms-secrets \
         --from-literal=ENCRYPTION_KEY="$ENCRYPTION_KEY" \
         --from-literal=AUTH_SECRET="$AUTH_SECRET" \
-        --from-literal=DB_CONNECTION_URI="postgresql://infisical_user:<password>@<cloud-sql-ip>:5432/infisical" \
+        --from-literal=DB_CONNECTION_URI="postgresql://kms_user:<password>@<cloud-sql-ip>:5432/kms" \
         --from-literal=REDIS_URL="redis://<memorystore-ip>:6379" \
-        --from-literal=SITE_URL="https://infisical.example.com" \
-        -n infisical
+        --from-literal=SITE_URL="https://kms.example.com" \
+        -n kms
       ```
 
       **Verify:** Confirm secret is created:
       ```bash
-      kubectl get secrets -n infisical
+      kubectl get secrets -n kms
       ```
     </Tab>
   </Tabs>
@@ -329,45 +329,45 @@ For production deployments with many users or secrets, increase these values acc
 
   ```bash
   # Create Google Cloud IAM service account
-  gcloud iam service-accounts create infisical-gsa \
-    --display-name="Infisical GKE Service Account"
+  gcloud iam service-accounts create kms-gsa \
+    --display-name="Hanzo KMS GKE Service Account"
 
   # Grant access to secrets
-  for secret in infisical-encryption-key infisical-auth-secret infisical-db-uri infisical-redis-url; do
+  for secret in kms-encryption-key kms-auth-secret kms-db-uri kms-redis-url; do
     gcloud secrets add-iam-policy-binding $secret \
-      --member="serviceAccount:infisical-gsa@<YOUR_PROJECT_ID>.iam.gserviceaccount.com" \
+      --member="serviceAccount:kms-gsa@<YOUR_PROJECT_ID>.iam.gserviceaccount.com" \
       --role="roles/secretmanager.secretAccessor"
   done
 
   # Bind to Kubernetes service account
   gcloud iam service-accounts add-iam-policy-binding \
-    infisical-gsa@<YOUR_PROJECT_ID>.iam.gserviceaccount.com \
+    kms-gsa@<YOUR_PROJECT_ID>.iam.gserviceaccount.com \
     --role roles/iam.workloadIdentityUser \
-    --member "serviceAccount:<YOUR_PROJECT_ID>.svc.id.goog[infisical/infisical]"
+    --member "serviceAccount:<YOUR_PROJECT_ID>.svc.id.goog[ghcr.io/hanzoai/kms]"
   ```
 </Step>
 
-<Step title="Deploy Infisical using Helm">
-  Deploy Infisical to your GKE cluster using the official Helm chart:
+<Step title="Deploy Hanzo KMS using Helm">
+  Deploy Hanzo KMS to your GKE cluster using the official Helm chart:
 
-  **Add the Infisical Helm Repository:**
+  **Add the Hanzo KMS Helm Repository:**
 
   ```bash
-  helm repo add infisical-helm-charts https://dl.cloudsmith.io/public/infisical/helm-charts/helm/charts/
+  helm repo add kms-helm-charts https://dl.cloudsmith.io/public/hanzoai/kms-helm-charts/helm/charts/
   helm repo update
   ```
 
   **Create a Helm Values File:**
 
-  Create a file named `infisical-values.yaml`:
+  Create a file named `kms-values.yaml`:
 
   ```yaml
-  # infisical-values.yaml
+  # kms-values.yaml
 
   replicaCount: 2
 
   image:
-    repository: infisical/infisical
+    repository: ghcr.io/hanzoai/kms
     tag: "v0.46.2-postgres"  # Use a specific version
     pullPolicy: IfNotPresent
 
@@ -380,17 +380,17 @@ For production deployments with many users or secrets, increase these values acc
     className: "gce"
     annotations:
       kubernetes.io/ingress.class: "gce"
-      kubernetes.io/ingress.global-static-ip-name: "infisical-ip"
-      networking.gke.io/managed-certificates: "infisical-cert"
+      kubernetes.io/ingress.global-static-ip-name: "kms-ip"
+      networking.gke.io/managed-certificates: "kms-cert"
     hosts:
-      - host: infisical.example.com
+      - host: kms.example.com
         paths:
           - path: /
             pathType: Prefix
 
   env:
     - name: SITE_URL
-      value: "https://infisical.example.com"
+      value: "https://kms.example.com"
     - name: HOST
       value: "0.0.0.0"
     - name: PORT
@@ -398,7 +398,7 @@ For production deployments with many users or secrets, increase these values acc
 
   envFrom:
     - secretRef:
-        name: infisical-secrets
+        name: kms-secrets
 
   resources:
     requests:
@@ -434,9 +434,9 @@ For production deployments with many users or secrets, increase these values acc
 
   serviceAccount:
     create: true
-    name: infisical
+    name: kms
     annotations:
-      iam.gke.io/gcp-service-account: infisical-gsa@<YOUR_PROJECT_ID>.iam.gserviceaccount.com
+      iam.gke.io/gcp-service-account: kms-gsa@<YOUR_PROJECT_ID>.iam.gserviceaccount.com
 
   podSecurityContext:
     fsGroup: 1000
@@ -453,46 +453,46 @@ For production deployments with many users or secrets, increase these values acc
                 - key: app.kubernetes.io/name
                   operator: In
                   values:
-                    - infisical
+                    - kms
             topologyKey: topology.kubernetes.io/zone
   ```
 
   **Reserve a Static IP Address:**
 
   ```bash
-  gcloud compute addresses create infisical-ip --global
-  gcloud compute addresses describe infisical-ip --global --format="value(address)"
+  gcloud compute addresses create kms-ip --global
+  gcloud compute addresses describe kms-ip --global --format="value(address)"
   ```
 
-  **Deploy Infisical:**
+  **Deploy Hanzo KMS:**
 
   ```bash
-  helm install infisical infisical-helm-charts/infisical \
-    --namespace infisical \
+  helm install kms kms-helm-charts/kms \
+    --namespace kms \
     --create-namespace \
-    --values infisical-values.yaml
+    --values kms-values.yaml
   ```
 
   **Verify:** Confirm deployment is successful:
   ```bash
   # Check pods are running
-  kubectl get pods -n infisical
+  kubectl get pods -n kms
 
   # Check service
-  kubectl get svc -n infisical
+  kubectl get svc -n kms
 
   # Check ingress
-  kubectl get ingress -n infisical
+  kubectl get ingress -n kms
 
   # Check pod logs
-  kubectl logs -l app.kubernetes.io/name=infisical -n infisical --tail=50
+  kubectl logs -l app.kubernetes.io/name=kms -n kms --tail=50
   ```
 
   Wait for all pods to be in `Running` state.
 </Step>
 
 <Step title="Configure HTTPS access with SSL/TLS">
-  Secure your Infisical deployment with HTTPS:
+  Secure your Hanzo KMS deployment with HTTPS:
 
   <Tabs>
     <Tab title="Google-Managed Certificates (Recommended)">
@@ -503,11 +503,11 @@ For production deployments with many users or secrets, increase these values acc
       apiVersion: networking.gke.io/v1
       kind: ManagedCertificate
       metadata:
-        name: infisical-cert
-        namespace: infisical
+        name: kms-cert
+        namespace: kms
       spec:
         domains:
-          - infisical.example.com
+          - kms.example.com
       ```
 
       ```bash
@@ -516,11 +516,11 @@ For production deployments with many users or secrets, increase these values acc
 
       **Update DNS:**
 
-      Create an **A record** in your DNS provider pointing `infisical.example.com` to the static IP address.
+      Create an **A record** in your DNS provider pointing `kms.example.com` to the static IP address.
 
       **Verify:** Check certificate status:
       ```bash
-      kubectl describe managedcertificate infisical-cert -n infisical
+      kubectl describe managedcertificate kms-cert -n kms
       ```
 
       Certificate provisioning can take 15-60 minutes.
@@ -575,7 +575,7 @@ For production deployments with many users or secrets, increase these values acc
   kind: FrontendConfig
   metadata:
     name: ssl-redirect
-    namespace: infisical
+    namespace: kms
   spec:
     redirectToHttps:
       enabled: true
@@ -593,115 +593,115 @@ For production deployments with many users or secrets, increase these values acc
 
   **Verify:** Test HTTPS access:
   ```bash
-  curl -I https://infisical.example.com/api/status
+  curl -I https://kms.example.com/api/status
   ```
 </Step>
 </Steps>
 
-After completing the above steps, your Infisical instance should be up and running on GCP. You can now proceed with creating an admin account and configuring additional features.
+After completing the above steps, your Hanzo KMS instance should be up and running on GCP. You can now proceed with creating an admin account and configuring additional features.
 
 ## Additional Configuration
 
 <AccordionGroup>
   <Accordion title="SMTP/Email Configuration">
-    Configure email sending for Infisical notifications and invitations:
+    Configure email sending for Hanzo KMS notifications and invitations:
 
     **Using SendGrid:**
     ```bash
-    kubectl create secret generic infisical-smtp \
+    kubectl create secret generic kms-smtp \
       --from-literal=SMTP_HOST="smtp.sendgrid.net" \
       --from-literal=SMTP_PORT="587" \
       --from-literal=SMTP_USERNAME="apikey" \
       --from-literal=SMTP_PASSWORD="<your-sendgrid-api-key>" \
       --from-literal=SMTP_FROM_ADDRESS="noreply@example.com" \
-      --from-literal=SMTP_FROM_NAME="Infisical" \
-      -n infisical
+      --from-literal=SMTP_FROM_NAME="Hanzo KMS" \
+      -n kms
     ```
 
     **Using Gmail:**
     ```bash
-    kubectl create secret generic infisical-smtp \
+    kubectl create secret generic kms-smtp \
       --from-literal=SMTP_HOST="smtp.gmail.com" \
       --from-literal=SMTP_PORT="587" \
       --from-literal=SMTP_USERNAME="your-email@gmail.com" \
       --from-literal=SMTP_PASSWORD="<app-password>" \
       --from-literal=SMTP_FROM_ADDRESS="your-email@gmail.com" \
-      --from-literal=SMTP_FROM_NAME="Infisical" \
-      -n infisical
+      --from-literal=SMTP_FROM_NAME="Hanzo KMS" \
+      -n kms
     ```
 
     Update your Helm values to include the SMTP secret:
     ```yaml
     envFrom:
       - secretRef:
-          name: infisical-secrets
+          name: kms-secrets
       - secretRef:
-          name: infisical-smtp
+          name: kms-smtp
     ```
 
     Upgrade the deployment:
     ```bash
-    helm upgrade infisical infisical-helm-charts/infisical \
-      --namespace infisical \
-      --values infisical-values.yaml
+    helm upgrade kms kms-helm-charts/kms \
+      --namespace kms \
+      --values kms-values.yaml
     ```
 
     **Verify:** Check logs for SMTP configuration:
     ```bash
-    kubectl logs -l app.kubernetes.io/name=infisical -n infisical | grep -i smtp
+    kubectl logs -l app.kubernetes.io/name=kms -n kms | grep -i smtp
     ```
   </Accordion>
 
   <Accordion title="Debugging with kubectl exec">
     Access running containers for debugging:
 
-    **Exec into an Infisical pod:**
+    **Exec into an Hanzo KMS pod:**
     ```bash
     # Get pod name
-    kubectl get pods -n infisical
+    kubectl get pods -n kms
 
     # Exec into the pod
-    kubectl exec -it <pod-name> -n infisical -- /bin/sh
+    kubectl exec -it <pod-name> -n kms -- /bin/sh
     ```
 
     **Common debugging commands:**
     ```bash
     # Check environment variables
-    kubectl exec -it <pod-name> -n infisical -- env | grep -E "(DB_|REDIS_|SITE_)"
+    kubectl exec -it <pod-name> -n kms -- env | grep -E "(DB_|REDIS_|SITE_)"
 
     # Test database connectivity
-    kubectl exec -it <pod-name> -n infisical -- nc -zv <cloud-sql-ip> 5432
+    kubectl exec -it <pod-name> -n kms -- nc -zv <cloud-sql-ip> 5432
 
     # Test Redis connectivity
-    kubectl exec -it <pod-name> -n infisical -- nc -zv <memorystore-ip> 6379
+    kubectl exec -it <pod-name> -n kms -- nc -zv <memorystore-ip> 6379
 
     # View application logs
-    kubectl logs <pod-name> -n infisical --tail=100 -f
+    kubectl logs <pod-name> -n kms --tail=100 -f
     ```
 
     **Run a debug pod:**
     ```bash
-    kubectl run debug-pod --rm -it --image=busybox -n infisical -- /bin/sh
+    kubectl run debug-pod --rm -it --image=busybox -n kms -- /bin/sh
     ```
   </Accordion>
 
   <Accordion title="Database Migrations">
-    Infisical automatically runs database migrations on startup. To manually manage migrations:
+    Hanzo KMS automatically runs database migrations on startup. To manually manage migrations:
 
     **Check migration status:**
     ```bash
-    kubectl logs -l app.kubernetes.io/name=infisical -n infisical | grep -i migration
+    kubectl logs -l app.kubernetes.io/name=kms -n kms | grep -i migration
     ```
 
     **Run migrations manually:**
     ```bash
     # Exec into a pod and run migrations
-    kubectl exec -it <pod-name> -n infisical -- npm run migration:latest
+    kubectl exec -it <pod-name> -n kms -- npm run migration:latest
     ```
 
     **Rollback migrations (if needed):**
     ```bash
-    kubectl exec -it <pod-name> -n infisical -- npm run migration:rollback
+    kubectl exec -it <pod-name> -n kms -- npm run migration:rollback
     ```
 
     <Warning>
@@ -714,14 +714,14 @@ After completing the above steps, your Infisical instance should be up and runni
 
     Cloud SQL automated backups are enabled by default. To create a manual backup:
     ```bash
-    gcloud sql backups create --instance=infisical-db
+    gcloud sql backups create --instance=kms-db
     ```
 
     To restore from a backup:
     ```bash
     gcloud sql backups restore <backup-id> \
-      --restore-instance=infisical-db \
-      --backup-instance=infisical-db
+      --restore-instance=kms-db \
+      --backup-instance=kms-db
     ```
 
     **Encryption Key Backup:**
@@ -733,14 +733,14 @@ After completing the above steps, your Infisical instance should be up and runni
 
     **Export secrets for backup:**
     ```bash
-    gcloud secrets versions access latest --secret=infisical-encryption-key > encryption-key-backup.txt
+    gcloud secrets versions access latest --secret=kms-encryption-key > encryption-key-backup.txt
     # Encrypt and store this file securely offline
     ```
   </Accordion>
 
   <Accordion title="Upgrade Instructions">
     **Pre-upgrade checklist:**
-    1. Review Infisical release notes for breaking changes
+    1. Review Hanzo KMS release notes for breaking changes
     2. Backup your database
     3. Verify your `ENCRYPTION_KEY` is backed up
 
@@ -750,45 +750,45 @@ After completing the above steps, your Infisical instance should be up and runni
     helm repo update
 
     # Update image tag in values file
-    # Edit infisical-values.yaml: image.tag: "v0.X.X"
+    # Edit kms-values.yaml: image.tag: "v0.X.X"
 
     # Upgrade deployment
-    helm upgrade infisical infisical-helm-charts/infisical \
-      --namespace infisical \
-      --values infisical-values.yaml
+    helm upgrade kms kms-helm-charts/kms \
+      --namespace kms \
+      --values kms-values.yaml
 
     # Monitor rollout
-    kubectl rollout status deployment/infisical -n infisical
+    kubectl rollout status deployment/kms -n kms
     ```
 
     **Rollback if needed:**
     ```bash
-    helm rollback infisical -n infisical
+    helm rollback kms -n kms
     ```
   </Accordion>
 
   <Accordion title="Monitoring & Telemetry">
     **Google Cloud Logging:**
 
-    View Infisical logs in Cloud Logging:
+    View Hanzo KMS logs in Cloud Logging:
     - Navigate to **Logging > Logs Explorer** in the GCP Console
-    - Filter: `resource.type="k8s_container" resource.labels.namespace_name="infisical"`
+    - Filter: `resource.type="k8s_container" resource.labels.namespace_name="kms"`
 
     **Set up Cloud Monitoring alerts:**
     ```bash
     # Create alert for high CPU usage
     gcloud alpha monitoring policies create \
       --notification-channels=<channel-id> \
-      --display-name="Infisical High CPU" \
+      --display-name="Hanzo KMS High CPU" \
       --condition-display-name="Pod CPU > 80%" \
       --condition-threshold-value=0.8 \
       --condition-threshold-duration=300s \
-      --condition-filter='resource.type="k8s_pod" AND resource.labels.namespace_name="infisical"'
+      --condition-filter='resource.type="k8s_pod" AND resource.labels.namespace_name="kms"'
     ```
 
     **Uptime checks:**
     - Navigate to **Monitoring > Uptime checks** in the GCP Console
-    - Create a check for `https://infisical.example.com/api/status`
+    - Create a check for `https://kms.example.com/api/status`
     - Set check frequency (e.g., every 1 minute)
 
     **Enable OpenTelemetry:**
@@ -806,15 +806,15 @@ After completing the above steps, your Infisical instance should be up and runni
 
     The HPA is configured in the Helm values. To verify:
     ```bash
-    kubectl get hpa -n infisical
-    kubectl describe hpa infisical -n infisical
+    kubectl get hpa -n kms
+    kubectl describe hpa kms -n kms
     ```
 
     **GKE Cluster Autoscaler:**
 
     Already enabled during cluster creation. To verify:
     ```bash
-    gcloud container clusters describe infisical-cluster \
+    gcloud container clusters describe kms-cluster \
       --region=us-central1 \
       --format="value(autoscaling)"
     ```
@@ -831,46 +831,46 @@ After completing the above steps, your Infisical instance should be up and runni
   </Accordion>
 
   <Accordion title="Clean Up / Delete Resources">
-    To completely remove Infisical and associated resources:
+    To completely remove Hanzo KMS and associated resources:
 
     **Delete Helm release:**
     ```bash
-    helm uninstall infisical -n infisical
-    kubectl delete namespace infisical
+    helm uninstall kms -n kms
+    kubectl delete namespace kms
     ```
 
     **Delete GCP resources:**
     ```bash
     # Delete Memorystore
-    gcloud redis instances delete infisical-redis --region=us-central1
+    gcloud redis instances delete kms-redis --region=us-central1
 
     # Delete Cloud SQL (WARNING: This deletes all data!)
-    gcloud sql instances delete infisical-db
+    gcloud sql instances delete kms-db
 
     # Delete GKE cluster
-    gcloud container clusters delete infisical-cluster --region=us-central1
+    gcloud container clusters delete kms-cluster --region=us-central1
 
     # Delete static IP
-    gcloud compute addresses delete infisical-ip --global
+    gcloud compute addresses delete kms-ip --global
 
     # Delete NAT and router
-    gcloud compute routers nats delete infisical-nat --router=infisical-router --region=us-central1
-    gcloud compute routers delete infisical-router --region=us-central1
+    gcloud compute routers nats delete kms-nat --router=kms-router --region=us-central1
+    gcloud compute routers delete kms-router --region=us-central1
 
     # Delete firewall rules
     gcloud compute firewall-rules delete allow-health-checks
 
     # Delete VPC (after all resources are removed)
-    gcloud compute networks subnets delete infisical-subnet --region=us-central1
-    gcloud compute networks delete infisical-vpc
+    gcloud compute networks subnets delete kms-subnet --region=us-central1
+    gcloud compute networks delete kms-vpc
 
     # Delete secrets
-    for secret in infisical-encryption-key infisical-auth-secret infisical-db-uri infisical-redis-url; do
+    for secret in kms-encryption-key kms-auth-secret kms-db-uri kms-redis-url; do
       gcloud secrets delete $secret
     done
 
     # Delete service account
-    gcloud iam service-accounts delete infisical-gsa@<YOUR_PROJECT_ID>.iam.gserviceaccount.com
+    gcloud iam service-accounts delete kms-gsa@<YOUR_PROJECT_ID>.iam.gserviceaccount.com
     ```
 
     <Warning>
@@ -883,7 +883,7 @@ After completing the above steps, your Infisical instance should be up and runni
 
 <AccordionGroup>
   <Accordion title="Terraform Example">
-    A Terraform configuration for deploying Infisical infrastructure on GCP:
+    A Terraform configuration for deploying Hanzo KMS infrastructure on GCP:
 
     ```hcl
     # main.tf
@@ -913,16 +913,16 @@ After completing the above steps, your Infisical instance should be up and runni
     }
 
     # VPC Network
-    resource "google_compute_network" "infisical_vpc" {
-      name                    = "infisical-vpc"
+    resource "google_compute_network" "kms_vpc" {
+      name                    = "kms-vpc"
       auto_create_subnetworks = false
     }
 
-    resource "google_compute_subnetwork" "infisical_subnet" {
-      name          = "infisical-subnet"
+    resource "google_compute_subnetwork" "kms_subnet" {
+      name          = "kms-subnet"
       ip_cidr_range = "10.0.0.0/20"
       region        = var.region
-      network       = google_compute_network.infisical_vpc.id
+      network       = google_compute_network.kms_vpc.id
 
       secondary_ip_range {
         range_name    = "pods"
@@ -938,27 +938,27 @@ After completing the above steps, your Infisical instance should be up and runni
     }
 
     # Cloud Router and NAT
-    resource "google_compute_router" "infisical_router" {
-      name    = "infisical-router"
+    resource "google_compute_router" "kms_router" {
+      name    = "kms-router"
       region  = var.region
-      network = google_compute_network.infisical_vpc.id
+      network = google_compute_network.kms_vpc.id
     }
 
-    resource "google_compute_router_nat" "infisical_nat" {
-      name                               = "infisical-nat"
-      router                             = google_compute_router.infisical_router.name
+    resource "google_compute_router_nat" "kms_nat" {
+      name                               = "kms-nat"
+      router                             = google_compute_router.kms_router.name
       region                             = var.region
       nat_ip_allocate_option             = "AUTO_ONLY"
       source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
     }
 
     # GKE Cluster
-    resource "google_container_cluster" "infisical_cluster" {
-      name     = "infisical-cluster"
+    resource "google_container_cluster" "kms_cluster" {
+      name     = "kms-cluster"
       location = var.region
 
-      network    = google_compute_network.infisical_vpc.name
-      subnetwork = google_compute_subnetwork.infisical_subnet.name
+      network    = google_compute_network.kms_vpc.name
+      subnetwork = google_compute_subnetwork.kms_subnet.name
 
       remove_default_node_pool = true
       initial_node_count       = 1
@@ -982,10 +982,10 @@ After completing the above steps, your Infisical instance should be up and runni
       monitoring_service = "monitoring.googleapis.com/kubernetes"
     }
 
-    resource "google_container_node_pool" "infisical_nodes" {
-      name       = "infisical-node-pool"
+    resource "google_container_node_pool" "kms_nodes" {
+      name       = "kms-node-pool"
       location   = var.region
-      cluster    = google_container_cluster.infisical_cluster.name
+      cluster    = google_container_cluster.kms_cluster.name
       node_count = 1
 
       autoscaling {
@@ -1013,8 +1013,8 @@ After completing the above steps, your Infisical instance should be up and runni
     }
 
     # Cloud SQL
-    resource "google_sql_database_instance" "infisical_db" {
-      name             = "infisical-db"
+    resource "google_sql_database_instance" "kms_db" {
+      name             = "kms-db"
       database_version = "POSTGRES_15"
       region           = var.region
 
@@ -1027,7 +1027,7 @@ After completing the above steps, your Infisical instance should be up and runni
 
         ip_configuration {
           ipv4_enabled    = false
-          private_network = google_compute_network.infisical_vpc.id
+          private_network = google_compute_network.kms_vpc.id
         }
 
         backup_configuration {
@@ -1045,41 +1045,41 @@ After completing the above steps, your Infisical instance should be up and runni
 
     # Private VPC Connection for Cloud SQL
     resource "google_compute_global_address" "private_ip_address" {
-      name          = "google-managed-services-infisical-vpc"
+      name          = "google-managed-services-kms-vpc"
       purpose       = "VPC_PEERING"
       address_type  = "INTERNAL"
       prefix_length = 16
-      network       = google_compute_network.infisical_vpc.id
+      network       = google_compute_network.kms_vpc.id
     }
 
     resource "google_service_networking_connection" "private_vpc_connection" {
-      network                 = google_compute_network.infisical_vpc.id
+      network                 = google_compute_network.kms_vpc.id
       service                 = "servicenetworking.googleapis.com"
       reserved_peering_ranges = [google_compute_global_address.private_ip_address.name]
     }
 
     # Memorystore Redis
-    resource "google_redis_instance" "infisical_redis" {
-      name           = "infisical-redis"
+    resource "google_redis_instance" "kms_redis" {
+      name           = "kms-redis"
       tier           = "STANDARD_HA"
       memory_size_gb = 1
       region         = var.region
 
-      authorized_network = google_compute_network.infisical_vpc.id
+      authorized_network = google_compute_network.kms_vpc.id
       redis_version      = "REDIS_7_0"
     }
 
     # Outputs
     output "gke_cluster_name" {
-      value = google_container_cluster.infisical_cluster.name
+      value = google_container_cluster.kms_cluster.name
     }
 
     output "cloud_sql_private_ip" {
-      value = google_sql_database_instance.infisical_db.private_ip_address
+      value = google_sql_database_instance.kms_db.private_ip_address
     }
 
     output "redis_host" {
-      value = google_redis_instance.infisical_redis.host
+      value = google_redis_instance.kms_redis.host
     }
     ```
 
@@ -1097,14 +1097,14 @@ After completing the above steps, your Infisical instance should be up and runni
 
     **Check pod status:**
     ```bash
-    kubectl describe pod <pod-name> -n infisical
-    kubectl logs <pod-name> -n infisical --previous
+    kubectl describe pod <pod-name> -n kms
+    kubectl logs <pod-name> -n kms --previous
     ```
 
     **Common causes:**
     - Insufficient resources: Check node capacity and resource requests
     - Image pull errors: Verify image tag and registry access
-    - Secret not found: Ensure `infisical-secrets` exists in the namespace
+    - Secret not found: Ensure `kms-secrets` exists in the namespace
     - Database connection failed: Verify Cloud SQL private IP and credentials
   </Accordion>
 
@@ -1114,11 +1114,11 @@ After completing the above steps, your Infisical instance should be up and runni
     **Verify connectivity:**
     ```bash
     # Check Cloud SQL instance status
-    gcloud sql instances describe infisical-db
+    gcloud sql instances describe kms-db
 
     # Test from a debug pod
-    kubectl run debug --rm -it --image=postgres:15 -n infisical -- \
-      psql "postgresql://infisical_user:<password>@<cloud-sql-ip>:5432/infisical"
+    kubectl run debug --rm -it --image=postgres:15 -n kms -- \
+      psql "postgresql://kms_user:<password>@<cloud-sql-ip>:5432/kms"
     ```
 
     **Common causes:**
@@ -1134,10 +1134,10 @@ After completing the above steps, your Infisical instance should be up and runni
     **Verify connectivity:**
     ```bash
     # Check Memorystore status
-    gcloud redis instances describe infisical-redis --region=us-central1
+    gcloud redis instances describe kms-redis --region=us-central1
 
     # Test from a debug pod
-    kubectl run debug --rm -it --image=redis:7 -n infisical -- \
+    kubectl run debug --rm -it --image=redis:7 -n kms -- \
       redis-cli -h <memorystore-ip> ping
     ```
 
@@ -1148,19 +1148,19 @@ After completing the above steps, your Infisical instance should be up and runni
   </Accordion>
 
   <Accordion title="Ingress not working">
-    **Symptoms:** Cannot access Infisical via the external URL.
+    **Symptoms:** Cannot access Hanzo KMS via the external URL.
 
     **Check ingress status:**
     ```bash
-    kubectl describe ingress -n infisical
-    kubectl get events -n infisical --sort-by='.lastTimestamp'
+    kubectl describe ingress -n kms
+    kubectl get events -n kms --sort-by='.lastTimestamp'
     ```
 
     **Common causes:**
     - DNS not configured: Verify A record points to static IP
     - Certificate not ready: Check ManagedCertificate status
     - Backend unhealthy: Verify pods are passing health checks
-    - Static IP not reserved: Ensure `infisical-ip` exists
+    - Static IP not reserved: Ensure `kms-ip` exists
   </Accordion>
 
   <Accordion title="SSL certificate not provisioning">
@@ -1168,7 +1168,7 @@ After completing the above steps, your Infisical instance should be up and runni
 
     **Check certificate status:**
     ```bash
-    kubectl describe managedcertificate infisical-cert -n infisical
+    kubectl describe managedcertificate kms-cert -n kms
     ```
 
     **Common causes:**
@@ -1183,8 +1183,8 @@ After completing the above steps, your Infisical instance should be up and runni
 
     **Check resource usage:**
     ```bash
-    kubectl top pods -n infisical
-    kubectl describe pod <pod-name> -n infisical | grep -A5 "Limits\|Requests"
+    kubectl top pods -n kms
+    kubectl describe pod <pod-name> -n kms | grep -A5 "Limits\|Requests"
     ```
 
     **Solutions:**
@@ -1204,7 +1204,7 @@ After completing the above steps, your Infisical instance should be up and runni
 
     **Verify key is set:**
     ```bash
-    kubectl get secret infisical-secrets -n infisical -o jsonpath='{.data.ENCRYPTION_KEY}' | base64 -d
+    kubectl get secret kms-secrets -n kms -o jsonpath='{.data.ENCRYPTION_KEY}' | base64 -d
     ```
 
     <Warning>

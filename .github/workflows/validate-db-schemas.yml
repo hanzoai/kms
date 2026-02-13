@@ -16,7 +16,7 @@ jobs:
         env:
             NODE_OPTIONS: "--max-old-space-size=8192"
             REDIS_URL: redis://172.17.0.1:6379
-            DB_CONNECTION_URI: postgres://infisical:infisical@172.17.0.1:5432/infisical?sslmode=disable
+            DB_CONNECTION_URI: postgres://kms:kms@172.17.0.1:5432/kms?sslmode=disable
             AUTH_SECRET: something-random
             ENCRYPTION_KEY: 4bnfe4e407b8921c104518903515b218
         steps:

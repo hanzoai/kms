@@ -1,9 +1,9 @@
 ---
 title: General
-description: "Learn how to authenticate with Infisical using LDAP."
+description: "Learn how to authenticate with Hanzo KMS using LDAP."
 ---
 
-**LDAP Auth** is an LDAP based authentication method that allows you to authenticate with Infisical using a machine identity configured with an [LDAP](https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol) directory.
+**LDAP Auth** is an LDAP based authentication method that allows you to authenticate with Hanzo KMS using a machine identity configured with an [LDAP](https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol) directory.
 
 ## Templates
 
@@ -72,7 +72,7 @@ To create and manage LDAP auth templates, see our [Machine Identity Auth Templat
 
       ```bash
         curl --request POST \
-          --url https://app.infisical.com/api/v1/auth/ldap-auth/login \
+          --url https://kms.hanzo.ai/api/v1/auth/ldap-auth/login \
           --header 'Content-Type: application/json' \
           --data '{
           "identityId": "<string>",
@@ -82,7 +82,7 @@ To create and manage LDAP auth templates, see our [Machine Identity Auth Templat
       ```
 
       <Note>
-        For EU Cloud and Self-Hosted users, make sure to replace `https://app.infisical.com` with `https://eu.infisical.com` or your self-hosted instance's URL in the request URL.
+        For EU Cloud and Self-Hosted users, make sure to replace `https://kms.hanzo.ai` with `https://eu.kms.hanzo.ai` or your self-hosted instance's URL in the request URL.
       </Note>
 
       If successful, you'll receive an access token in the response body.

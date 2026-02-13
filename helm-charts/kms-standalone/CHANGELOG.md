@@ -1,13 +1,13 @@
 ## 1.7.2 (October 20, 2025)
 Changes:
-* Updated the default `infisical.image.tag` value to `v0.151.0`.
-* `autoDatabaseSchemaMigration` has been fully removed as all newer versions of Infisical automatically run migrations as apart of the startup process.
+* Updated the default `kms.image.tag` value to `v0.151.0`.
+* `autoDatabaseSchemaMigration` has been fully removed as all newer versions of Hanzo KMS automatically run migrations as apart of the startup process.
 
 ## 1.7.1 (October 10, 2025)
 
 Changes:
-* Fixed using `extraVolumes` and `extraVolumeMounts` for when Infisical auto migration enabled
-    * Previously the custom volumes and custom volume mounts would only be added to the infisical core pods, but not the migration pod.
+* Fixed using `extraVolumes` and `extraVolumeMounts` for when Hanzo KMS auto migration enabled
+    * Previously the custom volumes and custom volume mounts would only be added to the kms core pods, but not the migration pod.
 
 ## 1.7.0 (September 30, 2025)
 
@@ -19,7 +19,7 @@ Changes:
 ## 1.6.1 (July 3, 2025)
 
 Changes:
-* Added support for `topologySpreadConstraints` configuration in Helm chart for the Infisical deployment
+* Added support for `topologySpreadConstraints` configuration in Helm chart for the Hanzo KMS deployment
 
 Features:
 * `topologySpreadConstraints`: Configure pod distribution across availability zones and nodes for high availability
@@ -36,17 +36,17 @@ Features:
 ## 1.4.1 (March 19, 2025)
 
 Changes:
-* Added support for supplying extra volume mounts and volumes via `infisical.extraVolumeMounts` and `infisical.extraVolumes`
+* Added support for supplying extra volume mounts and volumes via `kms.extraVolumeMounts` and `kms.extraVolumes`
 
 ## 1.4.0 (November 06, 2024)
 
 Changes:
 * Chart is now fully documented 
-* New fields introduced: `infisical.databaseSchemaMigrationJob.image` and `infisical.serviceAccount`
+* New fields introduced: `kms.databaseSchemaMigrationJob.image` and `kms.serviceAccount`
 
 Features:
 
-* Added support for auto creating service account with required permissions via `infisical.serviceAccount.create`
+* Added support for auto creating service account with required permissions via `kms.serviceAccount.create`
 
 ## 1.3.0 (October 28, 2024)
 
@@ -56,4 +56,4 @@ Changes:
 Features:
 
 * Added support for supplying Postgres secret as K8s secret via `postgresql.useExistingPostgresSecret`
-* Support overriding init container image via `infisical.databaseSchemaMigrationInitContainer`
+* Support overriding init container image via `kms.databaseSchemaMigrationInitContainer`

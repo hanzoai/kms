@@ -1,11 +1,11 @@
 ---
 title: "Migration Guide"
-description: "Guide for migrating permissions in Infisical"
+description: "Guide for migrating permissions in Hanzo KMS"
 ---
 
 # Migrating from Permission V1 to Permission V2
 
-This guide provides instructions for upgrading from the legacy V1 permissions system to the more powerful V2 permissions system in Infisical.
+This guide provides instructions for upgrading from the legacy V1 permissions system to the more powerful V2 permissions system in Hanzo KMS.
 
 ## Why Upgrade to V2?
 
@@ -64,7 +64,7 @@ Here's a complete example showing how to migrate a role from V1 to V2:
 
 ```hcl
 # Old V1 configuration
-resource "infisical_project_role" "example" {
+resource "kms_project_role" "example" {
   name = "example"
   permissions = [
     {
@@ -79,7 +79,7 @@ resource "infisical_project_role" "example" {
 }
 
 # New V2 configuration
-resource "infisical_project_role" "example" {
+resource "kms_project_role" "example" {
   name = "example"
   permissions_v2 = [
     # Original secrets permission

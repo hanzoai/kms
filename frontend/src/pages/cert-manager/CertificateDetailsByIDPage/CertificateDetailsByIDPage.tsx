@@ -467,7 +467,7 @@ export const CertificateDetailsByIDPage = () => {
     <>
       <Helmet>
         <title>Certificate Details</title>
-        <link rel="icon" href="/infisical.ico" />
+        <link rel="icon" href="/favicon.ico" />
       </Helmet>
       <Page />
     </>

@@ -116,7 +116,7 @@ export const CreateSecretRotationV2Modal = ({ onOpenChange, isOpen, ...props }: 
           ) : (
             <div className="flex items-center gap-x-2 text-mineshaft-300">
               Add Secret Rotation
-              <DocumentationLinkBadge href="https://infisical.com/docs/documentation/platform/secret-rotation/overview" />
+              <DocumentationLinkBadge href="https://kms.hanzo.ai/docs/documentation/platform/secret-rotation/overview" />
             </div>
           )
         }

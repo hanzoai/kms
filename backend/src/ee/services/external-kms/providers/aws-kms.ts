@@ -17,7 +17,7 @@ const getAwsKmsClient = async (providerInputs: TExternalKmsAwsSchema) => {
     });
     const command = new AssumeRoleCommand({
       RoleArn: awsCredential.assumeRoleArn,
-      RoleSessionName: `infisical-kms-${crypto.nativeCrypto.randomUUID()}`,
+      RoleSessionName: `kms-kms-${crypto.nativeCrypto.randomUUID()}`,
       DurationSeconds: 900, // 15mins
       ExternalId: awsCredential.externalId
     });
@@ -65,7 +65,7 @@ export const AwsKmsProviderFactory = async ({ inputs }: AwsKmsProviderArgs): Pro
   const generateInputKmsKey = async () => {
     if (providerInputs.kmsKeyId) return providerInputs;
 
-    const command = new CreateKeyCommand({ Tags: [{ TagKey: "author", TagValue: "infisical" }] });
+    const command = new CreateKeyCommand({ Tags: [{ TagKey: "author", TagValue: "kms" }] });
     const kmsKey = await awsClient.send(command);
 
     if (!kmsKey.KeyMetadata?.KeyId) throw new BadRequestError({ message: "Failed to generate kms key" });

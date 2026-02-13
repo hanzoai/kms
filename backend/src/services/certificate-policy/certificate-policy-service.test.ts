@@ -1466,13 +1466,13 @@ describe("CertificatePolicyService", () => {
           subject: [
             {
               type: CertSubjectAttributeType.COMMON_NAME,
-              allowed: ["*.infisical.com", "*.infisical2.com"]
+              allowed: ["*.kms.hanzo.ai", "*.kms2.hanzo.ai"]
             }
           ],
           sans: [
             {
               type: CertSubjectAlternativeNameType.DNS_NAME,
-              allowed: ["*.infisical.com", "*.infisical2.com"]
+              allowed: ["*.kms.hanzo.ai", "*.kms2.hanzo.ai"]
             }
           ]
         };
@@ -1480,9 +1480,9 @@ describe("CertificatePolicyService", () => {
 
         // Test case that matches first policy
         const requestMatchingFirstPolicy = {
-          commonName: "test.infisical.com",
+          commonName: "test.kms.hanzo.ai",
           subjectAlternativeNames: [
-            { type: CertSubjectAlternativeNameType.DNS_NAME as const, value: "api.infisical.com" }
+            { type: CertSubjectAlternativeNameType.DNS_NAME as const, value: "api.kms.hanzo.ai" }
           ],
           keyUsages: [CertKeyUsageType.DIGITAL_SIGNATURE, CertKeyUsageType.KEY_ENCIPHERMENT],
           extendedKeyUsages: [CertExtendedKeyUsageType.SERVER_AUTH],
@@ -1494,9 +1494,9 @@ describe("CertificatePolicyService", () => {
 
         // Test case that matches second policy
         const requestMatchingSecondPolicy = {
-          commonName: "test.infisical2.com",
+          commonName: "test.kms2.hanzo.ai",
           subjectAlternativeNames: [
-            { type: CertSubjectAlternativeNameType.DNS_NAME as const, value: "api.infisical2.com" }
+            { type: CertSubjectAlternativeNameType.DNS_NAME as const, value: "api.kms2.hanzo.ai" }
           ],
           keyUsages: [CertKeyUsageType.DIGITAL_SIGNATURE, CertKeyUsageType.KEY_ENCIPHERMENT],
           extendedKeyUsages: [CertExtendedKeyUsageType.SERVER_AUTH],
@@ -1520,7 +1520,7 @@ describe("CertificatePolicyService", () => {
         const result3 = await service.validateCertificateRequest("template-123", requestMatchingNeitherPolicy);
         expect(result3.isValid).toBe(false);
         expect(result3.errors).toContain(
-          "common_name value 'test.example.com' does not match allowed patterns: *.infisical.com, *.infisical2.com"
+          "common_name value 'test.example.com' does not match allowed patterns: *.kms.hanzo.ai, *.kms2.hanzo.ai"
         );
       });
     });

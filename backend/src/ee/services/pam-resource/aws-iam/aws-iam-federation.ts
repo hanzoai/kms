@@ -67,7 +67,7 @@ const assumePamRole = async ({
     const result = await stsClient.send(
       new AssumeRoleCommand({
         RoleArn: connectionDetails.roleArn,
-        RoleSessionName: `infisical-pam-${sessionNameSuffix}-${Date.now()}`,
+        RoleSessionName: `kms-pam-${sessionNameSuffix}-${Date.now()}`,
         DurationSeconds: sessionDuration,
         ExternalId: projectId
       })
@@ -173,7 +173,7 @@ export const validateTargetRoleAssumption = async ({
       pamCredentials,
       targetRoleArn,
       projectId,
-      roleSessionName: `infisical-pam-target-validation-${Date.now()}`
+      roleSessionName: `kms-pam-target-validation-${Date.now()}`
     });
     return targetCredentials !== null;
   } catch {

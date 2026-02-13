@@ -38,5 +38,5 @@ export default OrgAdminProjectGrantAccessTemplate;
 OrgAdminProjectGrantAccessTemplate.PreviewProps = {
   email: "kevin@infisical.com",
   projectName: "Example Project",
-  siteUrl: "https://infisical.com"
+  siteUrl: "https://kms.hanzo.ai"
 } as OrgAdminProjectGrantAccessTemplateProps;

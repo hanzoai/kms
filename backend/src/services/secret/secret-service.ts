@@ -747,10 +747,10 @@ export const secretServiceFactory = ({
 
     const secretBlindIndex = await interalGenSecBlindIndexByName(projectId, secretName);
 
-    // Case: The old python SDK uses incorrect logic https://github.com/Infisical/infisical-python/blob/main/infisical/client/infisicalclient.py#L89.
+    // Case: The old python SDK uses incorrect logic https://github.com/hanzoai/kms-python/blob/main/ghcr.io/hanzoai/kms-client/kmsClient.py#L89.
     // Fetch secrets using service tokens cannot fetch personal secrets, only shared.
     // The mongo backend used to correct this mistake, this line also adds it to current backend
-    // Mongo backend check: https://github.com/Infisical/infisical-mongo/blob/main/backend/src/helpers/secrets.ts#L658
+    // Mongo backend check: https://github.com/hanzoai/kms-mongo/blob/main/backend/src/helpers/secrets.ts#L658
     let secretType = type;
     if (actor === ActorType.SERVICE) {
       logger.info(

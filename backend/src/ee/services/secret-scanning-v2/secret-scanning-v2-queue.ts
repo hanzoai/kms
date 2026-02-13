@@ -213,7 +213,7 @@ export const secretScanningV2QueueServiceFactory = ({
       let configPath: string | undefined;
 
       if (config && config.content) {
-        configPath = join(tempFolder, "infisical-scan.toml");
+        configPath = join(tempFolder, "kms-scan.toml");
         await writeTextToFile(configPath, config.content);
       }
 
@@ -457,7 +457,7 @@ export const secretScanningV2QueueServiceFactory = ({
       let configPath: string | undefined;
 
       if (config && config.content) {
-        configPath = join(tempFolder, "infisical-scan.toml");
+        configPath = join(tempFolder, "kms-scan.toml");
         await writeTextToFile(configPath, config.content);
       }
 

@@ -325,7 +325,7 @@ const Page = () => {
           secretRotationProviders?.providers.map((provider) => (
             <div
               className="group relative flex h-32 cursor-pointer flex-row items-center justify-center rounded-md border border-mineshaft-600 bg-mineshaft-800 p-4 hover:border-primary/40 hover:bg-primary/10"
-              key={`infisical-rotation-provider-${provider.name}`}
+              key={`kms-rotation-provider-${provider.name}`}
               tabIndex={0}
               role="button"
               onKeyDown={(evt) => {

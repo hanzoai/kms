@@ -24,12 +24,12 @@ export const UpgradePlanModal = ({
   const getLink = () => {
     // self-hosting
     if (!subscription || subscription.slug === null) {
-      return "https://infisical.com/scheduledemo";
+      return "https://hanzo.ai/scheduledemo";
     }
 
-    // Infisical cloud
+    // Hanzo KMS cloud
     if (isEnterpriseFeature) {
-      return "https://infisical.com/talk-to-us";
+      return "https://hanzo.ai/talk-to-us";
     }
 
     return "/organization/billing" as const;
@@ -72,7 +72,7 @@ export const UpgradePlanModal = ({
 
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-      <ModalContent title="Unleash Infisical's Full Power">
+      <ModalContent title="Unleash Hanzo KMS's Full Power">
         <p className="mb-2 text-bunker-300">{text}</p>
         <p className="text-bunker-300">
           Upgrade and get access to this, as well as to other powerful enhancements.

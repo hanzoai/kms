@@ -1,13 +1,13 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "infisical-gateway.fullname" . }}
+  name: {{ include "kms-gateway.fullname" . }}
   labels:
-    {{- include "infisical-gateway.labels" . | nindent 4 }}
+    {{- include "kms-gateway.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
-      {{- include "infisical-gateway.selectorLabels" . | nindent 6 }}
+      {{- include "kms-gateway.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -15,7 +15,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "infisical-gateway.labels" . | nindent 8 }}
+        {{- include "kms-gateway.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -24,15 +24,15 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "infisical-gateway.serviceAccountName" . }}
+      serviceAccountName: {{ include "kms-gateway.serviceAccountName" . }}
       {{- with .Values.podSecurityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-        - name: infisical-gateway-session-recordings-data
+        - name: kms-gateway-session-recordings-data
           emptyDir: {}
-        - name: infisical-gateway-cached-relay-data
+        - name: kms-gateway-cached-relay-data
           emptyDir: {}
       containers:
         - name: {{ .Chart.Name }}
@@ -45,7 +45,7 @@ spec:
           args:
             - gateway
             - start
-            - --pam-session-recording-path={{ .Values.gateway.pamSessionRecordingsDirectory | default "/var/lib/infisical/session_recordings" }}
+            - --pam-session-recording-path={{ .Values.gateway.pamSessionRecordingsDirectory | default "/var/lib/kms/session_recordings" }}
           envFrom:
             - secretRef:
                 name: {{ .Values.secret.name }}
@@ -54,11 +54,11 @@ spec:
               containerPort: {{ .Values.service.port }}
               protocol: TCP
           volumeMounts:
-            - name: infisical-gateway-cached-relay-data
-              mountPath: /var/lib/infisical
-            {{- $sessionPath := .Values.gateway.pamSessionRecordingsDirectory | default "/var/lib/infisical/session_recordings" }}
-            {{- if not (hasPrefix "/var/lib/infisical" $sessionPath) }}
-            - name: infisical-gateway-session-recordings-data
+            - name: kms-gateway-cached-relay-data
+              mountPath: /var/lib/kms
+            {{- $sessionPath := .Values.gateway.pamSessionRecordingsDirectory | default "/var/lib/kms/session_recordings" }}
+            {{- if not (hasPrefix "/var/lib/kms" $sessionPath) }}
+            - name: kms-gateway-session-recordings-data
               mountPath: {{ $sessionPath }}
             {{- end }}
           {{- with .Values.resources }}

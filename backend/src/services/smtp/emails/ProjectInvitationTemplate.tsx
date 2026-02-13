@@ -41,6 +41,6 @@ export default ProjectInvitationTemplate;
 
 ProjectInvitationTemplate.PreviewProps = {
   workspaceName: "Example Project",
-  siteUrl: "https://infisical.com",
-  callback_url: "https://app.infisical.com"
+  siteUrl: "https://kms.hanzo.ai",
+  callback_url: "https://kms.hanzo.ai"
 } as ProjectInvitationTemplateProps;

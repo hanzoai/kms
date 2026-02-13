@@ -205,7 +205,7 @@ provider "aws" {
 }
 
 # Security Group for the Hanzo KMS Relay instance
-resource "aws_security_group" "infisical_relay_sg" {
+resource "aws_security_group" "kms_relay_sg" {
   name        = "${name}-relay-sg"
   description = "Allows inbound traffic for Hanzo KMS Relay and SSH"
   vpc_id      = "${vpcId}"
@@ -248,14 +248,14 @@ resource "aws_security_group" "infisical_relay_sg" {
 }
 
 # Elastic IP for a static public IP address
-resource "aws_eip" "infisical_relay_eip" {
+resource "aws_eip" "kms_relay_eip" {
   tags = {
     Name = "${name}-relay-eip"
   }
 }
 
 # EC2 instance to run Hanzo KMS Relay
-module "infisical_relay_instance" {
+module "kms_relay_instance" {
   source  = "terraform-aws-modules/ec2-instance/aws"
   version = "~> 5.6"
 
@@ -264,36 +264,36 @@ module "infisical_relay_instance" {
   instance_type = "t3.micro"
   subnet_id     = "${subnetId}"
 
-  vpc_security_group_ids      = [aws_security_group.infisical_relay_sg.id]
+  vpc_security_group_ids      = [aws_security_group.kms_relay_sg.id]
   associate_public_ip_address = false # We are using an Elastic IP instead
 
   user_data = <<-EOT
     #!/bin/bash
     set -e
     # Install Hanzo KMS CLI
-    curl -1sLf 'https://artifacts-cli.infisical.com/setup.deb.sh' | bash
-    apt-get update && apt-get install -y infisical
+    curl -1sLf 'https://artifacts-cli.kms.hanzo.ai/setup.deb.sh' | bash
+    apt-get update && apt-get install -y hanzo-kms
 
     # Install the relay as a systemd service.
-    # This example uses a Machine Identity token for authentication via the INFISICAL_TOKEN environment variable.
+    # This example uses a Machine Identity token for authentication via the KMS_TOKEN environment variable.
     #
     # Note: For production environments, you might consider fetching the token from AWS Parameter Store or AWS Secrets Manager.
-    export INFISICAL_TOKEN="${identityToken}"
-    sudo -E infisical relay systemd install \\
+    export KMS_TOKEN="${identityToken}"
+    sudo -E hanzo-kms relay systemd install \\
       --name "${name}" \\
       --domain "${siteURL}" \\
-      --host "\${aws_eip.infisical_relay_eip.public_ip}"
+      --host "\${aws_eip.kms_relay_eip.public_ip}"
 
     # Start and enable the service to run on boot
-    sudo systemctl start infisical-relay
-    sudo systemctl enable infisical-relay
+    sudo systemctl start kms-relay
+    sudo systemctl enable kms-relay
   EOT
 }
 
 # Associate the Elastic IP with the EC2 instance
 resource "aws_eip_association" "eip_assoc" {
-  instance_id   = module.infisical_relay_instance.id
-  allocation_id = aws_eip.infisical_relay_eip.id
+  instance_id   = module.kms_relay_instance.id
+  allocation_id = aws_eip.kms_relay_eip.id
 }
 `;
   }, [name, siteURL, identityToken, awsRegion, vpcId, ami, subnetId]);

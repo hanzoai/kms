@@ -574,7 +574,7 @@ export const scimServiceFactory = ({
     if (email) {
       await smtpService.sendMail({
         template: SmtpTemplates.ScimUserProvisioned,
-        subjectLine: "Infisical organization invitation",
+        subjectLine: "Hanzo KMS organization invitation",
         recipients: [email],
         substitutions: {
           organizationName: org.name,

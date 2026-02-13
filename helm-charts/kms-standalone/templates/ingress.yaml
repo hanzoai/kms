@@ -8,7 +8,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: infisical-ingress
+  name: kms-ingress
   {{- with $ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -34,14 +34,14 @@ spec:
           pathType: Prefix
           backend:
             service:
-              name: {{ include "infisical.fullname" . }}
+              name: {{ include "kms.fullname" . }}
               port:
                 number: 8080
         - path: /ss-webhook
           pathType: Exact
           backend:
             service:
-              name: {{ include "infisical.fullname" . }}
+              name: {{ include "kms.fullname" . }}
               port:
                 number: 8080
       {{- if $ingress.hostName }}

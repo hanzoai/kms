@@ -299,7 +299,7 @@ export const AsExternalLink: Story = {
     variant: "info",
     asChild: true,
     children: (
-      <a target="_blank" rel="noopener noreferrer" href="https://infisical.com/">
+      <a target="_blank" rel="noopener noreferrer" href="https://kms.hanzo.ai/">
         Link <ExternalLinkIcon />
       </a>
     )
@@ -365,7 +365,7 @@ export const IsTruncatable: Story = {
     children: (
       <>
         <OrgIcon />
-        <span>Infisical Infrastructure</span>
+        <span>Hanzo KMS Infrastructure</span>
       </>
     )
   },

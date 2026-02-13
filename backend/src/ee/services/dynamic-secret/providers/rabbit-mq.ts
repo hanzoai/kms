@@ -142,7 +142,7 @@ export const RabbitMqProvider = (): TDynamicProviderFns => {
         createUser: {
           password,
           username,
-          tags: [...(providerInputs.tags ?? []), "infisical-user"]
+          tags: [...(providerInputs.tags ?? []), "kms-user"]
         }
       });
       return { entityId: username, data: { DB_USERNAME: username, DB_PASSWORD: password } };

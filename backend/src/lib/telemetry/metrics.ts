@@ -3,7 +3,7 @@ import opentelemetry from "@opentelemetry/api";
 
 import { getConfig } from "../config/env";
 
-const infisicalMeter = opentelemetry.metrics.getMeter("Infisical");
+const kmsMeter = opentelemetry.metrics.getMeter("Hanzo KMS");
 
 export enum AuthAttemptAuthMethod {
   EMAIL = "email",
@@ -31,12 +31,12 @@ export enum AuthAttemptAuthResult {
   FAILURE = "failure"
 }
 
-export const authAttemptCounter = infisicalMeter.createCounter("infisical.auth.attempt.count", {
+export const authAttemptCounter = kmsMeter.createCounter("kms.auth.attempt.count", {
   description: "Authentication attempts (both successful and failed)",
   unit: "{attempt}"
 });
 
-export const secretReadCounter = infisicalMeter.createCounter("infisical.secret.read.count", {
+export const secretReadCounter = kmsMeter.createCounter("kms.secret.read.count", {
   description: "Number of secret read operations",
   unit: "{operation}"
 });
@@ -46,43 +46,43 @@ export const recordSecretReadMetric = (params: { environment: string; secretPath
 
   if (appCfg.OTEL_TELEMETRY_COLLECTION_ENABLED) {
     const attributes: Record<string, string> = {
-      "infisical.environment": params.environment,
-      "infisical.secret.path": params.secretPath,
-      ...(params.name ? { "infisical.secret.name": params.name } : {})
+      "kms.environment": params.environment,
+      "kms.secret.path": params.secretPath,
+      ...(params.name ? { "kms.secret.name": params.name } : {})
     };
 
     const orgId = requestContext.get("orgId");
     if (orgId) {
-      attributes["infisical.organization.id"] = orgId;
+      attributes["kms.organization.id"] = orgId;
     }
 
     const orgName = requestContext.get("orgName");
     if (orgName) {
-      attributes["infisical.organization.name"] = orgName;
+      attributes["kms.organization.name"] = orgName;
     }
 
     const projectDetails = requestContext.get("projectDetails");
     if (projectDetails?.id) {
-      attributes["infisical.project.id"] = projectDetails.id;
+      attributes["kms.project.id"] = projectDetails.id;
     }
     if (projectDetails?.name) {
-      attributes["infisical.project.name"] = projectDetails.name;
+      attributes["kms.project.name"] = projectDetails.name;
     }
 
     const userAuthInfo = requestContext.get("userAuthInfo");
     if (userAuthInfo?.userId) {
-      attributes["infisical.user.id"] = userAuthInfo.userId;
+      attributes["kms.user.id"] = userAuthInfo.userId;
     }
     if (userAuthInfo?.email) {
-      attributes["infisical.user.email"] = userAuthInfo.email;
+      attributes["kms.user.email"] = userAuthInfo.email;
     }
 
     const identityAuthInfo = requestContext.get("identityAuthInfo");
     if (identityAuthInfo?.identityId) {
-      attributes["infisical.identity.id"] = identityAuthInfo.identityId;
+      attributes["kms.identity.id"] = identityAuthInfo.identityId;
     }
     if (identityAuthInfo?.identityName) {
-      attributes["infisical.identity.name"] = identityAuthInfo.identityName;
+      attributes["kms.identity.name"] = identityAuthInfo.identityName;
     }
 
     const userAgent = requestContext.get("userAgent");
@@ -110,7 +110,7 @@ export enum KmipOperationType {
   REGISTER = "register"
 }
 
-export const kmipOperationCounter = infisicalMeter.createCounter("infisical.kmip.operation.count", {
+export const kmipOperationCounter = kmsMeter.createCounter("kms.kmip.operation.count", {
   description: "Number of KMIP operations performed",
   unit: "{operation}"
 });
@@ -127,26 +127,26 @@ export const recordKmipOperationMetric = (params: {
 
   if (appCfg.OTEL_TELEMETRY_COLLECTION_ENABLED) {
     const attributes: Record<string, string> = {
-      "infisical.kmip.operation.type": params.operationType,
-      "infisical.organization.id": params.orgId,
-      "infisical.project.id": params.projectId,
-      "infisical.kmip.client.id": params.clientId
+      "kms.kmip.operation.type": params.operationType,
+      "kms.organization.id": params.orgId,
+      "kms.project.id": params.projectId,
+      "kms.kmip.client.id": params.clientId
     };
 
     if (params.objectId) {
-      attributes["infisical.kmip.object.id"] = params.objectId;
+      attributes["kms.kmip.object.id"] = params.objectId;
     }
 
     if (params.objectName) {
-      attributes["infisical.kmip.object.name"] = params.objectName;
+      attributes["kms.kmip.object.name"] = params.objectName;
     }
 
     const identityAuthInfo = requestContext.get("identityAuthInfo");
     if (identityAuthInfo?.identityId) {
-      attributes["infisical.identity.id"] = identityAuthInfo.identityId;
+      attributes["kms.identity.id"] = identityAuthInfo.identityId;
     }
     if (identityAuthInfo?.identityName) {
-      attributes["infisical.identity.name"] = identityAuthInfo.identityName;
+      attributes["kms.identity.name"] = identityAuthInfo.identityName;
     }
 
     const userAgent = requestContext.get("userAgent");

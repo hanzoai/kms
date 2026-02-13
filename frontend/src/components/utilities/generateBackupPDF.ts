@@ -33,7 +33,7 @@ function createPdfContent(doc: jsPDF, personalEmail: string, generatedKey: strin
 
   doc.setFontSize(14);
   doc.text(
-    "In case you get locked out of you Infisical account, you`ll need these account details",
+    "In case you get locked out of you Hanzo KMS account, you`ll need these account details",
     32,
     180
   );
@@ -62,7 +62,7 @@ function createPdfContent(doc: jsPDF, personalEmail: string, generatedKey: strin
   doc.setTextColor(43, 43, 43);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(15);
-  doc.text("Infisical Account Details", 290, 375, { align: "center" });
+  doc.text("Hanzo KMS Account Details", 290, 375, { align: "center" });
   doc.setFontSize(12);
   doc.text("SIGN-IN URL", 50, 420);
   doc.text("EMAIL ADDRESS", 50, 465);
@@ -77,7 +77,7 @@ function createPdfContent(doc: jsPDF, personalEmail: string, generatedKey: strin
   doc.text(`${siteURL}/login`, 180, 420);
   doc.text(personalEmail, 180, 465);
   doc.text(generatedKey, 180, 510);
-  doc.text("Need help? Contact us at support@infisical.com", 32, 575);
+  doc.text("Need help? Contact us at support@hanzo.ai", 32, 575);
 }
 
 /**
@@ -88,7 +88,7 @@ function generateBackupPDF({ personalName, personalEmail, generatedKey }: PDFPro
   const doc = new jsPDF("p", "pt", "a4", true);
   createPdfHeader(doc, personalName);
   createPdfContent(doc, personalEmail, generatedKey);
-  doc.save("Infisical Emergency Kit.pdf");
+  doc.save("Hanzo KMS Emergency Kit.pdf");
 }
 
 /**
@@ -99,7 +99,7 @@ export function generateBackupPDFAsync({ personalName, personalEmail, generatedK
   const doc = new jsPDF("p", "pt", "a4", true);
   createPdfHeader(doc, personalName);
   createPdfContent(doc, personalEmail, generatedKey);
-  return doc.save("Infisical Emergency Kit.pdf", { returnPromise: true });
+  return doc.save("Hanzo KMS Emergency Kit.pdf", { returnPromise: true });
 }
 
 export default generateBackupPDF;

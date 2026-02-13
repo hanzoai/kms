@@ -13,12 +13,12 @@ export const POSTGRES_TEMPLATE = {
       port: { type: "integer" as const, default: "5432" },
       username1: {
         type: "string",
-        default: "infisical-pg-user1",
+        default: "kms-pg-user1",
         desc: "This user must be created in your database"
       },
       username2: {
         type: "string",
-        default: "infisical-pg-user2",
+        default: "kms-pg-user2",
         desc: "This user must be created in your database"
       },
       ca: { type: "string", desc: "SSL certificate for db auth(string)" }

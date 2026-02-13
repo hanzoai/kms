@@ -1,16 +1,16 @@
 ---
 title: "AWS (ECS with Fargate)"
-description: "Deploy Infisical on AWS using ECS Fargate, RDS, ElastiCache, and ALB."
+description: "Deploy Hanzo KMS on AWS using ECS Fargate, RDS, ElastiCache, and ALB."
 ---
 
-Learn how to deploy **Infisical** on Amazon Web Services using **Elastic Container Service (ECS)** with Fargate. This guide covers setting up Infisical in a production-ready AWS environment using **Amazon RDS** (PostgreSQL) for the database, **Amazon ElastiCache** (Redis) for caching, and an **Application Load Balancer (ALB)** for routing traffic.
+Learn how to deploy **Hanzo KMS** on Amazon Web Services using **Elastic Container Service (ECS)** with Fargate. This guide covers setting up Hanzo KMS in a production-ready AWS environment using **Amazon RDS** (PostgreSQL) for the database, **Amazon ElastiCache** (Redis) for caching, and an **Application Load Balancer (ALB)** for routing traffic.
 
 ## Prerequisites
 
 - An AWS account with permissions to create VPCs, ECS clusters, RDS, ElastiCache, and ALB resources
 - Basic knowledge of AWS networking (VPC, subnets, security groups) and ECS concepts
 - [AWS CLI](https://aws.amazon.com/cli/) installed and configured (optional, for CLI examples)
-- An Infisical Docker image tag from [Docker Hub](https://hub.docker.com/r/infisical/infisical/tags)
+- An Hanzo KMS Docker image tag from [Docker Hub](https://hub.docker.com/r/ghcr.io/hanzoai/kms/tags)
 
 <Warning>
   Do not use the `latest` tag in production. Always pin to a specific version to avoid unexpected changes during upgrades.
@@ -18,7 +18,7 @@ Learn how to deploy **Infisical** on Amazon Web Services using **Elastic Contain
 
 ## System Requirements
 
-The following are minimum requirements for running Infisical on AWS ECS:
+The following are minimum requirements for running Hanzo KMS on AWS ECS:
 
 | Component | Minimum | Recommended (Production) |
 |-----------|---------|--------------------------|
@@ -33,7 +33,7 @@ For production deployments with many users or secrets, increase these values acc
 
 <Steps>
 <Step title="Set up network infrastructure (VPC, subnets, security groups)">
-  Create an AWS Virtual Private Cloud (VPC) network for hosting Infisical:
+  Create an AWS Virtual Private Cloud (VPC) network for hosting Hanzo KMS:
 
   **VPC and Subnets:**
   - Create a VPC spanning at least two Availability Zones
@@ -55,7 +55,7 @@ For production deployments with many users or secrets, increase these values acc
   | Redis SG | 6379 from ECS Tasks SG | Allow Redis from ECS |
 
   <Note>
-    For additional security, consider placing CloudFront in front of the ALB, using AWS WAF for web application firewall protection, or restricting the ALB security group to specific IP ranges if your users access Infisical from known networks.
+    For additional security, consider placing CloudFront in front of the ALB, using AWS WAF for web application firewall protection, or restricting the ALB security group to specific IP ranges if your users access Hanzo KMS from known networks.
   </Note>
 
   **Verify:** After creating the VPC, confirm you have:
@@ -65,13 +65,13 @@ For production deployments with many users or secrets, increase these values acc
 
   ```bash
   # Verify VPC and subnets
-  aws ec2 describe-vpcs --filters "Name=tag:Name,Values=*infisical*"
+  aws ec2 describe-vpcs --filters "Name=tag:Name,Values=*kms*"
   aws ec2 describe-subnets --filters "Name=vpc-id,Values=<vpc-id>"
   ```
 </Step>
 
 <Step title="Provision the database (PostgreSQL) and cache (Redis)">
-  Set up the persistence layers for Infisical:
+  Set up the persistence layers for Hanzo KMS:
 
   **Amazon RDS (PostgreSQL):**
   - Create a PostgreSQL 14+ database instance in the private subnets
@@ -82,14 +82,14 @@ For production deployments with many users or secrets, increase these values acc
 
   ```bash
   aws rds create-db-instance \
-    --db-instance-identifier infisical-db \
+    --db-instance-identifier kms-db \
     --db-instance-class db.t3.small \
     --engine postgres \
     --engine-version 14 \
-    --master-username infisical \
+    --master-username kms \
     --master-user-password <your-secure-password> \
     --allocated-storage 20 \
-    --db-name infisical \
+    --db-name kms \
     --vpc-security-group-ids <rds-sg-id> \
     --db-subnet-group-name <db-subnet-group> \
     --multi-az \
@@ -105,8 +105,8 @@ For production deployments with many users or secrets, increase these values acc
 
   ```bash
   aws elasticache create-replication-group \
-    --replication-group-id infisical-redis \
-    --replication-group-description "Redis for Infisical" \
+    --replication-group-id kms-redis \
+    --replication-group-description "Redis for Hanzo KMS" \
     --engine redis \
     --cache-node-type cache.t3.small \
     --num-cache-clusters 2 \
@@ -121,18 +121,18 @@ For production deployments with many users or secrets, increase these values acc
   **Verify:** Wait for both services to become available:
   ```bash
   # Check RDS status
-  aws rds describe-db-instances --db-instance-identifier infisical-db --query 'DBInstances[0].DBInstanceStatus'
+  aws rds describe-db-instances --db-instance-identifier kms-db --query 'DBInstances[0].DBInstanceStatus'
 
   # Check ElastiCache status
-  aws elasticache describe-replication-groups --replication-group-id infisical-redis --query 'ReplicationGroups[0].Status'
+  aws elasticache describe-replication-groups --replication-group-id kms-redis --query 'ReplicationGroups[0].Status'
   ```
 
   Note the connection endpoints:
-  - **Database URI:** `postgresql://infisical:<password>@<rds-endpoint>:5432/infisical`
+  - **Database URI:** `postgresql://kms:<password>@<rds-endpoint>:5432/kms`
   - **Redis URI:** `redis://<elasticache-endpoint>:6379`
 </Step>
 
-<Step title="Securely store Infisical secrets and configuration">
+<Step title="Securely store Hanzo KMS secrets and configuration">
   Generate and store the required secrets using AWS Systems Manager Parameter Store or Secrets Manager:
 
   **Generate secrets:**
@@ -154,19 +154,19 @@ For production deployments with many users or secrets, increase these values acc
     <Tab title="Parameter Store (SSM)">
       ```bash
       # Store secrets in Parameter Store
-      aws ssm put-parameter --name "/infisical/ENCRYPTION_KEY" --value "$ENCRYPTION_KEY" --type "SecureString"
-      aws ssm put-parameter --name "/infisical/AUTH_SECRET" --value "$AUTH_SECRET" --type "SecureString"
-      aws ssm put-parameter --name "/infisical/DB_CONNECTION_URI" --value "postgresql://infisical:<password>@<rds-endpoint>:5432/infisical" --type "SecureString"
-      aws ssm put-parameter --name "/infisical/REDIS_URL" --value "redis://<elasticache-endpoint>:6379" --type "SecureString"
+      aws ssm put-parameter --name "/kms/ENCRYPTION_KEY" --value "$ENCRYPTION_KEY" --type "SecureString"
+      aws ssm put-parameter --name "/kms/AUTH_SECRET" --value "$AUTH_SECRET" --type "SecureString"
+      aws ssm put-parameter --name "/kms/DB_CONNECTION_URI" --value "postgresql://kms:<password>@<rds-endpoint>:5432/kms" --type "SecureString"
+      aws ssm put-parameter --name "/kms/REDIS_URL" --value "redis://<elasticache-endpoint>:6379" --type "SecureString"
       ```
     </Tab>
     <Tab title="Secrets Manager">
       ```bash
       # Store secrets in Secrets Manager
-      aws secretsmanager create-secret --name "infisical/ENCRYPTION_KEY" --secret-string "$ENCRYPTION_KEY"
-      aws secretsmanager create-secret --name "infisical/AUTH_SECRET" --secret-string "$AUTH_SECRET"
-      aws secretsmanager create-secret --name "infisical/DB_CONNECTION_URI" --secret-string "postgresql://infisical:<password>@<rds-endpoint>:5432/infisical"
-      aws secretsmanager create-secret --name "infisical/REDIS_URL" --secret-string "redis://<elasticache-endpoint>:6379"
+      aws secretsmanager create-secret --name "kms/ENCRYPTION_KEY" --secret-string "$ENCRYPTION_KEY"
+      aws secretsmanager create-secret --name "kms/AUTH_SECRET" --secret-string "$AUTH_SECRET"
+      aws secretsmanager create-secret --name "kms/DB_CONNECTION_URI" --secret-string "postgresql://kms:<password>@<rds-endpoint>:5432/kms"
+      aws secretsmanager create-secret --name "kms/REDIS_URL" --secret-string "redis://<elasticache-endpoint>:6379"
       ```
     </Tab>
   </Tabs>
@@ -174,10 +174,10 @@ For production deployments with many users or secrets, increase these values acc
   **Verify:** Confirm secrets are stored:
   ```bash
   # For Parameter Store
-  aws ssm get-parameters --names "/infisical/ENCRYPTION_KEY" "/infisical/AUTH_SECRET" --with-decryption
+  aws ssm get-parameters --names "/kms/ENCRYPTION_KEY" "/kms/AUTH_SECRET" --with-decryption
 
   # For Secrets Manager
-  aws secretsmanager list-secrets --filters Key=name,Values=infisical
+  aws secretsmanager list-secrets --filters Key=name,Values=kms
   ```
 </Step>
 
@@ -206,18 +206,18 @@ For production deployments with many users or secrets, increase these values acc
   ```bash
   # Create the execution role
   aws iam create-role \
-    --role-name InfisicalECSExecutionRole \
+    --role-name Hanzo KMSECSExecutionRole \
     --assume-role-policy-document file://ecs-task-execution-trust-policy.json
 
   # Attach the managed policy
   aws iam attach-role-policy \
-    --role-name InfisicalECSExecutionRole \
+    --role-name Hanzo KMSECSExecutionRole \
     --policy-arn arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
   ```
 
   **Task Role** (for application access to AWS services):
 
-  Create a file named `infisical-task-policy.json`:
+  Create a file named `kms-task-policy.json`:
   ```json
   {
     "Version": "2012-10-17",
@@ -229,14 +229,14 @@ For production deployments with many users or secrets, increase these values acc
           "ssm:GetParameters",
           "ssm:GetParametersByPath"
         ],
-        "Resource": "arn:aws:ssm:*:*:parameter/infisical/*"
+        "Resource": "arn:aws:ssm:*:*:parameter/kms/*"
       },
       {
         "Effect": "Allow",
         "Action": [
           "secretsmanager:GetSecretValue"
         ],
-        "Resource": "arn:aws:secretsmanager:*:*:secret:infisical/*"
+        "Resource": "arn:aws:secretsmanager:*:*:secret:kms/*"
       },
       {
         "Effect": "Allow",
@@ -262,14 +262,14 @@ For production deployments with many users or secrets, increase these values acc
   ```bash
   # Create the task role
   aws iam create-role \
-    --role-name InfisicalTaskRole \
+    --role-name Hanzo KMSTaskRole \
     --assume-role-policy-document file://ecs-task-execution-trust-policy.json
 
   # Create and attach the custom policy
   aws iam put-role-policy \
-    --role-name InfisicalTaskRole \
-    --policy-name InfisicalSecretsAccess \
-    --policy-document file://infisical-task-policy.json
+    --role-name Hanzo KMSTaskRole \
+    --policy-name KmsSecretsAccess \
+    --policy-document file://kms-task-policy.json
   ```
 
   **Enable ECS Exec** (for container debugging):
@@ -290,8 +290,8 @@ For production deployments with many users or secrets, increase these values acc
 
   **Verify:** Confirm roles are created:
   ```bash
-  aws iam get-role --role-name InfisicalECSExecutionRole
-  aws iam get-role --role-name InfisicalTaskRole
+  aws iam get-role --role-name Hanzo KMSECSExecutionRole
+  aws iam get-role --role-name Hanzo KMSTaskRole
   ```
 </Step>
 
@@ -299,27 +299,27 @@ For production deployments with many users or secrets, increase these values acc
   **Create ECS Cluster:**
   ```bash
   aws ecs create-cluster \
-    --cluster-name infisical-cluster \
+    --cluster-name kms-cluster \
     --capacity-providers FARGATE FARGATE_SPOT \
     --default-capacity-provider-strategy capacityProvider=FARGATE,weight=1
   ```
 
   **Create Task Definition:**
 
-  Create a file named `infisical-task-definition.json`:
+  Create a file named `kms-task-definition.json`:
   ```json
   {
-    "family": "infisical",
+    "family": "kms",
     "networkMode": "awsvpc",
     "requiresCompatibilities": ["FARGATE"],
     "cpu": "1024",
     "memory": "2048",
-    "executionRoleArn": "arn:aws:iam::<account-id>:role/InfisicalECSExecutionRole",
-    "taskRoleArn": "arn:aws:iam::<account-id>:role/InfisicalTaskRole",
+    "executionRoleArn": "arn:aws:iam::<account-id>:role/Hanzo KMSECSExecutionRole",
+    "taskRoleArn": "arn:aws:iam::<account-id>:role/Hanzo KMSTaskRole",
     "containerDefinitions": [
       {
-        "name": "infisical",
-        "image": "infisical/infisical:v0.151.0",
+        "name": "kms",
+        "image": "ghcr.io/hanzoai/kms:v0.151.0",
         "essential": true,
         "portMappings": [
           {
@@ -329,32 +329,32 @@ For production deployments with many users or secrets, increase these values acc
         ],
         "environment": [
           { "name": "HOST", "value": "0.0.0.0" },
-          { "name": "SITE_URL", "value": "https://infisical.example.com" }
+          { "name": "SITE_URL", "value": "https://kms.example.com" }
         ],
         "secrets": [
           {
             "name": "ENCRYPTION_KEY",
-            "valueFrom": "arn:aws:ssm:<region>:<account-id>:parameter/infisical/ENCRYPTION_KEY"
+            "valueFrom": "arn:aws:ssm:<region>:<account-id>:parameter/kms/ENCRYPTION_KEY"
           },
           {
             "name": "AUTH_SECRET",
-            "valueFrom": "arn:aws:ssm:<region>:<account-id>:parameter/infisical/AUTH_SECRET"
+            "valueFrom": "arn:aws:ssm:<region>:<account-id>:parameter/kms/AUTH_SECRET"
           },
           {
             "name": "DB_CONNECTION_URI",
-            "valueFrom": "arn:aws:ssm:<region>:<account-id>:parameter/infisical/DB_CONNECTION_URI"
+            "valueFrom": "arn:aws:ssm:<region>:<account-id>:parameter/kms/DB_CONNECTION_URI"
           },
           {
             "name": "REDIS_URL",
-            "valueFrom": "arn:aws:ssm:<region>:<account-id>:parameter/infisical/REDIS_URL"
+            "valueFrom": "arn:aws:ssm:<region>:<account-id>:parameter/kms/REDIS_URL"
           }
         ],
         "logConfiguration": {
           "logDriver": "awslogs",
           "options": {
-            "awslogs-group": "/ecs/infisical",
+            "awslogs-group": "/ecs/kms",
             "awslogs-region": "<region>",
-            "awslogs-stream-prefix": "infisical",
+            "awslogs-stream-prefix": "kms",
             "awslogs-create-group": "true"
           }
         },
@@ -372,12 +372,12 @@ For production deployments with many users or secrets, increase these values acc
 
   Register the task definition:
   ```bash
-  aws ecs register-task-definition --cli-input-json file://infisical-task-definition.json
+  aws ecs register-task-definition --cli-input-json file://kms-task-definition.json
   ```
 
   **Verify:** Confirm task definition is registered:
   ```bash
-  aws ecs describe-task-definition --task-definition infisical
+  aws ecs describe-task-definition --task-definition kms
   ```
 </Step>
 
@@ -385,7 +385,7 @@ For production deployments with many users or secrets, increase these values acc
   **Create ALB:**
   ```bash
   aws elbv2 create-load-balancer \
-    --name infisical-alb \
+    --name kms-alb \
     --subnets <public-subnet-1> <public-subnet-2> \
     --security-groups <alb-sg-id> \
     --scheme internet-facing \
@@ -395,7 +395,7 @@ For production deployments with many users or secrets, increase these values acc
   **Create Target Group:**
   ```bash
   aws elbv2 create-target-group \
-    --name infisical-tg \
+    --name kms-tg \
     --protocol HTTP \
     --port 8080 \
     --vpc-id <vpc-id> \
@@ -417,12 +417,12 @@ For production deployments with many users or secrets, increase these values acc
 
   **Verify:** Check ALB is active:
   ```bash
-  aws elbv2 describe-load-balancers --names infisical-alb --query 'LoadBalancers[0].State.Code'
+  aws elbv2 describe-load-balancers --names kms-alb --query 'LoadBalancers[0].State.Code'
   ```
 
-  Note the ALB DNS name for accessing Infisical:
+  Note the ALB DNS name for accessing Hanzo KMS:
   ```bash
-  aws elbv2 describe-load-balancers --names infisical-alb --query 'LoadBalancers[0].DNSName' --output text
+  aws elbv2 describe-load-balancers --names kms-alb --query 'LoadBalancers[0].DNSName' --output text
   ```
 </Step>
 
@@ -431,14 +431,14 @@ For production deployments with many users or secrets, increase these values acc
 
   ```bash
   aws ecs create-service \
-    --cluster infisical-cluster \
-    --service-name infisical-service \
-    --task-definition infisical \
+    --cluster kms-cluster \
+    --service-name kms-service \
+    --task-definition kms \
     --desired-count 2 \
     --launch-type FARGATE \
     --platform-version LATEST \
     --network-configuration "awsvpcConfiguration={subnets=[<private-subnet-1>,<private-subnet-2>],securityGroups=[<ecs-tasks-sg-id>],assignPublicIp=DISABLED}" \
-    --load-balancers "targetGroupArn=<target-group-arn>,containerName=infisical,containerPort=8080" \
+    --load-balancers "targetGroupArn=<target-group-arn>,containerName=kms,containerPort=8080" \
     --enable-execute-command \
     --deployment-configuration "minimumHealthyPercent=50,maximumPercent=200"
   ```
@@ -446,28 +446,28 @@ For production deployments with many users or secrets, increase these values acc
   **Verify deployment:**
   ```bash
   # Check service status
-  aws ecs describe-services --cluster infisical-cluster --services infisical-service --query 'services[0].status'
+  aws ecs describe-services --cluster kms-cluster --services kms-service --query 'services[0].status'
 
   # Watch task status
-  aws ecs list-tasks --cluster infisical-cluster --service-name infisical-service
-  aws ecs describe-tasks --cluster infisical-cluster --tasks <task-arn>
+  aws ecs list-tasks --cluster kms-cluster --service-name kms-service
+  aws ecs describe-tasks --cluster kms-cluster --tasks <task-arn>
 
   # Check target health
   aws elbv2 describe-target-health --target-group-arn <target-group-arn>
   ```
 
-  Once tasks are running and healthy, access Infisical via the ALB DNS name:
+  Once tasks are running and healthy, access Hanzo KMS via the ALB DNS name:
   ```bash
   curl http://<alb-dns-name>/api/status
   ```
 
   <Tip>
-    For production, run at least **2 Infisical tasks** spread across different Availability Zones for high availability and zero-downtime deployments.
+    For production, run at least **2 Hanzo KMS tasks** spread across different Availability Zones for high availability and zero-downtime deployments.
   </Tip>
 </Step>
 </Steps>
 
-After completing the above steps, your Infisical instance should be running on AWS. Visit `http://<alb-dns-name>` to access the Infisical web interface and create your admin account.
+After completing the above steps, your Hanzo KMS instance should be running on AWS. Visit `http://<alb-dns-name>` to access the Hanzo KMS web interface and create your admin account.
 
 ![self-hosted sign up](/images/self-hosting/applicable-to-all/selfhost-signup.png)
 
@@ -482,7 +482,7 @@ After completing the above steps, your Infisical instance should be running on A
     **1. Request an SSL Certificate:**
     ```bash
     aws acm request-certificate \
-      --domain-name infisical.example.com \
+      --domain-name kms.example.com \
       --validation-method DNS \
       --region <region>
     ```
@@ -515,7 +515,7 @@ After completing the above steps, your Infisical instance should be running on A
         "Changes": [{
           "Action": "CREATE",
           "ResourceRecordSet": {
-            "Name": "infisical.example.com",
+            "Name": "kms.example.com",
             "Type": "A",
             "AliasTarget": {
               "HostedZoneId": "<alb-hosted-zone-id>",
@@ -527,7 +527,7 @@ After completing the above steps, your Infisical instance should be running on A
       }'
     ```
 
-    **6. Update SITE_URL** in your ECS task definition to use `https://infisical.example.com`.
+    **6. Update SITE_URL** in your ECS task definition to use `https://kms.example.com`.
   </Accordion>
 
   <Accordion title="SMTP/Email Configuration (AWS SES)">
@@ -550,11 +550,11 @@ After completing the above steps, your Infisical instance should be running on A
         { "name": "SMTP_PORT", "value": "587" },
         { "name": "SMTP_SECURE", "value": "false" },
         { "name": "SMTP_FROM_ADDRESS", "value": "noreply@example.com" },
-        { "name": "SMTP_FROM_NAME", "value": "Infisical" }
+        { "name": "SMTP_FROM_NAME", "value": "Hanzo KMS" }
       ],
       "secrets": [
-        { "name": "SMTP_USERNAME", "valueFrom": "arn:aws:ssm:<region>:<account-id>:parameter/infisical/SMTP_USERNAME" },
-        { "name": "SMTP_PASSWORD", "valueFrom": "arn:aws:ssm:<region>:<account-id>:parameter/infisical/SMTP_PASSWORD" }
+        { "name": "SMTP_USERNAME", "valueFrom": "arn:aws:ssm:<region>:<account-id>:parameter/kms/SMTP_USERNAME" },
+        { "name": "SMTP_PASSWORD", "valueFrom": "arn:aws:ssm:<region>:<account-id>:parameter/kms/SMTP_PASSWORD" }
       ]
     }
     ```
@@ -605,33 +605,33 @@ After completing the above steps, your Infisical instance should be running on A
       --security-group-ids <vpc-endpoint-sg>
     ```
 
-    **Push Infisical image to ECR:**
+    **Push Hanzo KMS image to ECR:**
     ```bash
     # Create ECR repository
-    aws ecr create-repository --repository-name infisical
+    aws ecr create-repository --repository-name kms
 
     # Login to ECR
     aws ecr get-login-password --region <region> | docker login --username AWS --password-stdin <account-id>.dkr.ecr.<region>.amazonaws.com
 
     # Pull and push image
-    docker pull infisical/infisical:v0.151.0
-    docker tag infisical/infisical:v0.151.0 <account-id>.dkr.ecr.<region>.amazonaws.com/infisical:v0.151.0
-    docker push <account-id>.dkr.ecr.<region>.amazonaws.com/infisical:v0.151.0
+    docker pull ghcr.io/hanzoai/kms:v0.151.0
+    docker tag ghcr.io/hanzoai/kms:v0.151.0 <account-id>.dkr.ecr.<region>.amazonaws.com/kms:v0.151.0
+    docker push <account-id>.dkr.ecr.<region>.amazonaws.com/kms:v0.151.0
     ```
 
     Update your task definition to use the ECR image URL.
   </Accordion>
 
   <Accordion title="Database Migrations">
-    Infisical automatically runs database migrations on startup. For manual migration handling:
+    Hanzo KMS automatically runs database migrations on startup. For manual migration handling:
 
     **Check migration status:**
     ```bash
     # Exec into a running container
     aws ecs execute-command \
-      --cluster infisical-cluster \
+      --cluster kms-cluster \
       --task <task-id> \
-      --container infisical \
+      --container kms \
       --interactive \
       --command "/bin/sh"
 
@@ -677,13 +677,13 @@ After completing the above steps, your Infisical instance should be running on A
     **Exec into a container:**
     ```bash
     # Get task ID
-    TASK_ID=$(aws ecs list-tasks --cluster infisical-cluster --service-name infisical-service --query 'taskArns[0]' --output text | cut -d'/' -f3)
+    TASK_ID=$(aws ecs list-tasks --cluster kms-cluster --service-name kms-service --query 'taskArns[0]' --output text | cut -d'/' -f3)
 
     # Start interactive session
     aws ecs execute-command \
-      --cluster infisical-cluster \
+      --cluster kms-cluster \
       --task $TASK_ID \
-      --container infisical \
+      --container kms \
       --interactive \
       --command "/bin/sh"
     ```
@@ -710,16 +710,16 @@ After completing the above steps, your Infisical instance should be running on A
     - Take manual snapshots before upgrades:
     ```bash
     aws rds create-db-snapshot \
-      --db-instance-identifier infisical-db \
-      --db-snapshot-identifier infisical-pre-upgrade-$(date +%Y%m%d)
+      --db-instance-identifier kms-db \
+      --db-snapshot-identifier kms-pre-upgrade-$(date +%Y%m%d)
     ```
 
     **Export to S3 (for cross-region DR):**
     ```bash
     aws rds start-export-task \
-      --export-task-identifier infisical-export-$(date +%Y%m%d) \
-      --source-arn arn:aws:rds:<region>:<account-id>:snapshot:infisical-snapshot \
-      --s3-bucket-name infisical-backups \
+      --export-task-identifier kms-export-$(date +%Y%m%d) \
+      --source-arn arn:aws:rds:<region>:<account-id>:snapshot:kms-snapshot \
+      --s3-bucket-name kms-backups \
       --iam-role-arn arn:aws:iam::<account-id>:role/RDSExportRole \
       --kms-key-id <kms-key-id>
     ```
@@ -739,70 +739,70 @@ After completing the above steps, your Infisical instance should be running on A
     **1. Back up the database:**
     ```bash
     aws rds create-db-snapshot \
-      --db-instance-identifier infisical-db \
-      --db-snapshot-identifier infisical-pre-upgrade-$(date +%Y%m%d)
+      --db-instance-identifier kms-db \
+      --db-snapshot-identifier kms-pre-upgrade-$(date +%Y%m%d)
     ```
 
     **2. Update the task definition** with the new image tag:
     ```bash
-    # Edit infisical-task-definition.json with new version
+    # Edit kms-task-definition.json with new version
     # Then register the new revision
-    aws ecs register-task-definition --cli-input-json file://infisical-task-definition.json
+    aws ecs register-task-definition --cli-input-json file://kms-task-definition.json
     ```
 
     **3. Update the service:**
     ```bash
     aws ecs update-service \
-      --cluster infisical-cluster \
-      --service infisical-service \
-      --task-definition infisical:<new-revision>
+      --cluster kms-cluster \
+      --service kms-service \
+      --task-definition kms:<new-revision>
     ```
 
     **4. Monitor the deployment:**
     ```bash
-    aws ecs describe-services --cluster infisical-cluster --services infisical-service --query 'services[0].deployments'
+    aws ecs describe-services --cluster kms-cluster --services kms-service --query 'services[0].deployments'
     ```
 
     **5. Verify health:**
     ```bash
-    curl https://infisical.example.com/api/status
+    curl https://kms.example.com/api/status
     ```
 
     **Rollback if needed:**
     ```bash
     aws ecs update-service \
-      --cluster infisical-cluster \
-      --service infisical-service \
-      --task-definition infisical:<previous-revision>
+      --cluster kms-cluster \
+      --service kms-service \
+      --task-definition kms:<previous-revision>
     ```
   </Accordion>
 
   <Accordion title="Monitoring and Alerting">
     **CloudWatch Logs:**
-    - Logs are automatically sent to `/ecs/infisical` log group
+    - Logs are automatically sent to `/ecs/kms` log group
     - Set retention policy:
     ```bash
-    aws logs put-retention-policy --log-group-name /ecs/infisical --retention-in-days 30
+    aws logs put-retention-policy --log-group-name /ecs/kms --retention-in-days 30
     ```
 
     **CloudWatch Alarms:**
     ```bash
     # High CPU alarm
     aws cloudwatch put-metric-alarm \
-      --alarm-name infisical-high-cpu \
+      --alarm-name kms-high-cpu \
       --metric-name CPUUtilization \
       --namespace AWS/ECS \
       --statistic Average \
       --period 300 \
       --threshold 80 \
       --comparison-operator GreaterThanThreshold \
-      --dimensions Name=ClusterName,Value=infisical-cluster Name=ServiceName,Value=infisical-service \
+      --dimensions Name=ClusterName,Value=kms-cluster Name=ServiceName,Value=kms-service \
       --evaluation-periods 2 \
       --alarm-actions <sns-topic-arn>
 
     # Unhealthy target alarm
     aws cloudwatch put-metric-alarm \
-      --alarm-name infisical-unhealthy-targets \
+      --alarm-name kms-unhealthy-targets \
       --metric-name UnHealthyHostCount \
       --namespace AWS/ApplicationELB \
       --statistic Average \
@@ -817,7 +817,7 @@ After completing the above steps, your Infisical instance should be running on A
     **Enable Container Insights:**
     ```bash
     aws ecs update-cluster-settings \
-      --cluster infisical-cluster \
+      --cluster kms-cluster \
       --settings name=containerInsights,value=enabled
     ```
   </Accordion>
@@ -830,7 +830,7 @@ After completing the above steps, your Infisical instance should be running on A
     aws application-autoscaling register-scalable-target \
       --service-namespace ecs \
       --scalable-dimension ecs:service:DesiredCount \
-      --resource-id service/infisical-cluster/infisical-service \
+      --resource-id service/kms-cluster/kms-service \
       --min-capacity 2 \
       --max-capacity 10
     ```
@@ -840,8 +840,8 @@ After completing the above steps, your Infisical instance should be running on A
     aws application-autoscaling put-scaling-policy \
       --service-namespace ecs \
       --scalable-dimension ecs:service:DesiredCount \
-      --resource-id service/infisical-cluster/infisical-service \
-      --policy-name infisical-cpu-scaling \
+      --resource-id service/kms-cluster/kms-service \
+      --policy-name kms-cpu-scaling \
       --policy-type TargetTrackingScaling \
       --target-tracking-scaling-policy-configuration '{
         "TargetValue": 70.0,
@@ -861,7 +861,7 @@ After completing the above steps, your Infisical instance should be running on A
 
 <AccordionGroup>
   <Accordion title="Terraform Example">
-    A basic Terraform configuration for deploying Infisical on AWS:
+    A basic Terraform configuration for deploying Hanzo KMS on AWS:
 
     ```hcl
     # main.tf
@@ -892,7 +892,7 @@ After completing the above steps, your Infisical instance should be running on A
       source  = "terraform-aws-modules/vpc/aws"
       version = "~> 5.0"
 
-      name = "infisical-vpc"
+      name = "kms-vpc"
       cidr = "10.0.0.0/16"
 
       azs             = ["${var.aws_region}a", "${var.aws_region}b"]
@@ -905,7 +905,7 @@ After completing the above steps, your Infisical instance should be running on A
 
     # Security Groups
     resource "aws_security_group" "alb" {
-      name_prefix = "infisical-alb-"
+      name_prefix = "kms-alb-"
       vpc_id      = module.vpc.vpc_id
 
       ingress {
@@ -931,7 +931,7 @@ After completing the above steps, your Infisical instance should be running on A
     }
 
     resource "aws_security_group" "ecs_tasks" {
-      name_prefix = "infisical-ecs-"
+      name_prefix = "kms-ecs-"
       vpc_id      = module.vpc.vpc_id
 
       ingress {
@@ -954,7 +954,7 @@ After completing the above steps, your Infisical instance should be running on A
       source  = "terraform-aws-modules/rds/aws"
       version = "~> 6.0"
 
-      identifier = "infisical-db"
+      identifier = "kms-db"
 
       engine               = "postgres"
       engine_version       = "14"
@@ -963,8 +963,8 @@ After completing the above steps, your Infisical instance should be running on A
       instance_class       = "db.t3.small"
 
       allocated_storage = 20
-      db_name           = "infisical"
-      username          = "infisical"
+      db_name           = "kms"
+      username          = "kms"
       port              = 5432
 
       multi_az               = var.environment == "production"
@@ -977,8 +977,8 @@ After completing the above steps, your Infisical instance should be running on A
 
     # ElastiCache Redis
     resource "aws_elasticache_replication_group" "redis" {
-      replication_group_id = "infisical-redis"
-      description          = "Redis for Infisical"
+      replication_group_id = "kms-redis"
+      description          = "Redis for Hanzo KMS"
 
       node_type            = "cache.t3.small"
       num_cache_clusters   = var.environment == "production" ? 2 : 1
@@ -996,8 +996,8 @@ After completing the above steps, your Infisical instance should be running on A
     }
 
     # ECS Cluster
-    resource "aws_ecs_cluster" "infisical" {
-      name = "infisical-cluster"
+    resource "aws_ecs_cluster" "kms" {
+      name = "kms-cluster"
 
       setting {
         name  = "containerInsights"
@@ -1015,12 +1015,12 @@ After completing the above steps, your Infisical instance should be running on A
   </Accordion>
 
   <Accordion title="CloudFormation Example">
-    A CloudFormation template for deploying Infisical on AWS:
+    A CloudFormation template for deploying Hanzo KMS on AWS:
 
     ```yaml
-    # infisical-cloudformation.yaml
+    # kms-cloudformation.yaml
     AWSTemplateFormatVersion: '2010-09-09'
-    Description: 'Infisical on AWS ECS Fargate'
+    Description: 'Hanzo KMS on AWS ECS Fargate'
 
     Parameters:
       Environment:
@@ -1028,13 +1028,13 @@ After completing the above steps, your Infisical instance should be running on A
         Default: production
         AllowedValues: [development, staging, production]
       
-      InfisicalVersion:
+      Hanzo KMSVersion:
         Type: String
         Default: v0.151.0
       
       DomainName:
         Type: String
-        Description: Domain name for Infisical (e.g., infisical.example.com)
+        Description: Domain name for Hanzo KMS (e.g., kms.example.com)
 
     Conditions:
       IsProduction: !Equals [!Ref Environment, production]
@@ -1049,7 +1049,7 @@ After completing the above steps, your Infisical instance should be running on A
           EnableDnsSupport: true
           Tags:
             - Key: Name
-              Value: !Sub infisical-vpc-${Environment}
+              Value: !Sub kms-vpc-${Environment}
 
       # Public Subnets
       PublicSubnet1:
@@ -1108,7 +1108,7 @@ After completing the above steps, your Infisical instance should be running on A
       ECSCluster:
         Type: AWS::ECS::Cluster
         Properties:
-          ClusterName: !Sub infisical-cluster-${Environment}
+          ClusterName: !Sub kms-cluster-${Environment}
           ClusterSettings:
             - Name: containerInsights
               Value: enabled
@@ -1117,7 +1117,7 @@ After completing the above steps, your Infisical instance should be running on A
       TaskDefinition:
         Type: AWS::ECS::TaskDefinition
         Properties:
-          Family: infisical
+          Family: kms
           NetworkMode: awsvpc
           RequiresCompatibilities: [FARGATE]
           Cpu: '1024'
@@ -1125,8 +1125,8 @@ After completing the above steps, your Infisical instance should be running on A
           ExecutionRoleArn: !GetAtt ECSExecutionRole.Arn
           TaskRoleArn: !GetAtt ECSTaskRole.Arn
           ContainerDefinitions:
-            - Name: infisical
-              Image: !Sub infisical/infisical:${InfisicalVersion}
+            - Name: kms
+              Image: !Sub ghcr.io/hanzoai/kms:${Hanzo KMSVersion}
               Essential: true
               PortMappings:
                 - ContainerPort: 8080
@@ -1138,19 +1138,19 @@ After completing the above steps, your Infisical instance should be running on A
                   Value: !Sub https://${DomainName}
               Secrets:
                 - Name: ENCRYPTION_KEY
-                  ValueFrom: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/infisical/ENCRYPTION_KEY
+                  ValueFrom: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/kms/ENCRYPTION_KEY
                 - Name: AUTH_SECRET
-                  ValueFrom: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/infisical/AUTH_SECRET
+                  ValueFrom: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/kms/AUTH_SECRET
                 - Name: DB_CONNECTION_URI
-                  ValueFrom: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/infisical/DB_CONNECTION_URI
+                  ValueFrom: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/kms/DB_CONNECTION_URI
                 - Name: REDIS_URL
-                  ValueFrom: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/infisical/REDIS_URL
+                  ValueFrom: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/kms/REDIS_URL
               LogConfiguration:
                 LogDriver: awslogs
                 Options:
                   awslogs-group: !Ref LogGroup
                   awslogs-region: !Ref AWS::Region
-                  awslogs-stream-prefix: infisical
+                  awslogs-stream-prefix: kms
               HealthCheck:
                 Command: ['CMD-SHELL', 'wget -q --spider http://localhost:8080/api/status || exit 1']
                 Interval: 30
@@ -1163,7 +1163,7 @@ After completing the above steps, your Infisical instance should be running on A
         Type: AWS::ECS::Service
         DependsOn: ALBListener
         Properties:
-          ServiceName: infisical-service
+          ServiceName: kms-service
           Cluster: !Ref ECSCluster
           TaskDefinition: !Ref TaskDefinition
           DesiredCount: !If [IsProduction, 2, 1]
@@ -1178,7 +1178,7 @@ After completing the above steps, your Infisical instance should be running on A
               SecurityGroups:
                 - !Ref ECSSecurityGroup
           LoadBalancers:
-            - ContainerName: infisical
+            - ContainerName: kms
               ContainerPort: 8080
               TargetGroupArn: !Ref TargetGroup
 
@@ -1186,7 +1186,7 @@ After completing the above steps, your Infisical instance should be running on A
       ALB:
         Type: AWS::ElasticLoadBalancingV2::LoadBalancer
         Properties:
-          Name: !Sub infisical-alb-${Environment}
+          Name: !Sub kms-alb-${Environment}
           Scheme: internet-facing
           Type: application
           Subnets:
@@ -1199,7 +1199,7 @@ After completing the above steps, your Infisical instance should be running on A
       LogGroup:
         Type: AWS::Logs::LogGroup
         Properties:
-          LogGroupName: !Sub /ecs/infisical-${Environment}
+          LogGroupName: !Sub /ecs/kms-${Environment}
           RetentionInDays: 30
 
     Outputs:
@@ -1215,9 +1215,9 @@ After completing the above steps, your Infisical instance should be running on A
     **Deploy the stack:**
     ```bash
     aws cloudformation create-stack \
-      --stack-name infisical-stack \
-      --template-body file://infisical-cloudformation.yaml \
-      --parameters ParameterKey=DomainName,ParameterValue=infisical.example.com \
+      --stack-name kms-stack \
+      --template-body file://kms-cloudformation.yaml \
+      --parameters ParameterKey=DomainName,ParameterValue=kms.example.com \
       --capabilities CAPABILITY_IAM
     ```
   </Accordion>
@@ -1231,12 +1231,12 @@ After completing the above steps, your Infisical instance should be running on A
   <Accordion title="ECS tasks fail to start">
     **Check task status and stopped reason:**
     ```bash
-    aws ecs describe-tasks --cluster infisical-cluster --tasks <task-arn> --query 'tasks[0].stoppedReason'
+    aws ecs describe-tasks --cluster kms-cluster --tasks <task-arn> --query 'tasks[0].stoppedReason'
     ```
 
     **View CloudWatch logs:**
     ```bash
-    aws logs tail /ecs/infisical --follow
+    aws logs tail /ecs/kms --follow
     ```
 
     **Common causes:**
@@ -1250,7 +1250,7 @@ After completing the above steps, your Infisical instance should be running on A
     **Test connectivity from ECS task:**
     ```bash
     # Exec into container
-    aws ecs execute-command --cluster infisical-cluster --task <task-id> --container infisical --interactive --command "/bin/sh"
+    aws ecs execute-command --cluster kms-cluster --task <task-id> --container kms --interactive --command "/bin/sh"
 
     # Test database connection
     nc -zv <rds-endpoint> 5432
@@ -1262,7 +1262,7 @@ After completing the above steps, your Infisical instance should be running on A
 
     **Verify connection string:**
     ```bash
-    aws ssm get-parameter --name /infisical/DB_CONNECTION_URI --with-decryption
+    aws ssm get-parameter --name /kms/DB_CONNECTION_URI --with-decryption
     ```
   </Accordion>
 
@@ -1285,7 +1285,7 @@ After completing the above steps, your Infisical instance should be running on A
     - Health check timeout is too short (increase to 10 seconds)
   </Accordion>
 
-  <Accordion title="Cannot access Infisical in browser">
+  <Accordion title="Cannot access Hanzo KMS in browser">
     **Check ALB is accessible:**
     ```bash
     curl -v http://<alb-dns-name>/api/status
@@ -1293,7 +1293,7 @@ After completing the above steps, your Infisical instance should be running on A
 
     **Verify DNS resolution:**
     ```bash
-    nslookup infisical.example.com
+    nslookup kms.example.com
     ```
 
     **Check ALB security group:**
@@ -1321,7 +1321,7 @@ After completing the above steps, your Infisical instance should be running on A
 
     **Check application logs for email errors:**
     ```bash
-    aws logs filter-log-events --log-group-name /ecs/infisical --filter-pattern "smtp OR email OR mail"
+    aws logs filter-log-events --log-group-name /ecs/kms --filter-pattern "smtp OR email OR mail"
     ```
   </Accordion>
 
@@ -1331,7 +1331,7 @@ After completing the above steps, your Infisical instance should be running on A
     aws cloudwatch get-metric-statistics \
       --namespace AWS/ECS \
       --metric-name CPUUtilization \
-      --dimensions Name=ClusterName,Value=infisical-cluster Name=ServiceName,Value=infisical-service \
+      --dimensions Name=ClusterName,Value=kms-cluster Name=ServiceName,Value=kms-service \
       --start-time $(date -u -d '1 hour ago' +%Y-%m-%dT%H:%M:%SZ) \
       --end-time $(date -u +%Y-%m-%dT%H:%M:%SZ) \
       --period 300 \
@@ -1343,7 +1343,7 @@ After completing the above steps, your Infisical instance should be running on A
     aws cloudwatch get-metric-statistics \
       --namespace AWS/RDS \
       --metric-name CPUUtilization \
-      --dimensions Name=DBInstanceIdentifier,Value=infisical-db \
+      --dimensions Name=DBInstanceIdentifier,Value=kms-db \
       --start-time $(date -u -d '1 hour ago' +%Y-%m-%dT%H:%M:%SZ) \
       --end-time $(date -u +%Y-%m-%dT%H:%M:%SZ) \
       --period 300 \
@@ -1361,15 +1361,15 @@ After completing the above steps, your Infisical instance should be running on A
     **Verify prerequisites:**
     ```bash
     # Check service has execute-command enabled
-    aws ecs describe-services --cluster infisical-cluster --services infisical-service --query 'services[0].enableExecuteCommand'
+    aws ecs describe-services --cluster kms-cluster --services kms-service --query 'services[0].enableExecuteCommand'
 
     # Check task role has SSM permissions
-    aws iam get-role-policy --role-name InfisicalTaskRole --policy-name InfisicalSecretsAccess
+    aws iam get-role-policy --role-name Hanzo KMSTaskRole --policy-name KmsSecretsAccess
     ```
 
     **Check managed agent status:**
     ```bash
-    aws ecs describe-tasks --cluster infisical-cluster --tasks <task-arn> --query 'tasks[0].containers[0].managedAgents'
+    aws ecs describe-tasks --cluster kms-cluster --tasks <task-arn> --query 'tasks[0].containers[0].managedAgents'
     ```
 
     **Common fixes:**

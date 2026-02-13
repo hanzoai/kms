@@ -31,7 +31,7 @@ import {
   ProjectPermissionSub
 } from "@app/ee/services/permission/project-permission";
 import {
-  InfisicalProjectTemplate,
+  KmsProjectTemplate,
   TProjectTemplateServiceFactory
 } from "@app/ee/services/project-template/project-template-types";
 import { TSshCertificateAuthorityDALFactory } from "@app/ee/services/ssh/ssh-certificate-authority-dal";
@@ -248,7 +248,7 @@ export const projectServiceFactory = ({
     kmsKeyId,
     tx: trx,
     createDefaultEnvs = true,
-    template = InfisicalProjectTemplate.Default,
+    template = KmsProjectTemplate.Default,
     type = ProjectType.SecretManager,
     hasDeleteProtection
   }: TCreateProjectDTO) => {
@@ -297,7 +297,7 @@ export const projectServiceFactory = ({
       let projectTemplate: Awaited<ReturnType<typeof projectTemplateService.findProjectTemplateByName>> | null = null;
 
       switch (template) {
-        case InfisicalProjectTemplate.Default:
+        case KmsProjectTemplate.Default:
           projectTemplate = null;
           break;
         default:
@@ -721,7 +721,7 @@ export const projectServiceFactory = ({
       };
     });
 
-    await keyStore.deleteItem(`infisical-cloud-plan-${actorOrgId}`);
+    await keyStore.deleteItem(`kms-cloud-plan-${actorOrgId}`);
     return results;
   };
 
@@ -783,7 +783,7 @@ export const projectServiceFactory = ({
       return delProject;
     });
 
-    await keyStore.deleteItem(`infisical-cloud-plan-${actorOrgId}`);
+    await keyStore.deleteItem(`kms-cloud-plan-${actorOrgId}`);
     return deletedProject;
   };
 

@@ -9,13 +9,13 @@ export const MONGODB_CREDENTIALS_ROTATION_LIST_OPTION: TSecretRotationV2ListItem
   template: {
     createUserStatement: `use [DATABASE_NAME]
 db.createUser({
-  user: "infisical_user_1",
+  user: "kms_user_1",
   pwd: "temporary_password",
   roles: [{ role: "readWrite", db: "[DATABASE_NAME]" }]
 })
 
 db.createUser({
-  user: "infisical_user_2",
+  user: "kms_user_2",
   pwd: "temporary_password",
   roles: [{ role: "readWrite", db: "[DATABASE_NAME]" }]
 })`,

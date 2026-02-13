@@ -354,8 +354,8 @@ export const userAgentTypeToNameMap: { [K in UserAgentType]: string } = {
   [UserAgentType.CLI]: "CLI",
   [UserAgentType.K8_OPERATOR]: "K8s operator",
   [UserAgentType.TERRAFORM]: "Terraform",
-  [UserAgentType.NODE_SDK]: "InfisicalNodeSDK",
-  [UserAgentType.PYTHON_SDK]: "InfisicalPythonSDK",
+  [UserAgentType.NODE_SDK]: "KmsNodeSDK",
+  [UserAgentType.PYTHON_SDK]: "KmsPythonSDK",
   [UserAgentType.OTHER]: "Other"
 };
 

@@ -1,22 +1,22 @@
 ---
 title: "GitLab Connection"
-description: "Learn how to configure a GitLab Connection for Infisical using OAuth or Access Token methods."
+description: "Learn how to configure a GitLab Connection for Hanzo KMS using OAuth or Access Token methods."
 ---
 
-Infisical supports two methods for connecting to GitLab: **OAuth** and **Access Token**. Choose the method that best fits your setup and security requirements.
+Hanzo KMS supports two methods for connecting to GitLab: **OAuth** and **Access Token**. Choose the method that best fits your setup and security requirements.
 
 <Tabs>
   <Tab title="OAuth Method">
     The OAuth method provides secure authentication through GitLab's OAuth flow.
 
     <Accordion title="Self-Hosted Instance Setup">
-      Using the GitLab Connection with OAuth on a self-hosted instance of Infisical requires configuring an OAuth application in GitLab and registering your instance with it.
+      Using the GitLab Connection with OAuth on a self-hosted instance of Hanzo KMS requires configuring an OAuth application in GitLab and registering your instance with it.
 
-      <Tip>If you're self-hosting GitLab with custom certificates, you will have to configure your Infisical instance to trust these certificates. To learn how, please follow [this guide](../../self-hosting/guides/custom-certificates).</Tip>
+      <Tip>If you're self-hosting GitLab with custom certificates, you will have to configure your Hanzo KMS instance to trust these certificates. To learn how, please follow [this guide](../../self-hosting/guides/custom-certificates).</Tip>
 
       **Prerequisites:**
       - A GitLab account with existing projects
-      - Self-hosted Infisical instance
+      - Self-hosted Hanzo KMS instance
 
       <Steps>
         <Step title="Create an OAuth application in GitLab">
@@ -46,29 +46,29 @@ Infisical supports two methods for connecting to GitLab: **OAuth** and **Access 
             </Tabs>
 
           <Tip>
-            The domain you defined in the Redirect URI should be equivalent to the `SITE_URL` configured in your Infisical instance.
+            The domain you defined in the Redirect URI should be equivalent to the `SITE_URL` configured in your Hanzo KMS instance.
           </Tip>
 
           <Note>
             If you have a GitLab group, you can create an OAuth application under it in your group Settings > Applications.
           </Note>
         </Step>
-        <Step title="Add your GitLab OAuth application credentials to Infisical">
+        <Step title="Add your GitLab OAuth application credentials to Hanzo KMS">
           Obtain the **Application ID** and **Secret** for your GitLab OAuth application.
 
           ![GitLab Application Credentials](/images/app-connections/gitlab/gitlab-config-credentials.png)
 
-          Back in your Infisical instance, add two new environment variables for the credentials of your GitLab OAuth application:
+          Back in your Hanzo KMS instance, add two new environment variables for the credentials of your GitLab OAuth application:
 
           - `INF_APP_CONNECTION_GITLAB_OAUTH_CLIENT_ID`: The **Application ID** of your GitLab OAuth application.
           - `INF_APP_CONNECTION_GITLAB_OAUTH_CLIENT_SECRET`: The **Secret** of your GitLab OAuth application.
 
-          Once added, restart your Infisical instance and use the GitLab Connection.
+          Once added, restart your Hanzo KMS instance and use the GitLab Connection.
         </Step>
       </Steps>
     </Accordion>
 
-    ## Setup GitLab OAuth Connection in Infisical
+    ## Setup GitLab OAuth Connection in Hanzo KMS
 
     <Steps>
       <Step title="Navigate to App Connections">
@@ -85,7 +85,7 @@ Infisical supports two methods for connecting to GitLab: **OAuth** and **Access 
         ![Connect via GitLab OAuth](/images/app-connections/gitlab/create-gitlab-oauth-connection.png)
       </Step>
       <Step title="Grant Access">
-        You will be redirected to GitLab to grant Infisical access to your GitLab account. Once granted, you will be redirected back to Infisical's App Connections page.
+        You will be redirected to GitLab to grant Hanzo KMS access to your GitLab account. Once granted, you will be redirected back to Hanzo KMS's App Connections page.
         ![GitLab Authorization](/images/app-connections/gitlab/gitlab-authorization-page.png)
       </Step>
       <Step title="Connection Created">
@@ -250,7 +250,7 @@ Infisical supports two methods for connecting to GitLab: **OAuth** and **Access 
 
 </Tabs>
 
-## Setup GitLab Access Token Connection in Infisical
+## Setup GitLab Access Token Connection in Hanzo KMS
 
   <Steps>
   <Step title="Navigate to App Connections">

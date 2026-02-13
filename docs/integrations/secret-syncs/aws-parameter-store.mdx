@@ -1,20 +1,20 @@
 ---
 title: "AWS Parameter Store Sync"
-description: "Learn how to configure an AWS Parameter Store Sync for Infisical."
+description: "Learn how to configure an AWS Parameter Store Sync for Hanzo KMS."
 ---
 
 **Prerequisites:**
 
-        - Set up and add secrets to [Infisical Cloud](https://app.infisical.com)
+        - Set up and add secrets to [Hanzo KMS Cloud](https://kms.hanzo.ai)
         - Create an [AWS Connection](/integrations/app-connections/aws) with the required **Secret Sync** permissions
-        - Ensure your network security policies allow incoming requests from Infisical to this secret sync provider, if network restrictions apply.
+        - Ensure your network security policies allow incoming requests from Hanzo KMS to this secret sync provider, if network restrictions apply.
 
 <Note>
   For workflows involving large amounts of secrets or frequent syncs, we recommend increasing your [AWS Parameter Store throughput quota](https://docs.aws.amazon.com/systems-manager/latest/userguide/parameter-store-throughput.html) to avoid rate limiting.
 </Note>
 
 <Tabs>
-    <Tab title="Infisical UI">
+    <Tab title="Hanzo KMS UI">
         1. Navigate to **Project** > **Integrations** and select the **Secret Syncs** tab. Click on the **Add Sync** button.
         ![Secret Syncs Tab](/images/secret-syncs/general/secret-sync-tab.png)
 
@@ -41,22 +41,22 @@ description: "Learn how to configure an AWS Parameter Store Sync for Infisical."
         5. Configure the **Sync Options** to specify how secrets should be synced, then click **Next**.
         ![Configure Options](/images/secret-syncs/aws-parameter-store/aws-parameter-store-options.png)
 
-            - **Initial Sync Behavior**: Determines how Infisical should resolve the initial sync.
-                - **Overwrite Destination Secrets**: Removes any secrets at the destination endpoint not present in Infisical.
-                - **Import Secrets (Prioritize Infisical)**: Imports secrets from the destination endpoint before syncing, prioritizing values from Infisical over Parameter Store when keys conflict.
-                - **Import Secrets (Prioritize AWS Parameter Store)**: Imports secrets from the destination endpoint before syncing, prioritizing values from Parameter Store over Infisical when keys conflict.
+            - **Initial Sync Behavior**: Determines how Hanzo KMS should resolve the initial sync.
+                - **Overwrite Destination Secrets**: Removes any secrets at the destination endpoint not present in Hanzo KMS.
+                - **Import Secrets (Prioritize Hanzo KMS)**: Imports secrets from the destination endpoint before syncing, prioritizing values from Hanzo KMS over Parameter Store when keys conflict.
+                - **Import Secrets (Prioritize AWS Parameter Store)**: Imports secrets from the destination endpoint before syncing, prioritizing values from Parameter Store over Hanzo KMS when keys conflict.
             - **Key Schema**: Template that determines how secret names are transformed when syncing, using `{{secretKey}}` as a placeholder for the original secret name and `{{environment}}` for the environment.
             <Note>
-                We highly recommend using a Key Schema to ensure that Infisical only manages the specific keys you intend, keeping everything else untouched.
+                We highly recommend using a Key Schema to ensure that Hanzo KMS only manages the specific keys you intend, keeping everything else untouched.
             </Note>
             - **KMS Key**: The AWS KMS key ID or alias to encrypt parameters with.
-            - **Tags**: Optional resource tags to add to parameters synced by Infisical.
-            - **Sync Secret Metadata as Resource Tags**: If enabled, metadata attached to secrets will be added as resource tags to parameters synced by Infisical.
+            - **Tags**: Optional resource tags to add to parameters synced by Hanzo KMS.
+            - **Sync Secret Metadata as Resource Tags**: If enabled, metadata attached to secrets will be added as resource tags to parameters synced by Hanzo KMS.
             <Note>
                 Manually configured tags from the **Tags** field will take precedence over secret metadata when tag keys conflict.
             </Note>
             - **Auto-Sync Enabled**: If enabled, secrets will automatically be synced from the source location when changes occur. Disable to enforce manual syncing only.
-            - **Disable Secret Deletion**: If enabled, Infisical will not remove secrets from the sync destination. Enable this option if you intend to manage some secrets manually outside of Infisical.
+            - **Disable Secret Deletion**: If enabled, Hanzo KMS will not remove secrets from the sync destination. Enable this option if you intend to manage some secrets manually outside of Hanzo KMS.
 
         6. Configure the **Details** of your Parameter Store Sync, then click **Next**.
         ![Configure Details](/images/secret-syncs/aws-parameter-store/aws-parameter-store-details.png)
@@ -79,7 +79,7 @@ description: "Learn how to configure an AWS Parameter Store Sync for Infisical."
 
         ```bash Request
         curl    --request POST \
-        --url https://app.infisical.com/api/v1/secret-syncs/aws-parameter-store \
+        --url https://kms.hanzo.ai/api/v1/secret-syncs/aws-parameter-store \
         --header 'Content-Type: application/json' \
         --data '{
             "name": "my-parameter-store-sync",
@@ -158,6 +158,6 @@ description: "Learn how to configure an AWS Parameter Store Sync for Infisical."
 
 <AccordionGroup>
     <Accordion title="What's the relationship between 'path' and 'key schema'?">
-        The path is required and will be prepended to the key schema. For example, if you have a path of `/demo/path/` and a key schema of `INFISICAL_{{secretKey}}`, then the result will be `/demo/path/INFISICAL_{{secretKey}}`.
+        The path is required and will be prepended to the key schema. For example, if you have a path of `/demo/path/` and a key schema of `KMS_{{secretKey}}`, then the result will be `/demo/path/KMS_{{secretKey}}`.
     </Accordion>
 </AccordionGroup>

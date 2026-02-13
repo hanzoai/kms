@@ -64,7 +64,7 @@ const LICENSE_SERVER_CLOUD_LOGIN = "/api/auth/v1/license-server-login";
 const LICENSE_SERVER_ON_PREM_LOGIN = "/api/auth/v1/license-login";
 
 const LICENSE_SERVER_CLOUD_PLAN_TTL = 5 * 60; // 5 mins
-const FEATURE_CACHE_KEY = (orgId: string) => `infisical-cloud-plan-${orgId}`;
+const FEATURE_CACHE_KEY = (orgId: string) => `kms-cloud-plan-${orgId}`;
 
 export const licenseServiceFactory = ({
   orgDAL,
@@ -156,14 +156,14 @@ export const licenseServiceFactory = ({
 
         if (!isVerified) {
           isValidOfflineLicense = false;
-          logger.warn(`Infisical EE offline license verification failed`);
+          logger.warn(`Hanzo KMS EE offline license verification failed`);
         }
 
         if (contents.license.terminatesAt) {
           const terminationDate = new Date(contents.license.terminatesAt);
           if (terminationDate < new Date()) {
             isValidOfflineLicense = false;
-            logger.warn(`Infisical EE offline license has expired`);
+            logger.warn(`Hanzo KMS EE offline license has expired`);
           }
         }
 

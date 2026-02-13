@@ -1,16 +1,16 @@
 ---
 title: "GitHub Sync"
-description: "Learn how to configure a GitHub Sync for Infisical."
+description: "Learn how to configure a GitHub Sync for Hanzo KMS."
 ---
 
 **Prerequisites:**
 
-        - Set up and add secrets to [Infisical Cloud](https://app.infisical.com)
+        - Set up and add secrets to [Hanzo KMS Cloud](https://kms.hanzo.ai)
         - Create a [GitHub Connection](/integrations/app-connections/github)
-        - Ensure your network security policies allow incoming requests from Infisical to this secret sync provider, if network restrictions apply.
+        - Ensure your network security policies allow incoming requests from Hanzo KMS to this secret sync provider, if network restrictions apply.
 
 <Tabs>
-    <Tab title="Infisical UI">
+    <Tab title="Hanzo KMS UI">
         1. Navigate to **Project** > **Integrations** and select the **Secret Syncs** tab. Click on the **Add Sync** button.
         ![Secret Syncs Tab](/images/secret-syncs/general/secret-sync-tab.png)
 
@@ -58,17 +58,17 @@ description: "Learn how to configure a GitHub Sync for Infisical."
         5. Configure the **Sync Options** to specify how secrets should be synced, then click **Next**.
         ![Configure Options](/images/secret-syncs/github/github-options.png)
 
-            - **Initial Sync Behavior**: Determines how Infisical should resolve the initial sync.
-                - **Overwrite Destination Secrets**: Removes any secrets at the destination endpoint not present in Infisical.
+            - **Initial Sync Behavior**: Determines how Hanzo KMS should resolve the initial sync.
+                - **Overwrite Destination Secrets**: Removes any secrets at the destination endpoint not present in Hanzo KMS.
                 <Note>
                     GitHub does not support importing secrets.
                 </Note>
             - **Key Schema**: Template that determines how secret names are transformed when syncing, using `{{secretKey}}` as a placeholder for the original secret name and `{{environment}}` for the environment.
             <Note>
-                We highly recommend using a Key Schema to ensure that Infisical only manages the specific keys you intend, keeping everything else untouched.
+                We highly recommend using a Key Schema to ensure that Hanzo KMS only manages the specific keys you intend, keeping everything else untouched.
             </Note>
             - **Auto-Sync Enabled**: If enabled, secrets will automatically be synced from the source location when changes occur. Disable to enforce manual syncing only.
-            - **Disable Secret Deletion**: If enabled, Infisical will not remove secrets from the sync destination. Enable this option if you intend to manage some secrets manually outside of Infisical.
+            - **Disable Secret Deletion**: If enabled, Hanzo KMS will not remove secrets from the sync destination. Enable this option if you intend to manage some secrets manually outside of Hanzo KMS.
 
         6. Configure the **Details** of your GitHub Sync, then click **Next**.
         ![Configure Details](/images/secret-syncs/github/github-details.png)
@@ -90,7 +90,7 @@ description: "Learn how to configure a GitHub Sync for Infisical."
 
         ```bash Request
         curl    --request POST \
-        --url https://app.infisical.com/api/v1/secret-syncs/github \
+        --url https://kms.hanzo.ai/api/v1/secret-syncs/github \
         --header 'Content-Type: application/json' \
         --data '{
             "name": "my-github-sync",

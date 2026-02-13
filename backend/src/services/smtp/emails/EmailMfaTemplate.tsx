@@ -26,7 +26,7 @@ export const EmailMfaTemplate = ({ code, siteUrl, isCloud }: EmailMfaTemplatePro
           <strong>Not you?</strong>{" "}
           {isCloud ? (
             <>
-              Contact us at <BaseLink href="mailto:support@infisical.com">support@infisical.com</BaseLink> immediately
+              Contact us at <BaseLink href="mailto:support@hanzo.ai">support@hanzo.ai</BaseLink> immediately
             </>
           ) : (
             "Contact your administrator immediately"
@@ -43,5 +43,5 @@ export default EmailMfaTemplate;
 EmailMfaTemplate.PreviewProps = {
   code: "124356",
   isCloud: true,
-  siteUrl: "https://infisical.com"
+  siteUrl: "https://kms.hanzo.ai"
 } as EmailMfaTemplateProps;

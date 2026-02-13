@@ -1,47 +1,47 @@
 ---
 title: Alibaba Cloud Auth
-description: "Learn how to authenticate with Infisical using Alibaba Cloud user accounts."
+description: "Learn how to authenticate with Hanzo KMS using Alibaba Cloud user accounts."
 ---
 
-**Alibaba Cloud Auth** is an authentication method that verifies Alibaba Cloud users through signature validation, allowing secure access to Infisical resources.
+**Alibaba Cloud Auth** is an authentication method that verifies Alibaba Cloud users through signature validation, allowing secure access to Hanzo KMS resources.
 
 ## Diagram
 
-The following sequence diagram illustrates the Alibaba Cloud Auth workflow for authenticating Alibaba Cloud users with Infisical.
+The following sequence diagram illustrates the Alibaba Cloud Auth workflow for authenticating Alibaba Cloud users with Hanzo KMS.
 
 ```mermaid
 sequenceDiagram
   participant Client
-  participant Infisical
+  participant Hanzo KMS
   participant Alibaba Cloud
 
   Note over Client,Client: Step 1: Sign user identity request
 
-  Note over Client,Infisical: Step 2: Login Operation
-  Client->>Infisical: Send signed request details to /api/v1/auth/alicloud-auth/login
+  Note over Client,Hanzo KMS: Step 2: Login Operation
+  Client->>Hanzo KMS: Send signed request details to /api/v1/auth/alicloud-auth/login
 
-  Note over Infisical,Alibaba Cloud: Step 3: Request verification
-  Infisical->>Alibaba Cloud: Forward signed request
-  Alibaba Cloud-->>Infisical: Return user details
+  Note over Hanzo KMS,Alibaba Cloud: Step 3: Request verification
+  Hanzo KMS->>Alibaba Cloud: Forward signed request
+  Alibaba Cloud-->>Hanzo KMS: Return user details
 
-  Note over Infisical: Step 4: Identity property validation
-  Infisical->>Client: Return short-lived access token
+  Note over Hanzo KMS: Step 4: Identity property validation
+  Hanzo KMS->>Client: Return short-lived access token
 
-  Note over Client,Infisical: Step 5: Access Infisical API with token
-  Client->>Infisical: Make authenticated requests using the short-lived access token
+  Note over Client,Hanzo KMS: Step 5: Access Hanzo KMS API with token
+  Client->>Hanzo KMS: Make authenticated requests using the short-lived access token
 ```
 
 ## Concept
 
-At a high level, Infisical authenticates an Alibaba Cloud user by verifying its identity and checking that it meets specific requirements (e.g., its ARN is whitelisted) at the `/api/v1/auth/alicloud-auth/login` endpoint. If successful,
-then Infisical returns a short-lived access token that can be used to make authenticated requests to the Infisical API.
+At a high level, Hanzo KMS authenticates an Alibaba Cloud user by verifying its identity and checking that it meets specific requirements (e.g., its ARN is whitelisted) at the `/api/v1/auth/alicloud-auth/login` endpoint. If successful,
+then Hanzo KMS returns a short-lived access token that can be used to make authenticated requests to the Hanzo KMS API.
 
 To be more specific:
 1. The client signs a `GetCallerIdentity` request using an Alibaba Cloud user's access key secret; this is done using an HMAC sha1 algorithm.
-2. The client sends the signed request information alongside the signature to Infisical at the `/api/v1/auth/alicloud-auth/login` endpoint.
-3. Infisical reconstructs the request and sends it to Alibaba Cloud for verification and obtains the identity associated with the Alibaba Cloud user.
-4. Infisical checks the user's properties against set criteria such as **Allowed ARNs**.
-5. If all checks pass, Infisical returns a short-lived access token that the client can use to make authenticated requests to the Infisical API.
+2. The client sends the signed request information alongside the signature to Hanzo KMS at the `/api/v1/auth/alicloud-auth/login` endpoint.
+3. Hanzo KMS reconstructs the request and sends it to Alibaba Cloud for verification and obtains the identity associated with the Alibaba Cloud user.
+4. Hanzo KMS checks the user's properties against set criteria such as **Allowed ARNs**.
+5. If all checks pass, Hanzo KMS returns a short-lived access token that the client can use to make authenticated requests to the Hanzo KMS API.
 
 ## Prerequisite
 
@@ -80,27 +80,27 @@ In order to sign requests, you must have an Alibaba Cloud user with credentials 
 ## Guide
 
 In the following steps, we explore how to create and use identities for your workloads and applications on Alibaba Cloud to
-access the Infisical API using request signing.
+access the Hanzo KMS API using request signing.
 
 ### Creating an identity
 
-To create an identity, head to your Organization Settings > Access Control > [Identities](https://app.infisical.com/organization/access-management?selectedTab=identities) and press **Create identity**.
+To create an identity, head to your Organization Settings > Access Control > [Identities](https://kms.hanzo.ai/organization/access-management?selectedTab=identities) and press **Create identity**.
 
 ![identities organization](/images/platform/identities/identities-org.png)
 
-When creating an identity, you specify an organization-level [role](/documentation/platform/access-controls/role-based-access-controls) for it to assume; you can configure roles in Organization Settings > Access Control > [Organization Roles](https://app.infisical.com/organization/access-management?selectedTab=roles).
+When creating an identity, you specify an organization-level [role](/documentation/platform/access-controls/role-based-access-controls) for it to assume; you can configure roles in Organization Settings > Access Control > [Organization Roles](https://kms.hanzo.ai/organization/access-management?selectedTab=roles).
 
 ![identities organization create](/images/platform/identities/identities-org-create.png)
 
 Input some details for your new identity:
 - **Name (required):** A friendly name for the identity.
-- **Role (required):** A role from the [**Organization Roles**](https://app.infisical.com/organization/access-management?selectedTab=roles) tab for the identity to assume. The organization role assigned will determine what organization-level resources this identity can have access to.
+- **Role (required):** A role from the [**Organization Roles**](https://kms.hanzo.ai/organization/access-management?selectedTab=roles) tab for the identity to assume. The organization role assigned will determine what organization-level resources this identity can have access to.
 
 Once you've created an identity, you'll be redirected to a page where you can manage the identity.
 
 ![identities page](/images/platform/identities/identities-page.png)
 
-Since the identity has been configured with [Universal Auth](https://infisical.com/docs/documentation/platform/identities/universal-auth) by default, you should reconfigure it to use Alibaba Cloud Auth instead. To do this, click the cog next to **Universal Auth** and then select **Delete** in the options dropdown.
+Since the identity has been configured with [Universal Auth](https://kms.hanzo.ai/docs/documentation/platform/identities/universal-auth) by default, you should reconfigure it to use Alibaba Cloud Auth instead. To do this, click the cog next to **Universal Auth** and then select **Delete** in the options dropdown.
 
 ![identities press cog](/images/platform/identities/identities-press-cog.png)
 
@@ -111,7 +111,7 @@ Now create a new Alibaba Cloud Auth Method.
 ![identities create alicloud auth method](/images/platform/identities/alicloud/create-auth-method.png)
 
 Here's some information about each field:
-- **Allowed ARNs:** A comma-separated list of trusted Alibaba Cloud ARNs that are allowed to authenticate with Infisical.
+- **Allowed ARNs:** A comma-separated list of trusted Alibaba Cloud ARNs that are allowed to authenticate with Hanzo KMS.
 - **Access Token TTL (default is `2592000` equivalent to 30 days):** The lifetime for an access token in seconds. This value will be referenced at renewal time.
 - **Access Token Max TTL (default is `2592000` equivalent to 30 days):** The maximum lifetime for an access token in seconds. This value will be referenced at renewal time.
 - **Access Token Max Number of Uses (default is `0`):** The maximum number of times that an access token can be used; a value of `0` implies an infinite number of uses.
@@ -129,11 +129,11 @@ Select the identity you want to add to the project and the project-level role yo
 
 ![identities project create](/images/platform/identities/identities-project-create.png)
 
-### Accessing the Infisical API with the identity
+### Accessing the Hanzo KMS API with the identity
 
-To access the Infisical API as the identity, you need to construct a signed `GetCallerIdentity` request and then make a request to the `/api/v1/auth/alicloud-auth/login` endpoint passing the signed data and signature.
+To access the Hanzo KMS API as the identity, you need to construct a signed `GetCallerIdentity` request and then make a request to the `/api/v1/auth/alicloud-auth/login` endpoint passing the signed data and signature.
 
-Below is an example of how you can authenticate with Infisical using NodeJS.
+Below is an example of how you can authenticate with Hanzo KMS using NodeJS.
 
 ```ts
 import crypto from "crypto";
@@ -166,7 +166,7 @@ const signature = crypto
   .digest("base64");
 
 const res = await fetch(
-  "https://app.infisical.com/api/v1/auth/alicloud-auth/login",
+  "https://kms.hanzo.ai/api/v1/auth/alicloud-auth/login",
   {
     method: "POST",
     headers: {
@@ -182,11 +182,11 @@ const res = await fetch(
 
 const json = await res.json();
 
-console.log("Infisical Response:", JSON.stringify(json));
+console.log("Hanzo KMS Response:", JSON.stringify(json));
 ```
 
 <Note>
     Each identity access token has a time-to-live (TTL) which you can infer from the response of the login operation; the default TTL is `7200` seconds, which can be adjusted.
 
-    If an identity access token expires, it can no longer access the Infisical API. A new access token should be obtained by performing another login operation.
+    If an identity access token expires, it can no longer access the Hanzo KMS API. A new access token should be obtained by performing another login operation.
 </Note>

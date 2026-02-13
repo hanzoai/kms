@@ -1,30 +1,30 @@
 ---
 title: "Microsoft SQL Server Connection"
-description: "Learn how to configure a Microsoft SQL Server Connection for Infisical."
+description: "Learn how to configure a Microsoft SQL Server Connection for Hanzo KMS."
 ---
 
-Infisical supports connecting to Microsoft SQL Server using database principals.
+Hanzo KMS supports connecting to Microsoft SQL Server using database principals.
 
-## Configure a Microsoft SQL Server Principal for Infisical
+## Configure a Microsoft SQL Server Principal for Hanzo KMS
 
 <Steps>
     <Step title="Create a Principal">
-        Infisical recommends creating a designated server login and database user in your Microsoft SQL Server database for your connection.
+        Hanzo KMS recommends creating a designated server login and database user in your Microsoft SQL Server database for your connection.
         ```SQL
         -- Create login at the server level
-        CREATE LOGIN [infisical_app] WITH PASSWORD = 'my-password';
+        CREATE LOGIN [kms_app] WITH PASSWORD = 'my-password';
 
         -- Grant server-level connect permission
-        GRANT CONNECT SQL TO [infisical_app];
+        GRANT CONNECT SQL TO [kms_app];
 
         -- If you intend to use Platform Managed Credentials (see below)
-        GRANT ALTER ANY LOGIN TO [infisical_app];
+        GRANT ALTER ANY LOGIN TO [kms_app];
 
         -- Switch to the specific database where you want to create the user
         USE my_database;
 
         -- Create the database user mapped to the login
-        CREATE USER [infisical_app] FOR LOGIN [infisical_app];
+        CREATE USER [kms_app] FOR LOGIN [kms_app];
         ```
     </Step>
     <Step title="Grant Relevant Permissions">
@@ -36,9 +36,9 @@ Infisical supports connecting to Microsoft SQL Server using database principals.
 
         <Tabs>
             <Tab title="Secret Rotation">
-                For Secret Rotations, your Infisical user will require the ability to alter other logins' passwords:
+                For Secret Rotations, your Hanzo KMS user will require the ability to alter other logins' passwords:
                 ```SQL
-                GRANT ALTER ANY LOGIN TO infisical_login;
+                GRANT ALTER ANY LOGIN TO kms_login;
                 ```
             </Tab>
         </Tabs>
@@ -53,15 +53,15 @@ Infisical supports connecting to Microsoft SQL Server using database principals.
         - `sslCertificate` (optional) - The SSL certificate required for connection (if configured)
 
         <Note>
-            If you are self-hosting Infisical and intend to connect to an internal/private IP address, be sure to set the `ALLOW_INTERNAL_IP_CONNECTIONS` environment variable to `true`.
+            If you are self-hosting Hanzo KMS and intend to connect to an internal/private IP address, be sure to set the `ALLOW_INTERNAL_IP_CONNECTIONS` environment variable to `true`.
         </Note>
     </Step>
 </Steps>
 
-## Create Connection in Infisical
+## Create Connection in Hanzo KMS
 
 <Tabs>
-    <Tab title="Infisical UI">
+    <Tab title="Hanzo KMS UI">
         1. Navigate to the **Integrations** tab in the desired project, then select **App Connections**.
         ![App Connections Tab](/images/app-connections/general/add-connection.png)
 
@@ -70,8 +70,8 @@ Infisical supports connecting to Microsoft SQL Server using database principals.
 
         3. Select the **Username & Password** method option and provide the details obtained from the previous section and press **Connect to Microsoft SQL Server**.
         <Note>
-            Optionally, if you'd like Infisical to manage the credentials of this connection, you can enable the Platform Managed Credentials option.
-            If enabled, Infisical will update the password of the connection on creation to prevent external access to this database role.
+            Optionally, if you'd like Hanzo KMS to manage the credentials of this connection, you can enable the Platform Managed Credentials option.
+            If enabled, Hanzo KMS will update the password of the connection on creation to prevent external access to this database role.
         </Note>
         ![Create Microsoft SQL Server Connection](/images/app-connections/mssql/create-username-and-password-method.png)
 
@@ -83,15 +83,15 @@ Infisical supports connecting to Microsoft SQL Server using database principals.
         Connection](/api-reference/endpoints/app-connections/mssql/create) API endpoint.
 
         <Note>
-            Optionally, if you'd like Infisical to manage the credentials of this connection, you can set the `isPlatformManagedCredentials` option to `true`.
-            If enabled, Infisical will update the password of the connection on creation to prevent external access to this database role.
+            Optionally, if you'd like Hanzo KMS to manage the credentials of this connection, you can set the `isPlatformManagedCredentials` option to `true`.
+            If enabled, Hanzo KMS will update the password of the connection on creation to prevent external access to this database role.
         </Note>
 
         ### Sample request
 
         ```bash Request
         curl    --request POST \
-        --url https://app.infisical.com/api/v1/app-connections/mssql \
+        --url https://kms.hanzo.ai/api/v1/app-connections/mssql \
         --header 'Content-Type: application/json' \
         --data '{
             "name": "my-mssql-connection",
@@ -102,7 +102,7 @@ Infisical supports connecting to Microsoft SQL Server using database principals.
                 "host": "123.4.5.6",
                 "port": 1433,
                 "database": "default",
-                "username": "infisical_login",
+                "username": "kms_login",
                 "password": "my-password",
                 "sslEnabled": true,
                 "sslRejectUnauthorized": true
@@ -129,7 +129,7 @@ Infisical supports connecting to Microsoft SQL Server using database principals.
                     "host": "123.4.5.6",
                     "port": 1433,
                     "database": "default",
-                    "username": "infisical_login",
+                    "username": "kms_login",
                     "sslEnabled": true,
                     "sslRejectUnauthorized": true
                 }

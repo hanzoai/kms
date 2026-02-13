@@ -1,9 +1,9 @@
 ---
 title: "Security Architecture"
-description: "Security model, tenant isolation, and best practices for Infisical Gateways and Relays"
+description: "Security model, tenant isolation, and best practices for KMS Gateways and Relays"
 ---
 
-The Infisical Gateway enables secure access to private resources using SSH reverse tunnels, certificate-based authentication, and a comprehensive PKI (Public Key Infrastructure) system. The architecture provides end-to-end encryption and complete tenant isolation through multiple certificate authorities.
+The KMS Gateway enables secure access to private resources using SSH reverse tunnels, certificate-based authentication, and a comprehensive PKI (Public Key Infrastructure) system. The architecture provides end-to-end encryption and complete tenant isolation through multiple certificate authorities.
 
 ## Security Model Overview
 
@@ -11,10 +11,10 @@ The Infisical Gateway enables secure access to private resources using SSH rever
 
 The gateway system uses multiple certificate authorities depending on deployment configuration:
 
-**For Organizations Using Infisical-Managed Relays:**
+**For Organizations Using Hanzo KMS-Managed Relays:**
 
-- **Instance relay SSH Client CA & Server CA** - Gateway ↔ Infisical Relay Server authentication
-- **Instance relay PKI Client CA & Server CA** - Platform ↔ Infisical Relay Server authentication
+- **Instance relay SSH Client CA & Server CA** - Gateway ↔ Hanzo KMS Relay Server authentication
+- **Instance relay PKI Client CA & Server CA** - Platform ↔ Hanzo KMS Relay Server authentication
 - **Organization Gateway Client CA & Server CA** - Platform ↔ Gateway authentication
 
 **For Organizations Using Customer-Deployed Relays:**
@@ -42,11 +42,11 @@ Organization Level:
 
 When a gateway is first deployed:
 
-1. Authenticates with Infisical using machine identity token
+1. Authenticates with Hanzo KMS using machine identity token
 2. Receives SSH certificates for relay server authentication
 3. Establishes SSH reverse tunnel to assigned relay server
 4. Certificate issuance varies by relay configuration:
-   - **Infisical-managed relay**: Receives Instance relay SSH client certificate + Instance relay SSH Server CA
+   - **Hanzo KMS-managed relay**: Receives Instance relay SSH client certificate + Instance relay SSH Server CA
    - **Customer-deployed relay**: Receives Organization relay SSH client certificate + Organization relay SSH Server CA
 
 ### 2. SSH Tunnel Authentication
@@ -107,7 +107,7 @@ The architecture provides tenant isolation through multiple certificate authorit
 
 ### Authentication Flows by Deployment Type
 
-**Infisical-Managed Relay Deployments:**
+**Hanzo KMS-Managed Relay Deployments:**
 
 - Gateway authenticates with relay using Instance relay SSH certificates
 - Platform authenticates with relay using Instance relay PKI certificates

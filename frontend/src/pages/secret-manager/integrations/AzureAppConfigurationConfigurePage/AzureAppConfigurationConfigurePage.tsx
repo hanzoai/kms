@@ -268,7 +268,7 @@ export const AzureAppConfigurationConfigurePage = () => {
                 isError={Boolean(error)}
               >
                 <Input
-                  placeholder="https://infisical-configuration-integration-test.azconfig.io"
+                  placeholder="https://kms-configuration-integration-test.azconfig.io"
                   {...field}
                 />
               </FormControl>

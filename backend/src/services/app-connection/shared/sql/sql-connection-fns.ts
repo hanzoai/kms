@@ -98,7 +98,7 @@ const getOracleWalletKnexClient = (
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
       throw new BadRequestError({
-        message: `Failed to initialize Oracle client: ${errorMessage}. See documentation for instructions: https://infisical.com/docs/integrations/app-connections/oracledb#mutual-tls-wallet`
+        message: `Failed to initialize Oracle client: ${errorMessage}. See documentation for instructions: https://kms.hanzo.ai/docs/integrations/app-connections/oracledb#mutual-tls-wallet`
       });
     }
   }

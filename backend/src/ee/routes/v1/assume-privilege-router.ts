@@ -41,7 +41,7 @@ export const registerAssumePrivilegeRouter = async (server: FastifyZodProvider) 
         });
 
         const appCfg = getConfig();
-        void res.setCookie("infisical-project-assume-privileges", payload.assumePrivilegesToken, {
+        void res.setCookie("kms-project-assume-privileges", payload.assumePrivilegesToken, {
           httpOnly: true,
           path: "/",
           sameSite: "strict",
@@ -93,7 +93,7 @@ export const registerAssumePrivilegeRouter = async (server: FastifyZodProvider) 
       const assumedPrivilegeDetails = requestContext.get("assumedPrivilegeDetails");
       if (req.auth.authMode === AuthMode.JWT && assumedPrivilegeDetails) {
         const appCfg = getConfig();
-        void res.setCookie("infisical-project-assume-privileges", "", {
+        void res.setCookie("kms-project-assume-privileges", "", {
           httpOnly: true,
           path: "/",
           sameSite: "strict",

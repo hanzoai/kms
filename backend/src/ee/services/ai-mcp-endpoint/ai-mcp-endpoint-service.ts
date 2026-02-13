@@ -254,8 +254,8 @@ export const aiMcpEndpointServiceFactory = ({
       // Return an empty MCP server if no servers are connected
       const emptyServer = new RawMcpServer(
         {
-          name: "infisical-mcp-endpoint",
-          version: appCfg.INFISICAL_PLATFORM_VERSION || "0.0.1"
+          name: "kms-mcp-endpoint",
+          version: appCfg.KMS_PLATFORM_VERSION || "0.0.1"
         },
         {
           capabilities: {
@@ -317,7 +317,7 @@ export const aiMcpEndpointServiceFactory = ({
           tools: Array<{ name: string; description?: string; inputSchema?: Record<string, unknown> }>;
         }> => {
           const client = new Client({
-            name: `infisical-mcp-client-${mcpServer.name}`,
+            name: `kms-mcp-client-${mcpServer.name}`,
             version: "1.0.0"
           });
 
@@ -401,8 +401,8 @@ export const aiMcpEndpointServiceFactory = ({
     // Create the aggregating MCP server
     const server = new RawMcpServer(
       {
-        name: "infisical-mcp-endpoint",
-        version: appCfg.INFISICAL_PLATFORM_VERSION || "0.0.1"
+        name: "kms-mcp-endpoint",
+        version: appCfg.KMS_PLATFORM_VERSION || "0.0.1"
       },
       {
         capabilities: {
@@ -1347,7 +1347,7 @@ export const aiMcpEndpointServiceFactory = ({
       let client: Client | undefined;
       try {
         client = new Client({
-          name: "infisical-mcp-client",
+          name: "kms-mcp-client",
           version: "1.0.0"
         });
 

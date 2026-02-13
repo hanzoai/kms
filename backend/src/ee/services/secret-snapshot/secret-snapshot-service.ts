@@ -13,7 +13,7 @@ import { TKmsServiceFactory } from "@app/services/kms/kms-service";
 import { KmsDataKey } from "@app/services/kms/kms-types";
 import { TProjectBotServiceFactory } from "@app/services/project-bot/project-bot-service";
 import { TSecretDALFactory } from "@app/services/secret/secret-dal";
-import { INFISICAL_SECRET_VALUE_HIDDEN_MASK } from "@app/services/secret/secret-fns";
+import { KMS_SECRET_VALUE_HIDDEN_MASK } from "@app/services/secret/secret-fns";
 import { TSecretVersionDALFactory } from "@app/services/secret/secret-version-dal";
 import { TSecretVersionTagDALFactory } from "@app/services/secret/secret-version-tag-dal";
 import { TSecretFolderDALFactory } from "@app/services/secret-folder/secret-folder-dal";
@@ -210,7 +210,7 @@ export const secretSnapshotServiceFactory = ({
               ? secretManagerDecryptor({ cipherTextBlob: el.encryptedValue }).toString()
               : "";
           } else {
-            secretValue = INFISICAL_SECRET_VALUE_HIDDEN_MASK;
+            secretValue = KMS_SECRET_VALUE_HIDDEN_MASK;
           }
 
           return {
@@ -270,7 +270,7 @@ export const secretSnapshotServiceFactory = ({
               keySize: SymmetricKeySize.Bits128
             });
           } else {
-            secretValue = INFISICAL_SECRET_VALUE_HIDDEN_MASK;
+            secretValue = KMS_SECRET_VALUE_HIDDEN_MASK;
           }
 
           return {

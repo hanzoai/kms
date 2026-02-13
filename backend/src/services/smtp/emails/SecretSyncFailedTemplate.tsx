@@ -66,11 +66,11 @@ export default SecretSyncFailedTemplate;
 
 SecretSyncFailedTemplate.PreviewProps = {
   syncDestination: "AWS Parameter Store",
-  syncUrl: "https://infisical.com",
+  syncUrl: "https://kms.hanzo.ai",
   failureMessage: "Key name cannot contain a colon (:) or a forward slash (/).",
   projectName: "Example Project",
   secretPath: "/api/secrets",
   environment: "Production",
   syncName: "my-aws-sync",
-  siteUrl: "https://infisical.com"
+  siteUrl: "https://kms.hanzo.ai"
 } as SecretSyncFailedTemplateProps;

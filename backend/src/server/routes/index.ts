@@ -2888,11 +2888,11 @@ export const registerRoutes = async (
     user: userDAL,
     kmipClient: kmipClientDAL
   });
-  const shouldForwardWritesToPrimaryInstance = Boolean(envConfig.INFISICAL_PRIMARY_INSTANCE_URL);
+  const shouldForwardWritesToPrimaryInstance = Boolean(envConfig.KMS_PRIMARY_INSTANCE_URL);
   if (shouldForwardWritesToPrimaryInstance) {
-    logger.info(`Infisical primary instance is configured: ${envConfig.INFISICAL_PRIMARY_INSTANCE_URL}`);
+    logger.info(`Hanzo KMS primary instance is configured: ${envConfig.KMS_PRIMARY_INSTANCE_URL}`);
 
-    await server.register(forwardWritesToPrimary, { primaryUrl: envConfig.INFISICAL_PRIMARY_INSTANCE_URL as string });
+    await server.register(forwardWritesToPrimary, { primaryUrl: envConfig.KMS_PRIMARY_INSTANCE_URL as string });
   }
 
   await server.register(injectIdentity, { shouldForwardWritesToPrimaryInstance });

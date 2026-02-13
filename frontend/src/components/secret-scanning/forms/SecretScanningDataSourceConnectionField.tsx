@@ -62,7 +62,7 @@ export const SecretScanningDataSourceConnectionField = ({
                 <p>
                   Check out{" "}
                   <a
-                    href={`https://infisical.com/docs/integrations/app-connections/${app}`}
+                    href={`https://kms.hanzo.ai/docs/integrations/app-connections/${app}`}
                     target="_blank"
                     className="underline"
                     rel="noopener noreferrer"

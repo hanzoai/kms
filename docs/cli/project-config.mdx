@@ -3,16 +3,16 @@ title: "Project config file"
 description: "Project config file & customization options"
 ---
 
-To link your local project on your machine with an Infisical project, we suggest using the infisical init CLI command. This will generate a `.infisical.json` file in the root directory of your project.
+To link your local project on your machine with an Hanzo KMS project, we suggest using the hanzo-kms init CLI command. This will generate a `.kms.json` file in the root directory of your project.
 
-The `.infisical.json` file specifies various parameters, such as the Infisical project to retrieve secrets from, along with other configuration options. Furthermore, you can define additional properties in the file to further tailor your local development experience.
+The `.kms.json` file specifies various parameters, such as the Hanzo KMS project to retrieve secrets from, along with other configuration options. Furthermore, you can define additional properties in the file to further tailor your local development experience.
 
 ## Set default environment
 If you need to change environments while using the CLI, you can do so by including the `--env` flag in your command. 
 However, this can be inconvenient if you typically work in just one environment. 
 To simplify the process, you can establish a default environment, which will be used for every command unless you specify otherwise.
 
-```json .infisical.json
+```json .kms.json
 {
   "workspaceId": "63ee5410a45f7a1ed39ba118",
   "defaultEnvironment": "test",
@@ -22,14 +22,14 @@ To simplify the process, you can establish a default environment, which will be 
 
 ### How it works
 If both `defaultEnvironment` and `gitBranchToEnvironmentMapping` are configured, `gitBranchToEnvironmentMapping` will take precedence over `defaultEnvironment`. 
-However, if `gitBranchToEnvironmentMapping` is not set and `defaultEnvironment` is, then the `defaultEnvironment` will be used to execute your Infisical CLI commands.
+However, if `gitBranchToEnvironmentMapping` is not set and `defaultEnvironment` is, then the `defaultEnvironment` will be used to execute your KMS CLI commands.
 If you wish to override the `defaultEnvironment`, you can do so by using the `--env` flag explicitly.
 
-## Set Infisical environment based on GitHub branch 
-When fetching your secrets from Infisical, you can switch between environments by using the `--env` flag. However, in certain cases, you may prefer the environment to be automatically mapped based on the current GitHub branch you are working on. 
+## Set Hanzo KMS environment based on GitHub branch 
+When fetching your secrets from Hanzo KMS, you can switch between environments by using the `--env` flag. However, in certain cases, you may prefer the environment to be automatically mapped based on the current GitHub branch you are working on. 
 To achieve this, simply add the `gitBranchToEnvironmentMapping` property to your configuration file, as shown below.
 
-```json .infisical.json
+```json .kms.json
 {
   "workspaceId": "63ee5410a45f7a1ed39ba118",
   "gitBranchToEnvironmentMapping": {

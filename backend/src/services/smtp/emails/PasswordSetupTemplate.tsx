@@ -27,7 +27,7 @@ export const PasswordSetupTemplate = ({ email, isCloud, siteUrl, callback_url, t
           If you did not initiate this request, please contact{" "}
           {isCloud ? (
             <>
-              us immediately at <BaseLink href="mailto:support@infisical.com">support@infisical.com</BaseLink>
+              us immediately at <BaseLink href="mailto:support@hanzo.ai">support@hanzo.ai</BaseLink>
             </>
           ) : (
             "your administrator immediately"
@@ -51,8 +51,8 @@ export default PasswordSetupTemplate;
 
 PasswordSetupTemplate.PreviewProps = {
   email: "casey@infisical.com",
-  callback_url: "https://app.infisical.com",
+  callback_url: "https://kms.hanzo.ai",
   isCloud: true,
-  siteUrl: "https://infisical.com",
+  siteUrl: "https://kms.hanzo.ai",
   token: "preview-token"
 } as PasswordSetupTemplateProps;

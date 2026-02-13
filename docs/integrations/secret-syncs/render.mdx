@@ -1,15 +1,15 @@
 ---
 title: "Render Sync"
-description: "Learn how to configure a Render Sync for Infisical."
+description: "Learn how to configure a Render Sync for Hanzo KMS."
 ---
 
 **Prerequisites:**
 
-- Set up and add secrets to [Infisical Cloud](https://app.infisical.com)
+- Set up and add secrets to [Hanzo KMS Cloud](https://kms.hanzo.ai)
 - Create a [Render Connection](/integrations/app-connections/render)
 
 <Tabs>
-  <Tab title="Infisical UI">
+  <Tab title="Hanzo KMS UI">
     1. Navigate to **Project** > **Integrations** and select the **Secret Syncs** tab. Click on the **Add Sync** button.
     ![Secret Syncs Tab](/images/secret-syncs/general/secret-sync-tab.png)
 
@@ -37,13 +37,13 @@ description: "Learn how to configure a Render Sync for Infisical."
     5. Configure the **Sync Options** to specify how secrets should be synced, then click **Next**.
     ![Configure Options](/images/secret-syncs/render/render-sync-options.png)
 
-      - **Initial Sync Behavior**: Determines how Infisical should resolve the initial sync.
-        - **Overwrite Destination Secrets**: Removes any secrets at the destination endpoint not present in Infisical.
-        - **Import Secrets (Prioritize Infisical)**: Imports secrets from the Render service before syncing, prioritizing values from Infisical over Render when keys conflict.
-        - **Import Secrets (Prioritize Render)**: Imports secrets from the Render service before syncing, prioritizing values from Render over Infisical when keys conflict.
+      - **Initial Sync Behavior**: Determines how Hanzo KMS should resolve the initial sync.
+        - **Overwrite Destination Secrets**: Removes any secrets at the destination endpoint not present in Hanzo KMS.
+        - **Import Secrets (Prioritize Hanzo KMS)**: Imports secrets from the Render service before syncing, prioritizing values from Hanzo KMS over Render when keys conflict.
+        - **Import Secrets (Prioritize Render)**: Imports secrets from the Render service before syncing, prioritizing values from Render over Hanzo KMS when keys conflict.
       - **Key Schema**: Template that determines how secret names are transformed when syncing, using `{{secretKey}}` as a placeholder for the original secret name and `{{environment}}` for the environment.
       - **Auto-Sync Enabled**: If enabled, secrets will automatically be synced from the source location when changes occur. Disable to enforce manual syncing only.
-      - **Disable Secret Deletion**: If enabled, Infisical will not remove secrets from the sync destination. Enable this option if you intend to manage some secrets manually outside of Infisical.
+      - **Disable Secret Deletion**: If enabled, Hanzo KMS will not remove secrets from the sync destination. Enable this option if you intend to manage some secrets manually outside of Hanzo KMS.
 
     6. Configure the **Details** of your Render Sync, then click **Next**.
     ![Configure Details](/images/secret-syncs/render/render-sync-details.png)
@@ -65,7 +65,7 @@ description: "Learn how to configure a Render Sync for Infisical."
 
     ```bash Request
     curl --request POST \
-      --url https://app.infisical.com/api/v1/secret-syncs/render \
+      --url https://kms.hanzo.ai/api/v1/secret-syncs/render \
       --header 'Content-Type: application/json' \
       --data '{
         "name": "my-render-sync",

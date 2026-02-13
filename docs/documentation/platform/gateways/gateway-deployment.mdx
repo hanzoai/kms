@@ -1,18 +1,18 @@
 ---
 title: "Gateway Deployment"
-description: "Complete guide to deploying Infisical Gateways including network configuration and firewall requirements"
+description: "Complete guide to deploying KMS Gateways including network configuration and firewall requirements"
 ---
 
-Infisical Gateways enables secure communication between your private resources and the Infisical platform without exposing inbound ports in your network.
-This guide covers everything you need to deploy and configure Infisical Gateways.
+KMS Gateways enables secure communication between your private resources and the Hanzo KMS platform without exposing inbound ports in your network.
+This guide covers everything you need to deploy and configure KMS Gateways.
 
 ## Deployment Steps
 
-To successfully deploy an Infisical Gateway for use, follow these steps in order.
+To successfully deploy an KMS Gateway for use, follow these steps in order.
 
 <Steps>
   <Step title="Provision a Machine Identity">
-    Create a machine identity with the correct permissions to create and manage gateways. This identity is used by the gateway to authenticate with Infisical and should be provisioned in advance.
+    Create a machine identity with the correct permissions to create and manage gateways. This identity is used by the gateway to authenticate with Hanzo KMS and should be provisioned in advance.
     The gateway supports several [machine identity auth methods](/documentation/platform/identities/machine-identities), as listed below. Choose the one that best fits your environment and set the corresponding environment variables when deploying the gateway.
 
     <AccordionGroup>
@@ -20,85 +20,85 @@ To successfully deploy an Infisical Gateway for use, follow these steps in order
         Simple and secure authentication using client ID and client secret.
 
         **Environment Variables:**
-        - `INFISICAL_AUTH_METHOD=universal-auth`
-        - `INFISICAL_UNIVERSAL_AUTH_CLIENT_ID=<client-id>`
-        - `INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET=<client-secret>`
+        - `KMS_AUTH_METHOD=universal-auth`
+        - `KMS_UNIVERSAL_AUTH_CLIENT_ID=<client-id>`
+        - `KMS_UNIVERSAL_AUTH_CLIENT_SECRET=<client-secret>`
       </Accordion>
 
       <Accordion title="Token Auth">
         Direct authentication using a machine identity access token.
 
         **Environment Variables:**
-        - `INFISICAL_TOKEN=<token>`
+        - `KMS_TOKEN=<token>`
       </Accordion>
 
       <Accordion title="Native Kubernetes">
         Authentication using Kubernetes service account tokens.
 
         **Environment Variables:**
-        - `INFISICAL_AUTH_METHOD=kubernetes`
-        - `INFISICAL_MACHINE_IDENTITY_ID=<machine-identity-id>`
+        - `KMS_AUTH_METHOD=kubernetes`
+        - `KMS_MACHINE_IDENTITY_ID=<machine-identity-id>`
       </Accordion>
 
       <Accordion title="Native AWS IAM">
         Authentication using AWS IAM roles.
 
         **Environment Variables:**
-        - `INFISICAL_AUTH_METHOD=aws-iam`
-        - `INFISICAL_MACHINE_IDENTITY_ID=<machine-identity-id>`
+        - `KMS_AUTH_METHOD=aws-iam`
+        - `KMS_MACHINE_IDENTITY_ID=<machine-identity-id>`
       </Accordion>
 
       <Accordion title="Native GCP ID Token">
         Authentication using GCP identity tokens.
 
         **Environment Variables:**
-        - `INFISICAL_AUTH_METHOD=gcp-id-token`
-        - `INFISICAL_MACHINE_IDENTITY_ID=<machine-identity-id>`
+        - `KMS_AUTH_METHOD=gcp-id-token`
+        - `KMS_MACHINE_IDENTITY_ID=<machine-identity-id>`
       </Accordion>
 
       <Accordion title="GCP IAM">
         Authentication using GCP service account keys.
 
         **Environment Variables:**
-        - `INFISICAL_AUTH_METHOD=gcp-iam`
-        - `INFISICAL_MACHINE_IDENTITY_ID=<machine-identity-id>`
-        - `INFISICAL_GCP_SERVICE_ACCOUNT_KEY_FILE_PATH=<path-to-key-file>`
+        - `KMS_AUTH_METHOD=gcp-iam`
+        - `KMS_MACHINE_IDENTITY_ID=<machine-identity-id>`
+        - `KMS_GCP_SERVICE_ACCOUNT_KEY_FILE_PATH=<path-to-key-file>`
       </Accordion>
 
       <Accordion title="Native Azure">
         Authentication using Azure managed identity.
 
         **Environment Variables:**
-        - `INFISICAL_AUTH_METHOD=azure`
-        - `INFISICAL_MACHINE_IDENTITY_ID=<machine-identity-id>`
+        - `KMS_AUTH_METHOD=azure`
+        - `KMS_MACHINE_IDENTITY_ID=<machine-identity-id>`
       </Accordion>
 
       <Accordion title="OIDC Auth">
         Authentication using OIDC identity tokens.
 
         **Environment Variables:**
-        - `INFISICAL_AUTH_METHOD=oidc-auth`
-        - `INFISICAL_MACHINE_IDENTITY_ID=<machine-identity-id>`
-        - `INFISICAL_JWT=<oidc-jwt>`
+        - `KMS_AUTH_METHOD=oidc-auth`
+        - `KMS_MACHINE_IDENTITY_ID=<machine-identity-id>`
+        - `KMS_JWT=<oidc-jwt>`
       </Accordion>
 
       <Accordion title="JWT Auth">
         Authentication using JWT tokens.
 
         **Environment Variables:**
-        - `INFISICAL_AUTH_METHOD=jwt-auth`
-        - `INFISICAL_MACHINE_IDENTITY_ID=<machine-identity-id>`
-        - `INFISICAL_JWT=<jwt>`
+        - `KMS_AUTH_METHOD=jwt-auth`
+        - `KMS_MACHINE_IDENTITY_ID=<machine-identity-id>`
+        - `KMS_JWT=<jwt>`
       </Accordion>
     </AccordionGroup>
   </Step>
   <Step title="Set Up a Relay Server">
   Ensure a relay server is running and accessible before you deploy any gateways. You have two options:
-  - **Managed relay (Infisical Cloud, US/EU only):** Managed relays are only available for Infisical Cloud instances in the US and EU regions. If you are using Infisical Cloud in these regions, you can use the provided managed relay.
-  - **Self-hosted relay:** For all other cases, including all self-hosted and dedicated enterprise instances of Infisical, you must deploy your own relay server. You can also choose to deploy your own relay server when using Infisical Cloud if you require reduced geographic proximity to your target resources for lower latency or to reduce network congestion. For setup instructions, see the [Relay Deployment Guide](/documentation/platform/gateways/relay-deployment).
+  - **Managed relay (Hanzo KMS Cloud, US/EU only):** Managed relays are only available for Hanzo KMS Cloud instances in the US and EU regions. If you are using Hanzo KMS Cloud in these regions, you can use the provided managed relay.
+  - **Self-hosted relay:** For all other cases, including all self-hosted and dedicated enterprise instances of Hanzo KMS, you must deploy your own relay server. You can also choose to deploy your own relay server when using Hanzo KMS Cloud if you require reduced geographic proximity to your target resources for lower latency or to reduce network congestion. For setup instructions, see the [Relay Deployment Guide](/documentation/platform/gateways/relay-deployment).
   </Step>
-  <Step title="Install the Infisical CLI">
-    Make sure the Infisical CLI is installed on the machine or environment where you plan to deploy the gateway. The CLI is required for gateway installation and management.
+  <Step title="Install the KMS CLI">
+    Make sure the KMS CLI is installed on the machine or environment where you plan to deploy the gateway. The CLI is required for gateway installation and management.
 
     See the [CLI Installation Guide](/cli/overview) for instructions.
   </Step>
@@ -108,22 +108,22 @@ To successfully deploy an Infisical Gateway for use, follow these steps in order
     | Protocol | Destination                          | Port | Purpose                                    |
     | -------- | ------------------------------------ | ---- | ------------------------------------------ |
     | TCP      | Relay Server IP/Hostname             | 2222 | SSH reverse tunnel establishment           |
-    | TCP      | Infisical instance host (US/EU, other)  | 443  | API communication and certificate requests |
+    | TCP      | Hanzo KMS instance host (US/EU, other)  | 443  | API communication and certificate requests |
 
     For managed relays, allow outbound traffic to the provided relay server IP/hostname. For self-hosted relays, allow outbound traffic to your own relay server address.
 
-    If you are in a corporate environment with strict egress filtering, ensure outbound TCP 2222 to relay servers and outbound HTTPS 443 to Infisical API endpoints are allowed.
+    If you are in a corporate environment with strict egress filtering, ensure outbound TCP 2222 to relay servers and outbound HTTPS 443 to Hanzo KMS API endpoints are allowed.
   </Step>
   <Step title="Select a Deployment Method">
-    The Infisical CLI is used to install and start the gateway in your chosen environment. The CLI provides commands for both production and development scenarios, and supports a variety of options/flags to configure your deployment.
+    The KMS CLI is used to install and start the gateway in your chosen environment. The CLI provides commands for both production and development scenarios, and supports a variety of options/flags to configure your deployment.
 
     To view all available flags and equivalent environment variables for gateway deployment, see the [Gateway CLI Command Reference](/cli/commands/gateway).
     <Tabs>
       <Tab title="Linux Server (Production)">
         For production deployments on Linux servers, install the Gateway as a systemd service so that it runs securely in the background and automatically restarts on failure or system reboot:
         ```bash
-        sudo infisical gateway systemd install --token <your-machine-identity-token> --domain <your-infisical-domain> --name <gateway-name>
-        sudo systemctl start infisical-gateway
+        sudo kms gateway systemd install --token <your-machine-identity-token> --domain <your-kms-domain> --name <gateway-name>
+        sudo systemctl start kms-gateway
         ```
 
         <Info>
@@ -137,12 +137,12 @@ To successfully deploy an Infisical Gateway for use, follow these steps in order
       </Tab>
 
       <Tab title="Kubernetes (Production)">
-        For production deployments on Kubernetes clusters, install the Gateway using the Infisical Helm chart:
+        For production deployments on Kubernetes clusters, install the Gateway using the Hanzo KMS Helm chart:
 
         #### Install the latest Helm Chart repository
 
         ```bash
-        helm repo add infisical-helm-charts 'https://dl.cloudsmith.io/public/infisical/helm-charts/helm/charts/'
+        helm repo add kms-helm-charts 'https://dl.cloudsmith.io/public/hanzoai/kms-helm-charts/helm/charts/'
         helm repo update
         ```
 
@@ -151,21 +151,21 @@ To successfully deploy an Infisical Gateway for use, follow these steps in order
         The gateway supports all identity authentication methods through environment variables:
 
         ```bash
-        kubectl create secret generic infisical-gateway-environment \
-          --from-literal=INFISICAL_AUTH_METHOD=universal-auth \
-          --from-literal=INFISICAL_UNIVERSAL_AUTH_CLIENT_ID=<client-id> \
-          --from-literal=INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET=<client-secret> \
-          --from-literal=INFISICAL_GATEWAY_NAME=<gateway-name>
+        kubectl create secret generic kms-gateway-environment \
+          --from-literal=KMS_AUTH_METHOD=universal-auth \
+          --from-literal=KMS_UNIVERSAL_AUTH_CLIENT_ID=<client-id> \
+          --from-literal=KMS_UNIVERSAL_AUTH_CLIENT_SECRET=<client-secret> \
+          --from-literal=KMS_GATEWAY_NAME=<gateway-name>
         ```
 
         <Info>
-          By default, the gateway connects to the most optimal relay. Use the `--from-literal=INFISICAL_RELAY_NAME=<relay-name>` flag to manually specify a different relay server.
+          By default, the gateway connects to the most optimal relay. Use the `--from-literal=KMS_RELAY_NAME=<relay-name>` flag to manually specify a different relay server.
         </Info>
 
         #### Install the Gateway
 
         ```bash
-        helm install infisical-gateway infisical-helm-charts/infisical-gateway
+        helm install kms-gateway kms-helm-charts/kms-gateway
         ```
       </Tab>
 
@@ -173,7 +173,7 @@ To successfully deploy an Infisical Gateway for use, follow these steps in order
         For development or testing environments:
 
         ```bash
-        sudo infisical gateway start --token <token> --name=<gateway-name>
+        sudo kms gateway start --token <token> --name=<gateway-name>
         ```
 
         <Info>
@@ -188,9 +188,9 @@ To successfully deploy an Infisical Gateway for use, follow these steps in order
 
       1. **Check logs** for "Gateway started successfully" message indicating the gateway is running and connected to the relay
 
-      2. **Verify registration** in the Infisical by visiting the Gateways section of your organization. The new gateway should appear with a recent heartbeat timestamp.
+      2. **Verify registration** in the Hanzo KMS by visiting the Gateways section of your organization. The new gateway should appear with a recent heartbeat timestamp.
 
-      3. **Test connectivity** by creating a resource in Infisical that uses the gateway to access a private service. Verify the resource can successfully connect through the gateway.
+      3. **Test connectivity** by creating a resource in Hanzo KMS that uses the gateway to access a private service. Verify the resource can successfully connect through the gateway.
   </Step>
 </Steps>
 
@@ -201,7 +201,7 @@ To successfully deploy an Infisical Gateway for use, follow these steps in order
 No inbound ports need to be opened for gateways. The gateway only makes outbound connections:
 
 - **Outbound SSH** to relay servers on port 2222
-- **Outbound HTTPS** to Infisical API endpoints on port 443
+- **Outbound HTTPS** to Hanzo KMS API endpoints on port 443
 - **SSH reverse tunnels** handle all communication - no return traffic configuration needed
 
 This design maintains security by avoiding the need for inbound firewall rules that could expose your network to external threats.
@@ -215,9 +215,9 @@ Test relay connectivity and outbound API access from the gateway:
   ```bash
   nc -zv <relay-ip> 2222
   ```
-2. Test outbound API access (replace with your Infisical domain if different):
+2. Test outbound API access (replace with your Hanzo KMS domain if different):
   ```bash
-  curl -I https://app.infisical.com
+  curl -I https://kms.hanzo.ai
   ```
 </Accordion>
 
@@ -246,17 +246,17 @@ Check gateway logs for detailed error information:
 
 - **systemd service:**
   ```bash
-  sudo journalctl -u infisical-gateway -f
+  sudo journalctl -u kms-gateway -f
   ```
 - **Kubernetes:**
   ```bash
-  kubectl logs deployment/infisical-gateway
+  kubectl logs deployment/kms-gateway
   ```
 - **Local installation:** Logs appear in the terminal where you started the gateway
 </Accordion>
 
 <Accordion title="Where is the gateway configuration file stored?">
-For systemd-based installations, the gateway's configuration file is stored at `/etc/infisical/gateway.conf`. You may reference or inspect this file for troubleshooting advanced configuration issues.
+For systemd-based installations, the gateway's configuration file is stored at `/etc/kms/gateway.conf`. You may reference or inspect this file for troubleshooting advanced configuration issues.
 </Accordion>
 
 <Accordion title="What happens if there is a network interruption?">

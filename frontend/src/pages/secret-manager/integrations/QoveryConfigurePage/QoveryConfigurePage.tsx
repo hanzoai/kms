@@ -37,7 +37,7 @@ const qoveryScopes = [
 ];
 
 enum TabSections {
-  InfisicalSettings = "infisicalSettings",
+  Hanzo KMSSettings = "kmsSettings",
   QoverySettings = "qoverySettings"
 }
 
@@ -221,14 +221,14 @@ export const QoveryConfigurePage = () => {
             </a>
           </div>
         </CardTitle>
-        <Tabs defaultValue={TabSections.InfisicalSettings} className="px-6">
+        <Tabs defaultValue={TabSections.Hanzo KMSSettings} className="px-6">
           <TabList>
             <div className="flex w-full flex-row border-b border-mineshaft-600">
-              <Tab value={TabSections.InfisicalSettings}>Hanzo KMS Settings</Tab>
+              <Tab value={TabSections.Hanzo KMSSettings}>Hanzo KMS Settings</Tab>
               <Tab value={TabSections.QoverySettings}>Qovery Settings</Tab>
             </div>
           </TabList>
-          <TabPanel value={TabSections.InfisicalSettings}>
+          <TabPanel value={TabSections.Hanzo KMSSettings}>
             <motion.div
               key="panel-1"
               transition={{ duration: 0.15 }}
@@ -412,7 +412,7 @@ export const QoveryConfigurePage = () => {
           src="/images/loading/loading.gif"
           height={70}
           width={120}
-          alt="infisical loading indicator"
+          alt="loading indicator"
         />
       ) : (
         <div className="flex h-max max-w-md flex-col rounded-md border border-mineshaft-600 bg-mineshaft-800 p-6 text-center text-mineshaft-200">

@@ -1,6 +1,6 @@
 ##
 
--- Infisical Helm Chart --
+-- Hanzo KMS Helm Chart --
 
 ██╗███╗   ██╗███████╗██╗███████╗██╗ ██████╗ █████╗ ██╗     
 ██║████╗  ██║██╔════╝██║██╔════╝██║██╔════╝██╔══██╗██║     
@@ -11,14 +11,14 @@
 {{ .Chart.Name }} ({{ .Chart.Version }})
 
 
-╭―― Thank you for installing Infisical! 👋  ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――┤
+╭―― Thank you for installing Hanzo KMS! 👋  ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――┤
 │
-│   Infisical / All-in-one open-source SecretOps solution to manage your secrets across your infra! 🔒🔑
+│   Hanzo KMS / All-in-one open-source SecretOps solution to manage your secrets across your infra! 🔒🔑
 │
-│   Visit < https://infisical.com/docs/self-hosting/overview > for further documentation about self-hosting!
+│   Visit < https://kms.hanzo.ai/docs/self-hosting/overview > for further documentation about self-hosting!
 │
-│   Current installation (infisical) :
-│   • infisical          : {{ .Values.infisical.enabled }}
+│   Current installation (kms) :
+│   • kms              : {{ .Values.kms.enabled }}
 |   • nginx              : {{ .Values.ingress.nginx.enabled }}
 |   • Postgres DB        : {{ .Values.postgresql.enabled }}
 |   • Redis              : {{ .Values.redis.enabled }}
@@ -27,7 +27,7 @@
 
 ――― Here's a list of helpful commands to get you started 📝  ―――――――――――――――――――――――――――――――――――――――――┤
 
-→ Get all the Infisical resources (excluding secrets/pvcs)
+→ Get all the Hanzo KMS resources (excluding secrets/pvcs)
 $ kubectl get all -n {{ .Release.Namespace }}
  
 → Get your release status

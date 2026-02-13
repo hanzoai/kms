@@ -6,7 +6,7 @@ With regard to the Infisical Software:
 This software and associated documentation files (the "Software") may only be
 used in production, if you (and any entity that you represent) have agreed to,
 and are in compliance with, the Infisical Subscription Terms of Service, available
-at https://infisical.com/terms (the “Enterprise Terms”), or other
+at https://kms.hanzo.ai/terms (the “Enterprise Terms”), or other
 agreement governing the use of the Software, as agreed by you and Infisical,
 and otherwise have a valid Infisical Enterprise License for the
 correct number of user seats. Subject to the foregoing sentence, you are free to

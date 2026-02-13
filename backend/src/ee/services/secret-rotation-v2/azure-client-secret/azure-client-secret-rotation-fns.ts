@@ -60,7 +60,7 @@ export const azureClientSecretRotationFactory: TRotationFactory<
         endpoint,
         {
           passwordCredential: {
-            displayName: `Infisical Rotated Secret (${formattedDate})`,
+            displayName: `Hanzo KMS Rotated Secret (${formattedDate})`,
             endDateTime: endDateTime.toISOString()
           }
         },

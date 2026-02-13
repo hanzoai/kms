@@ -49,17 +49,17 @@ const ElastiCacheUserManager = (credentials: TBasicAWSCredentials, region: strin
     credentials
   });
 
-  const infisicalGroup = "infisical-managed-group-elasticache";
+  const kmsGroup = "kms-managed-group-elasticache";
 
-  const ensureInfisicalGroupExists = async (clusterName: string) => {
+  const ensureHanzo KMSGroupExists = async (clusterName: string) => {
     const replicationGroups = await elastiCache.send(new DescribeUserGroupsCommand());
 
-    const existingGroup = replicationGroups.UserGroups?.find((group) => group.UserGroupId === infisicalGroup);
+    const existingGroup = replicationGroups.UserGroups?.find((group) => group.UserGroupId === kmsGroup);
 
     let newlyCreatedGroup = false;
     if (!existingGroup) {
       const createGroupCommand = new CreateUserGroupCommand({
-        UserGroupId: infisicalGroup,
+        UserGroupId: kmsGroup,
         UserIds: ["default"],
         Engine: "redis"
       });
@@ -77,10 +77,10 @@ const ElastiCacheUserManager = (credentials: TBasicAWSCredentials, region: strin
         )
       ).ReplicationGroups?.[0];
 
-      if (!replicationGroup?.UserGroupIds?.includes(infisicalGroup)) {
-        // If the replication group doesn't have the infisical user group, we need to associate it
+      if (!replicationGroup?.UserGroupIds?.includes(kmsGroup)) {
+        // If the replication group doesn't have the KMS user group, we need to associate it
         const modifyGroupCommand = new ModifyReplicationGroupCommand({
-          UserGroupIdsToAdd: [infisicalGroup],
+          UserGroupIdsToAdd: [kmsGroup],
           UserGroupIdsToRemove: [],
           ApplyImmediately: true,
           ReplicationGroupId: clusterName
@@ -90,11 +90,11 @@ const ElastiCacheUserManager = (credentials: TBasicAWSCredentials, region: strin
     }
   };
 
-  const $addUserToInfisicalGroup = async (userId: string) => {
+  const $addUserToHanzo KMSGroup = async (userId: string) => {
     // figure out if the default user is already in the group, if it is, then we shouldn't add it again
 
     const addUserToGroupCommand = new ModifyUserGroupCommand({
-      UserGroupId: infisicalGroup,
+      UserGroupId: kmsGroup,
       UserIdsToAdd: [userId],
       UserIdsToRemove: []
     });
@@ -103,10 +103,10 @@ const ElastiCacheUserManager = (credentials: TBasicAWSCredentials, region: strin
   };
 
   const createUser = async (creationInput: TCreateElastiCacheUserInput, clusterName: string) => {
-    await ensureInfisicalGroupExists(clusterName);
+    await ensureHanzo KMSGroupExists(clusterName);
 
     await elastiCache.send(new CreateUserCommand(creationInput)); // First create the user
-    await $addUserToInfisicalGroup(creationInput.UserId); // Then add the user to the group. We know the group is already a part of the cluster because of ensureInfisicalGroupExists()
+    await $addUserToHanzo KMSGroup(creationInput.UserId); // Then add the user to the group. We know the group is already a part of the cluster because of ensureHanzo KMSGroupExists()
 
     return {
       userId: creationInput.UserId,

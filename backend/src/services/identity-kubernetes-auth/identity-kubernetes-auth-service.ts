@@ -227,7 +227,7 @@ export const identityKubernetesAuthServiceFactory = ({
             headers: {
               "Content-Type": "application/json",
               ...(useGatewayServiceAccount
-                ? { "x-infisical-action": GatewayHttpProxyActions.UseGatewayK8sServiceAccount }
+                ? { "x-kms-action": GatewayHttpProxyActions.UseGatewayK8sServiceAccount }
                 : headers)
             },
             timeout: 10000,
@@ -408,7 +408,7 @@ export const identityKubernetesAuthServiceFactory = ({
             {
               headers: {
                 "Content-Type": "application/json",
-                "x-infisical-action": GatewayHttpProxyActions.UseGatewayK8sServiceAccount
+                "x-kms-action": GatewayHttpProxyActions.UseGatewayK8sServiceAccount
               },
               signal: AbortSignal.timeout(10000),
               timeout: 10000
@@ -627,12 +627,12 @@ export const identityKubernetesAuthServiceFactory = ({
 
       if (appCfg.OTEL_TELEMETRY_COLLECTION_ENABLED) {
         authAttemptCounter.add(1, {
-          "infisical.identity.id": identityKubernetesAuth.identityId,
-          "infisical.identity.name": identity.name,
-          "infisical.organization.id": org.id,
-          "infisical.organization.name": org.name,
-          "infisical.identity.auth_method": AuthAttemptAuthMethod.KUBERNETES_AUTH,
-          "infisical.identity.auth_result": AuthAttemptAuthResult.SUCCESS,
+          "kms.identity.id": identityKubernetesAuth.identityId,
+          "kms.identity.name": identity.name,
+          "kms.organization.id": org.id,
+          "kms.organization.name": org.name,
+          "kms.identity.auth_method": AuthAttemptAuthMethod.KUBERNETES_AUTH,
+          "kms.identity.auth_result": AuthAttemptAuthResult.SUCCESS,
           "client.address": requestContext.get("ip"),
           "user_agent.original": requestContext.get("userAgent")
         });
@@ -642,12 +642,12 @@ export const identityKubernetesAuthServiceFactory = ({
     } catch (error) {
       if (appCfg.OTEL_TELEMETRY_COLLECTION_ENABLED) {
         authAttemptCounter.add(1, {
-          "infisical.identity.id": identityKubernetesAuth.identityId,
-          "infisical.identity.name": identity.name,
-          "infisical.organization.id": org.id,
-          "infisical.organization.name": org.name,
-          "infisical.identity.auth_method": AuthAttemptAuthMethod.KUBERNETES_AUTH,
-          "infisical.identity.auth_result": AuthAttemptAuthResult.FAILURE,
+          "kms.identity.id": identityKubernetesAuth.identityId,
+          "kms.identity.name": identity.name,
+          "kms.organization.id": org.id,
+          "kms.organization.name": org.name,
+          "kms.identity.auth_method": AuthAttemptAuthMethod.KUBERNETES_AUTH,
+          "kms.identity.auth_result": AuthAttemptAuthResult.FAILURE,
           "client.address": requestContext.get("ip"),
           "user_agent.original": requestContext.get("userAgent")
         });
@@ -762,7 +762,7 @@ export const identityKubernetesAuthServiceFactory = ({
       if (!plan.gateway) {
         throw new BadRequestError({
           message:
-            "Your current plan does not support gateway usage with identity k8s auth. Please upgrade your plan or contact Infisical Sales for assistance."
+            "Your current plan does not support gateway usage with identity k8s auth. Please upgrade your plan or contact Hanzo KMS Sales for assistance."
         });
       }
 
@@ -953,7 +953,7 @@ export const identityKubernetesAuthServiceFactory = ({
       if (!plan.gateway) {
         throw new BadRequestError({
           message:
-            "Your current plan does not support gateway usage with identity k8s auth. Please upgrade your plan or contact Infisical Sales for assistance."
+            "Your current plan does not support gateway usage with identity k8s auth. Please upgrade your plan or contact Hanzo KMS Sales for assistance."
         });
       }
 

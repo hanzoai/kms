@@ -47,6 +47,6 @@ export default ScimUserProvisionedTemplate;
 
 ScimUserProvisionedTemplate.PreviewProps = {
   organizationName: "Example Organization",
-  callback_url: "https://app.infisical.com",
-  siteUrl: "https://app.infisical.com"
+  callback_url: "https://kms.hanzo.ai",
+  siteUrl: "https://kms.hanzo.ai"
 } as ScimUserProvisionedTemplateProps;

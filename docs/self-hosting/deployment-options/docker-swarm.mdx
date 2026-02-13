@@ -1,20 +1,20 @@
 ---
 title: "Docker Swarm"
-description: "How to self-host Infisical with Docker Swarm (HA)."
+description: "How to self-host Hanzo KMS with Docker Swarm (HA)."
 ---
 
-# Self-Hosting Infisical with Docker Swarm
+# Self-Hosting Hanzo KMS with Docker Swarm
 
-This guide will provide step-by-step instructions on how to self-host Infisical using Docker Swarm. This is particularly helpful for those wanting to self-host Infisical on premise while still maintaining high availability (HA) for the core Infisical components. 
+This guide will provide step-by-step instructions on how to self-host Hanzo KMS using Docker Swarm. This is particularly helpful for those wanting to self-host Hanzo KMS on premise while still maintaining high availability (HA) for the core Hanzo KMS components. 
 The guide will demonstrate a setup with three nodes, ensuring that the cluster can tolerate the failure of one node while remaining fully operational.
 
 ## Docker Swarm
 
 [Docker Swarm](https://docs.docker.com/engine/swarm/) is a native clustering and orchestration solution for Docker containers. 
-It simplifies the deployment and management of containerized applications across multiple nodes, making it a great choice for self-hosting Infisical.
+It simplifies the deployment and management of containerized applications across multiple nodes, making it a great choice for self-hosting Hanzo KMS.
 
 Unlike Kubernetes, which requires a deep understanding of the Kubernetes ecosystem, if you're accustomed to Docker and Docker Compose, you're already familiar with most of Docker Swarm. 
-For this reason, we suggest teams use Docker Swarm to deploy Infisical in a highly available and fault tolerant manner.
+For this reason, we suggest teams use Docker Swarm to deploy Hanzo KMS in a highly available and fault tolerant manner.
 
 ## Prerequisites
 - Understanding of Docker Swarm
@@ -30,14 +30,14 @@ The provided Docker stack includes the following core components to achieve high
 2. **Redis**: Redis is used for caching and is set up with Redis Sentinel for HA. 
 The stack includes three Redis replicas and three Redis Sentinel instances for monitoring and failover.
 
-3. **Infisical**: Infisical is stateless, allowing for easy scaling and replication across multiple nodes.
+3. **Hanzo KMS**: Hanzo KMS is stateless, allowing for easy scaling and replication across multiple nodes.
 
 4. **HAProxy**: HAProxy is used as a load balancer to distribute traffic to the PostgreSQL and Redis instances. 
 It is configured to perform health checks and route requests to the appropriate backend services.
 
 ## Node Failure Tolerance
 
-To ensure Infisical is highly available and fault tolerant, it's important to choose the number of nodes in the cluster. 
+To ensure Hanzo KMS is highly available and fault tolerant, it's important to choose the number of nodes in the cluster. 
 The following table shows the relationship between the number of nodes and the maximum number of nodes that can be down while the cluster continues to function:
 
 | Total Nodes | Max Nodes Down | Min Nodes Required |
@@ -65,19 +65,19 @@ With two nodes, the failure of a single node can result in a loss of quorum and 
 
 ## Docker Deployment Stack Overview
 
-The [Docker stack file](https://github.com/Infisical/infisical/tree/main/docker-swarm) used in this guide defines the services and their configurations for deploying Infisical in a highly available manner. The main components of this stack are as follows.
+The [Docker stack file](https://github.com/hanzoai/kms/tree/main/docker-swarm) used in this guide defines the services and their configurations for deploying Hanzo KMS in a highly available manner. The main components of this stack are as follows.
 
-1. **HAProxy**: The HAProxy service is configured to expose ports for accessing PostgreSQL (5433 for the master, 5434 for replicas), Redis master (6379), and the Infisical backend (8080). It uses a config file (`haproxy.cfg`) to define the load balancing and health check rules.
+1. **HAProxy**: The HAProxy service is configured to expose ports for accessing PostgreSQL (5433 for the master, 5434 for replicas), Redis master (6379), and the Hanzo KMS backend (8080). It uses a config file (`haproxy.cfg`) to define the load balancing and health check rules.
 
-2. **Infisical**: The Infisical backend service is deployed with the latest PostgreSQL-compatible image. It is connected to the `infisical` network and uses secrets for environment variables.
+2. **Hanzo KMS**: The Hanzo KMS backend service is deployed with the latest PostgreSQL-compatible image. It is connected to the `kms` network and uses secrets for environment variables.
 
 3. **etcd**: Three etcd instances (etcd1, etcd2, etcd3) are deployed, one on each node, to provide distributed key-value storage for leader election and configuration management.
 
-4. **Spilo**: Three Spilo instances (spolo1, spolo2, spolo3) are deployed, one on each node, to run PostgreSQL with Patroni for high availability. They are connected to the `infisical` network and use persistent volumes for data storage.
+4. **Spilo**: Three Spilo instances (spolo1, spolo2, spolo3) are deployed, one on each node, to run PostgreSQL with Patroni for high availability. They are connected to the `kms` network and use persistent volumes for data storage.
 
-5. **Redis**: Three Redis instances (redis_replica0, redis_replica1, redis_replica2) are deployed, one on each node, with redis_replica0 acting as the master. They are connected to the `infisical` network.
+5. **Redis**: Three Redis instances (redis_replica0, redis_replica1, redis_replica2) are deployed, one on each node, with redis_replica0 acting as the master. They are connected to the `kms` network.
 
-6. **Redis Sentinel**: Three Redis Sentinel instances (redis_sentinel1, redis_sentinel2, redis_sentinel3) are deployed, one on each node, to monitor and manage the Redis instances. They are connected to the `infisical` network.
+6. **Redis Sentinel**: Three Redis Sentinel instances (redis_sentinel1, redis_sentinel2, redis_sentinel3) are deployed, one on each node, to monitor and manage the Redis instances. They are connected to the `kms` network.
 
 ## Deployment instructions
 
@@ -126,15 +126,15 @@ The [Docker stack file](https://github.com/Infisical/infisical/tree/main/docker-
 
   <Step title="Copy deployment assets to manager node">
   Copy the Docker stack YAML file, HAProxy configuration file and example `.env` file to the manager node. Ensure that all 3 files are placed in the same file directory.
-  - [Docker stack file](https://github.com/Infisical/infisical/blob/main/docker-swarm/stack.yaml) (rename to infisical-stack.yaml)
-  - [HA configuration file](https://github.com/Infisical/infisical/blob/main/docker-swarm/haproxy.cfg) (rename to haproxy.cfg)
-  - [Example .env file](https://github.com/Infisical/infisical/blob/main/docker-swarm/.env-example) (rename to .env)
+  - [Docker stack file](https://github.com/hanzoai/kms/blob/main/docker-swarm/stack.yaml) (rename to kms-stack.yaml)
+  - [HA configuration file](https://github.com/hanzoai/kms/blob/main/docker-swarm/haproxy.cfg) (rename to haproxy.cfg)
+  - [Example .env file](https://github.com/hanzoai/kms/blob/main/docker-swarm/.env-example) (rename to .env)
   </Step>
 
   <Step title="Deploy stack">
 
    ```
-   docker stack deploy -c infisical-stack.yaml infisical
+   docker stack deploy -c kms-stack.yaml kms
    ```
   </Step>
 
@@ -142,26 +142,26 @@ The [Docker stack file](https://github.com/Infisical/infisical/tree/main/docker-
     ```plain
     $ docker service ls 
     ID             NAME                        MODE         REPLICAS   IMAGE                                  PORTS
-    4kzq3ub8qgn9   infisical_etcd1             replicated   1/1        ghcr.io/zalando/spilo-16:3.2-p2        
-    tqx9t82bn8d9   infisical_etcd2             replicated   1/1        ghcr.io/zalando/spilo-16:3.2-p2        
-    t8vbkrasy8fz   infisical_etcd3             replicated   1/1        ghcr.io/zalando/spilo-16:3.2-p2        
-    77iei42fcf6q   infisical_haproxy           global       4/4        haproxy:latest                         *:5002-5003->5433-5434/tcp, *:6379->6379/tcp, *:7001->7000/tcp, *:8080->8080/tcp
-    jaewzqy8md56   infisical_infisical         replicated   5/5        infisical/infisical:v0.60.1-postgres   
-    58w4zablfbtb   infisical_redis_replica0    replicated   1/1        bitnami/redis:6.2.10                   
-    w4yag2whq0un   infisical_redis_replica1    replicated   1/1        bitnami/redis:6.2.10                   
-    w03mriy0jave   infisical_redis_replica2    replicated   1/1        bitnami/redis:6.2.10                   
-    ppo6rk47hc9t   infisical_redis_sentinel1   replicated   1/1        bitnami/redis-sentinel:6.2.10          
-    ub29vd0lnq7f   infisical_redis_sentinel2   replicated   1/1        bitnami/redis-sentinel:6.2.10          
-    szg3yky7yji2   infisical_redis_sentinel3   replicated   1/1        bitnami/redis-sentinel:6.2.10          
-    eqtocpf5tiy0   infisical_spolo1            replicated   1/1        ghcr.io/zalando/spilo-16:3.2-p2        
-    3lznscvk7k5t   infisical_spolo2            replicated   1/1        ghcr.io/zalando/spilo-16:3.2-p2        
-    v04ml7rz2j5q   infisical_spolo3            replicated   1/1        ghcr.io/zalando/spilo-16:3.2-p2
+    4kzq3ub8qgn9   kms_etcd1             replicated   1/1        ghcr.io/zalando/spilo-16:3.2-p2        
+    tqx9t82bn8d9   kms_etcd2             replicated   1/1        ghcr.io/zalando/spilo-16:3.2-p2        
+    t8vbkrasy8fz   kms_etcd3             replicated   1/1        ghcr.io/zalando/spilo-16:3.2-p2        
+    77iei42fcf6q   kms_haproxy           global       4/4        haproxy:latest                         *:5002-5003->5433-5434/tcp, *:6379->6379/tcp, *:7001->7000/tcp, *:8080->8080/tcp
+    jaewzqy8md56   kms_kms         replicated   5/5        ghcr.io/hanzoai/kms:v0.60.1-postgres   
+    58w4zablfbtb   kms_redis_replica0    replicated   1/1        bitnami/redis:6.2.10                   
+    w4yag2whq0un   kms_redis_replica1    replicated   1/1        bitnami/redis:6.2.10                   
+    w03mriy0jave   kms_redis_replica2    replicated   1/1        bitnami/redis:6.2.10                   
+    ppo6rk47hc9t   kms_redis_sentinel1   replicated   1/1        bitnami/redis-sentinel:6.2.10          
+    ub29vd0lnq7f   kms_redis_sentinel2   replicated   1/1        bitnami/redis-sentinel:6.2.10          
+    szg3yky7yji2   kms_redis_sentinel3   replicated   1/1        bitnami/redis-sentinel:6.2.10          
+    eqtocpf5tiy0   kms_spolo1            replicated   1/1        ghcr.io/zalando/spilo-16:3.2-p2        
+    3lznscvk7k5t   kms_spolo2            replicated   1/1        ghcr.io/zalando/spilo-16:3.2-p2        
+    v04ml7rz2j5q   kms_spolo3            replicated   1/1        ghcr.io/zalando/spilo-16:3.2-p2
     ```
   </Step>
 
   <Step title="View service status">
     ![HA Proxy stats](/images/self-hosting/deployment-options/docker-swarm/ha-proxy-ha.png)
-    To view the health of services in your Infisical cluster, visit port `<NODE-IP>:7001` of any node in your Docker swarm. 
+    To view the health of services in your Hanzo KMS cluster, visit port `<NODE-IP>:7001` of any node in your Docker swarm. 
     This port will expose the HA Proxy stats. 
 
     Run the following command to view the IPs of the nodes in your docker swarm.
@@ -180,15 +180,15 @@ The [Docker stack file](https://github.com/Infisical/infisical/tree/main/docker-
     </Info>
   </Step>
 
-  <Step title="Initialize Infisical">
+  <Step title="Initialize Hanzo KMS">
     ![self-hosting sign up](/images/self-hosting/applicable-to-all/selfhost-signup.png)
-    Once all expected services are up and running, visit `<NODE-IP>:8080` of any node in the swarm. This will take you to the Infisical configuration page.
+    Once all expected services are up and running, visit `<NODE-IP>:8080` of any node in the swarm. This will take you to the Hanzo KMS configuration page.
   </Step>
 
   </Steps>
 
 ## FAQ
-<Accordion title="How do I scale Infisical cluster further?" defaultOpen="true">
+<Accordion title="How do I scale Hanzo KMS cluster further?" defaultOpen="true">
   To further scale and make the system more resilient, you can add more nodes to the Docker Swarm and update the stack configuration accordingly:
 
   1. Add new VMs and join them to the Docker Swarm as worker nodes.

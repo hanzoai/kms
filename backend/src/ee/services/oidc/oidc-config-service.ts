@@ -470,7 +470,7 @@ export const oidcConfigServiceFactory = ({
       await smtpService
         .sendMail({
           template: SmtpTemplates.EmailVerification,
-          subjectLine: "Infisical confirmation code",
+          subjectLine: "Hanzo KMS confirmation code",
           recipients: [user.email],
           substitutions: {
             code: token
@@ -478,7 +478,7 @@ export const oidcConfigServiceFactory = ({
         })
         .catch((err: Error) => {
           throw new OidcAuthError({
-            message: `Error sending email confirmation code for user registration - contact the Infisical instance admin. ${err.message}`
+            message: `Error sending email confirmation code for user registration - contact the Hanzo KMS instance admin. ${err.message}`
           });
         });
     }
@@ -766,12 +766,12 @@ export const oidcConfigServiceFactory = ({
           .then(({ isUserCompleted, providerAuthToken, user }) => {
             if (appCfg.OTEL_TELEMETRY_COLLECTION_ENABLED) {
               authAttemptCounter.add(1, {
-                "infisical.user.email": claims?.email?.toLowerCase(),
-                "infisical.user.id": user.id,
-                "infisical.organization.id": org.id,
-                "infisical.organization.name": org.name,
-                "infisical.auth.method": AuthAttemptAuthMethod.OIDC,
-                "infisical.auth.result": AuthAttemptAuthResult.SUCCESS,
+                "kms.user.email": claims?.email?.toLowerCase(),
+                "kms.user.id": user.id,
+                "kms.organization.id": org.id,
+                "kms.organization.name": org.name,
+                "kms.auth.method": AuthAttemptAuthMethod.OIDC,
+                "kms.auth.result": AuthAttemptAuthResult.SUCCESS,
                 "client.address": requestContext.get("ip"),
                 "user_agent.original": requestContext.get("userAgent")
               });
@@ -782,11 +782,11 @@ export const oidcConfigServiceFactory = ({
           .catch((error) => {
             if (appCfg.OTEL_TELEMETRY_COLLECTION_ENABLED) {
               authAttemptCounter.add(1, {
-                "infisical.user.email": claims?.email?.toLowerCase(),
-                "infisical.organization.id": org.id,
-                "infisical.organization.name": org.name,
-                "infisical.auth.method": AuthAttemptAuthMethod.OIDC,
-                "infisical.auth.result": AuthAttemptAuthResult.FAILURE,
+                "kms.user.email": claims?.email?.toLowerCase(),
+                "kms.organization.id": org.id,
+                "kms.organization.name": org.name,
+                "kms.auth.method": AuthAttemptAuthMethod.OIDC,
+                "kms.auth.result": AuthAttemptAuthResult.FAILURE,
                 "client.address": requestContext.get("ip"),
                 "user_agent.original": requestContext.get("userAgent")
               });

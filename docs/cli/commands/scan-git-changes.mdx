@@ -4,19 +4,19 @@ description: "Scan for secrets in your uncommitted code"
 ---
 
 ```bash
-infisical scan git-changes
+hanzo-kms scan git-changes
 
 # Display the full secret findings
-infisical scan git-changes --verbose
+hanzo-kms scan git-changes --verbose
 ```
 
 ## Description
-Scanning for secrets before you commit your changes is great way to prevent leaks. Infisical makes this easy with the sub command `git-changes`.
+Scanning for secrets before you commit your changes is great way to prevent leaks. Hanzo KMS makes this easy with the sub command `git-changes`.
 
 The `git-changes` scans for uncommitted changes in a Git repository, and is especially designed for use on developer machines, aligning with the ['shift left'](https://cloud.google.com/architecture/devops/devops-tech-shifting-left-on-security) security approach. 
-When `git-changes` is run on a Git repository, Infisical parses the output from a `git diff` command. 
+When `git-changes` is run on a Git repository, Hanzo KMS parses the output from a `git diff` command. 
 
-To scan changes in commits that have been staged via `git add`, you can add the `--staged` flag to the sub command. This flag is particularly useful when using Infisical CLI as a pre-commit tool.
+To scan changes in commits that have been staged via `git add`, you can add the `--staged` flag to the sub command. This flag is particularly useful when using KMS CLI as a pre-commit tool.
 
 ### Flags
 <Accordion title="--staged">
@@ -50,9 +50,9 @@ To scan changes in commits that have been staged via `git add`, you can add the 
 
   order of precedence:
   1. --config flag
-  2. env var INFISICAL_SCAN_CONFIG
-  3. (--source/-s)/.infisical-scan.toml
-  If none of the three options are used, then Infisical will use the default config
+  2. env var KMS_SCAN_CONFIG
+  3. (--source/-s)/.kms-scan.toml
+  If none of the three options are used, then Hanzo KMS will use the default config
 </Accordion>
 
 <Accordion title="--exit-code">

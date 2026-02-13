@@ -31,8 +31,8 @@ jobs:
           context: .
           file: Dockerfile
           tags: |
-            infisical/patroni:${{ steps.commit.outputs.short }}
-            infisical/patroni:latest
+            hanzoai/patroni:${{ steps.commit.outputs.short }}
+            hanzoai/patroni:latest
           platforms: linux/amd64,linux/arm64
     
   

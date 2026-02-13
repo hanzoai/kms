@@ -76,7 +76,7 @@ export const registerCertificateEstRouter = async (server: FastifyZodProvider) =
         res.raw.end();
       });
 
-      res.raw.setHeader(wwwAuthenticateHeader, `Basic realm="infisical"`);
+      res.raw.setHeader(wwwAuthenticateHeader, `Basic realm="kms"`);
       res.raw.setHeader("Content-Length", 0);
       res.raw.statusCode = 401;
 

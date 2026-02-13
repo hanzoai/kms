@@ -1,10 +1,10 @@
 ---
-title: "infisical export"
-description: "Export Infisical secrets from CLI into different file formats"
+title: "hanzo-kms export"
+description: "Export Hanzo KMS secrets from CLI into different file formats"
 ---
 
 ```bash
-infisical export [options]
+hanzo-kms export [options]
 ```
 
 ## Description
@@ -13,40 +13,40 @@ Export environment variables from the platform into a file format. By default, o
 
 ## Subcommands & flags
 
-<Accordion title="infisical export" defaultOpen="true">
+<Accordion title="hanzo-kms export" defaultOpen="true">
   Use this command to export environment variables from the platform into a raw file formats
 
 ```bash
-$ infisical export
+$ hanzo-kms export
 
 # Export variables to a .env file
-infisical export > .env
-infisical export --output-file=./.env
+hanzo-kms export > .env
+hanzo-kms export --output-file=./.env
 
 # Export variables to a .env file (with export keyword)
-infisical export --format=dotenv-export > .env
-infisical export --format=dotenv-export --output-file=./.env
+hanzo-kms export --format=dotenv-export > .env
+hanzo-kms export --format=dotenv-export --output-file=./.env
 
 # Export variables to a JSON file
-infisical export --format=json > secrets.json
-infisical export --format=json --output-file=./secrets.json
+hanzo-kms export --format=json > secrets.json
+hanzo-kms export --format=json --output-file=./secrets.json
 
 # Export variables to a YAML file
-infisical export --format=yaml > secrets.yaml
-infisical export --format=yaml --output-file=./secrets.yaml
+hanzo-kms export --format=yaml > secrets.yaml
+hanzo-kms export --format=yaml --output-file=./secrets.yaml
 
 # Render secrets using a custom template file
-infisical export --template=<path to template>
+hanzo-kms export --template=<path to template>
 ```
 
 ### Environment variables
 
-  <Accordion title="INFISICAL_TOKEN">
+  <Accordion title="KMS_TOKEN">
     Used to fetch secrets via a [machine identities](/documentation/platform/identities/machine-identities) apposed to logged in credentials. Simply, export this variable in the terminal before running this command.
 
     ```bash
     # Example
-    export INFISICAL_TOKEN=$(infisical login --method=universal-auth --client-id=<identity-client-id> --client-secret=<identity-client-secret> --silent --plain) # --plain flag will output only the token, so it can be fed to an environment variable. --silent will disable any update messages.
+    export KMS_TOKEN=$(hanzo-kms login --method=universal-auth --client-id=<identity-client-id> --client-secret=<identity-client-secret> --silent --plain) # --plain flag will output only the token, so it can be fed to an environment variable. --silent will disable any update messages.
     ```
 
   <Info>
@@ -54,20 +54,20 @@ infisical export --template=<path to template>
 
     ```bash
     # Example
-    export INFISICAL_TOKEN=<service-token>
+    export KMS_TOKEN=<service-token>
     ```
 
   </Info>
   </Accordion>
 
-  <Accordion title="INFISICAL_DISABLE_UPDATE_CHECK">
+  <Accordion title="KMS_DISABLE_UPDATE_CHECK">
     Used to disable the check for new CLI versions. This can improve the time it takes to run this command. Recommended for production environments.
     
     To use, simply export this variable in the terminal before running this command.
 
     ```bash
     # Example
-    export INFISICAL_DISABLE_UPDATE_CHECK=true
+    export KMS_DISABLE_UPDATE_CHECK=true
     ```
 
   </Accordion>
@@ -79,10 +79,10 @@ infisical export --template=<path to template>
 
     ```bash
     # Export to specific file
-    infisical export --format=json --output-file=./secrets.json
+    hanzo-kms export --format=json --output-file=./secrets.json
 
     # Export to directory (uses default filename based on format)
-    infisical export --format=yaml --output-file=./
+    hanzo-kms export --format=yaml --output-file=./
     ```
 
     **When `--output-file` is specified:**
@@ -93,7 +93,7 @@ infisical export --template=<path to template>
 
     **When `--output-file` is NOT specified (default behavior):**
     - Output is sent to stdout (standard output)
-    - You can use shell redirection like `infisical export > secrets.json`
+    - You can use shell redirection like `hanzo-kms export > secrets.json`
     - Maintains backwards compatibility with existing scripts
 
     <Warning>
@@ -106,7 +106,7 @@ infisical export --template=<path to template>
     The `--template` flag specifies the path to the template file used for rendering secrets. When using templates, you can omit the other format flags.
 
     	```text my-template-file
-    {{$secrets := secret "<infisical-project-id>" "<environment-slug>" "<folder-path>"}}
+    {{$secrets := secret "<kms-project-id>" "<environment-slug>" "<folder-path>"}}
     {{$length := len $secrets}}
     {{- "{"}}
     {{- with $secrets }}
@@ -119,7 +119,7 @@ infisical export --template=<path to template>
 
     ```bash
     # Example
-    infisical export --template="/path/to/template/file"
+    hanzo-kms export --template="/path/to/template/file"
     ```
 
   </Accordion>
@@ -129,7 +129,7 @@ infisical export --template=<path to template>
 
     ```bash
     # Example
-    infisical export --env=prod
+    hanzo-kms export --env=prod
     ```
 
     Note: this flag only accepts environment slug names not the fully qualified name. To view the slug name of an environment, visit the project settings page.
@@ -139,13 +139,13 @@ infisical export --template=<path to template>
   </Accordion>
 
   <Accordion title="--projectId">
-    By default the project id is retrieved from the `.infisical.json` located at the root of your local project. 
+    By default the project id is retrieved from the `.kms.json` located at the root of your local project. 
     This flag allows you to override this behavior by explicitly defining the project to fetch your secrets from.
 
     ```bash
     # Example
 
-    infisical export --projectId=XXXXXXXXXXXXXX
+    hanzo-kms export --projectId=XXXXXXXXXXXXXX
     ```
 
   </Accordion>
@@ -182,7 +182,7 @@ infisical export --template=<path to template>
 
     ```bash
     # Example
-    infisical export --path="/path/to/folder" --env=dev
+    hanzo-kms export --path="/path/to/folder" --env=dev
     ```
 
   </Accordion>
@@ -192,7 +192,7 @@ infisical export --template=<path to template>
 
     ```bash
     # Example
-    infisical export --tags=tag1,tag2,tag3 --env=dev
+    hanzo-kms export --tags=tag1,tag2,tag3 --env=dev
     ```
 
     Note: you must reference the tag by its slug name not its fully qualified name. Go to project settings to view all tag slugs.

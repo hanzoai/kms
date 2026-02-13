@@ -13,10 +13,10 @@ description: "Learn how to automatically rotate DBT Service Tokens."
 
 - Create a [DBT Connection](/integrations/app-connections/dbt).
 
-## Create a DBT Service Token Rotation in Infisical
+## Create a DBT Service Token Rotation in Hanzo KMS
 
 <Tabs>
-    <Tab title="Infisical UI">
+    <Tab title="Hanzo KMS UI">
         1. Navigate to your Secret Manager Project's Dashboard and select **Add Secret Rotation** from the actions dropdown.
 
         ![Secret Manager Dashboard](/images/secret-rotations-v2/generic/add-secret-rotation.png)
@@ -75,7 +75,7 @@ description: "Learn how to automatically rotate DBT Service Tokens."
 
         ```bash Request
         curl --request POST \
-        --url https://us.infisical.com/api/v2/secret-rotations/dbt-service-token \
+        --url https://us.kms.hanzo.ai/api/v2/secret-rotations/dbt-service-token \
         --header 'Content-Type: application/json' \
         --data '{
             "name": "my-dbt-service-token-rotation",

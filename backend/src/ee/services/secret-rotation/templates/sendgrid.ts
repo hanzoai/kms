@@ -30,7 +30,7 @@ export const SENDGRID_TEMPLATE = {
         Authorization: "Bearer ${inputs.admin_api_key}"
       },
       body: {
-        name: "infisical-${random | 16}",
+        name: "kms-${random | 16}",
         scopes: { ref: "inputs.api_key_scopes" }
       },
       setter: {

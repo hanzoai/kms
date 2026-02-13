@@ -1,19 +1,19 @@
 ---
 title: Github
-description: "Learn how to authenticate Github workflows with Infisical using OpenID Connect (OIDC)."
+description: "Learn how to authenticate Github workflows with Hanzo KMS using OpenID Connect (OIDC)."
 ---
 
 **OIDC Auth** is a platform-agnostic JWT-based authentication method that can be used to authenticate from any platform or environment using an identity provider with OpenID Connect.
 
 ## Diagram
 
-The following sequence diagram illustrates the OIDC Auth workflow for authenticating Github workflows with Infisical.
+The following sequence diagram illustrates the OIDC Auth workflow for authenticating Github workflows with Hanzo KMS.
 
 ```mermaid
 sequenceDiagram
   participant Client as Github Workflow
   participant Idp as Identity Provider
-  participant Infis as Infisical
+  participant Infis as Hanzo KMS
 
   Client->>Idp: Step 1: Request identity token
   Idp-->>Client: Return JWT with verifiable claims
@@ -28,30 +28,30 @@ sequenceDiagram
   Note over Infis: Step 4: JWT validation
   Infis->>Client: Return short-lived access token
 
-  Note over Client,Infis: Step 5: Access Infisical API with Token
+  Note over Client,Infis: Step 5: Access Hanzo KMS API with Token
   Client->>Infis: Make authenticated requests using the short-lived access token
 ```
 
 ## Concept
 
-At a high-level, Infisical authenticates a client by verifying the JWT and checking that it meets specific requirements (e.g. it is issued by a trusted identity provider) at the `/api/v1/auth/oidc-auth/login` endpoint. If successful,
-then Infisical returns a short-lived access token that can be used to make authenticated requests to the Infisical API.
+At a high-level, Hanzo KMS authenticates a client by verifying the JWT and checking that it meets specific requirements (e.g. it is issued by a trusted identity provider) at the `/api/v1/auth/oidc-auth/login` endpoint. If successful,
+then Hanzo KMS returns a short-lived access token that can be used to make authenticated requests to the Hanzo KMS API.
 
 To be more specific:
 
 1. The Github workflow requests an identity token from Github's identity provider.
-2. The fetched identity token is sent to Infisical at the `/api/v1/auth/oidc-auth/login` endpoint.
-3. Infisical fetches the public key that was used to sign the identity token from Github's identity provider using OIDC Discovery.
-4. Infisical validates the JWT using the public key provided by the identity provider and checks that the subject, audience, and claims of the token matches with the set criteria.
-5. If all is well, Infisical returns a short-lived access token that the Github workflow can use to make authenticated requests to the Infisical API.
+2. The fetched identity token is sent to Hanzo KMS at the `/api/v1/auth/oidc-auth/login` endpoint.
+3. Hanzo KMS fetches the public key that was used to sign the identity token from Github's identity provider using OIDC Discovery.
+4. Hanzo KMS validates the JWT using the public key provided by the identity provider and checks that the subject, audience, and claims of the token matches with the set criteria.
+5. If all is well, Hanzo KMS returns a short-lived access token that the Github workflow can use to make authenticated requests to the Hanzo KMS API.
 
 <Note>
-  Infisical needs network-level access to Github's identity provider endpoints.
+  Hanzo KMS needs network-level access to Github's identity provider endpoints.
 </Note>
 
 ## Guide
 
-In the following steps, we explore how to create and use identities to access the Infisical API using the OIDC Auth authentication method.
+In the following steps, we explore how to create and use identities to access the Hanzo KMS API using the OIDC Auth authentication method.
 
 <Steps>
     <Step title="Creating an identity">
@@ -106,7 +106,7 @@ In the following steps, we explore how to create and use identities to access th
 
     ![identities project create](/images/platform/identities/identities-project-create.png)
     </Step>
-    <Step title="Accessing the Infisical API with the identity">
+    <Step title="Accessing the Hanzo KMS API with the identity">
         As a prerequisite, you will need to set `id-token:write` permissions for the Github workflow. This setting allows the JWT to be requested from Github's OIDC provider.
 
         ```yaml
@@ -115,7 +115,7 @@ In the following steps, we explore how to create and use identities to access th
         ...
         ```
 
-        To access the Infisical API as the identity, you need to fetch an identity token from Github's identity provider and make a request to the `/api/v1/auth/oidc-auth/login` endpoint in exchange for an access token.
+        To access the Hanzo KMS API as the identity, you need to fetch an identity token from Github's identity provider and make a request to the `/api/v1/auth/oidc-auth/login` endpoint in exchange for an access token.
         The identity token can be fetched using either of the following approaches:
         - Using environment variables on the runner (`ACTIONS_ID_TOKEN_REQUEST_URL` and `ACTIONS_ID_TOKEN_REQUEST_TOKEN`).
         ```yaml
@@ -129,7 +129,7 @@ In the following steps, we explore how to create and use identities to access th
 
         - Using `getIDToken()` from the Github Actions toolkit.
 
-        Below is an example of how a Github workflow can be configured to fetch secrets from Infisical using the [Infisical Secrets Action](https://github.com/Infisical/secrets-action) with OIDC Auth.
+        Below is an example of how a Github workflow can be configured to fetch secrets from Hanzo KMS using the [Hanzo KMS Secrets Action](https://github.com/Hanzo KMS/secrets-action) with OIDC Auth.
         ```yaml
         name: Manual workflow
 
@@ -143,7 +143,7 @@ In the following steps, we explore how to create and use identities to access th
             build:
                 runs-on: ubuntu-latest
                 steps:
-                    - uses: Infisical/secrets-action@v1.0.7
+                    - uses: Hanzo KMS/secrets-action@v1.0.7
                     with:
                         method: "oidc"
                         env-slug: "dev"
@@ -155,14 +155,14 @@ In the following steps, we explore how to create and use identities to access th
         Preceding steps can then use the secret values injected onto the workflow's environment.
 
         <Tip>
-            We recommend using [Infisical Secrets Action](https://github.com/Infisical/secrets-action) to authenticate with Infisical using OIDC Auth as it handles the authentication process including the fetching of identity tokens for you.
+            We recommend using [Hanzo KMS Secrets Action](https://github.com/Hanzo KMS/secrets-action) to authenticate with Hanzo KMS using OIDC Auth as it handles the authentication process including the fetching of identity tokens for you.
         </Tip>
 
         <Note>
         Each identity access token has a time-to-live (TTL) which you can infer from the response of the login operation;
         the default TTL is `7200` seconds which can be adjusted.
 
-        If an identity access token expires, it can no longer authenticate with the Infisical API. In this case,
+        If an identity access token expires, it can no longer authenticate with the Hanzo KMS API. In this case,
         a new access token should be obtained by performing another login operation.
         </Note>
     </Step>

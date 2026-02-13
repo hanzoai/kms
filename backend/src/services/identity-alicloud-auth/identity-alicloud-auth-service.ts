@@ -184,12 +184,12 @@ export const identityAliCloudAuthServiceFactory = ({
 
       if (appCfg.OTEL_TELEMETRY_COLLECTION_ENABLED) {
         authAttemptCounter.add(1, {
-          "infisical.identity.id": identityAliCloudAuth.identityId,
-          "infisical.identity.name": identity.name,
-          "infisical.organization.id": org.id,
-          "infisical.organization.name": org.name,
-          "infisical.identity.auth_method": AuthAttemptAuthMethod.ALICLOUD_AUTH,
-          "infisical.identity.auth_result": AuthAttemptAuthResult.SUCCESS,
+          "kms.identity.id": identityAliCloudAuth.identityId,
+          "kms.identity.name": identity.name,
+          "kms.organization.id": org.id,
+          "kms.organization.name": org.name,
+          "kms.identity.auth_method": AuthAttemptAuthMethod.ALICLOUD_AUTH,
+          "kms.identity.auth_result": AuthAttemptAuthResult.SUCCESS,
           "client.address": requestContext.get("ip"),
           "user_agent.original": requestContext.get("userAgent")
         });
@@ -204,12 +204,12 @@ export const identityAliCloudAuthServiceFactory = ({
     } catch (error) {
       if (appCfg.OTEL_TELEMETRY_COLLECTION_ENABLED) {
         authAttemptCounter.add(1, {
-          "infisical.identity.id": identityAliCloudAuth.identityId,
-          "infisical.identity.name": identity.name,
-          "infisical.organization.id": org.id,
-          "infisical.organization.name": org.name,
-          "infisical.identity.auth_method": AuthAttemptAuthMethod.ALICLOUD_AUTH,
-          "infisical.identity.auth_result": AuthAttemptAuthResult.FAILURE,
+          "kms.identity.id": identityAliCloudAuth.identityId,
+          "kms.identity.name": identity.name,
+          "kms.organization.id": org.id,
+          "kms.organization.name": org.name,
+          "kms.identity.auth_method": AuthAttemptAuthMethod.ALICLOUD_AUTH,
+          "kms.identity.auth_result": AuthAttemptAuthResult.FAILURE,
           "client.address": requestContext.get("ip"),
           "user_agent.original": requestContext.get("userAgent")
         });

@@ -43,7 +43,7 @@ export const NewDeviceLoginTemplate = ({
         <Text className="mb-[0px]">
           If you believe that this login is suspicious, please contact{" "}
           {isCloud ? (
-            <BaseLink href="mailto:support@infisical.com">support@infisical.com</BaseLink>
+            <BaseLink href="mailto:support@hanzo.ai">support@hanzo.ai</BaseLink>
           ) : (
             "your administrator"
           )}{" "}
@@ -63,5 +63,5 @@ NewDeviceLoginTemplate.PreviewProps = {
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15",
   timestamp: "Tue Apr 29 2025 23:03:27 GMT+0000 (Coordinated Universal Time)",
   isCloud: true,
-  siteUrl: "https://infisical.com"
+  siteUrl: "https://kms.hanzo.ai"
 } as NewDeviceLoginTemplateProps;

@@ -47,7 +47,7 @@ export interface CustomLogger extends Omit<Logger, "info" | "error" | "warn" | "
 export let logger: Readonly<CustomLogger>;
 
 const loggerConfig = z.object({
-  AWS_CLOUDWATCH_LOG_GROUP_NAME: z.string().default("infisical-log-stream"),
+  AWS_CLOUDWATCH_LOG_GROUP_NAME: z.string().default("kms-log-stream"),
   AWS_CLOUDWATCH_LOG_REGION: z.string().default("us-east-1"),
   AWS_CLOUDWATCH_LOG_ACCESS_KEY_ID: z.string().min(1).optional(),
   AWS_CLOUDWATCH_LOG_ACCESS_KEY_SECRET: z.string().min(1).optional(),

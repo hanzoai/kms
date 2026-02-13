@@ -84,9 +84,9 @@ const createGatewayConnection = async (
   const appCfg = getConfig();
 
   const protocolToAlpn = {
-    [GatewayProxyProtocol.Http]: "infisical-http-proxy",
-    [GatewayProxyProtocol.Tcp]: "infisical-tcp-proxy",
-    [GatewayProxyProtocol.Ping]: "infisical-ping"
+    [GatewayProxyProtocol.Http]: "kms-http-proxy",
+    [GatewayProxyProtocol.Tcp]: "kms-tcp-proxy",
+    [GatewayProxyProtocol.Ping]: "kms-ping"
   };
 
   const tlsOptions: tls.ConnectionOptions = {

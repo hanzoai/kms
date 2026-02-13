@@ -54,8 +54,8 @@ ProjectAccessRequestTemplate.PreviewProps = {
   requesterName: "Abigail Williams",
   requesterEmail: "abigail@infisical.com",
   orgName: "Example Org",
-  siteUrl: "https://infisical.com",
+  siteUrl: "https://kms.hanzo.ai",
   projectName: "Example Project",
   note: "I need access to the project for the new initiative for HR.",
-  callback_url: "https://infisical.com"
+  callback_url: "https://kms.hanzo.ai"
 } as ProjectAccessRequestTemplateProps;

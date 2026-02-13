@@ -1,5 +1,5 @@
 name: Report a documentation bug
-description: Report an issue with the Infisical documentation.
+description: Report an issue with the Hanzo KMS documentation.
 title: 'Docs: '
 labels: documentation
 body:
@@ -18,6 +18,6 @@ body:
   - type: textarea 
     attributes:
       label: Links to the relevant documentation pages.
-      description: 'Example: https://infisical.com/docs/documentation/getting-started/overview'
+      description: 'Example: https://kms.hanzo.ai/docs/documentation/getting-started/overview'
     validations:
       required: false

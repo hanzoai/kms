@@ -1,58 +1,58 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "infisical.name" -}}
+{{- define "kms.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "infisical.chart" -}}
+{{- define "kms.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*
-Create unified labels for infisical components
+Create unified labels for kms components
 */}}
-{{- define "infisical.common.matchLabels" -}}
-app: {{ template "infisical.name" . }}
+{{- define "kms.common.matchLabels" -}}
+app: {{ template "kms.name" . }}
 release: {{ .Release.Name }}
 {{- end -}}
 
-{{- define "infisical.common.metaLabels" -}}
-chart: {{ template "infisical.chart" . }}
+{{- define "kms.common.metaLabels" -}}
+chart: {{ template "kms.chart" . }}
 heritage: {{ .Release.Service }}
 {{- end -}}
 
-{{- define "infisical.common.labels" -}}
-{{ include "infisical.common.matchLabels" . }}
-{{ include "infisical.common.metaLabels" . }}
+{{- define "kms.common.labels" -}}
+{{ include "kms.common.matchLabels" . }}
+{{ include "kms.common.metaLabels" . }}
 {{- end -}}
 
-{{- define "infisical.labels" -}}
-{{ include "infisical.matchLabels" . }}
-{{ include "infisical.common.metaLabels" . }}
+{{- define "kms.labels" -}}
+{{ include "kms.matchLabels" . }}
+{{ include "kms.common.metaLabels" . }}
 {{- end -}}
 
-{{- define "infisical.matchLabels" -}}
-component: {{ .Values.infisical.name | quote }}
-{{ include "infisical.common.matchLabels" . }}
+{{- define "kms.matchLabels" -}}
+component: {{ .Values.kms.name | quote }}
+{{ include "kms.common.matchLabels" . }}
 {{- end -}}
 
-{{- define "infisical.roleName" -}}
-{{- printf "%s-infisical" .Release.Name -}}
+{{- define "kms.roleName" -}}
+{{- printf "%s-kms" .Release.Name -}}
 {{- end -}}
 
-{{- define "infisical.roleBindingName" -}}
-{{- printf "%s-infisical" .Release.Name -}}
+{{- define "kms.roleBindingName" -}}
+{{- printf "%s-kms" .Release.Name -}}
 {{- end -}}
 
-{{- define "infisical.serviceAccountName" -}}
-{{- if .Values.infisical.serviceAccount.create -}}
-{{- printf "%s-infisical" .Release.Name -}}
+{{- define "kms.serviceAccountName" -}}
+{{- if .Values.kms.serviceAccount.create -}}
+{{- printf "%s-kms" .Release.Name -}}
 {{- else -}}
-{{- .Values.infisical.serviceAccount.name | default "default" -}}
+{{- .Values.kms.serviceAccount.name | default "default" -}}
 {{- end -}}
 {{- end -}}
 
@@ -61,20 +61,20 @@ component: {{ .Values.infisical.name | quote }}
 Create a fully qualified backend name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 */}}
-{{- define "infisical.fullname" -}}
-{{- if .Values.infisical.fullnameOverride -}}
-{{- .Values.infisical.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- define "kms.fullname" -}}
+{{- if .Values.kms.fullnameOverride -}}
+{{- .Values.kms.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
 {{- $name := default .Chart.Name .Values.nameOverride -}}
 {{- if contains $name .Release.Name -}}
-{{- printf "%s-%s" .Release.Name .Values.infisical.name | trunc 63 | trimSuffix "-" -}}
+{{- printf "%s-%s" .Release.Name .Values.kms.name | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
-{{- printf "%s-%s-%s" .Release.Name $name .Values.infisical.name | trunc 63 | trimSuffix "-" -}}
+{{- printf "%s-%s-%s" .Release.Name $name .Values.kms.name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}
 
-{{- define "infisical.postgresService" -}}
+{{- define "kms.postgresService" -}}
 {{- if .Values.postgresql.fullnameOverride -}}
 {{- .Values.postgresql.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
@@ -82,11 +82,11 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 {{- end -}}
 
-{{- define "infisical.postgresDBConnectionString" -}}
+{{- define "kms.postgresDBConnectionString" -}}
 {{- $dbUsername := .Values.postgresql.auth.username -}}
 {{- $dbPassword := .Values.postgresql.auth.password -}}
 {{- $dbName := .Values.postgresql.auth.database -}}
-{{- $serviceName := include "infisical.postgresService" . -}}
+{{- $serviceName := include "kms.postgresService" . -}}
 {{- printf "postgresql://%s:%s@%s:5432/%s" $dbUsername $dbPassword $serviceName $dbName -}}
 {{- end -}}
 
@@ -94,7 +94,7 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 Create a fully qualified redis name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 */}}
-{{- define "infisical.redis.fullname" -}}
+{{- define "kms.redis.fullname" -}}
 {{- if .Values.redis.fullnameOverride -}}
 {{- .Values.redis.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
@@ -108,7 +108,7 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 
-{{- define "infisical.redisServiceName" -}}
+{{- define "kms.redisServiceName" -}}
 {{- if .Values.redis.fullnameOverride -}}
 {{- printf "%s-master" .Values.redis.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
@@ -117,8 +117,8 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 
-{{- define "infisical.redisConnectionString" -}}
+{{- define "kms.redisConnectionString" -}}
 {{- $password := .Values.redis.auth.password -}}
-{{- $serviceName := include "infisical.redisServiceName" . -}}
+{{- $serviceName := include "kms.redisServiceName" . -}}
 {{- printf "redis://default:%s@%s:6379" $password "redis-master" -}}
 {{- end -}}

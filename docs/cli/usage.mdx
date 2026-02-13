@@ -1,13 +1,13 @@
 ---
 title: "Quickstart"
-description: "Manage secrets with Infisical CLI"
+description: "Manage secrets with KMS CLI"
 ---
 
 The CLI is designed for a variety of secret management applications ranging from local development to CI/CD and production scenarios.
 
 <Tabs>
   <Tab title="Local development">
-    In the following steps, we explore how to use the Infisical CLI to fetch back environment variables from Infisical
+    In the following steps, we explore how to use the KMS CLI to fetch back environment variables from Hanzo KMS
     and inject them into your local development process.
     
     <Note>
@@ -16,53 +16,53 @@ The CLI is designed for a variety of secret management applications ranging from
 
     <Steps>
       <Step title="Log in with the CLI">
-        Start by running the `infisical login` command to authenticate with Infisical.
+        Start by running the `hanzo-kms login` command to authenticate with Hanzo KMS.
 
         ```bash
-        infisical login
+        hanzo-kms login
         ```
         <Note>
-          If you are in a containerized environment such as WSL 2 or Codespaces, run `infisical login -i` to avoid browser based login
+          If you are in a containerized environment such as WSL 2 or Codespaces, run `hanzo-kms login -i` to avoid browser based login
         </Note>
       </Step>
-      <Step title="Initialize Infisical for your project">
-        Next, navigate to your project and initialize Infisical.
+      <Step title="Initialize Hanzo KMS for your project">
+        Next, navigate to your project and initialize Hanzo KMS.
 
         ```bash
         # navigate to your project
         cd /path/to/project
 
-        # initialize infisical
-        infisical init
+        # initialize kms
+        hanzo-kms init
         ```
 
-        The `infisical init` command creates a `.infisical.json` file, containing [local project settings](./project-config), at the location where the command is executed.
+        The `hanzo-kms init` command creates a `.kms.json` file, containing [local project settings](./project-config), at the location where the command is executed.
 
         <Note>
-          The `.infisical.json` file does not contain any sensitive data, so you may commit it to your git repository.
+          The `.kms.json` file does not contain any sensitive data, so you may commit it to your git repository.
         </Note>
       </Step>
       <Step title="Inject environment variables">
-        Finally, pass environment variables from Infisical into your application.
+        Finally, pass environment variables from Hanzo KMS into your application.
 
         <Tabs>
           <Tab title="Feed secrets to your application">
             ```bash
-            infisical run --env=dev --path=/apps/firefly -- [your application start command] # e.g. npm run dev
+            hanzo-kms run --env=dev --path=/apps/firefly -- [your application start command] # e.g. npm run dev
 
             # example with node (nodemon)
-            infisical run --env=staging --path=/apps/spotify -- nodemon index.js
+            hanzo-kms run --env=staging --path=/apps/spotify -- nodemon index.js
 
             # example with flask
-            infisical run --env=prod --path=/apps/backend -- flask run
+            hanzo-kms run --env=prod --path=/apps/backend -- flask run
 
             # example with spring boot - maven
-            infisical run --env=dev --path=/apps/ -- ./mvnw spring-boot:run --quiet
+            hanzo-kms run --env=dev --path=/apps/ -- ./mvnw spring-boot:run --quiet
             ```
 
           </Tab>
           <Tab title="Feed secrets via custom aliases (advanced)">
-            Custom aliases can utilize secrets from Infisical. Suppose there is a custom alias `yd` in `custom.sh` that runs `yarn dev` and needs the secrets provided by Infisical.
+            Custom aliases can utilize secrets from Hanzo KMS. Suppose there is a custom alias `yd` in `custom.sh` that runs `yarn dev` and needs the secrets provided by Hanzo KMS.
             ```bash
             #!/bin/sh
 
@@ -71,10 +71,10 @@ The CLI is designed for a variety of secret management applications ranging from
             }
             ```
 
-            To make the secrets available from Infisical to `yd`, you can run the following command:
+            To make the secrets available from Hanzo KMS to `yd`, you can run the following command:
 
             ```bash
-            infisical run --env=prod --path=/apps/reddit --command="source custom.sh && yd"
+            hanzo-kms run --env=prod --path=/apps/reddit --command="source custom.sh && yd"
             ```
           </Tab>
         </Tabs>
@@ -86,20 +86,20 @@ The CLI is designed for a variety of secret management applications ranging from
   </Tab>
 
   <Tab title="Staging, production & all other use cases">
-    In the following steps, we explore how to use the Infisical CLI in a non-local development scenario
+    In the following steps, we explore how to use the KMS CLI in a non-local development scenario
     to fetch back environment variables and export them to a file.
     <Steps>
       <Step title="Create a machine identity and obtain credentials for it">
         Follow the steps listed [here](/documentation/platform/identities/universal-auth) to create a machine identity and obtain a **client ID** and **client secret** for it.
       </Step>
       <Step title="Obtain a machine identity access token">
-        Run the following command to authenticate with Infisical using the **client ID** and **client secret** credentials from step 1 and set the `INFISICAL_TOKEN` environment variable to the retrieved access token.
+        Run the following command to authenticate with Hanzo KMS using the **client ID** and **client secret** credentials from step 1 and set the `KMS_TOKEN` environment variable to the retrieved access token.
         
         ```bash
-        export INFISICAL_TOKEN=$(infisical login --method=universal-auth --client-id=<identity-client-id> --client-secret=<identity-client-secret> --silent --plain) # --plain flag will output only the token, so it can be fed to an environment variable. --silent will disable any update messages.
+        export KMS_TOKEN=$(hanzo-kms login --method=universal-auth --client-id=<identity-client-id> --client-secret=<identity-client-secret> --silent --plain) # --plain flag will output only the token, so it can be fed to an environment variable. --silent will disable any update messages.
         ```
 
-        The CLI is configured to look out for the `INFISICAL_TOKEN` environment variable, so going forward any command used will be authenticated.
+        The CLI is configured to look out for the `KMS_TOKEN` environment variable, so going forward any command used will be authenticated.
 
         Alternatively, assuming you have an access token on hand, you can also pass it directly to the CLI using the `--token` flag in conjunction with other CLI commands.
 
@@ -109,14 +109,14 @@ The CLI is designed for a variety of secret management applications ranging from
         </Info>
       </Step>
       <Step title="Export environment variables back into a file">
-        Finally, export the environment variables from Infisical to a file of choice.
+        Finally, export the environment variables from Hanzo KMS to a file of choice.
 
         ```bash
         # export variables to a .env file (with export keyword)
-        infisical export --format=dotenv-export > .env
+        hanzo-kms export --format=dotenv-export > .env
 
         # export variables to a YAML file
-        infisical export --format=yaml > secrets.yaml
+        hanzo-kms export --format=yaml > secrets.yaml
         ```
       </Step>
     </Steps>
@@ -125,9 +125,9 @@ The CLI is designed for a variety of secret management applications ranging from
 </Tabs>
 
 <Note>
-  Starting with CLI version v0.4.0, you can now choose to log in via Infisical Cloud (US/EU) or your own self-hosted instance by simply running `infisical login` and following the on-screen instructions — no need to manually set the `INFISICAL_API_URL` environment variable.
+  Starting with CLI version v0.4.0, you can now choose to log in via Hanzo KMS Cloud (US/EU) or your own self-hosted instance by simply running `hanzo-kms login` and following the on-screen instructions — no need to manually set the `KMS_API_URL` environment variable.
 
-For versions prior to v0.4.0, the CLI defaults to US Cloud. To connect to EU Cloud or a self-hosted instance, set the `INFISICAL_API_URL` environment variable to `https://eu.infisical.com` or your custom URL.
+For versions prior to v0.4.0, the CLI defaults to US Cloud. To connect to EU Cloud or a self-hosted instance, set the `KMS_API_URL` environment variable to `https://eu.kms.hanzo.ai` or your custom URL.
 
 </Note>
 
@@ -136,33 +136,33 @@ For versions prior to v0.4.0, the CLI defaults to US Cloud. To connect to EU Clo
 
 **Important:** If you're not using interactive login, you must configure the domain for **all CLI commands**.
 
-The CLI defaults to US Cloud (https://app.infisical.com). To connect to **EU Cloud (https://eu.infisical.com)** or a **self-hosted instance**, you must configure the domain in one of the following ways:
+The CLI defaults to US Cloud (https://kms.hanzo.ai). To connect to **EU Cloud (https://eu.kms.hanzo.ai)** or a **self-hosted instance**, you must configure the domain in one of the following ways:
 
-- Use the `INFISICAL_API_URL` environment variable
+- Use the `KMS_API_URL` environment variable
 - Use the `--domain` flag on every command
 
 <Tabs>
   <Tab title='Use Environment Variable (Recommended)'>
     The easiest way to ensure all CLI commands use the correct domain is to set
-    the `INFISICAL_API_URL` environment variable. This applies the domain
+    the `KMS_API_URL` environment variable. This applies the domain
     setting globally to all commands:
 
     ```bash
     # Linux/MacOS
-    export INFISICAL_API_URL="https://your-domain.infisical.com"
+    export KMS_API_URL="https://your-domain.kms.hanzo.ai"
 
     # Windows PowerShell
-    setx INFISICAL_API_URL "https://your-domain.infisical.com"
+    setx KMS_API_URL "https://your-domain.kms.hanzo.ai"
     ```
 
     Once set, all subsequent CLI commands will automatically use this domain:
 
     ```bash
     # Login with the domain
-    infisical login --method=universal-auth --client-id=<client-id> --client-secret=<client-secret> --silent --plain
+    hanzo-kms login --method=universal-auth --client-id=<client-id> --client-secret=<client-secret> --silent --plain
 
     # All other commands will also use the same domain automatically
-    infisical secrets --projectId <id> --env dev
+    hanzo-kms secrets --projectId <id> --env dev
     ```
 
   </Tab>
@@ -172,10 +172,10 @@ The CLI defaults to US Cloud (https://app.infisical.com). To connect to **EU Clo
 
     ```bash
     # Login with domain
-    infisical login --domain="https://your-domain.infisical.com" --method=universal-auth --client-id=<client-id> --client-secret=<client-secret> --silent --plain
+    hanzo-kms login --domain="https://your-domain.kms.hanzo.ai" --method=universal-auth --client-id=<client-id> --client-secret=<client-secret> --silent --plain
 
     # All subsequent commands must also include --domain
-    infisical secrets --domain="https://your-domain.infisical.com" --projectId=<id> --env=dev
+    hanzo-kms secrets --domain="https://your-domain.kms.hanzo.ai" --projectId=<id> --env=dev
     ```
 
     <Note>
@@ -190,39 +190,39 @@ The CLI defaults to US Cloud (https://app.infisical.com). To connect to **EU Clo
 <Tip>
   ## Custom Request Headers
 
-The Infisical CLI supports custom HTTP headers for requests to servers protected by authentication services such as Cloudflare Access. Configure these headers using the `INFISICAL_CUSTOM_HEADERS` environment variable:
+The KMS CLI supports custom HTTP headers for requests to servers protected by authentication services such as Cloudflare Access. Configure these headers using the `KMS_CUSTOM_HEADERS` environment variable:
 
 ```bash
 # Syntax: headername1=headervalue1 headername2=headervalue2
-export INFISICAL_CUSTOM_HEADERS="Access-Client-Id=your-client-id Access-Client-Secret=your-client-secret"
+export KMS_CUSTOM_HEADERS="Access-Client-Id=your-client-id Access-Client-Secret=your-client-secret"
 
-# Execute Infisical commands after setting the environment variable
-infisical secrets
+# Execute Hanzo KMS commands after setting the environment variable
+hanzo-kms secrets
 ```
 
-This functionality enables secure interaction with Infisical instances that require specific authentication headers.
+This functionality enables secure interaction with Hanzo KMS instances that require specific authentication headers.
 
 </Tip>
 
 ## History
 
-Your terminal keeps a history with the commands you run. When you create Infisical secrets directly from your terminal, they'll stay there for a while.
+Your terminal keeps a history with the commands you run. When you create Hanzo KMS secrets directly from your terminal, they'll stay there for a while.
 
-For security and privacy concerns, we recommend you to configure your terminal to ignore those specific Infisical commands.
+For security and privacy concerns, we recommend you to configure your terminal to ignore those specific Hanzo KMS commands.
 
 <Accordion title="Ignore commands">
   <Tabs>
     <Tab title="Unix/Linux">
         <Tip>
-          `$HOME/.profile` is pretty common but, you could place it under `$HOME/.profile.d/infisical.sh` or any profile file run at login 
+          `$HOME/.profile` is pretty common but, you could place it under `$HOME/.profile.d/kms.sh` or any profile file run at login 
         </Tip>
 
         ```bash
         cat <<EOF >> $HOME/.profile && source $HOME/.profile
 
-        # Ignoring specific Infisical CLI commands
+        # Ignoring specific KMS CLI commands
         DEFAULT_HISTIGNORE=$HISTIGNORE
-        export HISTIGNORE="*infisical secrets set*:$DEFAULT_HISTIGNORE"
+        export HISTIGNORE="*hanzo-kms secrets set*:$DEFAULT_HISTIGNORE"
         EOF
         ```
 
@@ -242,41 +242,41 @@ For security and privacy concerns, we recommend you to configure your terminal t
 ## FAQ
 
 <AccordionGroup>
-  <Accordion title="Can I connect the CLI to my self-hosted or non-US Cloud Infisical instance?">
-    Yes. The CLI is set to connect to Infisical US Cloud by default, but if you're using EU Cloud or a self-hosted instance you can configure the domain for **all CLI commands**.
+  <Accordion title="Can I connect the CLI to my self-hosted or non-US Cloud Hanzo KMS instance?">
+    Yes. The CLI is set to connect to Hanzo KMS US Cloud by default, but if you're using EU Cloud or a self-hosted instance you can configure the domain for **all CLI commands**.
 
     #### Method 1: Use the updated CLI (v0.4.0+)
 
-    Beginning with CLI version V0.4.0, you can choose between logging in through Infisical US Cloud, EU Cloud, or your own self-hosted instance. Simply execute the `infisical login` command and follow the on-screen instructions.
+    Beginning with CLI version V0.4.0, you can choose between logging in through Hanzo KMS US Cloud, EU Cloud, or your own self-hosted instance. Simply execute the `hanzo-kms login` command and follow the on-screen instructions.
 
      #### Method 2: Export environment variable
 
-    You can point the CLI to the self-hosted Infisical instance by exporting the environment variable `INFISICAL_API_URL` in your terminal.
+    You can point the CLI to the self-hosted Hanzo KMS instance by exporting the environment variable `KMS_API_URL` in your terminal.
 
     <Tabs>
     <Tab title="Linux/MacOs">
       ```bash
       # Set the API URL
-      export INFISICAL_API_URL="https://your-self-hosted-infisical.com"
+      export KMS_API_URL="https://your-self-hosted-kms.hanzo.ai"
 
       # For EU Cloud
-      export INFISICAL_API_URL="https://eu.infisical.com"
+      export KMS_API_URL="https://eu.kms.hanzo.ai"
 
       # Remove the setting
-      unset INFISICAL_API_URL
+      unset KMS_API_URL
       ```
 
     </Tab>
     <Tab title="Windows Powershell">
       ```bash
       # Set the API URL
-      setx INFISICAL_API_URL "https://your-self-hosted-infisical.com"
+      setx KMS_API_URL "https://your-self-hosted-kms.hanzo.ai"
 
       # For EU Cloud
-      setx INFISICAL_API_URL "https://eu.infisical.com"
+      setx KMS_API_URL "https://eu.kms.hanzo.ai"
 
       # Remove the setting
-      setx INFISICAL_API_URL ""
+      setx KMS_API_URL ""
 
       # NOTE: Once set, please restart powershell for the change to take effect
       ```
@@ -291,32 +291,32 @@ For security and privacy concerns, we recommend you to configure your terminal t
 
     ```bash
     # Login with domain
-    infisical login --domain="https://your-domain.infisical.com" --method=oidc-auth --jwt $JWT
+    hanzo-kms login --domain="https://your-domain.kms.hanzo.ai" --method=oidc-auth --jwt $JWT
 
     # All subsequent commands must also include --domain
-    infisical secrets --domain="https://your-self-hosted-infisical.com" --projectId <id> --env dev
-    infisical export --domain="https://your-self-hosted-infisical.com" --format=dotenv-export
+    hanzo-kms secrets --domain="https://your-self-hosted-kms.hanzo.ai" --projectId <id> --env dev
+    hanzo-kms export --domain="https://your-self-hosted-kms.hanzo.ai" --format=dotenv-export
     ```
 
     <Tip>
-      **Best Practice:** Use `INFISICAL_API_URL` environment variable (Method 2) to avoid having to remember the `--domain` flag on every command. This is especially important in CI/CD pipelines and automation scripts.
+      **Best Practice:** Use `KMS_API_URL` environment variable (Method 2) to avoid having to remember the `--domain` flag on every command. This is especially important in CI/CD pipelines and automation scripts.
     </Tip>
 
   </Accordion>
   <Accordion title="Can I use the CLI with service tokens?">
-    To use Infisical for non local development scenarios, please create a service token. The service token will allow you to authenticate and interact with Infisical. Once you have created a service token with the required permissions, you’ll need to feed the token to the CLI.
+    To use Hanzo KMS for non local development scenarios, please create a service token. The service token will allow you to authenticate and interact with Hanzo KMS. Once you have created a service token with the required permissions, you’ll need to feed the token to the CLI.
 
     ```bash
-      infisical export --token=<service-token>
-      infisical secrets --token=<service-token>
-      infisical run --token=<service-token> -- npm run dev
+      hanzo-kms export --token=<service-token>
+      hanzo-kms secrets --token=<service-token>
+      hanzo-kms run --token=<service-token> -- npm run dev
     ```
 
     #### Pass via shell environment variable
-    The CLI is configured to look for an environment variable named `INFISICAL_TOKEN`. If set, it’ll attempt to use it for authentication.
+    The CLI is configured to look for an environment variable named `KMS_TOKEN`. If set, it’ll attempt to use it for authentication.
 
     ```bash
-      export INFISICAL_TOKEN=<service-token>
+      export KMS_TOKEN=<service-token>
     ```
 
   </Accordion>

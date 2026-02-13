@@ -136,8 +136,8 @@ export enum UserAgentType {
   K8_OPERATOR = "k8-operator",
   TERRAFORM = "terraform",
   OTHER = "other",
-  PYTHON_SDK = "InfisicalPythonSDK",
-  NODE_SDK = "InfisicalNodeSDK"
+  PYTHON_SDK = "KmsPythonSDK",
+  NODE_SDK = "KmsNodeSDK"
 }
 
 export enum EventType {

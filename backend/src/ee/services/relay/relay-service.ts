@@ -77,7 +77,7 @@ export const relayServiceFactory = ({
       const rootCaIssuedAt = new Date();
       const rootCaExpiration = new Date(new Date().setFullYear(2045));
       const rootCaCert = await x509.X509CertificateGenerator.createSelfSigned({
-        name: `O=Infisical,CN=Infisical Instance Root Relay CA`,
+        name: `O=Hanzo KMS,CN=Hanzo KMS Instance Root Relay CA`,
         serialNumber: rootCaSerialNumber,
         notBefore: rootCaIssuedAt,
         notAfter: rootCaExpiration,
@@ -98,7 +98,7 @@ export const relayServiceFactory = ({
       const orgRelayCaSkObj = crypto.nativeCrypto.KeyObject.from(orgRelayCaKeys.privateKey);
       const orgRelayCaCert = await x509.X509CertificateGenerator.create({
         serialNumber: orgRelayCaSerialNumber,
-        subject: `O=Infisical,CN=Infisical Organization Relay CA`,
+        subject: `O=Hanzo KMS,CN=Hanzo KMS Organization Relay CA`,
         issuer: rootCaCert.subject,
         notBefore: orgRelayCaIssuedAt,
         notAfter: orgRelayCaExpiration,
@@ -129,7 +129,7 @@ export const relayServiceFactory = ({
       const instanceRelayCaSkObj = crypto.nativeCrypto.KeyObject.from(instanceRelayCaKeys.privateKey);
       const instanceRelayCaCert = await x509.X509CertificateGenerator.create({
         serialNumber: instanceRelayCaSerialNumber,
-        subject: `O=Infisical,CN=Infisical Instance Relay CA`,
+        subject: `O=Hanzo KMS,CN=Hanzo KMS Instance Relay CA`,
         issuer: rootCaCert.subject,
         notBefore: instanceRelayCaIssuedAt,
         notAfter: instanceRelayCaExpiration,
@@ -160,7 +160,7 @@ export const relayServiceFactory = ({
       const instanceRelayClientCaSkObj = crypto.nativeCrypto.KeyObject.from(instanceRelayClientCaKeys.privateKey);
       const instanceRelayClientCaCert = await x509.X509CertificateGenerator.create({
         serialNumber: instanceRelayClientCaSerialNumber,
-        subject: `O=Infisical,CN=Infisical Instance Relay Client CA`,
+        subject: `O=Hanzo KMS,CN=Hanzo KMS Instance Relay Client CA`,
         issuer: instanceRelayCaCert.subject,
         notBefore: instanceRelayClientCaIssuedAt,
         notAfter: instanceRelayClientCaExpiration,
@@ -191,7 +191,7 @@ export const relayServiceFactory = ({
       const instanceRelayServerCaSkObj = crypto.nativeCrypto.KeyObject.from(instanceRelayServerCaKeys.privateKey);
       const instanceRelayServerCaCert = await x509.X509CertificateGenerator.create({
         serialNumber: instanceRelayServerCaSerialNumber,
-        subject: `O=Infisical,CN=Infisical Instance Relay Server CA`,
+        subject: `O=Hanzo KMS,CN=Hanzo KMS Instance Relay Server CA`,
         issuer: instanceRelayCaCert.subject,
         notBefore: instanceRelayServerCaIssuedAt,
         notAfter: instanceRelayServerCaExpiration,
@@ -446,7 +446,7 @@ export const relayServiceFactory = ({
       const orgRelayClientCaSkObj = crypto.nativeCrypto.KeyObject.from(orgRelayClientCaKeys.privateKey);
       const orgRelayClientCaCert = await x509.X509CertificateGenerator.create({
         serialNumber: orgRelayClientCaSerialNumber,
-        subject: `O=${orgId},CN=Infisical Org Relay Client CA`,
+        subject: `O=${orgId},CN=Hanzo KMS Org Relay Client CA`,
         issuer: orgRelayCaCert.subject,
         notBefore: orgRelayClientCaIssuedAt,
         notAfter: orgRelayClientCaExpiration,
@@ -481,7 +481,7 @@ export const relayServiceFactory = ({
       const orgRelayServerCaSkObj = crypto.nativeCrypto.KeyObject.from(orgRelayServerCaKeys.privateKey);
       const orgRelayServerCaCert = await x509.X509CertificateGenerator.create({
         serialNumber: orgRelayServerCaSerialNumber,
-        subject: `O=${orgId},CN=Infisical Org Relay Server CA`,
+        subject: `O=${orgId},CN=Hanzo KMS Org Relay Server CA`,
         issuer: orgRelayCaCert.subject,
         notBefore: orgRelayServerCaIssuedAt,
         notAfter: orgRelayServerCaExpiration,
@@ -672,7 +672,7 @@ export const relayServiceFactory = ({
     const relayServerSerialNumber = createSerialNumber();
     const relayServerCertificate = await x509.X509CertificateGenerator.create({
       serialNumber: relayServerSerialNumber,
-      subject: `CN=${host},O=${orgId ?? "Infisical"},OU=Relay`,
+      subject: `CN=${host},O=${orgId ?? "Hanzo KMS"},OU=Relay`,
       issuer: relayServerCaCert.subject,
       notBefore: relayServerCertIssuedAt,
       notAfter: relayServerCertExpireAt,

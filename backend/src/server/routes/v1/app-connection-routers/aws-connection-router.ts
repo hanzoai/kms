@@ -22,7 +22,7 @@ export const registerAwsConnectionRouter = async (server: FastifyZodProvider) =>
     updateSchema: UpdateAwsConnectionSchema
   });
 
-  // The below endpoints are not exposed and for Infisical App use
+  // The below endpoints are not exposed and for Hanzo KMS App use
 
   server.route({
     method: "GET",

@@ -15,8 +15,8 @@ export enum UserAgentType {
   CLI = "cli",
   K8_OPERATOR = "k8-operator",
   TERRAFORM = "terraform",
-  NODE_SDK = "InfisicalNodeSDK",
-  PYTHON_SDK = "InfisicalPythonSDK",
+  NODE_SDK = "KmsNodeSDK",
+  PYTHON_SDK = "KmsPythonSDK",
   OTHER = "other"
 }
 

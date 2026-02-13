@@ -72,7 +72,7 @@ export const initDbConnection = ({
     // https://knexjs.org/guide/#pool
     pool: { min: 0, max: 10 },
     migrations: {
-      tableName: "infisical_migrations"
+      tableName: "kms_migrations"
     }
   });
 
@@ -90,7 +90,7 @@ export const initDbConnection = ({
         ssl: replicaSslConfig
       },
       migrations: {
-        tableName: "infisical_migrations"
+        tableName: "kms_migrations"
       },
       pool: { min: 0, max: 10 }
     });
@@ -123,7 +123,7 @@ export const initAuditLogDbConnection = ({
       ssl: sslConfig
     },
     migrations: {
-      tableName: "infisical_migrations"
+      tableName: "kms_migrations"
     },
     pool: { min: 0, max: 10 }
   });

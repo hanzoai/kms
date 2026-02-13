@@ -27,7 +27,7 @@ export const HealthAlertTemplate = ({ siteUrl, names, type }: HealthAlertTemplat
           {type === "instance-relay" && (
             <>
               If the issue persists, you can contact the Infisical team at{" "}
-              <BaseLink href="mailto:support@infisical.com">support@infisical.com</BaseLink>.
+              <BaseLink href="mailto:support@hanzo.ai">support@hanzo.ai</BaseLink>.
             </>
           )}
           {type === "relay" && <>Please contact your relay administrators.</>}
@@ -43,5 +43,5 @@ export default HealthAlertTemplate;
 HealthAlertTemplate.PreviewProps = {
   type: "gateway",
   names: '"gateway1", "gateway2"',
-  siteUrl: "https://infisical.com"
+  siteUrl: "https://kms.hanzo.ai"
 } as HealthAlertTemplateProps;

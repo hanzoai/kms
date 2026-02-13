@@ -315,12 +315,12 @@ export const identityUaServiceFactory = ({
 
       if (appCfg.OTEL_TELEMETRY_COLLECTION_ENABLED) {
         authAttemptCounter.add(1, {
-          "infisical.identity.id": identityUa.identityId,
-          "infisical.identity.name": identity.name,
-          "infisical.organization.id": org.id,
-          "infisical.organization.name": org.name,
-          "infisical.identity.auth_method": AuthAttemptAuthMethod.UNIVERSAL_AUTH,
-          "infisical.identity.auth_result": AuthAttemptAuthResult.SUCCESS,
+          "kms.identity.id": identityUa.identityId,
+          "kms.identity.name": identity.name,
+          "kms.organization.id": org.id,
+          "kms.organization.name": org.name,
+          "kms.identity.auth_method": AuthAttemptAuthMethod.UNIVERSAL_AUTH,
+          "kms.identity.auth_result": AuthAttemptAuthResult.SUCCESS,
           "client.address": requestContext.get("ip"),
           "user_agent.original": requestContext.get("userAgent")
         });
@@ -337,12 +337,12 @@ export const identityUaServiceFactory = ({
     } catch (error) {
       if (appCfg.OTEL_TELEMETRY_COLLECTION_ENABLED) {
         authAttemptCounter.add(1, {
-          "infisical.identity.id": identityUa.identityId,
-          "infisical.identity.name": identity.name,
-          "infisical.organization.id": org.id,
-          "infisical.organization.name": org.name,
-          "infisical.identity.auth_method": AuthAttemptAuthMethod.UNIVERSAL_AUTH,
-          "infisical.identity.auth_result": AuthAttemptAuthResult.FAILURE,
+          "kms.identity.id": identityUa.identityId,
+          "kms.identity.name": identity.name,
+          "kms.organization.id": org.id,
+          "kms.organization.name": org.name,
+          "kms.identity.auth_method": AuthAttemptAuthMethod.UNIVERSAL_AUTH,
+          "kms.identity.auth_result": AuthAttemptAuthResult.FAILURE,
           "client.address": requestContext.get("ip"),
           "user_agent.original": requestContext.get("userAgent")
         });

@@ -1,6 +1,6 @@
 import { setAuthToken, setMfaTempToken, setSignupTempToken } from "@app/hooks/api/reactQuery";
 
-export const PROVIDER_AUTH_TOKEN_KEY = "infisical__provider-auth-token";
+export const PROVIDER_AUTH_TOKEN_KEY = "kms__provider-auth-token";
 
 // depreciated: go for apiRequest module in config/api
 export default class SecurityClient {

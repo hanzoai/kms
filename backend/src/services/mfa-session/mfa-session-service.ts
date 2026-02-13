@@ -51,7 +51,7 @@ export const mfaSessionServiceFactory = ({
 
     await smtpService.sendMail({
       template: SmtpTemplates.EmailMfa,
-      subjectLine: "Infisical MFA code",
+      subjectLine: "Hanzo KMS MFA code",
       recipients: [email],
       substitutions: {
         code

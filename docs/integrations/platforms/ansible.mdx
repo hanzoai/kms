@@ -1,57 +1,57 @@
 ---
 title: "Ansible"
-description: "Learn how to use Infisical for secret management in Ansible."
+description: "Learn how to use Hanzo KMS for secret management in Ansible."
 ---
 
-You can find the Infisical Ansible collection on [Ansible Galaxy](https://galaxy.ansible.com/ui/repo/published/infisical/vault/).
+You can find the Hanzo KMS Ansible collection on [Ansible Galaxy](https://galaxy.ansible.com/ui/repo/published/kms/vault/).
 
-This Ansible Infisical collection includes a variety of Ansible content to help automate the management of Infisical services. This collection is maintained by the Infisical team.
+This Ansible Hanzo KMS collection includes a variety of Ansible content to help automate the management of Hanzo KMS services. This collection is maintained by the Hanzo KMS team.
 
 ## Ansible version compatibility
 Tested with the Ansible Core >= 2.12.0 versions, and the current development version of Ansible. Ansible Core versions prior to 2.12.0 have not been tested.
 
 ## Python version compatibility
-This collection depends on the Infisical SDK for Python.
+This collection depends on the Hanzo KMS SDK for Python.
 
 Requires Python 3.7 or greater.
 
 ## Installing this collection
-You can install the Infisical collection with the Ansible Galaxy CLI:
+You can install the Hanzo KMS collection with the Ansible Galaxy CLI:
 
 ```bash
-ansible-galaxy collection install infisical.vault
+ansible-galaxy collection install kms.vault
 ```
 
 The python module dependencies are not installed by ansible-galaxy. They can be manually installed using pip:
 
 ```bash
-pip install infisicalsdk
+pip install kmssdk
 ```
 
 ## Using this collection
 
-You can either call modules by their Fully Qualified Collection Name (FQCN), such as `infisical.vault.read_secrets`, or you can call modules by their short name if you list the `infisical.vault` collection in the playbook's collections keyword.
+You can either call modules by their Fully Qualified Collection Name (FQCN), such as `kms.vault.read_secrets`, or you can call modules by their short name if you list the `kms.vault` collection in the playbook's collections keyword.
 
 ## Authentication
 
-The Infisical Ansible Collection supports [Universal Auth](/documentation/platform/identities/universal-auth), [OIDC Auth](/documentation/platform/identities/oidc-auth/general), and [Token Auth](/documentation/platform/identities/token-auth) for authenticating against Infisical.
+The Hanzo KMS Ansible Collection supports [Universal Auth](/documentation/platform/identities/universal-auth), [OIDC Auth](/documentation/platform/identities/oidc-auth/general), and [Token Auth](/documentation/platform/identities/token-auth) for authenticating against Hanzo KMS.
 
 ### Login Module (Recommended)
 
 The recommended approach is to use the `login` module to authenticate once and reuse the credentials across multiple tasks. This reduces authentication overhead and makes playbooks cleaner. Alternatively, you can still pass credentials directly to each plugin/module if preferred.
 
 ```yaml
-- name: Login to Infisical
-  infisical.vault.login:
-    url: "https://app.infisical.com"
+- name: Login to Hanzo KMS
+  kms.vault.login:
+    url: "https://kms.hanzo.ai"
     auth_method: universal_auth
     universal_auth_client_id: "{{ client_id }}"
     universal_auth_client_secret: "{{ client_secret }}"
-  register: infisical_login
+  register: kms_login
 
 - name: Read secrets using cached login
-  infisical.vault.read_secrets:
-    login_data: "{{ infisical_login.login_data }}"
+  kms.vault.read_secrets:
+    login_data: "{{ kms_login.login_data }}"
     project_id: "{{ project_id }}"
     env_slug: "dev"
     path: "/"
@@ -67,51 +67,51 @@ The recommended approach is to use the `login` module to authenticate once and r
   <Accordion title="Universal Auth">
     Using Universal Auth for authentication is the most straight-forward way to get started with using the Ansible collection.
 
-    To use Universal Auth, you need to provide the Client ID and Client Secret of your Infisical Machine Identity.
+    To use Universal Auth, you need to provide the Client ID and Client Secret of your Hanzo KMS Machine Identity.
 
     ```yaml
     - name: Login with Universal Auth
-      infisical.vault.login:
-        url: "https://app.infisical.com"
+      kms.vault.login:
+        url: "https://kms.hanzo.ai"
         auth_method: universal_auth
         universal_auth_client_id: "<client-id>"
         universal_auth_client_secret: "<client-secret>"
-      register: infisical_login
+      register: kms_login
     ```
 
     You can also provide the `auth_method`, `universal_auth_client_id`, and `universal_auth_client_secret` parameters through environment variables:
 
     | Parameter Name                 | Environment Variable Name                |
     | ------------------------------ | ---------------------------------------- |
-    | `auth_method`                  | `INFISICAL_AUTH_METHOD`                  |
-    | `universal_auth_client_id`     | `INFISICAL_UNIVERSAL_AUTH_CLIENT_ID`     |
-    | `universal_auth_client_secret` | `INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET` |
+    | `auth_method`                  | `KMS_AUTH_METHOD`                  |
+    | `universal_auth_client_id`     | `KMS_UNIVERSAL_AUTH_CLIENT_ID`     |
+    | `universal_auth_client_secret` | `KMS_UNIVERSAL_AUTH_CLIENT_SECRET` |
   </Accordion>
 
   <Accordion title="OIDC Auth">
     To use OIDC Auth, you'll need to provide the ID of your machine identity, and the OIDC JWT to be used for authentication.
 
     <Note>
-      Please note that in order to use OIDC Auth, you must have `1.0.10` or newer of the `infisicalsdk` package installed.
+      Please note that in order to use OIDC Auth, you must have `1.0.10` or newer of the `kmssdk` package installed.
     </Note>
 
     ```yaml
     - name: Login with OIDC Auth
-      infisical.vault.login:
-        url: "https://app.infisical.com"
+      kms.vault.login:
+        url: "https://kms.hanzo.ai"
         auth_method: oidc_auth
         identity_id: "<identity-id>"
         jwt: "<oidc-jwt>"
-      register: infisical_login
+      register: kms_login
     ```
 
     You can also provide the `auth_method`, `identity_id`, and `jwt` parameters through environment variables:
 
     | Parameter Name  | Environment Variable Name |
     | --------------- | ------------------------- |
-    | auth_method     | `INFISICAL_AUTH_METHOD`   |
-    | identity_id     | `INFISICAL_IDENTITY_ID`   |
-    | jwt             | `INFISICAL_JWT`           |
+    | auth_method     | `KMS_AUTH_METHOD`   |
+    | identity_id     | `KMS_IDENTITY_ID`   |
+    | jwt             | `KMS_JWT`           |
 
   </Accordion>
 
@@ -119,24 +119,24 @@ The recommended approach is to use the `login` module to authenticate once and r
     Token Auth is the simplest authentication method that allows you to authenticate directly with an access token. This can be either a [Machine Identity Token Auth](/documentation/platform/identities/token-auth) token or a User JWT token.
 
     <Note>
-      Please note that in order to use Token Auth, you must have `1.0.13` or newer of the `infisicalsdk` package installed.
+      Please note that in order to use Token Auth, you must have `1.0.13` or newer of the `kmssdk` package installed.
     </Note>
 
     ```yaml
     - name: Login with Token Auth
-      infisical.vault.login:
-        url: "https://app.infisical.com"
+      kms.vault.login:
+        url: "https://kms.hanzo.ai"
         auth_method: token_auth
         token: "<your-token>"
-      register: infisical_login
+      register: kms_login
     ```
 
     You can also provide the `auth_method` and `token` parameters through environment variables:
 
     | Parameter Name | Environment Variable Name |
     | -------------- | ------------------------- |
-    | auth_method    | `INFISICAL_AUTH_METHOD`   |
-    | token          | `INFISICAL_TOKEN`         |
+    | auth_method    | `KMS_AUTH_METHOD`   |
+    | token          | `KMS_TOKEN`         |
 
   </Accordion>
 </AccordionGroup>
@@ -144,31 +144,31 @@ The recommended approach is to use the `login` module to authenticate once and r
 ## Available Plugins and Modules
 
 ### Lookup Plugins
-- `infisical.vault.login` - Authenticate and return reusable login data
-- `infisical.vault.read_secrets` - Read secrets from Infisical
+- `kms.vault.login` - Authenticate and return reusable login data
+- `kms.vault.read_secrets` - Read secrets from Hanzo KMS
 
 ### Modules
 
 **Authentication:**
-- `infisical.vault.login` - Authenticate and return reusable login data
+- `kms.vault.login` - Authenticate and return reusable login data
 
 **Static Secrets:**
-- `infisical.vault.read_secrets` - Read secrets from Infisical
-- `infisical.vault.create_secret` - Create a new secret
-- `infisical.vault.update_secret` - Update an existing secret
-- `infisical.vault.delete_secret` - Delete a secret
+- `kms.vault.read_secrets` - Read secrets from Hanzo KMS
+- `kms.vault.create_secret` - Create a new secret
+- `kms.vault.update_secret` - Update an existing secret
+- `kms.vault.delete_secret` - Delete a secret
 
 **Dynamic Secrets:**
-- `infisical.vault.create_dynamic_secret` - Create a dynamic secret configuration
-- `infisical.vault.get_dynamic_secret` - Get a dynamic secret by name
-- `infisical.vault.update_dynamic_secret` - Update a dynamic secret
-- `infisical.vault.delete_dynamic_secret` - Delete a dynamic secret
+- `kms.vault.create_dynamic_secret` - Create a dynamic secret configuration
+- `kms.vault.get_dynamic_secret` - Get a dynamic secret by name
+- `kms.vault.update_dynamic_secret` - Update a dynamic secret
+- `kms.vault.delete_dynamic_secret` - Delete a dynamic secret
 
 **Dynamic Secret Leases:**
-- `infisical.vault.create_dynamic_secret_lease` - Create a lease (generates credentials)
-- `infisical.vault.get_dynamic_secret_lease` - Get lease details
-- `infisical.vault.renew_dynamic_secret_lease` - Renew an existing lease
-- `infisical.vault.delete_dynamic_secret_lease` - Delete/revoke a lease
+- `kms.vault.create_dynamic_secret_lease` - Create a lease (generates credentials)
+- `kms.vault.get_dynamic_secret_lease` - Get lease details
+- `kms.vault.renew_dynamic_secret_lease` - Renew an existing lease
+- `kms.vault.delete_dynamic_secret_lease` - Delete/revoke a lease
 
 ## Examples
 
@@ -176,22 +176,22 @@ The recommended approach is to use the `login` module to authenticate once and r
 
 ```yaml
 ---
-- name: Read secrets from Infisical
+- name: Read secrets from Hanzo KMS
   hosts: localhost
   gather_facts: false
 
   tasks:
-    - name: Login to Infisical
-      infisical.vault.login:
-        url: "https://app.infisical.com"
+    - name: Login to Hanzo KMS
+      kms.vault.login:
+        url: "https://kms.hanzo.ai"
         auth_method: universal_auth
-        universal_auth_client_id: "{{ lookup('env', 'INFISICAL_CLIENT_ID') }}"
-        universal_auth_client_secret: "{{ lookup('env', 'INFISICAL_CLIENT_SECRET') }}"
-      register: infisical_login
+        universal_auth_client_id: "{{ lookup('env', 'KMS_CLIENT_ID') }}"
+        universal_auth_client_secret: "{{ lookup('env', 'KMS_CLIENT_SECRET') }}"
+      register: kms_login
 
     - name: Read all secrets as dictionary
-      infisical.vault.read_secrets:
-        login_data: "{{ infisical_login.login_data }}"
+      kms.vault.read_secrets:
+        login_data: "{{ kms_login.login_data }}"
         project_id: "your-project-id"
         env_slug: "dev"
         path: "/"
@@ -209,8 +209,8 @@ Use the `raw` option to retrieve complete secret metadata including version, cre
 
 ```yaml
 - name: Read all secrets with full metadata
-  infisical.vault.read_secrets:
-    login_data: "{{ infisical_login.login_data }}"
+  kms.vault.read_secrets:
+    login_data: "{{ kms_login.login_data }}"
     project_id: "your-project-id"
     env_slug: "dev"
     path: "/"
@@ -219,8 +219,8 @@ Use the `raw` option to retrieve complete secret metadata including version, cre
   # Returns: [{"id": "...", "secretKey": "HOST", "secretValue": "google.com", "version": 1, "type": "shared", ...}, ...]
 
 - name: Read all secrets with full metadata as dict
-  infisical.vault.read_secrets:
-    login_data: "{{ infisical_login.login_data }}"
+  kms.vault.read_secrets:
+    login_data: "{{ kms_login.login_data }}"
     project_id: "your-project-id"
     env_slug: "dev"
     path: "/"
@@ -236,13 +236,13 @@ The `read_secrets` lookup plugin allows for inline secret retrieval. Unlike modu
 
 ```yaml
 vars:
-  read_all_secrets_within_scope: "{{ lookup('infisical.vault.read_secrets', universal_auth_client_id='<>', universal_auth_client_secret='<>', project_id='<>', path='/', env_slug='dev', url='https://app.infisical.com') }}"
+  read_all_secrets_within_scope: "{{ lookup('kms.vault.read_secrets', universal_auth_client_id='<>', universal_auth_client_secret='<>', project_id='<>', path='/', env_slug='dev', url='https://kms.hanzo.ai') }}"
   # [{ "key": "HOST", "value": "google.com" }, { "key": "SMTP", "value": "gmail.smtp.edu" }]
 
-  read_all_secrets_as_dict: "{{ lookup('infisical.vault.read_secrets', as_dict=True, universal_auth_client_id='<>', universal_auth_client_secret='<>', project_id='<>', path='/', env_slug='dev', url='https://app.infisical.com') }}"
+  read_all_secrets_as_dict: "{{ lookup('kms.vault.read_secrets', as_dict=True, universal_auth_client_id='<>', universal_auth_client_secret='<>', project_id='<>', path='/', env_slug='dev', url='https://kms.hanzo.ai') }}"
   # { "SECRET_KEY_1": "secret-value-1", "SECRET_KEY_2": "secret-value-2" } -> Can be accessed as secrets.SECRET_KEY_1
 
-  read_secret_by_name_within_scope: "{{ lookup('infisical.vault.read_secrets', universal_auth_client_id='<>', universal_auth_client_secret='<>', project_id='<>', path='/', env_slug='dev', secret_name='HOST', url='https://app.infisical.com') }}"
+  read_secret_by_name_within_scope: "{{ lookup('kms.vault.read_secrets', universal_auth_client_id='<>', universal_auth_client_secret='<>', project_id='<>', path='/', env_slug='dev', secret_name='HOST', url='https://kms.hanzo.ai') }}"
   # { "key": "HOST", "value": "google.com" }
 ```
 
@@ -252,8 +252,8 @@ Create, update, and delete secrets programmatically:
 
 ```yaml
 - name: Create a secret
-  infisical.vault.create_secret:
-    login_data: "{{ infisical_login.login_data }}"
+  kms.vault.create_secret:
+    login_data: "{{ kms_login.login_data }}"
     project_id: "{{ project_id }}"
     env_slug: "dev"
     path: "/"
@@ -263,8 +263,8 @@ Create, update, and delete secrets programmatically:
   register: created_secret
 
 - name: Update a secret
-  infisical.vault.update_secret:
-    login_data: "{{ infisical_login.login_data }}"
+  kms.vault.update_secret:
+    login_data: "{{ kms_login.login_data }}"
     project_id: "{{ project_id }}"
     env_slug: "dev"
     path: "/"
@@ -273,8 +273,8 @@ Create, update, and delete secrets programmatically:
   register: updated_secret
 
 - name: Rename a secret
-  infisical.vault.update_secret:
-    login_data: "{{ infisical_login.login_data }}"
+  kms.vault.update_secret:
+    login_data: "{{ kms_login.login_data }}"
     project_id: "{{ project_id }}"
     env_slug: "dev"
     path: "/"
@@ -283,8 +283,8 @@ Create, update, and delete secrets programmatically:
   register: renamed_secret
 
 - name: Delete a secret
-  infisical.vault.delete_secret:
-    login_data: "{{ infisical_login.login_data }}"
+  kms.vault.delete_secret:
+    login_data: "{{ kms_login.login_data }}"
     project_id: "{{ project_id }}"
     env_slug: "dev"
     path: "/"
@@ -301,8 +301,8 @@ Dynamic secrets generate credentials on-demand with automatic expiration. They s
 ```yaml
 # Create a dynamic secret for PostgreSQL
 - name: Create a PostgreSQL dynamic secret
-  infisical.vault.create_dynamic_secret:
-    login_data: "{{ infisical_login.login_data }}"
+  kms.vault.create_dynamic_secret:
+    login_data: "{{ kms_login.login_data }}"
     project_slug: "my-project"
     env_slug: "dev"
     path: "/"
@@ -323,7 +323,7 @@ Dynamic secrets generate credentials on-demand with automatic expiration. They s
 ```
 
 <Note>
-  For the full list of supported provider types and their input configurations, see the [Dynamic Secrets API Documentation](https://infisical.com/docs/api-reference/endpoints/dynamic-secrets/create#body-provider).
+  For the full list of supported provider types and their input configurations, see the [Dynamic Secrets API Documentation](https://kms.hanzo.ai/docs/api-reference/endpoints/dynamic-secrets/create#body-provider).
 </Note>
 
 #### Getting and Using Dynamic Secret Credentials
@@ -333,8 +333,8 @@ To use a dynamic secret, you need to create a **lease** which generates the actu
 ```yaml
 # Create a lease to get database credentials
 - name: Get database credentials
-  infisical.vault.create_dynamic_secret_lease:
-    login_data: "{{ infisical_login.login_data }}"
+  kms.vault.create_dynamic_secret_lease:
+    login_data: "{{ kms_login.login_data }}"
     project_slug: "my-project"
     env_slug: "dev"
     path: "/"
@@ -357,8 +357,8 @@ To use a dynamic secret, you need to create a **lease** which generates the actu
 ```yaml
 # Get lease details
 - name: Get lease information
-  infisical.vault.get_dynamic_secret_lease:
-    login_data: "{{ infisical_login.login_data }}"
+  kms.vault.get_dynamic_secret_lease:
+    login_data: "{{ kms_login.login_data }}"
     project_slug: "my-project"
     env_slug: "dev"
     path: "/"
@@ -367,8 +367,8 @@ To use a dynamic secret, you need to create a **lease** which generates the actu
 
 # Renew a lease before it expires
 - name: Renew a lease for 2 more hours
-  infisical.vault.renew_dynamic_secret_lease:
-    login_data: "{{ infisical_login.login_data }}"
+  kms.vault.renew_dynamic_secret_lease:
+    login_data: "{{ kms_login.login_data }}"
     project_slug: "my-project"
     env_slug: "dev"
     path: "/"
@@ -378,8 +378,8 @@ To use a dynamic secret, you need to create a **lease** which generates the actu
 
 # Revoke the credentials when done
 - name: Delete the lease
-  infisical.vault.delete_dynamic_secret_lease:
-    login_data: "{{ infisical_login.login_data }}"
+  kms.vault.delete_dynamic_secret_lease:
+    login_data: "{{ kms_login.login_data }}"
     project_slug: "my-project"
     env_slug: "dev"
     path: "/"
@@ -391,8 +391,8 @@ To use a dynamic secret, you need to create a **lease** which generates the actu
 ```yaml
 # Update a dynamic secret's TTL
 - name: Update dynamic secret TTL
-  infisical.vault.update_dynamic_secret:
-    login_data: "{{ infisical_login.login_data }}"
+  kms.vault.update_dynamic_secret:
+    login_data: "{{ kms_login.login_data }}"
     project_slug: "my-project"
     env_slug: "dev"
     path: "/"
@@ -403,8 +403,8 @@ To use a dynamic secret, you need to create a **lease** which generates the actu
 
 # Delete a dynamic secret (also revokes all active leases)
 - name: Delete a dynamic secret
-  infisical.vault.delete_dynamic_secret:
-    login_data: "{{ infisical_login.login_data }}"
+  kms.vault.delete_dynamic_secret:
+    login_data: "{{ kms_login.login_data }}"
     project_slug: "my-project"
     env_slug: "dev"
     path: "/"

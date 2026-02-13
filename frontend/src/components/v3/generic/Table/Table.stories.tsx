@@ -30,7 +30,7 @@ const identities: {
     role: "Admin",
     managedBy: {
       scope: "org",
-      name: "infisical"
+      name: "kms"
     }
   },
   {
@@ -58,7 +58,7 @@ const identities: {
     role: "Viewer",
     managedBy: {
       scope: "org",
-      name: "infisical"
+      name: "kms"
     }
   },
   {

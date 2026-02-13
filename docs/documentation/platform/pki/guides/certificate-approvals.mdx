@@ -13,7 +13,7 @@ The following sequence diagram illustrates the certificate issuance workflow whe
 sequenceDiagram
   autonumber
   participant Client as Client
-  participant Infis as Infisical
+  participant Infis as Hanzo KMS
   participant Approver as Approver(s)
   participant CA as CA (Internal or External)
 
@@ -91,7 +91,7 @@ In the following steps, we set up an approval workflow for certificate issuance.
     ### Sample API Request
 
     ```bash
-    curl --location --request POST 'https://app.infisical.com/api/v1/cert-manager/certificates' \
+    curl --location --request POST 'https://kms.hanzo.ai/api/v1/cert-manager/certificates' \
       --header 'Authorization: Bearer <access-token>' \
       --header 'Content-Type: application/json' \
       --data-raw '{
@@ -140,7 +140,7 @@ In the following steps, we set up an approval workflow for certificate issuance.
     ### Get Certificate by Request ID
 
     ```bash
-    curl --location --request GET 'https://app.infisical.com/api/v3/cert-manager/certificate-requests/<request-id>' \
+    curl --location --request GET 'https://kms.hanzo.ai/api/v3/cert-manager/certificate-requests/<request-id>' \
       --header 'Authorization: Bearer <access-token>'
     ```
 

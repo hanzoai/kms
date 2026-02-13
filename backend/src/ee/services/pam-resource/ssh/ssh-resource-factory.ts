@@ -116,8 +116,8 @@ export const sshResourceFactory: TPamResourceFactory<TSSHResourceConnectionDetai
           client.connect({
             host: "localhost",
             port: proxyPort,
-            username: "infisical-connection-test",
-            password: "infisical-connection-test-password",
+            username: "kms-connection-test",
+            password: "kms-connection-test-password",
             readyTimeout: EXTERNAL_REQUEST_TIMEOUT,
             tryKeyboard: false,
             // We want to fail fast on auth, we're just testing reachability
@@ -265,7 +265,7 @@ export const sshResourceFactory: TPamResourceFactory<TSSHResourceConnectionDetai
       updatedAccountCredentials.authMethod === SSHAuthMethod.Password &&
       currentCredentials.authMethod === SSHAuthMethod.Password
     ) {
-      if (updatedAccountCredentials.password === "__INFISICAL_UNCHANGED__") {
+      if (updatedAccountCredentials.password === "__KMS_UNCHANGED__") {
         return {
           ...updatedAccountCredentials,
           password: currentCredentials.password
@@ -277,7 +277,7 @@ export const sshResourceFactory: TPamResourceFactory<TSSHResourceConnectionDetai
       updatedAccountCredentials.authMethod === SSHAuthMethod.PublicKey &&
       currentCredentials.authMethod === SSHAuthMethod.PublicKey
     ) {
-      if (updatedAccountCredentials.privateKey === "__INFISICAL_UNCHANGED__") {
+      if (updatedAccountCredentials.privateKey === "__KMS_UNCHANGED__") {
         return {
           ...updatedAccountCredentials,
           privateKey: currentCredentials.privateKey

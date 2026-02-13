@@ -59,7 +59,7 @@ export const OctopusDeploySyncFns = {
       if (!variable.IsSensitive && variable.Type !== "Sensitive") {
         nonSensitiveVariables.push(variable);
       } else {
-        // sensitive variables, this could contain infisical secrets
+        // sensitive variables, this could contain KMS secrets
         sensitiveVariables.push(variable);
       }
     });
@@ -127,11 +127,11 @@ export const OctopusDeploySyncFns = {
       headers: this.getAuthHeader(apiKey)
     });
 
-    const infisicalSecretKeys = Object.keys(secretMap);
+    const kmsSecretKeys = Object.keys(secretMap);
 
     const variablesToDelete = variableSet.Variables.filter(
       (variable) =>
-        infisicalSecretKeys.includes(variable.Name) && variable.IsSensitive === true && variable.Type === "Sensitive"
+        kmsSecretKeys.includes(variable.Name) && variable.IsSensitive === true && variable.Type === "Sensitive"
     ).map((variable) => variable.Id);
 
     await request.put(

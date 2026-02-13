@@ -58,7 +58,7 @@ export const OAuthPasswordResetTemplate = ({
           If you did not initiate this request, please contact{" "}
           {isCloud ? (
             <>
-              us immediately at <BaseLink href="mailto:support@infisical.com">support@infisical.com</BaseLink>
+              us immediately at <BaseLink href="mailto:support@hanzo.ai">support@hanzo.ai</BaseLink>
             </>
           ) : (
             "your administrator immediately"
@@ -76,5 +76,5 @@ OAuthPasswordResetTemplate.PreviewProps = {
   email: "user@example.com",
   lastLoginMethod: "github",
   isCloud: true,
-  siteUrl: "https://infisical.com"
+  siteUrl: "https://kms.hanzo.ai"
 } as OAuthPasswordResetTemplateProps;

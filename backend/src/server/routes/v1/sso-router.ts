@@ -16,7 +16,7 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as OAuth2Strategy } from "passport-oauth2";
 import { z } from "zod";
 
-import { INFISICAL_PROVIDER_GITHUB_ACCESS_TOKEN } from "@app/lib/config/const";
+import { KMS_PROVIDER_GITHUB_ACCESS_TOKEN } from "@app/lib/config/const";
 import { getConfig } from "@app/lib/config/env";
 import { BadRequestError, NotFoundError } from "@app/lib/errors";
 import { logger } from "@app/lib/logger";
@@ -78,12 +78,12 @@ export const registerOauthMiddlewares = (server: FastifyZodProvider) => {
 
             if (appCfg.OTEL_TELEMETRY_COLLECTION_ENABLED) {
               authAttemptCounter.add(1, {
-                "infisical.user.email": email,
-                "infisical.user.id": user.id,
-                "infisical.organization.id": orgId,
-                "infisical.organization.name": orgName,
-                "infisical.auth.method": AuthAttemptAuthMethod.GOOGLE,
-                "infisical.auth.result": AuthAttemptAuthResult.SUCCESS,
+                "kms.user.email": email,
+                "kms.user.id": user.id,
+                "kms.organization.id": orgId,
+                "kms.organization.name": orgName,
+                "kms.auth.method": AuthAttemptAuthMethod.GOOGLE,
+                "kms.auth.result": AuthAttemptAuthResult.SUCCESS,
                 "client.address": requestContext.get("ip"),
                 "user_agent.original": requestContext.get("userAgent")
               });
@@ -94,9 +94,9 @@ export const registerOauthMiddlewares = (server: FastifyZodProvider) => {
             logger.error(error);
             if (appCfg.OTEL_TELEMETRY_COLLECTION_ENABLED) {
               authAttemptCounter.add(1, {
-                "infisical.user.email": email,
-                "infisical.auth.method": AuthAttemptAuthMethod.GOOGLE,
-                "infisical.auth.result": AuthAttemptAuthResult.FAILURE,
+                "kms.user.email": email,
+                "kms.auth.method": AuthAttemptAuthMethod.GOOGLE,
+                "kms.auth.result": AuthAttemptAuthResult.FAILURE,
                 "client.address": requestContext.get("ip"),
                 "user_agent.original": requestContext.get("userAgent")
               });
@@ -149,12 +149,12 @@ export const registerOauthMiddlewares = (server: FastifyZodProvider) => {
 
             if (appCfg.OTEL_TELEMETRY_COLLECTION_ENABLED) {
               authAttemptCounter.add(1, {
-                "infisical.user.email": email,
-                "infisical.user.id": user.id,
-                "infisical.organization.id": orgId,
-                "infisical.organization.name": orgName,
-                "infisical.auth.method": AuthAttemptAuthMethod.GITHUB,
-                "infisical.auth.result": AuthAttemptAuthResult.SUCCESS,
+                "kms.user.email": email,
+                "kms.user.id": user.id,
+                "kms.organization.id": orgId,
+                "kms.organization.name": orgName,
+                "kms.auth.method": AuthAttemptAuthMethod.GITHUB,
+                "kms.auth.result": AuthAttemptAuthResult.SUCCESS,
                 "client.address": requestContext.get("ip"),
                 "user_agent.original": requestContext.get("userAgent")
               });
@@ -164,9 +164,9 @@ export const registerOauthMiddlewares = (server: FastifyZodProvider) => {
           } catch (err) {
             if (appCfg.OTEL_TELEMETRY_COLLECTION_ENABLED) {
               authAttemptCounter.add(1, {
-                "infisical.user.email": email,
-                "infisical.auth.method": AuthAttemptAuthMethod.GITHUB,
-                "infisical.auth.result": AuthAttemptAuthResult.FAILURE,
+                "kms.user.email": email,
+                "kms.auth.method": AuthAttemptAuthMethod.GITHUB,
+                "kms.auth.result": AuthAttemptAuthResult.FAILURE,
                 "client.address": requestContext.get("ip"),
                 "user_agent.original": requestContext.get("userAgent")
               });
@@ -212,12 +212,12 @@ export const registerOauthMiddlewares = (server: FastifyZodProvider) => {
 
             if (appCfg.OTEL_TELEMETRY_COLLECTION_ENABLED) {
               authAttemptCounter.add(1, {
-                "infisical.user.email": email,
-                "infisical.user.id": user.id,
-                "infisical.organization.id": orgId,
-                "infisical.organization.name": orgName,
-                "infisical.auth.method": AuthAttemptAuthMethod.GITLAB,
-                "infisical.auth.result": AuthAttemptAuthResult.SUCCESS,
+                "kms.user.email": email,
+                "kms.user.id": user.id,
+                "kms.organization.id": orgId,
+                "kms.organization.name": orgName,
+                "kms.auth.method": AuthAttemptAuthMethod.GITLAB,
+                "kms.auth.result": AuthAttemptAuthResult.SUCCESS,
                 "client.address": requestContext.get("ip"),
                 "user_agent.original": requestContext.get("userAgent")
               });
@@ -227,9 +227,9 @@ export const registerOauthMiddlewares = (server: FastifyZodProvider) => {
           } catch (error) {
             if (appCfg.OTEL_TELEMETRY_COLLECTION_ENABLED) {
               authAttemptCounter.add(1, {
-                "infisical.user.email": email,
-                "infisical.auth.method": AuthAttemptAuthMethod.GITLAB,
-                "infisical.auth.result": AuthAttemptAuthResult.FAILURE,
+                "kms.user.email": email,
+                "kms.auth.method": AuthAttemptAuthMethod.GITLAB,
+                "kms.auth.result": AuthAttemptAuthResult.FAILURE,
                 "client.address": requestContext.get("ip"),
                 "user_agent.original": requestContext.get("userAgent")
               });
@@ -278,7 +278,7 @@ export const registerSsoRouter = async (server: FastifyZodProvider) => {
     store: redisStore,
     cookie: {
       secure: appCfg.HTTPS_ENABLED,
-      sameSite: "lax" // we want cookies to be sent to Infisical in redirects originating from IDP server
+      sameSite: "lax" // we want cookies to be sent to Hanzo KMS in redirects originating from IDP server
     }
   });
   await server.register(passport.initialize());
@@ -443,7 +443,7 @@ export const registerSsoRouter = async (server: FastifyZodProvider) => {
       await req.session.destroy();
 
       if (req.passportUser.externalProviderAccessToken) {
-        void res.cookie(INFISICAL_PROVIDER_GITHUB_ACCESS_TOKEN, req.passportUser.externalProviderAccessToken, {
+        void res.cookie(KMS_PROVIDER_GITHUB_ACCESS_TOKEN, req.passportUser.externalProviderAccessToken, {
           httpOnly: true,
           path: "/",
           sameSite: "strict",

@@ -77,8 +77,8 @@ OrganizationInvitationTemplate.PreviewProps = {
   inviterFirstName: "Jane",
   inviterUsername: "jane@infisical.com",
   email: "john@infisical.com",
-  siteUrl: "https://infisical.com",
-  callback_url: "https://app.infisical.com",
+  siteUrl: "https://kms.hanzo.ai",
+  callback_url: "https://kms.hanzo.ai",
   token: "preview-token",
   organizationId: "1ae1c2c7-8068-461c-b15e-421737868a6a"
 } as OrganizationInvitationTemplateProps;

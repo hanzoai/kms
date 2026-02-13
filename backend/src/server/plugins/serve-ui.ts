@@ -41,9 +41,9 @@ export const registerServeUI = async (
       // Define window.__toCdnUrl for Vite's experimental.renderBuiltUrl runtime support
       // This function is called by dynamically imported chunks to resolve CDN URLs
       const js = `
-        window.__INFISICAL_RUNTIME_ENV__ = Object.freeze(${JSON.stringify(config)});
+        window.__KMS_RUNTIME_ENV__ = Object.freeze(${JSON.stringify(config)});
         window.__toCdnUrl = function(filename) {
-          var cdnHost = window.__INFISICAL_RUNTIME_ENV__.CDN_HOST || "";
+          var cdnHost = window.__KMS_RUNTIME_ENV__.CDN_HOST || "";
           if (cdnHost && filename.startsWith("assets/")) {
             return cdnHost + "/" + filename;
           }

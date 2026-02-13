@@ -1,17 +1,17 @@
 ---
 title: "Kubernetes CSI"
-description: "How to use the Infisical Kubernetes CSI provider to inject secrets directly into Kubernetes pods."
+description: "How to use the Hanzo KMS Kubernetes CSI provider to inject secrets directly into Kubernetes pods."
 ---
 
 ## Overview
 
-The Infisical CSI provider allows you to use Infisical with the [Secrets Store CSI driver](https://secrets-store-csi-driver.sigs.k8s.io) to inject secrets directly into your Kubernetes pods through a volume mount.
-In contrast to the [Infisical Kubernetes Operator](https://infisical.com/docs/integrations/platforms/kubernetes), the Infisical CSI provider will allow you to sync Infisical secrets directly to pods as files, removing the need for Kubernetes secret resources.
+The Hanzo KMS CSI provider allows you to use Hanzo KMS with the [Secrets Store CSI driver](https://secrets-store-csi-driver.sigs.k8s.io) to inject secrets directly into your Kubernetes pods through a volume mount.
+In contrast to the [KMS Operator](https://kms.hanzo.ai/docs/integrations/platforms/kubernetes), the Hanzo KMS CSI provider will allow you to sync Hanzo KMS secrets directly to pods as files, removing the need for Kubernetes secret resources.
 
 ```mermaid
 flowchart LR
     subgraph Secrets Management
-        SS(Infisical) --> CSP(Infisical CSI Provider)
+        SS(Hanzo KMS) --> CSP(Hanzo KMS CSI Provider)
         CSP --> CSD(Secrets Store CSI Driver)
     end
 
@@ -24,7 +24,7 @@ flowchart LR
 
 ## Features
 
-The following features are supported by the Infisical CSI Provider:
+The following features are supported by the Hanzo KMS CSI Provider:
 
 - Integration with Secrets Store CSI Driver for direct pod mounting
 - Authentication using Kubernetes service accounts via machine identities
@@ -34,17 +34,17 @@ The following features are supported by the Infisical CSI Provider:
 
 ## Prerequisites
 
-The Infisical CSI provider is only supported for Kubernetes clusters with version >= 1.20.
+The Hanzo KMS CSI provider is only supported for Kubernetes clusters with version >= 1.20.
 
 ## Limitations
 
-Currently, the Infisical CSI provider only supports static secrets.
+Currently, the Hanzo KMS CSI provider only supports static secrets.
 
 ## Deploy to Kubernetes cluster
 
 ### Install Secrets Store CSI Driver
 
-In order to use the Infisical CSI provider, you will first have to install the [Secrets Store CSI driver](https://secrets-store-csi-driver.sigs.k8s.io/getting-started/installation) to your cluster.
+In order to use the Hanzo KMS CSI provider, you will first have to install the [Secrets Store CSI driver](https://secrets-store-csi-driver.sigs.k8s.io/getting-started/installation) to your cluster.
 
 #### Standard Installation
 
@@ -57,7 +57,7 @@ helm repo add secrets-store-csi-driver https://kubernetes-sigs.github.io/secrets
 ```bash
 helm install csi secrets-store-csi-driver/secrets-store-csi-driver \
 --namespace=kube-system \
---set "tokenRequests[0].audience=infisical" \
+--set "tokenRequests[0].audience=kms" \
 --set enableSecretRotation=true \
 --set rotationPollInterval=2m \
 --set "syncSecret.enabled=true" \
@@ -65,17 +65,17 @@ helm install csi secrets-store-csi-driver/secrets-store-csi-driver \
 
 The flags configure the following:
 
-- `tokenRequests[0].audience=infisical`: Sets the audience value for service account token authentication (recommended for environments that support custom audiences)
-- `enableSecretRotation=true`: Enables automatic secret updates from Infisical
+- `tokenRequests[0].audience=kms`: Sets the audience value for service account token authentication (recommended for environments that support custom audiences)
+- `enableSecretRotation=true`: Enables automatic secret updates from Hanzo KMS
 - `rotationPollInterval=2m`: Checks for secret updates every 2 minutes
 - `syncSecret.enabled=true`: Enables syncing secrets to Kubernetes secrets
 
 <Info>
   If you do not wish to use the auto-syncing feature of the secrets store CSI
   driver, you can omit the `enableSecretRotation` and the `rotationPollInterval`
-  flags. Do note that by default, secrets from Infisical are only fetched and
+  flags. Do note that by default, secrets from Hanzo KMS are only fetched and
   mounted during pod creation. If there are any changes made to the secrets in
-  Infisical, they will not propagate to the pods unless auto-syncing is enabled
+  Hanzo KMS, they will not propagate to the pods unless auto-syncing is enabled
   for the CSI driver.
 </Info>
 
@@ -98,14 +98,14 @@ helm install csi secrets-store-csi-driver/secrets-store-csi-driver \
   your SecretProviderClass configuration.
 </Warning>
 
-### Install Infisical CSI Provider
+### Install Hanzo KMS CSI Provider
 
-You would then have to install the Infisical CSI provider to your cluster.
+You would then have to install the Hanzo KMS CSI provider to your cluster.
 
-**Install the latest Infisical Helm repository**
+**Install the latest Hanzo KMS Helm repository**
 
 ```bash
-helm repo add infisical-helm-charts 'https://dl.cloudsmith.io/public/infisical/helm-charts/helm/charts/'
+helm repo add kms-helm-charts 'https://dl.cloudsmith.io/public/hanzoai/kms-helm-charts/helm/charts/'
 
 helm repo update
 ```
@@ -113,34 +113,34 @@ helm repo update
 **Install the Helm Chart**
 
 ```bash
-helm install infisical-csi-provider infisical-helm-charts/infisical-csi-provider
+helm install kms-csi-provider kms-helm-charts/kms-csi-provider
 ```
 
 For a list of all supported arguments for the helm installation, you can run the following:
 
 ```bash
-helm show values infisical-helm-charts/infisical-csi-provider
+helm show values kms-helm-charts/kms-csi-provider
 ```
 
 ### Authentication
 
-In order for the Infisical CSI provider to pull secrets from your Infisical project, you will have to configure
-a machine identity with [Kubernetes authentication](https://infisical.com/docs/documentation/platform/identities/kubernetes-auth) configured with your cluster.
-You can refer to the documentation for setting it up [here](https://infisical.com/docs/documentation/platform/identities/kubernetes-auth#guide).
+In order for the Hanzo KMS CSI provider to pull secrets from your Hanzo KMS project, you will have to configure
+a machine identity with [Kubernetes authentication](https://kms.hanzo.ai/docs/documentation/platform/identities/kubernetes-auth) configured with your cluster.
+You can refer to the documentation for setting it up [here](https://kms.hanzo.ai/docs/documentation/platform/identities/kubernetes-auth#guide).
 
 <Warning>
   **Important**: The "Allowed Audience" field in your machine identity's
   Kubernetes authentication settings must match your CSI driver installation. If
-  you used the standard installation with `tokenRequests[0].audience=infisical`,
-  set the "Allowed Audience" field to `infisical`. If you used the installation
+  you used the standard installation with `tokenRequests[0].audience=kms`,
+  set the "Allowed Audience" field to `kms`. If you used the installation
   for environments without custom audience support, leave the "Allowed Audience"
   field empty.
 </Warning>
 
 ### Creating Secret Provider Class
 
-With the Secrets Store CSI driver and the Infisical CSI provider installed, create a Kubernetes [SecretProviderClass](https://secrets-store-csi-driver.sigs.k8s.io/concepts.html#secretproviderclass) resource to establish
-the connection between the CSI driver and the Infisical CSI provider for secret retrieval. You can create as many Secret Provider Classes as needed for your cluster.
+With the Secrets Store CSI driver and the Hanzo KMS CSI provider installed, create a Kubernetes [SecretProviderClass](https://secrets-store-csi-driver.sigs.k8s.io/concepts.html#secretproviderclass) resource to establish
+the connection between the CSI driver and the Hanzo KMS CSI provider for secret retrieval. You can create as many Secret Provider Classes as needed for your cluster.
 
 #### Standard Configuration
 
@@ -148,11 +148,11 @@ the connection between the CSI driver and the Infisical CSI provider for secret 
 apiVersion: secrets-store.csi.x-k8s.io/v1
 kind: SecretProviderClass
 metadata:
-  name: my-infisical-app-csi-provider
+  name: my-kms-app-csi-provider
 spec:
-  provider: infisical
+  provider: kms
   parameters:
-    infisicalUrl: "https://app.infisical.com"
+    kmsUrl: "https://kms.hanzo.ai"
     authMethod: "kubernetes"
     identityId: "ad2f8c67-cbe2-417a-b5eb-1339776ec0b3"
     projectId: "09eda1f8-85a3-47a9-8a6f-e27f133b2a36"
@@ -174,11 +174,11 @@ For environments that don't support custom audiences (such as AWS EKS), use this
 apiVersion: secrets-store.csi.x-k8s.io/v1
 kind: SecretProviderClass
 metadata:
-  name: my-infisical-app-csi-provider
+  name: my-kms-app-csi-provider
 spec:
-  provider: infisical
+  provider: kms
   parameters:
-    infisicalUrl: "https://app.infisical.com"
+    kmsUrl: "https://kms.hanzo.ai"
     authMethod: "kubernetes"
     useDefaultAudience: "true"
     identityId: "ad2f8c67-cbe2-417a-b5eb-1339776ec0b3"
@@ -197,7 +197,7 @@ spec:
   **Key difference**: The only change from the standard configuration is the
   addition of `useDefaultAudience: "true"`. This parameter tells the CSI
   provider to use the default Kubernetes audience instead of a custom
-  "infisical" audience, which is required for environments that reject custom
+  "kms" audience, which is required for environments that reject custom
   audiences.
 </Note>
 
@@ -208,31 +208,31 @@ spec:
 
 #### Supported Parameters
 
-<Accordion title="infisicalUrl">
-  The base URL of your Infisical instance. If you're using Infisical Cloud US,
-  this should be set to `https://app.infisical.com`. If you're using Infisical
-  Cloud EU, then this should be set to `https://eu.infisical.com`.
+<Accordion title="kmsUrl">
+  The base URL of your Hanzo KMS instance. If you're using Hanzo KMS Cloud US,
+  this should be set to `https://kms.hanzo.ai`. If you're using Hanzo KMS
+  Cloud EU, then this should be set to `https://eu.kms.hanzo.ai`.
 </Accordion>
 
 <Accordion title="caCertificate">
-  The CA certificate of the Infisical instance in order to establish SSL/TLS
+  The CA certificate of the Hanzo KMS instance in order to establish SSL/TLS
   when the instance uses a private or self-signed certificate. Unless necessary,
   this should be omitted.
 </Accordion>
 
 <Accordion title="authMethod">
-  The auth method to use for authenticating the Infisical CSI provider with
-  Infisical. For now, the only supported method is `kubernetes`.
+  The auth method to use for authenticating the Hanzo KMS CSI provider with
+  Hanzo KMS. For now, the only supported method is `kubernetes`.
 </Accordion>
 
 <Accordion title="identityId">
-  The ID of the machine identity to use for authenticating the Infisical CSI
-  provider with your Infisical organization. This should be the machine identity
+  The ID of the machine identity to use for authenticating the Hanzo KMS CSI
+  provider with your Hanzo KMS organization. This should be the machine identity
   configured with Kubernetes authentication.
 </Accordion>
 
 <Accordion title="projectId">
-  The project ID of the Infisical project to pull secrets from.
+  The project ID of the Hanzo KMS project to pull secrets from.
 </Accordion>
 
 <Accordion title="envSlug">
@@ -248,11 +248,11 @@ spec:
 
 <Accordion title="audience">
   The custom audience value configured for the CSI driver. This defaults to
-  `infisical`.
+  `kms`.
 </Accordion>
 
 <Accordion title="useDefaultAudience">
-  When set to `"true"`, the Infisical CSI provider will use the default
+  When set to `"true"`, the Hanzo KMS CSI provider will use the default
   Kubernetes audience instead of a custom audience. This is required for
   environments that don't support custom audiences (such as AWS EKS), which
   reject tokens with non-default audiences. When using this option, do not set a
@@ -289,7 +289,7 @@ spec:
         driver: secrets-store.csi.k8s.io
         readOnly: true
         volumeAttributes:
-          secretProviderClass: "my-infisical-app-csi-provider"
+          secretProviderClass: "my-kms-app-csi-provider"
 ```
 
 When the pod is created, the secrets are mounted as individual files in the /mnt/secrets-store directory.
@@ -308,10 +308,10 @@ kubectl exec -it nginx-secrets-store -- ls -l /mnt/secrets-store
 
 ### Troubleshooting
 
-To troubleshoot issues with the Infisical CSI provider, refer to the logs of the Infisical CSI provider running on the same node as your pod.
+To troubleshoot issues with the Hanzo KMS CSI provider, refer to the logs of the Hanzo KMS CSI provider running on the same node as your pod.
 
 ```bash
-kubectl logs infisical-csi-provider-7x44t
+kubectl logs kms-csi-provider-7x44t
 ```
 
 You can also refer to the logs of the secrets store CSI driver. Modify the command below with the appropriate pod and namespace of your secrets store CSI driver installation.
@@ -339,7 +339,7 @@ For additional guidance on setting this up for your production cluster, you can 
 ## Frequently Asked Questions
 
 <AccordionGroup>
-  <Accordion title="Is it possible to sync Infisical secrets as environment variables?">
+  <Accordion title="Is it possible to sync Hanzo KMS secrets as environment variables?">
     Yes, but it requires an indirect approach:
 
     1. First enable syncing to Kubernetes secrets by setting `syncSecret.enabled=true` in the CSI driver installation
@@ -352,7 +352,7 @@ For additional guidance on setting this up for your production cluster, you can 
 </AccordionGroup>
 
 <AccordionGroup>
-  <Accordion title="Do I have to list out every Infisical single secret that I want to sync?">
+  <Accordion title="Do I have to list out every Hanzo KMS single secret that I want to sync?">
     Yes, you will need to explicitly list each secret you want to sync in the
     Secret Provider Class configuration. This is a common requirement across all
     CSI providers as the Secrets Store CSI Driver architecture requires specific

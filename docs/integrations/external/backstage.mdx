@@ -1,16 +1,16 @@
 ---
-title: Backstage Infisical Plugin
-description: A powerful plugin that integrates Infisical secrets management into your Backstage developer portal.
+title: Backstage Hanzo KMS Plugin
+description: A powerful plugin that integrates Hanzo KMS secrets management into your Backstage developer portal.
 ---
 
-Integrate secrets management into your developer portal with the Backstage Infisical plugin suite. This plugin provides a seamless interface to manage your [Infisical](https://infisical.com) secrets directly within Backstage, including full support for environments and folder structure.
+Integrate secrets management into your developer portal with the Backstage Hanzo KMS plugin suite. This plugin provides a seamless interface to manage your [Hanzo KMS](https://kms.hanzo.ai) secrets directly within Backstage, including full support for environments and folder structure.
 
 ## Features
 
-- **Secrets Management**: View, create, update, and delete secrets from Infisical
-- **Folder Navigation**: Explore the full folder structure of your Infisical projects
+- **Secrets Management**: View, create, update, and delete secrets from Hanzo KMS
+- **Folder Navigation**: Explore the full folder structure of your Hanzo KMS projects
 - **Multi-Environment Support**: Easily switch between and manage different environments
-- **Entity Linking**: Map Backstage entities to specific Infisical projects via annotations
+- **Entity Linking**: Map Backstage entities to specific Hanzo KMS projects via annotations
 
 ---
 ## Installation
@@ -19,14 +19,14 @@ Integrate secrets management into your developer portal with the Backstage Infis
 
 ```bash
 # From your Backstage root directory
-yarn --cwd packages/app add @infisical/backstage-plugin-infisical
+yarn --cwd packages/app add @hanzo/kms-backstage-plugin-kms
 ```
 
 ### Backend Plugin
 
 ```bash
 # From your Backstage root directory
-yarn --cwd packages/backend add @infisical/backstage-backend-plugin-infisical
+yarn --cwd packages/backend add @hanzo/kms-backstage-backend-plugin-kms
 ```
 
 ## Configuration
@@ -36,18 +36,18 @@ yarn --cwd packages/backend add @infisical/backstage-backend-plugin-infisical
 Update your `app-config.yaml`:
 
 ```yaml
-infisical:
-  baseUrl: https://app.infisical.com
+kms:
+  baseUrl: https://kms.hanzo.ai
 
   authentication:
     # Option 1: API Token Authentication
     auth_token:
-      token: ${INFISICAL_API_TOKEN}
+      token: ${KMS_API_TOKEN}
 
     # Option 2: Client Credentials Authentication
     universalAuth:
-      clientId: ${INFISICAL_CLIENT_ID}
-      clientSecret: ${INFISICAL_CLIENT_SECRET}
+      clientId: ${KMS_CLIENT_ID}
+      clientSecret: ${KMS_CLIENT_SECRET}
 ```
 
 <Tip>
@@ -61,7 +61,7 @@ import { createBackend } from '@backstage/backend-defaults';
 
 const backend = createBackend();
 
-backend.add(import('@infisical/backstage-backend-plugin-infisical'));
+backend.add(import('@hanzo/kms-backstage-backend-plugin-kms'));
 
 backend.start();
 ```
@@ -71,11 +71,11 @@ backend.start();
 Update `packages/app/src/App.tsx` to include the plugin:
 
 ```tsx
-import { infisicalPlugin } from '@infisical/backstage-plugin-infisical';
+import { kmsPlugin } from '@hanzo/kms-backstage-plugin-kms';
 
 const app = createApp({
   plugins: [
-    infisicalPlugin,
+    kmsPlugin,
     // ...other plugins
   ],
 });
@@ -84,13 +84,13 @@ const app = createApp({
 Modify `packages/app/src/components/catalog/EntityPage.tsx`:
 
 ```tsx
-import { EntityInfisicalContent } from '@infisical/backstage-plugin-infisical';
+import { EntityHanzo KMSContent } from '@hanzo/kms-backstage-plugin-kms';
 
 const serviceEntityPage = (
   <EntityLayout>
     {/* ...other tabs */}
-    <EntityLayout.Route path="/infisical" title="Secrets">
-      <EntityInfisicalContent />
+    <EntityLayout.Route path="/kms" title="Secrets">
+      <EntityHanzo KMSContent />
     </EntityLayout.Route>
   </EntityLayout>
 );
@@ -98,7 +98,7 @@ const serviceEntityPage = (
 
 ### Entity Annotation
 
-Add the Infisical project ID to your entity yaml settings:
+Add the Hanzo KMS project ID to your entity yaml settings:
 
 ```yaml
 apiVersion: backstage.io/v1alpha1
@@ -106,18 +106,18 @@ kind: Component
 metadata:
   name: example-service
   annotations:
-    infisical/projectId: <your-infisical-project-id>
+    kms/projectId: <your-kms-project-id>
 ```
 
-> Replace `<your-infisical-project-id>` with the actual project ID from Infisical.
+> Replace `<your-kms-project-id>` with the actual project ID from Hanzo KMS.
 
 ## Usage
 
 Once installed and configured, you can:
 
-1. **View and manage secrets** in Infisical from within Backstage
-2. **Create, update, and delete** secrets using the Infisical tab in entity pages
+1. **View and manage secrets** in Hanzo KMS from within Backstage
+2. **Create, update, and delete** secrets using the Hanzo KMS tab in entity pages
 3. **Navigate environments and folders**
 4. **Search and filter** secrets by key, value, or comments
 
-![Backstage Plugin Table](/images/integrations/external/backstage/backstage-plugin-infisical.png)
+![Backstage Plugin Table](/images/integrations/external/backstage/backstage-plugin-kms.png)

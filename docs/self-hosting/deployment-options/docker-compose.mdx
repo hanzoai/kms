@@ -1,9 +1,9 @@
 ---
 title: "Docker Compose"
-description: "Deploy Infisical using Docker Compose for development, testing, or small-scale production environments."
+description: "Deploy Hanzo KMS using Docker Compose for development, testing, or small-scale production environments."
 ---
 
-Learn how to deploy **Infisical** using Docker Compose. This method runs Infisical and its dependencies (PostgreSQL and Redis) as containers on a single Docker host. It's ideal for trying out Infisical, development environments, or small-scale deployments that don't require high availability.
+Learn how to deploy **Hanzo KMS** using Docker Compose. This method runs Hanzo KMS and its dependencies (PostgreSQL and Redis) as containers on a single Docker host. It's ideal for trying out Hanzo KMS, development environments, or small-scale deployments that don't require high availability.
 
 ## Prerequisites
 
@@ -13,13 +13,13 @@ Learn how to deploy **Infisical** using Docker Compose. This method runs Infisic
 
 <Warning>
   This Docker Compose configuration is not designed for high-availability production scenarios. 
-  It includes just the essential components needed to set up an Infisical proof of concept (POC). 
-  To run Infisical in a highly available manner, see the [Docker Swarm guide](/self-hosting/deployment-options/docker-swarm) or [Kubernetes guide](/self-hosting/deployment-options/kubernetes-helm).
+  It includes just the essential components needed to set up an Hanzo KMS proof of concept (POC). 
+  To run Hanzo KMS in a highly available manner, see the [Docker Swarm guide](/self-hosting/deployment-options/docker-swarm) or [Kubernetes guide](/self-hosting/deployment-options/kubernetes-helm).
 </Warning>
 
 ## System Requirements
 
-The following are minimum requirements for running Infisical with Docker Compose:
+The following are minimum requirements for running Hanzo KMS with Docker Compose:
 
 | Component | Minimum | Recommended |
 |-----------|---------|-------------|
@@ -27,7 +27,7 @@ The following are minimum requirements for running Infisical with Docker Compose
 | RAM | 4 GB | 8 GB |
 | Disk | 20 GB | 50 GB+ (SSD recommended) |
 
-These requirements include resources for Infisical, PostgreSQL, and Redis containers. For larger deployments with many secrets or users, increase resources accordingly.
+These requirements include resources for Hanzo KMS, PostgreSQL, and Redis containers. For larger deployments with many secrets or users, increase resources accordingly.
 
 ## Deployment Steps
 
@@ -47,34 +47,34 @@ These requirements include resources for Infisical, PostgreSQL, and Redis contai
   </Step>
 
   <Step title="Download the Docker Compose file">
-    You can obtain the Infisical docker compose file by using a command-line downloader such as `wget` or `curl`. If your system doesn't have either of these, you can use an equivalent command that works with your machine.
+    You can obtain the Hanzo KMS docker compose file by using a command-line downloader such as `wget` or `curl`. If your system doesn't have either of these, you can use an equivalent command that works with your machine.
 
     <Tabs>
       <Tab title="curl">
         ```bash
-        curl -o docker-compose.prod.yml https://raw.githubusercontent.com/Infisical/infisical/main/docker-compose.prod.yml
+        curl -o docker-compose.prod.yml https://raw.githubusercontent.com/Hanzo KMS/kms/main/docker-compose.prod.yml
         ```
       </Tab>
       <Tab title="wget">
         ```bash
-        wget -O docker-compose.prod.yml https://raw.githubusercontent.com/Infisical/infisical/main/docker-compose.prod.yml
+        wget -O docker-compose.prod.yml https://raw.githubusercontent.com/Hanzo KMS/kms/main/docker-compose.prod.yml
         ```
       </Tab>
     </Tabs>
   </Step>
 
   <Step title="Configure environment variables">
-    Infisical requires a set of credentials used for connecting to dependent services such as Postgres, Redis, etc. The default credentials can be downloaded using one of the commands listed below.
+    Hanzo KMS requires a set of credentials used for connecting to dependent services such as Postgres, Redis, etc. The default credentials can be downloaded using one of the commands listed below.
 
     <Tabs>
       <Tab title="curl">
         ```bash
-        curl -o .env https://raw.githubusercontent.com/Infisical/infisical/main/.env.example
+        curl -o .env https://raw.githubusercontent.com/Hanzo KMS/kms/main/.env.example
         ```
       </Tab>
       <Tab title="wget">
         ```bash
-        wget -O .env https://raw.githubusercontent.com/Infisical/infisical/main/.env.example
+        wget -O .env https://raw.githubusercontent.com/Hanzo KMS/kms/main/.env.example
         ```
       </Tab>
     </Tabs>
@@ -89,7 +89,7 @@ These requirements include resources for Infisical, PostgreSQL, and Redis contai
     </Warning>
   </Step>
 
-  <Step title="Start Infisical">
+  <Step title="Start Hanzo KMS">
     Start all services in detached mode:
 
     ```bash
@@ -97,7 +97,7 @@ These requirements include resources for Infisical, PostgreSQL, and Redis contai
     ```
 
     This command starts three containers:
-    - **backend**: The main Infisical application (exposed on host port 80, internal port 8080)
+    - **backend**: The main Hanzo KMS application (exposed on host port 80, internal port 8080)
     - **db**: PostgreSQL database for storing encrypted secrets
     - **redis**: Redis for caching and job queues
   </Step>
@@ -109,7 +109,7 @@ These requirements include resources for Infisical, PostgreSQL, and Redis contai
     docker compose -f docker-compose.prod.yml ps
     ```
 
-    You should see all three services with a status of `Up`. Next, verify Infisical is responding:
+    You should see all three services with a status of `Up`. Next, verify Hanzo KMS is responding:
 
     ```bash
     curl -s http://localhost:80/api/status | head -c 100
@@ -118,7 +118,7 @@ These requirements include resources for Infisical, PostgreSQL, and Redis contai
     If successful, open your browser and navigate to `http://localhost:80` (or your configured domain) to create your admin account.
 
     <Tip>
-      The first user to sign up becomes the instance administrator. Make sure to complete this step before exposing Infisical to others.
+      The first user to sign up becomes the instance administrator. Make sure to complete this step before exposing Hanzo KMS to others.
     </Tip>
   </Step>
 </Steps>
@@ -127,7 +127,7 @@ These requirements include resources for Infisical, PostgreSQL, and Redis contai
 
   <Tab title="Podman Compose">
 
-Podman Compose is an alternative way to run Infisical using Podman as a replacement for Docker. Podman is backwards compatible with Docker Compose files.
+Podman Compose is an alternative way to run Hanzo KMS using Podman as a replacement for Docker. Podman is backwards compatible with Docker Compose files.
 
 <Steps>
   <Step title="Verify prerequisites">
@@ -142,34 +142,34 @@ Podman Compose is an alternative way to run Infisical using Podman as a replacem
   </Step>
 
   <Step title="Download the Docker Compose file">
-    You can obtain the Infisical docker compose file by using a command-line downloader such as `wget` or `curl`. If your system doesn't have either of these, you can use an equivalent command that works with your machine.
+    You can obtain the Hanzo KMS docker compose file by using a command-line downloader such as `wget` or `curl`. If your system doesn't have either of these, you can use an equivalent command that works with your machine.
 
     <Tabs>
       <Tab title="curl">
         ```bash
-        curl -o docker-compose.prod.yml https://raw.githubusercontent.com/Infisical/infisical/main/docker-compose.prod.yml
+        curl -o docker-compose.prod.yml https://raw.githubusercontent.com/Hanzo KMS/kms/main/docker-compose.prod.yml
         ```
       </Tab>
       <Tab title="wget">
         ```bash
-        wget -O docker-compose.prod.yml https://raw.githubusercontent.com/Infisical/infisical/main/docker-compose.prod.yml
+        wget -O docker-compose.prod.yml https://raw.githubusercontent.com/Hanzo KMS/kms/main/docker-compose.prod.yml
         ```
       </Tab>
     </Tabs>
   </Step>
 
   <Step title="Configure environment variables">
-    Infisical requires a set of credentials used for connecting to dependent services such as Postgres, Redis, etc. The default credentials can be downloaded using one of the commands listed below.
+    Hanzo KMS requires a set of credentials used for connecting to dependent services such as Postgres, Redis, etc. The default credentials can be downloaded using one of the commands listed below.
 
     <Tabs>
       <Tab title="curl">
         ```bash
-        curl -o .env https://raw.githubusercontent.com/Infisical/infisical/main/.env.example
+        curl -o .env https://raw.githubusercontent.com/Hanzo KMS/kms/main/.env.example
         ```
       </Tab>
       <Tab title="wget">
         ```bash
-        wget -O .env https://raw.githubusercontent.com/Infisical/infisical/main/.env.example
+        wget -O .env https://raw.githubusercontent.com/Hanzo KMS/kms/main/.env.example
         ```
       </Tab>
     </Tabs>
@@ -191,7 +191,7 @@ Podman Compose is an alternative way to run Infisical using Podman as a replacem
     </Note>
   </Step>
 
-  <Step title="Start Infisical">
+  <Step title="Start Hanzo KMS">
     ```bash
     podman-compose -f docker-compose.prod.yml up -d
     ```
@@ -209,7 +209,7 @@ Podman Compose is an alternative way to run Infisical using Podman as a replacem
 
 ### Stopping and Restarting Services
 
-To stop all Infisical services:
+To stop all Hanzo KMS services:
 
 ```bash
 docker compose -f docker-compose.prod.yml down
@@ -249,7 +249,7 @@ docker volume ls | grep -E "pg_data|redis_data"
 To back up the PostgreSQL volume:
 
 ```bash
-docker compose -f docker-compose.prod.yml exec db pg_dump -U infisical infisical > backup_$(date +%Y%m%d_%H%M%S).sql
+docker compose -f docker-compose.prod.yml exec db pg_dump -U kms kms > backup_$(date +%Y%m%d_%H%M%S).sql
 ```
 
 ### Viewing Logs
@@ -286,12 +286,12 @@ docker logs <container_name> --since 1h
 
 <AccordionGroup>
   <Accordion title="Firewall Configuration">
-    Configure your firewall to allow traffic to Infisical while securing other services:
+    Configure your firewall to allow traffic to Hanzo KMS while securing other services:
 
     **Required ports:**
     | Port | Service | Access |
     |------|---------|--------|
-    | 80 | HTTP (Infisical) | Public (or internal network) |
+    | 80 | HTTP (Hanzo KMS) | Public (or internal network) |
     | 443 | HTTPS (if using TLS) | Public (or internal network) |
 
     **Internal ports (should NOT be exposed publicly):**
@@ -326,15 +326,15 @@ docker logs <container_name> --since 1h
   </Accordion>
 
   <Accordion title="SMTP/Email Configuration">
-    Infisical uses email for user invitations, password resets, and notifications. Configure SMTP by adding these variables to your `.env` file:
+    Hanzo KMS uses email for user invitations, password resets, and notifications. Configure SMTP by adding these variables to your `.env` file:
 
     ```env
     SMTP_HOST=smtp.example.com
     SMTP_PORT=587
     SMTP_USERNAME=your-smtp-username
     SMTP_PASSWORD=your-smtp-password
-    SMTP_FROM_ADDRESS=infisical@example.com
-    SMTP_FROM_NAME=Infisical
+    SMTP_FROM_ADDRESS=kms@example.com
+    SMTP_FROM_NAME=Hanzo KMS
     ```
 
     **Common SMTP providers:**
@@ -347,7 +347,7 @@ docker logs <container_name> --since 1h
         SMTP_USERNAME=your-ses-smtp-username
         SMTP_PASSWORD=your-ses-smtp-password
         SMTP_FROM_ADDRESS=noreply@yourdomain.com
-        SMTP_FROM_NAME=Infisical
+        SMTP_FROM_NAME=Hanzo KMS
         ```
       </Tab>
       <Tab title="SendGrid">
@@ -357,7 +357,7 @@ docker logs <container_name> --since 1h
         SMTP_USERNAME=apikey
         SMTP_PASSWORD=your-sendgrid-api-key
         SMTP_FROM_ADDRESS=noreply@yourdomain.com
-        SMTP_FROM_NAME=Infisical
+        SMTP_FROM_NAME=Hanzo KMS
         ```
       </Tab>
       <Tab title="Gmail">
@@ -367,7 +367,7 @@ docker logs <container_name> --since 1h
         SMTP_USERNAME=your-email@gmail.com
         SMTP_PASSWORD=your-app-password
         SMTP_FROM_ADDRESS=your-email@gmail.com
-        SMTP_FROM_NAME=Infisical
+        SMTP_FROM_NAME=Hanzo KMS
         ```
         <Note>
           For Gmail, you must use an [App Password](https://support.google.com/accounts/answer/185833) instead of your regular password.
@@ -375,7 +375,7 @@ docker logs <container_name> --since 1h
       </Tab>
     </Tabs>
 
-    After updating the `.env` file, restart Infisical:
+    After updating the `.env` file, restart Hanzo KMS:
 
     ```bash
     docker compose -f docker-compose.prod.yml restart backend
@@ -383,7 +383,7 @@ docker logs <container_name> --since 1h
   </Accordion>
 
   <Accordion title="Enable HTTPS with NGINX">
-    We recommend securing your Infisical deployment with HTTPS using a reverse proxy like NGINX.
+    We recommend securing your Hanzo KMS deployment with HTTPS using a reverse proxy like NGINX.
 
     **1. Obtain SSL certificates** (e.g., via Let's Encrypt):
     ```bash
@@ -472,18 +472,18 @@ docker logs <container_name> --since 1h
 
     **Database backup:**
     ```bash
-    docker compose -f docker-compose.prod.yml exec db pg_dump -U infisical infisical > backup_$(date +%Y%m%d).sql
+    docker compose -f docker-compose.prod.yml exec db pg_dump -U kms kms > backup_$(date +%Y%m%d).sql
     ```
 
     **Automated daily backups (cron):**
     ```bash
     # Add to crontab (crontab -e)
-    0 2 * * * cd /path/to/infisical && docker compose -f docker-compose.prod.yml exec -T db pg_dump -U infisical infisical > /backups/infisical_$(date +\%Y\%m\%d).sql
+    0 2 * * * cd /path/to/kms && docker compose -f docker-compose.prod.yml exec -T db pg_dump -U kms kms > /backups/kms_$(date +\%Y\%m\%d).sql
     ```
 
     **Restore from backup:**
     ```bash
-    docker compose -f docker-compose.prod.yml exec -T db psql -U infisical infisical < backup.sql
+    docker compose -f docker-compose.prod.yml exec -T db psql -U kms kms < backup.sql
     ```
 
     <Warning>
@@ -492,7 +492,7 @@ docker logs <container_name> --since 1h
   </Accordion>
 
   <Accordion title="Enable Prometheus Monitoring">
-    Infisical exposes Prometheus metrics when enabled.
+    Hanzo KMS exposes Prometheus metrics when enabled.
 
     **1. Add to `.env`:**
     ```env
@@ -513,11 +513,11 @@ docker logs <container_name> --since 1h
   </Accordion>
 
   <Accordion title="Upgrade Instructions">
-    Keeping Infisical up-to-date ensures you receive the latest features and security patches.
+    Keeping Hanzo KMS up-to-date ensures you receive the latest features and security patches.
 
     **1. Back up your database:**
     ```bash
-    docker compose -f docker-compose.prod.yml exec db pg_dump -U infisical infisical > backup_before_upgrade.sql
+    docker compose -f docker-compose.prod.yml exec db pg_dump -U kms kms > backup_before_upgrade.sql
     ```
 
     **2. Update the image tag** in `docker-compose.prod.yml` to the desired version.
@@ -533,7 +533,7 @@ docker logs <container_name> --since 1h
     docker compose -f docker-compose.prod.yml logs -f backend
     ```
 
-    Watch for successful database migration messages. See the [Upgrade Guide](/self-hosting/guides/upgrading-infisical) for more details.
+    Watch for successful database migration messages. See the [Upgrade Guide](/self-hosting/guides/upgrading-kms) for more details.
   </Accordion>
 </AccordionGroup>
 
@@ -567,10 +567,10 @@ docker logs <container_name> --since 1h
 
     **Verify database credentials:**
     ```bash
-    docker compose -f docker-compose.prod.yml exec db psql -U infisical -c "SELECT 1"
+    docker compose -f docker-compose.prod.yml exec db psql -U kms -c "SELECT 1"
     ```
 
-    **Check Infisical logs for connection errors:**
+    **Check Hanzo KMS logs for connection errors:**
     ```bash
     docker compose -f docker-compose.prod.yml logs backend | grep -i "database\|postgres\|connection"
     ```
@@ -582,7 +582,7 @@ docker logs <container_name> --since 1h
     ```
   </Accordion>
 
-  <Accordion title="Cannot access Infisical in browser">
+  <Accordion title="Cannot access Hanzo KMS in browser">
     **Verify the service is running:**
     ```bash
     curl -v http://localhost:80/api/status
@@ -602,7 +602,7 @@ docker logs <container_name> --since 1h
     sudo firewall-cmd --list-all
     ```
 
-    **Verify SITE_URL is correct** in your `.env` file and matches how you're accessing Infisical.
+    **Verify SITE_URL is correct** in your `.env` file and matches how you're accessing Hanzo KMS.
   </Accordion>
 
   <Accordion title="Email/SMTP not working">
@@ -611,7 +611,7 @@ docker logs <container_name> --since 1h
     docker compose -f docker-compose.prod.yml exec backend nc -zv smtp.example.com 587
     ```
 
-    **Check Infisical logs for email errors:**
+    **Check Hanzo KMS logs for email errors:**
     ```bash
     docker compose -f docker-compose.prod.yml logs backend | grep -i "smtp\|email\|mail"
     ```
@@ -630,7 +630,7 @@ docker logs <container_name> --since 1h
 
     **Check for slow database queries:**
     ```bash
-    docker compose -f docker-compose.prod.yml exec db psql -U infisical -c "SELECT * FROM pg_stat_activity WHERE state = 'active'"
+    docker compose -f docker-compose.prod.yml exec db psql -U kms -c "SELECT * FROM pg_stat_activity WHERE state = 'active'"
     ```
 
     **Solutions:**
@@ -644,7 +644,7 @@ docker logs <container_name> --since 1h
 
     ```bash
     # Connect to the database
-    docker compose -f docker-compose.prod.yml exec db psql -U infisical
+    docker compose -f docker-compose.prod.yml exec db psql -U kms
 
     # Find the user
     SELECT id, email FROM users WHERE email = 'admin@example.com';
@@ -653,12 +653,12 @@ docker logs <container_name> --since 1h
     # or by deleting and recreating the user
     ```
 
-    For security reasons, passwords are hashed and cannot be directly reset in the database. Use the "Forgot Password" flow if SMTP is configured, or contact Infisical support for assistance.
+    For security reasons, passwords are hashed and cannot be directly reset in the database. Use the "Forgot Password" flow if SMTP is configured, or contact Hanzo KMS support for assistance.
   </Accordion>
 </AccordionGroup>
 
 ---
 
-Your Infisical instance should now be running on port `80` (or `443` if using TLS). Visit `http://localhost:80` or `https://<your-domain>` to access your instance.
+Your Hanzo KMS instance should now be running on port `80` (or `443` if using TLS). Visit `http://localhost:80` or `https://<your-domain>` to access your instance.
 
 ![self-hosted sign up](/images/self-hosting/applicable-to-all/selfhost-signup.png)

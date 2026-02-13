@@ -51,7 +51,7 @@ export const SnowflakeProvider = (): TDynamicProviderFns => {
       account: `${providerInputs.orgId}-${providerInputs.accountId}`,
       username: providerInputs.username,
       password: providerInputs.password,
-      application: "Infisical"
+      application: "Hanzo KMS"
     });
 
     await client.connectAsync(noop);
@@ -102,8 +102,8 @@ export const SnowflakeProvider = (): TDynamicProviderFns => {
       decryptedDynamicSecretInputs: inputs,
       dynamicSecret,
       identity,
-      // Username must start with an ascii letter, so we prepend the username with "infisical_"
-      usernamePrefix: "infisical_"
+      // Username must start with an ascii letter, so we prepend the username with "kms_"
+      usernamePrefix: "kms_"
     });
     const password = generatePassword();
 

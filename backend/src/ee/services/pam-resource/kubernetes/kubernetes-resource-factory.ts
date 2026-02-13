@@ -205,7 +205,7 @@ export const kubernetesResourceFactory: TPamResourceFactory<
       updatedAccountCredentials.authMethod === KubernetesAuthMethod.ServiceAccountToken &&
       currentCredentials.authMethod === KubernetesAuthMethod.ServiceAccountToken
     ) {
-      if (updatedAccountCredentials.serviceAccountToken === "__INFISICAL_UNCHANGED__") {
+      if (updatedAccountCredentials.serviceAccountToken === "__KMS_UNCHANGED__") {
         return {
           ...updatedAccountCredentials,
           serviceAccountToken: currentCredentials.serviceAccountToken

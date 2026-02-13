@@ -2,11 +2,11 @@ version: '3'
 
 services:
   backend:
-    container_name: infisical-backend-test
+    container_name: kms-backend-test
     restart: unless-stopped
     depends_on:
       - mongo
-    image: infisical/infisical:test
+    image: ghcr.io/hanzoai/kms:test
     command: npm run start
     environment:
       - NODE_ENV=production
@@ -15,17 +15,17 @@ services:
       - MONGO_PASSWORD=example
       - ENCRYPTION_KEY=a984ecdf82ec779e55dbcc21303a900f
     networks:
-      - infisical-test
+      - kms-test
 
   mongo:
-    container_name: infisical-mongo-test
+    container_name: kms-mongo-test
     image: mongo
     restart: always
     environment:
       - MONGO_INITDB_ROOT_USERNAME=test
       - MONGO_INITDB_ROOT_PASSWORD=example
     networks:
-      - infisical-test
+      - kms-test
 
 networks:
-  infisical-test:
+  kms-test:

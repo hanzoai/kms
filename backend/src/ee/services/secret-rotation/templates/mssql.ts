@@ -13,12 +13,12 @@ export const MSSQL_TEMPLATE = {
       port: { type: "integer" as const, default: "1433" },
       username1: {
         type: "string",
-        default: "infisical-sql-user1",
+        default: "kms-sql-user1",
         desc: "SQL Server login name that must be created at server level with a matching database user"
       },
       username2: {
         type: "string",
-        default: "infisical-sql-user2",
+        default: "kms-sql-user2",
         desc: "SQL Server login name that must be created at server level with a matching database user"
       },
       ca: { type: "string", desc: "SSL certificate for db auth(string)" }

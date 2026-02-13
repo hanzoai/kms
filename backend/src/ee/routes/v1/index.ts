@@ -63,7 +63,7 @@ export const registerV1EERoutes = async (server: FastifyZodProvider) => {
   await server.register(registerSubOrgRouter, { prefix: "/sub-organizations" });
   await server.register(registerLicenseRouter, { prefix: "/organizations" });
 
-  // depreciated in favour of infisical workspace
+  // depreciated in favour of kms workspace
   await server.register(
     async (projectRouter) => {
       await projectRouter.register(registerDeprecatedProjectRoleRouter);

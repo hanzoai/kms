@@ -43,7 +43,7 @@ export default SecretRequestCompletedTemplate;
 
 SecretRequestCompletedTemplate.PreviewProps = {
   respondentUsername: "Gracie",
-  siteUrl: "https://infisical.com",
-  secretRequestUrl: "https://infisical.com",
+  siteUrl: "https://kms.hanzo.ai",
+  secretRequestUrl: "https://kms.hanzo.ai",
   name: "API_TOKEN"
 } as SecretRequestCompletedTemplateProps;

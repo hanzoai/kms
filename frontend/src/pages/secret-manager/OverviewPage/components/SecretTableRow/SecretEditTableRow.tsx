@@ -27,7 +27,7 @@ import { createNotification } from "@app/components/notifications";
 import { ProjectPermissionCan } from "@app/components/permissions";
 import { SecretReferenceTree } from "@app/components/secrets/SecretReferenceDetails";
 import { DeleteActionModal, Modal, ModalContent, ModalTrigger } from "@app/components/v2";
-import { InfisicalSecretInput } from "@app/components/v2/InfisicalSecretInput";
+import { KmsSecretInput } from "@app/components/v2/KmsSecretInput";
 import {
   Badge,
   Popover,
@@ -397,7 +397,7 @@ export const SecretEditTableRow = ({
             control={control}
             name="value"
             render={({ field }) => (
-              <InfisicalSecretInput
+              <KmsSecretInput
                 {...field}
                 isReadOnly={isReadOnly}
                 value={
@@ -987,7 +987,7 @@ export const SecretEditTableRow = ({
               <UpgradePlanModal
                 isOpen={popUp.accessInsightsUpgrade.isOpen}
                 onOpenChange={(isOpen) => handlePopUpToggle("accessInsightsUpgrade", isOpen)}
-                text="Secret access insights can be unlocked if you upgrade to Infisical Pro plan."
+                text="Secret access insights can be unlocked if you upgrade to Hanzo KMS Pro plan."
               />
             </div>
           )}

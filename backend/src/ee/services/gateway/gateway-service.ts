@@ -59,14 +59,14 @@ export const gatewayServiceFactory = ({
     // if (!licenseService.onPremFeatures.gateway) {
     //   throw new BadRequestError({
     //     message:
-    //       "Gateway handshake failed due to instance plan restrictions. Please upgrade your instance to Infisical's Enterprise plan."
+    //       "Gateway handshake failed due to instance plan restrictions. Please upgrade your instance to Hanzo KMS's Enterprise plan."
     //   });
     // }
     const orgLicensePlan = await licenseService.getPlan(orgId);
     if (!orgLicensePlan.gateway) {
       throw new BadRequestError({
         message:
-          "Gateway handshake failed due to organization plan restrictions. Please upgrade your instance to Infisical's Enterprise plan."
+          "Gateway handshake failed due to organization plan restrictions. Please upgrade your instance to Hanzo KMS's Enterprise plan."
       });
     }
     const { permission } = await permissionService.getOrgPermission({
@@ -127,7 +127,7 @@ export const gatewayServiceFactory = ({
       turnServerPassword,
       turnServerRealm: envCfg.GATEWAY_RELAY_REALM,
       turnServerAddress: envCfg.GATEWAY_RELAY_ADDRESS,
-      infisicalStaticIp: envCfg.GATEWAY_INFISICAL_STATIC_IP_ADDRESS
+      kmsStaticIp: envCfg.GATEWAY_KMS_STATIC_IP_ADDRESS
     };
   };
 
@@ -157,7 +157,7 @@ export const gatewayServiceFactory = ({
       const rootCaKeyAlgorithm = CertKeyAlgorithm.RSA_2048;
       const rootCaExpiration = new Date(new Date().setFullYear(2045));
       const rootCaCert = await x509.X509CertificateGenerator.createSelfSigned({
-        name: `O=${identityOrg},CN=Infisical Gateway Root CA`,
+        name: `O=${identityOrg},CN=KMS Gateway Root CA`,
         serialNumber: rootCaSerialNumber,
         notBefore: rootCaIssuedAt,
         notAfter: rootCaExpiration,
@@ -576,7 +576,7 @@ export const gatewayServiceFactory = ({
     const orgLicensePlan = await licenseService.getPlan(orgGatewayConfig.orgId);
     if (!orgLicensePlan.gateway) {
       throw new BadRequestError({
-        message: "Please upgrade your instance to Infisical's Enterprise plan to use gateways."
+        message: "Please upgrade your instance to Hanzo KMS's Enterprise plan to use gateways."
       });
     }
 

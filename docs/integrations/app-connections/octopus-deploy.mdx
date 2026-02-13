@@ -1,9 +1,9 @@
 ---
 title: "Octopus Deploy Connection"
-description: "Learn how to configure an Octopus Deploy Connection for Infisical."
+description: "Learn how to configure an Octopus Deploy Connection for Hanzo KMS."
 ---
 
-Infisical supports the use of [API Keys](https://octopus.com/docs/octopus-rest-api/how-to-create-an-api-key) to connect with Octopus Deploy.
+Hanzo KMS supports the use of [API Keys](https://octopus.com/docs/octopus-rest-api/how-to-create-an-api-key) to connect with Octopus Deploy.
 
 ## Create Octopus Deploy API Key
 
@@ -82,7 +82,7 @@ Octopus Deploy supports two methods for creating API keys: via a user profile or
     <Tab title="User Profile API Key">
 
     <Note>
-      Infisical recommends using a service account for production integrations as they provide better security and are not tied to individual user accounts.
+      Hanzo KMS recommends using a service account for production integrations as they provide better security and are not tied to individual user accounts.
     </Note>
     <Steps>
       <Step title='Navigate to your user profile'>
@@ -106,13 +106,13 @@ Octopus Deploy supports two methods for creating API keys: via a user profile or
   </Tab>
 </Tabs>
 
-## Create an Octopus Deploy Connection in Infisical
+## Create an Octopus Deploy Connection in Hanzo KMS
 
 <Tabs>
-  <Tab title="Infisical UI">
+  <Tab title="Hanzo KMS UI">
     <Steps>
       <Step title="Navigate to App Connections">
-        In your Infisical dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
+        In your Hanzo KMS dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
         ![App Connections Tab](/images/app-connections/general/add-connection.png)
       </Step>
       <Step title="Select Octopus Deploy Connection">
@@ -128,7 +128,7 @@ Octopus Deploy supports two methods for creating API keys: via a user profile or
         ![Octopus Deploy Connection Modal](/images/app-connections/octopus-deploy/app-connection-form.png)
       </Step>
       <Step title="Connection created">
-        After submitting the form, your **Octopus Deploy Connection** will be successfully created and ready to use with your Infisical project.
+        After submitting the form, your **Octopus Deploy Connection** will be successfully created and ready to use with your Hanzo KMS project.
         ![Octopus Deploy Connection Created](/images/app-connections/octopus-deploy/app-connection-generated.png)
       </Step>
     </Steps>
@@ -142,7 +142,7 @@ Octopus Deploy supports two methods for creating API keys: via a user profile or
 
     ```bash Request
     curl    --request POST \
-            --url https://app.infisical.com/api/v1/app-connections/octopus-deploy \
+            --url https://kms.hanzo.ai/api/v1/app-connections/octopus-deploy \
             --header 'Content-Type: application/json' \
             --data '{
                 "name": "my-octopus-deploy-connection",

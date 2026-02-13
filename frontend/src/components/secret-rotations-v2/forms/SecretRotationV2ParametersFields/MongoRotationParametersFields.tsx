@@ -24,7 +24,7 @@ export const MongoRotationParametersFields = () => {
             errorText={error?.message}
             label="Database Username 1"
           >
-            <Input value={value} onChange={onChange} placeholder="infisical_user_1" />
+            <Input value={value} onChange={onChange} placeholder="kms_user_1" />
           </FormControl>
         )}
         control={control}
@@ -37,7 +37,7 @@ export const MongoRotationParametersFields = () => {
             errorText={error?.message}
             label="Database Username 2"
           >
-            <Input value={value} onChange={onChange} placeholder="infisical_user_2" />
+            <Input value={value} onChange={onChange} placeholder="kms_user_2" />
           </FormControl>
         )}
         control={control}
@@ -45,10 +45,10 @@ export const MongoRotationParametersFields = () => {
       />
       <NoticeBannerV2 title="Example Create User Statement">
         <p className="mb-3 text-sm text-mineshaft-300">
-          Infisical requires two database users to be created for rotation.
+          Hanzo KMS requires two database users to be created for rotation.
         </p>
         <p className="mb-3 text-sm text-mineshaft-300">
-          These users are intended to be solely managed by Infisical. Altering their login after
+          These users are intended to be solely managed by Hanzo KMS. Altering their login after
           rotation may cause unexpected failure.
         </p>
         <p className="mb-3 text-sm text-mineshaft-300">

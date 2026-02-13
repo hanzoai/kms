@@ -1,25 +1,25 @@
 ---
-title: "infisical run"
+title: "hanzo-kms run"
 description: "The command that injects your secrets into local environment"
 ---
 
 <Tabs>
   <Tab title="Single command">
     ```bash
-    infisical run [options] -- [your application start command]
+    hanzo-kms run [options] -- [your application start command]
 
     # Example
-    infisical run [options] -- npm run dev
+    hanzo-kms run [options] -- npm run dev
     ```
 
   </Tab>
 
   <Tab title="Chained commands">
     ```bash
-    infisical run [options] --command [string command]
+    hanzo-kms run [options] --command [string command]
 
     # Example
-    infisical run [options] --command "npm run bootstrap && npm run dev start; other-bash-command"
+    hanzo-kms run [options] --command "npm run bootstrap && npm run dev start; other-bash-command"
     ```
 
   </Tab>
@@ -27,28 +27,28 @@ description: "The command that injects your secrets into local environment"
 
 ## Description
 
-Inject secrets from Infisical into your application process.
+Inject secrets from Hanzo KMS into your application process.
 
 ## Subcommands & flags
 
-<Accordion title="infisical run" defaultOpen="true">
+<Accordion title="hanzo-kms run" defaultOpen="true">
   Use this command to inject secrets into your applications process
 
 ```bash
-$ infisical run -- <your application command>
+$ hanzo-kms run -- <your application command>
 
 # Example
-$ infisical run -- npm run dev
+$ hanzo-kms run -- npm run dev
 ```
 
 ### Environment variables
 
-  <Accordion title="INFISICAL_TOKEN">
+  <Accordion title="KMS_TOKEN">
     Used to fetch secrets via a [machine identity](/documentation/platform/identities/machine-identities) apposed to logged in credentials. Simply, export this variable in the terminal before running this command.
 
     ```bash
       # Example
-      export INFISICAL_TOKEN=$(infisical login --method=universal-auth --client-id=<identity-client-id> --client-secret=<identity-client-secret> --silent --plain) # --plain flag will output only the token, so it can be fed to an environment variable. --silent will disable any update messages.
+      export KMS_TOKEN=$(hanzo-kms login --method=universal-auth --client-id=<identity-client-id> --client-secret=<identity-client-secret> --silent --plain) # --plain flag will output only the token, so it can be fed to an environment variable. --silent will disable any update messages.
     ```
 
     <Info>
@@ -56,40 +56,40 @@ $ infisical run -- npm run dev
 
       ```bash
         # Example
-        export INFISICAL_TOKEN=<service-token>
+        export KMS_TOKEN=<service-token>
       ```
     </Info>
   </Accordion>
 
-  <Accordion title="INFISICAL_DISABLE_UPDATE_CHECK">
+  <Accordion title="KMS_DISABLE_UPDATE_CHECK">
     Used to disable the check for new CLI versions. This can improve the time it takes to run this command. Recommended for production environments.
     
     To use, simply export this variable in the terminal before running this command.
 
     ```bash
       # Example
-      export INFISICAL_DISABLE_UPDATE_CHECK=true
+      export KMS_DISABLE_UPDATE_CHECK=true
     ```
   </Accordion>
 
 ### Flags
 
   <Accordion title="--watch">
-    By passing the `watch` flag, you are telling the CLI to watch for changes that happen in your Infisical project.
+    By passing the `watch` flag, you are telling the CLI to watch for changes that happen in your Hanzo KMS project.
     If secret changes happen, the command you provided will automatically be restarted with the new environment variables attached.
 
     ```bash
       # Example
-      infisical run --watch -- printenv
+      hanzo-kms run --watch -- printenv
     ```
   </Accordion>
 
   <Accordion title="--project-config-dir">
-    Explicitly set the directory where the .infisical.json resides. This is useful for some monorepo setups.
+    Explicitly set the directory where the .kms.json resides. This is useful for some monorepo setups.
 
     ```bash
       # Example
-      infisical run --project-config-dir=/some-dir -- printenv
+      hanzo-kms run --project-config-dir=/some-dir -- printenv
     ```
   </Accordion>
 
@@ -98,7 +98,7 @@ $ infisical run -- npm run dev
 
     ```bash
     # Example
-    infisical run --command="npm run build && npm run dev; more-commands..."
+    hanzo-kms run --command="npm run build && npm run dev; more-commands..."
     ```
 
   </Accordion>
@@ -108,7 +108,7 @@ $ infisical run -- npm run dev
 
     ```bash
     # Example
-    infisical run --projectId=<project-id> -- npm run dev
+    hanzo-kms run --projectId=<project-id> -- npm run dev
     ```
 
   </Accordion>
@@ -118,10 +118,10 @@ $ infisical run -- npm run dev
 
     ```bash
     # Example
-    infisical run --token="<universal-auth-access-token>" --projectId=<project-id> -- npm run start
+    hanzo-kms run --token="<universal-auth-access-token>" --projectId=<project-id> -- npm run start
     ```
 
-    You may also expose the token to the CLI by setting the environment variable `INFISICAL_TOKEN` before executing the run command. This will have the same effect as setting the token with `--token` flag
+    You may also expose the token to the CLI by setting the environment variable `KMS_TOKEN` before executing the run command. This will have the same effect as setting the token with `--token` flag
 
   </Accordion>
 
@@ -158,7 +158,7 @@ $ infisical run -- npm run dev
 
     ```bash
     # Example
-    infisical run --tags=tag1,tag2,tag3 -- npm run dev
+    hanzo-kms run --tags=tag1,tag2,tag3 -- npm run dev
     ```
 
     Note: you must reference the tag by its slug name not its fully qualified name. Go to project settings to view all tag slugs.
@@ -172,7 +172,7 @@ $ infisical run -- npm run dev
 
     ```bash
     # Example
-    infisical run --path="/nextjs" -- npm run dev
+    hanzo-kms run --path="/nextjs" -- npm run dev
     ```
 
   </Accordion>
@@ -185,7 +185,7 @@ $ infisical run -- npm run dev
 To automatically reload your command when secrets change, use the `--watch` flag.
 
 ```bash
-infisical run --watch -- npm run dev
+hanzo-kms run --watch -- npm run dev
 ```
 
 This will watch for changes in your secrets and automatically restart your command with the new secrets.

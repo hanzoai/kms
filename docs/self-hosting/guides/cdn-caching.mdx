@@ -23,7 +23,7 @@ This is a documented limitation in Vite's official guidance: [Load Error Handlin
 
 ### Current Behavior
 
-Infisical includes a built-in workaround that detects version mismatches and triggers a page reload. While functional, this introduces a noticeable delay for users during deployments.
+Hanzo KMS includes a built-in workaround that detects version mismatches and triggers a page reload. While functional, this introduces a noticeable delay for users during deployments.
 
 ## The Solution: External Asset Storage
 
@@ -50,15 +50,15 @@ The key points:
 - **Long cache TTL**: Content-hashed files can be cached indefinitely (we recommend 30 days)
 - **Automatic cleanup**: Configure lifecycle rules to expire old assets after 30 days
 
-At Infisical, we use **CloudFront + S3** for this purpose, but you can use any CDN and object storage combination that fits your infrastructure.
+At Hanzo KMS, we use **CloudFront + S3** for this purpose, but you can use any CDN and object storage combination that fits your infrastructure.
 
 ## Exporting Assets
 
-Infisical provides a built-in command to export frontend assets from the Docker image:
+Hanzo KMS provides a built-in command to export frontend assets from the Docker image:
 
 ```bash
 # Export as tar archive to stdout
-docker run --rm infisical/infisical npm run --silent assets:export > assets.tar
+docker run --rm ghcr.io/hanzoai/kms npm run --silent assets:export > assets.tar
 
 # Extract the archive
 tar -xf assets.tar
@@ -69,7 +69,7 @@ Or export directly to a mounted directory:
 
 ```bash
 docker run --rm -v $(pwd)/cdn-assets:/output \
-  infisical/infisical npm run --silent assets:export /output
+  ghcr.io/hanzoai/kms npm run --silent assets:export /output
 ```
 
 ### What Gets Exported
@@ -86,14 +86,14 @@ These files are safe to cache with long TTLs because their filenames change when
 
 The general deployment flow should be:
 
-1. **Build** your new Docker image (or pull the official Infisical image)
+1. **Build** your new Docker image (or pull the official Hanzo KMS image)
 2. **Export** assets using `npm run assets:export`
 3. **Upload** assets to your object storage
 4. **Deploy** the new container version
 
 ```bash
 # Example: Export and upload to S3
-docker run --rm infisical/infisical:$VERSION npm run --silent assets:export > assets.tar
+docker run --rm ghcr.io/hanzoai/kms:$VERSION npm run --silent assets:export > assets.tar
 tar -xf assets.tar
 aws s3 sync assets s3://your-bucket/assets --cache-control "public, max-age=2592000"
 

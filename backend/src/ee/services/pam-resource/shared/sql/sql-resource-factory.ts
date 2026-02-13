@@ -19,8 +19,8 @@ import { TSqlAccountCredentials, TSqlResourceConnectionDetails } from "./sql-res
 
 const EXTERNAL_REQUEST_TIMEOUT = 10 * 1000;
 
-const TEST_CONNECTION_USERNAME = "infisical-gateway-connection-test";
-const TEST_CONNECTION_PASSWORD = "infisical-gateway-connection-test-password";
+const TEST_CONNECTION_USERNAME = "kms-gateway-connection-test";
+const TEST_CONNECTION_PASSWORD = "kms-gateway-connection-test-password";
 const SIMPLE_QUERY = "select 1";
 
 export interface SqlResourceConnection {
@@ -357,7 +357,7 @@ export const sqlResourceFactory: TPamResourceFactory<TSqlResourceConnectionDetai
     updatedAccountCredentials: TSqlAccountCredentials,
     currentCredentials: TSqlAccountCredentials
   ) => {
-    if (updatedAccountCredentials.password === "__INFISICAL_UNCHANGED__") {
+    if (updatedAccountCredentials.password === "__KMS_UNCHANGED__") {
       return {
         ...updatedAccountCredentials,
         password: currentCredentials.password

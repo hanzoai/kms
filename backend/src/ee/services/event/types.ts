@@ -5,7 +5,7 @@ import { ProjectType } from "@app/db/schemas";
 import { ProjectPermissionSecretEventActions } from "../permission/project-permission";
 
 export enum TopicName {
-  CoreServers = "infisical::core-servers"
+  CoreServers = "kms::core-servers"
 }
 
 export enum BusEventName {

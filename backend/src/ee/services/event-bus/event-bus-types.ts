@@ -2,7 +2,7 @@ import { z } from "zod";
 
 // Topic names for Redis pub/sub channels
 export enum EventBusTopicName {
-  CoreServers = "infisical::core-servers"
+  CoreServers = "kms::core-servers"
 }
 
 // Event types that can be published/subscribed

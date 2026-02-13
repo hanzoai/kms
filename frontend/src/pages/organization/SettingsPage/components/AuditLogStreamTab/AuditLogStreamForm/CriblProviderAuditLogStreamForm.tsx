@@ -53,7 +53,7 @@ export const CriblProviderAuditLogStreamForm = ({ auditLogStream, onSubmit }: Pr
                 <>
                   To derive your Stream URL: Obtain your Cribl hostname (e.g. cribl.example.com),
                   Hanzo KMS HTTP data source port (e.g. 20000), and HTTP event API path (e.g.
-                  /infisical).
+                  /kms).
                   <br />
                   <br />
                   If your Hanzo KMS Data Source has TLS enabled, then use the https protocol.
@@ -62,7 +62,7 @@ export const CriblProviderAuditLogStreamForm = ({ auditLogStream, onSubmit }: Pr
             >
               <Input
                 {...field}
-                placeholder="http://default.main.example.cribl.cloud:20000/infisical/_bulk"
+                placeholder="http://default.main.example.cribl.cloud:20000/kms/_bulk"
               />
             </FormControl>
           )}

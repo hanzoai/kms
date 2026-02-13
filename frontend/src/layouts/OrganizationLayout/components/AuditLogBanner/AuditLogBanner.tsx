@@ -12,7 +12,7 @@ export const AuditLogBanner = () => {
     return (
       <OrgAlertBanner
         text="Attention: Audit logs storage is disabled but no audit log streams have been configured."
-        link="https://infisical.com/docs/documentation/platform/audit-log-streams/audit-log-streams"
+        link="https://kms.hanzo.ai/docs/documentation/platform/audit-log-streams/audit-log-streams"
       />
     );
   }

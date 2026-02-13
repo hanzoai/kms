@@ -1,9 +1,9 @@
 ---
 title: "GitLab SSO"
-description: "Learn how to configure GitLab SSO for Infisical."
+description: "Learn how to configure GitLab SSO for Hanzo KMS."
 ---
 
-Using GitLab SSO on a self-hosted instance of Infisical requires configuring an OAuth application in GitLab and registering your instance with it.
+Using GitLab SSO on a self-hosted instance of Hanzo KMS requires configuring an OAuth application in GitLab and registering your instance with it.
 
 <Steps>
   <Step title="Create an OAuth application in GitLab">
@@ -22,20 +22,20 @@ Using GitLab SSO on a self-hosted instance of Infisical requires configuring an 
         in your group Settings > Applications.
     </Note>
   </Step>
-  <Step title="Add your OAuth application credentials to Infisical">
+  <Step title="Add your OAuth application credentials to Hanzo KMS">
     Obtain the **Application ID** and **Secret** for your GitLab application.
 
     ![sso gitlab config](/images/sso/gitlab/credentials.png) 
 
-    Back in your Infisical instance, make sure to set the following environment variables:
+    Back in your Hanzo KMS instance, make sure to set the following environment variables:
 
     - `CLIENT_ID_GITLAB_LOGIN`: The **Client ID** of your GitLab application.
     - `CLIENT_SECRET_GITLAB_LOGIN`: The **Secret** of your GitLab application.
     - (optional) `URL_GITLAB_LOGIN`: The URL of your self-hosted instance of GitLab where the OAuth application is registered. If no URL is passed in, this will default to `https://gitlab.com`.
     - `AUTH_SECRET`: A secret key used for signing and verifying JWT. This can be a random 32-byte base64 string generated with `openssl rand -base64 32`.
-    - `SITE_URL`: The URL of your self-hosted instance of Infisical - should be an absolute URL including the protocol (e.g. https://app.infisical.com)
+    - `SITE_URL`: The URL of your self-hosted instance of Hanzo KMS - should be an absolute URL including the protocol (e.g. https://kms.hanzo.ai)
       
-    Once added, restart your Infisical instance and log in with GitLab.
+    Once added, restart your Hanzo KMS instance and log in with GitLab.
   </Step>
 </Steps>
 
@@ -43,11 +43,11 @@ Using GitLab SSO on a self-hosted instance of Infisical requires configuring an 
 
 <AccordionGroup>
   <Accordion title="Why is GitLab SSO not working?">
-    It is likely that you have misconfigured your self-hosted instance of Infisical. You should:
+    It is likely that you have misconfigured your self-hosted instance of Hanzo KMS. You should:
 
     - Check that you have set the `CLIENT_ID_GITLAB_LOGIN`, `CLIENT_SECRET_GITLAB_LOGIN`, 
     `AUTH_SECRET`, and `SITE_URL` environment variables.
     - Check that the **Redirect URI** specified in GitLab matches the `SITE_URL` environment variable.
-    For example, if the former is `https://app.infisical.com/api/v1/sso/gitlab` then the latter should be `https://app.infisical.com`.
+    For example, if the former is `https://kms.hanzo.ai/api/v1/sso/gitlab` then the latter should be `https://kms.hanzo.ai`.
   </Accordion>
 </AccordionGroup>

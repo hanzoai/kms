@@ -1,13 +1,13 @@
 ---
 title: "Chef Sync"
-description: "Learn how to configure a Chef Sync for Infisical."
+description: "Learn how to configure a Chef Sync for Hanzo KMS."
 ---
 
 <Info>
     Chef Sync is a paid feature.
 
-    If you're using Infisical Cloud, then it is available under the **Enterprise Tier**. If you're self-hosting Infisical,
-    then you should contact team@infisical.com to purchase an enterprise license to use it.
+    If you're using Hanzo KMS Cloud, then it is available under the **Enterprise Tier**. If you're self-hosting Hanzo KMS,
+    then you should contact team@kms.hanzo.ai to purchase an enterprise license to use it.
 
 </Info>
 
@@ -16,7 +16,7 @@ description: "Learn how to configure a Chef Sync for Infisical."
 - Create a [Chef Connection](/integrations/app-connections/chef)
 
 <Tabs>
-  <Tab title="Infisical UI">
+  <Tab title="Hanzo KMS UI">
     <Steps>
       <Step title="Add Sync">
         Navigate to **Project** > **Integrations** and select the **Secret Syncs** tab. Click on the **Add Sync** button.
@@ -52,16 +52,16 @@ description: "Learn how to configure a Chef Sync for Infisical."
 
         ![Configure Options](/images/secret-syncs/chef/sync-options.png)
 
-        - **Initial Sync Behavior**: Determines how Infisical should resolve the initial sync.
-            - **Overwrite Destination Secrets**: Removes any secrets at the destination endpoint not present in Infisical.
-            - **Import Secrets (Prioritize Infisical)**: Imports secrets from the destination endpoint before syncing, prioritizing values from Infisical over Chef when keys conflict.
-            - **Import Secrets (Prioritize Chef)**: Imports secrets from the destination endpoint before syncing, prioritizing values from Chef over Infisical when keys conflict.
+        - **Initial Sync Behavior**: Determines how Hanzo KMS should resolve the initial sync.
+            - **Overwrite Destination Secrets**: Removes any secrets at the destination endpoint not present in Hanzo KMS.
+            - **Import Secrets (Prioritize Hanzo KMS)**: Imports secrets from the destination endpoint before syncing, prioritizing values from Hanzo KMS over Chef when keys conflict.
+            - **Import Secrets (Prioritize Chef)**: Imports secrets from the destination endpoint before syncing, prioritizing values from Chef over Hanzo KMS when keys conflict.
         - **Key Schema**: Template that determines how secret names are transformed when syncing, using `{{secretKey}}` as a placeholder for the original secret name and `{{environment}}` for the environment.
         <Note>
-          We highly recommend using a Key Schema to ensure that Infisical only manages the specific keys you intend, keeping everything else untouched.
+          We highly recommend using a Key Schema to ensure that Hanzo KMS only manages the specific keys you intend, keeping everything else untouched.
         </Note>
         - **Auto-Sync Enabled**: If enabled, secrets will automatically be synced from the source location when changes occur. Disable to enforce manual syncing only.
-        - **Disable Secret Deletion**: If enabled, Infisical will not remove secrets from the sync destination. Enable this option if you intend to manage some secrets manually outside of Infisical.
+        - **Disable Secret Deletion**: If enabled, Hanzo KMS will not remove secrets from the sync destination. Enable this option if you intend to manage some secrets manually outside of Hanzo KMS.
       </Step>
       <Step title="Configure details">
         Configure the **Details** of your Chef Sync, then click **Next**.
@@ -92,7 +92,7 @@ description: "Learn how to configure a Chef Sync for Infisical."
 
     ```bash Request
     curl    --request POST \
-            --url https://app.infisical.com/api/v1/secret-syncs/chef \
+            --url https://kms.hanzo.ai/api/v1/secret-syncs/chef \
             --header 'Content-Type: application/json' \
             --data '{
                 "name": "my-chef-sync",

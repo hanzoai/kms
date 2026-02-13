@@ -44,7 +44,7 @@ import {
   fnSecretBulkInsert,
   fnSecretBulkUpdate,
   getAllNestedSecretReferences,
-  INFISICAL_SECRET_VALUE_HIDDEN_MASK
+  KMS_SECRET_VALUE_HIDDEN_MASK
 } from "@app/services/secret/secret-fns";
 import { TSecretQueueFactory } from "@app/services/secret/secret-queue";
 import { SecretOperations } from "@app/services/secret/secret-types";
@@ -372,7 +372,7 @@ export const secretApprovalRequestServiceFactory = ({
         isRotatedSecret: el.secret?.isRotatedSecret ?? false,
         secretValueHidden: !getHasSecretReadAccess(secretApprovalRequest.environment, el.tags, secretPath?.[0]?.path),
         secretValue: !getHasSecretReadAccess(secretApprovalRequest.environment, el.tags, secretPath?.[0]?.path)
-          ? INFISICAL_SECRET_VALUE_HIDDEN_MASK
+          ? KMS_SECRET_VALUE_HIDDEN_MASK
           : el.secret && el.secret.isRotatedSecret
             ? undefined
             : el.encryptedValue !== undefined && el.encryptedValue !== null
@@ -397,7 +397,7 @@ export const secretApprovalRequestServiceFactory = ({
                 secretPath?.[0]?.path
               ),
               secretValue: !getHasSecretReadAccess(secretApprovalRequest.environment, el.tags, secretPath?.[0]?.path)
-                ? INFISICAL_SECRET_VALUE_HIDDEN_MASK
+                ? KMS_SECRET_VALUE_HIDDEN_MASK
                 : el.secret.encryptedValue
                   ? secretManagerDecryptor({ cipherTextBlob: el.secret.encryptedValue }).toString()
                   : "",
@@ -417,7 +417,7 @@ export const secretApprovalRequestServiceFactory = ({
                 secretPath?.[0]?.path
               ),
               secretValue: !getHasSecretReadAccess(secretApprovalRequest.environment, el.tags, secretPath?.[0]?.path)
-                ? INFISICAL_SECRET_VALUE_HIDDEN_MASK
+                ? KMS_SECRET_VALUE_HIDDEN_MASK
                 : el.secretVersion.encryptedValue
                   ? secretManagerDecryptor({ cipherTextBlob: el.secretVersion.encryptedValue }).toString()
                   : "",
@@ -1206,7 +1206,7 @@ export const secretApprovalRequestServiceFactory = ({
 
       await smtpService.sendMail({
         recipients: approverUsers.filter((approver) => approver.email).map((approver) => approver.email!),
-        subjectLine: "Infisical Secret Change Policy Bypassed",
+        subjectLine: "Hanzo KMS Secret Change Policy Bypassed",
 
         substitutions: {
           projectName: project.name,

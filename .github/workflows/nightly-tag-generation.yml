@@ -24,11 +24,11 @@ jobs:
       
       - name: Generate nightly tag
         run: |
-          # Get the latest infisical production tag
+          # Get the latest kms production tag
           LATEST_STABLE_TAG=$(git tag --list | grep "^v[0-9].*$" | grep -v "nightly" | sort -V | tail -n1)
           
           if [ -z "$LATEST_STABLE_TAG" ]; then
-            echo "No infisical production tags found, using v0.1.0"
+            echo "No kms production tags found, using v0.1.0"
             LATEST_STABLE_TAG="v0.1.0"
           fi
           

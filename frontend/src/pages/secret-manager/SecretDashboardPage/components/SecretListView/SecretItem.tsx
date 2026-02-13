@@ -60,7 +60,7 @@ import { CollapsibleSecretImports } from "./CollapsibleSecretImports";
 import { useBatchModeActions } from "../../SecretMainPage.store";
 
 export const HIDDEN_SECRET_VALUE = "*************************";
-export const HIDDEN_SECRET_VALUE_API_MASK = "<hidden-by-infisical>";
+export const HIDDEN_SECRET_VALUE_API_MASK = "<hidden-by-kms>";
 
 type Props = {
   secret: SecretV3RawSanitized & { originalKey?: string };

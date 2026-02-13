@@ -494,7 +494,7 @@ export const AwsSecretManagerConfigurePage = () => {
                             errorText={error?.message}
                             isError={Boolean(error)}
                           >
-                            <Input placeholder="infisical" {...field} />
+                            <Input placeholder="kms" {...field} />
                           </FormControl>
                         )}
                       />
@@ -510,7 +510,7 @@ export const AwsSecretManagerConfigurePage = () => {
                       isError={Boolean(error)}
                       className="mt-4"
                     >
-                      <Input placeholder="INFISICAL_" {...field} />
+                      <Input placeholder="KMS_" {...field} />
                     </FormControl>
                   )}
                 />
@@ -588,7 +588,7 @@ export const AwsSecretManagerConfigurePage = () => {
           src="/images/loading/loading.gif"
           height={70}
           width={120}
-          alt="infisical loading indicator"
+          alt="loading indicator"
         />
       ) : (
         <div className="flex h-max max-w-md flex-col rounded-md border border-mineshaft-600 bg-mineshaft-800 p-6 text-center text-mineshaft-200">

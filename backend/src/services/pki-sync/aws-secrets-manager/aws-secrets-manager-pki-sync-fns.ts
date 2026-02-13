@@ -48,7 +48,7 @@ const sleep = async () =>
     setTimeout(resolve, 1000);
   });
 
-const isInfisicalManagedCertificate = (secretName: string, pkiSync: TPkiSyncWithCredentials): boolean => {
+const isHanzo KMSManagedCertificate = (secretName: string, pkiSync: TPkiSyncWithCredentials): boolean => {
   const syncOptions = pkiSync.syncOptions as { certificateNameSchema?: string } | undefined;
   const certificateNameSchema = syncOptions?.certificateNameSchema;
 
@@ -57,7 +57,7 @@ const isInfisicalManagedCertificate = (secretName: string, pkiSync: TPkiSyncWith
     return matchesCertificateNameSchema(secretName, environment, certificateNameSchema);
   }
 
-  return secretName.startsWith(AWS_SECRETS_MANAGER_PKI_SYNC_DEFAULTS.INFISICAL_PREFIX);
+  return secretName.startsWith(AWS_SECRETS_MANAGER_PKI_SYNC_DEFAULTS.KMS_PREFIX);
 };
 
 const parseErrorMessage = (error: unknown): string => {
@@ -145,7 +145,7 @@ export const awsSecretsManagerPkiSyncFactory = ({
           output.SecretList.forEach((secretEntry) => {
             if (
               secretEntry.Name &&
-              isInfisicalManagedCertificate(secretEntry.Name, pkiSync as unknown as TPkiSyncWithCredentials)
+              isHanzo KMSManagedCertificate(secretEntry.Name, pkiSync as unknown as TPkiSyncWithCredentials)
             ) {
               secrets[secretEntry.Name] = secretEntry.ARN || secretEntry.Name;
             }
@@ -278,7 +278,7 @@ export const awsSecretsManagerPkiSyncFactory = ({
           .replace(new RE2("\\{\\{certificateId\\}\\}", "g"), certificateId)
           .replace(new RE2("\\{\\{commonName\\}\\}", "g"), safeCommonName);
       } else {
-        targetSecretName = `${AWS_SECRETS_MANAGER_PKI_SYNC_DEFAULTS.INFISICAL_PREFIX}${certificateId}`;
+        targetSecretName = `${AWS_SECRETS_MANAGER_PKI_SYNC_DEFAULTS.KMS_PREFIX}${certificateId}`;
       }
 
       const certificate = await certificateDAL.findById(certificateId);
@@ -378,7 +378,7 @@ export const awsSecretsManagerPkiSyncFactory = ({
                   Name: targetSecretName,
                   SecretString: secretValue,
                   KmsKeyId: keyId,
-                  Description: `Certificate managed by Infisical`
+                  Description: `Certificate managed by Hanzo KMS`
                 })
               ),
             {

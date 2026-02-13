@@ -36,6 +36,6 @@ export default UnlockAccountTemplate;
 
 UnlockAccountTemplate.PreviewProps = {
   callback_url: "Example Project",
-  siteUrl: "https://infisical.com",
+  siteUrl: "https://kms.hanzo.ai",
   token: "preview-token"
 } as UnlockAccountTemplateProps;

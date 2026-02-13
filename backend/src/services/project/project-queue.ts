@@ -334,7 +334,7 @@ export const projectQueueFactory = ({
         // 5. Create a bot for the project
         const newBot = await projectBotDAL.create(
           {
-            name: "Infisical Bot (Ghost)",
+            name: "Hanzo KMS Bot (Ghost)",
             projectId: project.id,
             tag,
             iv,

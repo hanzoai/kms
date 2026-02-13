@@ -1,15 +1,15 @@
 ---
-title: "Infisical Rust SDK"
+title: "Hanzo KMS Rust SDK"
 sidebarTitle: "Rust"
 icon: "/images/sdks/languages/rust.svg"
 ---
 
-If you're working with Rust, the official Infisical Rust SDK package is the easiest way to fetch and work with secrets for your application.
+If you're working with Rust, the official Hanzo KMS Rust SDK package is the easiest way to fetch and work with secrets for your application.
 
 ### Installation
 
 ```bash
-cargo add infisical
+cargo add kms
 ```
 
 ### Getting Started
@@ -17,13 +17,13 @@ cargo add infisical
 The easiest way to get started is to use the builder pattern for both the client and your requests.
 
 ```rust
-use infisical::{AuthMethod, Client, InfisicalError, encode_base64, decode_base64};
-use infisical::secrets::GetSecretRequest;
+use kms::{AuthMethod, Client, Hanzo KMSError, encode_base64, decode_base64};
+use kms::secrets::GetSecretRequest;
 
-async fn fetch_secret() -> Result<(), InfisicalError> {
+async fn fetch_secret() -> Result<(), Hanzo KMSError> {
     // 1. Build the client. You can chain methods to configure it.
     let mut client = Client::builder()
-        .base_url("https://app.infisical.com") // Optional: defaults to https://app.infisical.com
+        .base_url("https://kms.hanzo.ai") // Optional: defaults to https://kms.hanzo.ai
         .build()
         .await?;
 
@@ -54,13 +54,13 @@ The `Client::builder()` provides several configuration options:
 
 ```rust
 let mut client = Client::builder()
-    .base_url("https://app.infisical.com") // Optional: set custom Infisical instance URL
+    .base_url("https://kms.hanzo.ai") // Optional: set custom Hanzo KMS instance URL
     .build()
     .await?;
 ```
 
 **Parameters**
-- `.base_url(url)`: Optional method to set the Infisical instance URL. Defaults to `https://app.infisical.com` for Infisical Cloud. Use `https://eu.infisical.com` for EU and `http://localhost:8080` for local development.
+- `.base_url(url)`: Optional method to set the Hanzo KMS instance URL. Defaults to `https://kms.hanzo.ai` for Hanzo KMS Cloud. Use `https://eu.kms.hanzo.ai` for EU and `http://localhost:8080` for local development.
 
 ### Core Methods
 
@@ -76,7 +76,7 @@ The SDK methods are organized into the following high-level categories:
 The SDK provides utility functions for common operations:
 
 ```rust
-use infisical::{encode_base64, decode_base64};
+use kms::{encode_base64, decode_base64};
 
 // Base64 encode a string
 let encoded = encode_base64("sensitive data");
@@ -89,7 +89,7 @@ println!("Decoded: {}", decoded);
 
 **Available Functions**
 - `encode_base64(data: &str) -> String`: Encodes a string as base64
-- `decode_base64(data: &str) -> Result<String, InfisicalError>`: Decodes a base64 string
+- `decode_base64(data: &str) -> Result<String, Hanzo KMSError>`: Decodes a base64 string
 
 ### `secrets`
 
@@ -102,7 +102,7 @@ Create a new secret in your project.
 **Example**
 
 ```rust
-use infisical::secrets::CreateSecretRequest;
+use kms::secrets::CreateSecretRequest;
 
 let request = CreateSecretRequest::builder(
     "API_KEY",
@@ -132,7 +132,7 @@ Retrieve a specific secret by name.
 **Example**
 
 ```rust
-use infisical::secrets::GetSecretRequest;
+use kms::secrets::GetSecretRequest;
 
 let request = GetSecretRequest::builder("API_KEY", "<your-project-id>", "dev")
     .path("/")
@@ -155,7 +155,7 @@ List all secrets in a project and environment.
 **Example**
 
 ```rust
-use infisical::secrets::ListSecretsRequest;
+use kms::secrets::ListSecretsRequest;
 
 let request = ListSecretsRequest::builder("<your-project-id>", "dev")
     .path("/")
@@ -180,7 +180,7 @@ Update an existing secret.
 **Example**
 
 ```rust
-use infisical::secrets::UpdateSecretRequest;
+use kms::secrets::UpdateSecretRequest;
 
 let request = UpdateSecretRequest::builder("API_KEY", "<your-project-id>", "dev")
     .secret_value("new-secret-value") // Set the new value
@@ -206,7 +206,7 @@ Delete a secret from your project.
 **Example**
 
 ```rust
-use infisical::secrets::DeleteSecretRequest;
+use kms::secrets::DeleteSecretRequest;
 
 let request = DeleteSecretRequest::builder("API_KEY", "<your-project-id>", "dev")
     .path("/")
@@ -232,7 +232,7 @@ List all KMS keys in a project.
 **Example**
 
 ```rust
-use infisical::kms::ListKmsKeysRequest;
+use kms::kms::ListKmsKeysRequest;
 
 let request = ListKmsKeysRequest::builder("<your-project-id>").build();
 
@@ -250,7 +250,7 @@ Retrieve a specific KMS key by ID.
 **Example**
 
 ```rust
-use infisical::kms::GetKmsKeyRequest;
+use kms::kms::GetKmsKeyRequest;
 
 let request = GetKmsKeyRequest::builder("<key-id>").build();
 
@@ -268,7 +268,7 @@ Retrieve a specific KMS key by name.
 **Example**
 
 ```rust
-use infisical::kms::GetKmsKeyByNameRequest;
+use kms::kms::GetKmsKeyByNameRequest;
 
 let request = GetKmsKeyByNameRequest::builder("<key-name>").build();
 
@@ -286,7 +286,7 @@ Create a new KMS key in your project.
 **Example**
 
 ```rust
-use infisical::kms::{CreateKmsKeyRequest, EncryptionAlgorithm, KeyUsage};
+use kms::kms::{CreateKmsKeyRequest, EncryptionAlgorithm, KeyUsage};
 
 let request = CreateKmsKeyRequest::builder("<your-project-id>", "my-key")
     .description("A key for encryption operations")
@@ -311,7 +311,7 @@ Update an existing KMS key.
 **Example**
 
 ```rust
-use infisical::kms::UpdateKmsKeyRequest;
+use kms::kms::UpdateKmsKeyRequest;
 
 let request = UpdateKmsKeyRequest::builder("<key-id>")
     .name("updated-key-name")
@@ -336,7 +336,7 @@ Delete a KMS key from your project.
 **Example**
 
 ```rust
-use infisical::kms::DeleteKmsKeyRequest;
+use kms::kms::DeleteKmsKeyRequest;
 
 let request = DeleteKmsKeyRequest::builder("<key-id>").build();
 
@@ -354,7 +354,7 @@ Encrypt data using a KMS key.
 **Example**
 
 ```rust
-use infisical::kms::EncryptRequest;
+use kms::kms::EncryptRequest;
 
 let request = EncryptRequest::builder("<key-id>", "sensitive data").build();
 
@@ -372,7 +372,7 @@ Decrypt data using a KMS key.
 **Example**
 
 ```rust
-use infisical::kms::DecryptRequest;
+use kms::kms::DecryptRequest;
 
 let request = DecryptRequest::builder("<key-id>", "encrypted-data").build();
 
@@ -390,7 +390,7 @@ Sign data using a KMS key.
 **Example**
 
 ```rust
-use infisical::kms::{SigningAlgorithm, SignRequest};
+use kms::kms::{SigningAlgorithm, SignRequest};
 
 let request = SignRequest::builder("<key-id>", "data to sign")
     .signing_algorithm(SigningAlgorithm::RsassaPkcs1V15Sha256)
@@ -413,7 +413,7 @@ Verify a signature using a KMS key.
 **Example**
 
 ```rust
-use infisical::kms::{SigningAlgorithm, VerifyRequest};
+use kms::kms::{SigningAlgorithm, VerifyRequest};
 
 let request = VerifyRequest::builder("<key-id>", "data to sign", "signature")
     .signing_algorithm(SigningAlgorithm::RsassaPkcs1V15Sha256)
@@ -464,21 +464,21 @@ let algorithms = client.kms().get_signing_algorithms("<key-id>").await?;
 For development and testing, you'll need to set up environment variables. Create a `.env` file in your project root:
 
 ```env
-INFISICAL_CLIENT_ID=your_client_id_here
-INFISICAL_CLIENT_SECRET=your_client_secret_here
-INFISICAL_BASE_URL=http://localhost:8080  # Optional: for local development
+KMS_CLIENT_ID=your_client_id_here
+KMS_CLIENT_SECRET=your_client_secret_here
+KMS_BASE_URL=http://localhost:8080  # Optional: for local development
 
 # Project IDs for different resources
-INFISICAL_SECRETS_PROJECT_ID=your_project_id_here
-INFISICAL_KMS_PROJECT_ID=your_project_id_here
+KMS_SECRETS_PROJECT_ID=your_project_id_here
+KMS_KMS_PROJECT_ID=your_project_id_here
 ```
 
 ### Getting Credentials
 
 To obtain the required credentials:
 
-1. **Client ID and Secret**: Create a Universal Auth machine identity in your Infisical project settings
-2. **Project ID**: Found in your project settings or URL when viewing a project in the Infisical dashboard
+1. **Client ID and Secret**: Create a Universal Auth machine identity in your Hanzo KMS project settings
+2. **Project ID**: Found in your project settings or URL when viewing a project in the Hanzo KMS dashboard
 
 ### Running Tests
 
@@ -492,4 +492,4 @@ cargo test -- --ignored --nocapture
 cargo test test_kms_resource -- --ignored --nocapture
 ```
 
-**Note**: Integration tests require a running Infisical instance and valid authentication credentials.
+**Note**: Integration tests require a running Hanzo KMS instance and valid authentication credentials.

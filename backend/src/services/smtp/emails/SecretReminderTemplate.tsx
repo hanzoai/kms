@@ -41,5 +41,5 @@ SecretReminderTemplate.PreviewProps = {
   reminderNote: "Remember to rotate secret.",
   projectName: "Example Project",
   organizationName: "Example Organization",
-  siteUrl: "https://infisical.com"
+  siteUrl: "https://kms.hanzo.ai"
 } as SecretReminderTemplateProps;

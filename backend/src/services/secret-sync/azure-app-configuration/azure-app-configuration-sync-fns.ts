@@ -108,7 +108,7 @@ export const azureAppConfigurationSyncFactory = ({
       ])
     );
 
-    // add the secrets to azure app config, that are in infisical
+    // add the secrets to azure app config, that are in Hanzo KMS
     for await (const key of Object.keys(secretMap)) {
       if (!(key in azureAppConfigSecretsLabeled) || secretMap[key]?.value !== azureAppConfigSecretsLabeled[key]) {
         await request.put(
@@ -172,12 +172,12 @@ export const azureAppConfigurationSyncFactory = ({
       ).map((entry) => [entry.key, entry.value])
     );
 
-    for await (const infisicalKey of Object.keys(secretMap)) {
-      if (infisicalKey in azureAppConfigSecrets) {
+    for await (const kmsKey of Object.keys(secretMap)) {
+      if (kmsKey in azureAppConfigSecrets) {
         await $deleteAzureSecret(
           accessToken,
           secretSync.destinationConfig.configurationUrl,
-          infisicalKey,
+          kmsKey,
           secretSync.destinationConfig.label
         );
       }

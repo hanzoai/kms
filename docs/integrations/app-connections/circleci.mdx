@@ -1,9 +1,9 @@
 ---
 title: "CircleCI Connection"
-description: "Learn how to configure a CircleCI Connection for Infisical."
+description: "Learn how to configure a CircleCI Connection for Hanzo KMS."
 ---
 
-Infisical supports the use of [API Tokens](https://app.circleci.com/settings/user/tokens) to connect with CircleCI.
+Hanzo KMS supports the use of [API Tokens](https://app.circleci.com/settings/user/tokens) to connect with CircleCI.
 <Note>
   CircleCI requires the account user to have Read/Write or Admin permissions
 </Note>
@@ -21,19 +21,19 @@ Infisical supports the use of [API Tokens](https://app.circleci.com/settings/use
   </Step>
    <Step title="Set a name for the token and click 'Add API Token'">
     After creating the token, save the shown token value as it will not be shown again.
-    You will need this token to configure your Infisical connection
+    You will need this token to configure your Hanzo KMS connection
 
     ![Api Keys Page](/images/app-connections/circleci/circleci-create-new-token.png)
   </Step>
 </Steps>
 
-## Create a CircleCI Connection in Infisical
+## Create a CircleCI Connection in Hanzo KMS
 
 <Tabs>
-  <Tab title="Infisical UI">
+  <Tab title="Hanzo KMS UI">
     <Steps>
       <Step title="Navigate to App Connections">
-        In your Infisical dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
+        In your Hanzo KMS dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
 
         ![App Connections Tab](/images/app-connections/general/add-connection.png)
       </Step>
@@ -51,7 +51,7 @@ Infisical supports the use of [API Tokens](https://app.circleci.com/settings/use
         ![CircleCI Connection Modal](/images/app-connections/circleci/circleci-app-connection-form.png)
       </Step>
       <Step title="Connection created">
-        After submitting the form, your **CircleCI Connection** will be successfully created and ready to use with your Infisical project.
+        After submitting the form, your **CircleCI Connection** will be successfully created and ready to use with your Hanzo KMS project.
 
         ![CircleCI Connection Created](/images/app-connections/circleci/circleci-app-connection-generated.png)
       </Step>
@@ -66,7 +66,7 @@ Infisical supports the use of [API Tokens](https://app.circleci.com/settings/use
 
     ```bash Request
     curl    --request POST \
-            --url https://app.infisical.com/api/v1/app-connections/circleci \
+            --url https://kms.hanzo.ai/api/v1/app-connections/circleci \
             --header 'Content-Type: application/json' \
             --data '{
                 "name": "my-circleci-connection",

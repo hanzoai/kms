@@ -1959,7 +1959,7 @@ export const integrationAuthServiceFactory = ({
     const client = await OctopusClient.create({
       apiKey: accessToken,
       instanceURL: integrationAuth.url!,
-      userAgentApp: "Infisical Integration"
+      userAgentApp: "Hanzo KMS Integration"
     });
 
     const spaceRepository = new OctopusSpaceRepository(client);

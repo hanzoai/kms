@@ -1,0 +1,72 @@
+---
+{{- if .Values.kms.serviceAccount.create }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ printf "%s-kms" .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "kms.labels" . | nindent 4 }}
+  {{- with .Values.kms.serviceAccount.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "kms.roleName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "kms.labels" . | nindent 4 }}
+rules:
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs: ["get", "watch", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "kms.roleBindingName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "kms.labels" . | nindent 4 }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "kms.serviceAccountName" . }}
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "kms.roleName" . }}
+---
+{{- if .Values.kms.autoBootstrap.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "kms.roleName" . }}-bootstrap
+  namespace: {{ .Values.kms.autoBootstrap.secretDestination.namespace | default .Release.Namespace }}
+  labels:
+    {{- include "kms.labels" . | nindent 4 }}
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "create", "update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "kms.roleBindingName" . }}-bootstrap
+  namespace: {{ .Values.kms.autoBootstrap.secretDestination.namespace | default .Release.Namespace }}
+  labels:
+    {{- include "kms.labels" . | nindent 4 }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "kms.serviceAccountName" . }}
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "kms.roleName" . }}-bootstrap
+{{- end }}

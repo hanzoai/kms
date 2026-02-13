@@ -1,31 +1,31 @@
 ---
 title: "AB Initio"
-description: "How to use Infisical secrets in AB Initio."
+description: "How to use Hanzo KMS secrets in AB Initio."
 ---
 
 ## Prerequisites
 
-- Set up and add envars to [Infisical](https://app.infisical.com).
-- Install the [Infisical CLI](https://infisical.com/docs/cli/overview) to your server.
+- Set up and add envars to [Hanzo KMS](https://kms.hanzo.ai).
+- Install the [KMS CLI](https://kms.hanzo.ai/docs/cli/overview) to your server.
 
 ## Setup
 
 <Steps>
-    <Step title="Authorize Infisical for AB Initio">
-        Create a [machine identity](https://infisical.com/docs/documentation/platform/identities/machine-identities#machine-identities) in Infisical and give it the appropriate read permissions for the desired project and secret paths.
+    <Step title="Authorize Hanzo KMS for AB Initio">
+        Create a [machine identity](https://kms.hanzo.ai/docs/documentation/platform/identities/machine-identities#machine-identities) in Hanzo KMS and give it the appropriate read permissions for the desired project and secret paths.
     </Step>
-    <Step title="Add Infisical CLI to your workflow">
-        Update your AB Initio workflows to use Infisical CLI to inject Infisical secrets as environment variables.
+    <Step title="Add KMS CLI to your workflow">
+        Update your AB Initio workflows to use KMS CLI to inject Hanzo KMS secrets as environment variables.
     
         ```bash
         # Login using the machine identity. Modify this accordingly based on the authentication method used.
-        export INFISICAL_TOKEN=$(infisical login --method=universal-auth --client-id=$INFISICAL_CLIENT_ID --client-secret=$INFISICAL_CLIENT_SECRET --silent --plain)
+        export KMS_TOKEN=$(hanzo-kms login --method=universal-auth --client-id=$KMS_CLIENT_ID --client-secret=$KMS_CLIENT_SECRET --silent --plain)
 
-        # Fetch secrets from Infisical
-        infisical export --projectId="<>" --env="prod" > infisical.env
+        # Fetch secrets from Hanzo KMS
+        hanzo-kms export --projectId="<>" --env="prod" > kms.env
 
         # Inject secrets as environment variables
-        source infisical.env
+        source kms.env
         ```
     </Step>
 

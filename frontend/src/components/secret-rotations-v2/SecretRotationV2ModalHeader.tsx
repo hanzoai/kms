@@ -21,7 +21,7 @@ export const SecretRotationV2ModalHeader = ({ type, isConfigured }: Props) => {
         <div className="flex items-center gap-x-2 text-mineshaft-300">
           {destinationDetails.name} Rotation
           <DocumentationLinkBadge
-            href={`https://infisical.com/docs/documentation/platform/secret-rotation/${type}`}
+            href={`https://kms.hanzo.ai/docs/documentation/platform/secret-rotation/${type}`}
           />
         </div>
         <p className="text-sm leading-4 text-mineshaft-400">

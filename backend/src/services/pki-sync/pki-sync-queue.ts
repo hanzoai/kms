@@ -155,7 +155,7 @@ export const pkiSyncQueueFactory = ({
     );
   };
 
-  const $getInfisicalCertificates = async (
+  const $getHanzo KMSCertificates = async (
     pkiSync: TPkiSyncRaw | TPkiSyncWithCredentials
   ): Promise<{ certificateMap: TCertificateMap; certificateMetadata: Map<string, { id: string; name: string }> }> => {
     const { projectId, subscriberId, id: pkiSyncId } = pkiSync;
@@ -292,18 +292,18 @@ export const pkiSyncQueueFactory = ({
               const stableId = cert.profileId
                 ? `${cert.profileId.replace(/-/g, "")}-${(cert.commonName || "").replace(/[^a-zA-Z0-9]/g, "")}`
                 : certificate.id.replace(/-/g, "");
-              certificateName = `Infisical-${stableId}`;
+              certificateName = `Hanzo KMS-${stableId}`;
             }
 
             const alternativeNames: string[] = [];
 
-            const legacyName = `Infisical-${certificate.id.replace(/-/g, "")}`;
+            const legacyName = `Hanzo KMS-${certificate.id.replace(/-/g, "")}`;
             if (legacyName !== certificateName) {
               alternativeNames.push(legacyName);
             }
 
             if (cert.renewedFromCertificateId) {
-              const originalLegacyName = `Infisical-${cert.renewedFromCertificateId.replace(/-/g, "")}`;
+              const originalLegacyName = `Hanzo KMS-${cert.renewedFromCertificateId.replace(/-/g, "")}`;
               alternativeNames.push(originalLegacyName);
             }
 
@@ -440,7 +440,7 @@ export const pkiSyncQueueFactory = ({
         }
       } as TPkiSyncWithCredentials;
 
-      const { certificateMap, certificateMetadata } = await $getInfisicalCertificates(pkiSync);
+      const { certificateMap, certificateMetadata } = await $getHanzo KMSCertificates(pkiSync);
 
       const statusUpdates = Array.from(certificateMetadata.entries()).map(([, metadata]) => ({
         pkiSyncId: pkiSync.id,
@@ -706,7 +706,7 @@ export const pkiSyncQueueFactory = ({
         projectId: appConnectionProjectId
       });
 
-      const { certificateMap } = await $getInfisicalCertificates(pkiSync);
+      const { certificateMap } = await $getHanzo KMSCertificates(pkiSync);
 
       await PkiSyncFns.removeCertificates(
         {

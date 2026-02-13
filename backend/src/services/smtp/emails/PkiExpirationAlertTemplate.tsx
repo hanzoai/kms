@@ -87,5 +87,5 @@ PkiExpirationAlertTemplate.PreviewProps = {
   ],
   alertName: "Production SSL Certificate Expiration Alert",
   projectId: "c3b0ef29-915b-4cb1-8684-65b91b7fe02d",
-  siteUrl: "https://infisical.com"
+  siteUrl: "https://kms.hanzo.ai"
 } as PkiExpirationAlertTemplateProps;

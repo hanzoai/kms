@@ -4,7 +4,7 @@ sidebarTitle: "Webhook Alerts"
 description: "Learn how to set up webhook notifications for PKI certificate alerts"
 ---
 
-Infisical can send PKI certificate alert notifications to a webhook URL. This guide walks through creating a webhook alert, the payload format, and how to verify webhook signatures.
+Hanzo KMS can send PKI certificate alert notifications to a webhook URL. This guide walks through creating a webhook alert, the payload format, and how to verify webhook signatures.
 
 ## Guide to Creating a Webhook Alert
 
@@ -33,7 +33,7 @@ Webhook notifications are sent as HTTP POST requests with a [CloudEvents](https:
 ```json
 {
   "specversion": "1.0",
-  "type": "com.infisical.pki.certificate.expiration",
+  "type": "com.kms.pki.certificate.expiration",
   "source": "/projects/<project-id>/alerts/<alert-id>",
   "id": "<unique-event-id>",
   "time": "2024-01-15T10:30:00.000Z",
@@ -61,7 +61,7 @@ Webhook notifications are sent as HTTP POST requests with a [CloudEvents](https:
     ],
     "metadata": {
       "totalCertificates": 1,
-      "viewUrl": "https://app.infisical.com/cert-manager/<project-id>/policies"
+      "viewUrl": "https://kms.hanzo.ai/cert-manager/<project-id>/policies"
     }
   }
 }
@@ -69,12 +69,12 @@ Webhook notifications are sent as HTTP POST requests with a [CloudEvents](https:
 
 ## Webhook Signature Verification
 
-If you configure a signing secret for your webhook channel, Infisical will include an `x-infisical-signature` header with each request. This allows you to verify that the webhook payload originated from Infisical.
+If you configure a signing secret for your webhook channel, Hanzo KMS will include an `x-kms-signature` header with each request. This allows you to verify that the webhook payload originated from Hanzo KMS.
 
 The header format is:
 
 ```
-x-infisical-signature: t=<timestamp>,v1=<signature>
+x-kms-signature: t=<timestamp>,v1=<signature>
 ```
 
 Where:

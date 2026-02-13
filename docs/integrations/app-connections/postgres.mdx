@@ -1,21 +1,21 @@
 ---
 title: "PostgreSQL Connection"
-description: "Learn how to configure a PostgreSQL Connection for Infisical."
+description: "Learn how to configure a PostgreSQL Connection for Hanzo KMS."
 ---
 
-Infisical supports connecting to PostgreSQL using a database role.
+Hanzo KMS supports connecting to PostgreSQL using a database role.
 
-## Configure a PostgreSQL Role for Infisical
+## Configure a PostgreSQL Role for Hanzo KMS
 
 <Steps>
     <Step title="Create a Role">
-        Infisical recommends creating a designated role in your PostgreSQL database for your connection.
+        Hanzo KMS recommends creating a designated role in your PostgreSQL database for your connection.
         ```SQL
         -- create user role
-        CREATE ROLE infisical_role WITH LOGIN PASSWORD 'my-password';
+        CREATE ROLE kms_role WITH LOGIN PASSWORD 'my-password';
 
         -- grant login access to the specified database
-        GRANT CONNECT ON DATABASE my_database TO infisical_role;
+        GRANT CONNECT ON DATABASE my_database TO kms_role;
         ```
     </Step>
     <Step title="Grant Relevant Permissions">
@@ -25,18 +25,18 @@ Infisical supports connecting to PostgreSQL using a database role.
         </Tip>
         <Tabs>
             <Tab title="Secret Rotation">
-                For Secret Rotations, your Infisical user will require the ability to alter other users' passwords:
+                For Secret Rotations, your Hanzo KMS user will require the ability to alter other users' passwords:
                 ```SQL
                 -- enable permissions to alter login credentials
-                ALTER ROLE infisical_role WITH CREATEROLE;
+                ALTER ROLE kms_role WITH CREATEROLE;
                 ```
                 <Tip>
                     In some configurations, the role performing the rotation must be explicitly granted access to manage each user. To do this, grant the user's role to the rotation role with:
                     ```SQL
                     -- grant each user role to admin user for password rotation
-                    GRANT <secret_rotation_user> TO <infisical_role> WITH ADMIN OPTION;
+                    GRANT <secret_rotation_user> TO <kms_role> WITH ADMIN OPTION;
                     ```
-                    Replace `<secret_rotation_user>` with each specific username whose credentials will be rotated, and `<infisical_role>` with the role that will perform the rotation.
+                    Replace `<secret_rotation_user>` with each specific username whose credentials will be rotated, and `<kms_role>` with the role that will perform the rotation.
                 </Tip>
             </Tab>
         </Tabs>
@@ -51,15 +51,15 @@ Infisical supports connecting to PostgreSQL using a database role.
         - `sslCertificate` (optional) - The SSL certificate required for connection (if configured)
 
         <Note>
-            If you are self-hosting Infisical and intend to connect to an internal/private IP address, be sure to set the `ALLOW_INTERNAL_IP_CONNECTIONS` environment variable to `true`.
+            If you are self-hosting Hanzo KMS and intend to connect to an internal/private IP address, be sure to set the `ALLOW_INTERNAL_IP_CONNECTIONS` environment variable to `true`.
         </Note>
     </Step>
 </Steps>
 
-## Create Connection in Infisical
+## Create Connection in Hanzo KMS
 
 <Tabs>
-    <Tab title="Infisical UI">
+    <Tab title="Hanzo KMS UI">
         1. Navigate to the **Integrations** tab in the desired project, then select **App Connections**.
         ![App Connections Tab](/images/app-connections/general/add-connection.png)
 
@@ -68,8 +68,8 @@ Infisical supports connecting to PostgreSQL using a database role.
 
         3. Select the **Username & Password** method option and provide the details obtained from the previous section and press **Connect to PostgreSQL**.
         <Note>
-            Optionally, if you'd like Infisical to manage the credentials of this connection, you can enable the Platform Managed Credentials option.
-            If enabled, Infisical will update the password of the connection on creation to prevent external access to this database role.
+            Optionally, if you'd like Hanzo KMS to manage the credentials of this connection, you can enable the Platform Managed Credentials option.
+            If enabled, Hanzo KMS will update the password of the connection on creation to prevent external access to this database role.
         </Note>
         ![Create PostgreSQL Connection](/images/app-connections/postgres/create-username-and-password-method.png)
 
@@ -81,15 +81,15 @@ Infisical supports connecting to PostgreSQL using a database role.
         Connection](/api-reference/endpoints/app-connections/postgres/create) API endpoint.
 
             <Note>
-                Optionally, if you'd like Infisical to manage the credentials of this connection, you can set the `isPlatformManagedCredentials` option to `true`.
-                If enabled, Infisical will update the password of the connection on creation to prevent external access to this database role.
+                Optionally, if you'd like Hanzo KMS to manage the credentials of this connection, you can set the `isPlatformManagedCredentials` option to `true`.
+                If enabled, Hanzo KMS will update the password of the connection on creation to prevent external access to this database role.
             </Note>
 
         ### Sample request
 
         ```bash Request
         curl    --request POST \
-        --url https://app.infisical.com/api/v1/app-connections/postgres \
+        --url https://kms.hanzo.ai/api/v1/app-connections/postgres \
         --header 'Content-Type: application/json' \
         --data '{
             "name": "my-pg-connection",
@@ -100,7 +100,7 @@ Infisical supports connecting to PostgreSQL using a database role.
                 "host": "123.4.5.6",
                 "port": 5432,
                 "database": "default",
-                "username": "infisical_role",
+                "username": "kms_role",
                 "password": "my-password",
                 "sslEnabled": true,
                 "sslRejectUnauthorized": true
@@ -127,7 +127,7 @@ Infisical supports connecting to PostgreSQL using a database role.
                     "host": "123.4.5.6",
                     "port": 5432,
                     "database": "default",
-                    "username": "infisical_role",
+                    "username": "kms_role",
                     "sslEnabled": true,
                     "sslRejectUnauthorized": true
                 }

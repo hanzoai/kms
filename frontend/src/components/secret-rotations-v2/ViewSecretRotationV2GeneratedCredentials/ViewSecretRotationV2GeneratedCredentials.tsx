@@ -172,13 +172,13 @@ const Content = ({ secretRotation }: ContentProps) => {
             retired credentials will not be able to authenticate with {appName} during their{" "}
             <a
               target="_blank"
-              href="https://infisical.com/docs/documentation/platform/secret-rotation/overview#how-rotation-works"
+              href="https://kms.hanzo.ai/docs/documentation/platform/secret-rotation/overview#how-rotation-works"
               rel="noopener noreferrer"
               className="underline decoration-primary underline-offset-2 hover:text-mineshaft-200"
             >
               inactive period
             </a>
-            . This is a limitation of {appName} and cannot be rectified by Infisical.
+            . This is a limitation of {appName} and cannot be rectified by Hanzo KMS.
           </p>
         </NoticeBannerV2>
       )}

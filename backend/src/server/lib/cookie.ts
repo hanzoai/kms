@@ -23,7 +23,7 @@ export function addAuthOriginDomainCookie(res: FastifyReply) {
     const parts = hostname.split(".");
 
     if (parts.length >= 2) {
-      // For `app.infisical.com` => `.infisical.com`
+      // For `kms.hanzo.ai` => `.hanzo.ai`
       domain = `.${parts.slice(-2).join(".")}`;
     } else {
       // If somehow only "example", fallback to itself

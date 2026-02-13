@@ -21,7 +21,7 @@ export const SecretScanningDataSourceModalHeader = ({ type, isConfigured }: Prop
         <div className="flex items-center gap-x-2 text-mineshaft-300">
           {dataSourceDetails.name} Data Source
           <DocumentationLinkBadge
-            href={`https://infisical.com/docs/documentation/platform/secret-scanning/${type}`}
+            href={`https://kms.hanzo.ai/docs/documentation/platform/secret-scanning/${type}`}
           />
         </div>
         <p className="text-sm leading-4 text-mineshaft-400">

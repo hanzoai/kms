@@ -553,7 +553,7 @@ export const IdentityLdapAuthForm = ({
                 <Input
                   {...field}
                   containerClassName={scope === "template" ? "opacity-55" : ""}
-                  placeholder="cn=infisical,ou=Users,dc=example,dc=com"
+                  placeholder="cn=kms,ou=Users,dc=example,dc=com"
                   isDisabled={scope === "template"}
                 />
               </FormControl>

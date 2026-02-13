@@ -47,7 +47,7 @@ export const cloneRepository = async ({ cloneUrl, repoPath }: TCloneRepository):
 
 export function scanDirectory(inputPath: string, outputPath: string, configPath?: string): Promise<void> {
   return new Promise((resolve, reject) => {
-    const command = `cd ${inputPath} && infisical scan --exit-code=77 -r "${outputPath}" ${configPath ? `-c ${configPath}` : ""}`;
+    const command = `cd ${inputPath} && hanzo-kms scan --exit-code=77 -r "${outputPath}" ${configPath ? `-c ${configPath}` : ""}`;
     exec(command, (error) => {
       if (error && error.code !== 77) {
         reject(error);
@@ -60,7 +60,7 @@ export function scanDirectory(inputPath: string, outputPath: string, configPath?
 
 export function scanFile(inputPath: string, configPath?: string): Promise<void> {
   return new Promise((resolve, reject) => {
-    const command = `infisical scan --exit-code=77 --source "${inputPath}" --no-git ${configPath ? `-c ${configPath}` : ""}`;
+    const command = `hanzo-kms scan --exit-code=77 --source "${inputPath}" --no-git ${configPath ? `-c ${configPath}` : ""}`;
     exec(command, (error) => {
       if (error && error.code === 77) {
         reject(error);
@@ -202,7 +202,7 @@ export const scanSecretPolicyViolations = async (
 
   const tempFolder = await createTempFolder();
   try {
-    const configPath = join(tempFolder, "infisical-scan.toml");
+    const configPath = join(tempFolder, "kms-scan.toml");
 
     const secretPolicyConfiguration = generateSecretValuePolicyConfiguration(
       appCfg.PARAMS_FOLDER_SECRET_DETECTION_ENTROPY

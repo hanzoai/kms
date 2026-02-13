@@ -99,7 +99,7 @@ export const gatewayV2ServiceFactory = ({
       const rootCaExpiration = new Date(new Date().setFullYear(2045));
 
       const rootCaCert = await x509.X509CertificateGenerator.createSelfSigned({
-        name: `O=${orgId},CN=Infisical Gateway Root CA`,
+        name: `O=${orgId},CN=KMS Gateway Root CA`,
         serialNumber: rootCaSerialNumber,
         notBefore: rootCaIssuedAt,
         notAfter: rootCaExpiration,
@@ -120,7 +120,7 @@ export const gatewayV2ServiceFactory = ({
       const serverCaSkObj = crypto.nativeCrypto.KeyObject.from(serverCaKeys.privateKey);
       const serverCaCert = await x509.X509CertificateGenerator.create({
         serialNumber: serverCaSerialNumber,
-        subject: `O=${orgId},CN=Infisical Gateway Server CA`,
+        subject: `O=${orgId},CN=KMS Gateway Server CA`,
         issuer: rootCaCert.subject,
         notBefore: serverCaIssuedAt,
         notAfter: serverCaExpiration,
@@ -150,7 +150,7 @@ export const gatewayV2ServiceFactory = ({
       const clientCaSkObj = crypto.nativeCrypto.KeyObject.from(clientCaKeys.privateKey);
       const clientCaCert = await x509.X509CertificateGenerator.create({
         serialNumber: clientCaSerialNumber,
-        subject: `O=${orgId},CN=Infisical Gateway Client CA`,
+        subject: `O=${orgId},CN=KMS Gateway Client CA`,
         issuer: rootCaCert.subject,
         notBefore: clientCaIssuedAt,
         notAfter: clientCaExpiration,

@@ -1,9 +1,9 @@
 ---
 title: "LDAP Connection"
-description: "Learn how to configure an LDAP Connection for Infisical."
+description: "Learn how to configure an LDAP Connection for Hanzo KMS."
 ---
 
-Infisical supports the use of [Simple Binding](https://ldap.com/the-ldap-bind-operation) to connect with your LDAP provider.
+Hanzo KMS supports the use of [Simple Binding](https://ldap.com/the-ldap-bind-operation) to connect with your LDAP provider.
 
 ## Prerequisites
 
@@ -29,10 +29,10 @@ Depending on how you intend to use your LDAP connection, there may be additional
 </Tabs>
 
 
-## Setup LDAP Connection in Infisical
+## Setup LDAP Connection in Hanzo KMS
 
 <Tabs>
-    <Tab title="Infisical UI">
+    <Tab title="Hanzo KMS UI">
         1. Navigate to the **Integrations** tab in the desired project, then select **App Connections**.
         ![App Connections Tab](/images/app-connections/general/add-connection.png)
 
@@ -53,7 +53,7 @@ Depending on how you intend to use your LDAP connection, there may be additional
 
         ```bash Request
         curl    --request POST \
-            --url https://app.infisical.com/api/v1/app-connections/ldap \
+            --url https://kms.hanzo.ai/api/v1/app-connections/ldap \
             --header 'Content-Type: application/json' \
             --data '{
                 "name": "my-ldap-connection",

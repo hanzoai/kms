@@ -1,13 +1,13 @@
 ---
 title: "Terraform"
-description: "How to deploy Infisical Relay Servers using Terraform"
+description: "How to deploy Hanzo KMS Relay Servers using Terraform"
 ---
 
-This guide walks you through deploying an Infisical Relay server using Terraform. Select a provider below for specific instructions.
+This guide walks you through deploying an Hanzo KMS Relay server using Terraform. Select a provider below for specific instructions.
 
 <Tabs>
 <Tab title="AWS EC2">
-The provided configuration automates the creation of the EC2 instance, sets up the necessary security group rules, and uses a startup script to install and configure the Infisical Relay service.
+The provided configuration automates the creation of the EC2 instance, sets up the necessary security group rules, and uses a startup script to install and configure the Hanzo KMS Relay service.
 
 ### Prerequisites
 
@@ -15,11 +15,11 @@ Before you start, make sure you have the following:
 - An AWS account with permissions to create EC2 instances, Security Groups, and Elastic IPs.
 - An existing VPC and Subnet ID in your desired AWS region.
 - The AMI ID for your chosen OS (this guide uses an Ubuntu 22.04 LTS AMI).
-- Credentials for the Infisical Relay to authenticate with your Infisical instance. This guide uses a Machine Identity token, but other methods are available. You can find a full list of authentication options [here](/cli/commands/relay#available-authentication-methods).
+- Credentials for the Hanzo KMS Relay to authenticate with your Hanzo KMS instance. This guide uses a Machine Identity token, but other methods are available. You can find a full list of authentication options [here](/cli/commands/relay#available-authentication-methods).
 
 ### Terraform Configuration
 
-Here is the complete Terraform configuration to deploy the Infisical Relay.
+Here is the complete Terraform configuration to deploy the Hanzo KMS Relay.
 
 ```terraform
 terraform {
@@ -35,13 +35,13 @@ provider "aws" {
   region = "us-west-2" # Change to your desired AWS region
 }
 
-# Security Group for the Infisical Relay instance
-resource "aws_security_group" "infisical_relay_sg" {
-  name        = "infisical-relay-sg"
-  description = "Allows inbound traffic for Infisical Relay and SSH"
+# Security Group for the Hanzo KMS Relay instance
+resource "aws_security_group" "kms_relay_sg" {
+  name        = "kms-relay-sg"
+  description = "Allows inbound traffic for Hanzo KMS Relay and SSH"
   vpc_id      = "vpc-0c71f9c5709d88d18" # Change to your VPC ID
 
-  # Inbound: Allows the Infisical platform to securely communicate with the Relay server.
+  # Inbound: Allows the Hanzo KMS platform to securely communicate with the Relay server.
   ingress {
     from_port   = 8443
     to_port     = 8443
@@ -49,7 +49,7 @@ resource "aws_security_group" "infisical_relay_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Inbound: Allows Infisical Gateway to securely communicate via the Relay.
+  # Inbound: Allows KMS Gateway to securely communicate via the Relay.
   ingress {
     from_port   = 2222
     to_port     = 2222
@@ -65,7 +65,7 @@ resource "aws_security_group" "infisical_relay_sg" {
     cidr_blocks = ["0.0.0.0/0"] # Restrict this to your IP in production
   }
 
-  # Outbound: Allows the Relay server to make necessary outbound connections to the Infisical platform.
+  # Outbound: Allows the Relay server to make necessary outbound connections to the Hanzo KMS platform.
   egress {
     from_port   = 0
     to_port     = 0
@@ -74,57 +74,57 @@ resource "aws_security_group" "infisical_relay_sg" {
   }
 
   tags = {
-    Name = "infisical-relay-sg"
+    Name = "kms-relay-sg"
   }
 }
 
 # Elastic IP for a static public IP address
-resource "aws_eip" "infisical_relay_eip" {
+resource "aws_eip" "kms_relay_eip" {
   tags = {
-    Name = "infisical-relay-eip"
+    Name = "kms-relay-eip"
   }
 }
 
-# EC2 instance to run Infisical Relay
-module "infisical_relay_instance" {
+# EC2 instance to run Hanzo KMS Relay
+module "kms_relay_instance" {
   source  = "terraform-aws-modules/ec2-instance/aws"
   version = "~> 5.6"
 
-  name          = "infisical-relay-example"
+  name          = "kms-relay-example"
   ami           = "ami-065778886ef8ec7c8" # Change to your desired AMI ID
   instance_type = "t3.micro"
   subnet_id     = "subnet-0fd2337a1c604a494" # Change to your Subnet ID
 
-  vpc_security_group_ids      = [aws_security_group.infisical_relay_sg.id]
+  vpc_security_group_ids      = [aws_security_group.kms_relay_sg.id]
   associate_public_ip_address = false # We are using an Elastic IP instead
 
   user_data = <<-EOT
     #!/bin/bash
     set -e
-    # Install Infisical CLI
-    curl -1sLf 'https://artifacts-cli.infisical.com/setup.deb.sh' | bash
-    apt-get update && apt-get install -y infisical
+    # Install KMS CLI
+    curl -1sLf 'https://artifacts-cli.kms.hanzo.ai/setup.deb.sh' | bash
+    apt-get update && apt-get install -y kms
 
     # Install the relay as a systemd service.
-    # This example uses a Machine Identity token for authentication via the INFISICAL_TOKEN environment variable.
+    # This example uses a Machine Identity token for authentication via the KMS_TOKEN environment variable.
     #
     # Note: For production environments, you might consider fetching the token from AWS Parameter Store or AWS Secrets Manager.
-    export INFISICAL_TOKEN="your-machine-identity-token"
-    sudo -E infisical relay systemd install \
+    export KMS_TOKEN="your-machine-identity-token"
+    sudo -E kms relay systemd install \
       --name "my-relay-example" \
-      --domain "https://app.infisical.com" \
-      --host "${aws_eip.infisical_relay_eip.public_ip}"
+      --domain "https://kms.hanzo.ai" \
+      --host "${aws_eip.kms_relay_eip.public_ip}"
 
     # Start and enable the service to run on boot
-    sudo systemctl start infisical-relay
-    sudo systemctl enable infisical-relay
+    sudo systemctl start kms-relay
+    sudo systemctl enable kms-relay
   EOT
 }
 
 # Associate the Elastic IP with the EC2 instance
 resource "aws_eip_association" "eip_assoc" {
-  instance_id   = module.infisical_relay_instance.id
-  allocation_id = aws_eip.infisical_relay_eip.id
+  instance_id   = module.kms_relay_instance.id
+  allocation_id = aws_eip.kms_relay_eip.id
 }
 ```
 
@@ -135,12 +135,12 @@ The provided security group rules are open to the internet (`0.0.0.0/0`) for sim
 ### How to Deploy
 
 1.  **Save the configuration:** Save the code above to a file named `main.tf`.
-2.  **Customize values:** Update the placeholder values in `main.tf` to match your AWS environment and Infisical credentials. You'll need to replace:
+2.  **Customize values:** Update the placeholder values in `main.tf` to match your AWS environment and Hanzo KMS credentials. You'll need to replace:
     - `region` in the `provider` block.
     - `vpc_id` in the `aws_security_group` resource.
-    - `ami` and `subnet_id` in the `infisical_relay_instance` module.
-    - The `INFISICAL_TOKEN` environment variable in the `user_data` script (e.g., `export INFISICAL_TOKEN="your-machine-identity-token"`).
-    - The `--domain` in the `user_data` script if you are self-hosting Infisical.
+    - `ami` and `subnet_id` in the `kms_relay_instance` module.
+    - The `KMS_TOKEN` environment variable in the `user_data` script (e.g., `export KMS_TOKEN="your-machine-identity-token"`).
+    - The `--domain` in the `user_data` script if you are self-hosting Hanzo KMS.
 3.  **Apply the configuration:** Run the following Terraform commands in your terminal:
     ```bash
     terraform init

@@ -36,9 +36,9 @@ export const AWS_SECRETS_MANAGER_PKI_SYNC_CERTIFICATE_NAMING = {
 } as const;
 
 export const AWS_SECRETS_MANAGER_PKI_SYNC_DEFAULTS = {
-  INFISICAL_PREFIX: "infisical-",
+  KMS_PREFIX: "kms-",
   DEFAULT_ENVIRONMENT: "production",
-  DEFAULT_CERTIFICATE_NAME_SCHEMA: "infisical-{{certificateId}}",
+  DEFAULT_CERTIFICATE_NAME_SCHEMA: "kms-{{certificateId}}",
   DEFAULT_FIELD_MAPPINGS: {
     certificate: "certificate",
     privateKey: "private_key",
@@ -63,7 +63,7 @@ export const AWS_SECRETS_MANAGER_PKI_SYNC_LIST_OPTION = {
   destination: PkiSync.AwsSecretsManager,
   canImportCertificates: false,
   canRemoveCertificates: true,
-  defaultCertificateNameSchema: "infisical-{{certificateId}}",
+  defaultCertificateNameSchema: "kms-{{certificateId}}",
   forbiddenCharacters: AWS_SECRETS_MANAGER_PKI_SYNC_CERTIFICATE_NAMING.FORBIDDEN_CHARACTERS,
   allowedCharacterPattern: AWS_SECRETS_MANAGER_PKI_SYNC_CERTIFICATE_NAMING.ALLOWED_CHARACTER_PATTERN,
   maxCertificateNameLength: AWS_SECRETS_MANAGER_PKI_SYNC_CERTIFICATE_NAMING.MAX_LENGTH,

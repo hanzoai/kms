@@ -1,26 +1,26 @@
 ---
 title: "Kubernetes"
 sidebarTitle: "Kubernetes"
-description: "Learn how to configure Kubernetes cluster access through Infisical PAM for secure, audited, and just-in-time access to your Kubernetes clusters."
+description: "Learn how to configure Kubernetes cluster access through Hanzo KMS PAM for secure, audited, and just-in-time access to your Kubernetes clusters."
 ---
 
-Infisical PAM supports secure, just-in-time access to Kubernetes clusters through service account token authentication. This allows your team to access Kubernetes clusters without sharing long-lived credentials, while maintaining a complete audit trail of who accessed what and when.
+Hanzo KMS PAM supports secure, just-in-time access to Kubernetes clusters through service account token authentication. This allows your team to access Kubernetes clusters without sharing long-lived credentials, while maintaining a complete audit trail of who accessed what and when.
 
 ## How It Works
 
-Kubernetes access in Infisical PAM uses an Infisical Gateway to securely proxy connections to your Kubernetes API server. When a user requests access, Infisical generates a temporary kubeconfig that routes traffic through the Gateway, enabling secure access without exposing your cluster directly.
+Kubernetes access in Hanzo KMS PAM uses an KMS Gateway to securely proxy connections to your Kubernetes API server. When a user requests access, Hanzo KMS generates a temporary kubeconfig that routes traffic through the Gateway, enabling secure access without exposing your cluster directly.
 
 ```mermaid
 sequenceDiagram
     participant User
-    participant CLI as Infisical CLI
-    participant Infisical
-    participant Gateway as Infisical Gateway
+    participant CLI as KMS CLI
+    participant Hanzo KMS
+    participant Gateway as KMS Gateway
     participant K8s as Kubernetes API Server
 
     User->>CLI: Request Kubernetes access
-    CLI->>Infisical: Authenticate & request session
-    Infisical-->>CLI: Session credentials & Gateway info
+    CLI->>Hanzo KMS: Authenticate & request session
+    Hanzo KMS-->>CLI: Session credentials & Gateway info
     CLI->>CLI: Start local proxy
     CLI->>Gateway: Establish secure tunnel
     User->>CLI: kubectl commands
@@ -33,17 +33,17 @@ sequenceDiagram
 
 ### Key Concepts
 
-1. **Gateway**: An Infisical Gateway deployed in your network that can reach the Kubernetes API server. The Gateway handles secure communication between users and your cluster.
+1. **Gateway**: An KMS Gateway deployed in your network that can reach the Kubernetes API server. The Gateway handles secure communication between users and your cluster.
 
-2. **Service Account Token**: A Kubernetes service account token that grants access to the cluster. This token is stored securely in Infisical and used by the Gateway to authenticate with the Kubernetes API.
+2. **Service Account Token**: A Kubernetes service account token that grants access to the cluster. This token is stored securely in Hanzo KMS and used by the Gateway to authenticate with the Kubernetes API.
 
-3. **Local Proxy**: The Infisical CLI starts a local proxy on your machine that intercepts kubectl commands and routes them securely through the Gateway to your cluster.
+3. **Local Proxy**: The KMS CLI starts a local proxy on your machine that intercepts kubectl commands and routes them securely through the Gateway to your cluster.
 
 4. **Session Tracking**: All access sessions are logged, including when the session was created, who accessed the cluster, session duration, and when it ended.
 
 ### Session Tracking
 
-Infisical tracks:
+Hanzo KMS tracks:
 - When the session was created
 - Who accessed which cluster
 - Session duration
@@ -56,26 +56,26 @@ Infisical tracks:
 
 ## Prerequisites
 
-Before configuring Kubernetes access in Infisical PAM, you need:
+Before configuring Kubernetes access in Hanzo KMS PAM, you need:
 
-1. **Infisical Gateway** - A Gateway deployed in your network with access to the Kubernetes API server
+1. **KMS Gateway** - A Gateway deployed in your network with access to the Kubernetes API server
 2. **Service Account** - A Kubernetes service account with appropriate RBAC permissions
-3. **Infisical CLI** - The Infisical CLI installed on user machines
+3. **KMS CLI** - The KMS CLI installed on user machines
 
 <Warning>
-  **Gateway Required**: Unlike AWS Console access, Kubernetes access requires an Infisical Gateway to be deployed and registered with your Infisical instance. The Gateway must have network connectivity to your Kubernetes API server.
+  **Gateway Required**: Unlike AWS Console access, Kubernetes access requires an KMS Gateway to be deployed and registered with your Hanzo KMS instance. The Gateway must have network connectivity to your Kubernetes API server.
 </Warning>
 
 ## Create the PAM Resource
 
-The PAM Resource represents the connection between Infisical and your Kubernetes cluster.
+The PAM Resource represents the connection between Hanzo KMS and your Kubernetes cluster.
 
 <Steps>
   <Step title="Ensure Gateway is Running">
-    Before creating the resource, ensure you have an Infisical Gateway running and registered with your Infisical instance. The Gateway must have network access to your Kubernetes API server.
+    Before creating the resource, ensure you have an KMS Gateway running and registered with your Hanzo KMS instance. The Gateway must have network access to your Kubernetes API server.
   </Step>
 
-  <Step title="Create the Resource in Infisical">
+  <Step title="Create the Resource in Hanzo KMS">
     1. Navigate to your PAM project and go to the **Resources** tab
     2. Click **Add Resource** and select **Kubernetes**
     3. Enter a name for the resource (e.g., `production-k8s`, `staging-cluster`)
@@ -91,7 +91,7 @@ The PAM Resource represents the connection between Infisical and your Kubernetes
 
 ## Create a Service Account
 
-Infisical PAM currently supports service account token authentication for Kubernetes. You'll need to create a service account with appropriate permissions in your cluster.
+Hanzo KMS PAM currently supports service account token authentication for Kubernetes. You'll need to create a service account with appropriate permissions in your cluster.
 
 <Steps>
   <Step title="Create the Service Account YAML">
@@ -101,7 +101,7 @@ Infisical PAM currently supports service account token authentication for Kubern
     apiVersion: v1
     kind: ServiceAccount
     metadata:
-      name: infisical-pam-sa
+      name: kms-pam-sa
       namespace: kube-system
     ---
     # Bind the ServiceAccount to the desired ClusterRole
@@ -109,10 +109,10 @@ Infisical PAM currently supports service account token authentication for Kubern
     apiVersion: rbac.authorization.k8s.io/v1
     kind: ClusterRoleBinding
     metadata:
-      name: infisical-pam-binding
+      name: kms-pam-binding
     subjects:
       - kind: ServiceAccount
-        name: infisical-pam-sa
+        name: kms-pam-sa
         namespace: kube-system
     roleRef:
       kind: ClusterRole
@@ -123,10 +123,10 @@ Infisical PAM currently supports service account token authentication for Kubern
     apiVersion: v1
     kind: Secret
     metadata:
-      name: infisical-pam-sa-token
+      name: kms-pam-sa-token
       namespace: kube-system
       annotations:
-        kubernetes.io/service-account.name: infisical-pam-sa
+        kubernetes.io/service-account.name: kms-pam-sa
     type: kubernetes.io/service-account-token
     ```
 
@@ -143,7 +143,7 @@ Infisical PAM currently supports service account token authentication for Kubern
     ```
 
     This creates:
-    - A ServiceAccount named `infisical-pam-sa` in the `kube-system` namespace
+    - A ServiceAccount named `kms-pam-sa` in the `kube-system` namespace
     - A ClusterRoleBinding that grants the service account its permissions
     - A Secret containing a static, non-expiring token for the service account
   </Step>
@@ -152,7 +152,7 @@ Infisical PAM currently supports service account token authentication for Kubern
     Get the service account token that you'll use when creating the PAM account:
 
     ```bash
-    kubectl -n kube-system get secret infisical-pam-sa-token -o jsonpath='{.data.token}' | base64 -d
+    kubectl -n kube-system get secret kms-pam-sa-token -o jsonpath='{.data.token}' | base64 -d
     ```
 
     Copy this token - you'll need it in the next step.
@@ -180,7 +180,7 @@ A PAM Account represents a specific service account that users can request acces
 
 ## Access Kubernetes Cluster
 
-Once your resource and accounts are configured, users can request access through the Infisical CLI:
+Once your resource and accounts are configured, users can request access through the KMS CLI:
 
 <Steps>
   <Step title="Get the Access Command">
@@ -195,7 +195,7 @@ Once your resource and accounts are configured, users can request access through
     Run the copied command in your terminal.
 
     The CLI will:
-    1. Authenticate with Infisical
+    1. Authenticate with Hanzo KMS
     2. Establish a secure connection through the Gateway
     3. Start a local proxy on your machine
     4. Configure kubectl to use the proxy
@@ -210,14 +210,14 @@ Once your resource and accounts are configured, users can request access through
     kubectl describe deployment my-app
     ```
 
-    All commands are routed securely through the Infisical Gateway to your cluster.
+    All commands are routed securely through the KMS Gateway to your cluster.
   </Step>
 
   <Step title="End the Session">
     When you're done, stop the proxy by pressing `Ctrl+C` in the terminal where it's running. This will:
     - Close the secure tunnel
     - End the session
-    - Log the session details to Infisical
+    - Log the session details to Hanzo KMS
 
     You can view session logs in the **Sessions** page of your PAM project.
   </Step>

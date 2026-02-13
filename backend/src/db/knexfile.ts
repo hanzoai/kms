@@ -41,7 +41,7 @@ export default {
       directory: "./seeds"
     },
     migrations: {
-      tableName: "infisical_migrations",
+      tableName: "kms_migrations",
       loadExtensions: [".mjs", ".ts"]
     }
   },
@@ -66,7 +66,7 @@ export default {
       max: 10
     },
     migrations: {
-      tableName: "infisical_migrations",
+      tableName: "kms_migrations",
       loadExtensions: [".mjs", ".ts"]
     }
   }
