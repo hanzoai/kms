@@ -39,7 +39,7 @@
   --max-width-8xl: 88rem; /* 1408px */
 
   /* Colors v2 */
-  --color-background: #19191c;
+  --color-background: #000000;
   --color-foreground: #ebebeb;
   --color-success: #2ecc71;
   --color-info: #63b0bd;
@@ -47,7 +47,7 @@
   --color-danger: #e74c3c;
   --color-org: #30b3ff;
   --color-sub-org: #96ff59;
-  --color-project: #e0ed34;
+  --color-project: #fd4444;
   --color-neutral: #adaeb0;
   --color-border: #2b2c30;
   --color-label: #adaeb0;
@@ -71,18 +71,18 @@
   --color-org-v1: #30b3ff;
   --color-namespace-v1: #96ff59;
 
-  /* Primary */
-  --color-primary-50: #fffff5;
-  --color-primary-100: #fcfce8;
-  --color-primary-200: #f8faca;
-  --color-primary-300: #f4f7ab;
-  --color-primary-400: #ecf26d;
-  --color-primary-500: #e0ed34;
-  --color-primary-600: #c2d62b;
-  --color-primary-700: #97b31d;
-  --color-primary-800: #708f13;
-  --color-primary-900: #4d6b0b;
-  --color-primary: #e0ed34;
+  /* Primary - Hanzo Red */
+  --color-primary-50: #fff5f5;
+  --color-primary-100: #ffe3e3;
+  --color-primary-200: #ffc9c9;
+  --color-primary-300: #ffa8a8;
+  --color-primary-400: #fe7a7a;
+  --color-primary-500: #fd4444;
+  --color-primary-600: #e03333;
+  --color-primary-700: #b82525;
+  --color-primary-800: #8f1a1a;
+  --color-primary-900: #6b1212;
+  --color-primary: #fd4444;
 
   /* Grey + Misc */
   --color-grey: #0d1117;
