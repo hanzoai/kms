@@ -330,7 +330,7 @@ export const hsmServiceFactory = ({ hsmModule: { isInitialized, pkcs11 }, envCon
     return result;
   };
 
-  // We test the core functionality of the PKCS#11 module that we are using throughout Hanzo KMS. This is to ensure that the user doesn't configure a faulty or unsupported HSM device.
+  // We test the core functionality of the PKCS#11 module that we are using throughout KMS. This is to ensure that the user doesn't configure a faulty or unsupported HSM device.
   const $testPkcs11Module = async (session: pkcs11js.Handle) => {
     try {
       if (!pkcs11 || !isInitialized) {

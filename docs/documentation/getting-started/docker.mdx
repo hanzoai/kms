@@ -2,12 +2,12 @@
 title: "Docker"
 ---
 
-The [KMS CLI](/cli/overview) can be added to Dockerfiles to fetch secrets from Hanzo KMS and make them available as environment variables within containers at runtime.
+The [KMS CLI](/cli/overview) can be added to Dockerfiles to fetch secrets from KMS and make them available as environment variables within containers at runtime.
 
 Prerequisites:
 
-- Have a project with secrets ready in [Hanzo KMS Cloud](https://kms.hanzo.ai).
-- Create an [Hanzo KMS Token](/documentation/platform/token) scoped to an environment in your project in Hanzo KMS.
+- Have a project with secrets ready in [KMS Cloud](https://kms.hanzo.ai).
+- Create an [KMS Token](/documentation/platform/token) scoped to an environment in your project in KMS.
 
 
 <Tabs>
@@ -50,13 +50,13 @@ Prerequisites:
 
     ## Launch
     
-    Spin up your container with the `docker run` command and feed in your Hanzo KMS Token.
+    Spin up your container with the `docker run` command and feed in your KMS Token.
 
     ```console
     docker run --env KMS_TOKEN=<your_kms_token> <DOCKER-IMAGE>
     ```
     
-    Your containerized application should now be up and running with secrets from Hanzo KMS exposed as environment variables within your application's process.
+    Your containerized application should now be up and running with secrets from KMS exposed as environment variables within your application's process.
     
     ## Example Dockerfile
     
@@ -174,7 +174,7 @@ Prerequisites:
     docker-compose up
     ```
     
-    Your containers should now be running with the secrets from Hanzo KMS available inside as environment variables.
+    Your containers should now be running with the secrets from KMS available inside as environment variables.
 
     </Tab>
 </Tabs>

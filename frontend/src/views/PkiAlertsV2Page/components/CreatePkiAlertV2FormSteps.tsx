@@ -823,7 +823,7 @@ export const CreatePkiAlertV2FormSteps = ({
                             render={({ field: secretField }) => (
                               <FormControl
                                 label="Signing Secret"
-                                tooltipText="Adding a signing secret enables webhook signature verification, helping ensure requests are genuinely from Hanzo KMS. The signature is sent via the x-kms-signature header."
+                                tooltipText="Adding a signing secret enables webhook signature verification, helping ensure requests are genuinely from KMS. The signature is sent via the x-kms-signature header."
                               >
                                 <Input
                                   type="password"

@@ -81,7 +81,7 @@ export const authSignupServiceFactory = ({
       const appCfg = getConfig();
       await smtpService.sendMail({
         template: SmtpTemplates.SignupExistingAccount,
-        subjectLine: "Sign-up Request for Your Hanzo KMS Account",
+        subjectLine: "Sign-up Request for Your KMS Account",
         recipients: [sanitizedEmail],
         substitutions: {
           email: sanitizedEmail,
@@ -108,7 +108,7 @@ export const authSignupServiceFactory = ({
 
     await smtpService.sendMail({
       template: SmtpTemplates.SignupEmailVerification,
-      subjectLine: "Hanzo KMS confirmation code",
+      subjectLine: "KMS confirmation code",
       recipients: [sanitizedEmail],
       substitutions: {
         code: token

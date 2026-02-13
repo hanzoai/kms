@@ -1,31 +1,31 @@
 ---
 title: "Client Ecosystem"
 sidebarTitle: "Client Ecosystem"
-description: "Get an overview of the CLI, SDKs, agents, APIs, and integrations that interact with Hanzo KMS."
+description: "Get an overview of the CLI, SDKs, agents, APIs, and integrations that interact with KMS."
 ---
 
-Hanzo KMS provides a flexible interface for integrating into development workflows and infrastructure. Around it is a rich ecosystem of clients and integrations that allow users and systems to interact with Hanzo KMS across any environment.
+KMS provides a flexible interface for integrating into development workflows and infrastructure. Around it is a rich ecosystem of clients and integrations that allow users and systems to interact with KMS across any environment.
 
 These clients enable access to secrets, certificates, and other resources from wherever they’re needed—whether that’s a developer’s terminal, a CI/CD pipeline, or a running Kubernetes workload.
 
 ## Available Clients and Interfaces
 
-Hanzo KMS offers a non-exhaustive set of clients and interfaces to support a wide range of use cases:
+KMS offers a non-exhaustive set of clients and interfaces to support a wide range of use cases:
 
-- [CLI](/cli/overview): A powerful command-line interface for developers and operators to interact with Hanzo KMS from local or automated environments. Commonly used for secret access, SSH credential issuance, and more.
+- [CLI](/cli/overview): A powerful command-line interface for developers and operators to interact with KMS from local or automated environments. Commonly used for secret access, SSH credential issuance, and more.
 
-- [SDKs](/sdks/overview): Official client libraries for languages like Go, Node.js, and Python make it easy to integrate Hanzo KMS directly into applications and internal tooling.
+- [SDKs](/sdks/overview): Official client libraries for languages like Go, Node.js, and Python make it easy to integrate KMS directly into applications and internal tooling.
 
 - [HTTP API](/api-reference/overview/introduction): A fully documented RESTful API powers all core functionality and enables advanced or custom integrations.
 
 - [Agents](/integrations/platforms/kms-agent): Lightweight background processes that can fetch and sync secrets or credentials into local environments, containers, or file systems.
 
-- [Kubernetes Operator](/integrations/platforms/kubernetes/overview): A native controller that syncs Hanzo KMS secrets into Kubernetes as native Secrets, and supports secure workload integration.
+- [Kubernetes Operator](/integrations/platforms/kubernetes/overview): A native controller that syncs KMS secrets into Kubernetes as native Secrets, and supports secure workload integration.
 
-- [External Secrets Operator (ESO)](https://external-secrets.io/latest/provider/kms): Allows Hanzo KMS to act as a backend provider for syncing secrets into Kubernetes `Secret` objects using the widely adopted External Secrets Operator.
+- [External Secrets Operator (ESO)](https://external-secrets.io/latest/provider/kms): Allows KMS to act as a backend provider for syncing secrets into Kubernetes `Secret` objects using the widely adopted External Secrets Operator.
 
-- [Kubernetes cert-manager](/documentation/platform/pki/k8s-cert-manager): A controller that issues X.509 certificates from Hanzo KMS using the [ACME enrollment method](/documentation/platform/pki/enrollment-methods/acme) configured on a [certificate profile](/documentation/platform/pki/certificates/profiles) using the cert-manager Issuer and Certificate CRDs.
+- [Kubernetes cert-manager](/documentation/platform/pki/k8s-cert-manager): A controller that issues X.509 certificates from KMS using the [ACME enrollment method](/documentation/platform/pki/enrollment-methods/acme) configured on a [certificate profile](/documentation/platform/pki/certificates/profiles) using the cert-manager Issuer and Certificate CRDs.
 
 - [Secret Syncs](/integrations/secret-syncs/overview): Native integrations to forward secrets to services like GitHub, GitLab, AWS Secrets Manager, Vercel, and more.
 
-This modular ecosystem lets teams use Hanzo KMS alongside their existing stack—without requiring opinionated workflows or lock-in.
+This modular ecosystem lets teams use KMS alongside their existing stack—without requiring opinionated workflows or lock-in.

@@ -117,7 +117,7 @@ export const IdentitySection = withPermission(
                       if (!isMoreIdentitiesAllowed && !isEnterprise) {
                         handlePopUpOpen("upgradePlan", {
                           description:
-                            "You can add more machine identities if you upgrade your Hanzo KMS Pro plan."
+                            "You can add more machine identities if you upgrade your KMS Pro plan."
                         });
                         return;
                       }
@@ -162,7 +162,7 @@ export const IdentitySection = withPermission(
                     if (subscription && !subscription.machineIdentityAuthTemplates) {
                       handlePopUpOpen("upgradePlan", {
                         isEnterpriseFeature: true,
-                        text: "Your current plan does not include access to creating Machine Identity Auth Templates. To unlock this feature, please upgrade to Hanzo KMS Enterprise plan."
+                        text: "Your current plan does not include access to creating Machine Identity Auth Templates. To unlock this feature, please upgrade to KMS Enterprise plan."
                       });
                       return;
                     }

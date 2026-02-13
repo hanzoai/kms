@@ -1,9 +1,9 @@
 ---
 title: "GCP (GKE with Cloud SQL & Memorystore)"
-description: "Deploy Hanzo KMS securely on Google Cloud Platform using GKE, Cloud SQL, and Memorystore."
+description: "Deploy KMS securely on Google Cloud Platform using GKE, Cloud SQL, and Memorystore."
 ---
 
-Learn how to deploy **Hanzo KMS** on Google Cloud Platform using **Google Kubernetes Engine (GKE)** for container orchestration. This guide covers setting up Hanzo KMS in a production-ready GCP environment using **Cloud SQL** (PostgreSQL) for the database, **Memorystore** (Redis) for caching, and **Google Cloud Load Balancing** for routing traffic.
+Learn how to deploy **KMS** on Google Cloud Platform using **Google Kubernetes Engine (GKE)** for container orchestration. This guide covers setting up KMS in a production-ready GCP environment using **Cloud SQL** (PostgreSQL) for the database, **Memorystore** (Redis) for caching, and **Google Cloud Load Balancing** for routing traffic.
 
 ## Prerequisites
 
@@ -11,8 +11,8 @@ Learn how to deploy **Hanzo KMS** on Google Cloud Platform using **Google Kubern
 - Basic knowledge of GCP networking (VPC, subnets, firewall rules) and Kubernetes concepts
 - [gcloud CLI](https://cloud.google.com/sdk/docs/install) installed and configured
 - [kubectl](https://kubernetes.io/docs/tasks/tools/) installed for interacting with your GKE cluster
-- [Helm](https://helm.sh/docs/intro/install/) installed (version 3.x) for deploying the Hanzo KMS Helm chart
-- An Hanzo KMS Docker image tag from [Docker Hub](https://hub.docker.com/r/ghcr.io/hanzoai/kms/tags)
+- [Helm](https://helm.sh/docs/intro/install/) installed (version 3.x) for deploying the KMS Helm chart
+- An KMS Docker image tag from [Docker Hub](https://hub.docker.com/r/ghcr.io/hanzoai/kms/tags)
 
 <Warning>
   Do not use the `latest` tag in production. Always pin to a specific version to avoid unexpected changes during upgrades.
@@ -20,7 +20,7 @@ Learn how to deploy **Hanzo KMS** on Google Cloud Platform using **Google Kubern
 
 ## System Requirements
 
-The following are minimum requirements for running Hanzo KMS on GCP GKE:
+The following are minimum requirements for running KMS on GCP GKE:
 
 | Component | Minimum | Recommended (Production) |
 |-----------|---------|--------------------------|
@@ -28,8 +28,8 @@ The following are minimum requirements for running Hanzo KMS on GCP GKE:
 | GKE Nodes per Zone | 1 | 2+ |
 | Cloud SQL Instance | db-f1-micro | db-n1-standard-2 or larger |
 | Memorystore Capacity | 1 GB | 2 GB or larger |
-| Hanzo KMS Pod Memory | 512 MB | 1 GB |
-| Hanzo KMS Pod CPU | 500m | 1000m |
+| KMS Pod Memory | 512 MB | 1 GB |
+| KMS Pod CPU | 500m | 1000m |
 
 For production deployments with many users or secrets, increase these values accordingly.
 
@@ -37,7 +37,7 @@ For production deployments with many users or secrets, increase these values acc
 
 <Steps>
 <Step title="Set up network infrastructure (VPC, subnets, firewall rules)">
-  Create a VPC network for hosting Hanzo KMS:
+  Create a VPC network for hosting KMS:
 
   **VPC & Subnets:**
   - Create a **VPC-native network** that will host your GKE cluster, Cloud SQL instance, and Memorystore instance
@@ -114,7 +114,7 @@ For production deployments with many users or secrets, increase these values acc
 </Step>
 
 <Step title="Provision Google Kubernetes Engine (GKE) cluster">
-  Create a GKE cluster to host your Hanzo KMS deployment:
+  Create a GKE cluster to host your KMS deployment:
 
   ```bash
   gcloud container clusters create kms-cluster \
@@ -163,7 +163,7 @@ For production deployments with many users or secrets, increase these values acc
 </Step>
 
 <Step title="Provision Cloud SQL for PostgreSQL">
-  Set up the PostgreSQL database for Hanzo KMS:
+  Set up the PostgreSQL database for KMS:
 
   ```bash
   # Enable required APIs
@@ -232,7 +232,7 @@ For production deployments with many users or secrets, increase these values acc
 </Step>
 
 <Step title="Provision Memorystore for Redis">
-  Set up Redis caching for Hanzo KMS:
+  Set up Redis caching for KMS:
 
   ```bash
   # Enable Memorystore API
@@ -266,7 +266,7 @@ For production deployments with many users or secrets, increase these values acc
   </Warning>
 </Step>
 
-<Step title="Securely store Hanzo KMS secrets and configuration">
+<Step title="Securely store KMS secrets and configuration">
   Generate and store the required secrets:
 
   **Generate secrets:**
@@ -330,7 +330,7 @@ For production deployments with many users or secrets, increase these values acc
   ```bash
   # Create Google Cloud IAM service account
   gcloud iam service-accounts create kms-gsa \
-    --display-name="Hanzo KMS GKE Service Account"
+    --display-name="KMS GKE Service Account"
 
   # Grant access to secrets
   for secret in kms-encryption-key kms-auth-secret kms-db-uri kms-redis-url; do
@@ -347,10 +347,10 @@ For production deployments with many users or secrets, increase these values acc
   ```
 </Step>
 
-<Step title="Deploy Hanzo KMS using Helm">
-  Deploy Hanzo KMS to your GKE cluster using the official Helm chart:
+<Step title="Deploy KMS using Helm">
+  Deploy KMS to your GKE cluster using the official Helm chart:
 
-  **Add the Hanzo KMS Helm Repository:**
+  **Add the KMS Helm Repository:**
 
   ```bash
   helm repo add kms-helm-charts https://dl.cloudsmith.io/public/hanzoai/kms-helm-charts/helm/charts/
@@ -464,7 +464,7 @@ For production deployments with many users or secrets, increase these values acc
   gcloud compute addresses describe kms-ip --global --format="value(address)"
   ```
 
-  **Deploy Hanzo KMS:**
+  **Deploy KMS:**
 
   ```bash
   helm install kms kms-helm-charts/kms \
@@ -492,7 +492,7 @@ For production deployments with many users or secrets, increase these values acc
 </Step>
 
 <Step title="Configure HTTPS access with SSL/TLS">
-  Secure your Hanzo KMS deployment with HTTPS:
+  Secure your KMS deployment with HTTPS:
 
   <Tabs>
     <Tab title="Google-Managed Certificates (Recommended)">
@@ -598,13 +598,13 @@ For production deployments with many users or secrets, increase these values acc
 </Step>
 </Steps>
 
-After completing the above steps, your Hanzo KMS instance should be up and running on GCP. You can now proceed with creating an admin account and configuring additional features.
+After completing the above steps, your KMS instance should be up and running on GCP. You can now proceed with creating an admin account and configuring additional features.
 
 ## Additional Configuration
 
 <AccordionGroup>
   <Accordion title="SMTP/Email Configuration">
-    Configure email sending for Hanzo KMS notifications and invitations:
+    Configure email sending for KMS notifications and invitations:
 
     **Using SendGrid:**
     ```bash
@@ -614,7 +614,7 @@ After completing the above steps, your Hanzo KMS instance should be up and runni
       --from-literal=SMTP_USERNAME="apikey" \
       --from-literal=SMTP_PASSWORD="<your-sendgrid-api-key>" \
       --from-literal=SMTP_FROM_ADDRESS="noreply@example.com" \
-      --from-literal=SMTP_FROM_NAME="Hanzo KMS" \
+      --from-literal=SMTP_FROM_NAME="KMS" \
       -n kms
     ```
 
@@ -626,7 +626,7 @@ After completing the above steps, your Hanzo KMS instance should be up and runni
       --from-literal=SMTP_USERNAME="your-email@gmail.com" \
       --from-literal=SMTP_PASSWORD="<app-password>" \
       --from-literal=SMTP_FROM_ADDRESS="your-email@gmail.com" \
-      --from-literal=SMTP_FROM_NAME="Hanzo KMS" \
+      --from-literal=SMTP_FROM_NAME="KMS" \
       -n kms
     ```
 
@@ -655,7 +655,7 @@ After completing the above steps, your Hanzo KMS instance should be up and runni
   <Accordion title="Debugging with kubectl exec">
     Access running containers for debugging:
 
-    **Exec into an Hanzo KMS pod:**
+    **Exec into an KMS pod:**
     ```bash
     # Get pod name
     kubectl get pods -n kms
@@ -686,7 +686,7 @@ After completing the above steps, your Hanzo KMS instance should be up and runni
   </Accordion>
 
   <Accordion title="Database Migrations">
-    Hanzo KMS automatically runs database migrations on startup. To manually manage migrations:
+    KMS automatically runs database migrations on startup. To manually manage migrations:
 
     **Check migration status:**
     ```bash
@@ -740,7 +740,7 @@ After completing the above steps, your Hanzo KMS instance should be up and runni
 
   <Accordion title="Upgrade Instructions">
     **Pre-upgrade checklist:**
-    1. Review Hanzo KMS release notes for breaking changes
+    1. Review KMS release notes for breaking changes
     2. Backup your database
     3. Verify your `ENCRYPTION_KEY` is backed up
 
@@ -770,7 +770,7 @@ After completing the above steps, your Hanzo KMS instance should be up and runni
   <Accordion title="Monitoring & Telemetry">
     **Google Cloud Logging:**
 
-    View Hanzo KMS logs in Cloud Logging:
+    View KMS logs in Cloud Logging:
     - Navigate to **Logging > Logs Explorer** in the GCP Console
     - Filter: `resource.type="k8s_container" resource.labels.namespace_name="kms"`
 
@@ -779,7 +779,7 @@ After completing the above steps, your Hanzo KMS instance should be up and runni
     # Create alert for high CPU usage
     gcloud alpha monitoring policies create \
       --notification-channels=<channel-id> \
-      --display-name="Hanzo KMS High CPU" \
+      --display-name="KMS High CPU" \
       --condition-display-name="Pod CPU > 80%" \
       --condition-threshold-value=0.8 \
       --condition-threshold-duration=300s \
@@ -831,7 +831,7 @@ After completing the above steps, your Hanzo KMS instance should be up and runni
   </Accordion>
 
   <Accordion title="Clean Up / Delete Resources">
-    To completely remove Hanzo KMS and associated resources:
+    To completely remove KMS and associated resources:
 
     **Delete Helm release:**
     ```bash
@@ -883,7 +883,7 @@ After completing the above steps, your Hanzo KMS instance should be up and runni
 
 <AccordionGroup>
   <Accordion title="Terraform Example">
-    A Terraform configuration for deploying Hanzo KMS infrastructure on GCP:
+    A Terraform configuration for deploying KMS infrastructure on GCP:
 
     ```hcl
     # main.tf
@@ -1148,7 +1148,7 @@ After completing the above steps, your Hanzo KMS instance should be up and runni
   </Accordion>
 
   <Accordion title="Ingress not working">
-    **Symptoms:** Cannot access Hanzo KMS via the external URL.
+    **Symptoms:** Cannot access KMS via the external URL.
 
     **Check ingress status:**
     ```bash

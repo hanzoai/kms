@@ -341,7 +341,7 @@ export const githubOrgSyncServiceFactory = ({
         if ((err as Error)?.message?.includes("Although you appear to have the correct authorization credential")) {
           throw new BadRequestError({
             message:
-              "Please check your organization have approved Hanzo KMS Oauth application. For more info: https://kms.hanzo.ai/docs/documentation/platform/github-org-sync#troubleshooting"
+              "Please check your organization have approved KMS Oauth application. For more info: https://kms.hanzo.ai/docs/documentation/platform/github-org-sync#troubleshooting"
           });
         }
         throw new BadRequestError({ message: (err as Error)?.message });
@@ -352,14 +352,14 @@ export const githubOrgSyncServiceFactory = ({
     } = data;
     const githubUserTeams = teams?.edges?.map((el) => el.node.name.toLowerCase()) || [];
     const githubUserTeamSet = new Set(githubUserTeams);
-    const githubUserTeamOnHanzo KMS = await groupDAL.find({ orgId, $in: { name: githubUserTeams } });
-    const githubUserTeamOnHanzo KMSGroupByName = groupBy(githubUserTeamOnHanzo KMS, (i) => i.name);
+    const githubUserTeamOnKms = await groupDAL.find({ orgId, $in: { name: githubUserTeams } });
+    const githubUserTeamOnKmsGroupByName = groupBy(githubUserTeamOnKms, (i) => i.name);
 
     const newTeams = githubUserTeams.filter(
-      (el) => !kmsUserGroupSet.has(el) && !Object.hasOwn(githubUserTeamOnHanzo KMSGroupByName, el)
+      (el) => !kmsUserGroupSet.has(el) && !Object.hasOwn(githubUserTeamOnKmsGroupByName, el)
     );
     const updateTeams = githubUserTeams.filter(
-      (el) => !kmsUserGroupSet.has(el) && Object.hasOwn(githubUserTeamOnHanzo KMSGroupByName, el)
+      (el) => !kmsUserGroupSet.has(el) && Object.hasOwn(githubUserTeamOnKmsGroupByName, el)
     );
     const removeFromTeams = kmsUserGroups.filter((el) => !githubUserTeamSet.has(el.groupName));
 
@@ -406,7 +406,7 @@ export const githubOrgSyncServiceFactory = ({
         await groupDAL.transaction(async (tx) => {
           await userGroupMembershipDAL.insertMany(
             updateTeams.map((el) => ({
-              groupId: githubUserTeamOnHanzo KMSGroupByName[el][0].id,
+              groupId: githubUserTeamOnKmsGroupByName[el][0].id,
               userId
             })),
             tx
@@ -667,7 +667,7 @@ export const githubOrgSyncServiceFactory = ({
           if ((err as Error)?.message?.includes("Although you appear to have the correct authorization credential")) {
             throw new BadRequestError({
               message:
-                "Organization has restricted OAuth app access. Please check that: 1) Your organization has approved the Hanzo KMS OAuth application, 2) The token owner has sufficient organization permissions."
+                "Organization has restricted OAuth app access. Please check that: 1) Your organization has approved the KMS OAuth application, 2) The token owner has sufficient organization permissions."
             });
           }
           throw new BadRequestError({ message: `GitHub GraphQL query failed: ${(err as Error)?.message}` });
@@ -697,11 +697,11 @@ export const githubOrgSyncServiceFactory = ({
 
     const allGithubTeamNames = Array.from(new Set(teams?.edges?.map((edge) => edge.node.name.toLowerCase()) || []));
 
-    const existingTeamsOnHanzo KMS = await groupDAL.find({
+    const existingTeamsOnKms = await groupDAL.find({
       orgId: orgPermission.orgId,
       $in: { name: allGithubTeamNames }
     });
-    const existingTeamsMap = groupBy(existingTeamsOnHanzo KMS, (i) => i.name);
+    const existingTeamsMap = groupBy(existingTeamsOnKms, (i) => i.name);
 
     const teamsToCreate = allGithubTeamNames.filter((teamName) => !(teamName in existingTeamsMap));
     const createdTeams = new Set<string>();

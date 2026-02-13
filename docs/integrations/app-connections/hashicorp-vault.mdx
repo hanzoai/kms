@@ -1,13 +1,13 @@
 ---
 title: "Hashicorp Vault Connection"
-description: "Learn how to configure a Hashicorp Vault Connection for Hanzo KMS."
+description: "Learn how to configure a Hashicorp Vault Connection for KMS."
 ---
 
 <Note>
-    Hanzo KMS is compatible with Vault Self-hosted, HCP Vault Dedicated, and HCP Vault Enterprise deployments. Please note that HCP Generic Secrets are currently not supported.
+    KMS is compatible with Vault Self-hosted, HCP Vault Dedicated, and HCP Vault Enterprise deployments. Please note that HCP Generic Secrets are currently not supported.
 </Note>
 
-Hanzo KMS supports two methods for connecting to Hashicorp Vault.
+KMS supports two methods for connecting to Hashicorp Vault.
 
 <Tabs>
     <Tab title="App Role (Recommended)">
@@ -57,7 +57,7 @@ Hanzo KMS supports two methods for connecting to Hashicorp Vault.
                         - **data/\***: The path within the secrets engine used for storing secrets. The wildcard (*) grants access to all secrets within this mount point.
 
                         <Note>
-                            Make sure to replace the policy path with the specific path where you intend to sync your secrets. For better security and control, it's recommended to use a more granular path instead of a wildcard (*). You can also specify a path that doesn’t yet exist—Hanzo KMS will automatically create it for you during the sync process.
+                            Make sure to replace the policy path with the specific path where you intend to sync your secrets. For better security and control, it's recommended to use a more granular path instead of a wildcard (*). You can also specify a path that doesn’t yet exist—KMS will automatically create it for you during the sync process.
                         </Note>
                     </Tab>
                 </Tabs>
@@ -73,7 +73,7 @@ Hanzo KMS supports two methods for connecting to Hashicorp Vault.
                     If you used custom approle or policy names in previous steps, you'll need to customize the following commands.
                 </Note>
 
-                **Create Hanzo KMS Role**
+                **Create KMS Role**
 
                 ```hcl
                 vault write auth/approle/role/kms token_policies="kms-policy" token_ttl=30s token_max_ttl=2m
@@ -125,13 +125,13 @@ Hanzo KMS supports two methods for connecting to Hashicorp Vault.
     </Tab>
 </Tabs>
 
-## Setup Vault Connection in Hanzo KMS
+## Setup Vault Connection in KMS
 
 <Tabs>
-    <Tab title="Hanzo KMS UI">
+    <Tab title="KMS UI">
         <Steps>
             <Step title="Navigate to App Connections">
-                In your Hanzo KMS dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
+                In your KMS dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
 
                 ![App Connections Tab](/images/app-connections/general/add-connection.png)
             </Step>

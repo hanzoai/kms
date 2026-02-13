@@ -40,7 +40,7 @@ export const PkiSyncOptionsFields = ({ destination }: Props) => {
                   content={
                     <>
                       <p>
-                        When enabled, Hanzo KMS will automatically import certificates from the PKI
+                        When enabled, KMS will automatically import certificates from the PKI
                         subscriber to the destination during sync operations.
                       </p>
                       <p className="mt-4">
@@ -77,8 +77,8 @@ export const PkiSyncOptionsFields = ({ destination }: Props) => {
                   content={
                     <>
                       <p>
-                        When enabled, Hanzo KMS will remove certificates from the destination during
-                        a sync if they are no longer active in Hanzo KMS.
+                        When enabled, KMS will remove certificates from the destination during
+                        a sync if they are no longer active in KMS.
                       </p>
                       {currentDestination === PkiSync.AwsElasticLoadBalancer && (
                         <p className="mt-4">
@@ -91,7 +91,7 @@ export const PkiSyncOptionsFields = ({ destination }: Props) => {
                       )}
                       <p className="mt-4">
                         Disable this option if you intend to manage some certificates manually
-                        outside of Hanzo KMS.
+                        outside of KMS.
                       </p>
                     </>
                   }
@@ -169,7 +169,7 @@ export const PkiSyncOptionsFields = ({ destination }: Props) => {
                     content={
                       <>
                         <p>
-                          When enabled, Hanzo KMS will replace the contents of existing certificates
+                          When enabled, KMS will replace the contents of existing certificates
                           while preserving the same ARN during certificate renewal syncs.
                         </p>
                         <p className="mt-4">
@@ -212,7 +212,7 @@ export const PkiSyncOptionsFields = ({ destination }: Props) => {
                     content={
                       <>
                         <p>
-                          When enabled, Hanzo KMS will create a new version of the existing
+                          When enabled, KMS will create a new version of the existing
                           certificate in Azure Key Vault during certificate renewal syncs,
                           preserving the original certificate name.
                         </p>
@@ -258,7 +258,7 @@ export const PkiSyncOptionsFields = ({ destination }: Props) => {
                       <>
                         <p>
                           <strong>Only applies to certificate renewals:</strong> When a certificate
-                          is renewed in Hanzo KMS, this option controls how the renewed certificate
+                          is renewed in KMS, this option controls how the renewed certificate
                           is handled in AWS Secrets Manager.
                         </p>
                         <p className="mt-4">
@@ -303,7 +303,7 @@ export const PkiSyncOptionsFields = ({ destination }: Props) => {
                       <>
                         <p>
                           <strong>Only applies to certificate renewals:</strong> When a certificate
-                          is renewed in Hanzo KMS, this option controls how the renewed certificate
+                          is renewed in KMS, this option controls how the renewed certificate
                           is handled in Chef.
                         </p>
                         <p className="mt-4">
@@ -366,7 +366,7 @@ export const PkiSyncOptionsFields = ({ destination }: Props) => {
             isOptional
             errorText={error?.message}
             label="Certificate Name Schema"
-            helperText="Hanzo KMS strongly advises setting a Certificate Name Schema to ensure that Hanzo KMS only manages the specific certificates you intend to manage, keeping everything else untouched."
+            helperText="KMS strongly advises setting a Certificate Name Schema to ensure that KMS only manages the specific certificates you intend to manage, keeping everything else untouched."
           >
             <Input
               value={value || ""}

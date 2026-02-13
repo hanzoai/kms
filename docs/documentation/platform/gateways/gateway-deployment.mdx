@@ -3,7 +3,7 @@ title: "Gateway Deployment"
 description: "Complete guide to deploying KMS Gateways including network configuration and firewall requirements"
 ---
 
-KMS Gateways enables secure communication between your private resources and the Hanzo KMS platform without exposing inbound ports in your network.
+KMS Gateways enables secure communication between your private resources and the KMS platform without exposing inbound ports in your network.
 This guide covers everything you need to deploy and configure KMS Gateways.
 
 ## Deployment Steps
@@ -12,7 +12,7 @@ To successfully deploy an KMS Gateway for use, follow these steps in order.
 
 <Steps>
   <Step title="Provision a Machine Identity">
-    Create a machine identity with the correct permissions to create and manage gateways. This identity is used by the gateway to authenticate with Hanzo KMS and should be provisioned in advance.
+    Create a machine identity with the correct permissions to create and manage gateways. This identity is used by the gateway to authenticate with KMS and should be provisioned in advance.
     The gateway supports several [machine identity auth methods](/documentation/platform/identities/machine-identities), as listed below. Choose the one that best fits your environment and set the corresponding environment variables when deploying the gateway.
 
     <AccordionGroup>
@@ -94,8 +94,8 @@ To successfully deploy an KMS Gateway for use, follow these steps in order.
   </Step>
   <Step title="Set Up a Relay Server">
   Ensure a relay server is running and accessible before you deploy any gateways. You have two options:
-  - **Managed relay (Hanzo KMS Cloud, US/EU only):** Managed relays are only available for Hanzo KMS Cloud instances in the US and EU regions. If you are using Hanzo KMS Cloud in these regions, you can use the provided managed relay.
-  - **Self-hosted relay:** For all other cases, including all self-hosted and dedicated enterprise instances of Hanzo KMS, you must deploy your own relay server. You can also choose to deploy your own relay server when using Hanzo KMS Cloud if you require reduced geographic proximity to your target resources for lower latency or to reduce network congestion. For setup instructions, see the [Relay Deployment Guide](/documentation/platform/gateways/relay-deployment).
+  - **Managed relay (KMS Cloud, US/EU only):** Managed relays are only available for KMS Cloud instances in the US and EU regions. If you are using KMS Cloud in these regions, you can use the provided managed relay.
+  - **Self-hosted relay:** For all other cases, including all self-hosted and dedicated enterprise instances of KMS, you must deploy your own relay server. You can also choose to deploy your own relay server when using KMS Cloud if you require reduced geographic proximity to your target resources for lower latency or to reduce network congestion. For setup instructions, see the [Relay Deployment Guide](/documentation/platform/gateways/relay-deployment).
   </Step>
   <Step title="Install the KMS CLI">
     Make sure the KMS CLI is installed on the machine or environment where you plan to deploy the gateway. The CLI is required for gateway installation and management.
@@ -108,11 +108,11 @@ To successfully deploy an KMS Gateway for use, follow these steps in order.
     | Protocol | Destination                          | Port | Purpose                                    |
     | -------- | ------------------------------------ | ---- | ------------------------------------------ |
     | TCP      | Relay Server IP/Hostname             | 2222 | SSH reverse tunnel establishment           |
-    | TCP      | Hanzo KMS instance host (US/EU, other)  | 443  | API communication and certificate requests |
+    | TCP      | KMS instance host (US/EU, other)  | 443  | API communication and certificate requests |
 
     For managed relays, allow outbound traffic to the provided relay server IP/hostname. For self-hosted relays, allow outbound traffic to your own relay server address.
 
-    If you are in a corporate environment with strict egress filtering, ensure outbound TCP 2222 to relay servers and outbound HTTPS 443 to Hanzo KMS API endpoints are allowed.
+    If you are in a corporate environment with strict egress filtering, ensure outbound TCP 2222 to relay servers and outbound HTTPS 443 to KMS API endpoints are allowed.
   </Step>
   <Step title="Select a Deployment Method">
     The KMS CLI is used to install and start the gateway in your chosen environment. The CLI provides commands for both production and development scenarios, and supports a variety of options/flags to configure your deployment.
@@ -137,7 +137,7 @@ To successfully deploy an KMS Gateway for use, follow these steps in order.
       </Tab>
 
       <Tab title="Kubernetes (Production)">
-        For production deployments on Kubernetes clusters, install the Gateway using the Hanzo KMS Helm chart:
+        For production deployments on Kubernetes clusters, install the Gateway using the KMS Helm chart:
 
         #### Install the latest Helm Chart repository
 
@@ -188,9 +188,9 @@ To successfully deploy an KMS Gateway for use, follow these steps in order.
 
       1. **Check logs** for "Gateway started successfully" message indicating the gateway is running and connected to the relay
 
-      2. **Verify registration** in the Hanzo KMS by visiting the Gateways section of your organization. The new gateway should appear with a recent heartbeat timestamp.
+      2. **Verify registration** in the KMS by visiting the Gateways section of your organization. The new gateway should appear with a recent heartbeat timestamp.
 
-      3. **Test connectivity** by creating a resource in Hanzo KMS that uses the gateway to access a private service. Verify the resource can successfully connect through the gateway.
+      3. **Test connectivity** by creating a resource in KMS that uses the gateway to access a private service. Verify the resource can successfully connect through the gateway.
   </Step>
 </Steps>
 
@@ -201,7 +201,7 @@ To successfully deploy an KMS Gateway for use, follow these steps in order.
 No inbound ports need to be opened for gateways. The gateway only makes outbound connections:
 
 - **Outbound SSH** to relay servers on port 2222
-- **Outbound HTTPS** to Hanzo KMS API endpoints on port 443
+- **Outbound HTTPS** to KMS API endpoints on port 443
 - **SSH reverse tunnels** handle all communication - no return traffic configuration needed
 
 This design maintains security by avoiding the need for inbound firewall rules that could expose your network to external threats.
@@ -215,7 +215,7 @@ Test relay connectivity and outbound API access from the gateway:
   ```bash
   nc -zv <relay-ip> 2222
   ```
-2. Test outbound API access (replace with your Hanzo KMS domain if different):
+2. Test outbound API access (replace with your KMS domain if different):
   ```bash
   curl -I https://kms.hanzo.ai
   ```

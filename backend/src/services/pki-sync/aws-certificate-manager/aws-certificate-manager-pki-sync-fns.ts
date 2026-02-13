@@ -33,7 +33,7 @@ import {
   TAwsCertificateManagerPkiSyncConfig
 } from "./aws-certificate-manager-pki-sync-types";
 
-const KMS_CERTIFICATE_TAG = "Hanzo KMSCertificate";
+const KMS_CERTIFICATE_TAG = "KMSCertificate";
 const AWS_CERTIFICATE_ARN_PATTERN = new RE2("^arn:aws:acm:[a-z0-9-]+:\\d{12}:certificate/[a-f0-9-]{36}$");
 
 type TAwsAssumeRoleCredentials = z.infer<typeof AwsConnectionAssumeRoleCredentialsSchema>;
@@ -115,8 +115,8 @@ const generateCertificateName = (certificateName: string, pkiSync: TPkiSyncWithC
 
     let certificateId: string;
 
-    if (sanitizedCertificateName.startsWith("Hanzo KMS-")) {
-      certificateId = sanitizedCertificateName.substring("Hanzo KMS-".length);
+    if (sanitizedCertificateName.startsWith("KMS-")) {
+      certificateId = sanitizedCertificateName.substring("KMS-".length);
     } else {
       certificateId = sanitizedCertificateName;
     }
@@ -549,9 +549,9 @@ export const awsCertificateManagerPkiSyncFactory = ({
 
       Object.values(acmCertificates).forEach((acmCert) => {
         if (acmCert.arn && acmCert.Tags) {
-          const hasHanzo KMSTag = acmCert.Tags.some((tag) => tag.Key === KMS_CERTIFICATE_TAG && tag.Value);
+          const hasKmsTag = acmCert.Tags.some((tag) => tag.Key === KMS_CERTIFICATE_TAG && tag.Value);
 
-          if (hasHanzo KMSTag) {
+          if (hasKmsTag) {
             const isTrackedInSyncRecords = existingSyncRecords.some(
               (record) => record.externalIdentifier === acmCert.arn
             );

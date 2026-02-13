@@ -271,7 +271,7 @@ export const projectTemplateServiceFactory = ({
     if (environments && plan.environmentLimit !== null && environments.length > plan.environmentLimit) {
       throw new BadRequestError({
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        message: `Failed to create project template due to environment count exceeding your current limit of ${plan.environmentLimit}. Contact Hanzo KMS to increase limit.`
+        message: `Failed to create project template due to environment count exceeding your current limit of ${plan.environmentLimit}. Contact KMS to increase limit.`
       });
     }
 
@@ -509,7 +509,7 @@ export const projectTemplateServiceFactory = ({
     if (environments && plan.environmentLimit !== null && environments.length > plan.environmentLimit) {
       throw new BadRequestError({
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        message: `Failed to update project template due to environment count exceeding your current limit of ${plan.environmentLimit}. Contact Hanzo KMS to increase limit.`
+        message: `Failed to update project template due to environment count exceeding your current limit of ${plan.environmentLimit}. Contact KMS to increase limit.`
       });
     }
 

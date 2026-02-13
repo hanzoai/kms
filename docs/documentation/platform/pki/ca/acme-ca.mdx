@@ -1,13 +1,13 @@
 ---
 title: "ACME-compatible CA"
-description: "Learn how to connect Hanzo KMS to an ACME-compatible CA to issue certificates."
+description: "Learn how to connect KMS to an ACME-compatible CA to issue certificates."
 ---
 
 ## Concept
 
-Hanzo KMS can connect to any upstream ACME-compatible CA (e.g. Lets's Encrypt, DigiCert, etc.) supporting the [ACME protocol](https://en.wikipedia.org/wiki/Automatic_Certificate_Management_Environment) to issue certificates back to your end-entities. This integration uses the [DNS-01 challenge](https://letsencrypt.org/docs/challenge-types/#dns-01-challenge) method as part of the ACME domain validation challenge workflow for a requested certificate.
+KMS can connect to any upstream ACME-compatible CA (e.g. Lets's Encrypt, DigiCert, etc.) supporting the [ACME protocol](https://en.wikipedia.org/wiki/Automatic_Certificate_Management_Environment) to issue certificates back to your end-entities. This integration uses the [DNS-01 challenge](https://letsencrypt.org/docs/challenge-types/#dns-01-challenge) method as part of the ACME domain validation challenge workflow for a requested certificate.
 
-The upstream ACME-compatible CA integration lets you connect Hanzo KMS to providers by specifying
+The upstream ACME-compatible CA integration lets you connect KMS to providers by specifying
 their **ACME Directory URL** such as:
 
 - [Let's Encrypt](/documentation/platform/pki/ca/lets-encrypt): `https://acme-v02.api.letsencrypt.org/directory`.
@@ -17,16 +17,16 @@ their **ACME Directory URL** such as:
 - ZeroSSL: `https://acme.zerossl.com/v2/DV90`.
 - SSL.com: `https://acme.ssl.com/sslcom-dv-rsa`.
 
-When Hanzo KMS requests a certificate from an ACME-compatible CA, it creates a TXT record at `_acme-challenge.{your-domain}` in your configured DNS provider (e.g. Route53, Cloudflare, DNS Made Easy, etc.); this TXT record contains the challenge token issued by the ACME-compatible CA to validate domain control for the requested certificate.
-The ACME provider checks for the existence of this TXT record to verify domain control before issuing the certificate back to Hanzo KMS.
+When KMS requests a certificate from an ACME-compatible CA, it creates a TXT record at `_acme-challenge.{your-domain}` in your configured DNS provider (e.g. Route53, Cloudflare, DNS Made Easy, etc.); this TXT record contains the challenge token issued by the ACME-compatible CA to validate domain control for the requested certificate.
+The ACME provider checks for the existence of this TXT record to verify domain control before issuing the certificate back to KMS.
 
-After validation completes successfully, Hanzo KMS automatically removes the TXT record from your DNS provider.
+After validation completes successfully, KMS automatically removes the TXT record from your DNS provider.
 
 <div align="center">
 
 ```mermaid
 graph TD
-    A[ACME-compatible CA] <-->|ACME v2 Protocol| B[Hanzo KMS]
+    A[ACME-compatible CA] <-->|ACME v2 Protocol| B[KMS]
     B -->|Creates TXT Records<br>via DNS Provider| C[DNS Validation]
     B -->|Manages Certificates| D[End-Entities]
 ```
@@ -37,21 +37,21 @@ We recommend reading about [ACME protocol](https://tools.ietf.org/html/rfc8555) 
 
 ## Workflow
 
-A typical workflow for using Hanzo KMS with an external ACME-compatible CA consists of the following steps:
+A typical workflow for using KMS with an external ACME-compatible CA consists of the following steps:
 
 1. Setting up your DNS provider (e.g. Route53, Cloudflare, etc.) with appropriate DNS permissions.
-2. Creating an [App Connection](/integrations/app-connections/overview) in Hanzo KMS to store credentials for Hanzo KMS to connect to your DNS provider and create/remove DNS records as part of the DNS-01 challenge.
-3. Registering an [External CA](/documentation/platform/pki/ca/external-ca) in Hanzo KMS with the ACME type and inputting required configuration including the **ACME Directory URL** of the upstream ACME-compatible CA and the **App Connection** for your DNS provider.
+2. Creating an [App Connection](/integrations/app-connections/overview) in KMS to store credentials for KMS to connect to your DNS provider and create/remove DNS records as part of the DNS-01 challenge.
+3. Registering an [External CA](/documentation/platform/pki/ca/external-ca) in KMS with the ACME type and inputting required configuration including the **ACME Directory URL** of the upstream ACME-compatible CA and the **App Connection** for your DNS provider.
 
 Once this is complete, you can create a [certificate profile](/documentation/platform/pki/certificates/profiles) linked to the External CA proceed to request a certificate against it.
 
-## Guide to Connecting Hanzo KMS to an ACME-compatible CA
+## Guide to Connecting KMS to an ACME-compatible CA
 
-In the following steps, we explore how to connect Hanzo KMS to an ACME-compatible CA.
+In the following steps, we explore how to connect KMS to an ACME-compatible CA.
 
 <Steps>
     <Step title="Create an App Connection to your DNS provider">
-        Before registering an ACME-compatible CA with Hanzo KMS, you need to set up an [App Connection](/integrations/app-connections/overview) with the appropriate permissions for Hanzo KMS to perform the DNS-01 challenge with your DNS provider.
+        Before registering an ACME-compatible CA with KMS, you need to set up an [App Connection](/integrations/app-connections/overview) with the appropriate permissions for KMS to perform the DNS-01 challenge with your DNS provider.
         
         If you don’t see a specific DNS provider listed below or need a dedicated one, please reach out to sales@kms.hanzo.ai and we’ll help get that enabled for you.
 
@@ -129,7 +129,7 @@ In the following steps, we explore how to connect Hanzo KMS to an ACME-compatibl
     </Step>
     <Step title="Register an ACME-compatible CA">
         <Tabs>
-          <Tab title="Hanzo KMS UI">
+          <Tab title="KMS UI">
               To register an ACME-compatible CA, head to your Certificate Management Project > Certificate Authorities > External Certificate Authorities and press **Create CA**.
 
               ![pki register external ca](/images/platform/pki/ca/external-ca/create-external-ca-button.png)
@@ -141,19 +141,19 @@ In the following steps, we explore how to connect Hanzo KMS to an ACME-compatibl
               Here's some guidance for each field:
 
               - Name: A slug-friendly name for the ACME-compatible CA such as `lets-encrypt-production`.
-              - DNS App Connection: The App Connection from Step 1 used for Hanzo KMS to connect to your DNS provider and create/remove DNS records as part of the DNS-01 challenge in ACME.
+              - DNS App Connection: The App Connection from Step 1 used for KMS to connect to your DNS provider and create/remove DNS records as part of the DNS-01 challenge in ACME.
               - Zone / Zone ID: Enter the Zone / Zone ID for the domain(s) you'll be requesting certificates for.
               - Directory URL: Enter the **ACME Directory URL** for your desired upstream ACME-compatible CA such as `https://acme-v02.api.letsencrypt.org/directory` for Let's Encrypt.
               - Account Email: The email address to associate with your ACME account. This email will receive important notifications about your certificates.
               - EAB Key Identifier (KID): (Optional) The Key Identifier (KID) provided by your ACME CA for External Account Binding (EAB). This is required by some ACME providers (e.g., ZeroSSL, DigiCert) to link your ACME account to an external account you've pre-registered with them.
               - EAB HMAC Key: (Optional) The HMAC Key provided by your ACME CA for External Account Binding (EAB). This key is used in conjunction with the KID to prove ownership of the external account during ACME account registration.
 
-              Finally, press **Create** to register the ACME-compatible CA with Hanzo KMS.
+              Finally, press **Create** to register the ACME-compatible CA with KMS.
 
-              Great! You’ve successfully registered an external ACME-compatible CA with Hanzo KMS. Now check out the [Certificates](/documentation/platform/pki/certificates/overview) section to learn more about how to issue X.509 certificates using the ACME-compatible CA.
+              Great! You’ve successfully registered an external ACME-compatible CA with KMS. Now check out the [Certificates](/documentation/platform/pki/certificates/overview) section to learn more about how to issue X.509 certificates using the ACME-compatible CA.
           </Tab>
           <Tab title="API">
-            To register an ACME CA with Hanzo KMS using the API, make a request to the [Create External CA](https://kms.hanzo.ai/docs/api-reference/endpoints/certificate-authorities/acme/create) endpoint:
+            To register an ACME CA with KMS using the API, make a request to the [Create External CA](https://kms.hanzo.ai/docs/api-reference/endpoints/certificate-authorities/acme/create) endpoint:
 
             ### Sample request
 
@@ -218,7 +218,7 @@ In the following steps, we explore how to connect Hanzo KMS to an ACME-compatibl
 
 <AccordionGroup>
   <Accordion title="What DNS validation methods are supported?">
-    Currently, Hanzo KMS supports DNS-01 validation through AWS Route53 or Cloudflare. The DNS-01 challenge method is preferred for ACME integrations because it:
+    Currently, KMS supports DNS-01 validation through AWS Route53 or Cloudflare. The DNS-01 challenge method is preferred for ACME integrations because it:
 
     - Works with wildcard certificates
     - Doesn't require your servers to be publicly accessible

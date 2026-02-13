@@ -1,11 +1,11 @@
 ---
 title: "Scoping Secrets"
-description: "Learn how access to secrets is controlled in Hanzo KMS."
+description: "Learn how access to secrets is controlled in KMS."
 ---
 
 ## Secret Hierarchy
 
-Every secret in Hanzo KMS is scoped to an environment and a path.
+Every secret in KMS is scoped to an environment and a path.
 
 - An environment separates where secrets are used, such as `development`, `staging`, or `production`.
 - A path is an (optional) namespace within an environment that groups related secrets such as `/postgres`, `/redis`, or per-service paths like `/service-a`.
@@ -22,7 +22,7 @@ This model follows the [principle of least privilege](https://en.wikipedia.org/w
 
 ## Advanced Capabilities
 
-Beyond basic role assignments, Hanzo KMS includes additional access control mechanisms for more advanced use cases:
+Beyond basic role assignments, KMS includes additional access control mechanisms for more advanced use cases:
 
 - Access approvals: Users can request access to specific environments or paths. Access can be temporary and reviewed before it is granted, reducing long-term exposure.
 

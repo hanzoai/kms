@@ -22,7 +22,7 @@ import {
 
 import { TFormSchema } from "./ProjectRoleModifySection.utils";
 import { analyzeVaultPolicy, PolicyBlock, PolicyLine } from "./VaultPolicyAnalyzer.utils";
-import { parseVaultPolicyToHanzo KMS } from "./VaultPolicyImportModal.utils";
+import { parseVaultPolicyToKms } from "./VaultPolicyImportModal.utils";
 import { VaultPolicyPreview } from "./VaultPolicyPreview";
 
 type Props = {
@@ -132,7 +132,7 @@ const Content = ({ onClose }: ContentProps) => {
     }
 
     try {
-      const parsedPermissions = parseVaultPolicyToHanzo KMS(hclPolicy, mounts);
+      const parsedPermissions = parseVaultPolicyToKms(hclPolicy, mounts);
 
       if (!parsedPermissions || Object.keys(parsedPermissions).length === 0) {
         createNotification({
@@ -199,7 +199,7 @@ const Content = ({ onClose }: ContentProps) => {
                 as the environment (e.g., <code className="text-xs">secret/data/prod/app</code> →
                 env: <code className="text-xs">prod</code>, path:{" "}
                 <code className="text-xs">/app</code>). Vault capabilities and wildcards are
-                automatically mapped to equivalent Hanzo KMS permissions and glob patterns.
+                automatically mapped to equivalent KMS permissions and glob patterns.
               </p>
             </div>
           </div>
@@ -317,7 +317,7 @@ export const VaultPolicyImportModal = ({ isOpen, onOpenChange }: Props) => {
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent
         title="Import from HashiCorp Vault"
-        subTitle="Select a policy from your Vault namespace or paste your own HCL policy to translate it into Hanzo KMS permissions."
+        subTitle="Select a policy from your Vault namespace or paste your own HCL policy to translate it into KMS permissions."
         className="max-w-4xl"
       >
         <Content onClose={() => onOpenChange(false)} />

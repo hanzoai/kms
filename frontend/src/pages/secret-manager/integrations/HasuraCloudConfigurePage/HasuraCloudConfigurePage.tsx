@@ -92,7 +92,7 @@ export const HasuraCloudConfigurePage = () => {
       <Card className="max-w-lg rounded-md border border-mineshaft-600">
         <CardTitle
           className="px-6 text-left text-xl"
-          subTitle={`Choose which environment or folder in Hanzo KMS you want to sync to ${APP_NAME} environment variables.`}
+          subTitle={`Choose which environment or folder in KMS you want to sync to ${APP_NAME} environment variables.`}
         >
           <div className="flex flex-row items-center">
             <div className="flex items-center pb-0.5">

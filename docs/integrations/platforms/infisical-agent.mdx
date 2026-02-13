@@ -3,19 +3,19 @@ title: "KMS Agent"
 description: "This page describes how to manage secrets using KMS Agent."
 ---
 
-KMS Agent is a client daemon that simplifies the adoption of Hanzo KMS by providing a more scalable and user-friendly approach for applications to interact with Hanzo KMS.
+KMS Agent is a client daemon that simplifies the adoption of KMS by providing a more scalable and user-friendly approach for applications to interact with KMS.
 It eliminates the need to modify application logic by enabling clients to decide how they want their secrets rendered through the use of templates.
 
 ![agent diagram](/images/agent/kms-agent-diagram.png)
 
 ## Key Features
 
-- **Token lifecycle management**: Automatically authenticates with Hanzo KMS and deposits renewed access tokens at specified path for applications to consume
+- **Token lifecycle management**: Automatically authenticates with KMS and deposits renewed access tokens at specified path for applications to consume
 - **Templating**: Renders secrets and dynamic secret leases via user provided templates to desired formats for applications to consume
 
 ## Token Renewal
 
-The Hanzo KMS agent can help manage the life cycle of access tokens. The token renewal process is split into two main components: a `Method`, which is the authentication process suitable for your current setup, and `Sinks`, which are the places where the agent deposits the new access token whenever it receives updates.
+The KMS agent can help manage the life cycle of access tokens. The token renewal process is split into two main components: a `Method`, which is the authentication process suitable for your current setup, and `Sinks`, which are the places where the agent deposits the new access token whenever it receives updates.
 
 When the KMS Agent is started, it will attempt to obtain a valid access token using the authentication method you have configured. If the agent is unable to fetch a valid token, the agent will keep trying, increasing the time between each attempt.
 
@@ -24,26 +24,26 @@ Once a access token is successfully fetched, the agent will make sure the access
 Every time the agent successfully retrieves a new access token, it writes the new token to the Sinks you've configured.
 
 <Info>
-  Access tokens can be utilized with Hanzo KMS SDKs or directly in API requests
-  to retrieve secrets from Hanzo KMS
+  Access tokens can be utilized with KMS SDKs or directly in API requests
+  to retrieve secrets from KMS
 </Info>
 
 ## Templating
 
-The Hanzo KMS agent can help deliver formatted secrets to your application in a variety of environments. To achieve this, the agent will retrieve secrets from Hanzo KMS, format them using a specified template, and then save these formatted secrets to a designated file path.
+The KMS agent can help deliver formatted secrets to your application in a variety of environments. To achieve this, the agent will retrieve secrets from KMS, format them using a specified template, and then save these formatted secrets to a designated file path.
 
 Templating process is done through the use of Go language's [text/template feature](https://pkg.go.dev/text/template).You can refer to the available secret template functions [here](#available-secret-template-functions). Multiple template definitions can be set in the agent configuration file to generate a variety of formatted secret files.
 
 When the agent is started and templates are defined in the agent configuration file, the agent will attempt to acquire a valid access token using the set authentication method outlined in the agent's configuration.
 If this initial attempt is unsuccessful, the agent will momentarily pauses before continuing to make more attempts.
 
-Once the agent successfully obtains a valid access token, the agent proceeds to fetch the secrets from Hanzo KMS using it.
+Once the agent successfully obtains a valid access token, the agent proceeds to fetch the secrets from KMS using it.
 It then formats these secrets using the user provided templates and writes the formatted data to configured file paths.
 
 
 ### Available secret template functions
 
-The secret template functions is what you will use to fetch resources such as static secrets and dynamic secret leases from Hanzo KMS. Below is a list of the available secret template functions that you can use in your templates.
+The secret template functions is what you will use to fetch resources such as static secrets and dynamic secret leases from KMS. Below is a list of the available secret template functions that you can use in your templates.
 
 
 <AccordionGroup>
@@ -123,7 +123,7 @@ The secret template functions is what you will use to fetch resources such as st
     **Returns**: An object with keys corresponding to the dynamic secret lease credentials.
 
     <Tip>
-      Note that if you have multiple dynamic secret templates with identical configurations, only one lease will be created in Hanzo KMS for those templates, and the same lease will be written to your specified destination paths.
+      Note that if you have multiple dynamic secret templates with identical configurations, only one lease will be created in KMS for those templates, and the same lease will be written to your specified destination paths.
     </Tip>
   </Accordion>
 </AccordionGroup>
@@ -206,14 +206,14 @@ kms:
 
 ## Agent configuration file
 
-To set up the authentication method for token renewal and to define secret templates, the Hanzo KMS agent requires a YAML configuration file containing properties defined below.
+To set up the authentication method for token renewal and to define secret templates, the KMS agent requires a YAML configuration file containing properties defined below.
 While specifying an authentication method is mandatory to start the agent, configuring sinks and secret templates are optional.
 
 
 
 | Field                                         | Description                                                                                                                                                                                                     |
 | --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------               |
-| `kms.address`                           | The URL of the Hanzo KMS service. Default: `"https://kms.hanzo.ai"`.                                                                                                                                       |
+| `kms.address`                           | The URL of the KMS service. Default: `"https://kms.hanzo.ai"`.                                                                                                                                       |
 | `kms.exit-after-auth`                   | Whether to exit the agent after authentication and first secret render. Default: `"false"`.                                                                                                                     |
 | `kms.revoke-credentials-on-shutdown`    | Whether to revoke all managed dynamic secret leases and identity access tokens on shutdown. Default: `"false"`.                                                                                                 |
 | `kms.retry-strategy.max-retries`        | How many times to retry failed API requests such as authentication, secret retrieval, etc. Defaults to `3` retries.                                                                                             |
@@ -240,11 +240,11 @@ While specifying an authentication method is mandatory to start the agent, confi
 
 ## Authentication
 
-The Hanzo KMS agent supports multiple authentication methods. Below are the available authentication methods, with their respective configurations.
+The KMS agent supports multiple authentication methods. Below are the available authentication methods, with their respective configurations.
 
 <AccordionGroup>
 <Accordion title="Universal Auth">
-  The Universal Auth method is a simple and secure way to authenticate with Hanzo KMS. It requires a client ID and a client secret to authenticate with Hanzo KMS.
+  The Universal Auth method is a simple and secure way to authenticate with KMS. It requires a client ID and a client secret to authenticate with KMS.
 
 <ParamField query="config" type="UniversalAuthConfig">
   <Expandable title="properties">
@@ -281,7 +281,7 @@ The Hanzo KMS agent supports multiple authentication methods. Below are the avai
   </Steps>
 </Accordion>
 <Accordion title="Native Kubernetes">
-  The Native Kubernetes method is used to authenticate with Hanzo KMS when running in a Kubernetes environment. It requires a service account token to authenticate with Hanzo KMS.
+  The Native Kubernetes method is used to authenticate with KMS when running in a Kubernetes environment. It requires a service account token to authenticate with KMS.
 
 {" "}
 
@@ -317,7 +317,7 @@ The Hanzo KMS agent supports multiple authentication methods. Below are the avai
 
 </Accordion>
   <Accordion title="Native Azure">
-    The Native Azure method is used to authenticate with Hanzo KMS when running in an Azure environment.
+    The Native Azure method is used to authenticate with KMS when running in an Azure environment.
 
     <ParamField query="config" type="AzureAuthConfig">
       <Expandable title="properties">
@@ -345,7 +345,7 @@ The Hanzo KMS agent supports multiple authentication methods. Below are the avai
 
   </Accordion>
   <Accordion title="Native GCP ID Token">
-    The Native GCP ID Token method is used to authenticate with Hanzo KMS when running in a GCP environment.
+    The Native GCP ID Token method is used to authenticate with KMS when running in a GCP environment.
 
     <ParamField query="config" type="GCPIDTokenAuthConfig">
       <Expandable title="properties">
@@ -373,7 +373,7 @@ The Hanzo KMS agent supports multiple authentication methods. Below are the avai
 
   </Accordion>
   <Accordion title="GCP IAM">
-    The GCP IAM method is used to authenticate with Hanzo KMS with a GCP service account key.
+    The GCP IAM method is used to authenticate with KMS with a GCP service account key.
 
     <ParamField query="config" type="GCPIAMAuthConfig">
       <Expandable title="properties">
@@ -405,7 +405,7 @@ The Hanzo KMS agent supports multiple authentication methods. Below are the avai
 
   </Accordion>
   <Accordion title="Native AWS IAM">
-    The AWS IAM method is used to authenticate with Hanzo KMS with an AWS IAM role while running in an AWS environment like EC2, Lambda, etc.
+    The AWS IAM method is used to authenticate with KMS with an AWS IAM role while running in an AWS environment like EC2, Lambda, etc.
 
     <ParamField query="config" type="AWSIAMAuthConfig">
       <Expandable title="properties">
@@ -436,7 +436,7 @@ The Hanzo KMS agent supports multiple authentication methods. Below are the avai
 
 ## Quick start KMS Agent
 
-To install the Hanzo KMS agent, you must first install the [KMS CLI](/cli/overview) in the desired environment where you'd like the agent to run. This is because the Hanzo KMS agent is a sub-command of the KMS CLI.
+To install the KMS agent, you must first install the [KMS CLI](/cli/overview) in the desired environment where you'd like the agent to run. This is because the KMS agent is a sub-command of the KMS CLI.
 
 Once you have the CLI installed, you will need to provision programmatic access for the agent via [Universal Auth](/documentation/platform/identities/universal-auth). To obtain a **Client ID** and a **Client Secret**, follow the step by step guide outlined [here](/documentation/platform/identities/universal-auth).
 

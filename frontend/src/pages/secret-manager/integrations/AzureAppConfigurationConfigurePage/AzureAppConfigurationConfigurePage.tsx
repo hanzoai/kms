@@ -57,7 +57,7 @@ const initialSyncBehaviors = [
     label: "Import - Prefer values from Azure App Configuration",
     value: IntegrationSyncBehavior.PREFER_TARGET
   },
-  { label: "Import - Prefer values from Hanzo KMS", value: IntegrationSyncBehavior.PREFER_SOURCE }
+  { label: "Import - Prefer values from KMS", value: IntegrationSyncBehavior.PREFER_SOURCE }
 ];
 
 export const AzureAppConfigurationConfigurePage = () => {
@@ -156,7 +156,7 @@ export const AzureAppConfigurationConfigurePage = () => {
       <Card className="max-w-lg rounded-md border border-mineshaft-600">
         <CardTitle
           className="text-left text-xl"
-          subTitle="Choose which environment in Hanzo KMS you want to sync to your Azure App Configuration."
+          subTitle="Choose which environment in KMS you want to sync to your Azure App Configuration."
         >
           <div className="flex flex-row items-center">
             <div className="flex items-center">

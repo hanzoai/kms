@@ -1,6 +1,6 @@
 ---
 title: "Local development"
-description: "This guide will help you set up and run the Hanzo KMS platform in local development."
+description: "This guide will help you set up and run the KMS platform in local development."
 ---
 
 ## Fork and clone the repo
@@ -15,11 +15,11 @@ git checkout -b MY_BRANCH_NAME
 
 ## Set up environment variables
 
-Start by creating a `.env` file at the root of the Hanzo KMS directory then copy the contents of the file linked [here](https://github.com/hanzoai/kms/blob/main/.env.dev.example). View all available [environment variables](https://kms.hanzo.ai/docs/self-hosting/configuration/envars) and guidance for each.
+Start by creating a `.env` file at the root of the KMS directory then copy the contents of the file linked [here](https://github.com/hanzoai/kms/blob/main/.env.dev.example). View all available [environment variables](https://kms.hanzo.ai/docs/self-hosting/configuration/envars) and guidance for each.
 
-## Starting Hanzo KMS for development
+## Starting KMS for development
 
-We use Docker to spin up all required services for Hanzo KMS in local development. If you are unfamiliar with Docker, don’t worry, all you have to do is install Docker for your
+We use Docker to spin up all required services for KMS in local development. If you are unfamiliar with Docker, don’t worry, all you have to do is install Docker for your
 machine and run the command below to start up the development server.
 
 #### Start local server
@@ -39,7 +39,7 @@ Once all the services have spun up, browse to http://localhost:8080.
 docker compose -f docker-compose.dev.yml down
 ```
 
-## Starting Hanzo KMS docs locally
+## Starting KMS docs locally
 
 We use [Mintlify](https://mintlify.com/) for our docs.
 

@@ -1,10 +1,10 @@
 ---
 title: "Architecture"
 sidebarTitle: "Architecture"
-description: "Learn about the architecture, components, and security model of Hanzo KMS PAM."
+description: "Learn about the architecture, components, and security model of KMS PAM."
 ---
 
-Hanzo KMS PAM utilizes a secure, proxy-based architecture designed to provide access to private resources without exposing them directly to the internet. This system relies on a combination of the KMS CLI, a Relay server, and a self-hosted Gateway. For more information on Gateways, refer to the [Gateway Overview](/documentation/platform/gateways/overview).
+KMS PAM utilizes a secure, proxy-based architecture designed to provide access to private resources without exposing them directly to the internet. This system relies on a combination of the KMS CLI, a Relay server, and a self-hosted Gateway. For more information on Gateways, refer to the [Gateway Overview](/documentation/platform/gateways/overview).
 
 ## Core Components
 
@@ -57,7 +57,7 @@ A key feature of the Gateway is its ability to act as a "middleman" for all sess
 
 - **Interception**: Because the Gateway sits between the secure tunnel and the target resource, it intercepts all data flowing through the connection.
 - **Logging**: This traffic is logged as part of [Session Recording](/documentation/platform/pam/product-reference/session-recording). The Gateway temporarily stores encrypted session logs locally.
-- **Upload**: Once the session concludes, the logs are securely uploaded to the Hanzo KMS platform for storage and review.
+- **Upload**: Once the session concludes, the logs are securely uploaded to the KMS platform for storage and review.
 
 ## Security Architecture
 
@@ -69,7 +69,7 @@ The connection between the KMS CLI (client) and the Gateway is end-to-end encryp
 ### Network Security
 The Gateway uses **SSH reverse tunnels** to connect to the Relay. This design offers significant security benefits:
 - **No Inbound Ports**: You do not need to open any inbound firewall ports (like 22 or 5432) to the internet.
-- **Outbound-Only**: The Gateway only requires outbound connectivity to the Relay server and Hanzo KMS API.
+- **Outbound-Only**: The Gateway only requires outbound connectivity to the Relay server and KMS API.
 
 For a deep dive into the underlying cryptography, certificate management, and isolation guarantees, refer to the [Gateway Security Architecture](/documentation/platform/gateways/security).
 

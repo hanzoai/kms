@@ -1,16 +1,16 @@
 ---
 title: "AWS Connection"
-description: "Learn how to configure an AWS Connection for Hanzo KMS."
+description: "Learn how to configure an AWS Connection for KMS."
 ---
 
-Hanzo KMS supports two methods for connecting to AWS.
+KMS supports two methods for connecting to AWS.
 
 <Tabs>
     <Tab title="Assume Role (Recommended)">
-        Hanzo KMS will assume the provided role in your AWS account securely, without the need to share any credentials.
+        KMS will assume the provided role in your AWS account securely, without the need to share any credentials.
 
         <Accordion title="Self-Hosted Instance">
-            To connect your self-hosted Hanzo KMS instance with AWS, you need to set up an AWS IAM User account that can assume the configured AWS IAM Role.
+            To connect your self-hosted KMS instance with AWS, you need to set up an AWS IAM User account that can assume the configured AWS IAM Role.
 
             If your instance is deployed on AWS, the aws-sdk will automatically retrieve the credentials. Ensure that you assign the provided permission policy to your deployed instance, such as ECS or EC2.
 
@@ -50,21 +50,21 @@ Hanzo KMS supports two methods for connecting to AWS.
         </Accordion>
 
         <Steps>
-            <Step title="Create the Managing User IAM Role for Hanzo KMS">
+            <Step title="Create the Managing User IAM Role for KMS">
                 1. Navigate to the [Create IAM Role](https://console.aws.amazon.com/iamv2/home#/roles/create?step=selectEntities) page in your AWS Console.
                 ![IAM Role Creation](/images/integrations/aws/integration-aws-iam-assume-role.png)
 
                 2. Select **AWS Account** as the **Trusted Entity Type**.
-                3. Select **Another AWS Account** and provide the appropriate Hanzo KMS AWS Account ID: use **381492033652** for the **US region**, and **345594589636** for the **EU region**. This restricts the role to be assumed only by Hanzo KMS. If self-hosting, provide your AWS account number instead.
+                3. Select **Another AWS Account** and provide the appropriate KMS AWS Account ID: use **381492033652** for the **US region**, and **345594589636** for the **EU region**. This restricts the role to be assumed only by KMS. If self-hosting, provide your AWS account number instead.
                 <Note>
-                  **For Dedicated Instances**: Your AWS account ID differs from the one provided above. Please reach out to Hanzo KMS support to obtain your AWS account ID.
+                  **For Dedicated Instances**: Your AWS account ID differs from the one provided above. Please reach out to KMS support to obtain your AWS account ID.
                 </Note>
                 4. (Recommended) <strong>Enable "Require external ID"</strong> and input your **Organization ID** to strengthen security and mitigate the [confused deputy problem](https://docs.aws.amazon.com/IAM/latest/UserGuide/confused-deputy.html).
 
                 <Warning type="warning" title="Security Best Practice: Use External ID to Prevent Confused Deputy Attacks">
-                    When configuring an IAM Role that Hanzo KMS will assume, it’s highly recommended to enable the **"Require external ID"** option and specify your **Organization ID**.
+                    When configuring an IAM Role that KMS will assume, it’s highly recommended to enable the **"Require external ID"** option and specify your **Organization ID**.
 
-                    This precaution helps protect your AWS account against the [confused deputy problem](https://docs.aws.amazon.com/IAM/latest/UserGuide/confused-deputy.html), a potential security vulnerability where Hanzo KMS could be tricked into performing actions on your behalf by an unauthorized actor.
+                    This precaution helps protect your AWS account against the [confused deputy problem](https://docs.aws.amazon.com/IAM/latest/UserGuide/confused-deputy.html), a potential security vulnerability where KMS could be tricked into performing actions on your behalf by an unauthorized actor.
 
                     <strong>Always enable "Require external ID" and use your Organization ID when setting up the IAM Role.</strong>
                 </Warning>
@@ -81,7 +81,7 @@ Hanzo KMS supports two methods for connecting to AWS.
                     <Tab title="Secret Sync">
                         <AccordionGroup>
                             <Accordion title="AWS Secrets Manager">
-                                Use the following custom policy to grant the minimum permissions required by Hanzo KMS to sync secrets to AWS Secrets Manager:
+                                Use the following custom policy to grant the minimum permissions required by KMS to sync secrets to AWS Secrets Manager:
 
                                 ![IAM Role Secrets Manager Permissions](/images/app-connections/aws/secrets-manager-permissions.png)
 
@@ -115,7 +115,7 @@ Hanzo KMS supports two methods for connecting to AWS.
                                 <Note>If using a custom KMS key, be sure to add the IAM user or role as a key user. ![KMS Key IAM Role User](/images/app-connections/aws/kms-key-user.png)</Note>
                             </Accordion>
                             <Accordion title="AWS Parameter Store">
-                                Use the following custom policy to grant the minimum permissions required by Hanzo KMS to sync secrets to AWS Parameter Store:
+                                Use the following custom policy to grant the minimum permissions required by KMS to sync secrets to AWS Parameter Store:
 
                                 ![IAM Role Secrets Manager Permissions](/images/app-connections/aws/parameter-store-permissions.png)
 
@@ -152,7 +152,7 @@ Hanzo KMS supports two methods for connecting to AWS.
                     <Tab title="Secret Rotation">
                         <AccordionGroup>
                             <Accordion title="AWS IAM">
-                                Use the following custom policy to grant the minimum permissions required by Hanzo KMS to rotate secrets to AWS Access Keys:
+                                Use the following custom policy to grant the minimum permissions required by KMS to rotate secrets to AWS Access Keys:
 
                                 ![IAM Role Secret Rotation Permissions](/images/app-connections/aws/iam-role-secret-rotation-permissions.png)
 
@@ -180,7 +180,7 @@ Hanzo KMS supports two methods for connecting to AWS.
                     <Tab title="PKI Sync">
                         <AccordionGroup>
                             <Accordion title="AWS Certificate Manager">
-                                Use the following custom policy to grant the minimum permissions required by Hanzo KMS to sync certificates to AWS Certificate Manager:
+                                Use the following custom policy to grant the minimum permissions required by KMS to sync certificates to AWS Certificate Manager:
 
                                 ```json
                                 {
@@ -207,15 +207,15 @@ Hanzo KMS supports two methods for connecting to AWS.
                                 ```
                                 <Note>
                                     - **ListCertificates**: Lists all certificates in the account
-                                    - **ImportCertificate**: Imports certificates from Hanzo KMS into AWS Certificate Manager
+                                    - **ImportCertificate**: Imports certificates from KMS into AWS Certificate Manager
                                     - **ExportCertificate**: Exports certificates for synchronization
-                                    - **DeleteCertificate**: Removes certificates that are no longer managed by Hanzo KMS
+                                    - **DeleteCertificate**: Removes certificates that are no longer managed by KMS
                                     - **DescribeCertificate** and **GetCertificate**: Retrieves certificate details for comparison during sync
                                     - Tag-related permissions: Manages certificate tags for identification and organization
                                 </Note>
                             </Accordion>
                             <Accordion title="AWS Elastic Load Balancer">
-                                Use the following custom policy to grant the minimum permissions required by Hanzo KMS to sync certificates to AWS Elastic Load Balancers:
+                                Use the following custom policy to grant the minimum permissions required by KMS to sync certificates to AWS Elastic Load Balancers:
 
                                 ```json
                                 {
@@ -252,8 +252,8 @@ Hanzo KMS supports two methods for connecting to AWS.
                                 <Note>
                                     **ACM Permissions:**
                                     - **ListCertificates**: Lists all certificates in the account
-                                    - **ImportCertificate**: Imports certificates from Hanzo KMS into AWS Certificate Manager
-                                    - **DeleteCertificate**: Removes certificates that are no longer managed by Hanzo KMS
+                                    - **ImportCertificate**: Imports certificates from KMS into AWS Certificate Manager
+                                    - **DeleteCertificate**: Removes certificates that are no longer managed by KMS
                                     - **DescribeCertificate**: Retrieves certificate details for comparison during sync
                                     - **ListTagsForCertificate**: Retrieves certificate tags for identification
 
@@ -275,9 +275,9 @@ Hanzo KMS supports two methods for connecting to AWS.
                 ![Copy IAM Role ARN](/images/integrations/aws/integration-aws-iam-assume-arn.png)
             </Step>
 
-            <Step title="Setup AWS Connection in Hanzo KMS">
+            <Step title="Setup AWS Connection in KMS">
                 <Tabs>
-                    <Tab title="Hanzo KMS UI">
+                    <Tab title="KMS UI">
                         1. Navigate to the **Integrations** tab in the desired project, then select **App Connections**.
                         ![App Connections Tab](/images/app-connections/general/add-connection.png)
 
@@ -335,7 +335,7 @@ Hanzo KMS supports two methods for connecting to AWS.
 
     </Tab>
     <Tab title="Access Key">
-        Hanzo KMS will use the provided **Access Key ID** and **Secret Key** to connect to your AWS instance.
+        KMS will use the provided **Access Key ID** and **Secret Key** to connect to your AWS instance.
 
         <Steps>
             <Step title="Add Required Permissions to the IAM User">
@@ -349,7 +349,7 @@ Hanzo KMS supports two methods for connecting to AWS.
                     <Tab title="Secret Sync">
                         <AccordionGroup>
                             <Accordion title="AWS Secrets Manager">
-                                Use the following custom policy to grant the minimum permissions required by Hanzo KMS to sync secrets to AWS Secrets Manager:
+                                Use the following custom policy to grant the minimum permissions required by KMS to sync secrets to AWS Secrets Manager:
 
                                 ![IAM Role Secrets Manager Permissions](/images/app-connections/aws/secrets-manager-permissions.png)
 
@@ -383,7 +383,7 @@ Hanzo KMS supports two methods for connecting to AWS.
                                 <Note>If using a custom KMS key, be sure to add the IAM user or role as a key user. ![KMS Key IAM Role User](/images/app-connections/aws/kms-key-user.png)</Note>
                             </Accordion>
                             <Accordion title="AWS Parameter Store">
-                                Use the following custom policy to grant the minimum permissions required by Hanzo KMS to sync secrets to AWS Parameter Store:
+                                Use the following custom policy to grant the minimum permissions required by KMS to sync secrets to AWS Parameter Store:
 
                                 ![IAM Role Secrets Manager Permissions](/images/app-connections/aws/parameter-store-permissions.png)
 
@@ -420,7 +420,7 @@ Hanzo KMS supports two methods for connecting to AWS.
                     <Tab title="Secret Rotation">
                         <AccordionGroup>
                             <Accordion title="AWS IAM">
-                                Use the following custom policy to grant the minimum permissions required by Hanzo KMS to rotate secrets to AWS Access Keys:
+                                Use the following custom policy to grant the minimum permissions required by KMS to rotate secrets to AWS Access Keys:
 
                                 ![IAM Role Secret Rotation Permissions](/images/app-connections/aws/iam-role-secret-rotation-permissions.png)
 
@@ -448,7 +448,7 @@ Hanzo KMS supports two methods for connecting to AWS.
                     <Tab title="PKI Sync">
                         <AccordionGroup>
                             <Accordion title="AWS Certificate Manager">
-                                Use the following custom policy to grant the minimum permissions required by Hanzo KMS to sync certificates to AWS Certificate Manager:
+                                Use the following custom policy to grant the minimum permissions required by KMS to sync certificates to AWS Certificate Manager:
 
                                 ```json
                                 {
@@ -475,15 +475,15 @@ Hanzo KMS supports two methods for connecting to AWS.
                                 ```
                                 <Note>
                                     - **ListCertificates**: Lists all certificates in the account
-                                    - **ImportCertificate**: Imports certificates from Hanzo KMS into AWS Certificate Manager
+                                    - **ImportCertificate**: Imports certificates from KMS into AWS Certificate Manager
                                     - **ExportCertificate**: Exports certificates for synchronization
-                                    - **DeleteCertificate**: Removes certificates that are no longer managed by Hanzo KMS
+                                    - **DeleteCertificate**: Removes certificates that are no longer managed by KMS
                                     - **DescribeCertificate** and **GetCertificate**: Retrieves certificate details for comparison during sync
                                     - Tag-related permissions: Manages certificate tags for identification and organization
                                 </Note>
                             </Accordion>
                             <Accordion title="AWS Elastic Load Balancer">
-                                Use the following custom policy to grant the minimum permissions required by Hanzo KMS to sync certificates to AWS Elastic Load Balancers:
+                                Use the following custom policy to grant the minimum permissions required by KMS to sync certificates to AWS Elastic Load Balancers:
 
                                 ```json
                                 {
@@ -520,8 +520,8 @@ Hanzo KMS supports two methods for connecting to AWS.
                                 <Note>
                                     **ACM Permissions:**
                                     - **ListCertificates**: Lists all certificates in the account
-                                    - **ImportCertificate**: Imports certificates from Hanzo KMS into AWS Certificate Manager
-                                    - **DeleteCertificate**: Removes certificates that are no longer managed by Hanzo KMS
+                                    - **ImportCertificate**: Imports certificates from KMS into AWS Certificate Manager
+                                    - **DeleteCertificate**: Removes certificates that are no longer managed by KMS
                                     - **DescribeCertificate**: Retrieves certificate details for comparison during sync
                                     - **ListTagsForCertificate**: Retrieves certificate tags for identification
 
@@ -545,9 +545,9 @@ Hanzo KMS supports two methods for connecting to AWS.
                 ![access key 2](/images/integrations/aws/integrations-aws-access-key-2.png)
                 ![access key 3](/images/integrations/aws/integrations-aws-access-key-3.png)
             </Step>
-            <Step title="Setup AWS Connection in Hanzo KMS">
+            <Step title="Setup AWS Connection in KMS">
                 <Tabs>
-                    <Tab title="Hanzo KMS UI">
+                    <Tab title="KMS UI">
                         1. Navigate to the **Integrations** tab in the desired project, then select **App Connections**.
                         ![App Connections Tab](/images/app-connections/general/add-connection.png)
 

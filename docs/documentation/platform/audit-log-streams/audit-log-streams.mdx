@@ -1,15 +1,15 @@
 ---
 title: "Audit Log Streams"
-description: "Learn how to stream Hanzo KMS Audit Logs to external logging providers."
+description: "Learn how to stream KMS Audit Logs to external logging providers."
 ---
 
 <Info>
     Audit log streams is a paid feature.
 
-    If you're using Hanzo KMS Cloud, then it is available under the **Enterprise Tier**. If you're self-hosting Hanzo KMS, then you should contact team@kms.hanzo.ai to purchase an enterprise license to use it.
+    If you're using KMS Cloud, then it is available under the **Enterprise Tier**. If you're self-hosting KMS, then you should contact team@kms.hanzo.ai to purchase an enterprise license to use it.
 </Info>
 
-Hanzo KMS Audit Log Streaming enables you to transmit your organization's audit logs to external logging providers for monitoring and analysis.
+KMS Audit Log Streaming enables you to transmit your organization's audit logs to external logging providers for monitoring and analysis.
 
 ## Overview
 
@@ -46,7 +46,7 @@ Hanzo KMS Audit Log Streaming enables you to transmit your organization's audit 
 
 <AccordionGroup>
     <Accordion title="Azure">
-        Hanzo KMS offers a dedicated **Azure** provider to stream your audit logs, enabling seamless integration with services like Microsoft Sentinel.
+        KMS offers a dedicated **Azure** provider to stream your audit logs, enabling seamless integration with services like Microsoft Sentinel.
 
         <Warning>
             After setting up all Azure resources, it may take 10-20 minutes for logs to begin streaming.
@@ -88,7 +88,7 @@ Hanzo KMS Audit Log Streaming enables you to transmit your organization's audit 
 
                 ![azure new table](/images/platform/audit-log-streams/azure-new-table.png)
 
-                Configure the Custom Log Table: Provide a **Table name** (e.g., `Hanzo KMSLogs`), select the **Data collection endpoint** created in Step 1, and create a new **Data collection rule** as illustrated in the image below. Then, click **Next**.
+                Configure the Custom Log Table: Provide a **Table name** (e.g., `KMSLogs`), select the **Data collection endpoint** created in Step 1, and create a new **Data collection rule** as illustrated in the image below. Then, click **Next**.
 
                 ![azure configure table](/images/platform/audit-log-streams/azure-configure-table.png)
 
@@ -137,8 +137,8 @@ Hanzo KMS Audit Log Streaming enables you to transmit your organization's audit 
 
                 ![azure dcr](/images/platform/audit-log-streams/azure-dcr.png)
             </Step>
-            <Step title="Create Audit Log Stream on Hanzo KMS">
-                In Hanzo KMS, create a new audit log stream and select the **Azure** provider. Input the following details:
+            <Step title="Create Audit Log Stream on KMS">
+                In KMS, create a new audit log stream and select the **Azure** provider. Input the following details:
 
                 - **Tenant ID**: Your Tenant ID
                 - **Client ID**: The Client ID of an App Registration
@@ -168,8 +168,8 @@ Hanzo KMS Audit Log Streaming enables you to transmit your organization's audit 
 
         				![better stack connect](/images/platform/audit-log-streams/betterstack-source-details.png)
             </Step>
-            <Step title="Create Audit Log Stream on Hanzo KMS">
-        				On Hanzo KMS, create a new audit log stream and select the **Custom** option.
+            <Step title="Create Audit Log Stream on KMS">
+        				On KMS, create a new audit log stream and select the **Custom** option.
 
         				![select custom](/images/platform/audit-log-streams/select-custom.png)
 
@@ -183,10 +183,10 @@ Hanzo KMS Audit Log Streaming enables you to transmit your organization's audit 
         </Steps>
     </Accordion>
     <Accordion title="Cribl">
-        Stream Hanzo KMS audit logs to Cribl Stream for centralized processing and routing. Hanzo KMS supports Cribl as a provider for seamless integration.
+        Stream KMS audit logs to Cribl Stream for centralized processing and routing. KMS supports Cribl as a provider for seamless integration.
 
         <Steps>
-            <Step title="Create Hanzo KMS Data Source">
+            <Step title="Create KMS Data Source">
                 In Cribl Stream, navigate to **Worker Groups** and select your Worker Group. Take note of the **Ingress Address** for later steps.
 
         				![cribl ingress address](/images/platform/audit-log-streams/cribl-ingress-address.png)
@@ -207,8 +207,8 @@ Hanzo KMS Audit Log Streaming enables you to transmit your organization's audit 
 
                 Once you've configured the Data Source, click **Save** and deploy your changes.
         		</Step>
-            <Step title="Create Audit Log Stream on Hanzo KMS">
-                On Hanzo KMS, create a new audit log stream and select the **Cribl** provider option.
+            <Step title="Create Audit Log Stream on KMS">
+                On KMS, create a new audit log stream and select the **Cribl** provider option.
 
                 Input the following credentials:
                 - **Cribl Stream URL**: Your HTTP source endpoint composed of `http://<ingress-address>:<port>/<http-event-api-path>/_bulk`
@@ -235,8 +235,8 @@ Hanzo KMS Audit Log Streaming enables you to transmit your organization's audit 
         				![api key form](/images/platform/audit-log-streams/data-create-api-key.png)
         				![api key form](/images/platform/audit-log-streams/data-dog-api-key.png)
         		</Step>
-            <Step title="Create Audit Log Stream on Hanzo KMS">
-                On Hanzo KMS, create a new audit log stream and select the **Datadog** provider option.
+            <Step title="Create Audit Log Stream on KMS">
+                On KMS, create a new audit log stream and select the **Datadog** provider option.
 
                 Input your **Datadog Region** and the **Token** obtained from step 2.
 
@@ -273,8 +273,8 @@ Hanzo KMS Audit Log Streaming enables you to transmit your organization's audit 
 
         				![splunk credentials](/images/platform/audit-log-streams/splunk-credentials.png)
         		</Step>
-            <Step title="Create Audit Log Stream on Hanzo KMS">
-                On Hanzo KMS, create a new audit log stream and select the **Splunk** provider option.
+            <Step title="Create Audit Log Stream on KMS">
+                On KMS, create a new audit log stream and select the **Splunk** provider option.
 
                 Input your **Splunk Hostname** and the **Token** obtained from step 1.
 
@@ -393,12 +393,12 @@ Hanzo KMS Audit Log Streaming enables you to transmit your organization's audit 
     The user agent of the actor, if applicable.
 </ParamField>
 
-<ParamField path="userAgentType" type="web | cli | k8-operator | terraform | other | Hanzo KMSPythonSDK | Hanzo KMSNodeSDK">
+<ParamField path="userAgentType" type="web | cli | k8-operator | terraform | other | KMSPythonSDK | KMSNodeSDK">
     The type of user agent.
 </ParamField>
 
 <ParamField path="expiresAt" type="string" required>
-    The expiration date of the log entry. When this date is reached, the log entry will be deleted from Hanzo KMS.
+    The expiration date of the log entry. When this date is reached, the log entry will be deleted from KMS.
 </ParamField>
 
 <ParamField path="createdAt" type="string" required>

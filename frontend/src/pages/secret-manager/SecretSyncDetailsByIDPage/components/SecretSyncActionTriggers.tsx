@@ -190,7 +190,7 @@ export const SecretSyncActionTriggers = ({ secretSync }: Props) => {
                       <Tooltip
                         position="left"
                         sideOffset={42}
-                        content={`Import secrets from this ${destinationName} destination into Hanzo KMS.`}
+                        content={`Import secrets from this ${destinationName} destination into KMS.`}
                       >
                         <div className="flex h-full w-full items-center justify-between gap-1">
                           <span>Import Secrets</span>
@@ -218,7 +218,7 @@ export const SecretSyncActionTriggers = ({ secretSync }: Props) => {
                     <Tooltip
                       position="left"
                       sideOffset={42}
-                      content={`Remove secrets synced by Hanzo KMS from this ${destinationName} destination.`}
+                      content={`Remove secrets synced by KMS from this ${destinationName} destination.`}
                     >
                       <div className="flex h-full w-full items-center justify-between gap-1">
                         <span>Remove Secrets</span>

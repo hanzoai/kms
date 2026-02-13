@@ -1,25 +1,25 @@
 ---
 title: "AWS Amplify"
-description: "Learn how to sync secrets from Hanzo KMS to AWS Amplify."
+description: "Learn how to sync secrets from KMS to AWS Amplify."
 ---
 
 Prerequisites:
 
-- Hanzo KMS Cloud account
-- Add the secrets you wish to sync to Amplify to [Hanzo KMS Cloud](https://kms.hanzo.ai)
+- KMS Cloud account
+- Add the secrets you wish to sync to Amplify to [KMS Cloud](https://kms.hanzo.ai)
 
-There are many approaches to sync secrets stored within Hanzo KMS to AWS Amplify. This guide describes two such approaches below.
+There are many approaches to sync secrets stored within KMS to AWS Amplify. This guide describes two such approaches below.
 
-## Access Hanzo KMS secrets at Amplify build time
+## Access KMS secrets at Amplify build time
 
-This approach enables you to fetch secrets from Hanzo KMS during Amplify build time.
+This approach enables you to fetch secrets from KMS during Amplify build time.
 
 <Tabs>
 
   <Tab title="Machine Identity (Recommended)">
     <Steps>
       <Step title="Create a machine identity">
-          Create a machine identity and connect it to your Hanzo KMS project. You can read more about how to use machine identities [here](/documentation/platform/identities/machine-identities). The machine identity will allow you to authenticate and fetch secrets from Hanzo KMS.
+          Create a machine identity and connect it to your KMS project. You can read more about how to use machine identities [here](/documentation/platform/identities/machine-identities). The machine identity will allow you to authenticate and fetch secrets from KMS.
       </Step>
 
       <Step title="Set the machine identity client ID and client secret as Amplify environment variables">
@@ -45,7 +45,7 @@ This approach enables you to fetch secrets from Hanzo KMS during Amplify build t
       </Step>
 
       <Step title="Modify the build command">
-        You can now pull secrets from Hanzo KMS using the CLI and save them as a `.env` file. To do this, modify the build commands.
+        You can now pull secrets from KMS using the CLI and save them as a `.env` file. To do this, modify the build commands.
 
         ```yaml
         build:
@@ -65,7 +65,7 @@ This approach enables you to fetch secrets from Hanzo KMS during Amplify build t
 
     <Steps>
       <Step title="Generate a service token">
-        Go to your project settings in the Hanzo KMS dashboard to generate a [service token](/documentation/platform/token). This service token will allow you to authenticate and fetch secrets from Hanzo KMS. Once you have created a service token with the required permissions, you’ll need to provide the token to the CLI installed in your Docker container.
+        Go to your project settings in the KMS dashboard to generate a [service token](/documentation/platform/token). This service token will allow you to authenticate and fetch secrets from KMS. Once you have created a service token with the required permissions, you’ll need to provide the token to the CLI installed in your Docker container.
       </Step>
       <Step title="Set the service token as an Amplify environment variable">
         ![aws amplify env console](../../images/integrations/aws/integrations-amplify-env-console.png)
@@ -87,7 +87,7 @@ This approach enables you to fetch secrets from Hanzo KMS during Amplify build t
         ```
       </Step>
       <Step title="Modify the build command">
-        You can now pull secrets from Hanzo KMS using the CLI and save them as a `.env` file. To do this, modify the build commands.
+        You can now pull secrets from KMS using the CLI and save them as a `.env` file. To do this, modify the build commands.
 
         ```yaml
         build:
@@ -103,12 +103,12 @@ This approach enables you to fetch secrets from Hanzo KMS during Amplify build t
 
     ## Sync Secrets Using AWS SSM Parameter Store
 
-    Another approach to use secrets from Hanzo KMS in AWS Amplify is to utilize AWS Parameter Store.
-    At high level, you begin by using Hanzo KMS's AWS SSM Parameter Store integration to sync secrets from Hanzo KMS to AWS SSM Parameter Store. You then instruct AWS Amplify to consume those secrets from AWS SSM Parameter Store as [environment secrets](https://docs.aws.amazon.com/amplify/latest/userguide/environment-variables.html#environment-secrets).
+    Another approach to use secrets from KMS in AWS Amplify is to utilize AWS Parameter Store.
+    At high level, you begin by using KMS's AWS SSM Parameter Store integration to sync secrets from KMS to AWS SSM Parameter Store. You then instruct AWS Amplify to consume those secrets from AWS SSM Parameter Store as [environment secrets](https://docs.aws.amazon.com/amplify/latest/userguide/environment-variables.html#environment-secrets).
 
     <Steps>
       <Step title="Follow the AWS SSM Parameter Store Integration guide">
-        Follow the [Hanzo KMS AWS SSM Parameter Store Secret Syncs Guide](../secret-syncs/aws-parameter-store) to set up the integration. Pause once you reach the step where it asks you to select the path you would like to sync.
+        Follow the [KMS AWS SSM Parameter Store Secret Syncs Guide](../secret-syncs/aws-parameter-store) to set up the integration. Pause once you reach the step where it asks you to select the path you would like to sync.
       </Step>
       <Step title="Find your Amplify App ID">
         ![amplify app id](../../images/integrations/aws/integrations-amplify-app-id.png)
@@ -117,7 +117,7 @@ This approach enables you to fetch secrets from Hanzo KMS during Amplify build t
         3. The App ID will be the last part of the App ARN field after the slash.
       </Step>
       <Step title="Set AWS SSM Parameter Store path">
-        You need to set the path in the format `/amplify/[amplify_app_id]/[your-amplify-environment-name]` as the path option in AWS SSM Parameter Hanzo KMS Integration.
+        You need to set the path in the format `/amplify/[amplify_app_id]/[your-amplify-environment-name]` as the path option in AWS SSM Parameter KMS Integration.
       </Step>
     </Steps>
 

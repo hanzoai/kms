@@ -1,11 +1,11 @@
 ---
 title: "Databricks Connection"
-description: "Learn how to configure a Databricks Connection for Hanzo KMS."
+description: "Learn how to configure a Databricks Connection for KMS."
 ---
 
-Hanzo KMS supports the use of [service principals](https://docs.databricks.com/en/admin/users-groups/service-principals.html) to connect with your Databricks workspaces.
+KMS supports the use of [service principals](https://docs.databricks.com/en/admin/users-groups/service-principals.html) to connect with your Databricks workspaces.
 
-## Configure a Service Principal for Hanzo KMS
+## Configure a Service Principal for KMS
 
 <Steps>
     <Step title="Databricks Workspace Settings">
@@ -23,7 +23,7 @@ Hanzo KMS supports the use of [service principals](https://docs.databricks.com/e
         ![Add Service Principal](/images/app-connections/databricks/add-service-principal.png)
     </Step>
     <Step title="Add Service Principal">
-        Select the **Add New** option and create a service principal for Hanzo KMS.
+        Select the **Add New** option and create a service principal for KMS.
 
         ![Create Service Principal](/images/app-connections/databricks/create-service-principal.png)
     </Step>
@@ -46,7 +46,7 @@ Hanzo KMS supports the use of [service principals](https://docs.databricks.com/e
 
             ![Admin Group](/images/app-connections/databricks/admin-group.png)
 
-            Click **Add** and select the service principal you created for Hanzo KMS to add it to the admin group.
+            Click **Add** and select the service principal you created for KMS to add it to the admin group.
 
             ![Add to Admin Group](/images/app-connections/databricks/add-to-admin-group.png)
             ![Add to Admin Group Modal](/images/app-connections/databricks/add-to-admin-group-form.png)
@@ -61,15 +61,15 @@ Hanzo KMS supports the use of [service principals](https://docs.databricks.com/e
 
             ![Permissions Tab](/images/app-connections/databricks/permissions-tab.png)
         </Step>
-        <Step title="Grant Manage Permission to Hanzo KMS Service Principal">
-            In the **User, Group or Service Principal** field, select the service principal you created for Hanzo KMS. In the **Permission** field, select **Manage** to allow the Hanzo KMS service principal to manage credentials and secrets for this service principal. Click **Save** to apply the permissions. Repeat these steps for each service principal whose secrets you want to rotate.
+        <Step title="Grant Manage Permission to KMS Service Principal">
+            In the **User, Group or Service Principal** field, select the service principal you created for KMS. In the **Permission** field, select **Manage** to allow the KMS service principal to manage credentials and secrets for this service principal. Click **Save** to apply the permissions. Repeat these steps for each service principal whose secrets you want to rotate.
 
             ![Assign Manage Permission](/images/app-connections/databricks/assign-manage-permission.png)
         </Step>
     </Steps>
 </Accordion>
 
-## Setup Databricks Connection in Hanzo KMS
+## Setup Databricks Connection in KMS
 
 <Steps>
   <Step title="Navigate to App Connections">

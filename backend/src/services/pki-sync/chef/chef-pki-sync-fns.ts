@@ -30,7 +30,7 @@ const CHEF_RATE_LIMIT_CONFIG: RateLimitConfig = {
 const chefConnectionQueue = createConnectionQueue(CHEF_RATE_LIMIT_CONFIG);
 const { withRateLimitRetry } = chefConnectionQueue;
 
-const isHanzo KMSManagedCertificate = (certificateName: string, pkiSync: TPkiSyncWithCredentials): boolean => {
+const isKmsManagedCertificate = (certificateName: string, pkiSync: TPkiSyncWithCredentials): boolean => {
   const syncOptions = pkiSync.syncOptions as { certificateNameSchema?: string } | undefined;
   const certificateNameSchema = syncOptions?.certificateNameSchema;
 
@@ -346,7 +346,7 @@ export const chefPkiSyncFactory = ({ certificateDAL, certificateSyncDAL }: TChef
       const itemsToRemove: string[] = [];
 
       Object.keys(chefDataBagItems).forEach((itemName) => {
-        if (!activeExternalIdentifiers.has(itemName) && isHanzo KMSManagedCertificate(itemName, pkiSync)) {
+        if (!activeExternalIdentifiers.has(itemName) && isKmsManagedCertificate(itemName, pkiSync)) {
           itemsToRemove.push(itemName);
         }
       });

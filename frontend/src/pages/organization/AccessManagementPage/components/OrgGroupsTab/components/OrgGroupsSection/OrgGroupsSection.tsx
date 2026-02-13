@@ -33,7 +33,7 @@ export const OrgGroupsSection = () => {
   const handleAddGroupModal = () => {
     if (!subscription?.groups) {
       handlePopUpOpen("upgradePlan", {
-        text: "Your current plan does not allow adding groups. To unlock this feature, please upgrade to Hanzo KMS Enterprise plan.",
+        text: "Your current plan does not allow adding groups. To unlock this feature, please upgrade to KMS Enterprise plan.",
         isEnterpriseFeature: true
       });
     } else {

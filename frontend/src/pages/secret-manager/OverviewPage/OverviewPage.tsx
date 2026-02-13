@@ -931,7 +931,7 @@ export const OverviewPage = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Hanzo KMS CLI
+                  KMS CLI
                 </a>
                 ,
                 <a
@@ -940,7 +940,7 @@ export const OverviewPage = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Hanzo KMS API
+                  KMS API
                 </a>
                 ,
                 <a
@@ -949,7 +949,7 @@ export const OverviewPage = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Hanzo KMS SDKs
+                  KMS SDKs
                 </a>
                 , and
                 <a
@@ -1004,7 +1004,7 @@ export const OverviewPage = () => {
                       }
                       handlePopUpOpen("upgradePlan", {
                         isEnterpriseFeature: true,
-                        text: "Adding dynamic secrets can be unlocked if you upgrade to Hanzo KMS Enterprise plan."
+                        text: "Adding dynamic secrets can be unlocked if you upgrade to KMS Enterprise plan."
                       });
                     }}
                     onAddSecretRotation={() => {
@@ -1013,7 +1013,7 @@ export const OverviewPage = () => {
                         return;
                       }
                       handlePopUpOpen("upgradePlan", {
-                        text: "Adding secret rotations can be unlocked if you upgrade to Hanzo KMS Pro plan."
+                        text: "Adding secret rotations can be unlocked if you upgrade to KMS Pro plan."
                       });
                     }}
                     isDyanmicSecretAvailable={userAvailableDynamicSecretEnvs.length > 0}

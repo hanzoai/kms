@@ -33,7 +33,7 @@ const getDefaultConfig = (): GitHubClientConfig => ({
 const getHeaders = (token?: string): Record<string, string> => {
   const headers: Record<string, string> = {
     Accept: "application/vnd.github.v3+json",
-    "User-Agent": "Hanzo KMS-Upgrade-Path-Tool/1.0",
+    "User-Agent": "KMS-Upgrade-Path-Tool/1.0",
     "X-GitHub-Api-Version": "2022-11-28"
   };
 
@@ -50,7 +50,7 @@ const delay = (ms: number): Promise<void> => {
   });
 };
 
-const isMainHanzo KMSRelease = (tagName: string): boolean => {
+const isMainKmsRelease = (tagName: string): boolean => {
   if (
     tagName.startsWith("kms-cli/") ||
     tagName.startsWith("kms-k8-operator/") ||
@@ -205,7 +205,7 @@ export const fetchReleases = async (includePrerelease = false): Promise<Formatte
         const { data } = result.value;
         if (data.length > 0) {
           for (const release of data) {
-            if (!release.draft && isMainHanzo KMSRelease(release.tag_name)) {
+            if (!release.draft && isMainKmsRelease(release.tag_name)) {
               if (isVersionAtLeastMinimum(release.tag_name)) {
                 allReleases.push(release);
               } else {

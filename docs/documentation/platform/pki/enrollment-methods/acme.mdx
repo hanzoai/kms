@@ -5,23 +5,23 @@ sidebarTitle: "ACME"
 
 ## Concept
 
-The ACME enrollment method allows Hanzo KMS to act as an ACME server. It lets you request and manage certificates against a specific [certificate profile](/documentation/platform/pki/certificates/profiles) using the [ACME protocol](https://en.wikipedia.org/wiki/Automatic_Certificate_Management_Environment).
+The ACME enrollment method allows KMS to act as an ACME server. It lets you request and manage certificates against a specific [certificate profile](/documentation/platform/pki/certificates/profiles) using the [ACME protocol](https://en.wikipedia.org/wiki/Automatic_Certificate_Management_Environment).
 
 This method is suitable for web servers, load balancers, and other general-purpose servers that can run an [ACME client](https://letsencrypt.org/docs/client-options/) for automated certificate management;
 it can also be used with [cert-manager](https://cert-manager.io/) to issue and renew certificates for Kubernetes workloads through the [ACME issuer type](https://cert-manager.io/docs/configuration/acme/).
 
-Hanzo KMS's ACME enrollment method is based on [RFC 8555](https://datatracker.ietf.org/doc/html/rfc8555/).
+KMS's ACME enrollment method is based on [RFC 8555](https://datatracker.ietf.org/doc/html/rfc8555/).
 
 ## Prerequisites
 
-Install an [ACME client](https://letsencrypt.org/docs/client-options/) onto your server. This client will handle [ACME challenges](https://letsencrypt.org/docs/challenge-types/) and request/renew certificates from Hanzo KMS.
+Install an [ACME client](https://letsencrypt.org/docs/client-options/) onto your server. This client will handle [ACME challenges](https://letsencrypt.org/docs/challenge-types/) and request/renew certificates from KMS.
 
 ## Guide to Certificate Enrollment via ACME
 
 In the following steps, we explore how to issue a X.509 certificate using the ACME enrollment method.
 
 <Steps>
-  <Step title="Create a certificate profile in Hanzo KMS">
+  <Step title="Create a certificate profile in KMS">
     Create a [certificate
     profile](/documentation/platform/pki/certificates/profiles) with **ACME**
     selected as the enrollment method.
@@ -30,13 +30,13 @@ In the following steps, we explore how to issue a X.509 certificate using the AC
 
     <Note>
 
-    By default, when the ACME client requests a certificate against the certificate profile for a particular domain, Hanzo KMS will verify domain ownership using the [HTTP-01 challenge](https://letsencrypt.org/docs/challenge-types/#http-01-challenge) method prior to issuing a certificate back to the client.
+    By default, when the ACME client requests a certificate against the certificate profile for a particular domain, KMS will verify domain ownership using the [HTTP-01 challenge](https://letsencrypt.org/docs/challenge-types/#http-01-challenge) method prior to issuing a certificate back to the client.
 
-    If you want Hanzo KMS to skip domain ownership validation entirely, you can enable the **Skip DNS Ownership Validation** checkbox.
+    If you want KMS to skip domain ownership validation entirely, you can enable the **Skip DNS Ownership Validation** checkbox.
 
     Note that skipping domain ownership validation for the ACME enrollment method is **not the same** as skipping validation for an [External ACME CA integration](/documentation/platform/pki/ca/acme-ca).
 
-    When using the ACME enrollment, the domain ownership check occurring between the ACME client and Hanzo KMS can be skipped. In contrast, External ACME CA integrations always require domain ownership validation, as Hanzo KMS must complete a DNS-01 challenge with the upstream ACME-compatible CA.
+    When using the ACME enrollment, the domain ownership check occurring between the ACME client and KMS can be skipped. In contrast, External ACME CA integrations always require domain ownership validation, as KMS must complete a DNS-01 challenge with the upstream ACME-compatible CA.
     </Note>
 
   </Step>
@@ -47,13 +47,13 @@ In the following steps, we explore how to issue a X.509 certificate using the AC
 
     From the ACME configuration, gather the following values:
 
-    - ACME Directory URL: The URL that the ACME client will use to communicate with Hanzo KMS's ACME server.
-    - EAB Key Identifier (KID): A unique identifier that tells Hanzo KMS which ACME account is making the request.
-    - EAB Secret: A secret key that authenticates your ACME client with Hanzo KMS.
+    - ACME Directory URL: The URL that the ACME client will use to communicate with KMS's ACME server.
+    - EAB Key Identifier (KID): A unique identifier that tells KMS which ACME account is making the request.
+    - EAB Secret: A secret key that authenticates your ACME client with KMS.
 
   </Step>
   <Step title="Configure your ACME client">
-    Provide the **ACME Directory URL**, **EAB KID**, and **EAB Secret** from Step 2 to your ACME client to authenticate with Hanzo KMS and request a certificate.
+    Provide the **ACME Directory URL**, **EAB KID**, and **EAB Secret** from Step 2 to your ACME client to authenticate with KMS and request a certificate.
     
     For example, if using [Certbot](https://certbot.eff.org/) as an ACME client, you can configure and start requesting certificates with the following command:
 

@@ -6,7 +6,7 @@ description: "Learn how to create and manage MCP endpoints for AI clients."
 
 ## Concept
 
-MCP Endpoints are the entry points that AI clients (like Claude, ChatGPT, or custom agents) use to access your configured MCP Servers. Instead of connecting AI clients directly to individual MCP servers, you connect them to an Hanzo KMS MCP Endpoint which acts as a secure gateway.
+MCP Endpoints are the entry points that AI clients (like Claude, ChatGPT, or custom agents) use to access your configured MCP Servers. Instead of connecting AI clients directly to individual MCP servers, you connect them to an KMS MCP Endpoint which acts as a secure gateway.
 
 This architecture provides several benefits:
 
@@ -35,19 +35,19 @@ This architecture provides several benefits:
 
 ```mermaid
 graph LR
-    A[AI Client<br/>Claude, ChatGPT, etc.] --> B[MCP Endpoint<br/>Hanzo KMS]
+    A[AI Client<br/>Claude, ChatGPT, etc.] --> B[MCP Endpoint<br/>KMS]
     B --> C[MCP Server 1<br/>Notion]
     B --> D[MCP Server 2<br/>GitHub]
 ```
 
-When you create an MCP endpoint, Hanzo KMS generates a unique URL that you can add to your AI client's MCP configuration. The AI client connects to this URL and can access all enabled tools from the connected MCP servers.
+When you create an MCP endpoint, KMS generates a unique URL that you can add to your AI client's MCP configuration. The AI client connects to this URL and can access all enabled tools from the connected MCP servers.
 
 ## Guide to Creating an MCP Endpoint
 
 In the following steps, we explore how to create an MCP endpoint and connect it to an AI client.
 
 <Tabs>
-  <Tab title="Hanzo KMS UI">
+  <Tab title="KMS UI">
     <Steps>
       <Step title="Navigate to MCP Endpoints">
         Head to your Agent Sentinel project and select **MCP Endpoints** from the sidebar, then click **Create Endpoint**.
@@ -93,7 +93,7 @@ Once you have your endpoint URL, you can connect AI clients to it.
 
     1. Open Claude settings
     2. Navigate to the MCP section
-    3. Add a new server with your Hanzo KMS endpoint URL
+    3. Add a new server with your KMS endpoint URL
     4. Click **Connect**
 
     When connecting for the first time, Claude will open an authorization page where you grant access to the endpoint. You can configure:
@@ -107,7 +107,7 @@ Once you have your endpoint URL, you can connect AI clients to it.
     
     The general process is:
     1. Locate the MCP server configuration in your AI client
-    2. Add your Hanzo KMS endpoint URL as a new server
+    2. Add your KMS endpoint URL as a new server
     3. Complete the authorization flow when prompted
     
     Refer to your AI client's documentation for specific configuration steps.
@@ -184,7 +184,7 @@ MCP Endpoints support automatic PII (Personally Identifiable Information) filter
 ### Configuring PII Filters
 
 <Tabs>
-    <Tab title="Hanzo KMS UI">
+    <Tab title="KMS UI">
         <Steps>
             <Step title="Navigate to Endpoint Details">
                 Open your MCP endpoint and locate the **Filters** section in the left column.
@@ -214,13 +214,13 @@ MCP Endpoints support automatic PII (Personally Identifiable Information) filter
 
 <AccordionGroup>
   <Accordion title="How does PII filtering work?">
-    When PII filtering is enabled, Hanzo KMS scans request and/or response payloads using pattern matching to detect sensitive data. Detected PII is replaced with redaction placeholders (e.g., `[REDACTED_EMAIL]`) before the data is passed through. The original data is never stored or logged when filtering is enabled.
+    When PII filtering is enabled, KMS scans request and/or response payloads using pattern matching to detect sensitive data. Detected PII is replaced with redaction placeholders (e.g., `[REDACTED_EMAIL]`) before the data is passed through. The original data is never stored or logged when filtering is enabled.
   </Accordion>
   <Accordion title="Can I filter requests and responses separately?">
     Yes, you can enable PII filtering independently for requests (data sent to MCP servers) and responses (data returned to AI clients). This gives you granular control over where redaction is applied.
   </Accordion>
   <Accordion title="What PII types are supported?">
-    Hanzo KMS currently supports detection and redaction of: email addresses, phone numbers (US format), Social Security Numbers, credit card numbers, and IP addresses (both IPv4 and IPv6).
+    KMS currently supports detection and redaction of: email addresses, phone numbers (US format), Social Security Numbers, credit card numbers, and IP addresses (both IPv4 and IPv6).
   </Accordion>
   <Accordion title="Can I select different PII types for requests and responses?">
     No. The selected PII types apply to both request and response filtering. If you need different filtering rules, consider creating separate endpoints.

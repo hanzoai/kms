@@ -124,7 +124,7 @@ export const MicrosoftTeamsIntegrationForm = ({ id, onClose }: Props) => {
   return (
     <form onSubmit={handleSubmit(handleMicrosoftTeamsFormSubmit)} autoComplete="off">
       <div className="mb-4 text-xs text-mineshaft-200">
-        For seamless installations, ensure that the Hanzo KMS bot is already installed in your
+        For seamless installations, ensure that the KMS bot is already installed in your
         Microsoft Teams tenant. For more information, please refer to the{" "}
         <a
           className="text-primary-500"

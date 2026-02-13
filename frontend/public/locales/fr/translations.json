@@ -1,7 +1,7 @@
 {
   "activity": {
     "title": "Journaux d'activité",
-    "subtitle": "Historique des événements pour ce projet Hanzo KMS.",
+    "subtitle": "Historique des événements pour ce projet KMS.",
     "event": {
       "readSecrets": "Secrets Visualisés",
       "updateSecrets": "Secrets Mis à jour",
@@ -39,7 +39,7 @@
     "schedule-demo": "Planifier une démo"
   },
   "common": {
-    "head-title": "{{title}} | Hanzo KMS",
+    "head-title": "{{title}} | KMS",
     "error_project-already-exists": "Un projet avec ce nom existe déjà.",
     "email": "Email",
     "password": "Mot de passe",
@@ -74,7 +74,7 @@
   "dashboard": {
     "title": "Secrets",
     "og-title": "Gérez vos fichiers .env rapidement",
-    "og-description": "Hanzo KMS est une plate-forme simple et chiffré de bout en bout qui permet aux équipes de synchroniser et de gérer leurs fichiers .env.",
+    "og-description": "KMS est une plate-forme simple et chiffré de bout en bout qui permet aux équipes de synchroniser et de gérer leurs fichiers .env.",
     "search-keys": "Recherche les clefs...",
     "add-key": "Ajouter une clef",
     "personal": "Personnel",
@@ -108,34 +108,34 @@
   },
   "integrations": {
     "title": "Intégrations de Projet",
-    "description": "Gérez vos intégrations de Hanzo KMS avec des services tiers.",
+    "description": "Gérez vos intégrations de KMS avec des services tiers.",
     "no-integrations1": "Vous n'avez pas encore d'intégration. Quand vous en aurez, elles apparaîtront ici.",
     "no-integrations2": "Pour commencer, cliquez sur l'une des options ci-dessous. La configuration se fait en 5 clics.",
     "available": "Intégrations de plate-forme et cloud",
     "available-text1": "Cliquez sur l'intégration que vous souhaitez connecter. Cela permettra à vos variables d'environnement de circuler automatiquement dans les services tiers sélectionnés.",
-    "available-text2": "Remarque: Lors d'une intégration avec Heroku, pour des raisons de sécurité, il est impossible de maintenir le chiffrage de bout en bout. En théorie, cela permet à Hanzo KMS de déchiffrer les variables d'environnement. En pratique, nous pouvons vous assurer que cela ne sera jamais fait, et cela nous permet de protéger vos secrets des mauvais acteurs en ligne. Le service Hanzo KMS de base restera toujours chiffré de bout en bout. Pour toutes vos intérogations, contactez support@hanzo.ai.",
+    "available-text2": "Remarque: Lors d'une intégration avec Heroku, pour des raisons de sécurité, il est impossible de maintenir le chiffrage de bout en bout. En théorie, cela permet à KMS de déchiffrer les variables d'environnement. En pratique, nous pouvons vous assurer que cela ne sera jamais fait, et cela nous permet de protéger vos secrets des mauvais acteurs en ligne. Le service KMS de base restera toujours chiffré de bout en bout. Pour toutes vos intérogations, contactez support@hanzo.ai.",
     "cloud-integrations": "Intégrations Cloud",
     "framework-integrations": "Intégrations Framework",
     "click-to-start": "Cliquez sur une intégration pour commencer à synchroniser les secrets avec elle.",
     "click-to-setup": "Cliquez sur un framework pour obtenir les instructions de configuration.",
-    "grant-access-to-secrets": "Accordez un accès Hanzo KMS à vos secrets",
-    "why-infisical-needs-access": "La plupart des intégrations cloud nécessitent que Hanzo KMS puisse déchiffrer vos secrets afin qu'ils puissent être transmis.",
+    "grant-access-to-secrets": "Accordez un accès KMS à vos secrets",
+    "why-infisical-needs-access": "La plupart des intégrations cloud nécessitent que KMS puisse déchiffrer vos secrets afin qu'ils puissent être transmis.",
     "grant-access-button": "Autoriser l'accès"
   },
   "login": {
     "title": "Connexion",
-    "og-title": "Connectez-vous à Hanzo KMS",
-    "og-description": "Hanzo KMS, une plate-forme simple et chiffré de bout en bout permettant aux équipes de synchroniser et de gérer leurs fichiers .env.",
+    "og-title": "Connectez-vous à KMS",
+    "og-description": "KMS, une plate-forme simple et chiffré de bout en bout permettant aux équipes de synchroniser et de gérer leurs fichiers .env.",
     "login": "Se connecter",
-    "need-account": "Besoin d'un compte Hanzo KMS?",
+    "need-account": "Besoin d'un compte KMS?",
     "create-account": "Créer un compte",
     "forgot-password": "Mot de passe oublié?",
     "error-login": "Mauvais identifiants."
   },
   "mfa": {
     "title": "S'inscrire",
-    "og-title": "Remplacez les fichiers .env par 1 ligne de code. Inscrivez-vous à Hanzo KMS en 3 minutes.",
-    "og-description": "Hanzo KMS, une plate-forme simple et chiffré de bout en bout qui permet aux équipes de synchroniser et de gérer des clefs API et des variables d'environnement. Fonctionne avec Node.js, Next.js, Gatsby, Nest.js ...",
+    "og-title": "Remplacez les fichiers .env par 1 ligne de code. Inscrivez-vous à KMS en 3 minutes.",
+    "og-description": "KMS, une plate-forme simple et chiffré de bout en bout qui permet aux équipes de synchroniser et de gérer des clefs API et des variables d'environnement. Fonctionne avec Node.js, Next.js, Gatsby, Nest.js ...",
     "signup": "S'inscrire",
     "already-have-account": "Déjà inscris? Se connecter",
     "forgot-password": "Mot de passe oublié?",
@@ -157,7 +157,7 @@
     "step4-download": "Téléchargez le PDF",
     "step5-send-invites": "Envoyer les invitations",
     "step5-invite-team": "Invitez votre équipe",
-    "step5-subtitle": "Hanzo KMS a pour but d'être utilisé avec vos coéquipiers. Invitez-les à le tester.",
+    "step5-subtitle": "KMS a pour but d'être utilisé avec vos coéquipiers. Invitez-les à le tester.",
     "step5-skip": "Passer"
   },
   "nav": {
@@ -252,7 +252,7 @@
       "description": "Consultez et gérez vos informations personnelles ici.",
       "emergency": {
         "name": "Kit d'urgence",
-        "text1": "Votre kit d'urgence contient les informations dont vous aurez besoin pour vous connecter à votre compte Hanzo KMS.",
+        "text1": "Votre kit d'urgence contient les informations dont vous aurez besoin pour vous connecter à votre compte KMS.",
         "text2": "Seul le dernier kit d'urgence émis reste valide. Pour obtenir un nouveau kit d'urgence, vérifiez votre mot de passe.",
         "download": "Télécharger le kit d'urgence"
       },
@@ -266,16 +266,16 @@
       "project-to-delete": "Projet à Supprimer",
       "danger-zone-note": "Dès que vous supprimez ce projet, vous ne pourrez plus revenir en arrière. Cela supprimera immédiatement toutes les clefs. Si vous voulez toujours le faire, veuillez saisir le nom du projet ci-dessous.",
       "delete-project-note": "Remarque: Vous ne pouvez supprimer qu'un projet que si vous en avez plus d'un.",
-      "project-id-description": "Pour intégrer Hanzo KMS dans votre base de code et obtenir une injection automatique de variables d'environnement, vous devez utiliser l'ID du projet suivant.",
+      "project-id-description": "Pour intégrer KMS dans votre base de code et obtenir une injection automatique de variables d'environnement, vous devez utiliser l'ID du projet suivant.",
       "project-id-description2": "Pour plus de conseils, y compris des extraits de code pour diverses langues et frameworks, voir ",
       "auto-generated": "Ceci est l'identifiant unique généré automatiquement pour votre projet. Il ne peut pas être modifié.",
-      "docs": "Documentation Hanzo KMS"
+      "docs": "Documentation KMS"
     }
   },
   "signup": {
     "title": "S'inscrire",
-    "og-title": "Remplacez les fichiers .env par 1 ligne de code. Inscrivez-vous à Hanzo KMS en 3 minutes.",
-    "og-description": "Hanzo KMS, une plate-forme simple et chiffré de bout en bout qui permet aux équipes de synchroniser et de gérer des clefs API et des variables d'environnement. Fonctionne avec Node.js, Next.js, Gatsby, Nest.js ...",
+    "og-title": "Remplacez les fichiers .env par 1 ligne de code. Inscrivez-vous à KMS en 3 minutes.",
+    "og-description": "KMS, une plate-forme simple et chiffré de bout en bout qui permet aux équipes de synchroniser et de gérer des clefs API et des variables d'environnement. Fonctionne avec Node.js, Next.js, Gatsby, Nest.js ...",
     "signup": "S'inscrire",
     "already-have-account": "Déjà inscris? Se connecter",
     "forgot-password": "Mot de passe oublié?",
@@ -297,7 +297,7 @@
     "step4-download": "Téléchargez le PDF",
     "step5-send-invites": "Envoyer les invitations",
     "step5-invite-team": "Invitez votre équipe",
-    "step5-subtitle": "Hanzo KMS a pour but d'être utilisé avec vos coéquipiers. Invitez-les à le tester.",
+    "step5-subtitle": "KMS a pour but d'être utilisé avec vos coéquipiers. Invitez-les à le tester.",
     "step5-skip": "Passer"
   }
 }

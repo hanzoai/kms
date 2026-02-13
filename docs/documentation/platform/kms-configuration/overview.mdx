@@ -6,11 +6,11 @@ description: "Learn how to configure your project's encryption"
 
 ## Introduction
 
-Hanzo KMS leverages a Key Management Service (KMS) to securely encrypt and decrypt secrets in your projects.
+KMS leverages a Key Management Service (KMS) to securely encrypt and decrypt secrets in your projects.
 
 ## Overview
 
-Hanzo KMS's KMS ensures the security of your project's secrets through the following mechanisms:
+KMS's KMS ensures the security of your project's secrets through the following mechanisms:
 
 - Each project is assigned a unique workspace key, which is responsible for encrypting and decrypting secret values.
 - The workspace key itself is encrypted using the project's configured KMS.
@@ -25,4 +25,4 @@ For existing projects, you can configure the KMS from the Project Settings page.
 
 ## External KMS
 
-Hanzo KMS supports the use of external KMS solutions to enhance security and compliance. You can configure your project to use services like [AWS Key Management Service](./aws-kms) or [GCP Key Management Service](./gcp-kms) for managing encryption.
+KMS supports the use of external KMS solutions to enhance security and compliance. You can configure your project to use services like [AWS Key Management Service](./aws-kms) or [GCP Key Management Service](./gcp-kms) for managing encryption.

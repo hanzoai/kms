@@ -20,10 +20,10 @@ import { ProjectTemplateUsersSection } from "./ProjectTemplateUsersSection";
 type Props = {
   projectTemplate: TProjectTemplate;
   onBack: () => void;
-  isHanzo KMSTemplate: boolean;
+  isKmsTemplate: boolean;
 };
 
-export const EditProjectTemplate = ({ isHanzo KMSTemplate, projectTemplate, onBack }: Props) => {
+export const EditProjectTemplate = ({ isKmsTemplate, projectTemplate, onBack }: Props) => {
   const { handlePopUpToggle, popUp, handlePopUpOpen, handlePopUpClose } = usePopUp([
     "removeTemplate",
     "editDetails"
@@ -55,7 +55,7 @@ export const EditProjectTemplate = ({ isHanzo KMSTemplate, projectTemplate, onBa
             {description || "Project Template"}
           </h2>
         </div>
-        {!isHanzo KMSTemplate && (
+        {!isKmsTemplate && (
           <div className="flex gap-2">
             <OrgPermissionCan
               I={OrgPermissionActions.Edit}
@@ -96,15 +96,15 @@ export const EditProjectTemplate = ({ isHanzo KMSTemplate, projectTemplate, onBa
       </div>
       {type === ProjectType.SecretManager && (
         <ProjectTemplateEnvironmentsForm
-          isHanzo KMSTemplate={isHanzo KMSTemplate}
+          isKmsTemplate={isKmsTemplate}
           projectTemplate={projectTemplate}
         />
       )}
       <ProjectTemplateRolesSection
-        isHanzo KMSTemplate={isHanzo KMSTemplate}
+        isKmsTemplate={isKmsTemplate}
         projectTemplate={projectTemplate}
       />
-      {!isHanzo KMSTemplate && (
+      {!isKmsTemplate && (
         <>
           <ProjectTemplateUsersSection projectTemplate={projectTemplate} />
           <ProjectTemplateGroupsSection projectTemplate={projectTemplate} />

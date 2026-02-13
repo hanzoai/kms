@@ -16,7 +16,7 @@ If you are still experiencing trouble, please seek support.
 
 </Accordion>
 
-<Accordion title="Can I fetch secrets with Hanzo KMS if I am offline?">
+<Accordion title="Can I fetch secrets with KMS if I am offline?">
 Yes. If you have previously retrieved secrets for a specific project and environment (such as dev, staging, or prod), the  `run`/`secret` command will utilize the saved secrets, even when offline, on subsequent fetch attempts.
 
 </Accordion>
@@ -27,7 +27,7 @@ Yes. This is simply a configuration file and contains no sensitive data.
 
 <Accordion title="Where can I find my Project ID?">
 
-  Visit the Hanzo KMS website and navigate to a project of your choice. Once on the project page, access the **Project Settings** from the sidebar. Within the Project name section, click the "Copy Project ID" button for copying the current Project ID to clipboard, or simply obtain it from the URL of the current page.
+  Visit the KMS website and navigate to a project of your choice. Once on the project page, access the **Project Settings** from the sidebar. Within the Project name section, click the "Copy Project ID" button for copying the current Project ID to clipboard, or simply obtain it from the URL of the current page.
   
   ```
     https://kms.hanzo.ai/project/<your_project_id>/settings
@@ -42,12 +42,12 @@ Yes. This is simply a configuration file and contains no sensitive data.
   export KMS_CUSTOM_HEADERS="Access-Client-Id=your-client-id Access-Client-Secret=your-client-secret"
   ```
   
-  After setting this environment variable, run your Hanzo KMS commands as usual.
+  After setting this environment variable, run your KMS commands as usual.
 </Accordion>
 
 <Accordion title="Why would I need to use custom headers?">
   
-  Custom headers are necessary when your Hanzo KMS server is protected by services like Cloudflare Access or other reverse proxies that require specific authentication headers. Without this feature, you would need to implement security workarounds that might compromise your security posture.
+  Custom headers are necessary when your KMS server is protected by services like Cloudflare Access or other reverse proxies that require specific authentication headers. Without this feature, you would need to implement security workarounds that might compromise your security posture.
 </Accordion>
 
 <Accordion title="What format should I use for the custom headers?">

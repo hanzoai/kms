@@ -1,11 +1,11 @@
 ---
 title: "JumpCloud LDAP"
-description: "Learn how to configure JumpCloud LDAP for authenticating into Hanzo KMS."
+description: "Learn how to configure JumpCloud LDAP for authenticating into KMS."
 ---
 
 <Info>
-  LDAP is a paid feature. If you're using Hanzo KMS Cloud, then it is available
-  under the **Enterprise Tier**. If you're self-hosting Hanzo KMS, then you
+  LDAP is a paid feature. If you're using KMS Cloud, then it is available
+  under the **Enterprise Tier**. If you're self-hosting KMS, then you
   should contact sales@kms.hanzo.ai to purchase an enterprise license to use
   it.
 </Info>
@@ -17,7 +17,7 @@ Prerequisites:
 <Steps>
     <Step title="Prepare LDAP in JumpCloud">
         In JumpCloud, head to USER MANAGEMENT > Users and create a new user via the **Manual user entry** option. This user
-        will be used as a privileged service account to facilitate Hanzo KMS's ability to bind/search the LDAP directory.
+        will be used as a privileged service account to facilitate KMS's ability to bind/search the LDAP directory.
 
         When creating the user, input their **First Name**, **Last Name**, **Username** (required), **Company Email** (required), and **Description**.
         Also, create a password for the user.
@@ -26,8 +26,8 @@ Prerequisites:
 
         ![LDAP JumpCloud](/images/platform/ldap/jumpcloud/ldap-jumpcloud-enable-bind-dn.png)
     </Step>
-    <Step title="Prepare the LDAP configuration in Hanzo KMS">
-            In Hanzo KMS, head to the **Single Sign-On (SSO)** page and select the **General** tab. Select **Connect** for **LDAP**.
+    <Step title="Prepare the LDAP configuration in KMS">
+            In KMS, head to the **Single Sign-On (SSO)** page and select the **General** tab. Select **Connect** for **LDAP**.
 
             ![LDAP SSO Connect](../../../images/sso/connect-ldap.png)
 
@@ -57,36 +57,36 @@ Prerequisites:
     <Step title="Test the LDAP connection">
       Once you've filled out the LDAP configuration, you can test that part of the configuration is correct by pressing the **Test Connection** button.
 
-      Hanzo KMS will attempt to bind to the LDAP server using the provided **URL**, **Bind DN**, and **Bind Pass**. If the operation is successful, then Hanzo KMS will display a success message; if not, then Hanzo KMS will display an error message and provide a fuller error in the server logs.
+      KMS will attempt to bind to the LDAP server using the provided **URL**, **Bind DN**, and **Bind Pass**. If the operation is successful, then KMS will display a success message; if not, then KMS will display an error message and provide a fuller error in the server logs.
 
         ![LDAP test connection](/images/platform/ldap/ldap-test-connection.png)
     </Step>
-    <Step title="Define mappings from LDAP groups to groups in Hanzo KMS">
-     In order to sync LDAP groups to Hanzo KMS, head to the **LDAP Group Mappings** section to define mappings from LDAP groups to groups in Hanzo KMS.
+    <Step title="Define mappings from LDAP groups to groups in KMS">
+     In order to sync LDAP groups to KMS, head to the **LDAP Group Mappings** section to define mappings from LDAP groups to groups in KMS.
 
      ![LDAP group mappings section](/images/platform/ldap/ldap-group-mappings-section.png)
 
-     Group mappings ensure that users who log into Hanzo KMS via LDAP are added to or removed from the Hanzo KMS group(s) that corresponds to the LDAP group(s) they are a member of.
+     Group mappings ensure that users who log into KMS via LDAP are added to or removed from the KMS group(s) that corresponds to the LDAP group(s) they are a member of.
 
      ![LDAP group mappings table](/images/platform/ldap/ldap-group-mappings-table.png)
 
      Each group mapping consists of two parts:
      - LDAP Group CN: The common name of the LDAP group to map.
-     - Hanzo KMS Group: The Hanzo KMS group to map the LDAP group to.
+     - KMS Group: The KMS group to map the LDAP group to.
 
-     For example, suppose you want to automatically add a user who is part of the LDAP group with CN `Engineers` to the Hanzo KMS group `Engineers` when the user sets up their account with Hanzo KMS.
+     For example, suppose you want to automatically add a user who is part of the LDAP group with CN `Engineers` to the KMS group `Engineers` when the user sets up their account with KMS.
 
-     In this case, you would specify a mapping from the LDAP group with CN `Engineers` to the Hanzo KMS group `Engineers`.
-     Now when the user logs into Hanzo KMS via LDAP, Hanzo KMS will check the LDAP groups that the user is a part of whilst referencing the group mappings you created earlier. Since the user is a member of the LDAP group with CN `Engineers`, they will be added to the Hanzo KMS group `Engineers`.
-     In the future, if the user is no longer part of the LDAP group with CN `Engineers`, they will be removed from the Hanzo KMS group `Engineers` upon their next login.
+     In this case, you would specify a mapping from the LDAP group with CN `Engineers` to the KMS group `Engineers`.
+     Now when the user logs into KMS via LDAP, KMS will check the LDAP groups that the user is a part of whilst referencing the group mappings you created earlier. Since the user is a member of the LDAP group with CN `Engineers`, they will be added to the KMS group `Engineers`.
+     In the future, if the user is no longer part of the LDAP group with CN `Engineers`, they will be removed from the KMS group `Engineers` upon their next login.
      <Note>
-          Prior to defining any group mappings, ensure that you've created the Hanzo KMS groups that you want to map the LDAP groups to.
-          You can read more about creating (user) groups in Hanzo KMS [here](/documentation/platform/groups).
+          Prior to defining any group mappings, ensure that you've created the KMS groups that you want to map the LDAP groups to.
+          You can read more about creating (user) groups in KMS [here](/documentation/platform/groups).
      </Note>
 
    </Step>
-    <Step title="Enable LDAP in Hanzo KMS">
-            Enabling LDAP allows members in your organization to log into Hanzo KMS via LDAP.
+    <Step title="Enable LDAP in KMS">
+            Enabling LDAP allows members in your organization to log into KMS via LDAP.
             ![LDAP toggle](/images/platform/ldap/ldap-toggle.png)
     </Step>
 

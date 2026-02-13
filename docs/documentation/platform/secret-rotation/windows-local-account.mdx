@@ -8,14 +8,14 @@ description: "Learn how to automatically rotate Windows local account passwords 
 
   This rotation updates a single credential set in place. Old credentials become invalid immediately upon rotation. This means that clients using the previous credentials will fail to authenticate until they retrieve the new credentials.
 
-  This is a limitation of the rotation mechanism and cannot be rectified by Hanzo KMS.
+  This is a limitation of the rotation mechanism and cannot be rectified by KMS.
 </Note>
 
 ## Prerequisites
 
 - **Windows Server** with SMB3 support enabled (must be a member server or standalone machine, not a Domain Controller)
 - Create an [SMB Connection](/integrations/app-connections/smb) with administrator credentials
-- Ensure your network security policies allow SMB connections from Hanzo KMS to this rotation provider
+- Ensure your network security policies allow SMB connections from KMS to this rotation provider
 - The target local account must exist on the Windows server before configuring the rotation
 
 <Note>
@@ -36,10 +36,10 @@ description: "Learn how to automatically rotate Windows local account passwords 
     ```
 </Accordion>
 
-## Create a Windows Local Account Rotation in Hanzo KMS
+## Create a Windows Local Account Rotation in KMS
 
 <Tabs>
-    <Tab title="Hanzo KMS UI">
+    <Tab title="KMS UI">
         1. Navigate to your Secret Manager Project's Dashboard and select **Add Secret Rotation** from the actions dropdown.
         ![Secret Manager Dashboard](/images/secret-rotations-v2/generic/add-secret-rotation.png)
 
@@ -62,8 +62,8 @@ description: "Learn how to automatically rotate Windows local account passwords 
         ![Rotation Parameters](/images/secret-rotations-v2/windows-local-account/windows-local-account-parameters.png)
 
         - **Rotation Method** - The method to use when rotating the target user's password.
-            - **Login as Target** - Hanzo KMS will use the target user's current credentials to authenticate and rotate its own password. See the [Login as Target Requirements](#login-as-target-requirements) section below for important configuration details.
-            - **Login as Root** - Hanzo KMS will use the administrator credentials provided in the SMB Connection to rotate the target user's password. This is the recommended method for most use cases.
+            - **Login as Target** - KMS will use the target user's current credentials to authenticate and rotate its own password. See the [Login as Target Requirements](#login-as-target-requirements) section below for important configuration details.
+            - **Login as Root** - KMS will use the administrator credentials provided in the SMB Connection to rotate the target user's password. This is the recommended method for most use cases.
         - **Username** - The target Windows username whose password will be rotated.
         - **Current Password** - The current password of the target user (required when **Rotation Method** is set to **Login as Target**).
         - **Password Requirements** - The constraints to apply when generating new passwords.
@@ -114,7 +114,7 @@ description: "Learn how to automatically rotate Windows local account passwords 
 
         ### Reconcile Windows Local Account
 
-        If you suspect the credentials are out of sync (for example, after a manual password change on the server), you can regain access by using **Reconcile**. This will use the configured Windows App Connection's administrator account to reset the target user's password and sync it with Hanzo KMS.
+        If you suspect the credentials are out of sync (for example, after a manual password change on the server), you can regain access by using **Reconcile**. This will use the configured Windows App Connection's administrator account to reset the target user's password and sync it with KMS.
 
         ![Reconcile Option](/images/secret-rotations-v2/windows-local-account/windows-local-account-reconcile.png)
         ![Reconcile Confirmation](/images/secret-rotations-v2/windows-local-account/windows-local-account-reconcile-confirm.png)

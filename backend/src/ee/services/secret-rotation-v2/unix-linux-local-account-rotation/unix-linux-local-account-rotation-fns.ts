@@ -196,7 +196,7 @@ export const unixLinuxLocalAccountRotationFactory: TRotationFactory<
 
     const isSelfRotation = rotationMethod === UnixLinuxLocalAccountRotationMethod.LoginAsTarget;
     if (username === credentials.username)
-      throw new BadRequestError({ message: "Provided username is used in Hanzo KMS app connections." });
+      throw new BadRequestError({ message: "Provided username is used in KMS app connections." });
 
     const privilegedAccounts = ["root", "admin", "administrator", "sudo"];
     if (privilegedAccounts.includes(username.toLowerCase()))

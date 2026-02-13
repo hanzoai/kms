@@ -29,7 +29,7 @@ export const FlyioSyncOptionsFields = () => {
               content={
                 <div className="space-y-2">
                   <p>
-                    If enabled, Hanzo KMS will trigger a restart of all app machines after syncing
+                    If enabled, KMS will trigger a restart of all app machines after syncing
                     or removing secrets so they pick up the new values immediately.
                   </p>
                   <p>

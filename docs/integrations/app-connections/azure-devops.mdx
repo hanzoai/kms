@@ -1,12 +1,12 @@
 ---
 title: "Azure DevOps Connection"
-description: "Learn how to configure an Azure DevOps Connection for Hanzo KMS."
+description: "Learn how to configure an Azure DevOps Connection for KMS."
 ---
 
-Hanzo KMS currently supports three methods for connecting to Azure DevOps, which are OAuth, Azure DevOps Personal Access Token and Client Secrets.
+KMS currently supports three methods for connecting to Azure DevOps, which are OAuth, Azure DevOps Personal Access Token and Client Secrets.
 
 <Accordion title="Azure OAuth on a Self-Hosted Instance">
-  Using the Azure DevOps <b>OAuth connection</b> on a self-hosted instance of Hanzo KMS requires configuring an application in Azure
+  Using the Azure DevOps <b>OAuth connection</b> on a self-hosted instance of KMS requires configuring an application in Azure
   and registering your instance with it.
 
   **Prerequisites:**
@@ -25,7 +25,7 @@ Hanzo KMS currently supports three methods for connecting to Azure DevOps, which
 
       Create the application. As part of the form, set the **Redirect URI** to `https://your-domain.com/organization/app-connections/azure/oauth/callback`.
       <Tip>
-        The domain you defined in the Redirect URI should be equivalent to the `SITE_URL` configured in your Hanzo KMS instance.
+        The domain you defined in the Redirect URI should be equivalent to the `SITE_URL` configured in your KMS instance.
       </Tip>
 
       ![Azure devops](/images/app-connections/azure/register-callback.png)
@@ -47,19 +47,19 @@ Hanzo KMS currently supports three methods for connecting to Azure DevOps, which
 
 
     </Step>
-    <Step title="Add your application credentials to Hanzo KMS">
-      Obtain the **Application (Client) ID** and **Directory (Tenant) ID** (this will be used later in the Hanzo KMS connection) in Overview and generate a **Client Secret** in Certificate & secrets for your Azure application.
+    <Step title="Add your application credentials to KMS">
+      Obtain the **Application (Client) ID** and **Directory (Tenant) ID** (this will be used later in the KMS connection) in Overview and generate a **Client Secret** in Certificate & secrets for your Azure application.
 
       ![Azure devops](../../images/app-connections/azure/client-secrets/config-credentials-1.png)
       ![Azure devops](../../images/integrations/azure-app-configuration/config-credentials-2.png)
       ![Azure devops](../../images/integrations/azure-app-configuration/config-credentials-3.png)
 
-      Back in your Hanzo KMS instance, add two new environment variables for the credentials of your Azure application.
+      Back in your KMS instance, add two new environment variables for the credentials of your Azure application.
 
       - `INF_APP_CONNECTION_AZURE_DEVOPS_CLIENT_ID`: The **Application (Client) ID** of your Azure application.
       - `INF_APP_CONNECTION_AZURE_DEVOPS_CLIENT_SECRET`: The **Client Secret** of your Azure application.
 
-      Once added, restart your Hanzo KMS instance and use the Azure Client Secrets connection.
+      Once added, restart your KMS instance and use the Azure Client Secrets connection.
     </Step>
     </Steps>    
 
@@ -67,7 +67,7 @@ Hanzo KMS currently supports three methods for connecting to Azure DevOps, which
 
 <Accordion title="Azure DevOps personal access token (PAT)">
     #### Create a new Azure DevOps personal access token (PAT)
-    When using the Azure DevOps <b>Access Token connection</b> you'll need to create a new personal access token (PAT) in order to authenticate Hanzo KMS with Azure DevOps.
+    When using the Azure DevOps <b>Access Token connection</b> you'll need to create a new personal access token (PAT) in order to authenticate KMS with Azure DevOps.
     <Steps>
     <Step title="Navigate to Azure DevOps">
         ![integrations](../../images/integrations/azure-devops/overview-page.png)
@@ -81,7 +81,7 @@ Hanzo KMS currently supports three methods for connecting to Azure DevOps, which
         </Note>
     </Step>
     <Step title="Copy the new access token">
-        Copy the newly created token as this will be used to authenticate Hanzo KMS with Azure DevOps.
+        Copy the newly created token as this will be used to authenticate KMS with Azure DevOps.
         ![integrations](../../images/integrations/azure-devops/new-token-created.png)
     </Step>
     </Steps>
@@ -113,7 +113,7 @@ Hanzo KMS currently supports three methods for connecting to Azure DevOps, which
   </Steps>
 </Accordion>
 
-## Setup Azure Connection in Hanzo KMS
+## Setup Azure Connection in KMS
 
 <Steps>
 	<Step title="Navigate to App Connections">
@@ -137,8 +137,8 @@ Hanzo KMS currently supports three methods for connecting to Azure DevOps, which
                     </Tip>
                 </Step>
                 <Step title="Grant Access">
-                    You will then be redirected to Azure to grant Hanzo KMS access to your Azure account. Once granted,
-                    you will be redirected back to Hanzo KMS's App Connections page. ![Azure Client Secrets
+                    You will then be redirected to Azure to grant KMS access to your Azure account. Once granted,
+                    you will be redirected back to KMS's App Connections page. ![Azure Client Secrets
                     Authorization](/images/app-connections/azure/grant-access.png)
                 </Step>
             </Steps>

@@ -33,7 +33,7 @@ const initialSyncBehaviors = [
     value: IntegrationSyncBehavior.PREFER_TARGET
   },
   {
-    label: "Import non-sensitive - Prefer values from Hanzo KMS",
+    label: "Import non-sensitive - Prefer values from KMS",
     value: IntegrationSyncBehavior.PREFER_SOURCE
   }
 ];
@@ -128,7 +128,7 @@ export const TerraformCloudConfigurePage = () => {
       <Card className="max-w-lg rounded-md border border-mineshaft-600">
         <CardTitle
           className="px-6 text-left text-xl"
-          subTitle="Specify the encironment and path within Hanzo KMS that you want to push to which project in Terraform."
+          subTitle="Specify the encironment and path within KMS that you want to push to which project in Terraform."
         >
           <div className="flex flex-row items-center">
             <div className="flex items-center">

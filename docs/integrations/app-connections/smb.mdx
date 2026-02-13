@@ -1,9 +1,9 @@
 ---
 title: "SMB"
-description: "Learn how to configure an SMB Connection for Hanzo KMS."
+description: "Learn how to configure an SMB Connection for KMS."
 ---
 
-The SMB Connection allows Hanzo KMS to connect to Windows servers using the SMB (Server Message Block) protocol for remote management operations such as password rotation.
+The SMB Connection allows KMS to connect to Windows servers using the SMB (Server Message Block) protocol for remote management operations such as password rotation.
 
 ## Prerequisites
 
@@ -13,12 +13,12 @@ You will need the following information to establish an SMB connection:
 - **Port** - The SMB port (default is 445)
 - **Username** - A Windows administrator account with permissions to manage local accounts on the target machine
 - **Password** - The password for the administrator account
-- **Domain** (optional) - The Windows domain name if using domain credentials to authenticate. When provided, Hanzo KMS authenticates as a domain user (e.g., `MYDOMAIN\Administrator`) to manage local accounts on the target machine. This allows domain administrators to rotate local account passwords on domain-joined member servers.
+- **Domain** (optional) - The Windows domain name if using domain credentials to authenticate. When provided, KMS authenticates as a domain user (e.g., `MYDOMAIN\Administrator`) to manage local accounts on the target machine. This allows domain administrators to rotate local account passwords on domain-joined member servers.
 
 ### Windows Server Requirements
 
 - **SMB3 Support** - This connection uses SMB3 with encryption enabled for secure communication with Windows servers.
-- **Firewall Configuration** - The server must be accessible from Hanzo KMS or from the KMS Gateway if using it.
+- **Firewall Configuration** - The server must be accessible from KMS or from the KMS Gateway if using it.
 
 <Accordion title="Open firewall on Windows Defender for SMB connection">
     Run the following PowerShell command as Administrator on the Windows server to allow inbound SMB connections:
@@ -34,10 +34,10 @@ You will need the following information to establish an SMB connection:
     ```
 </Accordion>
 
-## Setup SMB Connection in Hanzo KMS
+## Setup SMB Connection in KMS
 
 <Tabs>
-    <Tab title="Hanzo KMS UI">
+    <Tab title="KMS UI">
         <Steps>
            <Step title="Navigate to App Connections">
                 Navigate to the **App Connections** tab in your Organization Settings.
@@ -61,7 +61,7 @@ You will need the following information to establish an SMB connection:
                 ![SMB Connection Modal](/images/app-connections/smb/smb-app-connection-form.png)
             </Step>
             <Step title="Connection Created">
-                After clicking Create, your **SMB Connection** is established and ready to use with your Hanzo KMS project.
+                After clicking Create, your **SMB Connection** is established and ready to use with your KMS project.
 
                 ![SMB Connection Created](/images/app-connections/smb/smb-app-connection-generated.png)
             </Step>

@@ -20,9 +20,9 @@ import { TSecretV2BridgeDALFactory } from "../../secret-v2-bridge/secret-v2-brid
 import type { TSecretV2BridgeServiceFactory } from "../../secret-v2-bridge/secret-v2-bridge-service";
 import { TSecretVersionV2DALFactory } from "../../secret-v2-bridge/secret-version-dal";
 import { TSecretVersionV2TagDALFactory } from "../../secret-v2-bridge/secret-version-tag-dal";
-import { Hanzo KMSImportData, TEnvKeyExportJSON, TImportHanzo KMSDataCreate } from "../external-migration-types";
+import { KmsImportData, TEnvKeyExportJSON, TImportKmsDataCreate } from "../external-migration-types";
 
-export type TImportDataIntoHanzo KMSDTO = {
+export type TImportDataIntoKmsDTO = {
   projectDAL: Pick<TProjectDALFactory, "transaction">;
   projectEnvDAL: Pick<TProjectEnvDALFactory, "find" | "findLastEnvPosition" | "create" | "findOne">;
   kmsService: Pick<TKmsServiceFactory, "createCipherPairWithDataKey">;
@@ -41,7 +41,7 @@ export type TImportDataIntoHanzo KMSDTO = {
   folderCommitService: Pick<TFolderCommitServiceFactory, "createCommit">;
   folderVersionDAL: Pick<TSecretFolderVersionDALFactory, "create">;
 
-  input: TImportHanzo KMSDataCreate;
+  input: TImportKmsDataCreate;
 };
 
 const { codec, hash } = sjcl;
@@ -62,10 +62,10 @@ export const decryptEnvKeyDataFn = async (decryptionKey: string, encryptedJson: 
   return decryptedJson;
 };
 
-export const parseEnvKeyDataFn = async (decryptedJson: string): Promise<Hanzo KMSImportData> => {
+export const parseEnvKeyDataFn = async (decryptedJson: string): Promise<KmsImportData> => {
   const parsedJson: TEnvKeyExportJSON = JSON.parse(decryptedJson) as TEnvKeyExportJSON;
 
-  const kmsImportData: Hanzo KMSImportData = {
+  const kmsImportData: KmsImportData = {
     projects: [],
     environments: [],
     folders: [],

@@ -53,7 +53,7 @@ export const SecretScanningDataSourceSelect = ({ onSelect }: Props) => {
         className="max-w-sm py-4"
         content={
           <>
-            <p className="mb-2">Hanzo KMS is constantly adding support for more services.</p>
+            <p className="mb-2">KMS is constantly adding support for more services.</p>
             <p>
               {`If you don't see the third-party
             service you're looking for,`}{" "}

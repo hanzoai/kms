@@ -560,7 +560,7 @@ export const aiMcpServerServiceFactory = ({
           token_endpoint_auth_method: "none",
           grant_types: ["authorization_code"],
           response_types: ["code"],
-          client_name: `Hanzo KMS MCP Client - ${actorId}`
+          client_name: `KMS MCP Client - ${actorId}`
         },
         {
           headers: {

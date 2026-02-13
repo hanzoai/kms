@@ -1,18 +1,18 @@
 ---
 title: "Entra ID / Azure AD SAML"
-description: "Learn how to configure Microsoft Entra ID for Hanzo KMS SSO."
+description: "Learn how to configure Microsoft Entra ID for KMS SSO."
 ---
 
 <Info>
    Azure SAML SSO is a paid feature.
 
-   If you're using Hanzo KMS Cloud, then it is available under the **Pro Tier**. If you're self-hosting Hanzo KMS,
+   If you're using KMS Cloud, then it is available under the **Pro Tier**. If you're self-hosting KMS,
    then you should contact sales@kms.hanzo.ai to purchase an enterprise license to use it.
 </Info>
 
 <Steps>
-   <Step title="Prepare the SAML SSO configuration in Hanzo KMS">
-      In Hanzo KMS, head to the **Single Sign-On (SSO)** page and select the **General** tab. Click **Connect** for **SAML** under the Connect to an Identity Provider section. Select **Azure / Entra**, then click **Connect** again.
+   <Step title="Prepare the SAML SSO configuration in KMS">
+      In KMS, head to the **Single Sign-On (SSO)** page and select the **General** tab. Click **Connect** for **SAML** under the Connect to an Identity Provider section. Select **Azure / Entra**, then click **Connect** again.
 
       ![SSO connect section](../../../images/sso/connect-saml.png)
 
@@ -28,7 +28,7 @@ description: "Learn how to configure Microsoft Entra ID for Hanzo KMS SSO."
       ![Azure SAML new application](../../../images/sso/azure/new-application.png)
 
       On the next screen, press the **+ Create your own application** button.
-      Give the application a unique name like Hanzo KMS; choose the "Integrate any other application you don't find in the gallery (Non-gallery)"
+      Give the application a unique name like KMS; choose the "Integrate any other application you don't find in the gallery (Non-gallery)"
       option and hit the **Create** button.
 
       ![Azure SAML create own application](../../../images/sso/azure/create-own-application.png)
@@ -44,7 +44,7 @@ description: "Learn how to configure Microsoft Entra ID for Hanzo KMS SSO."
       ![Azure SAML edit basic configuration 2](../../../images/sso/azure/edit-basic-config-2.png)
 
       <Note>
-      If you're self-hosting Hanzo KMS, then you will want to replace
+      If you're self-hosting KMS, then you will want to replace
       `https://kms.hanzo.ai` with your own domain.
       </Note>
 
@@ -65,21 +65,21 @@ description: "Learn how to configure Microsoft Entra ID for Hanzo KMS SSO."
       ![Azure SAML edit certificate signing option](../../../images/sso/azure/edit-saml-certificate-2.png)
    </Step>
    <Step title="Retrieve Identity Provider (IdP) Information from Azure">
-      In the **Set up Single Sign-On with SAML** screen, copy the **Login URL** and **SAML Certificate** to use when finishing configuring Azure SAML in Hanzo KMS.
+      In the **Set up Single Sign-On with SAML** screen, copy the **Login URL** and **SAML Certificate** to use when finishing configuring Azure SAML in KMS.
 
       ![Azure SAML identity provider values 1](../../../images/sso/azure/idp-values.png)
 
-      In the **Properties** screen, copy the **Application ID** to use when finishing configuring Azure SAML in Hanzo KMS.
+      In the **Properties** screen, copy the **Application ID** to use when finishing configuring Azure SAML in KMS.
 
       ![Azure SAML identity provider values 2](../../../images/sso/azure/idp-values-2.png)
    </Step>
-   <Step title="Finish configuring SAML in Hanzo KMS">
-      Back in Hanzo KMS, set **Login URL**, **Azure Application ID**, and **SAML Certificate** from step 3. Once you've done that, press **Update** to complete the required configuration.
+   <Step title="Finish configuring SAML in KMS">
+      Back in KMS, set **Login URL**, **Azure Application ID**, and **SAML Certificate** from step 3. Once you've done that, press **Update** to complete the required configuration.
 
       ![Azure SAML paste identity provider values](../../../images/sso/azure/idp-values-3.png)
 
       <Note>
-      When pasting the certificate into Hanzo KMS, you'll want to retain `-----BEGIN
+      When pasting the certificate into KMS, you'll want to retain `-----BEGIN
       CERTIFICATE-----` and `-----END CERTIFICATE-----` at the first and last line
       of the text area respectively.
 
@@ -92,16 +92,16 @@ description: "Learn how to configure Microsoft Entra ID for Hanzo KMS SSO."
 
       ![Azure SAML assignment](../../../images/sso/azure/assignment.png)
    </Step>
-   <Step title="Enable SAML SSO in Hanzo KMS">
-      Enabling SAML SSO allows members in your organization to log into Hanzo KMS via Azure.
+   <Step title="Enable SAML SSO in KMS">
+      Enabling SAML SSO allows members in your organization to log into KMS via Azure.
 
       ![Azure SAML assignment](../../../images/sso/azure/enable-saml.png)
    </Step>
-   <Step title="Enforce SAML SSO in Hanzo KMS">
-      Enforcing SAML SSO ensures that members in your organization can only access Hanzo KMS
+   <Step title="Enforce SAML SSO in KMS">
+      Enforcing SAML SSO ensures that members in your organization can only access KMS
       by logging into the organization via Azure.
 
-      To enforce SAML SSO, you're required to test out the SAML connection by successfully authenticating at least one Azure user with Hanzo KMS;
+      To enforce SAML SSO, you're required to test out the SAML connection by successfully authenticating at least one Azure user with KMS;
       Once you've completed this requirement, you can toggle the **Enforce SAML SSO** button to enforce SAML SSO.
 
       <Warning>
@@ -115,11 +115,11 @@ description: "Learn how to configure Microsoft Entra ID for Hanzo KMS SSO."
 </Steps>
 
 <Tip>
-    If you are only using one organization on your Hanzo KMS instance, you can configure a default organization in the [Server Admin Console](../admin-panel/server-admin#default-organization) to expedite SAML login.
+    If you are only using one organization on your KMS instance, you can configure a default organization in the [Server Admin Console](../admin-panel/server-admin#default-organization) to expedite SAML login.
 </Tip>
 
 <Note>
-    If you're configuring SAML SSO on a self-hosted instance of Hanzo KMS, make
+    If you're configuring SAML SSO on a self-hosted instance of KMS, make
     sure to set the `AUTH_SECRET` and `SITE_URL` environment variable for it to
     work:
     <div class="height:1px;"/>
@@ -127,9 +127,9 @@ description: "Learn how to configure Microsoft Entra ID for Hanzo KMS SSO."
     can be a random 32-byte base64 string generated with `openssl rand -base64
     32`.
     <div class="height:1px;"/>
-    - `SITE_URL`: The absolute URL of your self-hosted instance of Hanzo KMS including the protocol (e.g. https://kms.hanzo.ai)
+    - `SITE_URL`: The absolute URL of your self-hosted instance of KMS including the protocol (e.g. https://kms.hanzo.ai)
 </Note>
 
 <Note>
-   If you'd like to require Multi-factor Authentication for your team members to access Hanzo KMS check out our [Entra ID / Azure AD MFA](../mfa#entra-id-azure-ad-mfa) guide.
+   If you'd like to require Multi-factor Authentication for your team members to access KMS check out our [Entra ID / Azure AD MFA](../mfa#entra-id-azure-ad-mfa) guide.
 </Note>

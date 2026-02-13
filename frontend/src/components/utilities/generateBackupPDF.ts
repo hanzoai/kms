@@ -33,7 +33,7 @@ function createPdfContent(doc: jsPDF, personalEmail: string, generatedKey: strin
 
   doc.setFontSize(14);
   doc.text(
-    "In case you get locked out of you Hanzo KMS account, you`ll need these account details",
+    "In case you get locked out of you KMS account, you`ll need these account details",
     32,
     180
   );
@@ -62,7 +62,7 @@ function createPdfContent(doc: jsPDF, personalEmail: string, generatedKey: strin
   doc.setTextColor(43, 43, 43);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(15);
-  doc.text("Hanzo KMS Account Details", 290, 375, { align: "center" });
+  doc.text("KMS Account Details", 290, 375, { align: "center" });
   doc.setFontSize(12);
   doc.text("SIGN-IN URL", 50, 420);
   doc.text("EMAIL ADDRESS", 50, 465);
@@ -88,7 +88,7 @@ function generateBackupPDF({ personalName, personalEmail, generatedKey }: PDFPro
   const doc = new jsPDF("p", "pt", "a4", true);
   createPdfHeader(doc, personalName);
   createPdfContent(doc, personalEmail, generatedKey);
-  doc.save("Hanzo KMS Emergency Kit.pdf");
+  doc.save("KMS Emergency Kit.pdf");
 }
 
 /**
@@ -99,7 +99,7 @@ export function generateBackupPDFAsync({ personalName, personalEmail, generatedK
   const doc = new jsPDF("p", "pt", "a4", true);
   createPdfHeader(doc, personalName);
   createPdfContent(doc, personalEmail, generatedKey);
-  return doc.save("Hanzo KMS Emergency Kit.pdf", { returnPromise: true });
+  return doc.save("KMS Emergency Kit.pdf", { returnPromise: true });
 }
 
 export default generateBackupPDF;

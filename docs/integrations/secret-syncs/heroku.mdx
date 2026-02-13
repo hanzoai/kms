@@ -1,15 +1,15 @@
 ---
 title: "Heroku Sync"
-description: "Learn how to configure a Heroku Sync for Hanzo KMS."
+description: "Learn how to configure a Heroku Sync for KMS."
 ---
 
 **Prerequisites:**
 
-- Set up and add secrets to [Hanzo KMS Cloud](https://kms.hanzo.ai)
+- Set up and add secrets to [KMS Cloud](https://kms.hanzo.ai)
 - Create a [Heroku Connection](/integrations/app-connections/heroku)
 
 <Tabs>
-    <Tab title="Hanzo KMS UI">
+    <Tab title="KMS UI">
         1. Navigate to **Project** > **Integrations** and select the **Secret Syncs** tab. Click on the **Add Sync** button.
         ![Secret Syncs Tab](/images/secret-syncs/general/secret-sync-tab.png)
 
@@ -35,16 +35,16 @@ description: "Learn how to configure a Heroku Sync for Hanzo KMS."
         5. Configure the **Sync Options** to specify how secrets should be synced, then click **Next**.
         ![Configure Options](/images/secret-syncs/heroku/heroku-options.png)
 
-            - **Initial Sync Behavior**: Determines how Hanzo KMS should resolve the initial sync.
-                - **Import - Prefer values from Hanzo KMS**: Import secrets from Heroku to Hanzo KMS; if a secret with the same name already exists in Hanzo KMS, do nothing. Afterwards, sync secrets to Heroku.
-                - **Import - Prefer values from Heroku**: Import secrets from Heroku to Hanzo KMS; if a secret with the same name already exists in Hanzo KMS, replace its value with the one from Heroku. Afterwards, sync secrets to Heroku.
-                - **Overwrite Destination Secrets**: Removes any secrets at the destination endpoint not present in Hanzo KMS.
+            - **Initial Sync Behavior**: Determines how KMS should resolve the initial sync.
+                - **Import - Prefer values from KMS**: Import secrets from Heroku to KMS; if a secret with the same name already exists in KMS, do nothing. Afterwards, sync secrets to Heroku.
+                - **Import - Prefer values from Heroku**: Import secrets from Heroku to KMS; if a secret with the same name already exists in KMS, replace its value with the one from Heroku. Afterwards, sync secrets to Heroku.
+                - **Overwrite Destination Secrets**: Removes any secrets at the destination endpoint not present in KMS.
             - **Key Schema**: Template that determines how secret names are transformed when syncing, using `{{secretKey}}` as a placeholder for the original secret name and `{{environment}}` for the environment.
             <Note>
-                We highly recommend using a Key Schema to ensure that Hanzo KMS only manages the specific keys you intend, keeping everything else untouched.
+                We highly recommend using a Key Schema to ensure that KMS only manages the specific keys you intend, keeping everything else untouched.
             </Note>
             - **Auto-Sync Enabled**: If enabled, secrets will automatically be synced from the source location when changes occur. Disable to enforce manual syncing only.
-            - **Disable Secret Deletion**: If enabled, Hanzo KMS will not remove secrets from the sync destination. Enable this option if you intend to manage some secrets manually outside of Hanzo KMS.
+            - **Disable Secret Deletion**: If enabled, KMS will not remove secrets from the sync destination. Enable this option if you intend to manage some secrets manually outside of KMS.
 
         6. Configure the **Details** of your Heroku Sync, then click **Next**.
         ![Configure Details](/images/secret-syncs/heroku/heroku-details.png)

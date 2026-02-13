@@ -1,30 +1,30 @@
 ---
 title: "Bitbucket"
-description: "How to sync secrets from Hanzo KMS to Bitbucket"
+description: "How to sync secrets from KMS to Bitbucket"
 ---
 
-Hanzo KMS lets you sync secrets to Bitbucket at the repository-level and deployment environment-level.
+KMS lets you sync secrets to Bitbucket at the repository-level and deployment environment-level.
 
 
 Prerequisites:
 
-- Set up and add envars to [Hanzo KMS Cloud](https://kms.hanzo.ai)
+- Set up and add envars to [KMS Cloud](https://kms.hanzo.ai)
 
 <AccordionGroup>
-  <Accordion title="Push secrets to Bitbucket from Hanzo KMS">
+  <Accordion title="Push secrets to Bitbucket from KMS">
      Use our [Bitbucket Secret Syncs](../secret-syncs/bitbucket)
   </Accordion>
-  <Accordion title="Pull secrets in Bitbucket pipelines from Hanzo KMS">
+  <Accordion title="Pull secrets in Bitbucket pipelines from KMS">
     <Steps>
-      <Step title="Configure Hanzo KMS Access">
-        Configure a [Machine Identity](https://kms.hanzo.ai/docs/documentation/platform/identities/universal-auth) for your project and give it permissions to read secrets from your desired Hanzo KMS projects and environments.
+      <Step title="Configure KMS Access">
+        Configure a [Machine Identity](https://kms.hanzo.ai/docs/documentation/platform/identities/universal-auth) for your project and give it permissions to read secrets from your desired KMS projects and environments.
       </Step>
       <Step title="Initialize Bitbucket variables">
       Create Bitbucket variables (can be either workspace, repository, or deployment-level) to store Machine Identity Client ID and Client Secret.
       
       ![integrations bitbucket](/images/integrations/bitbucket/integrations-bitbucket-env.png)
       </Step>
-      <Step title="Integrate Hanzo KMS secrets into the pipeline">
+      <Step title="Integrate KMS secrets into the pipeline">
         Edit your Bitbucket pipeline YAML file to include the use of the KMS CLI to fetch and inject secrets into any script or command within the pipeline.
         
         #### Example
@@ -35,7 +35,7 @@ Prerequisites:
         pipelines:
           default:
             - step:
-                name: Build application with secrets from Hanzo KMS
+                name: Build application with secrets from KMS
                 script:
                   - apt update && apt install -y curl
                   - curl -1sLf 'https://dl.cloudsmith.io/public/ghcr.io/hanzoai/kms-cli/setup.deb.sh' | bash

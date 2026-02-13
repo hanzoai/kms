@@ -1,6 +1,6 @@
 ---
 title: "Cloudflare Custom Certificate"
-description: "Learn how to configure a Cloudflare Custom Certificate Sync for Hanzo KMS PKI."
+description: "Learn how to configure a Cloudflare Custom Certificate Sync for KMS PKI."
 ---
 
 **Prerequisites:**
@@ -15,7 +15,7 @@ description: "Learn how to configure a Cloudflare Custom Certificate Sync for Ha
 </Warning>
 
 <Tabs>
-    <Tab title="Hanzo KMS UI">
+    <Tab title="KMS UI">
         1. Navigate to **Project** > **Integrations** > **Certificate Syncs** and press **Add Sync**.
         ![Certificate Syncs Tab](/images/platform/pki/certificate-syncs/general/create-certificate-sync.png)
 
@@ -31,8 +31,8 @@ description: "Learn how to configure a Cloudflare Custom Certificate Sync for Ha
         4. Configure the **Sync Options** to specify how certificates should be synced, then click **Next**.
         ![Configure Options](/images/platform/pki/certificate-syncs/cloudflare-custom-certificate/cloudflare-options.png)
 
-        - **Enable Removal of Expired/Revoked Certificates**: If enabled, Hanzo KMS will remove certificates from the destination if they are no longer active in Hanzo KMS.
-        - **Certificate Name Schema** (Optional): Customize how certificate names are generated. Must include `{{certificateId}}` as a placeholder. If not specified, defaults to `Hanzo KMS-{{certificateId}}`.
+        - **Enable Removal of Expired/Revoked Certificates**: If enabled, KMS will remove certificates from the destination if they are no longer active in KMS.
+        - **Certificate Name Schema** (Optional): Customize how certificate names are generated. Must include `{{certificateId}}` as a placeholder. If not specified, defaults to `KMS-{{certificateId}}`.
         - **Auto-Sync Enabled**: If enabled, certificates will automatically be synced when changes occur. Disable to enforce manual syncing only.
 
         5. Configure the **Details** of your Cloudflare Custom Certificate Sync, then click **Next**.
@@ -118,7 +118,7 @@ description: "Learn how to configure a Cloudflare Custom Certificate Sync for Ha
 
 The Cloudflare Custom Certificate Sync provides:
 
-- **Automatic Deployment**: Deploy certificates in Hanzo KMS to Cloudflare as Custom certificates.
+- **Automatic Deployment**: Deploy certificates in KMS to Cloudflare as Custom certificates.
 - **Certificate Updates**: Update certificates in Cloudflare when renewals occur.
 - **Expiration Handling**: Optionally remove expired certificates from Cloudflare (if enabled).
 - **Chain Management**: Properly bundle certificate chains for optimal browser compatibility.
@@ -138,11 +138,11 @@ You can manually trigger certificate synchronization to Cloudflare using the syn
 - Testing certificate sync configurations
 - Force sync after making changes
 
-To manually sync certificates, use the [Sync Certificates](/api-reference/endpoints/pki/syncs/cloudflare-custom-certificate/sync-certificates) API endpoint or the manual sync option in the Hanzo KMS UI.
+To manually sync certificates, use the [Sync Certificates](/api-reference/endpoints/pki/syncs/cloudflare-custom-certificate/sync-certificates) API endpoint or the manual sync option in the KMS UI.
 
 ## FAQ
 
-<Accordion title="Can I import certificates from Cloudflare back into Hanzo KMS?">
-  Cloudflare does not support importing certificates back into Hanzo KMS
+<Accordion title="Can I import certificates from Cloudflare back into KMS?">
+  Cloudflare does not support importing certificates back into KMS
   due to security limitations where private keys cannot be extracted from Cloudflare.
 </Accordion>

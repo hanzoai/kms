@@ -1,9 +1,9 @@
 ---
 sidebarTitle: "Overview"
-description: "Learn how to sync certificates from Hanzo KMS PKI to third-party services."
+description: "Learn how to sync certificates from KMS PKI to third-party services."
 ---
 
-Certificate Syncs enable you to push certificates from Hanzo KMS to third-party services using [App Connections](/integrations/app-connections/overview).
+Certificate Syncs enable you to push certificates from KMS to third-party services using [App Connections](/integrations/app-connections/overview).
 
 <Note>
   Certificate Syncs are designed to automatically deploy certificates issued by
@@ -13,7 +13,7 @@ Certificate Syncs enable you to push certificates from Hanzo KMS to third-party 
 
 ## Concept
 
-Certificate Syncs are a project-level resource used to push certificates, via an [App Connection](/integrations/app-connections/overview), from Hanzo KMS
+Certificate Syncs are a project-level resource used to push certificates, via an [App Connection](/integrations/app-connections/overview), from KMS
 to a third-party service (destination). When paired with [server-side auto-renewal](/documentation/platform/pki/certificates/certificates#server-driven-certificate-renewal), renewed certificates are automatically synced to the destination,
 ensuring your certificates stay current.
 
@@ -88,9 +88,9 @@ should be synced. Follow these steps to start syncing:
      the destination.
 
 <Note>
-  Only certificates managed by Hanzo KMS will be affected during sync
-  operations. Certificates not created or managed by Hanzo KMS will remain
-  untouched, and changes made to Hanzo KMS-managed certificates directly in the
+  Only certificates managed by KMS will be affected during sync
+  operations. Certificates not created or managed by KMS will remain
+  untouched, and changes made to KMS-managed certificates directly in the
   destination service may be overwritten by future syncs.
 </Note>
 
@@ -103,7 +103,7 @@ should be synced. Follow these steps to start syncing:
    destination endpoint and automatically redeployed whenever they are renewed.
 
 <Note>
-  Hanzo KMS is continuously expanding its Certificate Sync third-party service
+  KMS is continuously expanding its Certificate Sync third-party service
   support. If the service you need isn't available, contact us at
   team@kms.hanzo.ai to make a request.
 </Note>
@@ -114,7 +114,7 @@ Certificate Syncs support flexible certificate naming through configurable namin
 
 ### Default Naming
 
-By default, certificates are named using the pattern `Hanzo KMS-{certificateId}` where `{certificateId}` is the unique identifier of the certificate with hyphens removed for compatibility with services like Azure Key Vault.
+By default, certificates are named using the pattern `KMS-{certificateId}` where `{certificateId}` is the unique identifier of the certificate with hyphens removed for compatibility with services like Azure Key Vault.
 
 ### Custom Naming Schema
 
@@ -131,4 +131,4 @@ You can customize certificate naming by providing a **Certificate Name Schema** 
 
 - Must include exactly one `{{certificateId}}` placeholder
 - Only alphanumeric characters, dashes (-), underscores (\_), and slashes (/) are allowed
-- Certificate names matching your schema will be managed by Hanzo KMS during sync operations
+- Certificate names matching your schema will be managed by KMS during sync operations

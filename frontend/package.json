@@ -1,6 +1,6 @@
 {
   "name": "@hanzo/kms-frontend",
-  "description": "Hanzo KMS Frontend Dashboard",
+  "description": "KMS Frontend Dashboard",
   "private": true,
   "version": "1.0.0",
   "repository": {

@@ -881,7 +881,7 @@ export const superAdminServiceFactory = ({
         if (user.isAccepted) {
           return smtpService.sendMail({
             template: SmtpTemplates.OrgAssignment,
-            subjectLine: "You've been added to an Hanzo KMS organization",
+            subjectLine: "You've been added to an KMS organization",
             recipients: [user.email],
             substitutions: {
               inviterFirstName: serverAdmin?.firstName,
@@ -904,7 +904,7 @@ export const superAdminServiceFactory = ({
 
         return smtpService.sendMail({
           template: SmtpTemplates.OrgInvite,
-          subjectLine: "Hanzo KMS organization invitation",
+          subjectLine: "KMS organization invitation",
           recipients: [user.email],
           substitutions: {
             inviterFirstName: serverAdmin?.firstName,
@@ -1047,7 +1047,7 @@ export const superAdminServiceFactory = ({
 
     await smtpService.sendMail({
       template: SmtpTemplates.OrgInvite,
-      subjectLine: "Hanzo KMS organization invitation",
+      subjectLine: "KMS organization invitation",
       recipients: [orgMembership.inviteEmail],
       substitutions: {
         inviterFirstName: serverAdmin?.firstName,
@@ -1084,7 +1084,7 @@ export const superAdminServiceFactory = ({
   const grantServerAdminAccessToUser = async (userId: string) => {
     if (!licenseService.onPremFeatures?.instanceUserManagement) {
       throw new BadRequestError({
-        message: "Failed to grant server admin access to user due to plan restriction. Upgrade to Hanzo KMS's Pro plan."
+        message: "Failed to grant server admin access to user due to plan restriction. Upgrade to KMS's Pro plan."
       });
     }
     await userDAL.updateById(userId, { superAdmin: true });
@@ -1127,7 +1127,7 @@ export const superAdminServiceFactory = ({
   const updateRootEncryptionStrategy = async (strategy: RootKeyEncryptionStrategy) => {
     if (!licenseService.onPremFeatures.hsm) {
       throw new BadRequestError({
-        message: "Failed to update encryption strategy due to plan restriction. Upgrade to Hanzo KMS's Enterprise plan."
+        message: "Failed to update encryption strategy due to plan restriction. Upgrade to KMS's Enterprise plan."
       });
     }
 

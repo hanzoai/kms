@@ -1,18 +1,18 @@
 ---
 title: "Jenkins Plugin"
-description: "How to effectively and securely manage secrets in Jenkins using Hanzo KMS"
+description: "How to effectively and securely manage secrets in Jenkins using KMS"
 ---
 
-**Objective**: Fetch secrets from Hanzo KMS to Jenkins pipelines
+**Objective**: Fetch secrets from KMS to Jenkins pipelines
 
-In this guide, we'll outline the steps to deliver secrets from Hanzo KMS to Jenkins via the KMS CLI.
-At a high level, the KMS CLI will be executed within your build environment and use a machine identity to authenticate with Hanzo KMS.
+In this guide, we'll outline the steps to deliver secrets from KMS to Jenkins via the KMS CLI.
+At a high level, the KMS CLI will be executed within your build environment and use a machine identity to authenticate with KMS.
 This token must be added as a Jenkins Credential and then passed to the KMS CLI as an environment variable, enabling it to access and retrieve secrets within your workflows.
 
 Prerequisites:
 
-- Set up and add secrets to [Hanzo KMS](https://kms.hanzo.ai).
-- Create a [machine identity](/documentation/platform/identities/machine-identities) (Recommended), or a service token in Hanzo KMS.
+- Set up and add secrets to [KMS](https://kms.hanzo.ai).
+- Create a [machine identity](/documentation/platform/identities/machine-identities) (Recommended), or a service token in KMS.
 - You have a working Jenkins installation with the [credentials plugin](https://plugins.jenkins.io/credentials/) installed.
 - You have the [KMS CLI](/cli/overview) installed on your Jenkins executor nodes or container images.
 
@@ -20,23 +20,23 @@ Prerequisites:
 
   <Tab title="Using Plugin with Machine Identities (Recommended)">
      
-    ## Jenkins Hanzo KMS Plugin
+    ## Jenkins KMS Plugin
 
-    This plugin adds a build wrapper to set environment variables from [Hanzo KMS](https://kms.hanzo.ai). Secrets are generally masked in the build log, so you can't accidentally print them.
+    This plugin adds a build wrapper to set environment variables from [KMS](https://kms.hanzo.ai). Secrets are generally masked in the build log, so you can't accidentally print them.
 
     ## Installation
 
-    To install the plugin, navigate to `Manage Jenkins -> Plugins -> Available plugins` and search for `Hanzo KMS`. Install the plugin and restart Jenkins.
+    To install the plugin, navigate to `Manage Jenkins -> Plugins -> Available plugins` and search for `KMS`. Install the plugin and restart Jenkins.
 
     ![Install Plugin](../../images/integrations/jenkins/plugin/install-plugin.png)
 
-    ## Hanzo KMS Authentication
+    ## KMS Authentication
 
-    Authenticating with Hanzo KMS is done through the use of [Machine Identities](https://kms.hanzo.ai/docs/documentation/platform/identities/machine-identities).
+    Authenticating with KMS is done through the use of [Machine Identities](https://kms.hanzo.ai/docs/documentation/platform/identities/machine-identities).
     Currently the Jenkins plugin only supports [Universal Auth](https://kms.hanzo.ai/docs/documentation/platform/identities/universal-auth) for authentication. More methods will be added soon.
 
     ### How does Universal Auth work?
-    To use Universal Auth, you'll need to create a new Credential _(Hanzo KMS Universal Auth Credential)_. The credential should contain your Universal Auth client ID, and your Universal Auth client secret.
+    To use Universal Auth, you'll need to create a new Credential _(KMS Universal Auth Credential)_. The credential should contain your Universal Auth client ID, and your Universal Auth client secret.
     Please [read more here](https://kms.hanzo.ai/docs/documentation/platform/identities/universal-auth) on how to setup a Machine Identity to use universal auth.
 
 
@@ -47,11 +47,11 @@ Prerequisites:
     Simply navigate to<br/>
     `Dashboard -> Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted)`.
 
-    Press the `Add Credentials` button and select `Hanzo KMS Universal Auth Credential` in the `Kind` field.
+    Press the `Add Credentials` button and select `KMS Universal Auth Credential` in the `Kind` field.
 
     The `ID` and `Description` field doesn't matter much in this case, as they won't be read anywhere. The description field will be displayed as the credential name during the plugin configuration.
 
-    ![Hanzo KMS Universal Auth Credential](../../images/integrations/jenkins/plugin/universal-auth-credential.png)
+    ![KMS Universal Auth Credential](../../images/integrations/jenkins/plugin/universal-auth-credential.png)
 
 
 
@@ -60,29 +60,29 @@ Prerequisites:
 
     Configuration takes place on a job-level basis.
 
-    Inside your job, you simply tick the `Hanzo KMS Plugin` checkbox under "Build Environment". After enabling the plugin, you'll see a new section appear where you'll have to configure the plugin.
+    Inside your job, you simply tick the `KMS Plugin` checkbox under "Build Environment". After enabling the plugin, you'll see a new section appear where you'll have to configure the plugin.
 
     ![Plugin enabled](../../images/integrations/jenkins/plugin/plugin-checked.png)
 
     You'll be prompted with 4 options to fill:
-    * Hanzo KMS URL
-        * This defaults to https://kms.hanzo.ai. This field is only relevant if you're running a managed or self-hosted instance. If you are using Hanzo KMS Cloud, leave this as-is, otherwise enter the URL of your Hanzo KMS instance.
-    * Hanzo KMS Credential
-        * This is where you select your Hanzo KMS credential to use for authentication. In the step above [Creating a Universal Auth credential](#creating-a-universal-auth-credential), you can read on how to configure the credential. Simply select the credential you have created for this field.
-    * Hanzo KMS Project Slug
-        * This is the slug of the project you wish to fetch secrets from. You can find this in your project settings on Hanzo KMS by clicking "Copy project slug".
+    * KMS URL
+        * This defaults to https://kms.hanzo.ai. This field is only relevant if you're running a managed or self-hosted instance. If you are using KMS Cloud, leave this as-is, otherwise enter the URL of your KMS instance.
+    * KMS Credential
+        * This is where you select your KMS credential to use for authentication. In the step above [Creating a Universal Auth credential](#creating-a-universal-auth-credential), you can read on how to configure the credential. Simply select the credential you have created for this field.
+    * KMS Project Slug
+        * This is the slug of the project you wish to fetch secrets from. You can find this in your project settings on KMS by clicking "Copy project slug".
     * Environment Slug
-        * This is the slug of the environment to fetch secrets from. In most cases it's either `dev`, `staging`, or `prod`. You can however create custom environments in Hanzo KMS. If you are using custom environments, you need to enter the slug of the custom environment you wish to fetch secrets from.
+        * This is the slug of the environment to fetch secrets from. In most cases it's either `dev`, `staging`, or `prod`. You can however create custom environments in KMS. If you are using custom environments, you need to enter the slug of the custom environment you wish to fetch secrets from.
       
     That's it! Now you're ready to select which secrets you want to fetch into Jenkins.
-    By clicking the `Add an Hanzo KMS secret` in the Jenkins UI like seen in the screenshot below.
+    By clicking the `Add an KMS secret` in the Jenkins UI like seen in the screenshot below.
 
-    ![Add Hanzo KMS secret](../../images/integrations/jenkins/plugin/add-kms-secret.png)
+    ![Add KMS secret](../../images/integrations/jenkins/plugin/add-kms-secret.png)
 
     You need to select which secrets that should be pulled into Jenkins.
-    You start by specifying a [folder path from Hanzo KMS](https://kms.hanzo.ai/docs/documentation/platform/folder#comparing-folders). The root path is simply `/`. You also need to select wether or not you want to [include imports](https://kms.hanzo.ai/docs/documentation/platform/secret-reference#secret-imports). Now you can add secrets the secret keys that you want to pull from Hanzo KMS into Jenkins. If you want to add multiple secrets, press the "Add key/value pair".
+    You start by specifying a [folder path from KMS](https://kms.hanzo.ai/docs/documentation/platform/folder#comparing-folders). The root path is simply `/`. You also need to select wether or not you want to [include imports](https://kms.hanzo.ai/docs/documentation/platform/secret-reference#secret-imports). Now you can add secrets the secret keys that you want to pull from KMS into Jenkins. If you want to add multiple secrets, press the "Add key/value pair".
 
-    If you wish to pull secrets from multiple paths, you can press the "Add an Hanzo KMS secret" button at the bottom, and configure a new set of secrets to pull.
+    If you wish to pull secrets from multiple paths, you can press the "Add an KMS secret" button at the bottom, and configure a new set of secrets to pull.
 
 
     ## Pipeline usage
@@ -90,19 +90,19 @@ Prerequisites:
 
     ### Generating pipeline block
 
-    Using the Hanzo KMS Plugin in a Jenkins pipeline is very straight forward. To generate a block to use the Hanzo KMS Plugin in a Pipeline, simply to go `{JENKINS_URL}/jenkins/job/{JOB_ID}/pipeline-syntax/`.
+    Using the KMS Plugin in a Jenkins pipeline is very straight forward. To generate a block to use the KMS Plugin in a Pipeline, simply to go `{JENKINS_URL}/jenkins/job/{JOB_ID}/pipeline-syntax/`.
 
     You can find a direct link on the Pipeline configuration page in the very bottom of the page, see image below.
 
     ![Pipeline Syntax Highlight](../../images/integrations/jenkins/plugin/pipeline-syntax-highlight.png)
 
-    On the Snippet Generator page, simply configure the Hanzo KMS Plugin like it's documented in the [Configuration documentation](#configuration) step.
+    On the Snippet Generator page, simply configure the KMS Plugin like it's documented in the [Configuration documentation](#configuration) step.
 
     Once you have filled out the configuration, press `Generate Pipeline Script`, and it will generate a block you can use in your pipeline.
 
     ![Pipeline Configuration](../../images/integrations/jenkins/plugin/pipeline-configuration.png)
 
-    ### Using Hanzo KMS in a Pipeline
+    ### Using KMS in a Pipeline
 
     Using the generated block in a pipeline is very straight forward. There's a few approaches on how to implement the block in a Pipeline script.
     Here's an example of using the generated block in a pipeline script. Make sure to replace the placeholder values with your own values.
@@ -110,12 +110,12 @@ Prerequisites:
     The script is formatted for clarity. All these fields will be pre-filled for you if you use the `Snippet Generator` like described in the [step above](#generating-pipeline-block).
     ```groovy
     node {
-        withHanzo KMS(
+        withKMS(
             configuration: [
                 kmsCredentialId: 'YOUR_CREDENTIAL_ID',
                 kmsEnvironmentSlug: 'PROJECT_ENV_SLUG', 
                 kmsProjectSlug: 'PROJECT_SLUG', 
-                kmsUrl: 'https://kms.hanzo.ai' // Change this to your Hanzo KMS instance URL if you aren't using Hanzo KMS Cloud.
+                kmsUrl: 'https://kms.hanzo.ai' // Change this to your KMS instance URL if you aren't using KMS Cloud.
             ], 
             kmsSecrets: [
                 kmsSecret(
@@ -139,16 +139,16 @@ Prerequisites:
   </Tab>
 
   <Tab title="Using CLI with Service Tokens">
-    ## Add Hanzo KMS Service Token to Jenkins
+    ## Add KMS Service Token to Jenkins
 
-    After setting up your project in Hanzo KMS and installing the KMS CLI to the environment where your Jenkins builds will run, you will need to add the Hanzo KMS Service Token to Jenkins.
+    After setting up your project in KMS and installing the KMS CLI to the environment where your Jenkins builds will run, you will need to add the KMS Service Token to Jenkins.
 
-    To generate a Hanzo KMS service token, follow the guide [here](/documentation/platform/token).
+    To generate a KMS service token, follow the guide [here](/documentation/platform/token).
     Once you have generated the token, navigate to **Manage Jenkins > Manage Credentials** in your Jenkins instance.
 
     ![Jenkins step 1](../../images/integrations/jenkins/jenkins_1.png)
 
-    Click on the credential store you want to store the Hanzo KMS Service Token in. In this case, we're using the default Jenkins global store.
+    Click on the credential store you want to store the KMS Service Token in. In this case, we're using the default Jenkins global store.
 
     <Info>
       Each of your projects will have a different `KMS_TOKEN`.
@@ -161,7 +161,7 @@ Prerequisites:
 
     ![Jenkins step 3](../../images/integrations/jenkins/jenkins_3.png)
 
-    Choose **Secret text** for the **Kind** option from the dropdown list and enter the Hanzo KMS Service Token in the **Secret** field.
+    Choose **Secret text** for the **Kind** option from the dropdown list and enter the KMS Service Token in the **Secret** field.
     Although the **ID** can be any value, we'll set it to `kms-service-token` for the sake of this guide.
     The description is optional and can be any text you prefer.
 
@@ -173,9 +173,9 @@ Prerequisites:
     ![Jenkins step 5](../../images/integrations/jenkins/jenkins_5.png)
 
 
-    ## Use Hanzo KMS in a Freestyle Project
+    ## Use KMS in a Freestyle Project
 
-    To fetch secrets with Hanzo KMS in a Freestyle Project job, you'll need to expose the credential you created above as an environment variable to the KMS CLI.
+    To fetch secrets with KMS in a Freestyle Project job, you'll need to expose the credential you created above as an environment variable to the KMS CLI.
     To do so, first click **New Item** from the dashboard navigation sidebar:
 
     ![Jenkins step 6](../../images/integrations/jenkins/jenkins_6.png)
@@ -189,7 +189,7 @@ Prerequisites:
     ![Jenkins step 8](../../images/integrations/jenkins/jenkins_8.png)
 
     Enter `KMS_TOKEN` in the **Variable** field then click the **Specific credentials** option from the Credentials section and select the credential you created earlier.
-    In this case, we saved it as `Hanzo KMS service token` so we'll choose that from the dropdown menu.
+    In this case, we saved it as `KMS service token` so we'll choose that from the dropdown menu.
 
     ![Jenkins step 9](../../images/integrations/jenkins/jenkins_9.png)
 
@@ -209,14 +209,14 @@ Prerequisites:
     Finally, click **Build Now** from the navigation sidebar to run your new job.
 
     <Info>
-      Running into issues? Join Hanzo KMS's [community Slack](https://hanzo.ai/slack) for quick support.
+      Running into issues? Join KMS's [community Slack](https://hanzo.ai/slack) for quick support.
     </Info>
 
 
 
-    ## Use Hanzo KMS in a Jenkins Pipeline
+    ## Use KMS in a Jenkins Pipeline
 
-    To fetch secrets using Hanzo KMS in a Pipeline job, you'll need to expose the Jenkins credential you created above as an environment variable.
+    To fetch secrets using KMS in a Pipeline job, you'll need to expose the Jenkins credential you created above as an environment variable.
     To do so, click **New Item** from the dashboard navigation sidebar:
 
     ![Jenkins step 6](../../images/integrations/jenkins/jenkins_6.png)
@@ -236,7 +236,7 @@ Prerequisites:
         }
 
         stages {
-            stage('Run Hanzo KMS') {
+            stage('Run KMS') {
                 steps {
                     sh("hanzo-kms secrets --env=dev --path=/")
 

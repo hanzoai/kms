@@ -1,16 +1,16 @@
 ---
-title: Backstage Hanzo KMS Plugin
-description: A powerful plugin that integrates Hanzo KMS secrets management into your Backstage developer portal.
+title: Backstage KMS Plugin
+description: A powerful plugin that integrates KMS secrets management into your Backstage developer portal.
 ---
 
-Integrate secrets management into your developer portal with the Backstage Hanzo KMS plugin suite. This plugin provides a seamless interface to manage your [Hanzo KMS](https://kms.hanzo.ai) secrets directly within Backstage, including full support for environments and folder structure.
+Integrate secrets management into your developer portal with the Backstage KMS plugin suite. This plugin provides a seamless interface to manage your [KMS](https://kms.hanzo.ai) secrets directly within Backstage, including full support for environments and folder structure.
 
 ## Features
 
-- **Secrets Management**: View, create, update, and delete secrets from Hanzo KMS
-- **Folder Navigation**: Explore the full folder structure of your Hanzo KMS projects
+- **Secrets Management**: View, create, update, and delete secrets from KMS
+- **Folder Navigation**: Explore the full folder structure of your KMS projects
 - **Multi-Environment Support**: Easily switch between and manage different environments
-- **Entity Linking**: Map Backstage entities to specific Hanzo KMS projects via annotations
+- **Entity Linking**: Map Backstage entities to specific KMS projects via annotations
 
 ---
 ## Installation
@@ -84,13 +84,13 @@ const app = createApp({
 Modify `packages/app/src/components/catalog/EntityPage.tsx`:
 
 ```tsx
-import { EntityHanzo KMSContent } from '@hanzo/kms-backstage-plugin-kms';
+import { EntityKMSContent } from '@hanzo/kms-backstage-plugin-kms';
 
 const serviceEntityPage = (
   <EntityLayout>
     {/* ...other tabs */}
     <EntityLayout.Route path="/kms" title="Secrets">
-      <EntityHanzo KMSContent />
+      <EntityKMSContent />
     </EntityLayout.Route>
   </EntityLayout>
 );
@@ -98,7 +98,7 @@ const serviceEntityPage = (
 
 ### Entity Annotation
 
-Add the Hanzo KMS project ID to your entity yaml settings:
+Add the KMS project ID to your entity yaml settings:
 
 ```yaml
 apiVersion: backstage.io/v1alpha1
@@ -109,14 +109,14 @@ metadata:
     kms/projectId: <your-kms-project-id>
 ```
 
-> Replace `<your-kms-project-id>` with the actual project ID from Hanzo KMS.
+> Replace `<your-kms-project-id>` with the actual project ID from KMS.
 
 ## Usage
 
 Once installed and configured, you can:
 
-1. **View and manage secrets** in Hanzo KMS from within Backstage
-2. **Create, update, and delete** secrets using the Hanzo KMS tab in entity pages
+1. **View and manage secrets** in KMS from within Backstage
+2. **Create, update, and delete** secrets using the KMS tab in entity pages
 3. **Navigate environments and folders**
 4. **Search and filter** secrets by key, value, or comments
 

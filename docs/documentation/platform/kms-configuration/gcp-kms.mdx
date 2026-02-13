@@ -3,7 +3,7 @@ title: "GCP Key Management Service"
 description: "Learn how to manage encryption using GCP KMS"
 ---
 
-To enhance the security of your Hanzo KMS projects, you can now encrypt your secrets using an external Key Management Service (KMS).
+To enhance the security of your KMS projects, you can now encrypt your secrets using an external Key Management Service (KMS).
 When external KMS is configured for your project, all encryption and decryption operations will be handled by the chosen KMS.
 This guide will walk you through the steps needed to configure external KMS support with Google Cloud KMS.
 
@@ -28,7 +28,7 @@ Before you begin, you'll first need to set up a GCP Service Account, add a KMS k
       <Info>
         Remember to keep the JSON file in a secure location. It will be used to authenticate your GCP service account.
 
-        Once you have successfully set up GCP KMS with Hanzo KMS, you should permanently delete the JSON file.
+        Once you have successfully set up GCP KMS with KMS, you should permanently delete the JSON file.
       </Info>
     </Step>
 
@@ -58,7 +58,7 @@ Before you begin, you'll first need to set up a GCP Service Account, add a KMS k
 
       7. For **Key Rotation Period**, select **Never (manual rotation)**, then click **Continue** followed by **Create**.
 
-      8. You should see the key in the list of keys. We're now ready to set it up in Hanzo KMS.
+      8. You should see the key in the list of keys. We're now ready to set it up in KMS.
     </Step>
 
   </Steps>
@@ -110,7 +110,7 @@ Next, you will need to follow the steps listed below to add GCP KMS for your org
   </Step>
 </Steps>
 
-You now have a GCP KMS Key configured at the organization level. You can assign these GCP KMS keys to existing Hanzo KMS projects by visiting the 'Project Settings' page.
+You now have a GCP KMS Key configured at the organization level. You can assign these GCP KMS keys to existing KMS projects by visiting the 'Project Settings' page.
 
 ## Assign GCP KMS Key to an Existing Project
 

@@ -1,11 +1,11 @@
 ---
 
-title: "Upgrade Hanzo KMS Instance"
-description: "How to upgrade Hanzo KMS self-hosted instance"
+title: "Upgrade KMS Instance"
+description: "How to upgrade KMS self-hosted instance"
 
 ---
 
-Keeping your Hanzo KMS instance up to date is key to making sure you receive the latest performance improvements, security patches, and feature updates. 
+Keeping your KMS instance up to date is key to making sure you receive the latest performance improvements, security patches, and feature updates. 
 We release updates approximately once a week, which may include new features, bug fixes, performance enhancements, and critical security patches.
 
 Since secrets management is a critical component of your infrastructure, we aim to avoid disruptive changes that will impact fetching secrets in downstream clients.
@@ -13,7 +13,7 @@ If a release requires specific attention, a note will be attached to the corresp
 
 During an upgrade, two key components are updated:
 
-- **Hanzo KMS Application:** The core application code is updated.
+- **KMS Application:** The core application code is updated.
 - **PostgreSQL Database Schema:** Schema migrations run automatically to ensure your database remains in sync with the updated application.
 
 > **Before You Upgrade:**  
@@ -48,13 +48,13 @@ Now, migrations run automatically during boot-up. This improvement streamlines t
      - **Database migrations** that may require additional settings or precautions
      - **Step-by-step upgrade path** with intermediate versions if needed
    - Review any breaking changes and plan necessary configuration updates before proceeding.
-   - Visit the [Hanzo KMS releases page](https://github.com/hanzoai/kms/releases) for a complete list of available versions.
+   - Visit the [KMS releases page](https://github.com/hanzoai/kms/releases) for a complete list of available versions.
 
 ![Upgrade Path Tool showing breaking changes and migration information](/images/self-hosting/helper/upgrade-path-tool.png)
 
 3. **Start the Upgrade Process:**  
-   - Launch the new version of Hanzo KMS. During startup, the application will automatically compare the current database schema with the updated schema in the code.
-   - If any differences are detected, Hanzo KMS will apply the necessary migrations automatically.
+   - Launch the new version of KMS. During startup, the application will automatically compare the current database schema with the updated schema in the code.
+   - If any differences are detected, KMS will apply the necessary migrations automatically.
 
 4. **Multi-Instance Coordination:**  
    - In environments with multiple instances, one instance will acquire a lock and perform the migration while the other instances wait.
@@ -68,7 +68,7 @@ Now, migrations run automatically during boot-up. This improvement streamlines t
 
 ### UI Caching Issues After Upgrade
 
-After upgrading your Hanzo KMS instance, you may encounter UI-related issues such as:
+After upgrading your KMS instance, you may encounter UI-related issues such as:
 - Strange loading behavior
 - Components not rendering correctly  
 - Unexpected errors in the browser console
@@ -90,7 +90,7 @@ These issues are often caused by browser caching of the previous version's stati
 
 ## Downgrade Considerations
 
-While we recommend staying up-to-date with the latest version, there may be scenarios where you need to downgrade your Hanzo KMS instance.
+While we recommend staying up-to-date with the latest version, there may be scenarios where you need to downgrade your KMS instance.
 
 <Warning>
   **Database Compatibility:** Downgrading can be complex due to database schema changes. Always ensure you have proper backups before attempting any version changes.
@@ -102,15 +102,15 @@ While we recommend staying up-to-date with the latest version, there may be scen
    - Create a database snapshot/backup **before** upgrading to the target version
    - Ensure the snapshot is from a version compatible with your desired downgrade target
 
-2. **Stop Hanzo KMS Services:**
-   - Gracefully shut down all Hanzo KMS instances to prevent data corruption
+2. **Stop KMS Services:**
+   - Gracefully shut down all KMS instances to prevent data corruption
 
 3. **Restore Database:**
    - Restore your database from the pre-upgrade snapshot
    - **Critical:** Do not attempt to downgrade with a database that has run migrations from a newer version
 
 4. **Deploy Previous Version:**
-   - Deploy the previous Hanzo KMS version
+   - Deploy the previous KMS version
    - Verify that the version matches the database schema in your snapshot
 
 5. **Verify Functionality:**

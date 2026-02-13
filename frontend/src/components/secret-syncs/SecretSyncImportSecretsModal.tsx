@@ -81,7 +81,7 @@ const Content = ({ secretSync, onComplete }: ContentProps) => {
             tooltipText={
               <div className="flex flex-col gap-3">
                 <p>
-                  Specify how Hanzo KMS should resolve importing secrets from {destinationName}. The
+                  Specify how KMS should resolve importing secrets from {destinationName}. The
                   following options are available:
                 </p>
                 <ul className="flex list-disc flex-col gap-3 pl-4">
@@ -152,7 +152,7 @@ export const SecretSyncImportSecretsModal = ({ isOpen, onOpenChange, secretSync 
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent
         title="Import Secrets"
-        subTitle={`Import secrets into Hanzo KMS from this ${destinationName} Sync destination.`}
+        subTitle={`Import secrets into KMS from this ${destinationName} Sync destination.`}
       >
         <Content secretSync={secretSync} onComplete={() => onOpenChange(false)} />
       </ModalContent>

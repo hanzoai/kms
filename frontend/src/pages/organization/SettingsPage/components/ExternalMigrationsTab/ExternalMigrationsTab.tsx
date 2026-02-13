@@ -21,7 +21,7 @@ export const ExternalMigrationsTab = () => {
         <div className="mb-4">
           <h2 className="text-xl font-medium text-mineshaft-100">In-Platform Migration Tooling</h2>
           <p className="mt-1 mb-6 text-sm text-gray-400">
-            Configure platform connections to enable migration features throughout Hanzo KMS, such
+            Configure platform connections to enable migration features throughout KMS, such
             as importing policies and resources directly within the UI.
           </p>
         </div>
@@ -59,7 +59,7 @@ export const ExternalMigrationsTab = () => {
               </a>
             </div>
             <p className="mt-1 text-sm text-gray-400">
-              Import data from another platform to Hanzo KMS.
+              Import data from another platform to KMS.
             </p>
           </div>
 

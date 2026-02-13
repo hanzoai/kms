@@ -1,13 +1,13 @@
 ---
 title: "Northflank Sync"
-description: "Learn how to configure a Northflank Sync for Hanzo KMS."
+description: "Learn how to configure a Northflank Sync for KMS."
 ---
 
 **Prerequisites:**
 - Create a [Northflank Connection](/integrations/app-connections/northflank)
 
 <Tabs>
-    <Tab title="Hanzo KMS UI">
+    <Tab title="KMS UI">
         <Steps>
             <Step title="Add Sync">
                 Navigate to **Project** > **Integrations** and select the **Secret Syncs** tab. Click on the **Add Sync** button.
@@ -43,16 +43,16 @@ description: "Learn how to configure a Northflank Sync for Hanzo KMS."
 
                 ![Configure Sync Options](/images/secret-syncs/northflank/configure-sync-options.png)
 
-                - **Initial Sync Behavior**: Determines how Hanzo KMS should resolve the initial sync.
-                    - **Overwrite Destination Secrets**: Removes any secrets at the destination endpoint not present in Hanzo KMS.
-                    - **Import Destination Secrets - Prioritize Hanzo KMS Values**: Imports any secrets present in the Northflank destination prior to syncing, prioritizing values from Hanzo KMS over Northflank when keys conflict.
-                    - **Import Destination Secrets - Prioritize Northflank Values**: Imports any secrets present in the Northflank destination prior to syncing, prioritizing values from Northflank over Hanzo KMS when keys conflict.
+                - **Initial Sync Behavior**: Determines how KMS should resolve the initial sync.
+                    - **Overwrite Destination Secrets**: Removes any secrets at the destination endpoint not present in KMS.
+                    - **Import Destination Secrets - Prioritize KMS Values**: Imports any secrets present in the Northflank destination prior to syncing, prioritizing values from KMS over Northflank when keys conflict.
+                    - **Import Destination Secrets - Prioritize Northflank Values**: Imports any secrets present in the Northflank destination prior to syncing, prioritizing values from Northflank over KMS when keys conflict.
                 - **Key Schema**: Template that determines how secret names are transformed when syncing, using `{{secretKey}}` as a placeholder for the original secret name and `{{environment}}` for the environment.
                 <Note>
-                    We highly recommend using a Key Schema to ensure that Hanzo KMS only manages the specific keys you intend, keeping everything else untouched.
+                    We highly recommend using a Key Schema to ensure that KMS only manages the specific keys you intend, keeping everything else untouched.
                 </Note>
                 - **Auto-Sync Enabled**: If enabled, secrets will automatically be synced from the source location when changes occur. Disable to enforce manual syncing only.
-                - **Disable Secret Deletion**: If enabled, Hanzo KMS will not remove secrets from the sync destination. Enable this option if you intend to manage some secrets manually outside of Hanzo KMS.
+                - **Disable Secret Deletion**: If enabled, KMS will not remove secrets from the sync destination. Enable this option if you intend to manage some secrets manually outside of KMS.
             </Step>
             <Step title="Configure details">
                 Configure the **Details** of your Northflank Sync, then click **Next**.

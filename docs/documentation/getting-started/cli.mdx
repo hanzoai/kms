@@ -4,11 +4,11 @@ title: "CLI"
 
 The KMS CLI can be used to inject secrets into any framework like Next.js, Express, Django and more in local development.
 
-It can also be used to expose secrets from Hanzo KMS as environment variables in CI/CD pipelines and [Docker containers](/documentation/getting-started/docker)
+It can also be used to expose secrets from KMS as environment variables in CI/CD pipelines and [Docker containers](/documentation/getting-started/docker)
 
 Prerequisites: 
 
-- Have a project with secrets ready in [Hanzo KMS Cloud](https://kms.hanzo.ai).
+- Have a project with secrets ready in [KMS Cloud](https://kms.hanzo.ai).
 
 ## Installation
 
@@ -26,7 +26,7 @@ Follow the instructions for your operating system to install the KMS CLI.
       Use [Scoop](https://scoop.sh/) package manager
 
         ```console
-        $ scoop bucket add org https://github.com/Hanzo KMS/scoop-kms.git
+        $ scoop bucket add org https://github.com/KMS/scoop-kms.git
         ```
 
         ```console
@@ -39,7 +39,7 @@ Follow the instructions for your operating system to install the KMS CLI.
 		$ apk add --no-cache bash sudo
 		```
 
-    	Add Hanzo KMS repository
+    	Add KMS repository
     	```console
     	$ curl -1sLf \
     		'https://dl.cloudsmith.io/public/ghcr.io/hanzoai/kms-cli/setup.alpine.sh' \
@@ -53,7 +53,7 @@ Follow the instructions for your operating system to install the KMS CLI.
 
    </Tab>
 	 <Tab title="RedHat/CentOs/Amazon">
-	 Add Hanzo KMS repository
+	 Add KMS repository
 		```console
 		$ curl -1sLf \
 		'https://dl.cloudsmith.io/public/ghcr.io/hanzoai/kms-cli/setup.rpm.sh' \
@@ -67,7 +67,7 @@ Follow the instructions for your operating system to install the KMS CLI.
 
    </Tab>
 	 <Tab title="Debian/Ubuntu">
-	 	Add Hanzo KMS repository 
+	 	Add KMS repository 
 			
 		```console
 		$ curl -1sLf \
@@ -93,7 +93,7 @@ Follow the instructions for your operating system to install the KMS CLI.
 
 ## Login
 
-Authenticate the CLI with the Hanzo KMS platform using your email and password.
+Authenticate the CLI with the KMS platform using your email and password.
 
 ```console
 $ hanzo-kms login
@@ -101,7 +101,7 @@ $ hanzo-kms login
 
 ## Initialization
 
-Navigate to the root of your project directory and run the `init` command. This step connects your local project to the project on the Hanzo KMS platform and creates a `kms.json` file containing a reference to that latter project.
+Navigate to the root of your project directory and run the `init` command. This step connects your local project to the project on the KMS platform and creates a `kms.json` file containing a reference to that latter project.
 
 ```console
 $ hanzo-kms init
@@ -121,7 +121,7 @@ $ hanzo-kms run -- flask run
 $ hanzo-kms run -- ./your_bash_script.sh
 ```
 
-Your app should now be running with the secrets from Hanzo KMS injected as environment variables.
+Your app should now be running with the secrets from KMS injected as environment variables.
 
 See also:
 

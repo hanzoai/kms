@@ -914,7 +914,7 @@ export const orgServiceFactory = ({
 
     await smtpService.sendMail({
       template: SmtpTemplates.OrgInvite,
-      subjectLine: "Hanzo KMS organization invitation",
+      subjectLine: "KMS organization invitation",
       recipients: [inviteeOrgMembership.email as string],
       substitutions: {
         inviterFirstName: invitingUser.firstName,
@@ -1255,7 +1255,7 @@ export const orgServiceFactory = ({
           try {
             await smtpService.sendMail({
               template: SmtpTemplates.OrgInvite,
-              subjectLine: `Reminder: You have been invited to ${org.name} on Hanzo KMS`,
+              subjectLine: `Reminder: You have been invited to ${org.name} on KMS`,
               recipients: [invitedUser.inviteEmail],
               substitutions: {
                 organizationName: org.name,

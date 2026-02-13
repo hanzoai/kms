@@ -134,7 +134,7 @@ export const newProjectMembershipUserFactory = ({
     if (emails.length) {
       await smtpService.sendMail({
         template: SmtpTemplates.WorkspaceInvite,
-        subjectLine: "Hanzo KMS project invitation",
+        subjectLine: "KMS project invitation",
         recipients: emails,
         substitutions: {
           workspaceName: project.name,

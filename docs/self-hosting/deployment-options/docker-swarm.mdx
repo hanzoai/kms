@@ -1,20 +1,20 @@
 ---
 title: "Docker Swarm"
-description: "How to self-host Hanzo KMS with Docker Swarm (HA)."
+description: "How to self-host KMS with Docker Swarm (HA)."
 ---
 
-# Self-Hosting Hanzo KMS with Docker Swarm
+# Self-Hosting KMS with Docker Swarm
 
-This guide will provide step-by-step instructions on how to self-host Hanzo KMS using Docker Swarm. This is particularly helpful for those wanting to self-host Hanzo KMS on premise while still maintaining high availability (HA) for the core Hanzo KMS components. 
+This guide will provide step-by-step instructions on how to self-host KMS using Docker Swarm. This is particularly helpful for those wanting to self-host KMS on premise while still maintaining high availability (HA) for the core KMS components. 
 The guide will demonstrate a setup with three nodes, ensuring that the cluster can tolerate the failure of one node while remaining fully operational.
 
 ## Docker Swarm
 
 [Docker Swarm](https://docs.docker.com/engine/swarm/) is a native clustering and orchestration solution for Docker containers. 
-It simplifies the deployment and management of containerized applications across multiple nodes, making it a great choice for self-hosting Hanzo KMS.
+It simplifies the deployment and management of containerized applications across multiple nodes, making it a great choice for self-hosting KMS.
 
 Unlike Kubernetes, which requires a deep understanding of the Kubernetes ecosystem, if you're accustomed to Docker and Docker Compose, you're already familiar with most of Docker Swarm. 
-For this reason, we suggest teams use Docker Swarm to deploy Hanzo KMS in a highly available and fault tolerant manner.
+For this reason, we suggest teams use Docker Swarm to deploy KMS in a highly available and fault tolerant manner.
 
 ## Prerequisites
 - Understanding of Docker Swarm
@@ -30,14 +30,14 @@ The provided Docker stack includes the following core components to achieve high
 2. **Redis**: Redis is used for caching and is set up with Redis Sentinel for HA. 
 The stack includes three Redis replicas and three Redis Sentinel instances for monitoring and failover.
 
-3. **Hanzo KMS**: Hanzo KMS is stateless, allowing for easy scaling and replication across multiple nodes.
+3. **KMS**: KMS is stateless, allowing for easy scaling and replication across multiple nodes.
 
 4. **HAProxy**: HAProxy is used as a load balancer to distribute traffic to the PostgreSQL and Redis instances. 
 It is configured to perform health checks and route requests to the appropriate backend services.
 
 ## Node Failure Tolerance
 
-To ensure Hanzo KMS is highly available and fault tolerant, it's important to choose the number of nodes in the cluster. 
+To ensure KMS is highly available and fault tolerant, it's important to choose the number of nodes in the cluster. 
 The following table shows the relationship between the number of nodes and the maximum number of nodes that can be down while the cluster continues to function:
 
 | Total Nodes | Max Nodes Down | Min Nodes Required |
@@ -65,11 +65,11 @@ With two nodes, the failure of a single node can result in a loss of quorum and 
 
 ## Docker Deployment Stack Overview
 
-The [Docker stack file](https://github.com/hanzoai/kms/tree/main/docker-swarm) used in this guide defines the services and their configurations for deploying Hanzo KMS in a highly available manner. The main components of this stack are as follows.
+The [Docker stack file](https://github.com/hanzoai/kms/tree/main/docker-swarm) used in this guide defines the services and their configurations for deploying KMS in a highly available manner. The main components of this stack are as follows.
 
-1. **HAProxy**: The HAProxy service is configured to expose ports for accessing PostgreSQL (5433 for the master, 5434 for replicas), Redis master (6379), and the Hanzo KMS backend (8080). It uses a config file (`haproxy.cfg`) to define the load balancing and health check rules.
+1. **HAProxy**: The HAProxy service is configured to expose ports for accessing PostgreSQL (5433 for the master, 5434 for replicas), Redis master (6379), and the KMS backend (8080). It uses a config file (`haproxy.cfg`) to define the load balancing and health check rules.
 
-2. **Hanzo KMS**: The Hanzo KMS backend service is deployed with the latest PostgreSQL-compatible image. It is connected to the `kms` network and uses secrets for environment variables.
+2. **KMS**: The KMS backend service is deployed with the latest PostgreSQL-compatible image. It is connected to the `kms` network and uses secrets for environment variables.
 
 3. **etcd**: Three etcd instances (etcd1, etcd2, etcd3) are deployed, one on each node, to provide distributed key-value storage for leader election and configuration management.
 
@@ -161,7 +161,7 @@ The [Docker stack file](https://github.com/hanzoai/kms/tree/main/docker-swarm) u
 
   <Step title="View service status">
     ![HA Proxy stats](/images/self-hosting/deployment-options/docker-swarm/ha-proxy-ha.png)
-    To view the health of services in your Hanzo KMS cluster, visit port `<NODE-IP>:7001` of any node in your Docker swarm. 
+    To view the health of services in your KMS cluster, visit port `<NODE-IP>:7001` of any node in your Docker swarm. 
     This port will expose the HA Proxy stats. 
 
     Run the following command to view the IPs of the nodes in your docker swarm.
@@ -180,15 +180,15 @@ The [Docker stack file](https://github.com/hanzoai/kms/tree/main/docker-swarm) u
     </Info>
   </Step>
 
-  <Step title="Initialize Hanzo KMS">
+  <Step title="Initialize KMS">
     ![self-hosting sign up](/images/self-hosting/applicable-to-all/selfhost-signup.png)
-    Once all expected services are up and running, visit `<NODE-IP>:8080` of any node in the swarm. This will take you to the Hanzo KMS configuration page.
+    Once all expected services are up and running, visit `<NODE-IP>:8080` of any node in the swarm. This will take you to the KMS configuration page.
   </Step>
 
   </Steps>
 
 ## FAQ
-<Accordion title="How do I scale Hanzo KMS cluster further?" defaultOpen="true">
+<Accordion title="How do I scale KMS cluster further?" defaultOpen="true">
   To further scale and make the system more resilient, you can add more nodes to the Docker Swarm and update the stack configuration accordingly:
 
   1. Add new VMs and join them to the Docker Swarm as worker nodes.

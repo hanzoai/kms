@@ -352,7 +352,7 @@ export const ALICLOUD_AUTH = {
   },
   ATTACH: {
     identityId: "The ID of the machine identity to attach the configuration onto.",
-    allowedArns: "The comma-separated list of trusted ARNs that are allowed to authenticate with Hanzo KMS.",
+    allowedArns: "The comma-separated list of trusted ARNs that are allowed to authenticate with KMS.",
     accessTokenTTL: "The lifetime for an access token in seconds.",
     accessTokenMaxTTL: "The maximum lifetime for an access token in seconds.",
     accessTokenNumUsesLimit: "The maximum number of times that an access token can be used.",
@@ -360,7 +360,7 @@ export const ALICLOUD_AUTH = {
   },
   UPDATE: {
     identityId: "The ID of the machine identity to update the auth method for.",
-    allowedArns: "The comma-separated list of trusted ARNs that are allowed to authenticate with Hanzo KMS.",
+    allowedArns: "The comma-separated list of trusted ARNs that are allowed to authenticate with KMS.",
     accessTokenTTL: "The new lifetime for an access token in seconds.",
     accessTokenMaxTTL: "The new maximum lifetime for an access token in seconds.",
     accessTokenNumUsesLimit: "The new maximum number of times that an access token can be used.",
@@ -382,7 +382,7 @@ export const TLS_CERT_AUTH = {
   ATTACH: {
     identityId: "The ID of the machine identity to attach the configuration onto.",
     allowedCommonNames:
-      "The comma-separated list of trusted common names that are allowed to authenticate with Hanzo KMS.",
+      "The comma-separated list of trusted common names that are allowed to authenticate with KMS.",
     caCertificate: "The PEM-encoded CA certificate to validate client certificates.",
     accessTokenTTL: "The lifetime for an access token in seconds.",
     accessTokenMaxTTL: "The maximum lifetime for an access token in seconds.",
@@ -392,7 +392,7 @@ export const TLS_CERT_AUTH = {
   UPDATE: {
     identityId: "The ID of the machine identity to update the auth method for.",
     allowedCommonNames:
-      "The comma-separated list of trusted common names that are allowed to authenticate with Hanzo KMS.",
+      "The comma-separated list of trusted common names that are allowed to authenticate with KMS.",
     caCertificate: "The PEM-encoded CA certificate to validate client certificates.",
     accessTokenTTL: "The new lifetime for an access token in seconds.",
     accessTokenMaxTTL: "The new maximum lifetime for an access token in seconds.",
@@ -421,9 +421,9 @@ export const AWS_AUTH = {
   ATTACH: {
     identityId: "The ID of the machine identity to attach the configuration onto.",
     allowedPrincipalArns:
-      "The comma-separated list of trusted IAM principal ARNs that are allowed to authenticate with Hanzo KMS.",
+      "The comma-separated list of trusted IAM principal ARNs that are allowed to authenticate with KMS.",
     allowedAccountIds:
-      "The comma-separated list of trusted AWS account IDs that are allowed to authenticate with Hanzo KMS.",
+      "The comma-separated list of trusted AWS account IDs that are allowed to authenticate with KMS.",
     accessTokenTTL: "The lifetime for an access token in seconds.",
     accessTokenMaxTTL: "The maximum lifetime for an access token in seconds.",
     stsEndpoint: "The endpoint URL for the AWS STS API.",
@@ -433,9 +433,9 @@ export const AWS_AUTH = {
   UPDATE: {
     identityId: "The ID of the machine identity to update the auth method for.",
     allowedPrincipalArns:
-      "The new comma-separated list of trusted IAM principal ARNs that are allowed to authenticate with Hanzo KMS.",
+      "The new comma-separated list of trusted IAM principal ARNs that are allowed to authenticate with KMS.",
     allowedAccountIds:
-      "The new comma-separated list of trusted AWS account IDs that are allowed to authenticate with Hanzo KMS.",
+      "The new comma-separated list of trusted AWS account IDs that are allowed to authenticate with KMS.",
     accessTokenTTL: "The new lifetime for an access token in seconds.",
     accessTokenMaxTTL: "The new maximum lifetime for an access token in seconds.",
     stsEndpoint: "The new endpoint URL for the AWS STS API.",
@@ -461,7 +461,7 @@ export const OCI_AUTH = {
     identityId: "The ID of the machine identity to attach the configuration onto.",
     tenancyOcid: "The OCID of your tenancy.",
     allowedUsernames:
-      "The comma-separated list of trusted OCI account usernames that are allowed to authenticate with Hanzo KMS.",
+      "The comma-separated list of trusted OCI account usernames that are allowed to authenticate with KMS.",
     accessTokenTTL: "The lifetime for an access token in seconds.",
     accessTokenMaxTTL: "The maximum lifetime for an access token in seconds.",
     accessTokenNumUsesLimit: "The maximum number of times that an access token can be used.",
@@ -471,7 +471,7 @@ export const OCI_AUTH = {
     identityId: "The ID of the machine identity to update the auth method for.",
     tenancyOcid: "The OCID of your tenancy.",
     allowedUsernames:
-      "The comma-separated list of trusted OCI account usernames that are allowed to authenticate with Hanzo KMS.",
+      "The comma-separated list of trusted OCI account usernames that are allowed to authenticate with KMS.",
     accessTokenTTL: "The new lifetime for an access token in seconds.",
     accessTokenMaxTTL: "The new maximum lifetime for an access token in seconds.",
     accessTokenNumUsesLimit: "The new maximum number of times that an access token can be used.",
@@ -495,7 +495,7 @@ export const AZURE_AUTH = {
     tenantId: "The tenant ID for the Azure AD organization.",
     resource: "The resource URL for the application registered in Azure AD.",
     allowedServicePrincipalIds:
-      "The comma-separated list of Azure AD service principal IDs that are allowed to authenticate with Hanzo KMS.",
+      "The comma-separated list of Azure AD service principal IDs that are allowed to authenticate with KMS.",
     accessTokenTrustedIps: "The IPs or CIDR ranges that access tokens can be used from.",
     accessTokenTTL: "The lifetime for an access token in seconds.",
     accessTokenMaxTTL: "The maximum lifetime for an access token in seconds.",
@@ -506,7 +506,7 @@ export const AZURE_AUTH = {
     tenantId: "The new tenant ID for the Azure AD organization.",
     resource: "The new resource URL for the application registered in Azure AD.",
     allowedServicePrincipalIds:
-      "The new comma-separated list of Azure AD service principal IDs that are allowed to authenticate with Hanzo KMS.",
+      "The new comma-separated list of Azure AD service principal IDs that are allowed to authenticate with KMS.",
     accessTokenTrustedIps: "The new IPs or CIDR ranges that access tokens can be used from.",
     accessTokenTTL: "The new lifetime for an access token in seconds.",
     accessTokenMaxTTL: "The new maximum lifetime for an access token in seconds.",
@@ -528,11 +528,11 @@ export const GCP_AUTH = {
   ATTACH: {
     identityId: "The ID of the machine identity to attach the configuration onto.",
     allowedServiceAccounts:
-      "The comma-separated list of trusted service account emails corresponding to the GCE resource(s) allowed to authenticate with Hanzo KMS.",
+      "The comma-separated list of trusted service account emails corresponding to the GCE resource(s) allowed to authenticate with KMS.",
     allowedProjects:
-      "The comma-separated list of trusted GCP projects that the GCE instance must belong to authenticate with Hanzo KMS.",
+      "The comma-separated list of trusted GCP projects that the GCE instance must belong to authenticate with KMS.",
     allowedZones:
-      "The comma-separated list of trusted zones that the GCE instances must belong to authenticate with Hanzo KMS.",
+      "The comma-separated list of trusted zones that the GCE instances must belong to authenticate with KMS.",
     accessTokenTrustedIps: "The IPs or CIDR ranges that access tokens can be used from.",
     accessTokenTTL: "The lifetime for an access token in seconds.",
     accessTokenMaxTTL: "The maximum lifetime for an access token in seconds.",
@@ -541,11 +541,11 @@ export const GCP_AUTH = {
   UPDATE: {
     identityId: "The ID of the machine identity to update the auth method for.",
     allowedServiceAccounts:
-      "The new comma-separated list of trusted service account emails corresponding to the GCE resource(s) allowed to authenticate with Hanzo KMS.",
+      "The new comma-separated list of trusted service account emails corresponding to the GCE resource(s) allowed to authenticate with KMS.",
     allowedProjects:
-      "The new comma-separated list of trusted GCP projects that the GCE instance must belong to authenticate with Hanzo KMS.",
+      "The new comma-separated list of trusted GCP projects that the GCE instance must belong to authenticate with KMS.",
     allowedZones:
-      "The new comma-separated list of trusted zones that the GCE instances must belong to authenticate with Hanzo KMS.",
+      "The new comma-separated list of trusted zones that the GCE instances must belong to authenticate with KMS.",
     accessTokenTrustedIps: "The new IPs or CIDR ranges that access tokens can be used from.",
     accessTokenTTL: "The new lifetime for an access token in seconds.",
     accessTokenMaxTTL: "The new maximum lifetime for an access token in seconds.",
@@ -573,10 +573,10 @@ export const KUBERNETES_AUTH = {
     tokenReviewMode:
       "The mode to use for token review. Must be one of: 'api', 'gateway'. If gateway is selected, the gateway must be deployed in Kubernetes, and the gateway must have the system:auth-delegator ClusterRole binding.",
     allowedNamespaces:
-      "The comma-separated list of trusted namespaces that service accounts must belong to authenticate with Hanzo KMS.",
-    allowedNames: "The comma-separated list of trusted service account names that can authenticate with Hanzo KMS.",
+      "The comma-separated list of trusted namespaces that service accounts must belong to authenticate with KMS.",
+    allowedNames: "The comma-separated list of trusted service account names that can authenticate with KMS.",
     allowedAudience:
-      "The optional audience claim that the service account JWT token must have to authenticate with Hanzo KMS.",
+      "The optional audience claim that the service account JWT token must have to authenticate with KMS.",
     gatewayId: "The ID of the gateway to use when performing kubernetes API requests.",
     accessTokenTrustedIps: "The IPs or CIDR ranges that access tokens can be used from.",
     accessTokenTTL: "The lifetime for an access token in seconds.",
@@ -592,10 +592,10 @@ export const KUBERNETES_AUTH = {
     tokenReviewMode:
       "The mode to use for token review. Must be one of: 'api', 'gateway'. If gateway is selected, the gateway must be deployed in Kubernetes, and the gateway must have the system:auth-delegator ClusterRole binding.",
     allowedNamespaces:
-      "The new comma-separated list of trusted namespaces that service accounts must belong to authenticate with Hanzo KMS.",
-    allowedNames: "The new comma-separated list of trusted service account names that can authenticate with Hanzo KMS.",
+      "The new comma-separated list of trusted namespaces that service accounts must belong to authenticate with KMS.",
+    allowedNames: "The new comma-separated list of trusted service account names that can authenticate with KMS.",
     allowedAudience:
-      "The new optional audience claim that the service account JWT token must have to authenticate with Hanzo KMS.",
+      "The new optional audience claim that the service account JWT token must have to authenticate with KMS.",
     gatewayId: "The ID of the gateway to use when performing kubernetes API requests.",
     accessTokenTrustedIps: "The new IPs or CIDR ranges that access tokens can be used from.",
     accessTokenTTL: "The new lifetime for an acccess token in seconds.",
@@ -1377,7 +1377,7 @@ export const DYNAMIC_SECRETS = {
     path: "The path to delete the dynamic secret in.",
     name: "The name of the dynamic secret.",
     isForced:
-      "A boolean flag to delete the the dynamic secret from Hanzo KMS without trying to remove it from external provider. Used when the dynamic secret got modified externally."
+      "A boolean flag to delete the the dynamic secret from KMS without trying to remove it from external provider. Used when the dynamic secret got modified externally."
   }
 } as const;
 
@@ -1408,7 +1408,7 @@ export const DYNAMIC_SECRET_LEASES = {
     path: "The path of the dynamic secret in.",
     leaseId: "The ID of the dynamic secret lease.",
     isForced:
-      "A boolean flag to delete the the dynamic secret from Hanzo KMS without trying to remove it from external provider. Used when the dynamic secret got modified externally."
+      "A boolean flag to delete the the dynamic secret from KMS without trying to remove it from external provider. Used when the dynamic secret got modified externally."
   },
   KUBERNETES: {
     CREATE: {
@@ -1614,7 +1614,7 @@ export const INTEGRATION_AUTH = {
     integration: "The slug of integration for the auth object.",
     accessId: "The unique authorized access ID of the external integration provider.",
     accessToken: "The unique authorized access token of the external integration provider.",
-    awsAssumeIamRoleArn: "The AWS IAM Role to be assumed by Hanzo KMS.",
+    awsAssumeIamRoleArn: "The AWS IAM Role to be assumed by KMS.",
     url: "",
     namespace: "",
     refreshToken: "The refresh token for integration authorization."
@@ -1658,8 +1658,8 @@ export const INTEGRATION = {
         "The repository IDs to sync secrets to when using the Github Integration. Only applicable when using Organization scope, and visibility is set to 'selected'.",
       kmsKeyId: "The ID of the encryption key from AWS KMS.",
       shouldDisableDelete: "The flag to disable deletion of secrets in AWS Parameter Store.",
-      shouldMaskSecrets: "Specifies if the secrets synced from Hanzo KMS to Gitlab should be marked as 'Masked'.",
-      shouldProtectSecrets: "Specifies if the secrets synced from Hanzo KMS to Gitlab should be marked as 'Protected'.",
+      shouldMaskSecrets: "Specifies if the secrets synced from KMS to Gitlab should be marked as 'Masked'.",
+      shouldProtectSecrets: "Specifies if the secrets synced from KMS to Gitlab should be marked as 'Protected'.",
       shouldEnableDelete: "The flag to enable deletion of secrets.",
       octopusDeployScopeValues: "Specifies the scope values to set on synced secrets to Octopus Deploy.",
       metadataSyncMode: "The mode for syncing metadata to external system"
@@ -1804,13 +1804,13 @@ export const SSH_HOST_GROUPS = {
     projectId: "The ID of the project to create the SSH host group in.",
     name: "The name of the SSH host group.",
     loginMappings:
-      "A list of default login mappings to include on each host in the SSH host group. Each login mapping contains a login user and a list of corresponding allowed principals being usernames of users in the Hanzo KMS SSH project."
+      "A list of default login mappings to include on each host in the SSH host group. Each login mapping contains a login user and a list of corresponding allowed principals being usernames of users in the KMS SSH project."
   },
   UPDATE: {
     sshHostGroupId: "The ID of the SSH host group to update.",
     name: "The name of the SSH host group to update to.",
     loginMappings:
-      "A list of default login mappings to include on each host in the SSH host group. Each login mapping contains a login user and a list of corresponding allowed principals being usernames of users in the Hanzo KMS SSH project."
+      "A list of default login mappings to include on each host in the SSH host group. Each login mapping contains a login user and a list of corresponding allowed principals being usernames of users in the KMS SSH project."
   },
   DELETE: {
     sshHostGroupId: "The ID of the SSH host group to delete."
@@ -1842,7 +1842,7 @@ export const SSH_HOSTS = {
     loginUser: "A login user on the remote machine (e.g. 'ec2-user', 'deploy', 'admin')",
     allowedPrincipals: "A list of allowed principals that can log in as the login user.",
     loginMappings:
-      "A list of login mappings for the SSH host. Each login mapping contains a login user and a list of corresponding allowed principals being usernames of users or groups slugs in the Hanzo KMS SSH project.",
+      "A list of login mappings for the SSH host. Each login mapping contains a login user and a list of corresponding allowed principals being usernames of users or groups slugs in the KMS SSH project.",
     userSshCaId:
       "The ID of the SSH CA to use for user certificates. If not specified, the default user SSH CA will be used if it exists.",
     hostSshCaId:
@@ -1857,7 +1857,7 @@ export const SSH_HOSTS = {
     loginUser: "A login user on the remote machine (e.g. 'ec2-user', 'deploy', 'admin')",
     allowedPrincipals: "A list of allowed principals that can log in as the login user.",
     loginMappings:
-      "A list of login mappings for the SSH host. Each login mapping contains a login user and a list of corresponding allowed principals being usernames of users or groups slugs in the Hanzo KMS SSH project."
+      "A list of login mappings for the SSH host. Each login mapping contains a login user and a list of corresponding allowed principals being usernames of users or groups slugs in the KMS SSH project."
   },
   DELETE: {
     sshHostId: "The ID of the SSH host to delete."
@@ -1925,7 +1925,7 @@ export const CERTIFICATE_AUTHORITIES = {
   },
   RENEW_CA_CERT: {
     caId: "The ID of the CA to renew the CA certificate for.",
-    type: "The type of behavior to use for the renewal operation. Currently Hanzo KMS is only able to renew a CA certificate with the same key pair.",
+    type: "The type of behavior to use for the renewal operation. Currently KMS is only able to renew a CA certificate with the same key pair.",
     notAfter: "The expiry date and time for the renewed CA certificate in YYYY-MM-DDTHH:mm:ss.sssZ format.",
     certificate: "The renewed CA certificate body.",
     certificateChain: "The certificate chain of the CA.",
@@ -2460,7 +2460,7 @@ export const AppConnections = {
       description: `An optional description for the ${appName} Connection.`,
       credentials: `The credentials used to connect with ${appName}.`,
       method: `The method used to authenticate with ${appName}.`,
-      isPlatformManagedCredentials: `Whether or not the ${appName} Connection credentials should be managed by Hanzo KMS. Once enabled this cannot be reversed.`,
+      isPlatformManagedCredentials: `Whether or not the ${appName} Connection credentials should be managed by KMS. Once enabled this cannot be reversed.`,
       projectId: `The ID of the project to create the ${appName} Connection in.`
     };
   },
@@ -2472,7 +2472,7 @@ export const AppConnections = {
       description: `The updated description of the ${appName} Connection.`,
       credentials: `The credentials used to connect with ${appName}.`,
       method: `The method used to authenticate with ${appName}.`,
-      isPlatformManagedCredentials: `Whether or not the ${appName} Connection credentials should be managed by Hanzo KMS. Once enabled this cannot be reversed.`
+      isPlatformManagedCredentials: `Whether or not the ${appName} Connection credentials should be managed by KMS. Once enabled this cannot be reversed.`
     };
   },
   DELETE: (app: AppConnection) => ({
@@ -2696,7 +2696,7 @@ export const SecretSyncs = {
   }),
   IMPORT_SECRETS: (destination: SecretSync) => ({
     syncId: `The ID of the ${SECRET_SYNC_NAME_MAP[destination]} Sync to trigger importing secrets for.`,
-    importBehavior: `Specify whether Hanzo KMS should prioritize secret values from Hanzo KMS or ${SECRET_SYNC_NAME_MAP[destination]}.`
+    importBehavior: `Specify whether KMS should prioritize secret values from KMS or ${SECRET_SYNC_NAME_MAP[destination]}.`
   }),
   REMOVE_SECRETS: (destination: SecretSync) => ({
     syncId: `The ID of the ${SECRET_SYNC_NAME_MAP[destination]} Sync to trigger removing secrets for.`
@@ -2704,28 +2704,28 @@ export const SecretSyncs = {
   SYNC_OPTIONS: (destination: SecretSync) => {
     const destinationName = SECRET_SYNC_NAME_MAP[destination];
     return {
-      initialSyncBehavior: `Specify how Hanzo KMS should resolve the initial sync to the ${destinationName} destination.`,
+      initialSyncBehavior: `Specify how KMS should resolve the initial sync to the ${destinationName} destination.`,
       keySchema: `Specify the format to use for structuring secret keys in the ${destinationName} destination.`,
       disableSecretDeletion: `Enable this flag to prevent removal of secrets from the ${destinationName} destination when syncing.`
     };
   },
   ADDITIONAL_SYNC_OPTIONS: {
     AWS_PARAMETER_STORE: {
-      keyId: "The AWS KMS key ID or alias to use when encrypting parameters synced by Hanzo KMS.",
-      tags: "Optional resource tags to add to parameters synced by Hanzo KMS.",
-      syncSecretMetadataAsTags: `Whether Hanzo KMS secret metadata should be added as resource tags to parameters synced by Hanzo KMS.`
+      keyId: "The AWS KMS key ID or alias to use when encrypting parameters synced by KMS.",
+      tags: "Optional resource tags to add to parameters synced by KMS.",
+      syncSecretMetadataAsTags: `Whether KMS secret metadata should be added as resource tags to parameters synced by KMS.`
     },
     AWS_SECRETS_MANAGER: {
-      keyId: "The AWS KMS key ID or alias to use when encrypting parameters synced by Hanzo KMS.",
-      tags: "Optional tags to add to secrets synced by Hanzo KMS.",
-      syncSecretMetadataAsTags: `Whether Hanzo KMS secret metadata should be added as tags to secrets synced by Hanzo KMS.`
+      keyId: "The AWS KMS key ID or alias to use when encrypting parameters synced by KMS.",
+      tags: "Optional tags to add to secrets synced by KMS.",
+      syncSecretMetadataAsTags: `Whether KMS secret metadata should be added as tags to secrets synced by KMS.`
     },
     RENDER: {
       autoRedeployServices:
-        "Whether Hanzo KMS should automatically redeploy the configured Render service upon secret changes."
+        "Whether KMS should automatically redeploy the configured Render service upon secret changes."
     },
     FLYIO: {
-      autoRedeploy: "Whether Hanzo KMS should automatically redeploy the configured Fly.io app upon secret changes."
+      autoRedeploy: "Whether KMS should automatically redeploy the configured Fly.io app upon secret changes."
     }
   },
   DESTINATION_CONFIG: {
@@ -2735,7 +2735,7 @@ export const SecretSyncs = {
     },
     AWS_SECRETS_MANAGER: {
       region: "The AWS region to sync secrets to.",
-      mappingBehavior: "How secrets from Hanzo KMS should be mapped to AWS Secrets Manager; one-to-one or many-to-one.",
+      mappingBehavior: "How secrets from KMS should be mapped to AWS Secrets Manager; one-to-one or many-to-one.",
       secretName: "The secret name in AWS Secrets Manager to sync to when using mapping behavior many-to-one."
     },
     GITHUB: {
@@ -3266,7 +3266,7 @@ export const SamlSso = {
     issuer: "The SAML provider issuer URL or entity ID.",
     cert: "The certificate to use for SAML authentication.",
     enableGroupSync:
-      "Whether to enable automatic synchronization of group memberships from the SAML provider to Hanzo KMS groups."
+      "Whether to enable automatic synchronization of group memberships from the SAML provider to KMS groups."
   },
   CREATE_CONFIG: {
     organizationId: "The ID of the organization to create the SAML config for.",
@@ -3277,7 +3277,7 @@ export const SamlSso = {
     issuer: "The SAML provider issuer URL or entity ID.",
     cert: "The certificate to use for SAML authentication.",
     enableGroupSync:
-      "Whether to enable automatic synchronization of group memberships from the SAML provider to Hanzo KMS groups."
+      "Whether to enable automatic synchronization of group memberships from the SAML provider to KMS groups."
   }
 };
 

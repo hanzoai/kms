@@ -1,12 +1,12 @@
 ## 1.7.2 (October 20, 2025)
 Changes:
 * Updated the default `kms.image.tag` value to `v0.151.0`.
-* `autoDatabaseSchemaMigration` has been fully removed as all newer versions of Hanzo KMS automatically run migrations as apart of the startup process.
+* `autoDatabaseSchemaMigration` has been fully removed as all newer versions of KMS automatically run migrations as apart of the startup process.
 
 ## 1.7.1 (October 10, 2025)
 
 Changes:
-* Fixed using `extraVolumes` and `extraVolumeMounts` for when Hanzo KMS auto migration enabled
+* Fixed using `extraVolumes` and `extraVolumeMounts` for when KMS auto migration enabled
     * Previously the custom volumes and custom volume mounts would only be added to the kms core pods, but not the migration pod.
 
 ## 1.7.0 (September 30, 2025)
@@ -19,7 +19,7 @@ Changes:
 ## 1.6.1 (July 3, 2025)
 
 Changes:
-* Added support for `topologySpreadConstraints` configuration in Helm chart for the Hanzo KMS deployment
+* Added support for `topologySpreadConstraints` configuration in Helm chart for the KMS deployment
 
 Features:
 * `topologySpreadConstraints`: Configure pod distribution across availability zones and nodes for high availability

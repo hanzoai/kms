@@ -4,7 +4,7 @@ sidebarTitle: "Slack Alerts"
 description: "Learn how to set up Slack notifications for PKI certificate alerts"
 ---
 
-Hanzo KMS can send PKI certificate alert notifications to a Slack channel using [Incoming Webhooks](https://api.slack.com/messaging/webhooks). This guide walks through creating a Slack app and configuring a Slack alert.
+KMS can send PKI certificate alert notifications to a Slack channel using [Incoming Webhooks](https://api.slack.com/messaging/webhooks). This guide walks through creating a Slack app and configuring a Slack alert.
 
 ## Guide to Creating a Slack Alert
 
@@ -12,7 +12,7 @@ Hanzo KMS can send PKI certificate alert notifications to a Slack channel using 
   <Step title="Create a Slack App">
     1. Go to the [Slack API Apps page](https://api.slack.com/apps) and click **Create New App**
     2. Select **From scratch**
-    3. Give your app a name (e.g., "Hanzo KMS PKI Alerts") and select the Slack workspace where you want to receive notifications
+    3. Give your app a name (e.g., "KMS PKI Alerts") and select the Slack workspace where you want to receive notifications
     4. Click **Create App**
 
     ![slack create app](/images/platform/pki/alerting/slack-create-app.png)
@@ -26,7 +26,7 @@ Hanzo KMS can send PKI certificate alert notifications to a Slack channel using 
 
     ![slack enable webhooks](/images/platform/pki/alerting/slack-enable-webhooks.png)
   </Step>
-  <Step title="Create the Alert in Hanzo KMS">
+  <Step title="Create the Alert in KMS">
     Head to your Certificate Management Project > Alerting and press **Create Certificate Alert**.
 
     ![pki alerting](/images/platform/pki/alerting/alert-create.png)
@@ -52,4 +52,4 @@ Hanzo KMS can send PKI certificate alert notifications to a Slack channel using 
 Keep your webhook URL secure. Anyone with access to it can post messages to your Slack channel.
 </Note>
 
-Slack messages include alert details and the two most urgent expiring certificates, with a link to view all certificates in Hanzo KMS.
+Slack messages include alert details and the two most urgent expiring certificates, with a link to view all certificates in KMS.

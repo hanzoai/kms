@@ -5,15 +5,15 @@ description: "Learn how to dynamically generate SAP ASE database account credent
 
 import DynamicSecretUsernameTemplateParamField from "/snippets/documentation/platform/dynamic-secrets/dynamic-secret-username-template-field.mdx";
 
-The Hanzo KMS SAP ASE dynamic secret allows you to generate SAP ASE database credentials on demand.
+The KMS SAP ASE dynamic secret allows you to generate SAP ASE database credentials on demand.
 
 ## Prerequisite
 
-- Hanzo KMS requires that you have a user in your SAP ASE instance, configured with the appropriate permissions. This user will facilitate the creation of new accounts as needed.
+- KMS requires that you have a user in your SAP ASE instance, configured with the appropriate permissions. This user will facilitate the creation of new accounts as needed.
   Ensure the user possesses privileges for creating, dropping, and granting permissions to roles for it to be able to create dynamic secrets.
   The user used for authentication must have access to the `master` database. You can use the `sa` user for this purpose or create a new user with the necessary permissions.
 
-- The SAP ASE instance should be reachable by Hanzo KMS.
+- The SAP ASE instance should be reachable by KMS.
 
 ## Set up Dynamic Secrets with SAP ASE
 

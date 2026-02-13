@@ -1,18 +1,18 @@
 ---
 title: Azure Auth
-description: "Learn how to authenticate with Hanzo KMS for services on Azure"
+description: "Learn how to authenticate with KMS for services on Azure"
 ---
 
-**Azure Auth** is an Azure-native authentication method for Azure resources like Azure VMs, Azure App Services, Azure Functions, Azure Kubernetes Service, etc. to access Hanzo KMS.
+**Azure Auth** is an Azure-native authentication method for Azure resources like Azure VMs, Azure App Services, Azure Functions, Azure Kubernetes Service, etc. to access KMS.
 
 ## Diagram
 
-The following sequence diagram illustrates the Azure Auth workflow for authenticating Azure [service principals](https://learn.microsoft.com/en-us/entra/identity-platform/app-objects-and-service-principals?tabs=browser) with Hanzo KMS.
+The following sequence diagram illustrates the Azure Auth workflow for authenticating Azure [service principals](https://learn.microsoft.com/en-us/entra/identity-platform/app-objects-and-service-principals?tabs=browser) with KMS.
 
 ```mermaid
 sequenceDiagram
   participant Client as Client
-  participant Infis as Hanzo KMS
+  participant Infis as KMS
   participant Azure as Azure AD OpenID
 
   Note over Client,Azure: Step 1: Instance Identity Token Retrieval
@@ -28,29 +28,29 @@ sequenceDiagram
   Note over Infis: Step 4: Identity Property Validation
   Infis->>Client: Return short-lived access token
 
-  Note over Client,Infis: Step 4: Access Hanzo KMS API with Token
+  Note over Client,Infis: Step 4: Access KMS API with Token
   Client->>Infis: Make authenticated requests using the short-lived access token
 ```
 
 ## Concept
 
-At a high-level, Hanzo KMS authenticates an Azure service by verifying its identity and checking that it meets specific requirements (e.g. it is bound to an allowed service principal) at the `/api/v1/auth/azure-auth/login` endpoint. If successful,
-then Hanzo KMS returns a short-lived access token that can be used to make authenticated requests to the Hanzo KMS API.
+At a high-level, KMS authenticates an Azure service by verifying its identity and checking that it meets specific requirements (e.g. it is bound to an allowed service principal) at the `/api/v1/auth/azure-auth/login` endpoint. If successful,
+then KMS returns a short-lived access token that can be used to make authenticated requests to the KMS API.
 
 To be more specific:
 
 1. The client running on an Azure service obtains an [access token](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/how-to-use-vm-token#get-a-token-using-http) that is a JWT token representing the managed identity for the Azure resource such as a Virtual Machine; the managed identity is associated with a service principal in Azure AD.
-2. The client sends the access token to Hanzo KMS.
-3. Hanzo KMS verifies the token against the corresponding public key at the [public Azure AD OpenID configuration endpoint](https://learn.microsoft.com/en-us/answers/questions/793793/azure-ad-validate-access-token).
-4. Hanzo KMS checks if the entity behind the access token is allowed to authenticate with Hanzo KMS based on set criteria such as **Allowed Service Principal IDs**.
-5. If all is well, Hanzo KMS returns a short-lived access token that the client can use to make authenticated requests to the Hanzo KMS API.
+2. The client sends the access token to KMS.
+3. KMS verifies the token against the corresponding public key at the [public Azure AD OpenID configuration endpoint](https://learn.microsoft.com/en-us/answers/questions/793793/azure-ad-validate-access-token).
+4. KMS checks if the entity behind the access token is allowed to authenticate with KMS based on set criteria such as **Allowed Service Principal IDs**.
+5. If all is well, KMS returns a short-lived access token that the client can use to make authenticated requests to the KMS API.
 
 <Note>
-We recommend using one of Hanzo KMS's clients like SDKs or the KMS Agent
-to authenticate with Hanzo KMS using Azure Auth as they handle the
+We recommend using one of KMS's clients like SDKs or the KMS Agent
+to authenticate with KMS using Azure Auth as they handle the
 authentication process including generating the client access token for you.
 
-Also, note that Hanzo KMS needs network-level access to send requests to the Google Cloud API
+Also, note that KMS needs network-level access to send requests to the Google Cloud API
 as part of the Azure Auth workflow.
 
 </Note>
@@ -58,7 +58,7 @@ as part of the Azure Auth workflow.
 ## Guide
 
 In the following steps, we explore how to create and use identities for your applications in Azure to
-access the Hanzo KMS API using the Azure Auth authentication method.
+access the KMS API using the Azure Auth authentication method.
 
 <Steps>
     <Step title="Creating an identity">
@@ -89,8 +89,8 @@ access the Hanzo KMS API using the Azure Auth authentication method.
     Here's some more guidance on each field:
 
     - Tenant ID: The [tenant ID](https://learn.microsoft.com/en-us/entra/fundamentals/how-to-find-tenant) for the Azure AD organization.
-    - Resource / Audience: The resource URL for the application registered in Azure AD. The value is expected to match the `aud` claim of the access token JWT later used in the login operation against Hanzo KMS. See the [resource](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/how-to-use-vm-token#get-a-token-using-http) parameter for how the audience is set when requesting a JWT access token from the Azure Instance Metadata Service (IMDS) endpoint. In most cases, this value should be `https://management.azure.com/` which is the default.
-    - Allowed Service Principal IDs: A comma-separated list of Azure AD service principal IDs that are allowed to authenticate with Hanzo KMS.
+    - Resource / Audience: The resource URL for the application registered in Azure AD. The value is expected to match the `aud` claim of the access token JWT later used in the login operation against KMS. See the [resource](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/how-to-use-vm-token#get-a-token-using-http) parameter for how the audience is set when requesting a JWT access token from the Azure Instance Metadata Service (IMDS) endpoint. In most cases, this value should be `https://management.azure.com/` which is the default.
+    - Allowed Service Principal IDs: A comma-separated list of Azure AD service principal IDs that are allowed to authenticate with KMS.
     - Access Token TTL (default is `2592000` equivalent to 30 days): The lifetime for an acccess token in seconds. This value will be referenced at renewal time.
     - Access Token Max TTL (default is `2592000`  equivalent to 30 days): The maximum lifetime for an acccess token in seconds. This value will be referenced at renewal time.
     - Access Token Max Number of Uses (default is `0`): The maximum number of times that an access token can be used; a value of `0` implies infinite number of uses.
@@ -108,10 +108,10 @@ access the Hanzo KMS API using the Azure Auth authentication method.
 
     ![identities project create](/images/platform/identities/identities-project-create.png)
     </Step>
-    <Step title="Accessing the Hanzo KMS API with the identity">
-        To access the Hanzo KMS API as the identity, you need to generate a managed identity [access token](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/how-to-use-vm-token#get-a-token-using-http) that is a JWT token representing the managed identity for the Azure resource such as a Virtual Machine. The client token must be sent to the `/api/v1/auth/azure-auth/login` endpoint in exchange for a separate access token to access the Hanzo KMS API.
+    <Step title="Accessing the KMS API with the identity">
+        To access the KMS API as the identity, you need to generate a managed identity [access token](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/how-to-use-vm-token#get-a-token-using-http) that is a JWT token representing the managed identity for the Azure resource such as a Virtual Machine. The client token must be sent to the `/api/v1/auth/azure-auth/login` endpoint in exchange for a separate access token to access the KMS API.
 
-        We provide a few code examples below of how you can authenticate with Hanzo KMS to access the [Hanzo KMS API](/api-reference/overview/introduction).
+        We provide a few code examples below of how you can authenticate with KMS to access the [KMS API](/api-reference/overview/introduction).
 
         <AccordionGroup>
             <Accordion
@@ -139,7 +139,7 @@ access the Hanzo KMS API using the Azure Auth authentication method.
                 }
                 ```
 
-                Next use send the obtained managed identity access token (i.e. the token from the `access_token` field above) to authenticate with Hanzo KMS and obtain a separate access token.
+                Next use send the obtained managed identity access token (i.e. the token from the `access_token` field above) to authenticate with KMS and obtain a separate access token.
 
                 #### Sample request
 
@@ -165,17 +165,17 @@ access the Hanzo KMS API using the Azure Auth authentication method.
                 }
                 ```
 
-                Next, you can use this access token to access the [Hanzo KMS API](/api-reference/overview/introduction)
+                Next, you can use this access token to access the [KMS API](/api-reference/overview/introduction)
             </Accordion>
         </AccordionGroup>
 
         <Tip>
-            We recommend using one of Hanzo KMS's clients like SDKs or the KMS Agent to authenticate with Hanzo KMS using Azure Auth as they handle the authentication process including retrieving the client access token.
+            We recommend using one of KMS's clients like SDKs or the KMS Agent to authenticate with KMS using Azure Auth as they handle the authentication process including retrieving the client access token.
         </Tip>
         <Note>
         Each identity access token has a time-to-live (TTL) which you can infer from the response of the login operation;
         the default TTL is `7200` seconds which can be adjusted.
-        If an identity access token expires, it can no longer authenticate with the Hanzo KMS API. In this case,
+        If an identity access token expires, it can no longer authenticate with the KMS API. In this case,
         a new access token should be obtained by performing another login operation.
         </Note>
     </Step>

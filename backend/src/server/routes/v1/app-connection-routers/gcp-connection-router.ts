@@ -21,7 +21,7 @@ export const registerGcpConnectionRouter = async (server: FastifyZodProvider) =>
     updateSchema: UpdateGcpConnectionSchema
   });
 
-  // The below endpoints are not exposed and for Hanzo KMS App use
+  // The below endpoints are not exposed and for KMS App use
   server.route({
     method: "GET",
     url: `/:connectionId/secret-manager-projects`,

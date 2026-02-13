@@ -1,25 +1,25 @@
 ---
-title: "Hanzo KMS Python SDK"
+title: "KMS Python SDK"
 sidebarTitle: "Python"
 icon: "/images/sdks/languages/python.svg"
 ---
 
-If you're working with Python, the official Hanzo KMS Python SDK package is the easiest way to fetch and work with secrets for your application. 
+If you're working with Python, the official KMS Python SDK package is the easiest way to fetch and work with secrets for your application. 
 
 ### Migrating to version 1.0.3 or above
 
 We have recently rolled out our first stable version of the SDK, version `1.0.3` and above.
 
 The 1.0.3 version comes with a few key changes that may change how you're using the SDK.
-1. **Removal of `rest`**: The SDK no longer exposes the entire Hanzo KMS API. This was nessecary as we have moved away from using an OpenAPI generator approach. We aim to add support for more API resources in the near future. If you have any specific requests, please [open an issue](https://github.com/Hanzo KMS/python-sdk-official/issues).
+1. **Removal of `rest`**: The SDK no longer exposes the entire KMS API. This was nessecary as we have moved away from using an OpenAPI generator approach. We aim to add support for more API resources in the near future. If you have any specific requests, please [open an issue](https://github.com/KMS/python-sdk-official/issues).
 
-2. **New response types**: The 1.0.3 release uses return types that differ from the older versions. The new return types such as `BaseSecret`, are all exported from the Hanzo KMS SDK.
+2. **New response types**: The 1.0.3 release uses return types that differ from the older versions. The new return types such as `BaseSecret`, are all exported from the KMS SDK.
 
 3. **Property renaming**: Some properties on the responses have been slightly renamed. An example of this would be that the `secret_key` property on the `get_secret_by_name()` method, that has been renamed to `secretKey`.
 
 With this in mind, you're ready to upgrade your SDK version to `1.0.3` or above. 
 
-You can refer to our [legacy documentation](https://github.com/Hanzo KMS/python-sdk-official/tree/9b0403938ee5ae599d42c5f1fdf9158671a15606?tab=readme-ov-file#kms-python-sdk) if need be.
+You can refer to our [legacy documentation](https://github.com/KMS/python-sdk-official/tree/9b0403938ee5ae599d42c5f1fdf9158671a15606?tab=readme-ov-file#kms-python-sdk) if need be.
 
 ## Requirements
 
@@ -34,10 +34,10 @@ pip install kmssdk
 ## Getting Started
 
 ```python
-from kms_sdk import Hanzo KMSSDKClient
+from kms_sdk import KMSSDKClient
 
 # Initialize the client
-client = Hanzo KMSSDKClient(host="https://kms.hanzo.ai")
+client = KMSSDKClient(host="https://kms.hanzo.ai")
 
 # Authenticate (example using Universal Auth)
 client.auth.universal_auth.login(
@@ -45,20 +45,20 @@ client.auth.universal_auth.login(
     client_secret="<machine-identity-client-secret>"
 )
 
-# Use the SDK to interact with Hanzo KMS
+# Use the SDK to interact with KMS
 secrets = client.secrets.list_secrets(project_id="<project-id>", environment_slug="dev", secret_path="/")
 ```
 
-## Hanzo KMSSDKClient Parameters
+## KMSSDKClient Parameters
 
-The `Hanzo KMSSDKClient` takes the following parameters, which are used as a global configuration for the lifetime of the SDK instance.
+The `KMSSDKClient` takes the following parameters, which are used as a global configuration for the lifetime of the SDK instance.
 
-- **host** (`str`, _Optional_): The host URL for your Hanzo KMS instance. Defaults to `https://kms.hanzo.ai`.
+- **host** (`str`, _Optional_): The host URL for your KMS instance. Defaults to `https://kms.hanzo.ai`.
 - **token** (`str`, _Optional_): Specify an authentication token to use for all requests. If provided, you will not need to call any of the `auth` methods. Defaults to `None`
 - **cache_ttl** (`int`, _Optional_): The SDK has built-in client-side caching for secrets, greatly improving response times. By default, secrets are cached for 1 minute (60 seconds). You can disable caching by setting `cache_ttl` to `None`, or adjust the duration in seconds as needed.
 
 ```python
-client = Hanzo KMSSDKClient(
+client = KMSSDKClient(
   host="https://kms.hanzo.ai", # Defaults to https://kms.hanzo.ai
   token="<optional-auth-token>", # If not set, use the client.auth() methods.
   cache_ttl = 300 # `None` to disable caching
@@ -72,7 +72,7 @@ The SDK methods are organized into the following high-level categories:
 1. `auth`: Handles authentication methods.
 2. `secrets`: Manages CRUD operations for secrets.
 3. `dynamic_secrets`: Manages dynamic secrets and leases.
-4. `kms`: Perform cryptographic operations with Hanzo KMS KMS.
+4. `kms`: Perform cryptographic operations with KMS KMS.
 5. `folders`: Manages folder-related operations.
 
 ### `auth`
@@ -104,7 +104,7 @@ response = client.auth.oidc_auth.login(
 ```
 
 **Parameters:**
-- `identity_id` (str): The ID of the OIDC identity configuration in Hanzo KMS.
+- `identity_id` (str): The ID of the OIDC identity configuration in KMS.
 - `jwt` (str): The OIDC JWT token obtained from your identity provider.
 
 This authentication method is useful when integrating with OIDC-compliant identity providers like Okta, Auth0, or any service that issues OIDC tokens.
@@ -426,7 +426,7 @@ deleted_secret = client.dynamic_secrets.delete(
 - `project_slug` (str): The slug of your project.
 - `environment_slug` (str): The environment in which to delete the dynamic secret.
 - `path` (str, optional): The path to the dynamic secret. Defaults to "/".
-- `is_forced` (bool, optional): A boolean flag to delete the dynamic secret from Hanzo KMS without trying to remove it from the external provider. Defaults to `False`.
+- `is_forced` (bool, optional): A boolean flag to delete the dynamic secret from KMS without trying to remove it from the external provider. Defaults to `False`.
 
 **Returns:**
 - `DynamicSecret`: The deleted dynamic secret.
@@ -530,7 +530,7 @@ revoked_lease = client.dynamic_secrets.leases.revoke(
 - `project_slug` (str): The slug of your project.
 - `environment_slug` (str): The environment in which to revoke the lease.
 - `path` (str, optional): The path to the dynamic secret. Defaults to "/".
-- `is_forced` (bool, optional): A boolean flag to revoke the lease from Hanzo KMS without trying to remove it from the external provider. Defaults to `False`.
+- `is_forced` (bool, optional): A boolean flag to revoke the lease from KMS without trying to remove it from the external provider. Defaults to `False`.
 
 **Returns:**
 - `DynamicSecretLease`: The revoked lease.

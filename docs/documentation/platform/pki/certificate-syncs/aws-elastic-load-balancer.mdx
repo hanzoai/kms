@@ -1,6 +1,6 @@
 ---
 title: "AWS Elastic Load Balancer"
-description: "Learn how to configure an AWS Elastic Load Balancer Certificate Sync for Hanzo KMS PKI."
+description: "Learn how to configure an AWS Elastic Load Balancer Certificate Sync for KMS PKI."
 ---
 
 The AWS Elastic Load Balancer Certificate Sync allows you to automatically deploy and manage TLS/SSL certificates on your AWS Application Load Balancers (ALBs) and Network Load Balancers (NLBs). Certificates are first imported into AWS Certificate Manager (ACM) and then attached to your configured listeners, enabling secure HTTPS/TLS traffic to your load balancers with automatic certificate lifecycle management.
@@ -10,17 +10,17 @@ The AWS Elastic Load Balancer Certificate Sync allows you to automatically deplo
 - Create an [AWS Connection](/integrations/app-connections/aws)
 
 <Note>
-  The AWS Elastic Load Balancer Certificate Sync requires the following IAM permissions for Hanzo KMS to sync certificates to your load balancers:
+  The AWS Elastic Load Balancer Certificate Sync requires the following IAM permissions for KMS to sync certificates to your load balancers:
 
   **ACM Permissions:** `acm:ListCertificates`, `acm:DescribeCertificate`, `acm:ImportCertificate`, `acm:DeleteCertificate`, `acm:ListTagsForCertificate`
 
   **ELB Permissions:** `elasticloadbalancing:DescribeLoadBalancers`, `elasticloadbalancing:DescribeListeners`, `elasticloadbalancing:DescribeListenerCertificates`, `elasticloadbalancing:AddListenerCertificates`, `elasticloadbalancing:RemoveListenerCertificates`, `elasticloadbalancing:ModifyListener`
 
-  These permissions allow Hanzo KMS to import certificates to ACM and attach them to your load balancer listeners.
+  These permissions allow KMS to import certificates to ACM and attach them to your load balancer listeners.
 </Note>
 
 <Tabs>
-    <Tab title="Hanzo KMS UI">
+    <Tab title="KMS UI">
         1. Navigate to **Project** > **Integrations** > **Certificate Syncs** and press **Add Sync**.
         ![Certificate Syncs Tab](/images/platform/pki/certificate-syncs/general/create-certificate-sync.png)
 
@@ -38,10 +38,10 @@ The AWS Elastic Load Balancer Certificate Sync allows you to automatically deplo
         4. Configure the **Sync Options** to specify how certificates should be synced, then click **Next**.
         ![Configure Options](/images/platform/pki/certificate-syncs/aws-elastic-load-balancer/elb-options.png)
 
-        - **Enable Removal of Expired/Revoked Certificates**: If enabled, Hanzo KMS will remove certificates from listeners and delete them from ACM when they are no longer active in Hanzo KMS.
-        - **Preserve ARN on Renewal**: If enabled, Hanzo KMS will sync renewed certificates to ACM under the same ARN as the original synced certificate instead of creating a new certificate with a new ARN.
+        - **Enable Removal of Expired/Revoked Certificates**: If enabled, KMS will remove certificates from listeners and delete them from ACM when they are no longer active in KMS.
+        - **Preserve ARN on Renewal**: If enabled, KMS will sync renewed certificates to ACM under the same ARN as the original synced certificate instead of creating a new certificate with a new ARN.
         - **Include Root CA**: If enabled, the Root CA certificate will be included in the certificate chain when syncing to ACM. If disabled, only intermediate certificates will be included.
-        - **Certificate Name Schema** (Optional): Customize how certificate tags are generated in ACM. Must include `{{certificateId}}` as a placeholder for the certificate ID to ensure proper certificate identification and management. If not specified, defaults to `Hanzo KMS-{{certificateId}}`.
+        - **Certificate Name Schema** (Optional): Customize how certificate tags are generated in ACM. Must include `{{certificateId}}` as a placeholder for the certificate ID to ensure proper certificate identification and management. If not specified, defaults to `KMS-{{certificateId}}`.
         - **Auto-Sync Enabled**: If enabled, certificates will automatically be synced when changes occur. Disable to enforce manual syncing only.
 
         5. Configure the **Details** of your AWS Elastic Load Balancer Certificate Sync, then click **Next**.
@@ -150,14 +150,14 @@ Your AWS Elastic Load Balancer Certificate Sync will:
 - **Automatic Deployment**: Deploy certificates to ACM and attach them to your configured listeners.
 - **Certificate Updates**: Update certificates in ACM and on listeners when renewals occur.
 - **Expiration Handling**: Optionally remove expired certificates from listeners and ACM (if enabled).
-- **Tagging**: Automatically tag certificates in ACM with an Hanzo KMSCertificate tag for easy identification and management.
+- **Tagging**: Automatically tag certificates in ACM with an KMSCertificate tag for easy identification and management.
 
 ## Setting Default Certificates
 
 You can set a certificate as the default for all configured listeners. The default certificate is used when a client connects without specifying a hostname via SNI (Server Name Indication).
 
 <Tabs>
-    <Tab title="Hanzo KMS UI">
+    <Tab title="KMS UI">
         You can set a certificate as the default directly from the certificates table in the sync details page. Click the **Set as Default** button next to the certificate you want to use as the default.
         ![Set Default Certificate](/images/platform/pki/certificate-syncs/aws-elastic-load-balancer/elb-set-default.png)
     </Tab>
@@ -193,11 +193,11 @@ You can manually trigger certificate synchronization to AWS Elastic Load Balance
 - Testing certificate sync configurations
 - Force sync after making changes
 
-To manually sync certificates, use the [Sync Certificates](/api-reference/endpoints/pki/syncs/aws-elastic-load-balancer/sync-certificates) API endpoint or the manual sync option in the Hanzo KMS UI.
+To manually sync certificates, use the [Sync Certificates](/api-reference/endpoints/pki/syncs/aws-elastic-load-balancer/sync-certificates) API endpoint or the manual sync option in the KMS UI.
 
 <Note>
   AWS Elastic Load Balancer does not support importing certificates back into
-  Hanzo KMS due to security limitations where private keys cannot be extracted
-  from AWS Certificate Manager. Only certificates managed by Hanzo KMS can be
+  KMS due to security limitations where private keys cannot be extracted
+  from AWS Certificate Manager. Only certificates managed by KMS can be
   synced to your load balancers.
 </Note>

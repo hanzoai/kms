@@ -5,7 +5,7 @@ description: "Learn how to dynamically generate AWS IAM Users."
 
 import DynamicSecretUsernameTemplateParamField from "/snippets/documentation/platform/dynamic-secrets/dynamic-secret-username-template-field.mdx";
 
-The Hanzo KMS AWS IAM dynamic secret allows you to generate AWS IAM Users and temporary credentials on demand based on a configured AWS policy. Hanzo KMS supports several authentication methods to connect to your AWS account, including assuming an IAM Role, using IAM Roles for Service Accounts (IRSA) on EKS, or static Access Keys.
+The KMS AWS IAM dynamic secret allows you to generate AWS IAM Users and temporary credentials on demand based on a configured AWS policy. KMS supports several authentication methods to connect to your AWS account, including assuming an IAM Role, using IAM Roles for Service Accounts (IRSA) on EKS, or static Access Keys.
 
 ## AWS STS Duration Limits
 
@@ -15,12 +15,12 @@ When using **Temporary Credentials**, AWS STS has specific maximum duration limi
 - **GetSessionToken operations** (Access Key & IRSA): Maximum 12 hours (43200 seconds)
 
 <Info>
-**Automatic Duration Adjustment**: If you specify a TTL that exceeds these AWS limits, Hanzo KMS will automatically use the maximum allowed duration instead of failing the operation. This ensures your dynamic secrets work reliably within AWS constraints.
+**Automatic Duration Adjustment**: If you specify a TTL that exceeds these AWS limits, KMS will automatically use the maximum allowed duration instead of failing the operation. This ensures your dynamic secrets work reliably within AWS constraints.
 </Info>
 
 ## Prerequisite
 
-Hanzo KMS needs an AWS IAM principal (a user or a role) with the required permissions to create and manage other IAM users and temporary credentials. This principal will be responsible for the lifecycle of the dynamically generated users and temporary credentials.
+KMS needs an AWS IAM principal (a user or a role) with the required permissions to create and manage other IAM users and temporary credentials. This principal will be responsible for the lifecycle of the dynamically generated users and temporary credentials.
 
 <Accordion title="Required IAM Permissions">
 
@@ -99,9 +99,9 @@ Hanzo KMS needs an AWS IAM principal (a user or a role) with the required permis
 
 <Tabs>
   <Tab title="Assume Role (Recommended)">
-    Hanzo KMS will assume the provided role in your AWS account securely, without the need to share any credentials.
+    KMS will assume the provided role in your AWS account securely, without the need to share any credentials.
         <Accordion title="Self-Hosted Instance">
-            To connect your self-hosted Hanzo KMS instance with AWS, you need to set up an AWS IAM User account that can assume the configured AWS IAM Role.
+            To connect your self-hosted KMS instance with AWS, you need to set up an AWS IAM User account that can assume the configured AWS IAM Role.
 
             If your instance is deployed on AWS, the aws-sdk will automatically retrieve the credentials. Ensure that you assign the provided permission policy to your deployed instance, such as ECS or EC2.
 
@@ -141,22 +141,22 @@ Hanzo KMS needs an AWS IAM principal (a user or a role) with the required permis
         </Accordion>
 
     <Steps>
-         <Step title="Create the Managing User IAM Role for Hanzo KMS">
+         <Step title="Create the Managing User IAM Role for KMS">
                 1. Navigate to the [Create IAM Role](https://console.aws.amazon.com/iamv2/home#/roles/create?step=selectEntities) page in your AWS Console.
                 ![IAM Role Creation](/images/integrations/aws/integration-aws-iam-assume-role.png)
 
                 2. Select **AWS Account** as the **Trusted Entity Type**.
-                3. Select **Another AWS Account** and provide the appropriate Hanzo KMS AWS Account ID: use **381492033652** for the **US region**, and **345594589636** for the **EU region**. This restricts the role to be assumed only by Hanzo KMS. If self-hosting, provide your AWS account number instead.
+                3. Select **Another AWS Account** and provide the appropriate KMS AWS Account ID: use **381492033652** for the **US region**, and **345594589636** for the **EU region**. This restricts the role to be assumed only by KMS. If self-hosting, provide your AWS account number instead.
                 <Note>
-                  **For Dedicated Instances**: Your AWS account ID differs from the one provided above. Please reach out to Hanzo KMS support to obtain your AWS account ID.
+                  **For Dedicated Instances**: Your AWS account ID differs from the one provided above. Please reach out to KMS support to obtain your AWS account ID.
                 </Note>
                 4. (Recommended) <strong>Enable "Require external ID"</strong> and input your **Project ID** to strengthen security and mitigate the [confused deputy problem](https://docs.aws.amazon.com/IAM/latest/UserGuide/confused-deputy.html).
                 5. Assign permission as shared in prerequisite.
 
                 <Warning type="warning" title="Security Best Practice: Use External ID to Prevent Confused Deputy Attacks">
-                    When configuring an IAM Role that Hanzo KMS will assume, it’s highly recommended to enable the **"Require external ID"** option and specify your **Project ID**.
+                    When configuring an IAM Role that KMS will assume, it’s highly recommended to enable the **"Require external ID"** option and specify your **Project ID**.
 
-                    This precaution helps protect your AWS account against the [confused deputy problem](https://docs.aws.amazon.com/IAM/latest/UserGuide/confused-deputy.html), a potential security vulnerability where Hanzo KMS could be tricked into performing actions on your behalf by an unauthorized actor.
+                    This precaution helps protect your AWS account against the [confused deputy problem](https://docs.aws.amazon.com/IAM/latest/UserGuide/confused-deputy.html), a potential security vulnerability where KMS could be tricked into performing actions on your behalf by an unauthorized actor.
 
                     <strong>Always enable "Require external ID" and use your Project ID when setting up the IAM Role.</strong>
                 </Warning>
@@ -297,10 +297,10 @@ Hanzo KMS needs an AWS IAM principal (a user or a role) with the required permis
     </Steps>
   </Tab>
   <Tab title="IRSA (EKS)">
-    This method is recommended for self-hosted Hanzo KMS instances running on AWS EKS. It uses [IAM Roles for Service Accounts (IRSA)](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) to securely grant permissions to the Hanzo KMS pods without managing static credentials.
+    This method is recommended for self-hosted KMS instances running on AWS EKS. It uses [IAM Roles for Service Accounts (IRSA)](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) to securely grant permissions to the KMS pods without managing static credentials.
 
     <Warning type="warning" title="IRSA Configuration Prerequisite">
-        In order to use IRSA, the `KUBERNETES_AUTO_FETCH_SERVICE_ACCOUNT_TOKEN` environment variable must be set to `true` for your self-hosted Hanzo KMS instance.
+        In order to use IRSA, the `KUBERNETES_AUTO_FETCH_SERVICE_ACCOUNT_TOKEN` environment variable must be set to `true` for your self-hosted KMS instance.
     </Warning>
 
     <Steps>
@@ -312,14 +312,14 @@ Hanzo KMS needs an AWS IAM principal (a user or a role) with the required permis
 
             ![Create OIDC Provider Placeholder](/images/integrations/aws/irsa-create-oidc-provider.png)
         </Step>
-        <Step title="Create the Managing User IAM Role for Hanzo KMS">
+        <Step title="Create the Managing User IAM Role for KMS">
             1. Navigate to the [Create IAM Role](https://console.aws.amazon.com/iamv2/home#/roles/create?step=selectEntities) page in your AWS Console.
             2. Select **Web identity** as the **Trusted Entity Type**.
             3. Choose the OIDC provider you created in the previous step.
             4. For the **Audience**, select `sts.amazonaws.com`.
             ![IAM Role Creation for IRSA](/images/integrations/aws/irsa-iam-role-creation.png)
             5. Attach the permission policy detailed in the **Prerequisite** section at the top of this page.
-            6. After creating the role, edit its **Trust relationship** to specify the service account Hanzo KMS is using in your cluster. This ensures only the Hanzo KMS pod can assume this role.
+            6. After creating the role, edit its **Trust relationship** to specify the service account KMS is using in your cluster. This ensures only the KMS pod can assume this role.
 
             ```json
             {
@@ -343,15 +343,15 @@ Hanzo KMS needs an AWS IAM principal (a user or a role) with the required permis
             ```
             Replace `<ACCOUNT_ID>`, `<REGION>`, `<OIDC_ID>`, `<K8S_NAMESPACE>`, and `<KMS_SERVICE_ACCOUNT_NAME>` with your specific values.
         </Step>
-        <Step title="Annotate the Hanzo KMS Kubernetes Service Account">
-            For the IRSA mechanism to work, the Hanzo KMS service account in your Kubernetes cluster must be annotated with the ARN of the IAM role you just created.
+        <Step title="Annotate the KMS Kubernetes Service Account">
+            For the IRSA mechanism to work, the KMS service account in your Kubernetes cluster must be annotated with the ARN of the IAM role you just created.
 
             Run the following command, replacing the placeholders with your values:
             ```bash
             kubectl annotate serviceaccount -n <kms-namespace> <kms-service-account> \
             eks.amazonaws.com/role-arn=arn:aws:iam::<account-id>:role/<iam-role-name>
             ```
-            This annotation tells the EKS Pod Identity Webhook to inject the necessary environment variables and tokens into the Hanzo KMS pod, allowing it to assume the specified IAM role.
+            This annotation tells the EKS Pod Identity Webhook to inject the necessary environment variables and tokens into the KMS pod, allowing it to assume the specified IAM role.
         </Step>
         <Step title="Secret Overview Dashboard">
             Navigate to the Secret Overview dashboard and select the environment in which you would like to add a dynamic secret to.
@@ -465,7 +465,7 @@ Hanzo KMS needs an AWS IAM principal (a user or a role) with the required permis
     </Steps>
   </Tab>
   <Tab title="Access Key">
-        Hanzo KMS will use the provided **Access Key ID** and **Secret Key** to connect to your AWS instance.
+        KMS will use the provided **Access Key ID** and **Secret Key** to connect to your AWS instance.
   <Steps>
       <Step title="Secret Overview Dashboard">
         Navigate to the Secret Overview dashboard and select the environment in which you would like to add a dynamic secret to.

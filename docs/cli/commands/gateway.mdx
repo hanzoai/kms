@@ -1,6 +1,6 @@
 ---
 title: "kms gateway"
-description: "Run the Hanzo KMS gateway or manage its systemd service"
+description: "Run the KMS gateway or manage its systemd service"
 ---
 
 <Tabs>
@@ -18,7 +18,7 @@ description: "Run the Hanzo KMS gateway or manage its systemd service"
 
 ## Description
 
-The Hanzo KMS gateway provides secure access to private resources using modern TCP-based SSH tunnel architecture with enhanced security and flexible deployment options.
+The KMS gateway provides secure access to private resources using modern TCP-based SSH tunnel architecture with enhanced security and flexible deployment options.
 
 The gateway system uses SSH reverse tunnels over TCP, eliminating firewall complexity and providing excellent performance for enterprise environments.
 
@@ -33,7 +33,7 @@ If you are moving from Gateway v1 to Gateway v2, this is NOT a drop-in switch. G
 
 <AccordionGroup>
 <Accordion title="kms gateway start" defaultOpen="true">
-  Run the Hanzo KMS gateway component within your the network where your target resources are located. The gateway establishes an SSH reverse tunnel to a relay server and provides secure access to private resources within your network.
+  Run the KMS gateway component within your the network where your target resources are located. The gateway establishes an SSH reverse tunnel to a relay server and provides secure access to private resources within your network.
 
 ```bash
 sudo kms gateway start --name=<name> --auth-method=<auth-method>
@@ -47,7 +47,7 @@ Once started, the gateway component will:
 
 - Automatically connect to a healthy relay with the lowest latency (unless the `--target-relay-name` flag is specified)
 - Establish outbound SSH reverse tunnel to relay server (no inbound firewall rules needed)
-- Authenticate using SSH certificates issued by Hanzo KMS
+- Authenticate using SSH certificates issued by KMS
 - Automatically reconnect if the connection is lost
 - Provide access to private resources within your network
 
@@ -57,7 +57,7 @@ The Gateway supports multiple authentication methods. Below are the available au
 
 <AccordionGroup>
   <Accordion title="Universal Auth">
-    The Universal Auth method is a simple and secure way to authenticate with Hanzo KMS. It requires a client ID and a client secret to authenticate with Hanzo KMS.
+    The Universal Auth method is a simple and secure way to authenticate with KMS. It requires a client ID and a client secret to authenticate with KMS.
 
       <ParamField query="Flags">
       <Expandable title="properties">
@@ -79,7 +79,7 @@ The Gateway supports multiple authentication methods. Below are the available au
 
   </Accordion>
   <Accordion title="Native Kubernetes">
-    The Native Kubernetes method is used to authenticate with Hanzo KMS when running in a Kubernetes environment. It requires a service account token to authenticate with Hanzo KMS.
+    The Native Kubernetes method is used to authenticate with KMS when running in a Kubernetes environment. It requires a service account token to authenticate with KMS.
 
       <ParamField query="Flags">
       <Expandable title="properties">
@@ -103,7 +103,7 @@ The Gateway supports multiple authentication methods. Below are the available au
 
   </Accordion>
   <Accordion title="Native Azure">
-    The Native Azure method is used to authenticate with Hanzo KMS when running in an Azure environment.
+    The Native Azure method is used to authenticate with KMS when running in an Azure environment.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -124,7 +124,7 @@ The Gateway supports multiple authentication methods. Below are the available au
 
   </Accordion>
   <Accordion title="Native GCP ID Token">
-    The Native GCP ID Token method is used to authenticate with Hanzo KMS when running in a GCP environment.
+    The Native GCP ID Token method is used to authenticate with KMS when running in a GCP environment.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -145,7 +145,7 @@ The Gateway supports multiple authentication methods. Below are the available au
 
   </Accordion>
   <Accordion title="GCP IAM">
-    The GCP IAM method is used to authenticate with Hanzo KMS with a GCP service account key.
+    The GCP IAM method is used to authenticate with KMS with a GCP service account key.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -167,7 +167,7 @@ The Gateway supports multiple authentication methods. Below are the available au
 
   </Accordion>
   <Accordion title="Native AWS IAM">
-    The AWS IAM method is used to authenticate with Hanzo KMS with an AWS IAM role while running in an AWS environment like EC2, Lambda, etc.
+    The AWS IAM method is used to authenticate with KMS with an AWS IAM role while running in an AWS environment like EC2, Lambda, etc.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -186,7 +186,7 @@ The Gateway supports multiple authentication methods. Below are the available au
 
   </Accordion>
   <Accordion title="OIDC Auth">
-    The OIDC Auth method is used to authenticate with Hanzo KMS via identity tokens with OIDC.
+    The OIDC Auth method is used to authenticate with KMS via identity tokens with OIDC.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -209,7 +209,7 @@ The Gateway supports multiple authentication methods. Below are the available au
   </Accordion>
 
   <Accordion title="JWT Auth">
-    The JWT Auth method is used to authenticate with Hanzo KMS via a JWT token.
+    The JWT Auth method is used to authenticate with KMS via a JWT token.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -232,7 +232,7 @@ The Gateway supports multiple authentication methods. Below are the available au
 
   </Accordion>
   <Accordion title="Token Auth">
-    You can use the `KMS_TOKEN` environment variable to authenticate with Hanzo KMS with a raw machine identity access token.
+    You can use the `KMS_TOKEN` environment variable to authenticate with KMS with a raw machine identity access token.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -262,7 +262,7 @@ The Gateway supports multiple authentication methods. Below are the available au
     sudo kms gateway start --target-relay-name=my-relay --name=my-gateway --token=<token>
     ```
 
-    **Note:** For Hanzo KMS Cloud users using instance relays, the relay infrastructure is already running and managed by Hanzo KMS. If using organization relays or self-hosted instance relays, you must first start a relay server. For more information on deploying relays, refer to the [Relay Deployment Guide](/documentation/platform/gateways/relay-deployment).
+    **Note:** For KMS Cloud users using instance relays, the relay infrastructure is already running and managed by KMS. If using organization relays or self-hosted instance relays, you must first start a relay server. For more information on deploying relays, refer to the [Relay Deployment Guide](/documentation/platform/gateways/relay-deployment).
 
   </Accordion>
 
@@ -277,7 +277,7 @@ The Gateway supports multiple authentication methods. Below are the available au
   </Accordion>
 
   <Accordion title="--domain">
-    Domain of your self-hosted Hanzo KMS instance.
+    Domain of your self-hosted KMS instance.
 
     ```bash
     # Example
@@ -305,7 +305,7 @@ sudo kms gateway systemd install --token=<token> --domain=<domain> --name=<name>
 
   <AccordionGroup>
   <Accordion title="--token">
-    The machine identity access token to authenticate with Hanzo KMS.
+    The machine identity access token to authenticate with KMS.
 
     ```bash
     # Example
@@ -317,7 +317,7 @@ sudo kms gateway systemd install --token=<token> --domain=<domain> --name=<name>
   </Accordion>
 
   <Accordion title="--domain">
-    Domain of your self-hosted Hanzo KMS instance.
+    Domain of your self-hosted KMS instance.
 
     ```bash
     # Example
@@ -346,7 +346,7 @@ sudo kms gateway systemd install --token=<token> --domain=<domain> --name=<name>
     sudo kms gateway systemd install --target-relay-name=my-relay --token=<token> --name=<name>
     ```
 
-    **Note:** For Hanzo KMS Cloud users using instance relays, the relay infrastructure is already running and managed by Hanzo KMS. If using organization relays or self-hosted instance relays, you must first start a relay server. For more information on deploying relays, refer to the [Relay Deployment Guide](/documentation/platform/gateways/relay-deployment).
+    **Note:** For KMS Cloud users using instance relays, the relay infrastructure is already running and managed by KMS. If using organization relays or self-hosted instance relays, you must first start a relay server. For more information on deploying relays, refer to the [Relay Deployment Guide](/documentation/platform/gateways/relay-deployment).
 
   </Accordion>
   </AccordionGroup>
@@ -391,7 +391,7 @@ sudo systemctl disable kms-gateway  # Disable auto-start on boot
 
   </Warning>
 
-Run the legacy Hanzo KMS gateway in the foreground. The gateway will connect to the relay service and maintain a persistent connection.
+Run the legacy KMS gateway in the foreground. The gateway will connect to the relay service and maintain a persistent connection.
 
 ```bash
 kms gateway --domain=<domain> --auth-method=<auth-method>
@@ -403,7 +403,7 @@ The KMS CLI supports multiple authentication methods. Below are the available au
 
 <AccordionGroup>
   <Accordion title="Universal Auth">
-    The Universal Auth method is a simple and secure way to authenticate with Hanzo KMS. It requires a client ID and a client secret to authenticate with Hanzo KMS.
+    The Universal Auth method is a simple and secure way to authenticate with KMS. It requires a client ID and a client secret to authenticate with KMS.
 
       <ParamField query="Flags">
       <Expandable title="properties">
@@ -425,7 +425,7 @@ The KMS CLI supports multiple authentication methods. Below are the available au
 
   </Accordion>
   <Accordion title="Native Kubernetes">
-    The Native Kubernetes method is used to authenticate with Hanzo KMS when running in a Kubernetes environment. It requires a service account token to authenticate with Hanzo KMS.
+    The Native Kubernetes method is used to authenticate with KMS when running in a Kubernetes environment. It requires a service account token to authenticate with KMS.
 
       <ParamField query="Flags">
       <Expandable title="properties">
@@ -449,7 +449,7 @@ The KMS CLI supports multiple authentication methods. Below are the available au
 
   </Accordion>
   <Accordion title="Native Azure">
-    The Native Azure method is used to authenticate with Hanzo KMS when running in an Azure environment.
+    The Native Azure method is used to authenticate with KMS when running in an Azure environment.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -470,7 +470,7 @@ The KMS CLI supports multiple authentication methods. Below are the available au
 
   </Accordion>
   <Accordion title="Native GCP ID Token">
-    The Native GCP ID Token method is used to authenticate with Hanzo KMS when running in a GCP environment.
+    The Native GCP ID Token method is used to authenticate with KMS when running in a GCP environment.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -491,7 +491,7 @@ The KMS CLI supports multiple authentication methods. Below are the available au
 
   </Accordion>
   <Accordion title="GCP IAM">
-    The GCP IAM method is used to authenticate with Hanzo KMS with a GCP service account key.
+    The GCP IAM method is used to authenticate with KMS with a GCP service account key.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -513,7 +513,7 @@ The KMS CLI supports multiple authentication methods. Below are the available au
 
   </Accordion>
   <Accordion title="Native AWS IAM">
-    The AWS IAM method is used to authenticate with Hanzo KMS with an AWS IAM role while running in an AWS environment like EC2, Lambda, etc.
+    The AWS IAM method is used to authenticate with KMS with an AWS IAM role while running in an AWS environment like EC2, Lambda, etc.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -532,7 +532,7 @@ The KMS CLI supports multiple authentication methods. Below are the available au
 
   </Accordion>
   <Accordion title="OIDC Auth">
-    The OIDC Auth method is used to authenticate with Hanzo KMS via identity tokens with OIDC.
+    The OIDC Auth method is used to authenticate with KMS via identity tokens with OIDC.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -555,7 +555,7 @@ The KMS CLI supports multiple authentication methods. Below are the available au
   </Accordion>
 
   <Accordion title="JWT Auth">
-    The JWT Auth method is used to authenticate with Hanzo KMS via a JWT token.
+    The JWT Auth method is used to authenticate with KMS via a JWT token.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -578,7 +578,7 @@ The KMS CLI supports multiple authentication methods. Below are the available au
 
   </Accordion>
   <Accordion title="Token Auth">
-    You can use the `KMS_TOKEN` environment variable to authenticate with Hanzo KMS with a raw machine identity access token.
+    You can use the `KMS_TOKEN` environment variable to authenticate with KMS with a raw machine identity access token.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -599,7 +599,7 @@ The KMS CLI supports multiple authentication methods. Below are the available au
 
   <AccordionGroup>
   <Accordion title="--domain">
-    Domain of your self-hosted Hanzo KMS instance.
+    Domain of your self-hosted KMS instance.
 
     ```bash
     # Example
@@ -636,7 +636,7 @@ sudo kms gateway install --token=<token> --domain=<domain>
 
   <AccordionGroup>
   <Accordion title="--token">
-    The machine identity access token to authenticate with Hanzo KMS.
+    The machine identity access token to authenticate with KMS.
 
     ```bash
     # Example
@@ -648,7 +648,7 @@ sudo kms gateway install --token=<token> --domain=<domain>
   </Accordion>
 
   <Accordion title="--domain">
-    Domain of your self-hosted Hanzo KMS instance.
+    Domain of your self-hosted KMS instance.
 
     ```bash
     # Example

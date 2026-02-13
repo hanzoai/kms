@@ -769,7 +769,7 @@ export const samlConfigServiceFactory = ({
 
       await smtpService.sendMail({
         template: SmtpTemplates.EmailVerification,
-        subjectLine: "Hanzo KMS confirmation code",
+        subjectLine: "KMS confirmation code",
         recipients: [user.email],
         substitutions: {
           code: token

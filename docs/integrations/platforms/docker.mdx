@@ -1,10 +1,10 @@
 ---
 title: "Docker Entrypoint"
-description: "Learn how to use Hanzo KMS to inject environment variables into a Docker container."
+description: "Learn how to use KMS to inject environment variables into a Docker container."
 ---
 
-This approach allows you to inject secrets from Hanzo KMS directly into your application.
-This is achieved by installing the KMS CLI into your docker image and modifying your start command to execute with Hanzo KMS.
+This approach allows you to inject secrets from KMS directly into your application.
+This is achieved by installing the KMS CLI into your docker image and modifying your start command to execute with KMS.
 
 ## Install the KMS CLI to your Dockerfile
 
@@ -17,7 +17,7 @@ To install the CLI, follow the instructions for your chosen distribution [here](
 
 ## Modify the start command in your Dockerfile
 
-Starting your service with the KMS CLI pulls your secrets from Hanzo KMS and injects them into your service.
+Starting your service with the KMS CLI pulls your secrets from KMS and injects them into your service.
 
 <Tabs>
   <Tab title="Machine Identity (Recommended)">
@@ -36,7 +36,7 @@ CMD ["kms", "run", "--projectId", "<your-project-id>", "--command", "npm run sta
 
 <Steps>
   <Step title="Generate a machine identity">
-    Generate a machine identity for your project by following the steps in the [Machine Identity](/documentation/platform/identities/machine-identities) guide. The machine identity will allow you to authenticate and fetch secrets from Hanzo KMS.
+    Generate a machine identity for your project by following the steps in the [Machine Identity](/documentation/platform/identities/machine-identities) guide. The machine identity will allow you to authenticate and fetch secrets from KMS.
   </Step>
   <Step title="Obtain an access token for the machine identity">
     Obtain an access token for the machine identity by running the following command:
@@ -65,7 +65,7 @@ The drawback of the previous method is that you would have to generate the `KMS_
 
 <Steps>
   <Step title="Generate a Machine Identity">
-    Create a machine identity for your project by following the steps in the [Machine Identity](/documentation/platform/identities/machine-identities) guide. This identity will enable authentication and secret retrieval from Hanzo KMS.
+    Create a machine identity for your project by following the steps in the [Machine Identity](/documentation/platform/identities/machine-identities) guide. This identity will enable authentication and secret retrieval from KMS.
   </Step>
 
   <Step title="Create the Shell Script">
@@ -111,8 +111,8 @@ CMD ["kms", "run", "--command", "npm run start && ..."]
 
   <Steps>
     <Step title="Generate a service token">
-      Head to your project settings in the Hanzo KMS dashboard to generate an [service token](/documentation/platform/token). 
-      This service token will allow you to authenticate and fetch secrets from Hanzo KMS. 
+      Head to your project settings in the KMS dashboard to generate an [service token](/documentation/platform/token). 
+      This service token will allow you to authenticate and fetch secrets from KMS. 
       Once you have created a service token with the required permissions, you’ll need to feed the token to the CLI installed in your docker container.
     </Step>
     <Step title="Feed service token to docker container">

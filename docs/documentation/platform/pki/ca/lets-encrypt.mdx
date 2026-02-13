@@ -1,15 +1,15 @@
 ---
 title: "Let's Encrypt"
-description: "Learn how to connect Hanzo KMS to Let's Encrypt to issue certificates."
+description: "Learn how to connect KMS to Let's Encrypt to issue certificates."
 ---
 
 ## Concept
 
-Hanzo KMS can connect to [Let's Encrypt](https://letsencrypt.org/) using the [ACME-compatible CA integration](/documentation/platform/pki/ca/acme-ca) to issue certificates back to your end-entities.
+KMS can connect to [Let's Encrypt](https://letsencrypt.org/) using the [ACME-compatible CA integration](/documentation/platform/pki/ca/acme-ca) to issue certificates back to your end-entities.
 
-## Guide to Connecting Hanzo KMS to Let's Encrypt CA
+## Guide to Connecting KMS to Let's Encrypt CA
 
-To connect Hanzo KMS to Let's Encrypt, follow the steps in the [ACME-compatible CA integration](/documentation/platform/pki/ca/acme-ca) guide but use the Let's Encrypt **ACME Directory URL**: `https://acme-v02.api.letsencrypt.org/directory`.
+To connect KMS to Let's Encrypt, follow the steps in the [ACME-compatible CA integration](/documentation/platform/pki/ca/acme-ca) guide but use the Let's Encrypt **ACME Directory URL**: `https://acme-v02.api.letsencrypt.org/directory`.
 
 Note that Let’s Encrypt issues 90-day certificates and enforces a limit of 50 certificates per registered domain per week.
 

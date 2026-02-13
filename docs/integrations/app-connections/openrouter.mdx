@@ -1,9 +1,9 @@
 ---
 title: "OpenRouter Connection"
-description: "Learn how to configure an OpenRouter (LLM router) connection for Hanzo KMS."
+description: "Learn how to configure an OpenRouter (LLM router) connection for KMS."
 ---
 
-[OpenRouter](https://openrouter.ai/) is a unified LLM router that gives you access to hundreds of large language models through a single API. Hanzo KMS supports connecting to OpenRouter using an **API Key** (Provisioning API key). This connection is used to manage and rotate OpenRouter API keys via [Secret Rotation](/documentation/platform/secret-rotation/openrouter-api-key).
+[OpenRouter](https://openrouter.ai/) is a unified LLM router that gives you access to hundreds of large language models through a single API. KMS supports connecting to OpenRouter using an **API Key** (Provisioning API key). This connection is used to manage and rotate OpenRouter API keys via [Secret Rotation](/documentation/platform/secret-rotation/openrouter-api-key).
 
 ## Prerequisites
 
@@ -18,7 +18,7 @@ You need a **Provisioning API key** from OpenRouter. Provisioning keys are used 
         ![OpenRouter Provisioning Keys](/images/app-connections/openrouter/step-1.png)
     </Step>
     <Step title="Create and Copy Key">
-        Complete the key creation flow and copy the generated Provisioning API key. Store it securely—you will use it when creating the Hanzo KMS connection.
+        Complete the key creation flow and copy the generated Provisioning API key. Store it securely—you will use it when creating the KMS connection.
 
         ![OpenRouter Key Created](/images/app-connections/openrouter/step-2.png)
     </Step>
@@ -28,13 +28,13 @@ You need a **Provisioning API key** from OpenRouter. Provisioning keys are used 
     For more details on Provisioning API keys and key management, see [OpenRouter's documentation](https://openrouter.ai/docs/guides/overview/auth/provisioning-api-keys).
 </Tip>
 
-## Create OpenRouter Connection in Hanzo KMS
+## Create OpenRouter Connection in KMS
 
 <Tabs>
-    <Tab title="Hanzo KMS UI">
+    <Tab title="KMS UI">
         <Steps>
             <Step title="Navigate to App Connections">
-                In your Hanzo KMS dashboard, go to **Organization Settings** → **App Connections** (or the **Integrations** → **App Connections** tab in your project).
+                In your KMS dashboard, go to **Organization Settings** → **App Connections** (or the **Integrations** → **App Connections** tab in your project).
 
                 ![App Connections Tab](/images/app-connections/general/add-connection.png)
             </Step>
@@ -52,7 +52,7 @@ You need a **Provisioning API key** from OpenRouter. Provisioning keys are used 
                 ![OpenRouter Connection Form](/images/app-connections/openrouter/openrouter-app-connection-form.png)
             </Step>
             <Step title="Connection Created">
-                After clicking **Create**, Hanzo KMS validates the key against OpenRouter's API. Your **OpenRouter Connection** is then ready to use for [OpenRouter API Key Secret Rotation](/documentation/platform/secret-rotation/openrouter-api-key).
+                After clicking **Create**, KMS validates the key against OpenRouter's API. Your **OpenRouter Connection** is then ready to use for [OpenRouter API Key Secret Rotation](/documentation/platform/secret-rotation/openrouter-api-key).
 
                 ![OpenRouter Connection Created](/images/app-connections/openrouter/openrouter-app-connection-created.png)
             </Step>

@@ -1,18 +1,18 @@
 ---
 title: "Gateway Overview"
 sidebarTitle: "Overview"
-description: "How to access private network resources from Hanzo KMS"
+description: "How to access private network resources from KMS"
 ---
 
 ![Architecture Overview](../../../images/platform/gateways/gateway-highlevel-diagram.png)
 
 The KMS Gateway provides secure access to private resources within your network without needing direct inbound connections to your environment.
-This is particularly useful when Hanzo KMS isn't hosted within the same network as the resources it needs to reach.
-This method keeps your resources fully protected from external access while enabling Hanzo KMS to securely interact with resources like databases.
+This is particularly useful when KMS isn't hosted within the same network as the resources it needs to reach.
+This method keeps your resources fully protected from external access while enabling KMS to securely interact with resources like databases.
 
 <Info>
-  Gateway is a paid feature available under the Enterprise Tier for Hanzo KMS
-  Cloud users. Self-hosted Hanzo KMS users can contact
+  Gateway is a paid feature available under the Enterprise Tier for KMS
+  Cloud users. Self-hosted KMS users can contact
   [sales@kms.hanzo.ai](mailto:sales@kms.hanzo.ai) to purchase an enterprise
   license.
 </Info>
@@ -23,29 +23,29 @@ The Gateway system consists of two primary components working together to enable
 
 <Tabs>
   <Tab title="Gateway" icon="server">
-  A Gateway is a lightweight service that you deploy within your own network infrastructure to provide secure access to your private resources. Think of it as a secure bridge between Hanzo KMS and your internal systems.
+  A Gateway is a lightweight service that you deploy within your own network infrastructure to provide secure access to your private resources. Think of it as a secure bridge between KMS and your internal systems.
 
-  Gateways must be deployed within the same network where your target resources are located, with direct network connectivity to the private resources you want Hanzo KMS to access.
+  Gateways must be deployed within the same network where your target resources are located, with direct network connectivity to the private resources you want KMS to access.
   For different networks, regions, or isolated environments, you'll need to deploy separate gateways.
 
   **Core Functions:**
   - **Network Placement**: Deployed within your VPCs, data centers, or on-premises infrastructure where your private resources live
-  - **Connection Model**: Only makes outbound connections to Hanzo KMS's relay servers, so no inbound firewall rules are needed
+  - **Connection Model**: Only makes outbound connections to KMS's relay servers, so no inbound firewall rules are needed
   - **Security Method**: Uses SSH reverse tunnels with certificate-based authentication for maximum security
-  - **Resource Access**: Acts as a proxy to connect Hanzo KMS to your private databases, APIs, and other services
+  - **Resource Access**: Acts as a proxy to connect KMS to your private databases, APIs, and other services
   </Tab>
 
   <Tab title="Relay Server" icon="route">
-  A Relay Server is the routing infrastructure that enables secure communication between the Hanzo KMS platform and your deployed gateways. It acts as an intermediary that never sees your actual data.
+  A Relay Server is the routing infrastructure that enables secure communication between the KMS platform and your deployed gateways. It acts as an intermediary that never sees your actual data.
 
   **Core Functions:**
-  - **Traffic Routing**: Routes encrypted traffic between the Hanzo KMS platform and your gateways without storing or inspecting the data
-  - **Network Isolation**: Enables secure communication without requiring direct network connections between Hanzo KMS and your private infrastructure
+  - **Traffic Routing**: Routes encrypted traffic between the KMS platform and your gateways without storing or inspecting the data
+  - **Network Isolation**: Enables secure communication without requiring direct network connections between KMS and your private infrastructure
   - **Authentication Management**: Validates SSH certificates and manages secure routing between authenticated gateways
 
   **Deployment Options:**
-  To reduce operational overhead, Hanzo KMS Cloud (US/EU) provides managed relay infrastructure, though organizations can also deploy their own relays for reduced latency.
-  - **Hanzo KMS Managed**: Use pre-deployed relays in select regions, shared across all Hanzo KMS Cloud organizations. Each organization traffic is isolated and encrypted.
+  To reduce operational overhead, KMS Cloud (US/EU) provides managed relay infrastructure, though organizations can also deploy their own relays for reduced latency.
+  - **KMS Managed**: Use pre-deployed relays in select regions, shared across all KMS Cloud organizations. Each organization traffic is isolated and encrypted.
   - **Self-Deployed**: Deploy your own dedicated relay servers geographically close to your infrastructure for reduced latency.
   </Tab>
 </Tabs>
@@ -54,16 +54,16 @@ The Gateway system consists of two primary components working together to enable
 
 The Gateway system uses SSH reverse tunnels for secure, firewall-friendly connectivity:
 
-1. **Gateway Registration**: The gateway establishes an outbound SSH reverse tunnel to a relay server using SSH certificates issued by Hanzo KMS
+1. **Gateway Registration**: The gateway establishes an outbound SSH reverse tunnel to a relay server using SSH certificates issued by KMS
 2. **Persistent Connection**: The gateway maintains an open TCP connection with the relay server, creating a secure channel for incoming requests
-3. **Request Routing**: When Hanzo KMS needs to access your resources, requests are routed through the relay server to the already-established gateway connection
-4. **Resource Access**: The gateway receives the routed requests and connects to your private resources on behalf of Hanzo KMS
+3. **Request Routing**: When KMS needs to access your resources, requests are routed through the relay server to the already-established gateway connection
+4. **Resource Access**: The gateway receives the routed requests and connects to your private resources on behalf of KMS
 
 ## Health Check
 
 To monitor their operational status, both gateways and relays transmit hourly heartbeats. A component is considered unhealthy if a heartbeat is not received for over an hour.
 
-Hanzo KMS automatically notifies all organization admins of unhealthy gateway or relay statuses through email and in-app notifications.
+KMS automatically notifies all organization admins of unhealthy gateway or relay statuses through email and in-app notifications.
 
 ## Getting Started
 

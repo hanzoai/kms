@@ -1,27 +1,27 @@
 ---
 title: "Spring Boot with Maven"
-description: "How to use Hanzo KMS to inject environment variables into Java Spring Boot"
+description: "How to use KMS to inject environment variables into Java Spring Boot"
 ---
 
 Prerequisites:
 
-- Set up and add your environment variables to [Hanzo KMS Cloud](https://kms.hanzo.ai)
+- Set up and add your environment variables to [KMS Cloud](https://kms.hanzo.ai)
 - [Install the CLI](/cli/overview)
 
-## Initialize Hanzo KMS 
-In order for Hanzo KMS to know which secrets to fetch, you'll need to first initialize Hanzo KMS at the root of your project. 
+## Initialize KMS 
+In order for KMS to know which secrets to fetch, you'll need to first initialize KMS at the root of your project. 
 
 ```bash
 # navigate to the root of your of your project 
 cd /path/to/project
 
-# then initialize Hanzo KMS
+# then initialize KMS
 hanzo-kms init
 ```
 
 
 ## Start your application with Maven wrapper
-To pass in Hanzo KMS secrets into your application, we will utilize the KMS CLI to inject the secrets into the Maven wrapper executable, which is used to launch your application. 
+To pass in KMS secrets into your application, we will utilize the KMS CLI to inject the secrets into the Maven wrapper executable, which is used to launch your application. 
 The Maven wrapper executable should already be present in the root directory of your project.
 
 ```bash 
@@ -70,7 +70,7 @@ Note that these instructions are currently only available for IntelliJ.
 hanzo-kms run -- ./mvnw spring-boot:run -Dspring-boot.run.jvmArguments="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=*:5005"
 ```
 
-**Step 5:** When you need to run a block of code in debug mode, select the Hanzo KMS script
+**Step 5:** When you need to run a block of code in debug mode, select the KMS script
 
 <img height="200" src="../../images/spring-maven-debug-5.png" />
 

@@ -1,17 +1,17 @@
 ---
 title: "Gradle"
-description: "How to use Hanzo KMS to inject environment variables with Gradle"
+description: "How to use KMS to inject environment variables with Gradle"
 ---
 
-# Using Hanzo KMS with Gradle
+# Using KMS with Gradle
 
 By integrating [KMS CLI](../../cli/overview) with Gradle, you can configure your builds and scripts to different environments, CI/CD pipelines, and more without explicitly setting variables in the command line.
 
-This documentation provides an overview of how to use Hanzo KMS with [Gradle](https://gradle.org/).
+This documentation provides an overview of how to use KMS with [Gradle](https://gradle.org/).
 
 ## Basic Usage
 
-To run a Gradle task with Hanzo KMS, you can use the `run` command. The basic structure is:
+To run a Gradle task with KMS, you can use the `run` command. The basic structure is:
 
 ```
 hanzo-kms run -- [Your command here]
@@ -33,14 +33,14 @@ task generateFile {
 hanzo-kms run -- gradle generateFile
 ```
 
-With this command, Hanzo KMS will automatically inject the environment variables associated with the current Hanzo KMS project into the Gradle process. 
+With this command, KMS will automatically inject the environment variables associated with the current KMS project into the Gradle process. 
 Your Gradle script can then access these variables using `System.getenv('VARIABLE_NAME')`.
 
 ## More Examples
 
 ### 1. Building a Project with a Specific Profile
 
-Assuming you have different build profiles (e.g., 'development', 'production'), you can use Hanzo KMS to switch between them:
+Assuming you have different build profiles (e.g., 'development', 'production'), you can use KMS to switch between them:
 
 ```
 hanzo-kms run -- gradle build
@@ -84,8 +84,8 @@ And in `build.gradle`:
 version = System.getenv('BUILD_NUMBER') ?: '1.0.0-SNAPSHOT'
 ```
 
-## Advantages of Using Hanzo KMS with Gradle
+## Advantages of Using KMS with Gradle
 
 1. **Flexibility**: Easily adapt your Gradle builds to different environments without modifying the build scripts or setting environment variables manually.
-2. **Reproducibility**: Ensure consistent builds by leveraging the environment variables from the related Hanzo KMS project.
-3. **Security**: Protect sensitive information by using Hanzo KMS's secrets management without exposing them in scripts or logs.
+2. **Reproducibility**: Ensure consistent builds by leveraging the environment variables from the related KMS project.
+3. **Security**: Protect sensitive information by using KMS's secrets management without exposing them in scripts or logs.

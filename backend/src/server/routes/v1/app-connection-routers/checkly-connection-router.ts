@@ -21,7 +21,7 @@ export const registerChecklyConnectionRouter = async (server: FastifyZodProvider
     updateSchema: UpdateChecklyConnectionSchema
   });
 
-  // The below endpoints are not exposed and for Hanzo KMS App use
+  // The below endpoints are not exposed and for KMS App use
   server.route({
     method: "GET",
     url: `/:connectionId/accounts`,

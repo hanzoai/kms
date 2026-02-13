@@ -26,7 +26,7 @@ const initialSyncBehaviors = [
     value: IntegrationSyncBehavior.OVERWRITE_TARGET
   },
   { label: "Import - Prefer values from Heroku", value: IntegrationSyncBehavior.PREFER_TARGET },
-  { label: "Import - Prefer values from Hanzo KMS", value: IntegrationSyncBehavior.PREFER_SOURCE }
+  { label: "Import - Prefer values from KMS", value: IntegrationSyncBehavior.PREFER_SOURCE }
 ];
 
 const schema = z.object({
@@ -120,7 +120,7 @@ export const HerokuConfigurePage = () => {
       <Card className="max-w-lg rounded-md border border-mineshaft-600 p-0">
         <CardTitle
           className="px-6 text-left text-xl"
-          subTitle="Select which environment or folder in Hanzo KMS you want to sync to Heroku's environment variables."
+          subTitle="Select which environment or folder in KMS you want to sync to Heroku's environment variables."
         >
           <div className="flex flex-row items-center">
             <div className="flex items-center">
@@ -261,7 +261,7 @@ export const HerokuConfigurePage = () => {
         </div>
         <span className="mt-4 text-sm text-mineshaft-300">
           After creating an integration, your secrets will start syncing immediately. This might
-          cause an unexpected override of current secrets in Heroku with secrets from Hanzo KMS.
+          cause an unexpected override of current secrets in Heroku with secrets from KMS.
         </span>
       </div></>} */}
     </div>

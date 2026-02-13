@@ -1,6 +1,6 @@
 ---
 title: "KMIP Integration"
-description: "Learn more about integrating with Hanzo KMS KMS using KMIP (Key Management Interoperability Protocol)."
+description: "Learn more about integrating with KMS KMS using KMIP (Key Management Interoperability Protocol)."
 ---
 
 <Note>
@@ -8,9 +8,9 @@ description: "Learn more about integrating with Hanzo KMS KMS using KMIP (Key Ma
   sales@kms.hanzo.ai if you have any questions.
 </Note>
 
-Hanzo KMS KMS provides Key Management Interoperability Protocol (KMIP) support for integration with KMIP-compatible clients. This allows for enhanced key management across various applications that support the KMIP 1.4 protocol.
+KMS KMS provides Key Management Interoperability Protocol (KMIP) support for integration with KMIP-compatible clients. This allows for enhanced key management across various applications that support the KMIP 1.4 protocol.
 
-## How KMIP Works with Hanzo KMS
+## How KMIP Works with KMS
 
 At a high level, the KMIP integration follows this architecture:
 
@@ -20,14 +20,14 @@ At a high level, the KMIP integration follows this architecture:
 At a high level, the KMIP integration works as follows:
 
 1. KMIP clients (your applications or tools) communicate with the KMIP server
-2. The KMIP server acts as a proxy and forwards requests to Hanzo KMS KMS
-3. The KMIP server authenticates to Hanzo KMS using a machine identity
+2. The KMIP server acts as a proxy and forwards requests to KMS KMS
+3. The KMIP server authenticates to KMS using a machine identity
 
-The KMIP server itself is deployed using the KMS CLI (`kms kmip start` command) and serves as an intermediary between your KMIP clients and Hanzo KMS's key management system.
+The KMIP server itself is deployed using the KMS CLI (`kms kmip start` command) and serves as an intermediary between your KMIP clients and KMS's key management system.
 
 ### Supported Operations
 
-The Hanzo KMS KMIP server supports the following operations for symmetric keys:
+The KMS KMIP server supports the following operations for symmetric keys:
 
 - **Create** - Generate symmetric keys
 - **Register** - Register externally created keys
@@ -41,7 +41,7 @@ The Hanzo KMS KMIP server supports the following operations for symmetric keys:
 
 ### Compatibility
 
-Hanzo KMS KMIP supports KMIP versions 1.0 to 1.4, ensuring compatibility with a wide range of clients and security tools.
+KMS KMIP supports KMIP versions 1.0 to 1.4, ensuring compatibility with a wide range of clients and security tools.
 
 ### Network Requirements
 
@@ -49,15 +49,15 @@ Ensure the following network connectivity is in place:
 
 - **KMIP Client → KMIP Server**: KMIP clients must be able to reach the KMIP server on port 5696 (or your configured port). Ensure firewalls allow this traffic and DNS resolution works if using hostnames.
 
-- **KMIP Server → Hanzo KMS Platform**: The KMIP server needs outbound HTTP access to Hanzo KMS. For self-hosted instances, ensure connectivity to your custom domain.
+- **KMIP Server → KMS Platform**: The KMIP server needs outbound HTTP access to KMS. For self-hosted instances, ensure connectivity to your custom domain.
 
 ## Configure and Deploy the KMIP Server
 
-Follow these steps in order to set up KMIP integration with Hanzo KMS:
+Follow these steps in order to set up KMIP integration with KMS:
 
 <Steps>
   <Step title="Enable KMIP at the Organization Level">
-    First, you need to enable KMIP for your entire Hanzo KMS organization and set up its PKI infrastructure.
+    First, you need to enable KMIP for your entire KMS organization and set up its PKI infrastructure.
 
     Navigate to **Organization Settings > KMIP** and click **Setup KMIP**.
     
@@ -69,12 +69,12 @@ Follow these steps in order to set up KMIP integration with Hanzo KMS:
 
     This generates the KMIP PKI for your organization, creating the cryptographic foundation that will be used for secure KMIP communications.
     <Info>
-    You do not need to manage these certificates yourself; Hanzo KMS handles the PKI infrastructure for you.
+    You do not need to manage these certificates yourself; KMS handles the PKI infrastructure for you.
     </Info>
   </Step>
 
   <Step title="Create a Machine Identity for the KMIP Server">
-    The KMIP server needs a machine identity to authenticate with Hanzo KMS and proxy requests on behalf of clients.
+    The KMIP server needs a machine identity to authenticate with KMS and proxy requests on behalf of clients.
 
     Configure a [machine identity](/documentation/platform/identities/machine-identities#machine-identities) by heading to your organization's **Access Control** and switching over to the **identities** tab. 
     From there you can click **Create Identity**.
@@ -83,7 +83,7 @@ Follow these steps in order to set up KMIP integration with Hanzo KMS:
     
     ![KMIP create machine identity](/images/platform/kms/kmip/kmip-create-mi.png)
 
-    This machine identity will be used by the KMIP server to authenticate and forward client requests to Hanzo KMS KMS.
+    This machine identity will be used by the KMIP server to authenticate and forward client requests to KMS KMS.
   </Step>
 
   <Step title="Create a Custom Organization Role with Proxy KMIP Permission">
@@ -94,7 +94,7 @@ Follow these steps in order to set up KMIP integration with Hanzo KMS:
     ![KMIP create custom role](/images/platform/kms/kmip/kmip-create-custom-role.png)
     ![KMIP assign proxy to role](/images/platform/kms/kmip/kmip-assign-custom-role-proxy.png)
 
-    This permission allows the KMIP server to act as an intermediary between KMIP clients and Hanzo KMS.
+    This permission allows the KMIP server to act as an intermediary between KMIP clients and KMS.
   </Step>
 
   <Step title="Assign the Organization Role to the Machine Identity">
@@ -104,17 +104,17 @@ Follow these steps in order to set up KMIP integration with Hanzo KMS:
     
     ![KMIP assign role to machine identity](/images/platform/kms/kmip/kmip-assign-mi-to-role.png)
 
-    This grants the machine identity the ability to serve KMIP client requests and forward them from your KMIP server to Hanzo KMS.
+    This grants the machine identity the ability to serve KMIP client requests and forward them from your KMIP server to KMS.
   </Step>
 
   <Step title="Deploy the KMIP Server">
     Now you're ready to deploy the KMIP server. 
-    You can run the KMIP server on any infrastructure that can reach the Hanzo KMS platform, such as a VM or container. 
+    You can run the KMIP server on any infrastructure that can reach the KMS platform, such as a VM or container. 
 
     Once you have your infrastructure ready, you'll need to install the KMS CLI on the server where you want to run the KMIP server.
 
     To install the latest KMS CLI visit [KMS CLI instructions](https://kms.hanzo.ai/docs/cli/overview). 
-    If you need to install specific versions of the CLI, you can find them on the [KMS CLI GitHub Releases](https://github.com/Hanzo KMS/cli/releases).
+    If you need to install specific versions of the CLI, you can find them on the [KMS CLI GitHub Releases](https://github.com/KMS/cli/releases).
 
     Then, launch the KMIP server with the following command:
 
@@ -136,7 +136,7 @@ Follow these steps in order to set up KMIP integration with Hanzo KMS:
     - **certificate-ttl** (default: "1y"): The duration for which the server certificate is valid
     - **hostnames-or-ips**: The IP address or the hostname of the server where you have deployed the KMIP server.
 
-    Once started, your KMIP server is now running and ready to accept client connections. It will authenticate to Hanzo KMS using the machine identity and proxy all KMIP operations.
+    Once started, your KMIP server is now running and ready to accept client connections. It will authenticate to KMS using the machine identity and proxy all KMIP operations.
   </Step>
 
   <Step title="Navigate to Your KMS Project">
@@ -154,7 +154,7 @@ Follow these steps in order to set up KMIP integration with Hanzo KMS:
     
     ![KMIP client modal](/images/platform/kms/kmip/kmip-client-modal.png)
 
-    This creates a KMIP client entity in Hanzo KMS that will be authenticated via mTLS certificates.
+    This creates a KMIP client entity in KMS that will be authenticated via mTLS certificates.
   </Step>
 
   <Step title="Generate Client Certificate">
@@ -172,11 +172,11 @@ Follow these steps in order to set up KMIP integration with Hanzo KMS:
     
     ![KMIP client cert modal](/images/platform/kms/kmip/kmip-client-certificate-modal.png)
 
-    Configure your KMIP-compatible applications or tools to use these credentials when connecting to the KMIP server. The client will now authenticate via mTLS and perform authorized key management operations through the KMIP server, which proxies requests to Hanzo KMS KMS.
+    Configure your KMIP-compatible applications or tools to use these credentials when connecting to the KMIP server. The client will now authenticate via mTLS and perform authorized key management operations through the KMIP server, which proxies requests to KMS KMS.
   </Step>
 </Steps>
 
-## Connecting your KMIP Client to Hanzo KMS
+## Connecting your KMIP Client to KMS
 
 After completing the setup, configure your KMIP compatible application to connect to the KMIP server.
 
@@ -184,7 +184,7 @@ While exact configuration steps vary by application, you'll generally need to pr
 
 1. **KMIP Server Address**: The hostname or IP and port where your KMIP server is listening (e.g., `my-kmip-server.com:5696`)
 
-2. **Client Certificates**: The certificate credentials generated from your Hanzo KMS KMS project:
+2. **Client Certificates**: The certificate credentials generated from your KMS KMS project:
    - **Client Certificate** (`client-cert.pem`) - Identifies your KMIP client
    - **Client Private Key** (`client-key.pem`) - Used for mTLS authentication
    - **Certificate Chain** (`cert-chain.pem`) - Verifies the KMIP server
@@ -203,13 +203,13 @@ While exact configuration steps vary by application, you'll generally need to pr
   </Step>
 
   <Step title="Prepare Certificate Files">
-    Organize the certificate materials you downloaded when generating the client certificate from the Hanzo KMS KMS project. You should have three files:
+    Organize the certificate materials you downloaded when generating the client certificate from the KMS KMS project. You should have three files:
 
     - **client-cert.pem** - The client certificate
     - **cert-chain.pem** - The certificate chain (includes intermediate and root CA certificates)
     - **client-key.pem** - The private key
 
-    Most KMIP clients require these files in PEM format, which is what Hanzo KMS provides by default.
+    Most KMIP clients require these files in PEM format, which is what KMS provides by default.
   </Step>
 
   <Step title="Configure Your KMIP Client Application">
@@ -241,7 +241,7 @@ While exact configuration steps vary by application, you'll generally need to pr
     - Creating a test key
     - Listing available keys
 
-    If the connection is successful, your KMIP client is now integrated with Hanzo KMS KMS and can perform key management operations according to the permissions you assigned.
+    If the connection is successful, your KMIP client is now integrated with KMS KMS and can perform key management operations according to the permissions you assigned.
 
     **Troubleshooting connection issues:**
     - Verify network connectivity between your KMIP client and the KMIP server

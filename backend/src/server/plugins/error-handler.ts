@@ -50,9 +50,9 @@ export const fastifyErrHandler = fastifyPlugin(async (server: FastifyZodProvider
     unit: "1"
   });
 
-  const kmsMeter = opentelemetry.metrics.getMeter("Hanzo KMS");
+  const kmsMeter = opentelemetry.metrics.getMeter("KMS");
   const errorCounter = kmsMeter.createCounter("kms.http.server.error.count", {
-    description: "Total number of API errors in Hanzo KMS (covers both human users and machine identities)",
+    description: "Total number of API errors in KMS (covers both human users and machine identities)",
     unit: "{error}"
   });
 

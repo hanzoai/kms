@@ -1,20 +1,20 @@
 ---
 title: SPIFFE/SPIRE
-description: "Learn how to authenticate SPIRE workloads with Hanzo KMS using OpenID Connect (OIDC)."
+description: "Learn how to authenticate SPIRE workloads with KMS using OpenID Connect (OIDC)."
 ---
 
 **OIDC Auth** is a platform-agnostic JWT-based authentication method that can be used to authenticate from any platform or environment using an identity provider with OpenID Connect.
 
 ## Diagram
 
-The following sequence diagram illustrates the OIDC Auth workflow for authenticating SPIRE workloads with Hanzo KMS.
+The following sequence diagram illustrates the OIDC Auth workflow for authenticating SPIRE workloads with KMS.
 
 ```mermaid
 sequenceDiagram
   participant Client as SPIRE Workload
   participant Agent as SPIRE Agent
   participant Server as SPIRE Server
-  participant Infis as Hanzo KMS
+  participant Infis as KMS
 
   Client->>Agent: Step 1: Request JWT-SVID
   Agent->>Server: Validate workload and fetch signing key
@@ -31,26 +31,26 @@ sequenceDiagram
   Note over Infis: Step 4: JWT validation
   Infis->>Client: Return short-lived access token
 
-  Note over Client,Infis: Step 5: Access Hanzo KMS API with Token
+  Note over Client,Infis: Step 5: Access KMS API with Token
   Client->>Infis: Make authenticated requests using the short-lived access token
 ```
 
 ## Concept
 
-At a high-level, Hanzo KMS authenticates a SPIRE workload by verifying the JWT-SVID and checking that it meets specific requirements (e.g. it is issued by a trusted SPIRE server) at the `/api/v1/auth/oidc-auth/login` endpoint. If successful,
-then Hanzo KMS returns a short-lived access token that can be used to make authenticated requests to the Hanzo KMS API.
+At a high-level, KMS authenticates a SPIRE workload by verifying the JWT-SVID and checking that it meets specific requirements (e.g. it is issued by a trusted SPIRE server) at the `/api/v1/auth/oidc-auth/login` endpoint. If successful,
+then KMS returns a short-lived access token that can be used to make authenticated requests to the KMS API.
 
 To be more specific:
 
 1. The SPIRE workload requests a JWT-SVID from the local SPIRE Agent.
 2. The SPIRE Agent validates the workload's identity and requests signing material from the SPIRE Server.
 3. The SPIRE Agent returns a JWT-SVID containing the workload's SPIFFE ID and other claims.
-4. The JWT-SVID is sent to Hanzo KMS at the `/api/v1/auth/oidc-auth/login` endpoint.
-5. Hanzo KMS fetches the public key that was used to sign the JWT-SVID from the SPIRE Server using OIDC Discovery.
-6. Hanzo KMS validates the JWT-SVID using the public key provided by the SPIRE Server and checks that the subject, audience, and claims of the token matches with the set criteria.
-7. If all is well, Hanzo KMS returns a short-lived access token that the workload can use to make authenticated requests to the Hanzo KMS API.
+4. The JWT-SVID is sent to KMS at the `/api/v1/auth/oidc-auth/login` endpoint.
+5. KMS fetches the public key that was used to sign the JWT-SVID from the SPIRE Server using OIDC Discovery.
+6. KMS validates the JWT-SVID using the public key provided by the SPIRE Server and checks that the subject, audience, and claims of the token matches with the set criteria.
+7. If all is well, KMS returns a short-lived access token that the workload can use to make authenticated requests to the KMS API.
 
-<Note>Hanzo KMS needs network-level access to the SPIRE Server's OIDC Discovery endpoint.</Note>
+<Note>KMS needs network-level access to the SPIRE Server's OIDC Discovery endpoint.</Note>
 
 ## Prerequisites
 
@@ -58,14 +58,14 @@ Before following this guide, ensure you have:
 
 - A running SPIRE deployment with both SPIRE Server and SPIRE Agent configured
 - OIDC Discovery Provider deployed alongside your SPIRE Server
-- Workload registration entries created in SPIRE for the workloads that need to access Hanzo KMS
-- Network connectivity between Hanzo KMS and your OIDC Discovery Provider endpoint
+- Workload registration entries created in SPIRE for the workloads that need to access KMS
+- Network connectivity between KMS and your OIDC Discovery Provider endpoint
 
 For detailed SPIRE setup instructions, refer to the [SPIRE documentation](https://spiffe.io/docs/latest/spire-about/).
 
 ## OIDC Discovery Provider Setup
 
-To enable JWT-SVID verification with Hanzo KMS, you need to deploy the OIDC Discovery Provider alongside your SPIRE Server. The OIDC Discovery Provider runs as a separate service that exposes the necessary OIDC endpoints.
+To enable JWT-SVID verification with KMS, you need to deploy the OIDC Discovery Provider alongside your SPIRE Server. The OIDC Discovery Provider runs as a separate service that exposes the necessary OIDC endpoints.
 
 In Kubernetes deployments, this is typically done by adding an `oidc-discovery-provider` container to your SPIRE Server StatefulSet:
 
@@ -80,13 +80,13 @@ In Kubernetes deployments, this is typically done by adding an `oidc-discovery-p
       name: spire-oidc-port
 ```
 
-The OIDC Discovery Provider will expose the OIDC Discovery endpoint at `https://<spire-oidc-host>/.well-known/openid_configuration`, which Hanzo KMS will use to fetch the public keys for JWT-SVID verification.
+The OIDC Discovery Provider will expose the OIDC Discovery endpoint at `https://<spire-oidc-host>/.well-known/openid_configuration`, which KMS will use to fetch the public keys for JWT-SVID verification.
 
 <Note>For detailed setup instructions, refer to the [SPIRE OIDC Discovery Provider documentation](https://github.com/spiffe/spire/tree/main/support/oidc-discovery-provider).</Note>
 
 ## Guide
 
-In the following steps, we explore how to create and use identities to access the Hanzo KMS API using the OIDC Auth authentication method with SPIFFE/SPIRE.
+In the following steps, we explore how to create and use identities to access the KMS API using the OIDC Auth authentication method with SPIFFE/SPIRE.
 
 <Steps>
     <Step title="Creating an identity">
@@ -141,8 +141,8 @@ In the following steps, we explore how to create and use identities to access th
 
     ![identities project create](/images/platform/identities/identities-project-create.png)
     </Step>
-    <Step title="Using JWT-SVID to authenticate with Hanzo KMS">
-    Here's an example of how a workload can use its JWT-SVID to authenticate with Hanzo KMS and retrieve secrets:
+    <Step title="Using JWT-SVID to authenticate with KMS">
+    Here's an example of how a workload can use its JWT-SVID to authenticate with KMS and retrieve secrets:
 
     ```bash
     #!/bin/bash
@@ -150,7 +150,7 @@ In the following steps, we explore how to create and use identities to access th
     # Obtain JWT-SVID from SPIRE Agent
     JWT_SVID=$(spire-agent api fetch jwt -audience kms -socketPath /run/spire/sockets/agent.sock | grep -A1 "token(" | tail -1)
 
-    # Authenticate with Hanzo KMS using the JWT-SVID
+    # Authenticate with KMS using the JWT-SVID
     ACCESS_TOKEN=$(curl -s -X POST \
         -H "Content-Type: application/json" \
         -d "{\"identityId\":\"<your-identity-id>\",\"jwt\":\"$JWT_SVID\"}" \
@@ -165,12 +165,12 @@ In the following steps, we explore how to create and use identities to access th
         Each identity access token has a time-to-live (TTL) which you can infer from the response of the login operation;
         the default TTL is `7200` seconds which can be adjusted.
 
-        If an identity access token expires, it can no longer authenticate with the Hanzo KMS API. In this case,
+        If an identity access token expires, it can no longer authenticate with the KMS API. In this case,
         a new access token should be obtained by performing another login operation.
     </Note>
 
     <Tip>
-        JWT-SVIDs from SPIRE have their own expiration time (typically short-lived). Ensure your application handles both JWT-SVID renewal from SPIRE and access token renewal from Hanzo KMS appropriately.
+        JWT-SVIDs from SPIRE have their own expiration time (typically short-lived). Ensure your application handles both JWT-SVID renewal from SPIRE and access token renewal from KMS appropriately.
     </Tip>
     </Step>
 

@@ -1,27 +1,27 @@
 ---
 title: "Windows Server"
 sidebarTitle: "Windows Server"
-description: "Learn how to configure Windows Server access through Hanzo KMS PAM for secure, audited, and just-in-time access to your Windows servers via RDP."
+description: "Learn how to configure Windows Server access through KMS PAM for secure, audited, and just-in-time access to your Windows servers via RDP."
 ---
 
-Hanzo KMS PAM supports secure, just-in-time access to Windows servers via the Remote Desktop Protocol (RDP).
+KMS PAM supports secure, just-in-time access to Windows servers via the Remote Desktop Protocol (RDP).
 This allows your team to access Windows servers without sharing long-lived credentials, while maintaining a complete audit trail of who accessed what and when.
 
 ## How It Works
 
-Windows Server access in Hanzo KMS PAM uses an KMS Gateway to securely proxy RDP connections to your Windows server. When a user requests access, Hanzo KMS establishes a secure tunnel through the Gateway, enabling access without exposing your server directly.
+Windows Server access in KMS PAM uses an KMS Gateway to securely proxy RDP connections to your Windows server. When a user requests access, KMS establishes a secure tunnel through the Gateway, enabling access without exposing your server directly.
 
 ```mermaid
 sequenceDiagram
     participant User
     participant CLI as KMS CLI
-    participant Hanzo KMS
+    participant KMS
     participant Gateway as KMS Gateway
     participant Windows as Windows Server
 
     User->>CLI: Request Windows Server access
-    CLI->>Hanzo KMS: Authenticate & request session
-    Hanzo KMS-->>CLI: Session credentials & Gateway info
+    CLI->>KMS: Authenticate & request session
+    KMS-->>CLI: Session credentials & Gateway info
     CLI->>Gateway: Establish secure tunnel
     Gateway->>Windows: RDP connection (port 3389)
     Windows-->>Gateway: Session established
@@ -33,20 +33,20 @@ sequenceDiagram
 
 1. **Gateway**: An KMS Gateway deployed in your network that can reach the Windows server. The Gateway handles secure communication between users and your server.
 
-2. **RDP Protocol**: Hanzo KMS connects to your Windows server using the Remote Desktop Protocol (RDP) on the configured port (default: 3389).
+2. **RDP Protocol**: KMS connects to your Windows server using the Remote Desktop Protocol (RDP) on the configured port (default: 3389).
 
 3. **Account Types**: Windows accounts can be categorized as either **User** accounts or **Service** accounts, allowing you to organize and manage different types of access.
 
 ## Prerequisites
 
-Before configuring Windows Server access in Hanzo KMS PAM, you need:
+Before configuring Windows Server access in KMS PAM, you need:
 
 1. **KMS Gateway** - A Gateway deployed in your network with access to the Windows server
 2. **RDP Enabled** - Remote Desktop must be enabled on the Windows server (port 3389 by default)
 3. **Windows Credentials** - A username and password for a Windows account on the server
 
 <Warning>
-  **Gateway Required**: Windows Server access requires an KMS Gateway to be deployed and registered with your Hanzo KMS instance. The Gateway must have network connectivity to your Windows server on the RDP port (default: 3389).
+  **Gateway Required**: Windows Server access requires an KMS Gateway to be deployed and registered with your KMS instance. The Gateway must have network connectivity to your Windows server on the RDP port (default: 3389).
 </Warning>
 
 ## Create the PAM Resource
@@ -55,10 +55,10 @@ The PAM Resource represents the Windows server you want to manage access to.
 
 <Steps>
   <Step title="Ensure Gateway is Running">
-    Before creating the resource, ensure you have an KMS Gateway running and registered with your Hanzo KMS instance. The Gateway must have network access to your Windows server.
+    Before creating the resource, ensure you have an KMS Gateway running and registered with your KMS instance. The Gateway must have network access to your Windows server.
   </Step>
 
-  <Step title="Create the Resource in Hanzo KMS">
+  <Step title="Create the Resource in KMS">
     1. Navigate to your PAM project and go to the **Resources** tab
     2. Click **Add Resource** and select **Windows Server**
     3. Fill in the connection details:
@@ -79,7 +79,7 @@ The PAM Resource represents the Windows server you want to manage access to.
       The RDP port (default: `3389`)
     </ParamField>
 
-    Clicking **Create Resource** will trigger a connection test from the selected Gateway to your Windows server. Hanzo KMS verifies that the server is reachable and responds to RDP connection requests.
+    Clicking **Create Resource** will trigger a connection test from the selected Gateway to your Windows server. KMS verifies that the server is reachable and responds to RDP connection requests.
   </Step>
 </Steps>
 

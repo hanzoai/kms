@@ -94,7 +94,7 @@ export const RundeckConfigurePage = () => {
       <Card className="max-w-lg rounded-md border border-mineshaft-600">
         <CardTitle
           className="px-6 text-left text-xl"
-          subTitle="Choose which environment or folder in Hanzo KMS you want to sync to the Rundeck Key Storage."
+          subTitle="Choose which environment or folder in KMS you want to sync to the Rundeck Key Storage."
         >
           <div className="flex flex-row items-center">
             <div className="flex items-center pb-0.5">

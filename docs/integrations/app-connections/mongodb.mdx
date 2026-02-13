@@ -1,15 +1,15 @@
 ---
 title: "MongoDB Connection"
-description: "Learn how to configure a MongoDB Connection for Hanzo KMS."
+description: "Learn how to configure a MongoDB Connection for KMS."
 ---
 
-Hanzo KMS supports the use of Username & Password authentication to connect with MongoDB databases.
+KMS supports the use of Username & Password authentication to connect with MongoDB databases.
 
-## Configure a MongoDB user for Hanzo KMS
+## Configure a MongoDB user for KMS
 
 <Steps>
     <Step title="Create a MongoDB user">
-        Hanzo KMS recommends creating a designated user in your MongoDB database for your connection.
+        KMS recommends creating a designated user in your MongoDB database for your connection.
 
         ```bash
         use [TARGET-DATABASE]
@@ -30,7 +30,7 @@ Hanzo KMS supports the use of Username & Password authentication to connect with
 
         <Tabs>
             <Tab title="Secret Rotation">
-                For Secret Rotations, your Hanzo KMS user will require the ability to create, update, and delete users in the target database:
+                For Secret Rotations, your KMS user will require the ability to create, update, and delete users in the target database:
 
                 ```bash
                 use [TARGET-DATABASE]
@@ -48,13 +48,13 @@ Hanzo KMS supports the use of Username & Password authentication to connect with
 
 </Steps>
 
-## Create MongoDB Connection in Hanzo KMS
+## Create MongoDB Connection in KMS
 
 <Tabs>
-    <Tab title="Hanzo KMS UI">
+    <Tab title="KMS UI">
         <Steps>
             <Step title="Navigate to App Connections">
-                In your Hanzo KMS dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
+                In your KMS dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
 
                 ![App Connections Tab](/images/app-connections/general/add-connection.png)
             </Step>
@@ -78,7 +78,7 @@ Hanzo KMS supports the use of Username & Password authentication to connect with
                 ![MongoDB Connection Modal](/images/app-connections/mongodb/mongodb-app-connection-form.png)
             </Step>
             <Step title="Connection Created">
-                After clicking Create, your **MongoDB Connection** is established and ready to use with your Hanzo KMS project.
+                After clicking Create, your **MongoDB Connection** is established and ready to use with your KMS project.
 
                 ![MongoDB Connection Created](/images/app-connections/mongodb/mongodb-app-connection-generated.png)
             </Step>

@@ -762,7 +762,7 @@ export const identityKubernetesAuthServiceFactory = ({
       if (!plan.gateway) {
         throw new BadRequestError({
           message:
-            "Your current plan does not support gateway usage with identity k8s auth. Please upgrade your plan or contact Hanzo KMS Sales for assistance."
+            "Your current plan does not support gateway usage with identity k8s auth. Please upgrade your plan or contact KMS Sales for assistance."
         });
       }
 
@@ -953,7 +953,7 @@ export const identityKubernetesAuthServiceFactory = ({
       if (!plan.gateway) {
         throw new BadRequestError({
           message:
-            "Your current plan does not support gateway usage with identity k8s auth. Please upgrade your plan or contact Hanzo KMS Sales for assistance."
+            "Your current plan does not support gateway usage with identity k8s auth. Please upgrade your plan or contact KMS Sales for assistance."
         });
       }
 

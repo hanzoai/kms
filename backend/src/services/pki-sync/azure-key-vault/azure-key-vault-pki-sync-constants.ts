@@ -44,7 +44,7 @@ export const AZURE_KEY_VAULT_PKI_SYNC_LIST_OPTION = {
   destination: PkiSync.AzureKeyVault,
   canImportCertificates: false,
   canRemoveCertificates: true,
-  defaultCertificateNameSchema: "Hanzo KMS-PKI-Sync-{{certificateId}}",
+  defaultCertificateNameSchema: "KMS-PKI-Sync-{{certificateId}}",
   forbiddenCharacters: AZURE_KEY_VAULT_CERTIFICATE_NAMING.FORBIDDEN_CHARACTERS,
   allowedCharacterPattern: AZURE_KEY_VAULT_CERTIFICATE_NAMING.ALLOWED_CHARACTER_PATTERN,
   maxCertificateNameLength: AZURE_KEY_VAULT_CERTIFICATE_NAMING.MAX_NAME_LENGTH,

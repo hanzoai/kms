@@ -5,7 +5,7 @@ description: "Learn how to issue certificates using a Certificate Signing Reques
 
 import RequestCertSetup from "/snippets/documentation/platform/pki/guides/request-cert-setup.mdx";
 
-The [API enrollment method](/documentation/platform/pki/enrollment-methods/api) supports issuing certificates using a Certificate Signing Request (CSR). This allows you to manage your own private key externally while having Hanzo KMS sign the certificate.
+The [API enrollment method](/documentation/platform/pki/enrollment-methods/api) supports issuing certificates using a Certificate Signing Request (CSR). This allows you to manage your own private key externally while having KMS sign the certificate.
 
 ## When to Use CSR-Based Issuance
 
@@ -106,7 +106,7 @@ Your CSR must meet the following requirements:
   </Step>
   <Step title="Issue a certificate with your CSR">
     <Tabs>
-      <Tab title="Hanzo KMS UI">
+      <Tab title="KMS UI">
         To issue a certificate using your CSR, navigate to your Project > Certificates > Certificate Requests and click **Request**.
 
         ![pki certificates](/images/platform/pki/certificate/cert-issue.png)
@@ -177,7 +177,7 @@ Your CSR must meet the following requirements:
 <AccordionGroup>
   <Accordion title="When should I use Managed vs CSR?">
     **Use Managed (recommended for most cases)** when:
-    - You want Hanzo KMS to handle key generation and storage
+    - You want KMS to handle key generation and storage
     - You need server-side auto-renewal capabilities
     - You're deploying certificates via certificate syncs to cloud providers
     - You want the simplest setup with minimal configuration
@@ -191,12 +191,12 @@ Your CSR must meet the following requirements:
     - You're integrating with systems that generate their own CSRs (e.g., load balancers, appliances)
 
     <Note>
-      Certificates issued via CSR are **not eligible for server-side auto-renewal** since Hanzo KMS doesn't have access to the private key. You'll need to handle renewal by generating a new CSR and requesting a new certificate.
+      Certificates issued via CSR are **not eligible for server-side auto-renewal** since KMS doesn't have access to the private key. You'll need to handle renewal by generating a new CSR and requesting a new certificate.
     </Note>
   </Accordion>
 
   <Accordion title="How do I renew a certificate issued via CSR?">
-    Certificates issued via CSR cannot be automatically renewed by Hanzo KMS since the private key is managed externally. To renew:
+    Certificates issued via CSR cannot be automatically renewed by KMS since the private key is managed externally. To renew:
 
     1. Generate a new CSR using your existing private key (or generate a new key pair if desired)
     2. Request a new certificate using the new CSR

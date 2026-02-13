@@ -182,7 +182,7 @@ const envSchema = z
     SMTP_USERNAME: zpStr(z.string().optional()),
     SMTP_PASSWORD: zpStr(z.string().optional()),
     SMTP_FROM_ADDRESS: zpStr(z.string().optional()),
-    SMTP_FROM_NAME: zpStr(z.string().optional().default("Hanzo KMS")),
+    SMTP_FROM_NAME: zpStr(z.string().optional().default("KMS")),
     SMTP_CUSTOM_CA_CERT: zpStr(
       z.string().optional().describe("Base64 encoded custom CA certificate PEM(s) for the SMTP server")
     ),

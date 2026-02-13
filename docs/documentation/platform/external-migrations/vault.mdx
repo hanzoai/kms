@@ -1,18 +1,18 @@
 ---
-title: "Migrating from Vault to Hanzo KMS"
+title: "Migrating from Vault to KMS"
 sidebarTitle: "Vault"
-description: "Learn how to migrate resources from Vault to Hanzo KMS."
+description: "Learn how to migrate resources from Vault to KMS."
 ---
 
-This guide helps you migrate from HashiCorp Vault to Hanzo KMS. Whether you're moving a single application or your entire secrets infrastructure, Hanzo KMS provides tooling to make the transition smooth.
+This guide helps you migrate from HashiCorp Vault to KMS. Whether you're moving a single application or your entire secrets infrastructure, KMS provides tooling to make the transition smooth.
 
-Our in-platform migration tooling lets you set up a connection to your Vault instance once, then import specific resources as needed throughout Hanzo KMS. Think of it as creating a "bridge" between Vault and Hanzo KMS that you can use repeatedly.
+Our in-platform migration tooling lets you set up a connection to your Vault instance once, then import specific resources as needed throughout KMS. Think of it as creating a "bridge" between Vault and KMS that you can use repeatedly.
 
 **What you can migrate:**
 - KV v1 and KV v2 secrets
-- Kubernetes auth method configurations (become [Machine Identities](/documentation/platform/identities/machine-identities) in Hanzo KMS)
-- Kubernetes secrets engine roles (become [Dynamic Secrets](/documentation/platform/dynamic-secrets/kubernetes) in Hanzo KMS)
-- Vault policies (translated to [Hanzo KMS project roles](/documentation/platform/access-controls/role-based-access-controls))
+- Kubernetes auth method configurations (become [Machine Identities](/documentation/platform/identities/machine-identities) in KMS)
+- Kubernetes secrets engine roles (become [Dynamic Secrets](/documentation/platform/dynamic-secrets/kubernetes) in KMS)
+- Vault policies (translated to [KMS project roles](/documentation/platform/access-controls/role-based-access-controls))
 
 <Warning>
   **Organization Admin Access Required:** All in-platform migration features
@@ -22,11 +22,11 @@ Our in-platform migration tooling lets you set up a connection to your Vault ins
 
 ## Set Up Your Vault Connection
 
-Before importing anything, you need to establish a secure connection between Hanzo KMS and your Vault instance. This is a one-time setup.
+Before importing anything, you need to establish a secure connection between KMS and your Vault instance. This is a one-time setup.
 
 <Steps>
   <Step title="Create a Vault policy">
-    In your Vault instance, create a policy that allows Hanzo KMS to read your secrets, policies, and authentication configurations. This policy grants read-only access and doesn't allow Hanzo KMS to modify or create resources within your Vault instance.
+    In your Vault instance, create a policy that allows KMS to read your secrets, policies, and authentication configurations. This policy grants read-only access and doesn't allow KMS to modify or create resources within your Vault instance.
 
     <Accordion title="View the complete policy">
     ```hcl
@@ -100,15 +100,15 @@ Before importing anything, you need to establish a secure connection between Han
 
   </Step>
 
-  <Step title="Create an App Connection in Hanzo KMS">
-    In Hanzo KMS, navigate to **Organization Settings > App Connections** and create a new HashiCorp Vault connection.
+  <Step title="Create an App Connection in KMS">
+    In KMS, navigate to **Organization Settings > App Connections** and create a new HashiCorp Vault connection.
 
     Follow the [HashiCorp Vault App Connection documentation](/integrations/app-connections/hashicorp-vault) for detailed setup instructions. When configuring authentication (Token or AppRole), make sure it uses the `kms-in-platform-migration` policy you created.
 
   </Step>
 
   <Step title="Add Vault Namespaces for Migration">
-    Navigate to **Organization Settings > External Migrations** in Hanzo KMS.
+    Navigate to **Organization Settings > External Migrations** in KMS.
 
     Under the "In-Platform Migration Tooling" section for HashiCorp Vault, click **"+ Add Namespace"**.
 
@@ -130,7 +130,7 @@ Before importing anything, you need to establish a secure connection between Han
 
 ## Migrate Your Resources
 
-Once your Vault connection is configured, you'll see import options throughout Hanzo KMS wherever relevant. The sections below cover each type of resource you can migrate.
+Once your Vault connection is configured, you'll see import options throughout KMS wherever relevant. The sections below cover each type of resource you can migrate.
 
 <Tip>
 **Migration Strategy:** We recommend migrating one application at a time. Start with a non-critical application to familiarize yourself with the process, then proceed to more important services.
@@ -141,7 +141,7 @@ Once your Vault connection is configured, you'll see import options throughout H
 KV secrets are imported into a specific **environment** (e.g., Development, Staging, Production) within a **project**. If you're coming from Vault, think of a project as similar to a KV secret engine dedicated to one application.
 
 <Info>
-**First time?** You'll need to [create a project](/documentation/platform/project) first. A project in Hanzo KMS typically represents a single application or microservice.
+**First time?** You'll need to [create a project](/documentation/platform/project) first. A project in KMS typically represents a single application or microservice.
 </Info>
 
 **To import secrets from Vault:**
@@ -160,15 +160,15 @@ KV secrets are imported into a specific **environment** (e.g., Development, Stag
   ![Import Vault Secrets](/images/platform/external-migrations/vault-in-platform/import-vault-secrets-modal.png)
 
 
-The secrets will be imported into your current environment and folder path. If your Vault path has nested paths, you can create [folders](/documentation/platform/folder) in Hanzo KMS to maintain a similar structure.
+The secrets will be imported into your current environment and folder path. If your Vault path has nested paths, you can create [folders](/documentation/platform/folder) in KMS to maintain a similar structure.
 
 ### Migrating Kubernetes Auth Method
 
-If you're using Vault's Kubernetes auth method to authenticate your pods, you can migrate this configuration to Hanzo KMS's [Machine Identities](/documentation/platform/identities/machine-identities). In Vault, you define Kubernetes roles that specify which service accounts can authenticate. In Hanzo KMS, this maps to a Machine Identity with Kubernetes authentication enabled.
+If you're using Vault's Kubernetes auth method to authenticate your pods, you can migrate this configuration to KMS's [Machine Identities](/documentation/platform/identities/machine-identities). In Vault, you define Kubernetes roles that specify which service accounts can authenticate. In KMS, this maps to a Machine Identity with Kubernetes authentication enabled.
 
 **To import Kubernetes auth configuration:**
 
-1. First, [create a Machine Identity](/documentation/platform/identities/machine-identities) in Hanzo KMS
+1. First, [create a Machine Identity](/documentation/platform/identities/machine-identities) in KMS
 2. Navigate to **Access Control > Machine Identities** and select the identity
 3. Click **"Add Authentication Method"** and choose **Kubernetes Auth**
 4. In the configuration modal, click **"Load from Vault"**
@@ -187,11 +187,11 @@ The authentication settings (allowed service accounts, namespaces, TTL, etc.) wi
   must be manually provided in the form after importing the configuration.
 </Note>
 
-**After importing:** You'll need to update your Kubernetes deployments to use the [KMS Operator](/integrations/platforms/kubernetes/overview) or [Hanzo KMS SDK](/sdks/overview) instead of the Vault agent/sidecar.
+**After importing:** You'll need to update your Kubernetes deployments to use the [KMS Operator](/integrations/platforms/kubernetes/overview) or [KMS SDK](/sdks/overview) instead of the Vault agent/sidecar.
 
 ### Migrating Kubernetes Secrets Engine Roles
 
-If you're using Vault's Kubernetes secrets engine to generate short-lived Kubernetes credentials, you can migrate these roles to Hanzo KMS's [Dynamic Secrets](/documentation/platform/dynamic-secrets/kubernetes). Both platforms support generating temporary Kubernetes service account tokens or creating temporary service accounts, so the configuration is similar.
+If you're using Vault's Kubernetes secrets engine to generate short-lived Kubernetes credentials, you can migrate these roles to KMS's [Dynamic Secrets](/documentation/platform/dynamic-secrets/kubernetes). Both platforms support generating temporary Kubernetes service account tokens or creating temporary service accounts, so the configuration is similar.
 
 **To import a Kubernetes dynamic secret configuration:**
 
@@ -219,13 +219,13 @@ The form will be automatically populated with the role's configuration including
   be manually provided in the form after loading the configuration.
 </Note>
 
-Learn more about how Dynamic Secrets work in Hanzo KMS in the [Dynamic Secrets documentation](/documentation/platform/dynamic-secrets/overview).
+Learn more about how Dynamic Secrets work in KMS in the [Dynamic Secrets documentation](/documentation/platform/dynamic-secrets/overview).
 
 ### Migrating Vault Policies
 
-Hanzo KMS can translate your Vault HCL policies into [Hanzo KMS project roles](/documentation/platform/access-controls/role-based-access-controls). The table below shows how Vault capabilities map to Hanzo KMS permissions:
+KMS can translate your Vault HCL policies into [KMS project roles](/documentation/platform/access-controls/role-based-access-controls). The table below shows how Vault capabilities map to KMS permissions:
 
-| Vault Capability | Hanzo KMS Permission |
+| Vault Capability | KMS Permission |
 |-----------------|---------------------|
 | `read` | Read secrets |
 | `list` | Read secrets (list is implicit with read) |
@@ -236,7 +236,7 @@ Hanzo KMS can translate your Vault HCL policies into [Hanzo KMS project roles](/
 <Note>
   Policy translation is best-effort and provides a starting point based on your
   Vault configuration. The translated permissions should be reviewed and
-  adjusted as needed since Vault and Hanzo KMS have different access control
+  adjusted as needed since Vault and KMS have different access control
   models.
 </Note>
 
@@ -252,13 +252,13 @@ Hanzo KMS can translate your Vault HCL policies into [Hanzo KMS project roles](/
 
    ![Translate Vault Policy Modal](/images/platform/external-migrations/vault-in-platform/translate-vault-policy-modal.png)
 
-5. Review the automatically translated Hanzo KMS permissions
+5. Review the automatically translated KMS permissions
 6. Make any adjustments and save
 
 <Tip>
   **How policy translation works:**
   - Vault path patterns are analyzed to identify KV secret engines and environments
-  - Vault capabilities (`read`, `list`, `create`, etc.) are mapped to Hanzo KMS permissions
+  - Vault capabilities (`read`, `list`, `create`, etc.) are mapped to KMS permissions
   - Wildcards in paths are converted to glob patterns
   - Secret paths are preserved for granular access control
   
@@ -270,7 +270,7 @@ Hanzo KMS can translate your Vault HCL policies into [Hanzo KMS project roles](/
   }
   ```
   
-  Becomes an Hanzo KMS role with **read** permission on secrets in the corresponding environment/folder path.
+  Becomes an KMS role with **read** permission on secrets in the corresponding environment/folder path.
 </Tip>
 
 ## Next Steps After Migration
@@ -279,7 +279,7 @@ Once you've imported your secrets and configurations, here's how to start using 
 
 <CardGroup cols={2}>
   <Card title="Update Your Applications" icon="code" href="/sdks/overview">
-    Replace Vault client libraries with Hanzo KMS SDKs in your application code
+    Replace Vault client libraries with KMS SDKs in your application code
   </Card>
   <Card title="Set Up Kubernetes Integration" icon="dharmachakra" href="/integrations/platforms/kubernetes/overview">
     Use the KMS Operator to inject secrets into your pods

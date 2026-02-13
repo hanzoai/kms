@@ -1,27 +1,27 @@
 ---
 title: "SSH"
 sidebarTitle: "SSH"
-description: "Learn how to configure SSH server access through Hanzo KMS PAM with support for password, key-based, and certificate-based authentication."
+description: "Learn how to configure SSH server access through KMS PAM with support for password, key-based, and certificate-based authentication."
 ---
 
-Hanzo KMS PAM supports secure, just-in-time access to SSH servers. This allows your team to access Linux/Unix servers without sharing static credentials, while maintaining a complete audit trail of all sessions.
+KMS PAM supports secure, just-in-time access to SSH servers. This allows your team to access Linux/Unix servers without sharing static credentials, while maintaining a complete audit trail of all sessions.
 
 ## How It Works
 
-SSH access in Hanzo KMS PAM uses a Gateway deployed in your network to establish secure connections to your servers. The Gateway acts as a bridge between Hanzo KMS and your private infrastructure.
+SSH access in KMS PAM uses a Gateway deployed in your network to establish secure connections to your servers. The Gateway acts as a bridge between KMS and your private infrastructure.
 
 ```mermaid
 sequenceDiagram
     participant CLI as KMS CLI
     participant Gateway
-    participant Hanzo KMS
+    participant KMS
     participant SSH as SSH Server
 
-    CLI->>Hanzo KMS: Request session (authenticate)
-    Hanzo KMS-->>CLI: Session ID + Gateway connection details
+    CLI->>KMS: Request session (authenticate)
+    KMS-->>CLI: Session ID + Gateway connection details
     CLI->>Gateway: Connect via secure tunnel
-    Gateway->>Hanzo KMS: Fetch credentials for session
-    Hanzo KMS-->>Gateway: Return credentials
+    Gateway->>KMS: Fetch credentials for session
+    KMS-->>Gateway: Return credentials
     Gateway->>SSH: Connect with credentials
     SSH-->>Gateway: Session established
     Gateway-->>CLI: Proxied SSH session
@@ -29,7 +29,7 @@ sequenceDiagram
 
 ## Authentication Methods
 
-Hanzo KMS PAM supports three authentication methods for SSH:
+KMS PAM supports three authentication methods for SSH:
 
 | Method | Description | Use Case |
 |--------|-------------|----------|
@@ -39,27 +39,27 @@ Hanzo KMS PAM supports three authentication methods for SSH:
 
 ### Certificate-Based Authentication
 
-Certificate-based authentication allows for the use of ephemeral credentials. Hanzo KMS generates short-lived SSH certificates on-demand for each session.
+Certificate-based authentication allows for the use of ephemeral credentials. KMS generates short-lived SSH certificates on-demand for each session.
 
 **Benefits:**
 - **Ephemeral access**: Certificates are generated per-session and expire automatically
-- **Centralized trust**: Servers trust the Hanzo KMS CA to authorize connections
-- **Simplified management**: Hanzo KMS handles the certificate lifecycle for each connection
+- **Centralized trust**: Servers trust the KMS CA to authorize connections
+- **Simplified management**: KMS handles the certificate lifecycle for each connection
 - **Audit trail**: Each certificate is tied to a specific user and session
 
 ```mermaid
 sequenceDiagram
     participant CLI as KMS CLI
     participant Gateway
-    participant Hanzo KMS
+    participant KMS
     participant SSH as SSH Server
 
-    CLI->>Hanzo KMS: Request session (authenticate)
-    Hanzo KMS-->>CLI: Session ID + Gateway connection details
+    CLI->>KMS: Request session (authenticate)
+    KMS-->>CLI: Session ID + Gateway connection details
     CLI->>Gateway: Connect via secure tunnel
-    Gateway->>Hanzo KMS: Fetch credentials for session
-    Hanzo KMS->>Hanzo KMS: Generate key pair + sign certificate
-    Hanzo KMS-->>Gateway: Return private key + certificate
+    Gateway->>KMS: Fetch credentials for session
+    KMS->>KMS: Generate key pair + sign certificate
+    KMS-->>Gateway: Return private key + certificate
     Gateway->>SSH: Connect with certificate
     SSH->>SSH: Verify certificate against CA
     SSH-->>Gateway: Session established
@@ -68,7 +68,7 @@ sequenceDiagram
 
 ## Prerequisites
 
-Before configuring SSH access in Hanzo KMS PAM, ensure you have:
+Before configuring SSH access in KMS PAM, ensure you have:
 
 1. **An KMS Gateway** deployed with network reachability to your SSH servers
 2. **Network connectivity** from the Gateway to your SSH servers on port 22 (or custom SSH port)
@@ -108,7 +108,7 @@ The PAM Resource represents the SSH server you want to protect.
   </Step>
 
   <Step title="Create the Resource">
-    Click **Create Resource**. Hanzo KMS will validate that the Gateway can reach the SSH server.
+    Click **Create Resource**. KMS will validate that the Gateway can reach the SSH server.
   </Step>
 </Steps>
 
@@ -174,11 +174,11 @@ A PAM Account represents a specific user account on the SSH server. You can crea
 
 ### Certificate Authentication
 
-Certificate authentication requires additional setup on your SSH server to trust the Hanzo KMS CA.
+Certificate authentication requires additional setup on your SSH server to trust the KMS CA.
 
 <Steps>
   <Step title="Configure the SSH Server">
-    Before creating the account, you need to configure your SSH server to trust certificates signed by Hanzo KMS.
+    Before creating the account, you need to configure your SSH server to trust certificates signed by KMS.
 
     Run the following command on your SSH server (requires root/sudo):
 
@@ -216,7 +216,7 @@ Certificate authentication requires additional setup on your SSH server to trust
     </Warning>
   </Step>
 
-  <Step title="Add Account in Hanzo KMS">
+  <Step title="Add Account in KMS">
     <ParamField path="Name" type="string" required>
       A friendly name for this account
     </ParamField>
@@ -230,7 +230,7 @@ Certificate authentication requires additional setup on your SSH server to trust
     </ParamField>
 
     <Note>
-      Unlike password or key authentication, you don't need to provide any credentials. Hanzo KMS will generate a new key pair and certificate for each session.
+      Unlike password or key authentication, you don't need to provide any credentials. KMS will generate a new key pair and certificate for each session.
     </Note>
   </Step>
 </Steps>
@@ -253,14 +253,14 @@ Once your resource and accounts are configured, users can access SSH servers thr
     ```
   </Step>
 
-  <Step title="Login to Hanzo KMS">
+  <Step title="Login to KMS">
     ```bash
     hanzo-kms login
     ```
   </Step>
 
   <Step title="Connect to SSH Server">
-    Specify the **resource name** and **account name** as shown in Hanzo KMS:
+    Specify the **resource name** and **account name** as shown in KMS:
 
     ```bash
     kms pam ssh access --resource <resource-name> --account <account-name> --project-id <project-id> --duration <duration>

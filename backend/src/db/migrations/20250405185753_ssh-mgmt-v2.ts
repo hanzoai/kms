@@ -48,7 +48,7 @@ export async function up(knex: Knex): Promise<void> {
   }
 
   if (!(await knex.schema.hasTable(TableName.ProjectSshConfig))) {
-    // new table to store configuration for projects of type SSH (i.e. Hanzo KMS SSH)
+    // new table to store configuration for projects of type SSH (i.e. KMS SSH)
     await knex.schema.createTable(TableName.ProjectSshConfig, (t) => {
       t.uuid("id", { primaryKey: true }).defaultTo(knex.fn.uuid());
       t.timestamps(true, true, true);

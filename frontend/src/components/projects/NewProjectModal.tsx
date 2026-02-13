@@ -312,7 +312,7 @@ const NewProjectForm = ({ onOpenChange }: NewProjectFormProps) => {
                       side="top"
                     >
                       <SelectItem value={INTERNAL_KMS_KEY_ID} key="kms-internal">
-                        Default Hanzo KMS KMS
+                        Default KMS KMS
                       </SelectItem>
                       {externalKmsList?.map((kms) => (
                         <SelectItem value={kms.id} key={`kms-${kms.id}`}>

@@ -1,15 +1,15 @@
 ---
 title: "Redis Connection"
-description: "Learn how to configure a Redis Connection for Hanzo KMS."
+description: "Learn how to configure a Redis Connection for KMS."
 ---
 
-Hanzo KMS supports the use of Username & Password authentication to connect with Redis databases
+KMS supports the use of Username & Password authentication to connect with Redis databases
 
-## Configure a Redis user for Hanzo KMS 
+## Configure a Redis user for KMS 
 
 <Steps>
     <Step title="Create a Redis user">
-        Hanzo KMS recommends creating a designated user in your Redis database for your connection.
+        KMS recommends creating a designated user in your Redis database for your connection.
 
         ```bash
         ACL SETUSER user_manager on >[ENTER-YOUR-USER-PASSWORD]
@@ -25,7 +25,7 @@ Hanzo KMS supports the use of Username & Password authentication to connect with
         
         <Tabs>
             <Tab title="Secret Rotation">
-                For Secret Rotations, your Hanzo KMS user will require the ability to set and delete users:
+                For Secret Rotations, your KMS user will require the ability to set and delete users:
 
                 ```bash
                 ACL SETUSER user_manager +acl|setuser +acl|deluser ~*
@@ -36,13 +36,13 @@ Hanzo KMS supports the use of Username & Password authentication to connect with
 </Steps>
 
 
-## Create Redis Connection in Hanzo KMS
+## Create Redis Connection in KMS
 
 <Tabs>
-    <Tab title="Hanzo KMS UI">
+    <Tab title="KMS UI">
         <Steps>
             <Step title="Navigate to App Connections">
-                In your Hanzo KMS dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
+                In your KMS dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
 
                 ![App Connections Tab](/images/app-connections/general/add-connection.png)
             </Step>
@@ -66,7 +66,7 @@ Hanzo KMS supports the use of Username & Password authentication to connect with
                 ![Redis Connection Modal](/images/app-connections/redis/redis-app-connection-form.png)
             </Step>
             <Step title="Connection Created">
-                After clicking Create, your **Redis Connection** is established and ready to use with your Hanzo KMS project.
+                After clicking Create, your **Redis Connection** is established and ready to use with your KMS project.
 
                 ![Redis Connection Created](/images/app-connections/redis/redis-app-connection-generated.png)
             </Step>

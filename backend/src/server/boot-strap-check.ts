@@ -16,18 +16,18 @@ const bootstrapCb = async () => {
   const serverCfg = await getServerCfg();
   const baseUrl = appCfg.SITE_URL || `http://localhost:${appCfg.PORT}`;
   if (!serverCfg.initialized) {
-    console.info(`Welcome to Hanzo KMS
+    console.info(`Welcome to KMS
 
-Create your Hanzo KMS administrator account at:
+Create your KMS administrator account at:
 ${baseUrl}/admin/signup
 `);
   } else {
     console.info(`Welcome back!
 
-To access Hanzo KMS Administrator Panel open
+To access KMS Administrator Panel open
 ${baseUrl}/admin
 
-To access Hanzo KMS server
+To access KMS server
 ${baseUrl}
 `);
   }

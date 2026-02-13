@@ -1,19 +1,19 @@
 ---
 title: CircleCI
-description: "Learn how to authenticate CircleCI jobs with Hanzo KMS using OpenID Connect (OIDC)."
+description: "Learn how to authenticate CircleCI jobs with KMS using OpenID Connect (OIDC)."
 ---
 
 **OIDC Auth** is a platform-agnostic JWT-based authentication method that can be used to authenticate from any platform or environment using an identity provider with OpenID Connect.
 
 ## Diagram
 
-The following sequence diagram illustrates the OIDC Auth workflow for authenticating CircleCI jobs with Hanzo KMS.
+The following sequence diagram illustrates the OIDC Auth workflow for authenticating CircleCI jobs with KMS.
 
 ```mermaid
 sequenceDiagram
   participant Client as CircleCI Job
   participant Idp as CircleCI Identity Provider
-  participant Infis as Hanzo KMS
+  participant Infis as KMS
 
   Idp->>Client: Step 1: Inject JWT with verifiable claims
 
@@ -27,28 +27,28 @@ sequenceDiagram
   Note over Infis: Step 4: JWT validation
   Infis->>Client: Return short-lived access token
 
-  Note over Client,Infis: Step 5: Access Hanzo KMS API with Token
+  Note over Client,Infis: Step 5: Access KMS API with Token
   Client->>Infis: Make authenticated requests using the short-lived access token
 ```
 
 ## Concept
 
-At a high-level, Hanzo KMS authenticates a client by verifying the JWT and checking that it meets specific requirements (e.g. it is issued by a trusted identity provider) at the `/api/v1/auth/oidc-auth/login` endpoint. If successful,
-then Hanzo KMS returns a short-lived access token that can be used to make authenticated requests to the Hanzo KMS API.
+At a high-level, KMS authenticates a client by verifying the JWT and checking that it meets specific requirements (e.g. it is issued by a trusted identity provider) at the `/api/v1/auth/oidc-auth/login` endpoint. If successful,
+then KMS returns a short-lived access token that can be used to make authenticated requests to the KMS API.
 
 To be more specific:
 
 1. CircleCI provides the running job with a valid OIDC token specific to the execution.
-2. The CircleCI OIDC token is sent to Hanzo KMS at the `/api/v1/auth/oidc-auth/login` endpoint.
-3. Hanzo KMS fetches the public key that was used to sign the identity token provided by CircleCI.
-4. Hanzo KMS validates the JWT using the public key provided by the identity provider and checks that the subject, audience, and claims of the token matches with the set criteria.
-5. If all is well, Hanzo KMS returns a short-lived access token that CircleCI jobs can use to make authenticated requests to the Hanzo KMS API.
+2. The CircleCI OIDC token is sent to KMS at the `/api/v1/auth/oidc-auth/login` endpoint.
+3. KMS fetches the public key that was used to sign the identity token provided by CircleCI.
+4. KMS validates the JWT using the public key provided by the identity provider and checks that the subject, audience, and claims of the token matches with the set criteria.
+5. If all is well, KMS returns a short-lived access token that CircleCI jobs can use to make authenticated requests to the KMS API.
 
-<Note>Hanzo KMS needs network-level access to the CircleCI servers.</Note>
+<Note>KMS needs network-level access to the CircleCI servers.</Note>
 
 ## Guide
 
-In the following steps, we explore how to create and use identities to access the Hanzo KMS API using the OIDC Auth authentication method.
+In the following steps, we explore how to create and use identities to access the KMS API using the OIDC Auth authentication method.
 
 <Steps>
     <Step title="Creating an identity">
@@ -103,8 +103,8 @@ In the following steps, we explore how to create and use identities to access th
 
     ![identities project create](/images/platform/identities/identities-project-create.png)
     </Step>
-    <Step title="Using CircleCI OIDC token to authenticate with Hanzo KMS">
-        The following is an example of how to use the `$CIRCLE_OIDC_TOKEN` with the Hanzo KMS [terraform provider](https://registry.terraform.io/providers/Hanzo KMS/kms/latest/docs) to manage resources in a CircleCI pipeline.
+    <Step title="Using CircleCI OIDC token to authenticate with KMS">
+        The following is an example of how to use the `$CIRCLE_OIDC_TOKEN` with the KMS [terraform provider](https://registry.terraform.io/providers/KMS/kms/latest/docs) to manage resources in a CircleCI pipeline.
 
         ```yml config.yml
         version: 2.1
@@ -128,7 +128,7 @@ In the following steps, we explore how to create and use identities to access th
             jobs:
             - terraform-apply
         ```
-        The Hanzo KMS terraform provider expects the  `KMS_AUTH_JWT` environment variable to be set to the CircleCI OIDC token.
+        The KMS terraform provider expects the  `KMS_AUTH_JWT` environment variable to be set to the CircleCI OIDC token.
         ```hcl main.tf
         terraform {
             required_providers {
@@ -166,7 +166,7 @@ In the following steps, we explore how to create and use identities to access th
             Each identity access token has a time-to-live (TTL) which you can infer from the response of the login operation;
             the default TTL is `7200` seconds which can be adjusted.
 
-            If an identity access token expires, it can no longer authenticate with the Hanzo KMS API. In this case,
+            If an identity access token expires, it can no longer authenticate with the KMS API. In this case,
             a new access token should be obtained by performing another login operation.
         </Note>
     </Step>

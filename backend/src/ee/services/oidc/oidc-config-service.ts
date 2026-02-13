@@ -470,7 +470,7 @@ export const oidcConfigServiceFactory = ({
       await smtpService
         .sendMail({
           template: SmtpTemplates.EmailVerification,
-          subjectLine: "Hanzo KMS confirmation code",
+          subjectLine: "KMS confirmation code",
           recipients: [user.email],
           substitutions: {
             code: token
@@ -478,7 +478,7 @@ export const oidcConfigServiceFactory = ({
         })
         .catch((err: Error) => {
           throw new OidcAuthError({
-            message: `Error sending email confirmation code for user registration - contact the Hanzo KMS instance admin. ${err.message}`
+            message: `Error sending email confirmation code for user registration - contact the KMS instance admin. ${err.message}`
           });
         });
     }

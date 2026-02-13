@@ -1,19 +1,19 @@
 ---
 title: JWT Auth
-description: "Learn how to authenticate with Hanzo KMS using JWT-based authentication."
+description: "Learn how to authenticate with KMS using JWT-based authentication."
 ---
 
 **JWT Auth** is a platform-agnostic authentication method that validates JSON Web Tokens (JWTs) issued by your JWT issuer or authentication system, allowing secure authentication from any platform or environment that can obtain valid JWTs.
 
 ## Diagram
 
-The following sequence diagram illustrates the JWT Auth workflow for authenticating with Hanzo KMS.
+The following sequence diagram illustrates the JWT Auth workflow for authenticating with KMS.
 
 ```mermaid
 sequenceDiagram
     participant Client as Client Application
     participant Issuer as JWT Issuer
-    participant Infis as Hanzo KMS
+    participant Infis as KMS
 
     Client->>Issuer: Step 1: Request JWT token
     Issuer-->>Client: Return signed JWT with claims
@@ -28,32 +28,32 @@ sequenceDiagram
     Note over Infis: Step 4: Token Generation
     Infis->>Client: Return short-lived access token
 
-    Note over Client,Infis: Step 5: Access Hanzo KMS API with Token
+    Note over Client,Infis: Step 5: Access KMS API with Token
     Client->>Infis: Make authenticated requests using the short-lived access token
 ```
 
 ## Concept
 
-At a high-level, Hanzo KMS authenticates a client by verifying the JWT and checking that it meets specific requirements (e.g. it is signed by a trusted key) at the `/api/v1/auth/jwt-auth/login` endpoint. If successful, then Hanzo KMS returns a short-lived access token that can be used to make authenticated requests to the Hanzo KMS API.
+At a high-level, KMS authenticates a client by verifying the JWT and checking that it meets specific requirements (e.g. it is signed by a trusted key) at the `/api/v1/auth/jwt-auth/login` endpoint. If successful, then KMS returns a short-lived access token that can be used to make authenticated requests to the KMS API.
 
 To be more specific:
 
 1. The client requests a JWT from their JWT issuer.
-2. The fetched JWT is sent to Hanzo KMS at the `/api/v1/auth/jwt-auth/login` endpoint.
-3. Hanzo KMS validates the JWT signature using either:
+2. The fetched JWT is sent to KMS at the `/api/v1/auth/jwt-auth/login` endpoint.
+3. KMS validates the JWT signature using either:
    - Pre-configured public keys (Static configuration)
    - Public keys fetched from a JWKS endpoint (JWKS configuration)
-4. Hanzo KMS verifies that the configured claims match in the token. This includes standard claims like subject, audience, and issuer, as well as any additional custom claims specified in the configuration.
-5. If all is well, Hanzo KMS returns a short-lived access token that the client can use to make authenticated requests to the Hanzo KMS API.
+4. KMS verifies that the configured claims match in the token. This includes standard claims like subject, audience, and issuer, as well as any additional custom claims specified in the configuration.
+5. If all is well, KMS returns a short-lived access token that the client can use to make authenticated requests to the KMS API.
 
 <Note>
-  For JWKS configuration, Hanzo KMS needs network-level access to the configured
+  For JWKS configuration, KMS needs network-level access to the configured
   JWKS endpoint.
 </Note>
 
 ## Guide
 
-In the following steps, we explore how to create and use identities to access the Hanzo KMS API using the JWT authentication method.
+In the following steps, we explore how to create and use identities to access the KMS API using the JWT authentication method.
 
 <Steps>
 <Step title="Creating an identity">
@@ -118,24 +118,24 @@ In the following steps, we explore how to create and use identities to access th
     ![identities project create](/images/platform/identities/identities-project-create.png)
     </Step>
 
-    <Step title="Accessing the Hanzo KMS API with the identity">
-    To access the Hanzo KMS API as the identity, you will need to obtain a JWT from your JWT issuer that meets the validation requirements configured in step 2.
+    <Step title="Accessing the KMS API with the identity">
+    To access the KMS API as the identity, you will need to obtain a JWT from your JWT issuer that meets the validation requirements configured in step 2.
 
-    Once you have obtained a valid JWT, you can use it to authenticate with Hanzo KMS at the `/api/v1/auth/jwt-auth/login` endpoint.
+    Once you have obtained a valid JWT, you can use it to authenticate with KMS at the `/api/v1/auth/jwt-auth/login` endpoint.
 
-    We provide a code example below of how you might use the JWT to authenticate with Hanzo KMS to gain access to the [Hanzo KMS API](/api-reference/overview/introduction).
+    We provide a code example below of how you might use the JWT to authenticate with KMS to gain access to the [KMS API](/api-reference/overview/introduction).
 
    <Accordion
         title="Sample code for inside an application"
     > 
-        The shown example uses Node.js but you can use any other language to authenticate with Hanzo KMS using your JWT.
+        The shown example uses Node.js but you can use any other language to authenticate with KMS using your JWT.
         
         ```javascript   
         try {
             // Obtain JWT from your issuer
             const jwt = "<your-jwt-token>";
 
-            const kmsUrl = "https://kms.hanzo.ai"; // or your self-hosted Hanzo KMS URL
+            const kmsUrl = "https://kms.hanzo.ai"; // or your self-hosted KMS URL
             const identityId = "<your-identity-id>";
 
             const { data } = await axios.post(
@@ -154,14 +154,14 @@ In the following steps, we explore how to create and use identities to access th
     </Accordion>
 
     <Tip>
-        We recommend using one of Hanzo KMS's clients like SDKs or the KMS Agent to authenticate with Hanzo KMS using JWT Auth as they handle the authentication process for you.
+        We recommend using one of KMS's clients like SDKs or the KMS Agent to authenticate with KMS using JWT Auth as they handle the authentication process for you.
     </Tip>
 
     <Note>
     Each identity access token has a time-to-live (TTL) which you can infer from the response of the login operation;
     the default TTL is `2592000` seconds (30 days) which can be adjusted in the configuration.
 
-    If an identity access token exceeds its max TTL or maximum number of uses, it can no longer authenticate with the Hanzo KMS API. In this case,
+    If an identity access token exceeds its max TTL or maximum number of uses, it can no longer authenticate with the KMS API. In this case,
     a new access token should be obtained by performing another login operation with a valid JWT.
     </Note>
 

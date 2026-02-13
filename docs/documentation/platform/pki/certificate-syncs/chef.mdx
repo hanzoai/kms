@@ -1,16 +1,16 @@
 ---
 title: "Chef"
-description: "Learn how to configure a Chef Certificate Sync for Hanzo KMS PKI."
+description: "Learn how to configure a Chef Certificate Sync for KMS PKI."
 ---
 
 **Prerequisites:**
 
 - Create a [Chef Connection](/integrations/app-connections/chef)
-- Ensure your network security policies allow incoming requests from Hanzo KMS to this certificate sync provider, if network restrictions apply.
+- Ensure your network security policies allow incoming requests from KMS to this certificate sync provider, if network restrictions apply.
 
 <Note>
   The Chef Certificate Sync requires the following permissions to be set on the Chef user
-  for Hanzo KMS to sync certificates to Chef: `data bag read`, `data bag create`, `data bag update`, `data bag delete`.
+  for KMS to sync certificates to Chef: `data bag read`, `data bag create`, `data bag update`, `data bag delete`.
 
 Any role with these permissions would work such as a custom role with **Data Bag** permissions.
 
@@ -22,7 +22,7 @@ Any role with these permissions would work such as a custom role with **Data Bag
 </Note>
 
 <Tabs>
-    <Tab title="Hanzo KMS UI">
+    <Tab title="KMS UI">
         1. Navigate to **Project** > **Integrations** > **Certificate Syncs** and press **Add Sync**.
         ![Certificate Syncs Tab](/images/platform/pki/certificate-syncs/general/create-certificate-sync.png)
 
@@ -38,8 +38,8 @@ Any role with these permissions would work such as a custom role with **Data Bag
         4. Configure the **Sync Options** to specify how certificates should be synced, then click **Next**.
         ![Configure Options](/images/platform/pki/certificate-syncs/chef/chef-options.png)
 
-            - **Enable Removal of Expired/Revoked Certificates**: If enabled, Hanzo KMS will remove certificates from the destination if they are no longer active in Hanzo KMS.
-            - **Preserve Data Bag Item on Renewal**: Only applies to certificate renewals. When a certificate is renewed in Hanzo KMS, this option controls how the renewed certificate is handled. If enabled, the renewed certificate will update the existing data bag item, preserving the same item name. If disabled, the renewed certificate will be created as a new data bag item with a new name.
+            - **Enable Removal of Expired/Revoked Certificates**: If enabled, KMS will remove certificates from the destination if they are no longer active in KMS.
+            - **Preserve Data Bag Item on Renewal**: Only applies to certificate renewals. When a certificate is renewed in KMS, this option controls how the renewed certificate is handled. If enabled, the renewed certificate will update the existing data bag item, preserving the same item name. If disabled, the renewed certificate will be created as a new data bag item with a new name.
             - **Include Root CA**: If enabled, the Root CA certificate will be included in the certificate chain when syncing to Chef data bags. If disabled, only intermediate certificates will be included.
             - **Certificate Name Schema** (Optional): Customize how certificate item names are generated in Chef data bags. Use `{{certificateId}}` as a placeholder for the certificate ID.
             - **Auto-Sync Enabled**: If enabled, certificates will automatically be synced when changes occur. Disable to enforce manual syncing only.
@@ -210,7 +210,7 @@ Any role with these permissions would work such as a custom role with **Data Bag
 
 The Chef Certificate Sync provides:
 
-- **Automatic Deployment**: Deploy certificates in Hanzo KMS to Chef data bags with customizable field names.
+- **Automatic Deployment**: Deploy certificates in KMS to Chef data bags with customizable field names.
 - **Certificate Updates**: Update certificates in Chef data bags when renewals occur.
 - **Expiration Handling**: Optionally remove expired certificates from Chef data bags (if enabled).
 - **Format Preservation**: Maintain certificate format during sync operations.
@@ -232,12 +232,12 @@ You can manually trigger certificate synchronization to Chef using the sync cert
 - Testing certificate sync configurations
 - Force sync after making changes
 
-To manually sync certificates, use the [Sync Certificates](/api-reference/endpoints/pki/syncs/chef/sync-certificates) API endpoint or the manual sync option in the Hanzo KMS UI.
+To manually sync certificates, use the [Sync Certificates](/api-reference/endpoints/pki/syncs/chef/sync-certificates) API endpoint or the manual sync option in the KMS UI.
 
 ## FAQ
 
-<Accordion title="Can I import certificates from Chef back into Hanzo KMS?">
-  Chef does not support importing certificates back into Hanzo KMS
+<Accordion title="Can I import certificates from Chef back into KMS?">
+  Chef does not support importing certificates back into KMS
   due to the nature of Chef data bags where certificates are stored as data
   rather than managed certificate objects.
 </Accordion>

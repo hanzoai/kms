@@ -1,24 +1,24 @@
 ---
 title: "General OIDC Group Membership Mapping"
 sidebarTitle: "Group Membership Mapping"
-description: "Learn how to sync OIDC group members to matching groups in Hanzo KMS."
+description: "Learn how to sync OIDC group members to matching groups in KMS."
 ---
 
-You can have Hanzo KMS automatically sync group
-memberships between your OIDC provider and Hanzo KMS by configuring a `groups` claim on your provider tokens.
-When a user logs in via OIDC, they will be added to Hanzo KMS groups that are present in their OIDC `groups` claim,
-and removed from any Hanzo KMS groups not present in the claim.
+You can have KMS automatically sync group
+memberships between your OIDC provider and KMS by configuring a `groups` claim on your provider tokens.
+When a user logs in via OIDC, they will be added to KMS groups that are present in their OIDC `groups` claim,
+and removed from any KMS groups not present in the claim.
 
 <Info>
     When enabled, manual
-    management of Hanzo KMS group memberships will be disabled.
+    management of KMS group memberships will be disabled.
 </Info>
 
 <Warning>
-    Group membership changes in your OIDC provider only sync with Hanzo KMS when a
+    Group membership changes in your OIDC provider only sync with KMS when a
     user logs in via OIDC. For example, if you remove a user from a group in your OIDC provider,
-    this change will not be reflected in Hanzo KMS until their next OIDC login.
-    To ensure this behavior, Hanzo KMS recommends enabling Enforce OIDC SSO in the OIDC settings.
+    this change will not be reflected in KMS until their next OIDC login.
+    To ensure this behavior, KMS recommends enabling Enforce OIDC SSO in the OIDC settings.
 </Warning>
 
 
@@ -42,8 +42,8 @@ and removed from any Hanzo KMS groups not present in the claim.
             Setup varies between OIDC providers. Please refer to your OIDC provider's documentation for more information.
         </Note>
     </Step>
-    <Step title="Setup groups in Hanzo KMS and enable OIDC Group Membership Mapping">
-        2.1. In Hanzo KMS, create any groups you would like to sync users to. Make sure the name of the Hanzo KMS group is an exact match of the OIDC group name.
+    <Step title="Setup groups in KMS and enable OIDC Group Membership Mapping">
+        2.1. In KMS, create any groups you would like to sync users to. Make sure the name of the KMS group is an exact match of the OIDC group name.
         ![OIDC general kms group](/images/sso/keycloak-oidc/group-membership-mapping/create-kms-group.png)
 
         2.2. Next, enable **OIDC Group Membership Mapping** on the **Single Sign-On (SSO)** page under the **General** tab.

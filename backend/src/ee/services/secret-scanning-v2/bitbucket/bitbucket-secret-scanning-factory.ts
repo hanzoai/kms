@@ -55,7 +55,7 @@ export const BitbucketSecretScanningFactory = () => {
     const { data } = await request.post<{ uuid: string }>(
       `${IntegrationUrls.BITBUCKET_API_URL}/2.0/workspaces/${encodeURIComponent(payload.config.workspaceSlug)}/hooks`,
       {
-        description: "Hanzo KMS webhook for push events",
+        description: "KMS webhook for push events",
         url: `${cfg.SITE_URL}/secret-scanning/webhooks/bitbucket`,
         active: false,
         events: ["repo:push"]
@@ -89,7 +89,7 @@ export const BitbucketSecretScanningFactory = () => {
     await request.put(
       `${IntegrationUrls.BITBUCKET_API_URL}/2.0/workspaces/${encodeURIComponent(payload.config.workspaceSlug)}/hooks/${webhookId}`,
       {
-        description: "Hanzo KMS webhook for push events",
+        description: "KMS webhook for push events",
         url: newWebhookUrl,
         active: true,
         events: ["repo:push"],

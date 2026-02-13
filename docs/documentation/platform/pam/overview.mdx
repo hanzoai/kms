@@ -4,22 +4,22 @@ sidebarTitle: "Overview"
 description: "Manage and secure access to critical infrastructure like databases and servers with policy-based controls and approvals."
 ---
 
-Hanzo KMS Privileged Access Management (PAM) provides a centralized way to manage and secure access to your critical infrastructure. It allows you to enforce fine-grained, policy-based controls over resources like databases, servers, and more, ensuring that only authorized users can access sensitive systems, and only when they need to.
+KMS Privileged Access Management (PAM) provides a centralized way to manage and secure access to your critical infrastructure. It allows you to enforce fine-grained, policy-based controls over resources like databases, servers, and more, ensuring that only authorized users can access sensitive systems, and only when they need to.
 
 ## The PAM Workflow
 
-At its core, Hanzo KMS PAM is designed to decouple **user identity** from **infrastructure credentials**. Instead of sharing static passwords or SSH keys, users authenticate with their SSO identity, and Hanzo KMS handles the rest.
+At its core, KMS PAM is designed to decouple **user identity** from **infrastructure credentials**. Instead of sharing static passwords or SSH keys, users authenticate with their SSO identity, and KMS handles the rest.
 
 Here is how a typical access lifecycle looks:
 
-1.  **Discovery**: A user logs into Hanzo KMS and sees a catalog of resources (databases, servers) and the accounts under each resource they are allowed to access. Access is **resource-centric**: users navigate to a resource first, then select an account within that resource.
+1.  **Discovery**: A user logs into KMS and sees a catalog of resources (databases, servers) and the accounts under each resource they are allowed to access. Access is **resource-centric**: users navigate to a resource first, then select an account within that resource.
 2.  **Connection**: The user selects a resource and an account (e.g., `production-db` and `read-only`). They initiate the connection via the KMS CLI.
-3.  **Credential Injection**: Hanzo KMS validates the request. If allowed, it establishes a secure tunnel and automatically injects the credentials for the target account. **The user never sees the underlying password or key.**
+3.  **Credential Injection**: KMS validates the request. If allowed, it establishes a secure tunnel and automatically injects the credentials for the target account. **The user never sees the underlying password or key.**
 4.  **Monitoring**: The session is established. All traffic is intercepted, logged, and recorded for audit purposes.
 
 ## Core Concepts
 
-To successfully implement Hanzo KMS PAM, it is essential to understand the relationship between the following components:
+To successfully implement KMS PAM, it is essential to understand the relationship between the following components:
 
 <CardGroup cols={3}>
   <Card title="Gateway" icon="server">
@@ -49,12 +49,12 @@ graph TD
 ```
 
 1.  **Gateway**: Deployed once per network/VPC. It provides connectivity to all resources in that environment.
-2.  **Resource**: Configured within Hanzo KMS. It points to a specific IP/Host accessible by the Gateway.
+2.  **Resource**: Configured within KMS. It points to a specific IP/Host accessible by the Gateway.
 3.  **Account**: Defined under a Resource. Users request access to a specific *Account* on a *Resource*.
 
 ## Network Architecture
 
-Hanzo KMS PAM uses a secure proxy-based architecture to connect users to resources without direct network exposure.
+KMS PAM uses a secure proxy-based architecture to connect users to resources without direct network exposure.
 
 When a user accesses a resource, their connection is routed securely through a Relay to your self-hosted Gateway, which then connects to the target resource. This ensures zero-trust access without exposing your infrastructure to the public internet.
 

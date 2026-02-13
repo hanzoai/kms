@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { DocumentationLinkBadge } from "./DocumentationLinkBadge";
 
 /**
- * The documentation link badge is a re-usable component to link to Hanzo KMS documentation references.
+ * The documentation link badge is a re-usable component to link to KMS documentation references.
  */
 const meta = {
   title: "Platform/Documentation Link Badge",

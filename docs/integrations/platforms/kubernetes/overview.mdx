@@ -1,14 +1,14 @@
 ---
 title: "Kubernetes Operator"
 sidebarTitle: "Overview"
-description: "How to use Hanzo KMS to inject, push, and manage secrets within Kubernetes clusters"
+description: "How to use KMS to inject, push, and manage secrets within Kubernetes clusters"
 ---
 
-The KMS Operator is a collection of Kubernetes controllers that streamline how secrets are managed between Hanzo KMS and your Kubernetes cluster. 
+The KMS Operator is a collection of Kubernetes controllers that streamline how secrets are managed between KMS and your Kubernetes cluster. 
 It provides multiple Custom Resource Definitions (CRDs) which enable you to:
 
-- **Sync** secrets from Hanzo KMS into Kubernetes (`KmsSecret`).
-- **Push** new secrets from Kubernetes to Hanzo KMS (`KmsPushSecret`).
+- **Sync** secrets from KMS into Kubernetes (`KmsSecret`).
+- **Push** new secrets from Kubernetes to KMS (`KmsPushSecret`).
 - **Manage** dynamic secrets and automatically create time-bound leases (`KmsDynamicSecret`).
 
 When these CRDs are configured, the KMS Operator will continuously monitors for changes and performs necessary updates to keep your Kubernetes secrets up to date. 
@@ -179,8 +179,8 @@ controllerManager:
 
 Currently the operator supports the following CRD's. We are constantly expanding the functionality of the operator, and this list will be updated as new CRD's are added.
 
-1. [KmsSecret](/integrations/platforms/kubernetes/kms-secret-crd): Sync secrets from Hanzo KMS to a Kubernetes secret.
-2. [KmsPushSecret](/integrations/platforms/kubernetes/kms-push-secret-crd): Push secrets from a Kubernetes secret to Hanzo KMS.
+1. [KmsSecret](/integrations/platforms/kubernetes/kms-secret-crd): Sync secrets from KMS to a Kubernetes secret.
+2. [KmsPushSecret](/integrations/platforms/kubernetes/kms-push-secret-crd): Push secrets from a Kubernetes secret to KMS.
 3. [KmsDynamicSecret](/integrations/platforms/kubernetes/kms-dynamic-secret-crd): Sync dynamic secrets and create leases automatically in Kubernetes.
 
 ## Metrics and Prometheus
@@ -313,7 +313,7 @@ process_resident_memory_bytes / 1024 / 1024
 
 ## General Configuration
 ### Private/self-signed certificate
-To connect to Hanzo KMS instances behind a private/self-signed certificate, you can configure the TLS settings in the CRD
+To connect to KMS instances behind a private/self-signed certificate, you can configure the TLS settings in the CRD
 to point to a CA certificate stored in a Kubernetes secret resource.
 
 ```yaml
@@ -331,7 +331,7 @@ spec:
 
 ## Advanced Templating
 
-With the Hanzo KMS Secrets Operator, you can use templating to dynamically generate secrets in Kubernetes. The templating is built on top of [Go templates](https://pkg.go.dev/text/template), which is a powerful and flexible template engine built into Go.
+With the KMS Secrets Operator, you can use templating to dynamically generate secrets in Kubernetes. The templating is built on top of [Go templates](https://pkg.go.dev/text/template), which is a powerful and flexible template engine built into Go.
 
 Please be aware that trying to reference non-existing keys will result in an error. Additionally, each template field is processed individually, which means one template field cannot reference another template field.
 
@@ -341,7 +341,7 @@ Please be aware that trying to reference non-existing keys will result in an err
 
 ### Available helper functions
 
-The Hanzo KMS Secrets Operator exposes a wide range of helper functions to make it easier to work with secrets in Kubernetes.
+The KMS Secrets Operator exposes a wide range of helper functions to make it easier to work with secrets in Kubernetes.
 
 | Function | Description | Signature |
 | -------- | ----------- | --------- |
@@ -364,7 +364,7 @@ The Hanzo KMS Secrets Operator exposes a wide range of helper functions to make 
 
 ### Sprig functions
 
-The Hanzo KMS Secrets Operator integrates with the [Sprig library](https://github.com/Masterminds/sprig) to provide additional helper functions.
+The KMS Secrets Operator integrates with the [Sprig library](https://github.com/Masterminds/sprig) to provide additional helper functions.
 
 <Note>
   We've removed `expandEnv` and `env` from the supported functions for security reasons.
@@ -432,10 +432,10 @@ Spec:
 Status:
   Conditions:
     Last Transition Time:  2022-12-18T04:29:09Z
-    Message:               Hanzo KMS controller has located the Hanzo KMS token in provided Kubernetes secret
+    Message:               KMS controller has located the KMS token in provided Kubernetes secret
     Reason:                OK
     Status:                True
-    Type:                  secrets.hanzo.ai/LoadedHanzo KMSToken
+    Type:                  secrets.hanzo.ai/LoadedKMSToken
     Last Transition Time:  2022-12-18T04:29:10Z
     Message:               Failed to update secret because: 400 Bad Request
     Reason:                Error
@@ -450,7 +450,7 @@ The managed secret created by the operator will not be deleted when the operator
 
 <Tabs>
 	 <Tab title="Helm">
-		Uninstall Hanzo KMS Helm repository 
+		Uninstall KMS Helm repository 
     ```bash
     helm uninstall <release name>
     ```

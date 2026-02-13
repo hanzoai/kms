@@ -1,10 +1,10 @@
 ---
-title: "Hanzo KMS Node.js SDK"
+title: "KMS Node.js SDK"
 sidebarTitle: "Node.js"
 icon: "/images/sdks/languages/node.svg"
 ---
 
-If you're working with Node.js, the official Hanzo KMS Node.js SDK package is the easiest way to fetch and work with secrets for your application. 
+If you're working with Node.js, the official KMS Node.js SDK package is the easiest way to fetch and work with secrets for your application. 
 
 ## Deprecation Notice
 
@@ -20,13 +20,13 @@ npm install @hanzo/kms-sdk
 ## Getting Started
 
 ```typescript
-import { Hanzo KMSSDK } from '@hanzo/kms-sdk'
+import { KMSSDK } from '@hanzo/kms-sdk'
 
-const client = new Hanzo KMSSDK({
+const client = new KMSSDK({
   siteUrl: "your-kms-instance.com" // Optional, defaults to https://kms.hanzo.ai
 });
 
-// Authenticate with Hanzo KMS
+// Authenticate with KMS
 await client.auth().universalAuth.login({
   clientId: "<machine-identity-client-id>",
   clientSecret: "<machine-identity-client-secret>"
@@ -317,8 +317,8 @@ For a more in-depth description of each input type for each dynamic secret type,
 ##### Example for creating a new Redis dynamic secret
 
 ```typescript
-import { Hanzo KMSSDK, DynamicSecretProviders } from "@hanzo/kms-sdk";
-	const client = new Hanzo KMSSDK();
+import { KMSSDK, DynamicSecretProviders } from "@hanzo/kms-sdk";
+	const client = new KMSSDK();
 
 	await client.auth().universalAuth.login({
 		// For localhost
@@ -467,7 +467,7 @@ const project = await client.projects().create({
 - `projectDescription` (string): An optional description of the project to create.
 - `slug` (string): An optional slug for the project to create. If not provided, one will be generated automatically.
 - `template` (string): Optionally provide a project template name to use for creating this project.
-- `kmsKeyId` (string): The ID of the KMS key to use for the project. Will use the Hanzo KMS KMS by default.
+- `kmsKeyId` (string): The ID of the KMS key to use for the project. Will use the KMS KMS by default.
 
 **Returns:**
 - `Project`: The project that was created.
@@ -512,7 +512,7 @@ const environment = await client.environments().create({
 - `name` (string): The name of the environment to be created.
 - `projectId` (string): The ID of the project to create the environment within.
 - `slug`: (string): The slug of the environment to be created.
-- `position` (number): An optional position of the environment to be created. The position is used in the Hanzo KMS UI to display environments in order. Environments with the lowest position come first.
+- `position` (number): An optional position of the environment to be created. The position is used in the KMS UI to display environments in order. Environments with the lowest position come first.
 
 **Returns:**
 - `Environment`: The environment that was created.
@@ -570,8 +570,8 @@ Creating a new KMS key can be done by using the `.kms().keys().create({})` funct
 ##### Example for creating an encryption key
 
 ```typescript
-import { Hanzo KMSSDK, KeyUsage, EncryptionAlgorithm } from "@hanzo/kms-sdk";
-const client = new Hanzo KMSSDK();
+import { KMSSDK, KeyUsage, EncryptionAlgorithm } from "@hanzo/kms-sdk";
+const client = new KMSSDK();
 
 await client.auth().universalAuth.login({
 	clientId: "CLIENT_ID",

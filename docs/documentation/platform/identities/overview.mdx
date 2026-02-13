@@ -1,10 +1,10 @@
 ---
 title: "User and Machine Identities"
 sidebarTitle: "Overview"
-description: "Learn more about identities to interact with resources in Hanzo KMS."
+description: "Learn more about identities to interact with resources in KMS."
 ---
 
-To interact with secrets and resource with Hanzo KMS, it is important to understand the concept of identities. 
+To interact with secrets and resource with KMS, it is important to understand the concept of identities. 
 Identities can be of two types: 
 - **People** (e.g., developers, platform engineers, administrators)
 - **Machines** (e.g., machine entities for managing secrets in CI/CD pipelines, production applications, and more)
@@ -13,7 +13,7 @@ Both people and machines are able to utilize corresponding clients (e.g., Dashbo
 
 <CardGroup cols={2}>
   <Card href="./user-identities" title="People (User Identities)" icon="people" color="#000000">
-    Learn more about the concept on user identities in Hanzo KMS. 
+    Learn more about the concept on user identities in KMS. 
   </Card>
   <Card
     title="Machine Identities"
@@ -21,7 +21,7 @@ Both people and machines are able to utilize corresponding clients (e.g., Dashbo
     icon="computer"
     color="#000000"
   >
-    Understand the concept of machine identities in Hanzo KMS. 
+    Understand the concept of machine identities in KMS. 
   </Card>
 </CardGroup>
 
@@ -31,15 +31,15 @@ Understanding how to calculate your identity requirements helps with capacity pl
 
 ### User Identities
 
-User identity count is straightforward—it equals the number of human users who need access to Hanzo KMS. This includes developers, DevOps/platform engineers, security administrators, and any other team members requiring direct Hanzo KMS access.
+User identity count is straightforward—it equals the number of human users who need access to KMS. This includes developers, DevOps/platform engineers, security administrators, and any other team members requiring direct KMS access.
 
 <Tip>
-  User identities map 1:1 with people. If you have 50 engineers who need Hanzo KMS access, that's 50 user identities.
+  User identities map 1:1 with people. If you have 50 engineers who need KMS access, that's 50 user identities.
 </Tip>
 
 ### Machine Identities
 
-If you're familiar with cloud provider IAM concepts, Hanzo KMS machine identities work the same way:
+If you're familiar with cloud provider IAM concepts, KMS machine identities work the same way:
 
 | Cloud Provider | Equivalent Concept |
 |----------------|-------------------|
@@ -48,7 +48,7 @@ If you're familiar with cloud provider IAM concepts, Hanzo KMS machine identitie
 | Azure | Service Principals |
 | Kubernetes | ServiceAccounts |
 
-Just as you don't create a new IAM role for every EC2 instance or a new service account for every VM, you don't create a new Hanzo KMS machine identity for every machine. Instead, machine identities are **permission-based, not machine-based**—they represent a unique set of access permissions that can be shared across multiple workloads.
+Just as you don't create a new IAM role for every EC2 instance or a new service account for every VM, you don't create a new KMS machine identity for every machine. Instead, machine identities are **permission-based, not machine-based**—they represent a unique set of access permissions that can be shared across multiple workloads.
 
 <Info>
   **Key principle**: If multiple machines require identical permissions to the same secrets, they share a single machine identity—just like multiple EC2 instances can assume the same IAM role.

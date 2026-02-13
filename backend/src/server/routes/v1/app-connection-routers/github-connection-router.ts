@@ -21,7 +21,7 @@ export const registerGitHubConnectionRouter = async (server: FastifyZodProvider)
     updateSchema: UpdateGitHubConnectionSchema
   });
 
-  // The below endpoints are not exposed and for Hanzo KMS App use
+  // The below endpoints are not exposed and for KMS App use
 
   server.route({
     method: "GET",

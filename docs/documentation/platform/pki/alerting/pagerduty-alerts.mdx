@@ -4,14 +4,14 @@ sidebarTitle: "PagerDuty Alerts"
 description: "Learn how to set up PagerDuty notifications for PKI certificate alerts"
 ---
 
-Hanzo KMS can send PKI certificate alert notifications to PagerDuty using the [Events API v2](https://developer.pagerduty.com/docs/events-api-v2-overview). This guide walks through creating a PagerDuty service and configuring a PagerDuty alert.
+KMS can send PKI certificate alert notifications to PagerDuty using the [Events API v2](https://developer.pagerduty.com/docs/events-api-v2-overview). This guide walks through creating a PagerDuty service and configuring a PagerDuty alert.
 
 ## Guide to Creating a PagerDuty Alert
 
 <Steps>
   <Step title="Create a PagerDuty Service (or use an existing one)">
     1. Go to **PagerDuty** → **Services** → **Service Directory** → **New Service**
-    2. Give the service a name (e.g., "Hanzo KMS PKI Alerts")
+    2. Give the service a name (e.g., "KMS PKI Alerts")
     3. Select **Events API v2** as the integration
 
     ![pagerduty events api v2](/images/platform/pki/alerting/pagerduty-events-api-v2.png)
@@ -21,11 +21,11 @@ Hanzo KMS can send PKI certificate alert notifications to PagerDuty using the [E
     If you want to use an existing service, go to the service's **Integrations** tab → **Add an Integration** → select **Events API v2**.
   </Step>
   <Step title="Copy the Integration Key">
-    After creating the service (or adding the integration), copy the 32-character **Integration Key** from the **Integrations** tab. You'll need this key to configure the alert in Hanzo KMS.
+    After creating the service (or adding the integration), copy the 32-character **Integration Key** from the **Integrations** tab. You'll need this key to configure the alert in KMS.
 
     ![pagerduty integration key](/images/platform/pki/alerting/pagerduty-integration-key.png)
   </Step>
-  <Step title="Create the Alert in Hanzo KMS">
+  <Step title="Create the Alert in KMS">
     Head to your Certificate Management Project > Alerting and press **Create Certificate Alert**.
 
     ![pki alerting](/images/platform/pki/alerting/alert-create.png)
@@ -53,7 +53,7 @@ Keep your integration key secure. Anyone with access to it can send events to yo
 
 ## Severity Mapping
 
-Hanzo KMS automatically maps the time remaining until certificate expiry to a PagerDuty event severity:
+KMS automatically maps the time remaining until certificate expiry to a PagerDuty event severity:
 
 | Time Until Expiry | PagerDuty Severity |
 | --- | --- |

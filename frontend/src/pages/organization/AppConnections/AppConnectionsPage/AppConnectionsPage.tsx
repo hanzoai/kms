@@ -18,7 +18,7 @@ export const AppConnectionsPage = withPermission(
     return (
       <div className="bg-bunker-800">
         <Helmet>
-          <title>Hanzo KMS | App Connections</title>
+          <title>KMS | App Connections</title>
           <link rel="icon" href="/hanzo.ico" />
           <meta property="og:image" content="/images/message.png" />
         </Helmet>

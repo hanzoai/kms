@@ -204,7 +204,7 @@ export const MCPEndpointDetailPage = () => {
   return (
     <>
       <Helmet>
-        <title>MCP Endpoint | Hanzo KMS</title>
+        <title>MCP Endpoint | KMS</title>
         <link rel="icon" href="/hanzo.ico" />
       </Helmet>
       <PageContent />

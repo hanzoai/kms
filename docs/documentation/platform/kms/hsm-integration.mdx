@@ -1,6 +1,6 @@
 ---
 title: "HSM Integration"
-description: "Learn more about integrating an HSM with Hanzo KMS KMS."
+description: "Learn more about integrating an HSM with KMS KMS."
 ---
 
 <Note>
@@ -13,8 +13,8 @@ description: "Learn more about integrating an HSM with Hanzo KMS KMS."
 
 ## Overview
 
-Hanzo KMS KMS currently supports two encryption strategies:
-1. **Standard Encryption**: This is the default encryption strategy used by Hanzo KMS KMS. It uses a software-protected encryption key to encrypt KMS keys within your Hanzo KMS instance. The root encryption key is defined by setting the `ENCRYPTION_KEY` environment variable.
+KMS KMS currently supports two encryption strategies:
+1. **Standard Encryption**: This is the default encryption strategy used by KMS KMS. It uses a software-protected encryption key to encrypt KMS keys within your KMS instance. The root encryption key is defined by setting the `ENCRYPTION_KEY` environment variable.
 2. **Hardware Security Module (HSM)**: This encryption strategy uses a Hardware Security Module (HSM) to create a root encryption key that is stored on a physical device to encrypt the KMS keys within your instance.
 
 ## Hardware Security Module (HSM)
@@ -24,25 +24,25 @@ Hanzo KMS KMS currently supports two encryption strategies:
 Using a hardware security module comes with the added benefit of having a secure and tamper-proof device to store your encryption keys. This ensures that your data is protected from unauthorized access.
 
 <Warning>
-  All encryption keys used for cryptographic operations are stored within the HSM. This means that if the HSM is lost or destroyed, you will no longer be able to decrypt your data stored within Hanzo KMS. Most providers offer recovery options for HSM devices, which you should consider when setting up an HSM device.
+  All encryption keys used for cryptographic operations are stored within the HSM. This means that if the HSM is lost or destroyed, you will no longer be able to decrypt your data stored within KMS. Most providers offer recovery options for HSM devices, which you should consider when setting up an HSM device.
 </Warning>
 
 Enabling HSM encryption has a set of key benefits:
-1. **Root Key Wrapping**: The root KMS encryption key that is used to secure your Hanzo KMS instance will be encrypted using the HSM device rather than the standard software-protected key.
+1. **Root Key Wrapping**: The root KMS encryption key that is used to secure your KMS instance will be encrypted using the HSM device rather than the standard software-protected key.
 
 
 #### Caveats
-- **Performance**: Using an HSM device can have a performance impact on your Hanzo KMS instance. This is due to the additional latency introduced by the HSM device. This is however only noticeable when your instance(s) start up or when the encryption strategy is changed.
-- **Key Recovery**: If the HSM device is lost or destroyed, you will no longer be able to decrypt your data stored within Hanzo KMS. Most HSM providers offer recovery options, which you should consider when setting up an HSM device.
+- **Performance**: Using an HSM device can have a performance impact on your KMS instance. This is due to the additional latency introduced by the HSM device. This is however only noticeable when your instance(s) start up or when the encryption strategy is changed.
+- **Key Recovery**: If the HSM device is lost or destroyed, you will no longer be able to decrypt your data stored within KMS. Most HSM providers offer recovery options, which you should consider when setting up an HSM device.
 
 ## Requirements
 - An HSM device _(PKCS#11 compatible library)_ from a compatible provider such as [Thales Luna HSM](https://cpl.thalesgroup.com/encryption/data-protection-on-demand/services/luna-cloud-hsm), [AWS CloudHSM](https://aws.amazon.com/cloudhsm/), [Fortanix HSM](https://www.fortanix.com/platform/data-security-manager), or others.
-  Hanzo KMS is validated to work with PKCS#11 2.30 and newer. If your HSM device doesn't follow the >=2.30 PKCS#11 standard you may see degraded performance.
+  KMS is validated to work with PKCS#11 2.30 and newer. If your HSM device doesn't follow the >=2.30 PKCS#11 standard you may see degraded performance.
 
 
 ## Environment Variable Configuration
-To configure your Hanzo KMS instance to use an HSM, you must set the required environment variables. Below you'll find an example of the required environment variables.
-For further instructions on how to configure the HSM device for your Hanzo KMS instance, please see the [Setup Instructions](#setup-instructions) section.
+To configure your KMS instance to use an HSM, you must set the required environment variables. Below you'll find an example of the required environment variables.
+For further instructions on how to configure the HSM device for your KMS instance, please see the [Setup Instructions](#setup-instructions) section.
 
 
 ```dotenv
@@ -61,13 +61,13 @@ You can read more about the [default instance configurations](/self-hosting/conf
 
 ## PKCS#11 Key Attributes
 
-If no AES key or HMAC key already exists with the label you defined on the `HSM_KEY_LABEL` environment variable, then Hanzo KMS will create one for you automatically using the label specified on `HSM_KEY_LABEL`.
+If no AES key or HMAC key already exists with the label you defined on the `HSM_KEY_LABEL` environment variable, then KMS will create one for you automatically using the label specified on `HSM_KEY_LABEL`.
 Below you'll find a list of the attributes each key will be created with.
 
 ### AES Key
 
 <Accordion title="Bring your own key minimum requirements (optional)">
-  If you bring your own AES key and don't let Hanzo KMS create it for you it must have at least the following attributes:
+  If you bring your own AES key and don't let KMS create it for you it must have at least the following attributes:
 
   * `CKA_CLASS`: `CKO_SECRET_KEY` — Defines the key class _(secret key)_.
   * `CKA_KEY_TYPE`: `CKO_AES` — Defines the key type _(AES key)_.
@@ -95,7 +95,7 @@ Below you'll find a list of the attributes each key will be created with.
 ### HMAC Key
 
 <Accordion title="Bring your own key minimum requirements (optional)">
-  If you bring your own HMAC key and don't let Hanzo KMS create it for you it must have at least the following attributes:
+  If you bring your own HMAC key and don't let KMS create it for you it must have at least the following attributes:
 
   * `CKA_CLASS`: `CKO_SECRET_KEY` — Defines the key class _(secret key)_.
   * `CKA_KEY_TYPE`: `CKO_GENERIC_SECRET` — Defines the key class _(generic secret key)_.
@@ -127,23 +127,23 @@ Below you'll find a list of the attributes each key will be created with.
 
 <Steps>
     <Step title="Setting up an HSM Device">
-        To set up HSM encryption, you need to configure an HSM provider and HSM key. The HSM provider is used to connect to the HSM device, and the HSM key is used to encrypt Hanzo KMS's KMS keys. We recommend using a Cloud HSM provider such as [Thales Luna HSM](https://cpl.thalesgroup.com/encryption/data-protection-on-demand/services/luna-cloud-hsm), [AWS CloudHSM](https://aws.amazon.com/cloudhsm/), or [Fortanix HSM](https://www.fortanix.com/platform/data-security-manager).
+        To set up HSM encryption, you need to configure an HSM provider and HSM key. The HSM provider is used to connect to the HSM device, and the HSM key is used to encrypt KMS's KMS keys. We recommend using a Cloud HSM provider such as [Thales Luna HSM](https://cpl.thalesgroup.com/encryption/data-protection-on-demand/services/luna-cloud-hsm), [AWS CloudHSM](https://aws.amazon.com/cloudhsm/), or [Fortanix HSM](https://www.fortanix.com/platform/data-security-manager).
 
-        You need to follow the instructions provided by the HSM provider to set up the HSM device. Once the HSM device is set up, the HSM device can be used within Hanzo KMS.
+        You need to follow the instructions provided by the HSM provider to set up the HSM device. Once the HSM device is set up, the HSM device can be used within KMS.
 
-        After setting up the HSM from your provider, you will have a set of files that you can use to access the HSM. These files need to be present on the machine where Hanzo KMS is running.
+        After setting up the HSM from your provider, you will have a set of files that you can use to access the HSM. These files need to be present on the machine where KMS is running.
         If you are using containers, you will need to mount the folder where these files are stored as a volume in the container.
 
         The setup process for an HSM device varies depending on the provider. We have created guides for Thales Luna Cloud HSM and Fortanix HSM, which you can find below.
         
     </Step>
-    <Step title="Configure HSM on Hanzo KMS">
+    <Step title="Configure HSM on KMS">
 
     <Warning>
       Are you using Docker or Kubernetes for your deployment? If you are using Docker or Kubernetes, please follow the instructions in the [Using HSM's in your Deployment](#using-hsms-in-your-deployment) section.
     </Warning>
 
-        Configuring the HSM on Hanzo KMS requires setting a set of environment variables:
+        Configuring the HSM on KMS requires setting a set of environment variables:
         - `HSM_LIB_PATH`: The path to the PKCS#11 library provided by the HSM provider. This usually comes in the form of a `.so` for Linux and MacOS, or a `.dll` file for Windows. For Docker, you need to mount the library path as a volume. Further instructions can be found below. If you are using Docker, make sure to set the HSM_LIB_PATH environment variable to the path where the library is mounted in the container.
         - `HSM_PIN`: The PKCS#11 PIN to use for authentication with the HSM device.
         - `HSM_SLOT`: The slot number to use for the HSM device. This is typically between `0` and `5` for most HSM devices.
@@ -152,7 +152,7 @@ Below you'll find a list of the attributes each key will be created with.
         You can read more about the [default instance configurations](/self-hosting/configuration/envars) here.
     </Step>
     <Step title="Restart Instance">
-        After setting up the HSM, you need to restart the Hanzo KMS instance for the changes to take effect.
+        After setting up the HSM, you need to restart the KMS instance for the changes to take effect.
     </Step>
     <Step title="Navigate to the Server Admin Console">
         ![Server Admin Console](/images/platform/kms/hsm/server-admin-console.png)
@@ -160,7 +160,7 @@ Below you'll find a list of the attributes each key will be created with.
     <Step title="Update the KMS Encryption Strategy to HSM">
         ![Set Encryption Strategy](/images/platform/kms/hsm/encryption-strategy.png)
 
-        Once you press the 'Save' button, your Hanzo KMS instance will immediately switch to the HSM encryption strategy. This will re-encrypt your KMS key with keys from the HSM device.
+        Once you press the 'Save' button, your KMS instance will immediately switch to the HSM encryption strategy. This will re-encrypt your KMS key with keys from the HSM device.
     </Step>
     <Step title="Verify Encryption Strategy">
         To verify that the HSM was correctly configured, you can try creating a new secret in one of your projects. If the secret is created successfully, the HSM is now being used for encryption.
@@ -172,7 +172,7 @@ Below you'll find a list of the attributes each key will be created with.
 
 <Tabs>
   <Tab title="Docker">
-    When using Docker, you need to mount the path containing the HSM client files. This section covers how to configure your Hanzo KMS instance to use an HSM with Docker.
+    When using Docker, you need to mount the path containing the HSM client files. This section covers how to configure your KMS instance to use an HSM with Docker.
 
     <Tabs>
       <Tab title="Thales Luna Cloud HSM">
@@ -303,7 +303,7 @@ Below you'll find a list of the attributes each key will be created with.
 
             <Warning>
               If no key is found with the provided key label, the HSM will create a new key with the provided label.
-              Hanzo KMS depends on an AES and HMAC key to be present in the HSM. If these keys are not present, Hanzo KMS will create them. The AES key label will be the value of the `HSM_KEY_LABEL` environment variable, and the HMAC key label will be the value of the `HSM_KEY_LABEL` environment variable with the suffix `_HMAC`.
+              KMS depends on an AES and HMAC key to be present in the HSM. If these keys are not present, KMS will create them. The AES key label will be the value of the `HSM_KEY_LABEL` environment variable, and the HMAC key label will be the value of the `HSM_KEY_LABEL` environment variable with the suffix `_HMAC`.
             </Warning>
 
             ```bash
@@ -323,7 +323,7 @@ Below you'll find a list of the attributes each key will be created with.
               ghcr.io/hanzoai/kms:<version> # Replace <version> with the version you want to use
             ```
 
-            We recommend reading further about [using Hanzo KMS with Docker](/self-hosting/deployment-options/standalone-kms).
+            We recommend reading further about [using KMS with Docker](/self-hosting/deployment-options/standalone-kms).
 
           </Step>
         </Steps>
@@ -332,7 +332,7 @@ Below you'll find a list of the attributes each key will be created with.
       <Tab title="Fortanix HSM">
         <Steps>
           <Step title="Set up Fortanix HSM">
-            To use Fortanix HSM with Hanzo KMS, you need to:
+            To use Fortanix HSM with KMS, you need to:
             
             1. Create an App in Fortanix:
                - Set Interface value to be PKCS#11
@@ -415,7 +415,7 @@ Below you'll find a list of the attributes each key will be created with.
         <Steps>
 
           <Step title="Configure CloudHSM client">
-            Before using the CloudHSM client, it must be configured properly so Hanzo KMS can use it for cryptographic operations.
+            Before using the CloudHSM client, it must be configured properly so KMS can use it for cryptographic operations.
 
 
             **1. Download the AWS CloudHSM client**
@@ -499,7 +499,7 @@ Below you'll find a list of the attributes each key will be created with.
             }
           ```
 
-          Save the entire `/opt/cloudhsm` folder, as you will need to mount this to your Hanzo KMS Docker container in the later steps. In this guide we will be saving all the files from the folder as `/etc/cloudhsm` and mounting it to the `/etc/cloudhsm` directory in the Docker container.
+          Save the entire `/opt/cloudhsm` folder, as you will need to mount this to your KMS Docker container in the later steps. In this guide we will be saving all the files from the folder as `/etc/cloudhsm` and mounting it to the `/etc/cloudhsm` directory in the Docker container.
 
           </Step>
 
@@ -541,7 +541,7 @@ Below you'll find a list of the attributes each key will be created with.
 
           <Step title="Download the HSM issuing CA certificate">
             When you initialized your HSM, you were prompted to download the cluster CSR and sign it.
-            In order to use the HSM with Hanzo KMS, you need to obtain the issuer CA certificate that was used to sign the cluster CSR.
+            In order to use the HSM with KMS, you need to obtain the issuer CA certificate that was used to sign the cluster CSR.
 
             If you followed [the official AWS documentation](https://docs.aws.amazon.com/cloudhsm/latest/userguide/initialize-cluster.html), you should have a CA certificate called `customerCA.crt`. 
 
@@ -555,7 +555,7 @@ Below you'll find a list of the attributes each key will be created with.
 
             <Warning>
               If no key is found with the provided key label, the HSM will create a new key with the provided label.
-              Hanzo KMS depends on an AES and HMAC key to be present in the HSM. If these keys are not present, Hanzo KMS will create them. The AES key label will be the value of the `HSM_KEY_LABEL` environment variable, and the HMAC key label will be the value of the `HSM_KEY_LABEL` environment variable with the suffix `_HMAC`.
+              KMS depends on an AES and HMAC key to be present in the HSM. If these keys are not present, KMS will create them. The AES key label will be the value of the `HSM_KEY_LABEL` environment variable, and the HMAC key label will be the value of the `HSM_KEY_LABEL` environment variable with the suffix `_HMAC`.
             </Warning>
 
             ```bash
@@ -580,7 +580,7 @@ Below you'll find a list of the attributes each key will be created with.
               ghcr.io/hanzoai/kms:<version> # Replace <version> with the version you want to use
             ```
 
-            We recommend reading further about [using Hanzo KMS with Docker](/self-hosting/deployment-options/standalone-kms).
+            We recommend reading further about [using KMS with Docker](/self-hosting/deployment-options/standalone-kms).
 
           </Step>
         </Steps>
@@ -590,7 +590,7 @@ Below you'll find a list of the attributes each key will be created with.
     </Tabs>
   </Tab>
   <Tab title="Kubernetes">
-    When you are deploying Hanzo KMS with the [Kubernetes self-hosting option](/self-hosting/deployment-options/kubernetes-helm), you can still use HSM encryption, but you need to ensure that the HSM client files are present in the container.
+    When you are deploying KMS with the [Kubernetes self-hosting option](/self-hosting/deployment-options/kubernetes-helm), you can still use HSM encryption, but you need to ensure that the HSM client files are present in the container.
 
     <Tabs>
       <Tab title="Thales Luna Cloud HSM">
@@ -601,7 +601,7 @@ Below you'll find a list of the attributes each key will be created with.
 
         <Steps>
           <Step title="Create HSM client folder">
-            When using Kubernetes, you need to mount the path containing the HSM client files. This section covers how to configure your Hanzo KMS instance to use an HSM with Kubernetes. In this example, we are going to be using `/etc/luna-docker`.
+            When using Kubernetes, you need to mount the path containing the HSM client files. This section covers how to configure your KMS instance to use an HSM with Kubernetes. In this example, we are going to be using `/etc/luna-docker`.
 
 
             ```bash
@@ -759,7 +759,7 @@ Below you'll find a list of the attributes each key will be created with.
           </Step>
 
           <Step title="Creating Persistent Volume Claim (PVC)">
-            You need to create a Persistent Volume Claim (PVC) to mount the HSM client files to the Hanzo KMS deployment.
+            You need to create a Persistent Volume Claim (PVC) to mount the HSM client files to the KMS deployment.
 
 
             ```bash
@@ -1210,7 +1210,7 @@ Below you'll find a list of the attributes each key will be created with.
               </Steps>
             </Accordion>
 
-            You need to create a Persistent Volume Claim (PVC) to mount the HSM client files to the Hanzo KMS deployment.
+            You need to create a Persistent Volume Claim (PVC) to mount the HSM client files to the KMS deployment.
 
             ```bash
             kubectl apply -f - <<EOF
@@ -1262,7 +1262,7 @@ Below you'll find a list of the attributes each key will be created with.
 
           <Step title="Configure the PVC">
 
-          We need to configure the PVC to work with the CloudHSM, so Hanzo KMS can consume the HSM client files.
+          We need to configure the PVC to work with the CloudHSM, so KMS can consume the HSM client files.
 
           **2.1. Start a shell in the PVC pod:**
 
@@ -1300,7 +1300,7 @@ Below you'll find a list of the attributes each key will be created with.
 
           **2.4. Install the AWS CloudHSM client:**
 
-          The Hanzo KMS images run on Debian, so we need to install a Debian-compatible version of the AWS CloudHSM client.
+          The KMS images run on Debian, so we need to install a Debian-compatible version of the AWS CloudHSM client.
 
           ```bash
           wget https://s3.amazonaws.com/cloudhsmv2-software/CloudHsmClient/Jammy/cloudhsm-pkcs11_latest_u22.04_amd64.deb
@@ -1380,7 +1380,7 @@ Below you'll find a list of the attributes each key will be created with.
           **2.8. Copy your issuer CA certificate to the PVC:**
 
           When you initialized your HSM, you were prompted to download the cluster CSR and sign it.
-          In order to use the HSM with Hanzo KMS, you need to obtain the issuer CA certificate that was used to sign the cluster CSR.
+          In order to use the HSM with KMS, you need to obtain the issuer CA certificate that was used to sign the cluster CSR.
 
           If you followed [the official AWS documentation](https://docs.aws.amazon.com/cloudhsm/latest/userguide/initialize-cluster.html), you should have a CA certificate called `customerCA.crt`. 
 
@@ -1427,7 +1427,7 @@ Below you'll find a list of the attributes each key will be created with.
 
           **2.10. Copy the configured client to the PVC:**
 
-          Copy from the HSM files into the `/data` directory in the PVC, which is what will be mounted for the Hanzo KMS deployment.
+          Copy from the HSM files into the `/data` directory in the PVC, which is what will be mounted for the KMS deployment.
           ```bash
           cp -r /opt/cloudhsm/. /data/
           ```
@@ -1527,7 +1527,7 @@ Below you'll find a list of the attributes each key will be created with.
             ```
 
             <Warning>
-              Make sure to set the `tag` to **`v0.151.0-nightly-20251013.1` or above**, as this is the minimum Hanzo KMS version that supports AWS CloudHSM.
+              Make sure to set the `tag` to **`v0.151.0-nightly-20251013.1` or above**, as this is the minimum KMS version that supports AWS CloudHSM.
             </Warning>
 
             <Warning>
@@ -1561,8 +1561,8 @@ Below you'll find a list of the attributes each key will be created with.
 
 ## Disabling HSM Encryption
 
-To disable HSM encryption, navigate to Hanzo KMS's Server Admin Console and set the KMS encryption strategy to `Software-based Encryption`. This will revert the encryption strategy back to the default software-based encryption.
+To disable HSM encryption, navigate to KMS's Server Admin Console and set the KMS encryption strategy to `Software-based Encryption`. This will revert the encryption strategy back to the default software-based encryption.
 
 <Note>
-  In order to disable HSM encryption, the Hanzo KMS instance must be able to access the HSM device. If the HSM device is no longer accessible, you will not be able to disable HSM encryption.
+  In order to disable HSM encryption, the KMS instance must be able to access the HSM device. If the HSM device is no longer accessible, you will not be able to disable HSM encryption.
 </Note>

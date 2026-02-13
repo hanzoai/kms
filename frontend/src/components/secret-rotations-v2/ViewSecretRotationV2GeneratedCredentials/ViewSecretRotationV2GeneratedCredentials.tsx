@@ -178,7 +178,7 @@ const Content = ({ secretRotation }: ContentProps) => {
             >
               inactive period
             </a>
-            . This is a limitation of {appName} and cannot be rectified by Hanzo KMS.
+            . This is a limitation of {appName} and cannot be rectified by KMS.
           </p>
         </NoticeBannerV2>
       )}

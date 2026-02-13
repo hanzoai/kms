@@ -161,7 +161,7 @@ export const authPaswordServiceFactory = ({
     await smtpService.sendMail({
       template: SmtpTemplates.SetupPassword,
       recipients: [email],
-      subjectLine: "Hanzo KMS Password Setup",
+      subjectLine: "KMS Password Setup",
       substitutions: {
         email,
         token,

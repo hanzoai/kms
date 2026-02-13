@@ -8,18 +8,18 @@ description: "Learn how to automatically rotate Unix/Linux local account passwor
 
   This rotation updates a single credential set in place. Old credentials become invalid immediately upon rotation. This means that clients using the previous credentials will fail to authenticate until they retrieve the new credentials.
 
-  This is a limitation of the SSH provider and cannot be rectified by Hanzo KMS.
+  This is a limitation of the SSH provider and cannot be rectified by KMS.
 </Note>
 
 ## Prerequisites
 
 - Create an [SSH Connection](/integrations/app-connections/ssh) with the **Secret Rotation** requirements
-- Ensure your network security policies allow incoming requests from Hanzo KMS to this rotation provider, if network restrictions apply.
+- Ensure your network security policies allow incoming requests from KMS to this rotation provider, if network restrictions apply.
 
-## Create a Unix/Linux Local Account Rotation in Hanzo KMS
+## Create a Unix/Linux Local Account Rotation in KMS
 
 <Tabs>
-    <Tab title="Hanzo KMS UI">
+    <Tab title="KMS UI">
         1. Navigate to your Secret Manager Project's Dashboard and select **Add Secret Rotation** from the actions dropdown.
         ![Secret Manager Dashboard](/images/secret-rotations-v2/generic/add-secret-rotation.png)
 
@@ -42,8 +42,8 @@ description: "Learn how to automatically rotate Unix/Linux local account passwor
         ![Rotation Parameters](/images/secret-rotations-v2/unix-linux-local-account/unix-linux-local-account-parameters.png)
 
         - **Rotation Method** - The method to use when rotating the target user's password.
-            - **Login as Target** - Hanzo KMS will use the provided SSH username and password to log in and rotate its own password.
-            - **Login as Root** - Hanzo KMS will use the SSH Connection's credentials to log in and rotate the provided user's password.
+            - **Login as Target** - KMS will use the provided SSH username and password to log in and rotate its own password.
+            - **Login as Root** - KMS will use the SSH Connection's credentials to log in and rotate the provided user's password.
         - **Username** - The target SSH username whose password will be rotated.
         - **Current Password** - The current password of the target user (required when **Rotation Method** is set to **Login as Target**).
         - **Password Requirements** - The constraints to apply when generating new passwords.
@@ -68,7 +68,7 @@ description: "Learn how to automatically rotate Unix/Linux local account passwor
 
         ### Reconcile Unix/Linux Local Account
 
-        If you suspect the credentials are out of sync (for example, after a manual password change on the server), you can regain access by using **Reconcile**. This will use the configured SSH App Connection's root account to reset the target user's password and sync it with Hanzo KMS.
+        If you suspect the credentials are out of sync (for example, after a manual password change on the server), you can regain access by using **Reconcile**. This will use the configured SSH App Connection's root account to reset the target user's password and sync it with KMS.
 
         ![Reconcile Option](/images/secret-rotations-v2/unix-linux-local-account/unix-linux-local-account-reconcile.png)
         ![Reconcile Confirmation](/images/secret-rotations-v2/unix-linux-local-account/unix-linux-local-account-reconcile-confirm.png)

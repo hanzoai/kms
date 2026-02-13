@@ -42,7 +42,7 @@ export const DeleteAppConnectionModal = ({ isOpen, onOpenChange, appConnection }
       {appConnection.isPlatformManagedCredentials && (
         <NoticeBannerV2 className="mt-3" title="Platform Managed Credentials">
           <p className="text-sm text-bunker-300">
-            This App Connection&#39;s credentials are managed by Hanzo KMS.
+            This App Connection&#39;s credentials are managed by KMS.
           </p>
           <p className="mt-3 text-sm text-bunker-300">
             By deleting this connection you may lose permanent access to the associated resource.

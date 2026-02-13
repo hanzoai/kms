@@ -118,7 +118,7 @@ export const PreviewSection = () => {
                 <h2 className="text-xl font-medium text-mineshaft-100">
                   Unleash the full power of{" "}
                   <span className="bg-linear-to-r from-primary-500 to-yellow bg-clip-text font-medium text-transparent">
-                    Hanzo KMS
+                    KMS
                   </span>
                 </h2>
                 <p className="mt-4 text-gray-400">

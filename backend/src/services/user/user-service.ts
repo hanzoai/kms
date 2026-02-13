@@ -89,7 +89,7 @@ export const userServiceFactory = ({
 
     await smtpService.sendMail({
       template: SmtpTemplates.EmailVerification,
-      subjectLine: "Hanzo KMS confirmation code",
+      subjectLine: "KMS confirmation code",
       recipients: [user.email],
       substitutions: {
         code: userToken
@@ -232,7 +232,7 @@ export const userServiceFactory = ({
         // Send OTP to NEW email address
         await smtpService.sendMail({
           template: SmtpTemplates.EmailVerification,
-          subjectLine: "Hanzo KMS email change verification",
+          subjectLine: "KMS email change verification",
           recipients: [newEmail.toLowerCase()],
           substitutions: {
             code: otpCode
@@ -357,7 +357,7 @@ export const userServiceFactory = ({
         // Send email to user to confirm account deletion
         await smtpService.sendMail({
           template: SmtpTemplates.AccountDeletionConfirmation,
-          subjectLine: "Your Hanzo KMS account has been deleted",
+          subjectLine: "Your KMS account has been deleted",
           recipients: [user.email],
           substitutions: {
             email: user.email

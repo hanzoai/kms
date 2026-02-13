@@ -172,7 +172,7 @@ const Page = withPermission(
                           onClick={async () => {
                             if (currentOrg?.scimEnabled) {
                               createNotification({
-                                text: "You cannot manage users from Hanzo KMS when SCIM is enabled for your organization",
+                                text: "You cannot manage users from KMS when SCIM is enabled for your organization",
                                 type: "error"
                               });
                               return;
@@ -211,7 +211,7 @@ const Page = withPermission(
                           onClick={() => {
                             if (currentOrg?.scimEnabled) {
                               createNotification({
-                                text: "You cannot manage users from Hanzo KMS when SCIM is enabled for your organization",
+                                text: "You cannot manage users from KMS when SCIM is enabled for your organization",
                                 type: "error"
                               });
                               return;

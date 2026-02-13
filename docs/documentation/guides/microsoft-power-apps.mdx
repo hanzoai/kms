@@ -1,6 +1,6 @@
 ---
 title: "Microsoft Power Apps"
-description: "Learn how to manage secrets in Microsoft Power Apps with Hanzo KMS."
+description: "Learn how to manage secrets in Microsoft Power Apps with KMS."
 ---
 In recent years, there has been a shift towards so-called low-code and no-code platforms. These platforms are particularly appealing to businesses without internal development capabilities, yet teams often discover that some coding is necessary to fully satisfy their business needs.
 
@@ -8,9 +8,9 @@ Low-code platforms have become increasingly sophisticated and useful, leading to
 
 Consider the need for data integrations where an HTTP-based call to a web service might be necessary, typically requiring authentication through an API key or another type of secret.
 
-Importantly, it's crucial to avoid hardcoding these secrets, as they would then be accessible to anyone with collaboration rights to the code. This underscores the importance of using a secret management solution like Hanzo KMS.
+Importantly, it's crucial to avoid hardcoding these secrets, as they would then be accessible to anyone with collaboration rights to the code. This underscores the importance of using a secret management solution like KMS.
 
-In this article, we'll demonstrate how to retrieve app secrets from Hanzo KMS for use in a Power Apps application. We'll create a simple application with a dedicated data connector to illustrate the ease of integrating Hanzo KMS with Power Apps. This tutorial assumes some prior programming experience in C#.
+In this article, we'll demonstrate how to retrieve app secrets from KMS for use in a Power Apps application. We'll create a simple application with a dedicated data connector to illustrate the ease of integrating KMS with Power Apps. This tutorial assumes some prior programming experience in C#.
 
 Prerequisites: 
 - Created Microsoft Power App.
@@ -56,9 +56,9 @@ Prerequisites:
         We can now fill out the fields using the information for our created function. The combination boxes are automatically filled in order. Once we select one of the reachable subscriptions (tied to the same account we’ve used to log in to create a Power App), the available services are displayed. Once we select our Azure Functions service, we select the function for retrieving the secret.
 
     </Step>
-    <Step title="Set Up Hanzo KMS in an Azure Function">
+    <Step title="Set Up KMS in an Azure Function">
 
-        You can add Hanzo KMS in an Azure Function quite easily using the [Hanzo KMS SDK for .NET](https://kms.hanzo.ai/docs/sdks/languages/csharp) (or other languages). This enables the function to communicate with Hanzo KMS to obtain secrets, among other things.
+        You can add KMS in an Azure Function quite easily using the [KMS SDK for .NET](https://kms.hanzo.ai/docs/sdks/languages/csharp) (or other languages). This enables the function to communicate with KMS to obtain secrets, among other things.
 
         In short, we can simply bring all the necessary classes over and start using the Client class. Essentially, this enables us to write code like this:
 
@@ -67,9 +67,9 @@ Prerequisites:
         {
             ClientId = "CLIENT_ID",
             ClientSecret = "CLIENT_SECRET",
-            // SiteUrl = "http://localhost:8080", <-- This line can be omitted if you're using Hanzo KMS Cloud.
+            // SiteUrl = "http://localhost:8080", <-- This line can be omitted if you're using KMS Cloud.
         };
-        var kms = new Hanzo KMSClient(settings);
+        var kms = new KMSClient(settings);
 
         var options = new GetSecretOptions
         {
@@ -80,7 +80,7 @@ Prerequisites:
         var secret = kms.GetSecret(options);
         ```
 
-        Knowing the URL of Hanzo KMS as well as the Client Id and Client Secret, we can now access the desired values.
+        Knowing the URL of KMS as well as the Client Id and Client Secret, we can now access the desired values.
 
         Now it’s time to actually use the secret within a Power App. There are two ways to request a desired target service with a secret retrieved from the function:
 
@@ -108,7 +108,7 @@ Prerequisites:
             req.CreateResponse(HttpStatusCode.OK, resultContent);
         }
         ```
-        This creates a request to the resource protected by an API key that is retrieved from Hanzo KMS.
+        This creates a request to the resource protected by an API key that is retrieved from KMS.
 
     </Step>
 </Steps>

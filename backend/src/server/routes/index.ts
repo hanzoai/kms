@@ -2890,7 +2890,7 @@ export const registerRoutes = async (
   });
   const shouldForwardWritesToPrimaryInstance = Boolean(envConfig.KMS_PRIMARY_INSTANCE_URL);
   if (shouldForwardWritesToPrimaryInstance) {
-    logger.info(`Hanzo KMS primary instance is configured: ${envConfig.KMS_PRIMARY_INSTANCE_URL}`);
+    logger.info(`KMS primary instance is configured: ${envConfig.KMS_PRIMARY_INSTANCE_URL}`);
 
     await server.register(forwardWritesToPrimary, { primaryUrl: envConfig.KMS_PRIMARY_INSTANCE_URL as string });
   }

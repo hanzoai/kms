@@ -43,7 +43,7 @@ const Content = ({ pkiSync, onComplete }: ContentProps) => {
       }}
     >
       <p className="mb-8 text-sm text-mineshaft-200">
-        Are you sure you want to remove certificates synced by Hanzo KMS from this {destinationName}{" "}
+        Are you sure you want to remove certificates synced by KMS from this {destinationName}{" "}
         destination?
       </p>
       <div className="mt-8 flex w-full items-center justify-between gap-2">
@@ -69,7 +69,7 @@ export const PkiSyncRemoveCertificatesModal = ({ isOpen, onOpenChange, pkiSync }
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent
         title="Remove Certificates"
-        subTitle={`Remove certificates synced by Hanzo KMS from this ${destinationName} Sync destination.`}
+        subTitle={`Remove certificates synced by KMS from this ${destinationName} Sync destination.`}
       >
         <Content pkiSync={pkiSync} onComplete={() => onOpenChange(false)} />
       </ModalContent>

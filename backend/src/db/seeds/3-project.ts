@@ -119,7 +119,7 @@ const createUserWithGhostUser = async (
     .encryptWithRootEncryptionKey(encKeys.plainPrivateKey);
 
   await knex(TableName.ProjectBot).insert({
-    name: "Hanzo KMS Bot (Ghost)",
+    name: "KMS Bot (Ghost)",
     projectId,
     tag,
     iv,

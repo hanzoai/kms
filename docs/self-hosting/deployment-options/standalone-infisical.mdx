@@ -1,20 +1,20 @@
 ---
 title: "Docker"
-description: "Learn how to run Hanzo KMS with Docker."
+description: "Learn how to run KMS with Docker."
 ---
 
 Prerequisites:
 - Basic knowledge of [Docker](https://www.docker.com/)
 - Have Docker installed on your system. If not, follow the installation guide [here](https://docs.docker.com/get-docker/).
 
-Hanzo KMS is available as a single Docker image to ease deployment.
+KMS is available as a single Docker image to ease deployment.
 This Docker image only includes the application code, meaning you must supply a connection to a Postgres database and a Redis instance.
-The following guide provides a detailed step-by-step walkthrough on how you can deploy Hanzo KMS with Docker.
+The following guide provides a detailed step-by-step walkthrough on how you can deploy KMS with Docker.
 
 <Steps>
-  <Step title="Pull the Hanzo KMS Docker image">
-    Visit [Docker Hub](https://hub.docker.com/r/ghcr.io/hanzoai/kms/tags) and select a version of Hanzo KMS image you would like to deploy.
-    Then run the following command in your terminal to pull the specific Hanzo KMS Docker image.
+  <Step title="Pull the KMS Docker image">
+    Visit [Docker Hub](https://hub.docker.com/r/ghcr.io/hanzoai/kms/tags) and select a version of KMS image you would like to deploy.
+    Then run the following command in your terminal to pull the specific KMS Docker image.
     
     ```
     docker pull ghcr.io/hanzoai/kms:<version>
@@ -22,13 +22,13 @@ The following guide provides a detailed step-by-step walkthrough on how you can 
     
     Remember to replace `<version>` with the docker image tag of your choice.
   </Step>
-  <Step title="Start Hanzo KMS">
-    For a minimal installation of Hanzo KMS, you must configure `ENCRYPTION_KEY`, `AUTH_SECRET`, `DB_CONNECTION_URI`, `SITE_URL`, and `REDIS_URL`.     [View all available configurations](/self-hosting/configuration/envars).
+  <Step title="Start KMS">
+    For a minimal installation of KMS, you must configure `ENCRYPTION_KEY`, `AUTH_SECRET`, `DB_CONNECTION_URI`, `SITE_URL`, and `REDIS_URL`.     [View all available configurations](/self-hosting/configuration/envars).
     
 
     We recommend using Cloud-based Platform as a Service (PaaS) solutions for PostgreSQL and Redis to ensure high availability. 
 
-    Once you have added the required environment variables to your docker run command, execute it in your terminal to get Hanzo KMS up and running.
+    Once you have added the required environment variables to your docker run command, execute it in your terminal to get KMS up and running.
     
     For example:
 
@@ -53,6 +53,6 @@ The following guide provides a detailed step-by-step walkthrough on how you can 
 </Steps>
 
 ### Additional discussion 
-It's important to note that the above is a basic example of deploying Hanzo KMS using Docker. 
+It's important to note that the above is a basic example of deploying KMS using Docker. 
 In practice, for production deployments, you may want to use container orchestration platforms such as AWS ECS, Google Cloud Run, or Kubernetes. 
 These platforms offer additional features like scalability, load balancing, and automated deployment, making them suitable for handling production-level traffic and providing high availability.

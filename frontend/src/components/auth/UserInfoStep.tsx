@@ -166,7 +166,7 @@ export default function UserInfoStep({
             Organization Name
           </p>
           <Input
-            placeholder="Hanzo KMS"
+            placeholder="KMS"
             onChange={(e) => setOrganizationName(e.target.value)}
             value={organizationName}
             maxLength={64}

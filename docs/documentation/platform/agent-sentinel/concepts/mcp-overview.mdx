@@ -1,7 +1,7 @@
 ---
 title: "Model Context Protocol"
 sidebarTitle: "What is MCP?"
-description: "Learn what the Model Context Protocol is and how Hanzo KMS helps you manage it securely."
+description: "Learn what the Model Context Protocol is and how KMS helps you manage it securely."
 ---
 
 ## What is the Model Context Protocol?
@@ -36,7 +36,7 @@ KMS Agent Sentinel acts as a secure gateway between AI clients and MCP servers:
 
 ```mermaid
 graph LR
-    A[AI Client] --> B[Hanzo KMS MCP Endpoint]
+    A[AI Client] --> B[KMS MCP Endpoint]
     B --> C[Notion]
     B --> D[GitHub]
     B --> E[Slack]
@@ -47,6 +47,6 @@ This architecture provides:
 1. **Centralized Credential Management**: Store and manage MCP server credentials in one place. Choose between **shared credentials** (one credential for all users) or **personal credentials** (each user authenticates individually) based on your security and compliance needs.
 2. **Tool Governance**: Control exactly which tools from each MCP server are available through your endpoints.
 3. **Complete Audit Trail**: Every tool invocation is logged with full request/response details, user attribution, and timestamps.
-4. **Access Control**: Leverage Hanzo KMS's existing access control mechanisms to manage who can use which endpoints.
+4. **Access Control**: Leverage KMS's existing access control mechanisms to manage who can use which endpoints.
 
 Learn more about [credential modes](/documentation/platform/agent-sentinel/mcp-servers#credential-modes) when configuring MCP servers.

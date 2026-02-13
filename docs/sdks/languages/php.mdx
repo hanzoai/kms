@@ -1,10 +1,10 @@
 ---
-title: "Hanzo KMS PHP SDK"
+title: "KMS PHP SDK"
 sidebarTitle: "PHP"
 icon: "/images/sdks/languages/php.svg"
 ---
 
-If you're working with PHP, the official Hanzo KMS PHP SDK package is the easiest way to fetch and work with secrets for your application.
+If you're working with PHP, the official KMS PHP SDK package is the easiest way to fetch and work with secrets for your application.
 
 ## Installation
 
@@ -17,18 +17,18 @@ composer require kms/php-sdk
 ```php
 <?php
 
-use Hanzo KMS\SDK\Hanzo KMSSDK;
+use KMS\SDK\KMSSDK;
 
-$sdk = new Hanzo KMSSDK('https://kms.hanzo.ai');
+$sdk = new KMSSDK('https://kms.hanzo.ai');
 
-// Authenticate with Hanzo KMS
+// Authenticate with KMS
 $response = $sdk->auth()->universalAuth()->login(
     "your-machine-identity-client-id",
     "your-machine-identity-client-secret"
 );
 
 // List secrets
-$params = new \Hanzo KMS\SDK\Models\ListSecretsParameters(
+$params = new \KMS\SDK\Models\ListSecretsParameters(
     environment: "dev",
     secretPath: "/",
     projectId: "your-project-id"
@@ -74,7 +74,7 @@ This sub-class handles operations related to secrets:
 #### List Secrets
 
 ```php
-use Hanzo KMS\SDK\Models\ListSecretsParameters;
+use KMS\SDK\Models\ListSecretsParameters;
 
 $params = new ListSecretsParameters(
     environment: "dev",
@@ -106,7 +106,7 @@ $secrets = $sdk->secrets()->list($params);
 #### Create Secret
 
 ```php
-use Hanzo KMS\SDK\Models\CreateSecretParameters;
+use KMS\SDK\Models\CreateSecretParameters;
 
 $params = new CreateSecretParameters(
     secretKey: "SECRET_NAME",
@@ -132,7 +132,7 @@ $createdSecret = $sdk->secrets()->create($params);
 #### Get Secret
 
 ```php
-use Hanzo KMS\SDK\Models\GetSecretParameters;
+use KMS\SDK\Models\GetSecretParameters;
 
 $params = new GetSecretParameters(
     secretKey: "SECRET_NAME",
@@ -156,7 +156,7 @@ $secret = $sdk->secrets()->get($params);
 #### Update Secret
 
 ```php
-use Hanzo KMS\SDK\Models\UpdateSecretParameters;
+use KMS\SDK\Models\UpdateSecretParameters;
 
 $params = new UpdateSecretParameters(
     secretKey: "SECRET_NAME",
@@ -182,7 +182,7 @@ $updatedSecret = $sdk->secrets()->update($params);
 #### Delete Secret
 
 ```php
-use Hanzo KMS\SDK\Models\DeleteSecretParameters;
+use KMS\SDK\Models\DeleteSecretParameters;
 
 $params = new DeleteSecretParameters(
     secretKey: "SECRET_NAME",

@@ -4,19 +4,19 @@ title: "Request a Certificate via the KMS Agent"
 
 import RequestCertSetup from "/snippets/documentation/platform/pki/guides/request-cert-setup.mdx";
 
-The [KMS Agent](/integrations/platforms/certificate-agent) is an installable client daemon that can request TLS and other X.509 certificates from Hanzo KMS using the [API enrollment method](/documentation/platform/pki/enrollment-methods/api) configured on a [certificate profile](/documentation/platform/pki/certificates/profiles), persist it to a specified path on the filesystem, and automatically monitor and renew it before expiration.
+The [KMS Agent](/integrations/platforms/certificate-agent) is an installable client daemon that can request TLS and other X.509 certificates from KMS using the [API enrollment method](/documentation/platform/pki/enrollment-methods/api) configured on a [certificate profile](/documentation/platform/pki/certificates/profiles), persist it to a specified path on the filesystem, and automatically monitor and renew it before expiration.
 
 Instead of [manually requesting](/documentation/platform/pki/guides/request-cert-api) and renewing a certificate via the [Issue Certificate](/api-reference/endpoints/certificates/create-certificate) API endpoint, you can install and launch the KMS Agent to have it perform these steps for you automatically.
 
 ## Diagram
 
-The following sequence diagram illustrates the certificate enrollment workflow for requesting a certificate using the KMS Agent from Hanzo KMS.
+The following sequence diagram illustrates the certificate enrollment workflow for requesting a certificate using the KMS Agent from KMS.
 
 ```mermaid
 sequenceDiagram
   autonumber
   participant Agent as KMS Agent
-  participant Infis as Hanzo KMS
+  participant Infis as KMS
   participant CA as CA<br/>(Internal or External)
 
   Agent->>Infis: Request certificate<br/>(profileId, conditional subject/SANs, ttl,<br/>key usages, conditional CSR, etc.)
@@ -81,7 +81,7 @@ In the following steps, we explore an end-to-end workflow for requesting and con
   <Step title="Request a certificate">
     Next, [install the KMS CLI](/cli/overview) on the target machine you wish to request the certificate on and follow the documentation [here](/integrations/platforms/certificate-agent#operating-the-agent) to set up the KMS Agent on it.
     
-    As part of the setup, you must create an [agent configuration file](/integrations/platforms/certificate-agent#agent-configuration) that specifies how the agent should authenticate with Hanzo KMS using a [machine identity](/documentation/platform/identities/machine-identities), the certificate profile it should request against (from Step 3), what kind of certificate to request, where to persist the certificate, and how it should be managed in terms of auto-renewal.
+    As part of the setup, you must create an [agent configuration file](/integrations/platforms/certificate-agent#agent-configuration) that specifies how the agent should authenticate with KMS using a [machine identity](/documentation/platform/identities/machine-identities), the certificate profile it should request against (from Step 3), what kind of certificate to request, where to persist the certificate, and how it should be managed in terms of auto-renewal.
     
     Finally, start the agent with that configuration file so it can start requesting and continuously renewing the certificate on your behalf using the command below:
 

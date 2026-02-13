@@ -1,29 +1,29 @@
 ---
 title: "Stream to Non-HTTP providers"
-description: "How to stream Hanzo KMS Audit Logs to Non-HTTP log providers"
+description: "How to stream KMS Audit Logs to Non-HTTP log providers"
 ---
 
 <Info>
     Audit log streams is a paid feature.
    
-    If you're using Hanzo KMS Cloud, then it is available under the **Enterprise Tier**. If you're self-hosting Hanzo KMS,
+    If you're using KMS Cloud, then it is available under the **Enterprise Tier**. If you're self-hosting KMS,
     then you should contact team@kms.hanzo.ai to purchase an enterprise license to use it.
 </Info>
 
-This guide will demonstrate how you can send Hanzo KMS Audit log streams to storage solutions that do not support direct HTTP-based ingestion, such as AWS S3.
-To achieve this, you will learn how you can use a log collector like Fluent Bit to capture and forward logs from Hanzo KMS to non-HTTP storage options. 
-In this pattern, Fluent Bit acts as an intermediary, accepting HTTP log streams from Hanzo KMS and transforming them into a format that can be sent to your desired storage provider.
+This guide will demonstrate how you can send KMS Audit log streams to storage solutions that do not support direct HTTP-based ingestion, such as AWS S3.
+To achieve this, you will learn how you can use a log collector like Fluent Bit to capture and forward logs from KMS to non-HTTP storage options. 
+In this pattern, Fluent Bit acts as an intermediary, accepting HTTP log streams from KMS and transforming them into a format that can be sent to your desired storage provider.
 
 ## Overview
 
 Log collectors are tools used to collect, analyze, transform, and send logs to storage. 
-For the purposes of this guide, we will use [Fluent Bit](https://fluentbit.io) as our log collector and send logs from Hanzo KMS to AWS S3. 
+For the purposes of this guide, we will use [Fluent Bit](https://fluentbit.io) as our log collector and send logs from KMS to AWS S3. 
 However, this is just a example and you can use any log collector of your choice. 
 
 ## Deploy Fluent Bit
 
 You can deploy Fluent Bit in one of two ways:
-1. As a sidecar to your self-hosted Hanzo KMS instance
+1. As a sidecar to your self-hosted KMS instance
 2. As a standalone service in any deployment/compute service (e.g., AWS EC2, ECS, or GCP Compute Engine)
 
 To view all deployment methods, visit the [Fluent Bit Getting Started guide](https://docs.fluentbit.io/manual/installation/getting-started-with-fluent-bit).
@@ -55,7 +55,7 @@ The following Fluent Bit configuration sets up an HTTP listener on port `8888` a
     compression                  gzip
     s3_key_format                /$TAG/%Y/%m/%d/%H_%M_%S.gz
 ```
-### Connecting Hanzo KMS Audit Log Stream
+### Connecting KMS Audit Log Stream
 
-Once Fluent Bit is set up and configured, you can point the Hanzo KMS [audit log stream](/documentation/platform/audit-log-streams/audit-log-streams) to Fluent Bit's HTTP listener, which will then forward the logs to your chosen provider. 
-Using this pattern, you are able to send Hanzo KMS Audit logs to various providers that do not support HTTP based log ingestion by default. 
+Once Fluent Bit is set up and configured, you can point the KMS [audit log stream](/documentation/platform/audit-log-streams/audit-log-streams) to Fluent Bit's HTTP listener, which will then forward the logs to your chosen provider. 
+Using this pattern, you are able to send KMS Audit logs to various providers that do not support HTTP based log ingestion by default. 

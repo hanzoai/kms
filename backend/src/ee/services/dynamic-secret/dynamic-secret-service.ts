@@ -465,7 +465,7 @@ export const dynamicSecretServiceFactory = ({
     const leases = await dynamicSecretLeaseDAL.find({ dynamicSecretId: dynamicSecretCfg.id });
     // when not forced we check with the external system to first remove the things
     // we introduce a forced concept because consider the external lease got deleted by some other external like a human or another system
-    // this allows user to clean up it from Hanzo KMS
+    // this allows user to clean up it from KMS
     if (isForced) {
       // clear all queues for lease revocations
       await Promise.all(leases.map(({ id: leaseId }) => dynamicSecretQueueService.unsetLeaseRevocation(leaseId)));

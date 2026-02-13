@@ -783,7 +783,7 @@ export const accessApprovalRequestServiceFactory = ({
             if (recipientEmails.length > 0) {
               await smtpService.sendMail({
                 recipients: recipientEmails,
-                subjectLine: "Hanzo KMS Secret Access Policy Bypassed",
+                subjectLine: "KMS Secret Access Policy Bypassed",
                 substitutions: {
                   projectName: project.name,
                   requesterFullName: `${actingUser.firstName} ${actingUser.lastName}`,

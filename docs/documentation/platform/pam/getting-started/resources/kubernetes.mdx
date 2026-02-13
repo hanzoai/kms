@@ -1,26 +1,26 @@
 ---
 title: "Kubernetes"
 sidebarTitle: "Kubernetes"
-description: "Learn how to configure Kubernetes cluster access through Hanzo KMS PAM for secure, audited, and just-in-time access to your Kubernetes clusters."
+description: "Learn how to configure Kubernetes cluster access through KMS PAM for secure, audited, and just-in-time access to your Kubernetes clusters."
 ---
 
-Hanzo KMS PAM supports secure, just-in-time access to Kubernetes clusters through service account token authentication. This allows your team to access Kubernetes clusters without sharing long-lived credentials, while maintaining a complete audit trail of who accessed what and when.
+KMS PAM supports secure, just-in-time access to Kubernetes clusters through service account token authentication. This allows your team to access Kubernetes clusters without sharing long-lived credentials, while maintaining a complete audit trail of who accessed what and when.
 
 ## How It Works
 
-Kubernetes access in Hanzo KMS PAM uses an KMS Gateway to securely proxy connections to your Kubernetes API server. When a user requests access, Hanzo KMS generates a temporary kubeconfig that routes traffic through the Gateway, enabling secure access without exposing your cluster directly.
+Kubernetes access in KMS PAM uses an KMS Gateway to securely proxy connections to your Kubernetes API server. When a user requests access, KMS generates a temporary kubeconfig that routes traffic through the Gateway, enabling secure access without exposing your cluster directly.
 
 ```mermaid
 sequenceDiagram
     participant User
     participant CLI as KMS CLI
-    participant Hanzo KMS
+    participant KMS
     participant Gateway as KMS Gateway
     participant K8s as Kubernetes API Server
 
     User->>CLI: Request Kubernetes access
-    CLI->>Hanzo KMS: Authenticate & request session
-    Hanzo KMS-->>CLI: Session credentials & Gateway info
+    CLI->>KMS: Authenticate & request session
+    KMS-->>CLI: Session credentials & Gateway info
     CLI->>CLI: Start local proxy
     CLI->>Gateway: Establish secure tunnel
     User->>CLI: kubectl commands
@@ -35,7 +35,7 @@ sequenceDiagram
 
 1. **Gateway**: An KMS Gateway deployed in your network that can reach the Kubernetes API server. The Gateway handles secure communication between users and your cluster.
 
-2. **Service Account Token**: A Kubernetes service account token that grants access to the cluster. This token is stored securely in Hanzo KMS and used by the Gateway to authenticate with the Kubernetes API.
+2. **Service Account Token**: A Kubernetes service account token that grants access to the cluster. This token is stored securely in KMS and used by the Gateway to authenticate with the Kubernetes API.
 
 3. **Local Proxy**: The KMS CLI starts a local proxy on your machine that intercepts kubectl commands and routes them securely through the Gateway to your cluster.
 
@@ -43,7 +43,7 @@ sequenceDiagram
 
 ### Session Tracking
 
-Hanzo KMS tracks:
+KMS tracks:
 - When the session was created
 - Who accessed which cluster
 - Session duration
@@ -56,26 +56,26 @@ Hanzo KMS tracks:
 
 ## Prerequisites
 
-Before configuring Kubernetes access in Hanzo KMS PAM, you need:
+Before configuring Kubernetes access in KMS PAM, you need:
 
 1. **KMS Gateway** - A Gateway deployed in your network with access to the Kubernetes API server
 2. **Service Account** - A Kubernetes service account with appropriate RBAC permissions
 3. **KMS CLI** - The KMS CLI installed on user machines
 
 <Warning>
-  **Gateway Required**: Unlike AWS Console access, Kubernetes access requires an KMS Gateway to be deployed and registered with your Hanzo KMS instance. The Gateway must have network connectivity to your Kubernetes API server.
+  **Gateway Required**: Unlike AWS Console access, Kubernetes access requires an KMS Gateway to be deployed and registered with your KMS instance. The Gateway must have network connectivity to your Kubernetes API server.
 </Warning>
 
 ## Create the PAM Resource
 
-The PAM Resource represents the connection between Hanzo KMS and your Kubernetes cluster.
+The PAM Resource represents the connection between KMS and your Kubernetes cluster.
 
 <Steps>
   <Step title="Ensure Gateway is Running">
-    Before creating the resource, ensure you have an KMS Gateway running and registered with your Hanzo KMS instance. The Gateway must have network access to your Kubernetes API server.
+    Before creating the resource, ensure you have an KMS Gateway running and registered with your KMS instance. The Gateway must have network access to your Kubernetes API server.
   </Step>
 
-  <Step title="Create the Resource in Hanzo KMS">
+  <Step title="Create the Resource in KMS">
     1. Navigate to your PAM project and go to the **Resources** tab
     2. Click **Add Resource** and select **Kubernetes**
     3. Enter a name for the resource (e.g., `production-k8s`, `staging-cluster`)
@@ -91,7 +91,7 @@ The PAM Resource represents the connection between Hanzo KMS and your Kubernetes
 
 ## Create a Service Account
 
-Hanzo KMS PAM currently supports service account token authentication for Kubernetes. You'll need to create a service account with appropriate permissions in your cluster.
+KMS PAM currently supports service account token authentication for Kubernetes. You'll need to create a service account with appropriate permissions in your cluster.
 
 <Steps>
   <Step title="Create the Service Account YAML">
@@ -195,7 +195,7 @@ Once your resource and accounts are configured, users can request access through
     Run the copied command in your terminal.
 
     The CLI will:
-    1. Authenticate with Hanzo KMS
+    1. Authenticate with KMS
     2. Establish a secure connection through the Gateway
     3. Start a local proxy on your machine
     4. Configure kubectl to use the proxy
@@ -217,7 +217,7 @@ Once your resource and accounts are configured, users can request access through
     When you're done, stop the proxy by pressing `Ctrl+C` in the terminal where it's running. This will:
     - Close the secure tunnel
     - End the session
-    - Log the session details to Hanzo KMS
+    - Log the session details to KMS
 
     You can view session logs in the **Sessions** page of your PAM project.
   </Step>

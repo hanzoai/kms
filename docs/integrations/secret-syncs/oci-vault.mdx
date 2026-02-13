@@ -1,12 +1,12 @@
 ---
 title: "OCI Vault Sync"
-description: "Learn how to configure an Oracle Cloud Infrastructure Vault Sync for Hanzo KMS."
+description: "Learn how to configure an Oracle Cloud Infrastructure Vault Sync for KMS."
 ---
 
 <Info>
     OCI Vault Sync is a paid feature.
 
-    If you're using Hanzo KMS Cloud, then it is available under the **Enterprise Tier**. If you're self-hosting Hanzo KMS,
+    If you're using KMS Cloud, then it is available under the **Enterprise Tier**. If you're self-hosting KMS,
     then you should contact team@kms.hanzo.ai to purchase an enterprise license to use it.
 </Info>
 
@@ -14,10 +14,10 @@ description: "Learn how to configure an Oracle Cloud Infrastructure Vault Sync f
 - Create an [OCI Connection](/integrations/app-connections/oci) with the required **Secret Sync** permissions
 - [Create](https://docs.oracle.com/en-us/iaas/Content/Identity/compartments/To_create_a_compartment.htm) or use an existing OCI Compartment (which the OCI Connection is authorized to access)
 - [Create](https://docs.oracle.com/en-us/iaas/Content/KeyManagement/Tasks/managingvaults_topic-To_create_a_new_vault.htm#createnewvault) or use an existing OCI Vault
-- Ensure your network security policies allow incoming requests from Hanzo KMS to this secret sync provider, if network restrictions apply.
+- Ensure your network security policies allow incoming requests from KMS to this secret sync provider, if network restrictions apply.
 
 <Tabs>
-    <Tab title="Hanzo KMS UI">
+    <Tab title="KMS UI">
         <Steps>
             <Step title="Add Sync">
                 Navigate to **Project** > **Integrations** and select the **Secret Syncs** tab. Click on the **Add Sync** button.
@@ -54,16 +54,16 @@ description: "Learn how to configure an Oracle Cloud Infrastructure Vault Sync f
 
                 ![Configure Sync Options](/images/secret-syncs/oci-vault/configure-sync-options.png)
 
-                - **Initial Sync Behavior**: Determines how Hanzo KMS should resolve the initial sync.
-                    - **Overwrite Destination Secrets**: Removes any secrets at the destination endpoint not present in Hanzo KMS.
-                    - **Import Secrets (Prioritize Hanzo KMS)**: Imports secrets from the destination endpoint before syncing, prioritizing values from Hanzo KMS over OCI Vault when keys conflict.
-                    - **Import Secrets (Prioritize OCI Vault)**: Imports secrets from the destination endpoint before syncing, prioritizing values from OCI Vault over Hanzo KMS when keys conflict.
+                - **Initial Sync Behavior**: Determines how KMS should resolve the initial sync.
+                    - **Overwrite Destination Secrets**: Removes any secrets at the destination endpoint not present in KMS.
+                    - **Import Secrets (Prioritize KMS)**: Imports secrets from the destination endpoint before syncing, prioritizing values from KMS over OCI Vault when keys conflict.
+                    - **Import Secrets (Prioritize OCI Vault)**: Imports secrets from the destination endpoint before syncing, prioritizing values from OCI Vault over KMS when keys conflict.
                 - **Key Schema**: Template that determines how secret names are transformed when syncing, using `{{secretKey}}` as a placeholder for the original secret name and `{{environment}}` for the environment.
                 <Note>
-                    We highly recommend using a Key Schema to ensure that Hanzo KMS only manages the specific keys you intend, keeping everything else untouched.
+                    We highly recommend using a Key Schema to ensure that KMS only manages the specific keys you intend, keeping everything else untouched.
                 </Note>
                 - **Auto-Sync Enabled**: If enabled, secrets will automatically be synced from the source location when changes occur. Disable to enforce manual syncing only.
-                - **Disable Secret Deletion**: If enabled, Hanzo KMS will not remove secrets from the sync destination. Enable this option if you intend to manage some secrets manually outside of Hanzo KMS.
+                - **Disable Secret Deletion**: If enabled, KMS will not remove secrets from the sync destination. Enable this option if you intend to manage some secrets manually outside of KMS.
             </Step>
             <Step title="Configure details">
                 Configure the **Details** of your OCI Vault Sync, then click **Next**.
@@ -173,7 +173,7 @@ description: "Learn how to configure an Oracle Cloud Infrastructure Vault Sync f
 
 <AccordionGroup>
     <Accordion title="How are non-active lifecycle states treated?">
-        When Hanzo KMS attempts to sync secrets, the sync will fail and attempt to re-sync if **any secret** has one of the following lifecycle states:
+        When KMS attempts to sync secrets, the sync will fail and attempt to re-sync if **any secret** has one of the following lifecycle states:
         - SchedulingDeletion
         - CancellingDeletion
         - Deleting
@@ -183,6 +183,6 @@ description: "Learn how to configure an Oracle Cloud Infrastructure Vault Sync f
         We do this to prevent any desync issues.
     </Accordion>
     <Accordion title="What happens if I create / update a variable that's scheduled for deletion in OCI Vault?">
-        In the case that a variable is created or updated while it's scheduled for deletion in OCI Vault, we cancel the deletion and update the variable. This action may take up to a minute since Hanzo KMS must wait for OCI to completely cancel the deletion and then update the variable.
+        In the case that a variable is created or updated while it's scheduled for deletion in OCI Vault, we cancel the deletion and update the variable. This action may take up to a minute since KMS must wait for OCI to completely cancel the deletion and then update the variable.
     </Accordion>
 </AccordionGroup>

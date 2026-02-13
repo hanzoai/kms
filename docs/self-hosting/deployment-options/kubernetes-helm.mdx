@@ -1,9 +1,9 @@
 ---
 title: "Kubernetes via Helm Chart"
-description: "Learn how to deploy Hanzo KMS on Kubernetes using our official Helm chart."
+description: "Learn how to deploy KMS on Kubernetes using our official Helm chart."
 ---
 
-Learn how to deploy **Hanzo KMS** on Kubernetes using the official Helm chart. This method is ideal for production environments that require scalability, high availability, and integration with existing Kubernetes infrastructure.
+Learn how to deploy **KMS** on Kubernetes using the official Helm chart. This method is ideal for production environments that require scalability, high availability, and integration with existing Kubernetes infrastructure.
 
 ## Prerequisites
 
@@ -18,7 +18,7 @@ Learn how to deploy **Hanzo KMS** on Kubernetes using the official Helm chart. T
 
 ## System Requirements
 
-The following are minimum requirements for running Hanzo KMS on Kubernetes:
+The following are minimum requirements for running KMS on Kubernetes:
 
 | Component | Minimum | Recommended (Production) |
 |-----------|---------|--------------------------|
@@ -31,7 +31,7 @@ The following are minimum requirements for running Hanzo KMS on Kubernetes:
 
 | Pod | CPU Request | Memory Limit |
 |-----|-------------|--------------|
-| Hanzo KMS | 350m | 1000Mi |
+| KMS | 350m | 1000Mi |
 | PostgreSQL | 250m | 512Mi |
 | Redis | 100m | 256Mi |
 
@@ -41,7 +41,7 @@ For production deployments with many users or secrets, increase these values acc
 
 <Steps>
   <Step title="Create a namespace">
-    Create a dedicated namespace for Hanzo KMS to isolate resources:
+    Create a dedicated namespace for KMS to isolate resources:
 
     ```bash
     kubectl create namespace kms
@@ -51,7 +51,7 @@ For production deployments with many users or secrets, increase these values acc
   </Step>
 
   <Step title="Add the Helm repository">
-    Add the Hanzo KMS Helm charts repository and update your local cache:
+    Add the KMS Helm charts repository and update your local cache:
 
     ```bash
     helm repo add kms-helm-charts 'https://dl.cloudsmith.io/public/hanzoai/kms-helm-charts/helm/charts/'
@@ -60,7 +60,7 @@ For production deployments with many users or secrets, increase these values acc
   </Step>
 
   <Step title="Create the secrets">
-    Hanzo KMS requires a Kubernetes secret named `kms-secrets` containing essential configuration. Create this secret in the same namespace where you'll deploy the chart.
+    KMS requires a Kubernetes secret named `kms-secrets` containing essential configuration. Create this secret in the same namespace where you'll deploy the chart.
 
     <Tabs>
       <Tab title="Proof of concept">
@@ -125,11 +125,11 @@ For production deployments with many users or secrets, increase these values acc
       Do not use the `latest` tag in production. Always pin to a specific version to avoid unexpected changes during upgrades.
     </Warning>
 
-    For all available configuration options, see the [full values.yaml reference](https://raw.githubusercontent.com/Hanzo KMS/kms/main/helm-charts/kms-standalone/values.yaml).
+    For all available configuration options, see the [full values.yaml reference](https://raw.githubusercontent.com/KMS/kms/main/helm-charts/kms-standalone/values.yaml).
   </Step>
 
   <Step title="Install the Helm chart">
-    Deploy Hanzo KMS using Helm:
+    Deploy KMS using Helm:
 
     ```bash
     helm upgrade --install kms kms-helm-charts/kms-standalone \
@@ -137,7 +137,7 @@ For production deployments with many users or secrets, increase these values acc
       --values values.yaml
     ```
 
-    This command installs Hanzo KMS if it doesn't exist, or upgrades it if it does.
+    This command installs KMS if it doesn't exist, or upgrades it if it does.
   </Step>
 
   <Step title="Verify the deployment">
@@ -171,7 +171,7 @@ For production deployments with many users or secrets, increase these values acc
     ```
 
     <Tip>
-      The first user to sign up becomes the instance administrator. Complete this step before exposing Hanzo KMS to others.
+      The first user to sign up becomes the instance administrator. Complete this step before exposing KMS to others.
     </Tip>
   </Step>
 </Steps>
@@ -182,10 +182,10 @@ For production deployments with many users or secrets, increase these values acc
 
 ### Viewing Pod Logs
 
-To view logs from Hanzo KMS pods:
+To view logs from KMS pods:
 
 ```bash
-# View logs from all Hanzo KMS pods
+# View logs from all KMS pods
 kubectl logs -n kms -l component=kms -f
 
 # View logs from a specific pod
@@ -207,7 +207,7 @@ kubectl logs -n kms -l app.kubernetes.io/name=redis -f
 
 ### Scaling the Deployment
 
-Hanzo KMS's application layer is stateless, so you can scale horizontally:
+KMS's application layer is stateless, so you can scale horizontally:
 
 ```bash
 # Scale to 4 replicas
@@ -227,7 +227,7 @@ helm upgrade kms kms-helm-charts/kms-standalone \
   --values values.yaml
 ```
 
-### Upgrading Hanzo KMS
+### Upgrading KMS
 
 To upgrade to a new version:
 
@@ -255,9 +255,9 @@ To upgrade to a new version:
    kubectl rollout status deployment/kms -n kms
    ```
 
-### Uninstalling Hanzo KMS
+### Uninstalling KMS
 
-To completely remove Hanzo KMS from your cluster:
+To completely remove KMS from your cluster:
 
 ```bash
 # Uninstall the Helm release
@@ -328,7 +328,7 @@ redis:
 
 <AccordionGroup>
   <Accordion title="SMTP/Email Configuration">
-    Hanzo KMS uses email for user invitations, password resets, and notifications. Add SMTP configuration to your secrets:
+    KMS uses email for user invitations, password resets, and notifications. Add SMTP configuration to your secrets:
 
     ```bash
     kubectl create secret generic kms-secrets \
@@ -341,7 +341,7 @@ redis:
       --from-literal=SMTP_USERNAME="your-smtp-username" \
       --from-literal=SMTP_PASSWORD="your-smtp-password" \
       --from-literal=SMTP_FROM_ADDRESS="kms@example.com" \
-      --from-literal=SMTP_FROM_NAME="Hanzo KMS" \
+      --from-literal=SMTP_FROM_NAME="KMS" \
       --dry-run=client -o yaml | kubectl apply -f -
     ```
 
@@ -353,7 +353,7 @@ redis:
     | SendGrid | smtp.sendgrid.net | 587 |
     | Gmail | smtp.gmail.com | 587 |
 
-    After updating secrets, restart the Hanzo KMS pods:
+    After updating secrets, restart the KMS pods:
 
     ```bash
     kubectl rollout restart deployment/kms -n kms
@@ -544,7 +544,7 @@ redis:
   </Accordion>
 
   <Accordion title="Prometheus Monitoring">
-    Hanzo KMS exposes Prometheus metrics when enabled.
+    KMS exposes Prometheus metrics when enabled.
 
     **1. Add telemetry configuration to your secrets:**
 
@@ -582,7 +582,7 @@ redis:
   <Accordion title="High Availability Configuration">
     For production high availability:
 
-    **1. Multiple Hanzo KMS replicas:**
+    **1. Multiple KMS replicas:**
 
     ```yaml values.yaml
     kms:
@@ -664,7 +664,7 @@ redis:
     ```
   </Accordion>
 
-  <Accordion title="Cannot access Hanzo KMS via Ingress">
+  <Accordion title="Cannot access KMS via Ingress">
     **Check ingress status:**
     ```bash
     kubectl get ingress -n kms
@@ -777,17 +777,17 @@ redis:
       fullnameOverride: ""
 
       kms:
-        # -- Enable Hanzo KMS chart deployment
+        # -- Enable KMS chart deployment
         enabled: true
         # -- Sets the name of the deployment within this chart
         name: kms
 
         autoBootstrap:
-          # -- Enable auto-bootstrap of the Hanzo KMS instance
+          # -- Enable auto-bootstrap of the KMS instance
           enabled: false
 
           image:
-            # -- Hanzo KMS KMS CLI image tag version
+            # -- KMS KMS CLI image tag version
             tag: "0.41.86"
 
           # -- Template for the data/stringData section of the Kubernetes secret. Available functions: encodeBase64
@@ -800,7 +800,7 @@ redis:
             # -- Namespace to create the bootstrap secret in. If not provided, the secret will be created in the same namespace as the release.
             namespace: "default"
 
-          # -- Hanzo KMS organization to create in the Hanzo KMS instance during auto-bootstrap
+          # -- KMS organization to create in the KMS instance during auto-bootstrap
           organization: "default-org"
 
           credentialSecret:
@@ -824,19 +824,19 @@ redis:
           # -- Optional custom service account name, if existing service account is used
           name: null
 
-        # -- Override for the full name of Hanzo KMS resources in this deployment
+        # -- Override for the full name of KMS resources in this deployment
         fullnameOverride: ""
-        # -- Custom annotations for Hanzo KMS pods
+        # -- Custom annotations for KMS pods
         podAnnotations: {}
-        # -- Custom annotations for Hanzo KMS deployment
+        # -- Custom annotations for KMS deployment
         deploymentAnnotations: {}
         # -- Number of pod replicas for high availability
         replicaCount: 2
 
         image:
-          # -- Image repository for the Hanzo KMS service
+          # -- Image repository for the KMS service
           repository: ghcr.io/hanzoai/kms
-          # -- Specific version tag of the Hanzo KMS image. View the latest version here https://hub.docker.com/r/ghcr.io/hanzoai/kms
+          # -- Specific version tag of the KMS image. View the latest version here https://hub.docker.com/r/ghcr.io/hanzoai/kms
           tag: "v0.151.0"
           # -- Pulls image only if not already present on the node
           pullPolicy: IfNotPresent
@@ -853,11 +853,11 @@ redis:
         # -- Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
         topologySpreadConstraints: []
 
-        # -- Kubernetes Secret reference containing Hanzo KMS root credentials
+        # -- Kubernetes Secret reference containing KMS root credentials
         kubeSecretRef: "kms-secrets"
 
         service:
-          # -- Custom annotations for Hanzo KMS service
+          # -- Custom annotations for KMS service
           annotations: {}
           # -- Service type, can be changed based on exposure needs (e.g., LoadBalancer)
           type: ClusterIP
@@ -866,10 +866,10 @@ redis:
 
         resources:
           limits:
-            # -- Memory limit for Hanzo KMS container
+            # -- Memory limit for KMS container
             memory: 1000Mi
           requests:
-            # -- CPU request for Hanzo KMS container
+            # -- CPU request for KMS container
             cpu: 350m
 
       ingress:
@@ -913,7 +913,7 @@ redis:
           username: kms
           # -- Password for PostgreSQL database access
           password: root
-          # -- Database name for Hanzo KMS
+          # -- Database name for KMS
           database: kmsDB
 
         useExistingPostgresSecret:
@@ -958,6 +958,6 @@ redis:
 
 ---
 
-Your Hanzo KMS instance should now be running on Kubernetes. Access it via the ingress hostname you configured, or use `kubectl port-forward` for local testing.
+Your KMS instance should now be running on Kubernetes. Access it via the ingress hostname you configured, or use `kubectl port-forward` for local testing.
 
 ![self-hosted sign up](/images/self-hosting/applicable-to-all/selfhost-signup.png)

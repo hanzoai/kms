@@ -3,7 +3,7 @@ title: "GCP IAM"
 description: "Learn how to dynamically generate GCP service account tokens."
 ---
 
-The Hanzo KMS GCP IAM dynamic secret allows you to generate GCP service account tokens on demand based on service account permissions.
+The KMS GCP IAM dynamic secret allows you to generate GCP service account tokens on demand based on service account permissions.
 
 <Warning>
     GCP service account access tokens cannot be revoked. As such, revoking or regenerating a token does not invalidate the old one; it remains active until it expires.
@@ -14,7 +14,7 @@ The Hanzo KMS GCP IAM dynamic secret allows you to generate GCP service account 
 </Note>
 
 <Accordion title="Self-Hosted Instance">
-    Using the GCP integration on a self-hosted instance of Hanzo KMS requires configuring a service account on GCP and
+    Using the GCP integration on a self-hosted instance of KMS requires configuring a service account on GCP and
     configuring your instance to use it.
 
     <Steps>
@@ -37,7 +37,7 @@ The Hanzo KMS GCP IAM dynamic secret allows you to generate GCP service account 
         <Step title="Configure Your Instance">
             1. Copy the entire contents of the downloaded JSON key file.
             2. Set it as a string value for the `INF_APP_CONNECTION_GCP_SERVICE_ACCOUNT_CREDENTIAL` environment variable.
-            3. Restart your Hanzo KMS instance to apply the changes.
+            3. Restart your KMS instance to apply the changes.
             4. You can now use GCP integration with service account impersonation.
         </Step>
     </Steps>
@@ -53,20 +53,20 @@ The Hanzo KMS GCP IAM dynamic secret allows you to generate GCP service account 
         ![Create Service Account](/images/app-connections/gcp/create-service-account.png)
     </Step>
     <Step title="Configure Service Account Permissions">
-        When you assign specific roles and permissions to this service account, any tokens generated through Hanzo KMS's dynamic secrets functionality will inherit these exact permissions. This means that applications using these dynamically generated tokens will have the same access capabilities as defined by the service account's role assignments, ensuring proper access control while maintaining the principle of least privilege.
+        When you assign specific roles and permissions to this service account, any tokens generated through KMS's dynamic secrets functionality will inherit these exact permissions. This means that applications using these dynamically generated tokens will have the same access capabilities as defined by the service account's role assignments, ensuring proper access control while maintaining the principle of least privilege.
 
         After configuring the appropriate roles, press "DONE".
     </Step>
     <Step title="Enable Service Account Impersonation">
-        To enable service account impersonation, you'll need to grant the **Service Account Token Creator** role to the Hanzo KMS instance's service account. This configuration allows Hanzo KMS to securely impersonate the new service account.
+        To enable service account impersonation, you'll need to grant the **Service Account Token Creator** role to the KMS instance's service account. This configuration allows KMS to securely impersonate the new service account.
         - Navigate to the IAM & Admin > Service Accounts section in your Google Cloud Console
         - Select the newly created service account
         - Click on the "PERMISSIONS" tab
         - Click "Grant Access" to add a new principal
 
-        If you're using Hanzo KMS Cloud US, use the following service account: `kms-us@kms-us.iam.gserviceaccount.com`
+        If you're using KMS Cloud US, use the following service account: `kms-us@kms-us.iam.gserviceaccount.com`
 
-        If you're using Hanzo KMS Cloud EU, use the following service account: `kms-eu@kms-eu.iam.gserviceaccount.com`
+        If you're using KMS Cloud EU, use the following service account: `kms-eu@kms-eu.iam.gserviceaccount.com`
 
         If you're self-hosting, follow the "Self-Hosted Instance" guide at the top of the page and then use service account you created
 

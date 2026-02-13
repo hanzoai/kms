@@ -7,35 +7,35 @@ description: "Learn how to use KMS CLI Agent to manage certificates automaticall
 ## Concept
 
 The KMS Agent is a client daemon that is packaged into the [KMS CLI](/cli/overview).
-It can be used to request a certificate from Hanzo KMS using the [API enrollment method](/documentation/platform/pki/enrollment-methods/api) configured on a [certificate profile](/documentation/platform/pki/certificates/profiles), persist it to a specified path on the filesystem, and automatically monitor and renew it before expiration.
+It can be used to request a certificate from KMS using the [API enrollment method](/documentation/platform/pki/enrollment-methods/api) configured on a [certificate profile](/documentation/platform/pki/certificates/profiles), persist it to a specified path on the filesystem, and automatically monitor and renew it before expiration.
 
 The KMS Agent is notable:
 
-- Automating certificate management: The agent can request, persist, monitor, and renew certificates from Hanzo KMS automatically without manual intervention. It also supports post-event hooks to execute custom commands after certificate issuance, renewal, or failure events.
-- Leveraging workload identity: The agent can authenticate with Hanzo KMS as a [machine identity](/documentation/platform/identities/machine-identities) using an infrastructure-native authentication method such as [AWS Auth](/docs/documentation/platform/identities/aws-auth), [Azure Auth](/docs/documentation/platform/identities/azure-auth), [GCP Auth](/docs/documentation/platform/identities/gcp-auth), [Kubernetes Auth](/docs/documentation/platform/identities/kubernetes-auth), etc.
+- Automating certificate management: The agent can request, persist, monitor, and renew certificates from KMS automatically without manual intervention. It also supports post-event hooks to execute custom commands after certificate issuance, renewal, or failure events.
+- Leveraging workload identity: The agent can authenticate with KMS as a [machine identity](/documentation/platform/identities/machine-identities) using an infrastructure-native authentication method such as [AWS Auth](/docs/documentation/platform/identities/aws-auth), [Azure Auth](/docs/documentation/platform/identities/azure-auth), [GCP Auth](/docs/documentation/platform/identities/gcp-auth), [Kubernetes Auth](/docs/documentation/platform/identities/kubernetes-auth), etc.
 
 The typical workflow for using the agent involves installing the KMS CLI on the target machine, creating a configuration file defining the certificate to request and how it should be managed, and then starting the agent with that configuration so it can request, persist, monitor, and renew the certificate before it expires.
 This follows a [client-driven approach](/documentation/platform/pki/certificates/certificates#client-driven-certificate-renewal) to certificate renewal.
 
 ## Workflow
 
-A typical workflow for using the KMS Agent to request certificates from Hanzo KMS consists of the following steps:
+A typical workflow for using the KMS Agent to request certificates from KMS consists of the following steps:
 
-1. Create a [certificate profile](/documentation/platform/pki/certificates/profiles) in Hanzo KMS with the [API enrollment method](/documentation/platform/pki/enrollment-methods/api) configured on it.
+1. Create a [certificate profile](/documentation/platform/pki/certificates/profiles) in KMS with the [API enrollment method](/documentation/platform/pki/enrollment-methods/api) configured on it.
 2. Install the [KMS CLI](/cli/overview) on the target machine.
 3. Create an agent [configuration file](/integrations/platforms/certificate-agent#agent-configuration) containing details about the certificate to request and how it should be managed such as renewal thresholds, post-event hooks, etc.
 4. Start the agent with that configuration so it can request, persist, monitor, and going forward automatically renew the certificate before it expires on the target machine.
 
 ## Operating the Agent
 
-This section describes how to use the KMS Agent to request certificates from Hanzo KMS. It covers how the agent authenticates with Hanzo KMS,
-and how to configure it to start requesting certificates from Hanzo KMS.
+This section describes how to use the KMS Agent to request certificates from KMS. It covers how the agent authenticates with KMS,
+and how to configure it to start requesting certificates from KMS.
 
 ### Authentication
 
-The KMS Agent can authenticate with Hanzo KMS as a [machine identity](/documentation/platform/identities/machine-identities) using one of its supported authentication methods.
+The KMS Agent can authenticate with KMS as a [machine identity](/documentation/platform/identities/machine-identities) using one of its supported authentication methods.
 
-Upon successful authentication, the agent receives a short-lived access token that it uses to make subsequent authenticated requests to obtain and renew certificates from Hanzo KMS;
+Upon successful authentication, the agent receives a short-lived access token that it uses to make subsequent authenticated requests to obtain and renew certificates from KMS;
 the agent automatically handles token renewal as documented [here](/integrations/platforms/kms-agent#token-renewal).
 
 <AccordionGroup>
@@ -113,7 +113,7 @@ the agent automatically handles token renewal as documented [here](/integrations
 
   </Accordion>
   <Accordion title="Native GCP ID Token">
-    The Native GCP ID Token method is used to authenticate with Hanzo KMS when running in a GCP environment.
+    The Native GCP ID Token method is used to authenticate with KMS when running in a GCP environment.
 
     <Steps>
       <Step title="Create a GCP machine identity">
@@ -133,7 +133,7 @@ the agent automatically handles token renewal as documented [here](/integrations
 
   </Accordion>
   <Accordion title="GCP IAM">
-    The GCP IAM method is used to authenticate with Hanzo KMS with a GCP service account key.
+    The GCP IAM method is used to authenticate with KMS with a GCP service account key.
 
     <Steps>
       <Step title="Create a GCP machine identity">
@@ -154,7 +154,7 @@ the agent automatically handles token renewal as documented [here](/integrations
 
   </Accordion>
   <Accordion title="Native AWS IAM">
-    The AWS IAM method is used to authenticate with Hanzo KMS with an AWS IAM role while running in an AWS environment.
+    The AWS IAM method is used to authenticate with KMS with an AWS IAM role while running in an AWS environment.
 
     <Steps>
       <Step title="Create an AWS machine identity">
@@ -177,24 +177,24 @@ the agent automatically handles token renewal as documented [here](/integrations
 
 ### Agent Configuration
 
-The KMS Agent relies on a YAML configuration file to define its behavior, including how it should authenticate with Hanzo KMS, the certificate it should request, and how that certificate should be managed including auto-renewal.
+The KMS Agent relies on a YAML configuration file to define its behavior, including how it should authenticate with KMS, the certificate it should request, and how that certificate should be managed including auto-renewal.
 
-The code snippet below shows an example configuration file that instructs the agent to request and continuously renew a certificate from Hanzo KMS.
+The code snippet below shows an example configuration file that instructs the agent to request and continuously renew a certificate from KMS.
 
 Note that not all configuration options in this file are required but this example includes all of the available options.
 
 ```yaml example-cert-agent-config.yaml
 version: v1
 
-# Hanzo KMS server configuration
+# KMS server configuration
 kms:
-  address: "https://kms.hanzo.ai" # The URL of the Hanzo KMS instance (e.g. https://kms.hanzo.ai, https://eu.kms.hanzo.ai, https://your-self-hosted-instance.com)
+  address: "https://kms.hanzo.ai" # The URL of the KMS instance (e.g. https://kms.hanzo.ai, https://eu.kms.hanzo.ai, https://your-self-hosted-instance.com)
   retry-strategy:
     max-retries: 3
     max-delay: "5s"
     base-delay: "200ms"
 
-# Hanzo KMS authentication configuration
+# KMS authentication configuration
 auth:
   type: "universal-auth" # The authentication method to use (e.g. universal-auth, kubernetes-auth, azure-auth, gcp-id-token, gcp-iam, aws-iam)
   config:
@@ -258,7 +258,7 @@ certificates:
 
 To be more specific, the configuration file instructs the agent to:
 
-- Authenticate with Hanzo KMS using the [Universal Auth](/integrations/platforms/certificate-agent#universal-auth) authentication method.
+- Authenticate with KMS using the [Universal Auth](/integrations/platforms/certificate-agent#universal-auth) authentication method.
 - Request a 90-day certificate against the [certificate profile](/documentation/platform/pki/certificates/profiles) named `prof-web-server-12345` with the common name `web.company.com` and the subject alternative names `web.company.com` and `www.company.com`.
 - Automatically renew the certificate 30 days before expiration by checking the certificate status every 6 hours and retrying up to 3 times with a base delay of 200ms and a maximum delay of 5s if the certificate status check fails.
 - Store the certificate and its associated private key and certificate chain (excluding the root CA certificate) in the filesystem at the specified paths with the specified permissions.
@@ -391,26 +391,26 @@ kms:
 
 ## Example Agent Configuration Files
 
-Since there are several ways you might want to use the KMS Agent to request certificates from Hanzo KMS,
+Since there are several ways you might want to use the KMS Agent to request certificates from KMS,
 we provide a few example configuration files for common use cases below to help you get started.
 
 ### One-Time Certificate Issuance
 
-The code snippet below shows a configuration file that instructs the agent to request a certificate from Hanzo KMS
+The code snippet below shows a configuration file that instructs the agent to request a certificate from KMS
 once without performing any subsequent auto-renewal.
 
 ```yaml
 version: v1
 
-# Hanzo KMS server configuration
+# KMS server configuration
 kms:
-  address: "https://kms.hanzo.ai" # The URL of the Hanzo KMS instance (e.g. https://kms.hanzo.ai, https://eu.kms.hanzo.ai, https://your-self-hosted-instance.com)
+  address: "https://kms.hanzo.ai" # The URL of the KMS instance (e.g. https://kms.hanzo.ai, https://eu.kms.hanzo.ai, https://your-self-hosted-instance.com)
   retry-strategy:
     max-retries: 3
     max-delay: "5s"
     base-delay: "200ms"
 
-# Hanzo KMS authentication configuration
+# KMS authentication configuration
 auth:
   type: "universal-auth" # The authentication method to use (e.g. universal-auth, kubernetes-auth, azure-auth, gcp-id-token, gcp-iam, aws-iam)
   config:
@@ -449,26 +449,26 @@ certificates:
 
 ### One-Time Certificate Issuance using a Pre-Generated CSR
 
-The code snippet below shows a configuration file that instructs the agent to request a certificate from Hanzo KMS
+The code snippet below shows a configuration file that instructs the agent to request a certificate from KMS
 once using a pre-generated CSR.
 
 Note that when `csr-path` is specified:
 
-- The `private-key` is omitted from the configuration file because we assume that it is pre-generated and managed externally, with only the CSR being submitted to Hanzo KMS for signing.
+- The `private-key` is omitted from the configuration file because we assume that it is pre-generated and managed externally, with only the CSR being submitted to KMS for signing.
 - The agent will not be able to perform any auto-renewal operations, as it is assumed to not have access to the private key required to generate a new CSR.
 
 ```yaml
 version: v1
 
-# Hanzo KMS server configuration
+# KMS server configuration
 kms:
-  address: "https://kms.hanzo.ai" # The URL of the Hanzo KMS instance (e.g. https://kms.hanzo.ai, https://eu.kms.hanzo.ai, https://your-self-hosted-instance.com)
+  address: "https://kms.hanzo.ai" # The URL of the KMS instance (e.g. https://kms.hanzo.ai, https://eu.kms.hanzo.ai, https://your-self-hosted-instance.com)
   retry-strategy:
     max-retries: 3
     max-delay: "5s"
     base-delay: "200ms"
 
-# Hanzo KMS authentication configuration
+# KMS authentication configuration
 auth:
   type: "universal-auth" # The authentication method to use (e.g. universal-auth, kubernetes-auth, azure-auth, gcp-id-token, gcp-iam, aws-iam)
   config:
@@ -492,20 +492,20 @@ certificates:
 
 ### Certificate Issuance with Automatic Renewal
 
-The code snippet below shows a configuration file that instructs the agent to request a certificate from Hanzo KMS and continuously renew it 14 days before expiration, checking the certificate status every 6 hours.
+The code snippet below shows a configuration file that instructs the agent to request a certificate from KMS and continuously renew it 14 days before expiration, checking the certificate status every 6 hours.
 
 ```yaml
 version: v1
 
-# Hanzo KMS server configuration
+# KMS server configuration
 kms:
-  address: "https://kms.hanzo.ai" # The URL of the Hanzo KMS instance (e.g. https://kms.hanzo.ai, https://eu.kms.hanzo.ai, https://your-self-hosted-instance.com)
+  address: "https://kms.hanzo.ai" # The URL of the KMS instance (e.g. https://kms.hanzo.ai, https://eu.kms.hanzo.ai, https://your-self-hosted-instance.com)
   retry-strategy:
     max-retries: 3
     max-delay: "5s"
     base-delay: "200ms"
 
-# Hanzo KMS authentication configuration
+# KMS authentication configuration
 auth:
   type: "universal-auth" # The authentication method to use (e.g. universal-auth, kubernetes-auth, azure-auth, gcp-id-token, gcp-iam, aws-iam)
   config:

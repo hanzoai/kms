@@ -113,8 +113,8 @@ export const RegionSelect = () => {
           </button>
         </ModalTrigger>
         <ModalContent
-          title="Hanzo KMS Cloud data regions"
-          subTitle="Select the closest region to you and your team. Contact Hanzo KMS if you need to migrate regions."
+          title="KMS Cloud data regions"
+          subTitle="Select the closest region to you and your team. Contact KMS if you need to migrate regions."
         >
           {regions.map(({ value, label, location: regionLocation, flag }) => (
             <div className="mb-6" key={value}>

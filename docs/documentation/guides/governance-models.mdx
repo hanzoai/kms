@@ -1,12 +1,12 @@
 ---
 title: "Centralized vs. Self-Service Governance"
 sidebarTitle: "Governance Models"
-description: "Learn how to structure Hanzo KMS for centralized platform administration or team self-service autonomy"
+description: "Learn how to structure KMS for centralized platform administration or team self-service autonomy"
 ---
 
-Organizations adopt different approaches to secrets management governance based on their security requirements, compliance obligations, and team structures. Hanzo KMS supports a spectrum of governance models—from fully centralized platform administration to team-driven self-service.
+Organizations adopt different approaches to secrets management governance based on their security requirements, compliance obligations, and team structures. KMS supports a spectrum of governance models—from fully centralized platform administration to team-driven self-service.
 
-This guide covers how to configure Hanzo KMS for different governance approaches and what tradeoffs to consider.
+This guide covers how to configure KMS for different governance approaches and what tradeoffs to consider.
 
 ## Understanding the Spectrum
 
@@ -64,7 +64,7 @@ How you manage identity—both for users and machines—significantly affects yo
 | **MFA** | Required organization-wide | Encouraged or optional |
 | **Session duration** | Short sessions enforced | Longer sessions permitted |
 
-Hanzo KMS supports multiple authentication methods that can be configured based on your requirements:
+KMS supports multiple authentication methods that can be configured based on your requirements:
 
 - [SAML SSO](/documentation/platform/sso/overview) with providers like Okta, Azure AD, Google Workspace, and JumpCloud
 - [OIDC SSO](/documentation/platform/sso/general-oidc) for standards-based authentication
@@ -84,7 +84,7 @@ For organizations using SAML, [group membership mapping](/documentation/platform
 
 ### Machine Identity Management
 
-[Machine identities](/documentation/platform/identities/machine-identities) authenticate applications, services, and automated systems with Hanzo KMS. Your governance model shapes how these identities are managed:
+[Machine identities](/documentation/platform/identities/machine-identities) authenticate applications, services, and automated systems with KMS. Your governance model shapes how these identities are managed:
 
 | Approach | Centralized | Self-Service |
 |----------|-------------|--------------|
@@ -92,7 +92,7 @@ For organizations using SAML, [group membership mapping](/documentation/platform
 | **Auth method selection** | Standardized methods enforced (e.g., "Kubernetes Auth only in production") | Teams choose methods appropriate to their infrastructure |
 | **Credential management** | Platform team manages and distributes credentials | Teams manage their own identity credentials |
 
-Hanzo KMS supports multiple machine identity authentication methods:
+KMS supports multiple machine identity authentication methods:
 
 - [Universal Auth](/documentation/platform/identities/universal-auth) — Client ID/secret authentication for any environment
 - [Kubernetes Auth](/documentation/platform/identities/kubernetes-auth) — Native authentication using Kubernetes service accounts
@@ -105,7 +105,7 @@ Centralized organizations often standardize on platform-native authentication me
 
 ## Access Control
 
-Hanzo KMS's [role-based access control](/documentation/platform/access-controls/role-based-access-controls) operates at two levels: organization and project. How you configure these controls determines who can do what across your secrets infrastructure.
+KMS's [role-based access control](/documentation/platform/access-controls/role-based-access-controls) operates at two levels: organization and project. How you configure these controls determines who can do what across your secrets infrastructure.
 
 ### Organization-Level Roles
 
@@ -240,16 +240,16 @@ Who creates, rotates, and retires secrets—and how—depends on your governance
 | **Base environment** | Platform team designates source environments for imports | Teams choose which environments to reference from |
 
 <Note>
-Projects in Hanzo KMS are isolated from one another. Secret referencing and imports work within a single project—you cannot reference secrets across different projects.
+Projects in KMS are isolated from one another. Secret referencing and imports work within a single project—you cannot reference secrets across different projects.
 </Note>
 
 ## Integrations and Secret Delivery
 
-Hanzo KMS offers multiple methods for delivering secrets to applications and infrastructure.
+KMS offers multiple methods for delivering secrets to applications and infrastructure.
 
 ### Secret Syncs
 
-[Secret Syncs](/integrations/secret-syncs/overview) push secrets to third-party platforms like AWS Secrets Manager, Azure Key Vault, GCP Secret Manager, and others. Syncs keep external secret stores updated when values change in Hanzo KMS.
+[Secret Syncs](/integrations/secret-syncs/overview) push secrets to third-party platforms like AWS Secrets Manager, Azure Key Vault, GCP Secret Manager, and others. Syncs keep external secret stores updated when values change in KMS.
 
 | Approach | Centralized | Self-Service |
 |----------|-------------|--------------|
@@ -262,7 +262,7 @@ Hanzo KMS offers multiple methods for delivering secrets to applications and inf
 For Kubernetes environments, two primary integration patterns are available:
 
 - [KMS Operator](/integrations/platforms/kubernetes/kms-operator) — Syncs secrets to Kubernetes Secrets resources
-- [Hanzo KMS Secrets Injector](/integrations/platforms/kubernetes-injector) — Injects secrets directly into pods at runtime
+- [KMS Secrets Injector](/integrations/platforms/kubernetes-injector) — Injects secrets directly into pods at runtime
 
 | Approach | Centralized | Self-Service |
 |----------|-------------|--------------|
@@ -280,7 +280,7 @@ The [KMS Agent](/kms-agent/overview) and [CLI](/cli/overview) provide flexible s
 
 ### Gateways
 
-[Gateways](/documentation/platform/gateways/overview) enable Hanzo KMS to securely access private resources—such as databases in isolated VPCs—without exposing them to the public internet. Gateways are lightweight components deployed within your private network that establish secure, outbound-only connections to Hanzo KMS.
+[Gateways](/documentation/platform/gateways/overview) enable KMS to securely access private resources—such as databases in isolated VPCs—without exposing them to the public internet. Gateways are lightweight components deployed within your private network that establish secure, outbound-only connections to KMS.
 
 Gateways are essential for features that require direct access to private infrastructure:
 - [Dynamic secrets](/documentation/platform/dynamic-secrets/overview) for databases in private networks
@@ -289,7 +289,7 @@ Gateways are essential for features that require direct access to private infras
 
 #### Gateway Architecture
 
-Gateways operate at two levels within Hanzo KMS:
+Gateways operate at two levels within KMS:
 
 1. **Organization-level registration**: Gateways are registered and visible in Organization Settings → Access Control → Gateways. This provides central visibility into all gateway infrastructure.
 
@@ -338,7 +338,7 @@ For Kubernetes environments, gateways can also serve as token reviewers for [Kub
 
 ## Audit and Compliance
 
-Visibility into secrets access and changes is critical for security and compliance. Hanzo KMS provides audit capabilities at both organization and project levels.
+Visibility into secrets access and changes is critical for security and compliance. KMS provides audit capabilities at both organization and project levels.
 
 ### Audit Logs
 
@@ -371,7 +371,7 @@ Supported destinations include:
 
 ## Security Controls
 
-Beyond access control, Hanzo KMS offers additional security settings.
+Beyond access control, KMS offers additional security settings.
 
 ### Security Policies
 
@@ -457,12 +457,12 @@ Organizations scaling from startup to enterprise may need to add centralization:
 
 Regardless of model, invest in:
 - Clear documentation of secrets management standards and processes
-- Training for teams on Hanzo KMS features and security best practices
+- Training for teams on KMS features and security best practices
 - Runbooks for common operations (secret rotation, access requests, incident response)
 
 ## Summary
 
-Here's a quick reference for how key Hanzo KMS features map to each governance model:
+Here's a quick reference for how key KMS features map to each governance model:
 
 | Feature | Centralized Use | Self-Service Use |
 |---------|-----------------|------------------|

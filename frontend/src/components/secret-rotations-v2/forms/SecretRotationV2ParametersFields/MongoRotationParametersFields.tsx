@@ -45,10 +45,10 @@ export const MongoRotationParametersFields = () => {
       />
       <NoticeBannerV2 title="Example Create User Statement">
         <p className="mb-3 text-sm text-mineshaft-300">
-          Hanzo KMS requires two database users to be created for rotation.
+          KMS requires two database users to be created for rotation.
         </p>
         <p className="mb-3 text-sm text-mineshaft-300">
-          These users are intended to be solely managed by Hanzo KMS. Altering their login after
+          These users are intended to be solely managed by KMS. Altering their login after
           rotation may cause unexpected failure.
         </p>
         <p className="mb-3 text-sm text-mineshaft-300">

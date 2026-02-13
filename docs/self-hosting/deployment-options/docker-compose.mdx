@@ -1,9 +1,9 @@
 ---
 title: "Docker Compose"
-description: "Deploy Hanzo KMS using Docker Compose for development, testing, or small-scale production environments."
+description: "Deploy KMS using Docker Compose for development, testing, or small-scale production environments."
 ---
 
-Learn how to deploy **Hanzo KMS** using Docker Compose. This method runs Hanzo KMS and its dependencies (PostgreSQL and Redis) as containers on a single Docker host. It's ideal for trying out Hanzo KMS, development environments, or small-scale deployments that don't require high availability.
+Learn how to deploy **KMS** using Docker Compose. This method runs KMS and its dependencies (PostgreSQL and Redis) as containers on a single Docker host. It's ideal for trying out KMS, development environments, or small-scale deployments that don't require high availability.
 
 ## Prerequisites
 
@@ -13,13 +13,13 @@ Learn how to deploy **Hanzo KMS** using Docker Compose. This method runs Hanzo K
 
 <Warning>
   This Docker Compose configuration is not designed for high-availability production scenarios. 
-  It includes just the essential components needed to set up an Hanzo KMS proof of concept (POC). 
-  To run Hanzo KMS in a highly available manner, see the [Docker Swarm guide](/self-hosting/deployment-options/docker-swarm) or [Kubernetes guide](/self-hosting/deployment-options/kubernetes-helm).
+  It includes just the essential components needed to set up an KMS proof of concept (POC). 
+  To run KMS in a highly available manner, see the [Docker Swarm guide](/self-hosting/deployment-options/docker-swarm) or [Kubernetes guide](/self-hosting/deployment-options/kubernetes-helm).
 </Warning>
 
 ## System Requirements
 
-The following are minimum requirements for running Hanzo KMS with Docker Compose:
+The following are minimum requirements for running KMS with Docker Compose:
 
 | Component | Minimum | Recommended |
 |-----------|---------|-------------|
@@ -27,7 +27,7 @@ The following are minimum requirements for running Hanzo KMS with Docker Compose
 | RAM | 4 GB | 8 GB |
 | Disk | 20 GB | 50 GB+ (SSD recommended) |
 
-These requirements include resources for Hanzo KMS, PostgreSQL, and Redis containers. For larger deployments with many secrets or users, increase resources accordingly.
+These requirements include resources for KMS, PostgreSQL, and Redis containers. For larger deployments with many secrets or users, increase resources accordingly.
 
 ## Deployment Steps
 
@@ -47,34 +47,34 @@ These requirements include resources for Hanzo KMS, PostgreSQL, and Redis contai
   </Step>
 
   <Step title="Download the Docker Compose file">
-    You can obtain the Hanzo KMS docker compose file by using a command-line downloader such as `wget` or `curl`. If your system doesn't have either of these, you can use an equivalent command that works with your machine.
+    You can obtain the KMS docker compose file by using a command-line downloader such as `wget` or `curl`. If your system doesn't have either of these, you can use an equivalent command that works with your machine.
 
     <Tabs>
       <Tab title="curl">
         ```bash
-        curl -o docker-compose.prod.yml https://raw.githubusercontent.com/Hanzo KMS/kms/main/docker-compose.prod.yml
+        curl -o docker-compose.prod.yml https://raw.githubusercontent.com/KMS/kms/main/docker-compose.prod.yml
         ```
       </Tab>
       <Tab title="wget">
         ```bash
-        wget -O docker-compose.prod.yml https://raw.githubusercontent.com/Hanzo KMS/kms/main/docker-compose.prod.yml
+        wget -O docker-compose.prod.yml https://raw.githubusercontent.com/KMS/kms/main/docker-compose.prod.yml
         ```
       </Tab>
     </Tabs>
   </Step>
 
   <Step title="Configure environment variables">
-    Hanzo KMS requires a set of credentials used for connecting to dependent services such as Postgres, Redis, etc. The default credentials can be downloaded using one of the commands listed below.
+    KMS requires a set of credentials used for connecting to dependent services such as Postgres, Redis, etc. The default credentials can be downloaded using one of the commands listed below.
 
     <Tabs>
       <Tab title="curl">
         ```bash
-        curl -o .env https://raw.githubusercontent.com/Hanzo KMS/kms/main/.env.example
+        curl -o .env https://raw.githubusercontent.com/KMS/kms/main/.env.example
         ```
       </Tab>
       <Tab title="wget">
         ```bash
-        wget -O .env https://raw.githubusercontent.com/Hanzo KMS/kms/main/.env.example
+        wget -O .env https://raw.githubusercontent.com/KMS/kms/main/.env.example
         ```
       </Tab>
     </Tabs>
@@ -89,7 +89,7 @@ These requirements include resources for Hanzo KMS, PostgreSQL, and Redis contai
     </Warning>
   </Step>
 
-  <Step title="Start Hanzo KMS">
+  <Step title="Start KMS">
     Start all services in detached mode:
 
     ```bash
@@ -97,7 +97,7 @@ These requirements include resources for Hanzo KMS, PostgreSQL, and Redis contai
     ```
 
     This command starts three containers:
-    - **backend**: The main Hanzo KMS application (exposed on host port 80, internal port 8080)
+    - **backend**: The main KMS application (exposed on host port 80, internal port 8080)
     - **db**: PostgreSQL database for storing encrypted secrets
     - **redis**: Redis for caching and job queues
   </Step>
@@ -109,7 +109,7 @@ These requirements include resources for Hanzo KMS, PostgreSQL, and Redis contai
     docker compose -f docker-compose.prod.yml ps
     ```
 
-    You should see all three services with a status of `Up`. Next, verify Hanzo KMS is responding:
+    You should see all three services with a status of `Up`. Next, verify KMS is responding:
 
     ```bash
     curl -s http://localhost:80/api/status | head -c 100
@@ -118,7 +118,7 @@ These requirements include resources for Hanzo KMS, PostgreSQL, and Redis contai
     If successful, open your browser and navigate to `http://localhost:80` (or your configured domain) to create your admin account.
 
     <Tip>
-      The first user to sign up becomes the instance administrator. Make sure to complete this step before exposing Hanzo KMS to others.
+      The first user to sign up becomes the instance administrator. Make sure to complete this step before exposing KMS to others.
     </Tip>
   </Step>
 </Steps>
@@ -127,7 +127,7 @@ These requirements include resources for Hanzo KMS, PostgreSQL, and Redis contai
 
   <Tab title="Podman Compose">
 
-Podman Compose is an alternative way to run Hanzo KMS using Podman as a replacement for Docker. Podman is backwards compatible with Docker Compose files.
+Podman Compose is an alternative way to run KMS using Podman as a replacement for Docker. Podman is backwards compatible with Docker Compose files.
 
 <Steps>
   <Step title="Verify prerequisites">
@@ -142,34 +142,34 @@ Podman Compose is an alternative way to run Hanzo KMS using Podman as a replacem
   </Step>
 
   <Step title="Download the Docker Compose file">
-    You can obtain the Hanzo KMS docker compose file by using a command-line downloader such as `wget` or `curl`. If your system doesn't have either of these, you can use an equivalent command that works with your machine.
+    You can obtain the KMS docker compose file by using a command-line downloader such as `wget` or `curl`. If your system doesn't have either of these, you can use an equivalent command that works with your machine.
 
     <Tabs>
       <Tab title="curl">
         ```bash
-        curl -o docker-compose.prod.yml https://raw.githubusercontent.com/Hanzo KMS/kms/main/docker-compose.prod.yml
+        curl -o docker-compose.prod.yml https://raw.githubusercontent.com/KMS/kms/main/docker-compose.prod.yml
         ```
       </Tab>
       <Tab title="wget">
         ```bash
-        wget -O docker-compose.prod.yml https://raw.githubusercontent.com/Hanzo KMS/kms/main/docker-compose.prod.yml
+        wget -O docker-compose.prod.yml https://raw.githubusercontent.com/KMS/kms/main/docker-compose.prod.yml
         ```
       </Tab>
     </Tabs>
   </Step>
 
   <Step title="Configure environment variables">
-    Hanzo KMS requires a set of credentials used for connecting to dependent services such as Postgres, Redis, etc. The default credentials can be downloaded using one of the commands listed below.
+    KMS requires a set of credentials used for connecting to dependent services such as Postgres, Redis, etc. The default credentials can be downloaded using one of the commands listed below.
 
     <Tabs>
       <Tab title="curl">
         ```bash
-        curl -o .env https://raw.githubusercontent.com/Hanzo KMS/kms/main/.env.example
+        curl -o .env https://raw.githubusercontent.com/KMS/kms/main/.env.example
         ```
       </Tab>
       <Tab title="wget">
         ```bash
-        wget -O .env https://raw.githubusercontent.com/Hanzo KMS/kms/main/.env.example
+        wget -O .env https://raw.githubusercontent.com/KMS/kms/main/.env.example
         ```
       </Tab>
     </Tabs>
@@ -191,7 +191,7 @@ Podman Compose is an alternative way to run Hanzo KMS using Podman as a replacem
     </Note>
   </Step>
 
-  <Step title="Start Hanzo KMS">
+  <Step title="Start KMS">
     ```bash
     podman-compose -f docker-compose.prod.yml up -d
     ```
@@ -209,7 +209,7 @@ Podman Compose is an alternative way to run Hanzo KMS using Podman as a replacem
 
 ### Stopping and Restarting Services
 
-To stop all Hanzo KMS services:
+To stop all KMS services:
 
 ```bash
 docker compose -f docker-compose.prod.yml down
@@ -286,12 +286,12 @@ docker logs <container_name> --since 1h
 
 <AccordionGroup>
   <Accordion title="Firewall Configuration">
-    Configure your firewall to allow traffic to Hanzo KMS while securing other services:
+    Configure your firewall to allow traffic to KMS while securing other services:
 
     **Required ports:**
     | Port | Service | Access |
     |------|---------|--------|
-    | 80 | HTTP (Hanzo KMS) | Public (or internal network) |
+    | 80 | HTTP (KMS) | Public (or internal network) |
     | 443 | HTTPS (if using TLS) | Public (or internal network) |
 
     **Internal ports (should NOT be exposed publicly):**
@@ -326,7 +326,7 @@ docker logs <container_name> --since 1h
   </Accordion>
 
   <Accordion title="SMTP/Email Configuration">
-    Hanzo KMS uses email for user invitations, password resets, and notifications. Configure SMTP by adding these variables to your `.env` file:
+    KMS uses email for user invitations, password resets, and notifications. Configure SMTP by adding these variables to your `.env` file:
 
     ```env
     SMTP_HOST=smtp.example.com
@@ -334,7 +334,7 @@ docker logs <container_name> --since 1h
     SMTP_USERNAME=your-smtp-username
     SMTP_PASSWORD=your-smtp-password
     SMTP_FROM_ADDRESS=kms@example.com
-    SMTP_FROM_NAME=Hanzo KMS
+    SMTP_FROM_NAME=KMS
     ```
 
     **Common SMTP providers:**
@@ -347,7 +347,7 @@ docker logs <container_name> --since 1h
         SMTP_USERNAME=your-ses-smtp-username
         SMTP_PASSWORD=your-ses-smtp-password
         SMTP_FROM_ADDRESS=noreply@yourdomain.com
-        SMTP_FROM_NAME=Hanzo KMS
+        SMTP_FROM_NAME=KMS
         ```
       </Tab>
       <Tab title="SendGrid">
@@ -357,7 +357,7 @@ docker logs <container_name> --since 1h
         SMTP_USERNAME=apikey
         SMTP_PASSWORD=your-sendgrid-api-key
         SMTP_FROM_ADDRESS=noreply@yourdomain.com
-        SMTP_FROM_NAME=Hanzo KMS
+        SMTP_FROM_NAME=KMS
         ```
       </Tab>
       <Tab title="Gmail">
@@ -367,7 +367,7 @@ docker logs <container_name> --since 1h
         SMTP_USERNAME=your-email@gmail.com
         SMTP_PASSWORD=your-app-password
         SMTP_FROM_ADDRESS=your-email@gmail.com
-        SMTP_FROM_NAME=Hanzo KMS
+        SMTP_FROM_NAME=KMS
         ```
         <Note>
           For Gmail, you must use an [App Password](https://support.google.com/accounts/answer/185833) instead of your regular password.
@@ -375,7 +375,7 @@ docker logs <container_name> --since 1h
       </Tab>
     </Tabs>
 
-    After updating the `.env` file, restart Hanzo KMS:
+    After updating the `.env` file, restart KMS:
 
     ```bash
     docker compose -f docker-compose.prod.yml restart backend
@@ -383,7 +383,7 @@ docker logs <container_name> --since 1h
   </Accordion>
 
   <Accordion title="Enable HTTPS with NGINX">
-    We recommend securing your Hanzo KMS deployment with HTTPS using a reverse proxy like NGINX.
+    We recommend securing your KMS deployment with HTTPS using a reverse proxy like NGINX.
 
     **1. Obtain SSL certificates** (e.g., via Let's Encrypt):
     ```bash
@@ -492,7 +492,7 @@ docker logs <container_name> --since 1h
   </Accordion>
 
   <Accordion title="Enable Prometheus Monitoring">
-    Hanzo KMS exposes Prometheus metrics when enabled.
+    KMS exposes Prometheus metrics when enabled.
 
     **1. Add to `.env`:**
     ```env
@@ -513,7 +513,7 @@ docker logs <container_name> --since 1h
   </Accordion>
 
   <Accordion title="Upgrade Instructions">
-    Keeping Hanzo KMS up-to-date ensures you receive the latest features and security patches.
+    Keeping KMS up-to-date ensures you receive the latest features and security patches.
 
     **1. Back up your database:**
     ```bash
@@ -570,7 +570,7 @@ docker logs <container_name> --since 1h
     docker compose -f docker-compose.prod.yml exec db psql -U kms -c "SELECT 1"
     ```
 
-    **Check Hanzo KMS logs for connection errors:**
+    **Check KMS logs for connection errors:**
     ```bash
     docker compose -f docker-compose.prod.yml logs backend | grep -i "database\|postgres\|connection"
     ```
@@ -582,7 +582,7 @@ docker logs <container_name> --since 1h
     ```
   </Accordion>
 
-  <Accordion title="Cannot access Hanzo KMS in browser">
+  <Accordion title="Cannot access KMS in browser">
     **Verify the service is running:**
     ```bash
     curl -v http://localhost:80/api/status
@@ -602,7 +602,7 @@ docker logs <container_name> --since 1h
     sudo firewall-cmd --list-all
     ```
 
-    **Verify SITE_URL is correct** in your `.env` file and matches how you're accessing Hanzo KMS.
+    **Verify SITE_URL is correct** in your `.env` file and matches how you're accessing KMS.
   </Accordion>
 
   <Accordion title="Email/SMTP not working">
@@ -611,7 +611,7 @@ docker logs <container_name> --since 1h
     docker compose -f docker-compose.prod.yml exec backend nc -zv smtp.example.com 587
     ```
 
-    **Check Hanzo KMS logs for email errors:**
+    **Check KMS logs for email errors:**
     ```bash
     docker compose -f docker-compose.prod.yml logs backend | grep -i "smtp\|email\|mail"
     ```
@@ -653,12 +653,12 @@ docker logs <container_name> --since 1h
     # or by deleting and recreating the user
     ```
 
-    For security reasons, passwords are hashed and cannot be directly reset in the database. Use the "Forgot Password" flow if SMTP is configured, or contact Hanzo KMS support for assistance.
+    For security reasons, passwords are hashed and cannot be directly reset in the database. Use the "Forgot Password" flow if SMTP is configured, or contact KMS support for assistance.
   </Accordion>
 </AccordionGroup>
 
 ---
 
-Your Hanzo KMS instance should now be running on port `80` (or `443` if using TLS). Visit `http://localhost:80` or `https://<your-domain>` to access your instance.
+Your KMS instance should now be running on port `80` (or `443` if using TLS). Visit `http://localhost:80` or `https://<your-domain>` to access your instance.
 
 ![self-hosted sign up](/images/self-hosting/applicable-to-all/selfhost-signup.png)

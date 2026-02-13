@@ -105,7 +105,7 @@ export const DatabricksConfigurePage = () => {
       <Card className="max-w-lg rounded-md border border-mineshaft-600">
         <CardTitle
           className="px-6 text-left text-xl"
-          subTitle="Choose which environment or folder in Hanzo KMS you want to sync to which Databricks secrets scope."
+          subTitle="Choose which environment or folder in KMS you want to sync to which Databricks secrets scope."
         >
           <div className="flex flex-row items-center">
             <div className="flex items-center pb-0.5">
@@ -203,12 +203,12 @@ export const DatabricksConfigurePage = () => {
           <span className="text-md ml-3 text-mineshaft-100">Pro Tip</span>
         </div>
         <span className="mt-4 text-sm text-mineshaft-300">
-          When integrating with Databricks, Hanzo KMS is intended to be the source of truth for the
+          When integrating with Databricks, KMS is intended to be the source of truth for the
           secrets in the configured Databricks scope.
         </span>
         <span className="mt-4 text-sm text-mineshaft-300">
-          Any secrets not present in Hanzo KMS will be removed from the specified scope. To prevent
-          removal of secrets not managed by Hanzo KMS, Hanzo KMS recommends creating a designated
+          Any secrets not present in KMS will be removed from the specified scope. To prevent
+          removal of secrets not managed by KMS, KMS recommends creating a designated
           secret scope for your integration.
         </span>
       </div>

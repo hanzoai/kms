@@ -128,7 +128,7 @@ export const NorthflankSyncFns = {
 
     for (const [key, value] of Object.entries(northflankSecrets)) {
       const shouldKeep =
-        !secretMap[key] && // this prevents duplicates from Hanzo KMS secrets, because we add all of them to the updateVariables in the next loop
+        !secretMap[key] && // this prevents duplicates from KMS secrets, because we add all of them to the updateVariables in the next loop
         (secretSync.syncOptions.disableSecretDeletion ||
           !matchesSchema(key, secretSync.environment?.slug || "", secretSync.syncOptions.keySchema));
 

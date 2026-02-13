@@ -1,10 +1,10 @@
 ---
-title: "Hanzo KMS Go SDK"
+title: "KMS Go SDK"
 sidebarTitle: "Go"
 icon: "/images/sdks/languages/go.svg"
 ---
 
-If you're working with Go, the official Hanzo KMS Go SDK package is the easiest way to fetch and work with secrets for your application.
+If you're working with Go, the official KMS Go SDK package is the easiest way to fetch and work with secrets for your application.
 
 - [Package](https://pkg.go.dev/github.com/kms/go-sdk)
 - [Github Repository](https://github.com/kms/go-sdk)
@@ -23,7 +23,7 @@ import (
 
 func main() {
 
-	client := kms.NewHanzo KMSClient(context.Background(), kms.Config{
+	client := kms.NewKMSClient(context.Background(), kms.Config{
 		SiteUrl: "https://kms.hanzo.ai", // Optional, default is https://kms.hanzo.ai
     AutoTokenRefresh: true, // Wether or not to let the SDK handle the access token lifecycle. Defaults to true if not specified.
 	})
@@ -52,7 +52,7 @@ func main() {
 }
 ```
 
-This example demonstrates how to use the Hanzo KMS Go SDK in a simple Go application. The application retrieves a secret named `API_KEY` from the `dev` environment of the `YOUR_PROJECT_ID` project.
+This example demonstrates how to use the KMS Go SDK in a simple Go application. The application retrieves a secret named `API_KEY` from the `dev` environment of the `YOUR_PROJECT_ID` project.
 
 <Warning>
   We do not recommend hardcoding your [Machine Identity
@@ -71,7 +71,7 @@ $ go get github.com/kms/go-sdk
 Import the SDK and create a client instance.
 
 ```go
-client := kms.NewHanzo KMSClient(context.Background(), kms.Config{
+client := kms.NewKMSClient(context.Background(), kms.Config{
 		SiteUrl: "https://kms.hanzo.ai", // Optional, default is https://api.kms.hanzo.ai
 	})
 ```
@@ -81,7 +81,7 @@ client := kms.NewHanzo KMSClient(context.Background(), kms.Config{
 <ParamField query="options" type="object">
     <Expandable title="properties">
         <ParamField query="SiteUrl" type="string" optional default="https://kms.hanzo.ai">
-            The URL of the Hanzo KMS API..
+            The URL of the KMS API..
         </ParamField>
 
         <ParamField query="UserAgent" type="string">
@@ -109,11 +109,11 @@ client := kms.NewHanzo KMSClient(context.Background(), kms.Config{
 
 # Automatic token refreshing
 
-The Hanzo KMS Go SDK supports automatic token refreshing. After using one of the auth methods such as Universal Auth, the SDK will automatically renew and re-authenticate when needed.
+The KMS Go SDK supports automatic token refreshing. After using one of the auth methods such as Universal Auth, the SDK will automatically renew and re-authenticate when needed.
 This behavior is enabled by default, but you can opt-out by setting `AutoTokenRefresh` to `false` in the client settings.
 
 ```go
-  client := kms.NewHanzo KMSClient(context.Background(), kms.Config{
+  client := kms.NewKMSClient(context.Background(), kms.Config{
     AutoTokenRefresh: false, // <- Disable automatic token refreshing
   })
 ```
@@ -124,7 +124,7 @@ When using automatic token refreshing it's important to understand how your appl
   ctx, cancel := context.WithCancel(context.Background())
   defer cancel() // Cancel the context when the client is no longer needed
 
-  client := kms.NewHanzo KMSClient(ctx, kms.Config{
+  client := kms.NewKMSClient(ctx, kms.Config{
     AutoTokenRefresh: true,
   })
 
@@ -171,7 +171,7 @@ if err != nil {
 
 Call `.Auth().GcpIdTokenAuthLogin()` with empty arguments to use the following environment variables:
 
-- `KMS_GCP_AUTH_IDENTITY_ID` - Your Hanzo KMS Machine Identity ID.
+- `KMS_GCP_AUTH_IDENTITY_ID` - Your KMS Machine Identity ID.
 
 **Using the SDK directly**
 
@@ -190,7 +190,7 @@ if err != nil {
 
 Call `.Auth().GcpIamAuthLogin()` with empty arguments to use the following environment variables:
 
-- `KMS_GCP_IAM_AUTH_IDENTITY_ID` - Your Hanzo KMS Machine Identity ID.
+- `KMS_GCP_IAM_AUTH_IDENTITY_ID` - Your KMS Machine Identity ID.
 - `KMS_GCP_IAM_SERVICE_ACCOUNT_KEY_FILE_PATH` - The path to your GCP service account key file.
 
 **Using the SDK directly**
@@ -217,7 +217,7 @@ if err != nil {
 
 Call `.Auth().AwsIamAuthLogin()` with empty arguments to use the following environment variables:
 
-- `KMS_AWS_IAM_AUTH_IDENTITY_ID` - Your Hanzo KMS Machine Identity ID.
+- `KMS_AWS_IAM_AUTH_IDENTITY_ID` - Your KMS Machine Identity ID.
 
 **Using the SDK directly**
 
@@ -243,7 +243,7 @@ if err != nil {
 
 Call `.Auth().AzureAuthLogin()` with empty arguments to use the following environment variables:
 
-- `KMS_AZURE_AUTH_IDENTITY_ID` - Your Hanzo KMS Machine Identity ID.
+- `KMS_AZURE_AUTH_IDENTITY_ID` - Your KMS Machine Identity ID.
 
 **Using the SDK directly**
 
@@ -269,7 +269,7 @@ if err != nil {
 
 Call `.Auth().KubernetesAuthLogin()` with empty arguments to use the following environment variables:
 
-- `KMS_KUBERNETES_IDENTITY_ID` - Your Hanzo KMS Machine Identity ID.
+- `KMS_KUBERNETES_IDENTITY_ID` - Your KMS Machine Identity ID.
 - `KMS_KUBERNETES_SERVICE_ACCOUNT_TOKEN_PATH_ENV_NAME` - The environment variable name that contains the path to the service account token. This is optional and will default to `/var/run/secrets/kubernetes.io/serviceaccount/token`.
 
 **Using the SDK directly**
@@ -385,7 +385,7 @@ if err != nil {
 
 **OciAuthLoginOptions fields:**
 
-- `IdentityID` (string) - Your Hanzo KMS Machine Identity ID. Can be set via `KMS_OCI_AUTH_IDENTITY_ID` environment variable.
+- `IdentityID` (string) - Your KMS Machine Identity ID. Can be set via `KMS_OCI_AUTH_IDENTITY_ID` environment variable.
 - `UserID` (string) - Your OCI user OCID.
 - `TenancyID` (string) - Your OCI tenancy OCID.
 - `Fingerprint` (string) - Your OCI API key fingerprint.
@@ -419,7 +419,7 @@ if err != nil {
 
 `client.Secrets().List(options)`
 
-Retrieve all secrets within the Hanzo KMS project and environment that client is connected to.
+Retrieve all secrets within the KMS project and environment that client is connected to.
 
 ```go
 secrets, err := client.Secrets().List(kms.ListSecretsOptions{
@@ -471,7 +471,7 @@ secrets, err := client.Secrets().List(kms.ListSecretsOptions{
 
 `client.Secrets().Retrieve(options)`
 
-Retrieve a secret from Hanzo KMS. By default `Secrets().Retrieve()` fetches and returns a shared secret.
+Retrieve a secret from KMS. By default `Secrets().Retrieve()` fetches and returns a shared secret.
 
 ```go
 secret, err := client.Secrets().Retrieve(kms.RetrieveSecretOptions{
@@ -514,7 +514,7 @@ secret, err := client.Secrets().Retrieve(kms.RetrieveSecretOptions{
 
 `client.Secrets().Create(options)`
 
-Create a new secret in Hanzo KMS.
+Create a new secret in KMS.
 
 ```go
 secret, err := client.Secrets().Create(kms.CreateSecretOptions{
@@ -563,7 +563,7 @@ secret, err := client.Secrets().Create(kms.CreateSecretOptions{
 
 `client.Secrets().Update(options)`
 
-Update an existing secret in Hanzo KMS.
+Update an existing secret in KMS.
 
 ```go
 secret, err := client.Secrets().Update(kms.UpdateSecretOptions{
@@ -616,7 +616,7 @@ secret, err := client.Secrets().Update(kms.UpdateSecretOptions{
 
 `client.Secrets().Delete(options)`
 
-Delete a secret in Hanzo KMS.
+Delete a secret in KMS.
 
 ```go
 secret, err := client.Secrets().Delete(kms.DeleteSecretOptions{
@@ -654,7 +654,7 @@ secret, err := client.Secrets().Delete(kms.DeleteSecretOptions{
 
 `client.Secrets().Batch().Create(options)`
 
-Create multiple secrets in Hanzo KMS.
+Create multiple secrets in KMS.
 
 ```go
 	createdSecrets, err := client.Secrets().Batch().Create(kms.BatchCreateSecretsOptions{
@@ -729,7 +729,7 @@ Create multiple secrets in Hanzo KMS.
 
 `client.Folders().List(options)`
 
-Retrieve all within the Hanzo KMS project and environment that client is connected to.
+Retrieve all within the KMS project and environment that client is connected to.
 
 ```go
 folders, err := client.Folders().List(kms.ListFoldersOptions{
@@ -764,7 +764,7 @@ folders, err := client.Folders().List(kms.ListFoldersOptions{
 
 `client.Folders().Create(options)`
 
-Create a new folder in Hanzo KMS.
+Create a new folder in KMS.
 
 ```go
 folder, err := client.Folders().Create(kms.CreateFolderOptions{
@@ -801,7 +801,7 @@ folder, err := client.Folders().Create(kms.CreateFolderOptions{
 
 `client.Folders().Update(options)`
 
-Update an existing folder in Hanzo KMS.
+Update an existing folder in KMS.
 
 ```go
 folder, err := client.Folders().Update(kms.UpdateFolderOptions{
@@ -842,7 +842,7 @@ folder, err := client.Folders().Update(kms.UpdateFolderOptions{
 
 `client.Folders().Delete(options)`
 
-Delete a folder in Hanzo KMS.
+Delete a folder in KMS.
 
 ```go
 deletedFolder, err := client.Folders().Delete(kms.DeleteFolderOptions{
@@ -885,7 +885,7 @@ deletedFolder, err := client.Folders().Delete(kms.DeleteFolderOptions{
 
 `client.Kms().Keys().Create(options)`
 
-Create a new key in Hanzo KMS.
+Create a new key in KMS.
 
 ```go
 	newKey, err := client.Kms().Keys().Create(kms.KmsCreateKeyOptions{
@@ -967,7 +967,7 @@ Create a new key in Hanzo KMS.
 
 `client.Kms().Keys().Delete(options)`
 
-Delete a key in Hanzo KMS.
+Delete a key in KMS.
 
 ```go
 deletedKey, err = client.Kms().Keys().Delete(kms.KmsDeleteKeyOptions{
@@ -1022,7 +1022,7 @@ deletedKey, err = client.Kms().Keys().Delete(kms.KmsDeleteKeyOptions{
 ### Signing Data
 
 `client.Kms().Signing().Sign(options)`
-Sign data in Hanzo KMS.
+Sign data in KMS.
 
 ```go
 res, err := client.Kms().Signing().SignData(kms.KmsSignDataOptions{
@@ -1078,7 +1078,7 @@ res, err := client.Kms().Signing().SignData(kms.KmsSignDataOptions{
 ### Verifying Data
 
 `client.Kms().Signing().Verify(options)`
-Verify data in Hanzo KMS.
+Verify data in KMS.
 
 ```go
 res, err := client.Kms().Signing().Verify(kms.KmsVerifyDataOptions{
@@ -1126,7 +1126,7 @@ res, err := client.Kms().Signing().Verify(kms.KmsVerifyDataOptions{
 ### List Signing Algorithms
 
 `client.Kms().Signing().ListSigningAlgorithms(options)`
-List signing algorithms in Hanzo KMS.
+List signing algorithms in KMS.
 
 ```go
 res, err := client.Kms().Signing().ListSigningAlgorithms(kms.KmsListSigningAlgorithmsOptions{
@@ -1159,7 +1159,7 @@ res, err := client.Kms().Signing().ListSigningAlgorithms(kms.KmsListSigningAlgor
 </Note>
 
 `client.Kms().Signing().GetPublicKey(options)`
-Get the public key in Hanzo KMS.
+Get the public key in KMS.
 
 ```go
 publicKey, err := client.Kms().Signing().GetPublicKey(kms.KmsGetPublicKeyOptions{
@@ -1186,7 +1186,7 @@ publicKey, err := client.Kms().Signing().GetPublicKey(kms.KmsGetPublicKeyOptions
 ### Encrypt Data
 
 `client.Kms().Encryption().Encrypt(options)`
-Encrypt data with a key in Hanzo KMS KMS.
+Encrypt data with a key in KMS KMS.
 
 ```go
 res, err := client.Kms().EncryptData(kms.KmsEncryptDataOptions{
@@ -1214,7 +1214,7 @@ res, err := client.Kms().EncryptData(kms.KmsEncryptDataOptions{
 ### Decrypt Data
 
 `client.Kms().DecryptData(options)`
-Decrypt data with a key in Hanzo KMS KMS.
+Decrypt data with a key in KMS KMS.
 
 ```go
 res, err := client.Kms().DecryptData(kms.KmsDecryptDataOptions{

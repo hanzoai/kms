@@ -44,7 +44,7 @@ export const CLOUDFLARE_CUSTOM_CERTIFICATE_PKI_SYNC_LIST_OPTION = {
   destination: PkiSync.CloudflareCustomCertificate,
   canImportCertificates: false,
   canRemoveCertificates: true,
-  defaultCertificateNameSchema: "Hanzo KMS-{{certificateId}}",
+  defaultCertificateNameSchema: "KMS-{{certificateId}}",
   forbiddenCharacters: CLOUDFLARE_CUSTOM_CERTIFICATE_NAMING.FORBIDDEN_CHARACTERS,
   allowedCharacterPattern: CLOUDFLARE_CUSTOM_CERTIFICATE_NAMING.ALLOWED_CHARACTER_PATTERN,
   maxCertificateNameLength: CLOUDFLARE_CUSTOM_CERTIFICATE_NAMING.MAX_NAME_LENGTH,

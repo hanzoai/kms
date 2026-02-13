@@ -1,20 +1,20 @@
 ---
 title: Machine Identities
-description: "Learn how to use Machine Identities to programmatically interact with Hanzo KMS."
+description: "Learn how to use Machine Identities to programmatically interact with KMS."
 ---
 
 ## Concept
 
-An Hanzo KMS machine identity is an entity that represents a workload or application that require access to various resources in Hanzo KMS. This is conceptually similar to an IAM user in AWS or service account in Google Cloud Platform (GCP).
+An KMS machine identity is an entity that represents a workload or application that require access to various resources in KMS. This is conceptually similar to an IAM user in AWS or service account in Google Cloud Platform (GCP).
 
-Each identity must authenticate with the Hanzo KMS API using a supported authentication method like [Token Auth](/documentation/platform/identities/token-auth), [Universal Auth](/documentation/platform/identities/universal-auth), [Kubernetes Auth](/documentation/platform/identities/kubernetes-auth), [AWS Auth](/documentation/platform/identities/aws-auth), [Azure Auth](/documentation/platform/identities/azure-auth), or [GCP Auth](/documentation/platform/identities/gcp-auth) to get back a short-lived access token to be used in subsequent requests.
+Each identity must authenticate with the KMS API using a supported authentication method like [Token Auth](/documentation/platform/identities/token-auth), [Universal Auth](/documentation/platform/identities/universal-auth), [Kubernetes Auth](/documentation/platform/identities/kubernetes-auth), [AWS Auth](/documentation/platform/identities/aws-auth), [Azure Auth](/documentation/platform/identities/azure-auth), or [GCP Auth](/documentation/platform/identities/gcp-auth) to get back a short-lived access token to be used in subsequent requests.
 
 ![Organization Identities](/images/platform/organization/organization-machine-identities.png)
 
 Key Features:
 
 - Role Assignment: Identities must be assigned [roles](/documentation/platform/access-controls/role-based-access-controls). These roles determine the scope of access to resources, either at the organization level or project level.
-- Auth/Token Configuration: Identities must be configured with corresponding authentication methods and access token properties to securely interact with the Hanzo KMS API.
+- Auth/Token Configuration: Identities must be configured with corresponding authentication methods and access token properties to securely interact with the KMS API.
 
 ## Scopes
 
@@ -34,8 +34,8 @@ perform organization-level operations. Organization-level identities are useful 
 
         1. Creating the identity with a name and [role](/documentation/platform/access-controls/role-based-access-controls) in Project > Access Control > Machine Identities.
         This step also involves configuring an authentication method for it.
-        2. Authenticating the identity with the Hanzo KMS API based on the configured authentication method on it and receiving a short-lived access token back.
-        3. Authenticating subsequent requests with the Hanzo KMS API using the short-lived access token.
+        2. Authenticating the identity with the KMS API based on the configured authentication method on it and receiving a short-lived access token back.
+        3. Authenticating subsequent requests with the KMS API using the short-lived access token.
     </Tab>
     <Tab title="Organization Identities">
         A typical workflow for using organization identities consists of four steps:
@@ -43,17 +43,17 @@ perform organization-level operations. Organization-level identities are useful 
         1. Creating the identity with a name and [role](/documentation/platform/access-controls/role-based-access-controls) in Organization > Access Control > Machine Identities.
         This step also involves configuring an authentication method for it.
         2. Adding the identity to the project(s) you want it to have access to.
-        3. Authenticating the identity with the Hanzo KMS API based on the configured authentication method on it and receiving a short-lived access token back.
-        4. Authenticating subsequent requests with the Hanzo KMS API using the short-lived access token.
+        3. Authenticating the identity with the KMS API based on the configured authentication method on it and receiving a short-lived access token back.
+        4. Authenticating subsequent requests with the KMS API using the short-lived access token.
     </Tab>
 </Tabs>
 
 ## Authentication Methods
 
-To interact with various resources in Hanzo KMS, Machine Identities can authenticate with the Hanzo KMS API using:
+To interact with various resources in KMS, Machine Identities can authenticate with the KMS API using:
 
-- [Token Auth](/documentation/platform/identities/token-auth): A platform-agnostic, simple authentication method suitable to authenticate with Hanzo KMS using a token.
-- [Universal Auth](/documentation/platform/identities/universal-auth): A platform-agnostic authentication method suitable to authenticate with Hanzo KMS using a Client ID and Client Secret.
+- [Token Auth](/documentation/platform/identities/token-auth): A platform-agnostic, simple authentication method suitable to authenticate with KMS using a token.
+- [Universal Auth](/documentation/platform/identities/universal-auth): A platform-agnostic authentication method suitable to authenticate with KMS using a Client ID and Client Secret.
 - [Kubernetes Auth](/documentation/platform/identities/kubernetes-auth): A Kubernetes-native authentication method for applications (e.g. pods).
 - [AWS Auth](/documentation/platform/identities/aws-auth): An AWS-native authentication method for AWS services (e.g. EC2, Lambda functions, etc.).
 - [Azure Auth](/documentation/platform/identities/azure-auth): An Azure-native authentication method for Azure resources (e.g. Azure VMs, Azure App Services, Azure Functions, Azure Kubernetes Service, etc.).
@@ -80,7 +80,7 @@ You can learn more about how to do this in the CLI quickstart [here](/cli/usage)
 <Accordion title="What is the difference between an identity and service token?">
   A service token is a project-level authentication method that is being deprecated in favor of identities. The service token method will be removed in the future in accordance with the deprecation notice and timeline stated [here](https://kms.hanzo.ai/blog/deprecating-api-keys).
 
-  Amongst many differences, identities provide broader access over the Hanzo KMS API, utilizes the same
+  Amongst many differences, identities provide broader access over the KMS API, utilizes the same
   permission system as user identities, and come with a significantly larger number of configurable authentication and security features.
 
   If you're looking for a simple authentication method, similar to service tokens, that can be bound onto an identity, we recommend checking out [Token Auth](/documentation/platform/identities/token-auth).

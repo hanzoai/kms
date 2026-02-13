@@ -1,24 +1,24 @@
 ---
 title: "SSO Overview"
 sidebarTitle: "Overview"
-description: "Learn how to log in to Hanzo KMS via SSO protocols."
+description: "Learn how to log in to KMS via SSO protocols."
 ---
 
 <Info>
-  Hanzo KMS offers Google SSO and GitHub SSO for free across both Hanzo KMS
-  Cloud and Hanzo KMS Self-hosted. Hanzo KMS also offers SAML SSO authentication
+  KMS offers Google SSO and GitHub SSO for free across both KMS
+  Cloud and KMS Self-hosted. KMS also offers SAML SSO authentication
   and OpenID Connect (OIDC) but as paid features that can be unlocked on
-  Hanzo KMS Cloud's **Pro** tier or via enterprise license on self-hosted
-  instances of Hanzo KMS. On this front, we support industry-leading providers
+  KMS Cloud's **Pro** tier or via enterprise license on self-hosted
+  instances of KMS. On this front, we support industry-leading providers
   including Okta, Azure AD, and JumpCloud; with any questions, please reach out
   to team@kms.hanzo.ai.
 </Info>
 
-You can configure your organization in Hanzo KMS to have members authenticate with the platform via protocols like [SAML 2.0](https://en.wikipedia.org/wiki/SAML_2.0) or [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html).
+You can configure your organization in KMS to have members authenticate with the platform via protocols like [SAML 2.0](https://en.wikipedia.org/wiki/SAML_2.0) or [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html).
 
 ## Identity providers
 
-Hanzo KMS supports these and many other identity providers:
+KMS supports these and many other identity providers:
 
 - [Google SSO](/documentation/platform/sso/google)
 - [GitHub SSO](/documentation/platform/sso/github)
@@ -36,12 +36,12 @@ Hanzo KMS supports these and many other identity providers:
 If your required identity provider is not shown in the list above, please reach out to [team@kms.hanzo.ai](mailto:team@kms.hanzo.ai) for assistance.
 
 <Info>
-  For enhanced security, Hanzo KMS enforces PKCE (Proof Key for Code Exchange) with the OAuth 2.0-based SSO providers and OIDC. This provides additional protection against authorization code interception attacks and strengthens your authentication flow security.
+  For enhanced security, KMS enforces PKCE (Proof Key for Code Exchange) with the OAuth 2.0-based SSO providers and OIDC. This provides additional protection against authorization code interception attacks and strengthens your authentication flow security.
 </Info>
 
 ## SSO Break Glass
 
-In the event your SSO provider experiences downtime, and you need to access Hanzo KMS, Organization Admins can utilize the Admin Login Portal to bypass SSO enforcement.
+In the event your SSO provider experiences downtime, and you need to access KMS, Organization Admins can utilize the Admin Login Portal to bypass SSO enforcement.
 
 This portal is accessible at `/login/admin` (e.g., https://kms.hanzo.ai/login/admin).
 
@@ -52,14 +52,14 @@ This portal is accessible at `/login/admin` (e.g., https://kms.hanzo.ai/login/ad
 ## FAQ
 
 <AccordionGroup>
-    <Accordion title="Why does Hanzo KMS require additional email verification for users connected via SAML?">
-        By default, Hanzo KMS Cloud is configured to not trust emails from external
+    <Accordion title="Why does KMS require additional email verification for users connected via SAML?">
+        By default, KMS Cloud is configured to not trust emails from external
         identity providers to prevent any malicious account takeover attempts via
-        email spoofing. Accordingly, Hanzo KMS creates a new user for anyone provisioned
+        email spoofing. Accordingly, KMS creates a new user for anyone provisioned
         through an external identity provider and requires an additional email
         verification step upon their first login.
 
-        If you're running a self-hosted instance of Hanzo KMS and would like it to trust emails from external identity providers,
+        If you're running a self-hosted instance of KMS and would like it to trust emails from external identity providers,
         you can configure this behavior in the Server Admin Console.
     </Accordion>
     <Accordion title="Why do I get redirected to SSO when trying to use the Admin Login Portal?">

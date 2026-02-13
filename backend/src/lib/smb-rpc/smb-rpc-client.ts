@@ -205,7 +205,7 @@ const getNtStatusMessage = (ntStatus: string): string => {
     NT_STATUS_IO_TIMEOUT: "Connection timed out",
     NT_STATUS_UNSUCCESSFUL: `Connection failed - verify SMB is enabled on target, firewall allows the port provided in the connection configuration, and SMB3 protocol is supported`,
     NT_STATUS_PASSWORD_RESTRICTION:
-      "Password rejected by Windows policy - ensure Hanzo KMS password requirements meet or exceed Windows password policy",
+      "Password rejected by Windows policy - ensure KMS password requirements meet or exceed Windows password policy",
     NT_STATUS_WRONG_PASSWORD: "Incorrect password"
   };
 

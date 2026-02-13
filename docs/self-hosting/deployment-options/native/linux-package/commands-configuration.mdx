@@ -1,11 +1,11 @@
 ---
 title: "Configurations"
-description: "Learn how to configure and manage the Hanzo KMS Linux package"
+description: "Learn how to configure and manage the KMS Linux package"
 ---
 
 ## Configuration Overview
 
-All configuration for the Hanzo KMS Linux package is managed through a single file called `kms.rb`, located in the `/etc/kms` directory. 
+All configuration for the KMS Linux package is managed through a single file called `kms.rb`, located in the `/etc/kms` directory. 
 This file defines all necessary settings, including encryption keys, database connections, and environment-specific settings.
 
 <Info> After making any changes to the `kms.rb` file, always run `kms-ctl reconfigure` to apply them. </Info>
@@ -26,13 +26,13 @@ For a full list of supported configuration variables, refer to the [configuratio
 
 ## All `kms-ctl` Commands
 
-The Hanzo KMS Linux package includes the `kms-ctl` command-line tool, which allows you to manage your deployment. 
+The KMS Linux package includes the `kms-ctl` command-line tool, which allows you to manage your deployment. 
 The available commands are listed below.
 
 | Command                      | Description                                                                 |
 |-----------------------------|-----------------------------------------------------------------------------|
-| `kms-ctl reconfigure` | Applies changes from `kms.rb` and restarts the Hanzo KMS services.   |
-| `kms-ctl start`       | Starts the Hanzo KMS services.                                             |
-| `kms-ctl stop`        | Stops all running Hanzo KMS services.                                      |
-| `kms-ctl status`      | Displays the current status of the Hanzo KMS services.                     |
-| `kms-ctl tail`        | Streams real-time logs from the Hanzo KMS application.                     |
+| `kms-ctl reconfigure` | Applies changes from `kms.rb` and restarts the KMS services.   |
+| `kms-ctl start`       | Starts the KMS services.                                             |
+| `kms-ctl stop`        | Stops all running KMS services.                                      |
+| `kms-ctl status`      | Displays the current status of the KMS services.                     |
+| `kms-ctl tail`        | Streams real-time logs from the KMS application.                     |

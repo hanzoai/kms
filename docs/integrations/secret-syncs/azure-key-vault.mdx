@@ -1,27 +1,27 @@
 ---
 title: "Azure Key Vault Sync"
-description: "Learn how to configure a Azure Key Vault Sync for Hanzo KMS."
+description: "Learn how to configure a Azure Key Vault Sync for KMS."
 ---
 
 **Prerequisites:**
 
-        - Set up and add secrets to [Hanzo KMS Cloud](https://kms.hanzo.ai)
+        - Set up and add secrets to [KMS Cloud](https://kms.hanzo.ai)
         - Create an [Azure Key Vault Connection](/integrations/app-connections/azure-key-vault)
-        - Ensure your network security policies allow incoming requests from Hanzo KMS to this secret sync provider, if network restrictions apply.
+        - Ensure your network security policies allow incoming requests from KMS to this secret sync provider, if network restrictions apply.
 
 <Note>
   The Azure Key Vault Secret Sync requires the following secrets permissions to be set on the user / service principal
-  for Hanzo KMS to sync secrets to Azure Key Vault: `secrets/list`, `secrets/get`, `secrets/set`, `secrets/recover`.
+  for KMS to sync secrets to Azure Key Vault: `secrets/list`, `secrets/get`, `secrets/set`, `secrets/recover`.
 
   Any role with these permissions would work such as the **Key Vault Secrets Officer** role.
 </Note>
 
 <Note>
-  Secrets in Hanzo KMS that contain an underscore (`_`) will be converted to a hyphen (`-`) when synced to Azure Key Vault.
+  Secrets in KMS that contain an underscore (`_`) will be converted to a hyphen (`-`) when synced to Azure Key Vault.
 </Note>
 
 <Tabs>
-    <Tab title="Hanzo KMS UI">
+    <Tab title="KMS UI">
         1. Navigate to **Project** > **Integrations** and select the **Secret Syncs** tab. Click on the **Add Sync** button.
         ![Secret Syncs Tab](/images/secret-syncs/general/secret-sync-tab.png)
 
@@ -48,16 +48,16 @@ description: "Learn how to configure a Azure Key Vault Sync for Hanzo KMS."
         5. Configure the **Sync Options** to specify how secrets should be synced, then click **Next**.
         ![Configure Options](/images/secret-syncs/azure-key-vault/vault-options.png)
 
-            - **Initial Sync Behavior**: Determines how Hanzo KMS should resolve the initial sync.
-                - **Overwrite Destination Secrets**: Removes any secrets at the destination endpoint not present in Hanzo KMS.
-                - **Import Secrets (Prioritize Hanzo KMS)**: Imports secrets from the destination endpoint before syncing, prioritizing values from Hanzo KMS over Secrets Manager when keys conflict.
-                - **Import Secrets (Prioritize Azure Key Vault)**: Imports secrets from the destination endpoint before syncing, prioritizing values from Secrets Manager over Hanzo KMS when keys conflict.
+            - **Initial Sync Behavior**: Determines how KMS should resolve the initial sync.
+                - **Overwrite Destination Secrets**: Removes any secrets at the destination endpoint not present in KMS.
+                - **Import Secrets (Prioritize KMS)**: Imports secrets from the destination endpoint before syncing, prioritizing values from KMS over Secrets Manager when keys conflict.
+                - **Import Secrets (Prioritize Azure Key Vault)**: Imports secrets from the destination endpoint before syncing, prioritizing values from Secrets Manager over KMS when keys conflict.
             - **Key Schema**: Template that determines how secret names are transformed when syncing, using `{{secretKey}}` as a placeholder for the original secret name and `{{environment}}` for the environment.
             <Note>
-                We highly recommend using a Key Schema to ensure that Hanzo KMS only manages the specific keys you intend, keeping everything else untouched.
+                We highly recommend using a Key Schema to ensure that KMS only manages the specific keys you intend, keeping everything else untouched.
             </Note>
             - **Auto-Sync Enabled**: If enabled, secrets will automatically be synced from the source location when changes occur. Disable to enforce manual syncing only.
-            - **Disable Secret Deletion**: If enabled, Hanzo KMS will not remove secrets from the sync destination. Enable this option if you intend to manage some secrets manually outside of Hanzo KMS.
+            - **Disable Secret Deletion**: If enabled, KMS will not remove secrets from the sync destination. Enable this option if you intend to manage some secrets manually outside of KMS.
 
         6. Configure the **Details** of your Azure Key Vault Sync, then click **Next**.
         ![Configure Details](/images/secret-syncs/azure-key-vault/vault-details.png)

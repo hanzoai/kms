@@ -1,19 +1,19 @@
 ---
 title: General
-description: "Learn how to authenticate with Hanzo KMS from any platform or environment using OpenID Connect (OIDC)."
+description: "Learn how to authenticate with KMS from any platform or environment using OpenID Connect (OIDC)."
 ---
 
 **OIDC Auth** is a platform-agnostic JWT-based authentication method that can be used to authenticate from any platform or environment using an identity provider with OpenID Connect.
 
 ## Diagram
 
-The following sequence diagram illustrates the OIDC Auth workflow for authenticating clients with Hanzo KMS.
+The following sequence diagram illustrates the OIDC Auth workflow for authenticating clients with KMS.
 
 ```mermaid
 sequenceDiagram
   participant Client as Client
   participant Idp as Identity Provider
-  participant Infis as Hanzo KMS
+  participant Infis as KMS
 
   Client->>Idp: Step 1: Request identity token
   Idp-->>Client: Return JWT with verifiable claims
@@ -28,31 +28,31 @@ sequenceDiagram
   Note over Infis: Step 4: JWT validation
   Infis->>Client: Return short-lived access token
 
-  Note over Client,Infis: Step 5: Access Hanzo KMS API with Token
+  Note over Client,Infis: Step 5: Access KMS API with Token
   Client->>Infis: Make authenticated requests using the short-lived access token
 ```
 
 ## Concept
 
-At a high-level, Hanzo KMS authenticates a client by verifying the JWT and checking that it meets specific requirements (e.g. it is issued by a trusted identity provider) at the `/api/v1/auth/oidc-auth/login` endpoint. If successful,
-then Hanzo KMS returns a short-lived access token that can be used to make authenticated requests to the Hanzo KMS API.
+At a high-level, KMS authenticates a client by verifying the JWT and checking that it meets specific requirements (e.g. it is issued by a trusted identity provider) at the `/api/v1/auth/oidc-auth/login` endpoint. If successful,
+then KMS returns a short-lived access token that can be used to make authenticated requests to the KMS API.
 
 To be more specific:
 
 1. The client requests an identity token from its identity provider.
-2. The client sends the identity token to Hanzo KMS at the `/api/v1/auth/oidc-auth/login` endpoint.
-3. Hanzo KMS fetches the public key that was used to sign the identity token from the identity provider using OIDC Discovery.
-4. Hanzo KMS validates the JWT using the public key provided by the identity provider and checks that the subject, audience, and claims of the token matches with the set criteria.
-5. If all is well, Hanzo KMS returns a short-lived access token that the client can use to make authenticated requests to the Hanzo KMS API.
+2. The client sends the identity token to KMS at the `/api/v1/auth/oidc-auth/login` endpoint.
+3. KMS fetches the public key that was used to sign the identity token from the identity provider using OIDC Discovery.
+4. KMS validates the JWT using the public key provided by the identity provider and checks that the subject, audience, and claims of the token matches with the set criteria.
+5. If all is well, KMS returns a short-lived access token that the client can use to make authenticated requests to the KMS API.
 
 <Note>
-  Hanzo KMS needs network-level access to the identity provider configuration
+  KMS needs network-level access to the identity provider configuration
   endpoints.
 </Note>
 
 ## Guide
 
-In the following steps, we explore how to create and use identities to access the Hanzo KMS API using the OIDC Auth authentication method.
+In the following steps, we explore how to create and use identities to access the KMS API using the OIDC Auth authentication method.
 
 <Steps>
     <Step title="Creating an identity">
@@ -110,10 +110,10 @@ In the following steps, we explore how to create and use identities to access th
 
     ![identities project create](/images/platform/identities/identities-project-create.png)
     </Step>
-    <Step title="Accessing the Hanzo KMS API with the identity">
-        To access the Hanzo KMS API as the identity, you need to fetch an identity token from an identity provider and make a request to the `/api/v1/auth/oidc-auth/login` endpoint in exchange for an access token.
+    <Step title="Accessing the KMS API with the identity">
+        To access the KMS API as the identity, you need to fetch an identity token from an identity provider and make a request to the `/api/v1/auth/oidc-auth/login` endpoint in exchange for an access token.
 
-        We provide an example below of how authentication is done with Hanzo KMS using OIDC. It is a snippet from the [official Github secrets action](https://github.com/Hanzo KMS/secrets-action).
+        We provide an example below of how authentication is done with KMS using OIDC. It is a snippet from the [official Github secrets action](https://github.com/KMS/secrets-action).
 
         #### Sample usage
         ```javascript
@@ -155,14 +155,14 @@ In the following steps, we explore how to create and use identities to access th
         ```
 
         <Tip>
-            We recommend using one of Hanzo KMS's clients like SDKs or the KMS Agent to authenticate with Hanzo KMS using OIDC Auth as they handle the authentication process including the fetching of identity tokens for you.
+            We recommend using one of KMS's clients like SDKs or the KMS Agent to authenticate with KMS using OIDC Auth as they handle the authentication process including the fetching of identity tokens for you.
         </Tip>
 
         <Note>
         Each identity access token has a time-to-live (TTL) which you can infer from the response of the login operation;
         the default TTL is `7200` seconds which can be adjusted.
 
-        If an identity access token expires, it can no longer authenticate with the Hanzo KMS API. In this case,
+        If an identity access token expires, it can no longer authenticate with the KMS API. In this case,
         a new access token should be obtained by performing another login operation.
         </Note>
     </Step>

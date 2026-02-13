@@ -1,11 +1,11 @@
 ---
-title: "Hanzo KMS Enterprise"
-description: "Find out how to activate Hanzo KMS Enterprise edition (EE) features."
+title: "KMS Enterprise"
+description: "Find out how to activate KMS Enterprise edition (EE) features."
 ---
 
-While most features in Hanzo KMS are free to use, others are paid and require purchasing an enterprise license to use them.
+While most features in KMS are free to use, others are paid and require purchasing an enterprise license to use them.
 
-This guide walks through how you can use these paid features on a self-hosted instance of Hanzo KMS.
+This guide walks through how you can use these paid features on a self-hosted instance of KMS.
 
 <Steps>
     <Step title="Purchase a license">
@@ -14,21 +14,21 @@ This guide walks through how you can use these paid features on a self-hosted in
         Once purchased, you will be issued a license key.
     </Step>
     <Step title="Activate the license">
-        Set your license key as the value of the **LICENSE_KEY** environment variable within your Hanzo KMS instance.
+        Set your license key as the value of the **LICENSE_KEY** environment variable within your KMS instance.
 
         <Tabs>
             <Tab title="Regular License">
-            - Assign the issued license key to the `LICENSE_KEY` environment variable in your Hanzo KMS instance.
+            - Assign the issued license key to the `LICENSE_KEY` environment variable in your KMS instance.
 
-            - Your Hanzo KMS instance will need to communicate with the Hanzo KMS license server to validate the license key.
-            If you want to limit outgoing connections only to the Hanzo KMS license server, you can use the following IP addresses: `13.248.249.247` and `35.71.190.59`
+            - Your KMS instance will need to communicate with the KMS license server to validate the license key.
+            If you want to limit outgoing connections only to the KMS license server, you can use the following IP addresses: `13.248.249.247` and `35.71.190.59`
 
             <Note>
                 Ensure that your firewall or network settings allow outbound connections to these IP addresses to avoid any issues with license validation.
             </Note>
             </Tab>
             <Tab title="Offline License">
-            - Assign the issued offline license key to the `LICENSE_KEY` environment variable in your Hanzo KMS instance.
+            - Assign the issued offline license key to the `LICENSE_KEY` environment variable in your KMS instance.
 
             - The system will automatically detect that it's an offline license based on the key format.
 
@@ -39,7 +39,7 @@ This guide walks through how you can use these paid features on a self-hosted in
         </Tabs>
 
         Once your instance starts up, the license key will be validated and you'll be able to use the paid features.
-        However, when the license expires, Hanzo KMS will continue to run, but EE features will be disabled until the license is renewed or a new one is purchased.
+        However, when the license expires, KMS will continue to run, but EE features will be disabled until the license is renewed or a new one is purchased.
     </Step>
 
 </Steps>

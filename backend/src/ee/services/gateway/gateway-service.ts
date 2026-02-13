@@ -59,14 +59,14 @@ export const gatewayServiceFactory = ({
     // if (!licenseService.onPremFeatures.gateway) {
     //   throw new BadRequestError({
     //     message:
-    //       "Gateway handshake failed due to instance plan restrictions. Please upgrade your instance to Hanzo KMS's Enterprise plan."
+    //       "Gateway handshake failed due to instance plan restrictions. Please upgrade your instance to KMS's Enterprise plan."
     //   });
     // }
     const orgLicensePlan = await licenseService.getPlan(orgId);
     if (!orgLicensePlan.gateway) {
       throw new BadRequestError({
         message:
-          "Gateway handshake failed due to organization plan restrictions. Please upgrade your instance to Hanzo KMS's Enterprise plan."
+          "Gateway handshake failed due to organization plan restrictions. Please upgrade your instance to KMS's Enterprise plan."
       });
     }
     const { permission } = await permissionService.getOrgPermission({
@@ -576,7 +576,7 @@ export const gatewayServiceFactory = ({
     const orgLicensePlan = await licenseService.getPlan(orgGatewayConfig.orgId);
     if (!orgLicensePlan.gateway) {
       throw new BadRequestError({
-        message: "Please upgrade your instance to Hanzo KMS's Enterprise plan to use gateways."
+        message: "Please upgrade your instance to KMS's Enterprise plan to use gateways."
       });
     }
 

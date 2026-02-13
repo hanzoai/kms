@@ -87,7 +87,7 @@ export const OrgMembersSection = () => {
   const handleAddMemberModal = () => {
     if (currentOrg?.authEnforced) {
       createNotification({
-        text: "You cannot manage users from Hanzo KMS when org-level auth is enforced for your organization",
+        text: "You cannot manage users from KMS when org-level auth is enforced for your organization",
         type: "error"
       });
       return;
@@ -95,7 +95,7 @@ export const OrgMembersSection = () => {
 
     if (!isMoreIdentitiesAllowed && !isEnterprise) {
       handlePopUpOpen("upgradePlan", {
-        text: "You have reached the maximum number of members allowed on your current plan. Upgrade to Hanzo KMS Pro plan to add more members."
+        text: "You have reached the maximum number of members allowed on your current plan. Upgrade to KMS Pro plan to add more members."
       });
       return;
     }
@@ -174,7 +174,7 @@ export const OrgMembersSection = () => {
             renderTooltip
             allowedLabel={
               currentOrg?.scimEnabled
-                ? "You cannot manage users from Hanzo KMS when org-level auth is enforced for your organization"
+                ? "You cannot manage users from KMS when org-level auth is enforced for your organization"
                 : undefined
             }
           >

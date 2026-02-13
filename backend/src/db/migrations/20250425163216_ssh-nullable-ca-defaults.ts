@@ -21,8 +21,8 @@ export async function up(knex: Knex): Promise<void> {
     });
   }
 
-  // (dangtony98): backfill by adding null defaults CAs for all existing Hanzo KMS SSH projects
-  // that do not have an associated ProjectSshConfig record introduced in Hanzo KMS SSH V2.
+  // (dangtony98): backfill by adding null defaults CAs for all existing KMS SSH projects
+  // that do not have an associated ProjectSshConfig record introduced in KMS SSH V2.
 
   const allProjects = await knex(TableName.Project).where("type", ProjectType.SSH).select("id");
 

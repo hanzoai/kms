@@ -117,7 +117,7 @@ export const HashicorpVaultConfigurePage = () => {
       <Card className="max-w-lg rounded-md border border-mineshaft-600">
         <CardTitle
           className="px-6 text-left text-xl"
-          subTitle="Select which environment or folder in Hanzo KMS you want to sync to which path in HashiCorp Vault."
+          subTitle="Select which environment or folder in KMS you want to sync to which path in HashiCorp Vault."
         >
           <div className="flex flex-row items-center">
             <div className="inline-flex items-center">
@@ -184,7 +184,7 @@ export const HashicorpVaultConfigurePage = () => {
                   isError={Boolean(error)}
                   isRequired
                   label="Secrets Path"
-                  helperText="A path to your secrets in Hanzo KMS."
+                  helperText="A path to your secrets in KMS."
                 >
                   <Input {...field} autoCorrect="off" spellCheck={false} placeholder="/" />
                 </FormControl>
@@ -242,7 +242,7 @@ export const HashicorpVaultConfigurePage = () => {
         </div>
         <span className="mt-4 text-sm text-mineshaft-300">
           After creating an integration, your secrets will start syncing immediately. This might
-          cause an unexpected override of current secrets in Vault with secrets from Hanzo KMS.
+          cause an unexpected override of current secrets in Vault with secrets from KMS.
         </span>
       </div>
     </div>

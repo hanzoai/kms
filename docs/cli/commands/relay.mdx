@@ -1,6 +1,6 @@
 ---
 title: "kms relay"
-description: "Relay-related commands for Hanzo KMS"
+description: "Relay-related commands for KMS"
 ---
 
 <Tabs>
@@ -22,13 +22,13 @@ description: "Relay-related commands for Hanzo KMS"
 
 ## Description
 
-Relay-related commands for Hanzo KMS that provide identity-aware relay infrastructure for routing encrypted traffic. Relays are organization-deployed servers that route encrypted traffic between Hanzo KMS and your gateways.
+Relay-related commands for KMS that provide identity-aware relay infrastructure for routing encrypted traffic. Relays are organization-deployed servers that route encrypted traffic between KMS and your gateways.
 
 ## Subcommands & flags
 
 <AccordionGroup>
 <Accordion title="kms relay start" defaultOpen="true">
-  Run the Hanzo KMS relay component. The relay handles network traffic routing between Hanzo KMS and your gateways.
+  Run the KMS relay component. The relay handles network traffic routing between KMS and your gateways.
 
 ```bash
 kms relay start --host=<host> --name=<name> --auth-method=<auth-method>
@@ -63,7 +63,7 @@ kms relay start --host=<host> --name=<name> --auth-method=<auth-method>
 
 ### Authentication
 
-Relays support all standard Hanzo KMS authentication methods. Choose the authentication method that best fits your environment and set the corresponding flags when starting the relay.
+Relays support all standard KMS authentication methods. Choose the authentication method that best fits your environment and set the corresponding flags when starting the relay.
 
 ```bash
 # Example with Universal Auth
@@ -76,7 +76,7 @@ The KMS CLI supports multiple authentication methods for relays. Below are the a
 
 <AccordionGroup>
   <Accordion title="Universal Auth">
-    The Universal Auth method is a simple and secure way to authenticate with Hanzo KMS. It requires a client ID and a client secret to authenticate with Hanzo KMS.
+    The Universal Auth method is a simple and secure way to authenticate with KMS. It requires a client ID and a client secret to authenticate with KMS.
 
       <ParamField query="Flags">
       <Expandable title="properties">
@@ -98,7 +98,7 @@ The KMS CLI supports multiple authentication methods for relays. Below are the a
 
   </Accordion>
   <Accordion title="Native Kubernetes">
-    The Native Kubernetes method is used to authenticate with Hanzo KMS when running in a Kubernetes environment. It requires a service account token to authenticate with Hanzo KMS.
+    The Native Kubernetes method is used to authenticate with KMS when running in a Kubernetes environment. It requires a service account token to authenticate with KMS.
 
       <ParamField query="Flags">
       <Expandable title="properties">
@@ -122,7 +122,7 @@ The KMS CLI supports multiple authentication methods for relays. Below are the a
 
   </Accordion>
   <Accordion title="Native Azure">
-    The Native Azure method is used to authenticate with Hanzo KMS when running in an Azure environment.
+    The Native Azure method is used to authenticate with KMS when running in an Azure environment.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -143,7 +143,7 @@ The KMS CLI supports multiple authentication methods for relays. Below are the a
 
   </Accordion>
   <Accordion title="Native GCP ID Token">
-    The Native GCP ID Token method is used to authenticate with Hanzo KMS when running in a GCP environment.
+    The Native GCP ID Token method is used to authenticate with KMS when running in a GCP environment.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -164,7 +164,7 @@ The KMS CLI supports multiple authentication methods for relays. Below are the a
 
   </Accordion>
   <Accordion title="GCP IAM">
-    The GCP IAM method is used to authenticate with Hanzo KMS with a GCP service account key.
+    The GCP IAM method is used to authenticate with KMS with a GCP service account key.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -186,7 +186,7 @@ The KMS CLI supports multiple authentication methods for relays. Below are the a
 
   </Accordion>
   <Accordion title="Native AWS IAM">
-    The AWS IAM method is used to authenticate with Hanzo KMS with an AWS IAM role while running in an AWS environment like EC2, Lambda, etc.
+    The AWS IAM method is used to authenticate with KMS with an AWS IAM role while running in an AWS environment like EC2, Lambda, etc.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -205,7 +205,7 @@ The KMS CLI supports multiple authentication methods for relays. Below are the a
 
   </Accordion>
   <Accordion title="OIDC Auth">
-    The OIDC Auth method is used to authenticate with Hanzo KMS via identity tokens with OIDC.
+    The OIDC Auth method is used to authenticate with KMS via identity tokens with OIDC.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -228,7 +228,7 @@ The KMS CLI supports multiple authentication methods for relays. Below are the a
   </Accordion>
 
   <Accordion title="JWT Auth">
-    The JWT Auth method is used to authenticate with Hanzo KMS via a JWT token.
+    The JWT Auth method is used to authenticate with KMS via a JWT token.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -251,7 +251,7 @@ The KMS CLI supports multiple authentication methods for relays. Below are the a
 
   </Accordion>
   <Accordion title="Token Auth">
-    You can use the `KMS_TOKEN` environment variable to authenticate with Hanzo KMS with a raw machine identity access token.
+    You can use the `KMS_TOKEN` environment variable to authenticate with KMS with a raw machine identity access token.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -271,7 +271,7 @@ The KMS CLI supports multiple authentication methods for relays. Below are the a
 </Accordion>
 
 <Accordion title="kms relay systemd" defaultOpen="false">
-  Manage systemd service for Hanzo KMS relay. This allows you to install and run the relay as a systemd service on Linux systems.
+  Manage systemd service for KMS relay. This allows you to install and run the relay as a systemd service on Linux systems.
   ### Requirements
   - **Operating System**: Linux only (systemd is not supported on other operating systems)
   - **Privileges**: Root/sudo privileges required for both install and uninstall operations
@@ -318,7 +318,7 @@ sudo kms relay systemd install --name=my-relay --host=192.168.1.100 --token=<tok
 </Accordion>
 
 <Accordion title="--token">
-  Connect with Hanzo KMS using machine identity access token.
+  Connect with KMS using machine identity access token.
 
 ```bash
 # Example
@@ -328,7 +328,7 @@ sudo kms relay systemd install --token=<machine-identity-token> --host=<host> --
 </Accordion>
 
 <Accordion title="--domain">
-  Domain of your self-hosted Hanzo KMS instance. Optional flag for specifying a custom domain.
+  Domain of your self-hosted KMS instance. Optional flag for specifying a custom domain.
 
 ```bash
 # Example

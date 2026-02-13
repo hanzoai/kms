@@ -13,11 +13,11 @@ hanzo-kms scan --verbose
 ## Description
 The `hanzo-kms scan` command serves to scan repositories, directories, and files. It's compatible with both individual developer machines and Continuous Integration (CI) environments.
 
-When you run `hanzo-kms scan` on a Git repository, Hanzo KMS will parses the output of a `git log -p` command. This command generates [patches](https://stackoverflow.com/questions/8279602/what-is-a-patch-in-git-version-control) that Hanzo KMS uses to identify secrets in your code. 
+When you run `hanzo-kms scan` on a Git repository, KMS will parses the output of a `git log -p` command. This command generates [patches](https://stackoverflow.com/questions/8279602/what-is-a-patch-in-git-version-control) that KMS uses to identify secrets in your code. 
 You can configure the range of commits that `git log` will cover using the `--log-opts` flag. 
 Any options you can use with `git log -p` are valid for `--log-opts`. 
 
-For instance, to instruct Hanzo KMS to scan a specific range of commits, use the following command: `hanzo-kms scan --log-opts="--all commitA..commitB"`. For more details, refer to the [Git log documentation](https://git-scm.com/docs/git-log).
+For instance, to instruct KMS to scan a specific range of commits, use the following command: `hanzo-kms scan --log-opts="--all commitA..commitB"`. For more details, refer to the [Git log documentation](https://git-scm.com/docs/git-log).
 
 To scan individual files and directories, use the `--no-git` flag. 
 
@@ -74,7 +74,7 @@ To scan individual files and directories, use the `--no-git` flag.
   1. --config flag
   2. env var KMS_SCAN_CONFIG
   3. (--source/-s)/.kms-scan.toml
-  If none of the three options are used, then Hanzo KMS will use the default config
+  If none of the three options are used, then KMS will use the default config
 </Accordion>
 
 <Accordion title="--exit-code">

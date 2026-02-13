@@ -47,7 +47,7 @@ export const pkiAlertServiceFactory = ({
       for await (const [, alertItems] of Object.entries(groupedByAlert)) {
         await smtpService.sendMail({
           recipients: [email],
-          subjectLine: `Hanzo KMS CA/Certificate expiration notice: ${alertItems[0].alertName}`,
+          subjectLine: `KMS CA/Certificate expiration notice: ${alertItems[0].alertName}`,
           substitutions: {
             alertName: alertItems[0].alertName,
             alertBeforeDays: items[0].alertBeforeDays,

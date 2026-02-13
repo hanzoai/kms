@@ -1,23 +1,23 @@
 ---
-title: "Hanzo KMS Cloud"
-description: "Architecture overview of Hanzo KMS's US and EU cloud deployments"
+title: "KMS Cloud"
+description: "Architecture overview of KMS's US and EU cloud deployments"
 ---
 
-This document provides an overview of Hanzo KMS's cloud architecture for our US and EU deployments, detailing the core components and how they interact to provide security and infrastructure services.
+This document provides an overview of KMS's cloud architecture for our US and EU deployments, detailing the core components and how they interact to provide security and infrastructure services.
 
 ## Overview
 
-Hanzo KMS Cloud operates on AWS infrastructure using containerized services deployed via Amazon ECS (Elastic Container Service). Our US and EU deployments use identical architectural patterns to ensure consistency and reliability across regions.
+KMS Cloud operates on AWS infrastructure using containerized services deployed via Amazon ECS (Elastic Container Service). Our US and EU deployments use identical architectural patterns to ensure consistency and reliability across regions.
 
-![Hanzo KMS Cloud Architecture](/images/self-hosting/reference-architectures/Hanzo KMS-AWS-ECS-architecture.jpeg)
+![KMS Cloud Architecture](/images/self-hosting/reference-architectures/KMS-AWS-ECS-architecture.jpeg)
 
 ## Components
 
-A typical Hanzo KMS Cloud deployment consists of the following components:
+A typical KMS Cloud deployment consists of the following components:
 
 ### Application Services
 
-- **Hanzo KMS Core**: Main application server running the Hanzo KMS backend API
+- **KMS Core**: Main application server running the KMS backend API
 - **License API**: Dedicated API service for license management with separate RDS instance (shared between US/EU)
 - **Application Load Balancer**: Routes incoming traffic to application containers with SSL termination and host-based routing
 
@@ -43,7 +43,7 @@ A typical Hanzo KMS Cloud deployment consists of the following components:
 
 ### Service Architecture
 
-The Hanzo KMS application runs as multiple containerized services on ECS:
+The KMS application runs as multiple containerized services on ECS:
 
 - **Main Server**: Auto-scaling containerized application services
 - **License API**: Dedicated service with separate infrastructure (shared globally)
@@ -65,7 +65,7 @@ Services are deployed in private subnets with the following connectivity:
 1. **DNS resolution** via Cloudflare routes traffic to AWS Global Accelerator
 2. **Global Accelerator** optimizes routing to the nearest AWS region
 3. **Client requests** are routed through the Application Load Balancer to ECS containers
-4. **Application logic** processes requests in the Hanzo KMS Core service
+4. **Application logic** processes requests in the KMS Core service
 5. **Data persistence** occurs via encrypted connections to RDS
 6. **Caching** utilizes ElastiCache for performance optimization
 7. **Configuration** is retrieved from AWS SSM Parameter Store

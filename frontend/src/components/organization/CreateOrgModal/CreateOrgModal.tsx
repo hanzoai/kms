@@ -71,7 +71,7 @@ export const CreateOrgModal: FC<CreateOrgModalProps> = ({ isOpen, onClose }) => 
     <Modal modal={false} isOpen={isOpen}>
       <ModalContent
         title="Create Organization"
-        subTitle="Looks like you're not part of any organizations. Create one to start using Hanzo KMS"
+        subTitle="Looks like you're not part of any organizations. Create one to start using KMS"
       >
         <form onSubmit={handleSubmit(onFormSubmit)}>
           <Controller

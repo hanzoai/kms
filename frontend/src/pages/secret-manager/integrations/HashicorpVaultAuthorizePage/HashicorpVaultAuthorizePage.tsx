@@ -67,7 +67,7 @@ export const HashicorpVaultAuthorizePage = () => {
       <Card className="mb-12 max-w-lg rounded-md border border-mineshaft-600">
         <CardTitle
           className="px-6 text-left text-xl"
-          subTitle="After connecting to Vault, you will be prompted to set up an integration for a particular Hanzo KMS project and environment."
+          subTitle="After connecting to Vault, you will be prompted to set up an integration for a particular KMS project and environment."
         >
           <div className="flex flex-row items-center">
             <div className="inline-flex items-center">

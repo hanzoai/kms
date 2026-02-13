@@ -1,31 +1,31 @@
 ---
 title: "Components"
-description: "Understand Hanzo KMS's core architectural components and how they work together."
+description: "Understand KMS's core architectural components and how they work together."
 ---
 
 ## Overview
 
-Hanzo KMS is architected around several key components that work in concert to provide a secure and streamlined secret management experience. These components span the client, API, and storage layers, ensuring that secrets are protected at every stage of their lifecycle.
+KMS is architected around several key components that work in concert to provide a secure and streamlined secret management experience. These components span the client, API, and storage layers, ensuring that secrets are protected at every stage of their lifecycle.
 
 ## 1. API (Backend)
 
-Hanzo KMS exposes a well-documented [REST API](https://kms.hanzo.ai/docs/api-reference/overview/introduction) that enables programmatic interaction with the platform, enabling a wide range of use cases.
+KMS exposes a well-documented [REST API](https://kms.hanzo.ai/docs/api-reference/overview/introduction) that enables programmatic interaction with the platform, enabling a wide range of use cases.
 
 ## 2. Storage Backend
 
-Hanzo KMS relies on a robust storage backend to durably store secrets, users, and other platform data. Hanzo KMS's storage backend is [PostgreSQL](https://www.postgresql.org/).
+KMS relies on a robust storage backend to durably store secrets, users, and other platform data. KMS's storage backend is [PostgreSQL](https://www.postgresql.org/).
 
 ## 3. Caching Layer
 
-Hanzo KMS uses [Redis](https://redis.com) to enable more complex workflows including a queuing system to manage long-running asynchronous tasks, cron jobs, as well as reliable cache for frequently used resources.
+KMS uses [Redis](https://redis.com) to enable more complex workflows including a queuing system to manage long-running asynchronous tasks, cron jobs, as well as reliable cache for frequently used resources.
 
 ## 4. Clients
 
-Clients are interfaces through which users and applications interact with the Hanzo KMS API:
+Clients are interfaces through which users and applications interact with the KMS API:
 
 - **Web UI**: A browser-based portal providing a user-friendly interface for managing secrets, configurations, and performing administrative tasks.
 
-- [**CLI**](https://kms.hanzo.ai/docs/cli): A terminal-based tool for interacting with the Hanzo KMS API, enabling automation, scripting, and integration into CI/CD pipelines.
+- [**CLI**](https://kms.hanzo.ai/docs/cli): A terminal-based tool for interacting with the KMS API, enabling automation, scripting, and integration into CI/CD pipelines.
 
 - **SDKs (Software Development Kits)**: Platform-specific libraries with method abstractions for working with secrets. Supported languages include [Node.js](https://kms.hanzo.ai/docs/sdks/languages/node), [Python](https://kms.hanzo.ai/docs/sdks/languages/python), [Java](https://kms.hanzo.ai/docs/sdks/languages/java), [Golang](https://kms.hanzo.ai/docs/sdks/languages/go), [Ruby](https://kms.hanzo.ai/docs/sdks/languages/ruby) and [.NET](https://kms.hanzo.ai/docs/sdks/languages/csharp).
 

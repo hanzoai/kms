@@ -3,14 +3,14 @@ title: "Docker Run"
 description: "Learn how to pass secrets to your docker container at run time."
 ---
 
-This method allows you to feed secrets from Hanzo KMS into your container using the `--env-file` flag of `docker run` command. 
+This method allows you to feed secrets from KMS into your container using the `--env-file` flag of `docker run` command. 
 Rather than giving the flag a file path to your env file, you'll use the KMS CLI to create a virtual file path.
 
 For this method to function as expected, you must have a bash shell (for processing substitution) and the [KMS CLI](../../cli/overview) installed in the environment where you will be running the `docker run` command.
 
 ## 1. Authentication
 
-If you are already logged in via the CLI you can skip this step. Otherwise, head to your organization settings in Hanzo KMS Cloud to create a [Machine Identity](../../documentation/platform/identities/machine-identities). The machine identity will allow you to authenticate and fetch secrets from Hanzo KMS. 
+If you are already logged in via the CLI you can skip this step. Otherwise, head to your organization settings in KMS Cloud to create a [Machine Identity](../../documentation/platform/identities/machine-identities). The machine identity will allow you to authenticate and fetch secrets from KMS. 
 Once you have created a machine identity with the required permissions, you'll need to feed the token to the CLI.
 <Info> 
   Please note that we highly recommend using `hanzo-kms login` for local development.
@@ -40,12 +40,12 @@ You can use the `hanzo-kms login --method=universal-auth` command to directly ob
   In production scenarios, please to avoid using the `hanzo-kms login` command and instead use a [machine identity](../../documentation/platform/identities/machine-identities).
 </Warning>
 
-## 2. Run your docker command with Hanzo KMS 
+## 2. Run your docker command with KMS 
 Next, use the --env-file flag of the `docker run` command with KMS CLI to point to your secrets. 
-Under the hood, this command will fetch secrets from Hanzo KMS and serve them as a file to the `--env-file` flag. 
+Under the hood, this command will fetch secrets from KMS and serve them as a file to the `--env-file` flag. 
 
 ```bash
-# In this example, executing a docker run command will initiate an empty Alpine container and display the environment variables passed to it by Hanzo KMS.
+# In this example, executing a docker run command will initiate an empty Alpine container and display the environment variables passed to it by KMS.
 docker run --rm --env-file <(hanzo-kms export --format=dotenv) alpine printenv
 ```
 

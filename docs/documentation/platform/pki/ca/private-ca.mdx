@@ -1,12 +1,12 @@
 ---
 title: "Internal CA"
 sidebarTitle: "Internal CA"
-description: "Learn how to create a Private CA hierarchy with Hanzo KMS."
+description: "Learn how to create a Private CA hierarchy with KMS."
 ---
 
 ## Concept
 
-Hanzo KMS lets you build your Internal PKI through a Private Certificate Authority (CA) hierarchy, enabling you to issue and manage digital certificates for your end-entities.
+KMS lets you build your Internal PKI through a Private Certificate Authority (CA) hierarchy, enabling you to issue and manage digital certificates for your end-entities.
 
 <div align="center">
 
@@ -23,12 +23,12 @@ graph TD
 
 A typical workflow for setting up a Private CA hierarchy consists of the following steps:
 
-1. Configuring an Hanzo KMS root CA with details like name, validity period, and path length — This step is optional if you wish to use an external root CA with Hanzo KMS only serving the intermediate CAs.
+1. Configuring an KMS root CA with details like name, validity period, and path length — This step is optional if you wish to use an external root CA with KMS only serving the intermediate CAs.
 2. Configuring and chaining intermediate CA(s) with details like name, validity period, path length, and imported certificate to your Root CA.
 3. Managing the CA lifecycle events such as CA succession.
 
 <Note>
-  Note that this workflow can be executed via the Hanzo KMS UI or manually such
+  Note that this workflow can be executed via the KMS UI or manually such
   as via API. If manually executing the workflow, you may have to create a
   Certificate Signing Request (CSR) for the intermediate CA, create an
   intermediate certificate using the root CA private key and CSR, and import the
@@ -41,7 +41,7 @@ In the following steps, we explore how to create a simple Private CA hierarchy
 consisting of an (optional) root CA and an intermediate CA.
 
 <Tabs>
-  <Tab title="Hanzo KMS UI">
+  <Tab title="KMS UI">
 <Steps>
     <Step title="Creating a root CA">
         If you wish to use an external root CA, you can skip this step and head to step 2 to create an intermediate CA.
@@ -80,7 +80,7 @@ consisting of an (optional) root CA and an intermediate CA.
 
         ![pki install cert opt](/images/platform/pki/ca/ca-install-intermediate-opt.png)
 
-        2.3a. If you created a root CA in step 1, select **Hanzo KMS CA** for the **Parent CA Type** field.
+        2.3a. If you created a root CA in step 1, select **KMS CA** for the **Parent CA Type** field.
 
         Next, set the **Parent CA** to the root CA created in step 1 and configure the intended **Valid Until** and **Path Length** fields on the intermediate CA; feel free to use the prefilled values.
 
@@ -145,7 +145,7 @@ consisting of an (optional) root CA and an intermediate CA.
     }
     ```
 
-    By default, Hanzo KMS creates a root CA with the `RSA_2048` key algorithm, validity period of 10 years, with no restrictions on path length;
+    By default, KMS creates a root CA with the `RSA_2048` key algorithm, validity period of 10 years, with no restrictions on path length;
     you may override these defaults by specifying your own options when making the API request.
 
   </Step>
@@ -264,7 +264,7 @@ consisting of an (optional) root CA and an intermediate CA.
 In the following steps, we explore how to renew a CA certificate.
 
 <Note>
-  If renewing an intermediate CA chained to an Hanzo KMS CA, then Hanzo KMS will
+  If renewing an intermediate CA chained to an KMS CA, then KMS will
   automate the process of generating a new certificate for the intermediate CA for you.
 
 If renewing an intermediate CA chained to an external parent CA, you'll be
@@ -274,7 +274,7 @@ the certificate back to the intermediate CA.
 </Note>
 
 <Tabs>
-  <Tab title="Hanzo KMS UI">
+  <Tab title="KMS UI">
     Head to the CA Page of the CA you wish you renew and press **Renew CA** on
     the left side. ![pki ca renewal
     page](/images/platform/pki/ca-renewal-page.png) Input a new **Valid Until**
@@ -318,14 +318,14 @@ the certificate back to the intermediate CA.
 
 <AccordionGroup>
   <Accordion title="What key algorithms are supported as part of private key generation and certificate signing?">
-    Hanzo KMS supports `RSA 2048`, `RSA 4096`, `ECDSA P-256`, `ECDSA P-384` key
+    KMS supports `RSA 2048`, `RSA 4096`, `ECDSA P-256`, `ECDSA P-384` key
     algorithms specified at the time of creating a CA.
   </Accordion>
-  <Accordion title="Does Hanzo KMS support CA renewal via new key pair">
-    At the moment, Hanzo KMS only supports CA renewal via same key pair. We
+  <Accordion title="Does KMS support CA renewal via new key pair">
+    At the moment, KMS only supports CA renewal via same key pair. We
     anticipate supporting CA renewal via new key pair in the coming month.
   </Accordion>
-  <Accordion title="Does Hanzo KMS support chaining an Intermediate CA to an external CA?">
+  <Accordion title="Does KMS support chaining an Intermediate CA to an external CA?">
     Yes. You may obtain a CSR from the Intermediate CA and use it to generate a
     certificate from your external CA. The certificate, along with the external
     CA certificate chain, can be imported back to the Intermediate CA as part of

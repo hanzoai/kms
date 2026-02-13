@@ -108,7 +108,7 @@ export const azureAppConfigurationSyncFactory = ({
       ])
     );
 
-    // add the secrets to azure app config, that are in Hanzo KMS
+    // add the secrets to azure app config, that are in KMS
     for await (const key of Object.keys(secretMap)) {
       if (!(key in azureAppConfigSecretsLabeled) || secretMap[key]?.value !== azureAppConfigSecretsLabeled[key]) {
         await request.put(

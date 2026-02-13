@@ -102,7 +102,7 @@ export const GcpSyncFields = () => {
             tooltipText={
               <div className="flex flex-col gap-3">
                 <p>
-                  Specify how Hanzo KMS should sync secrets to GCP. The following options are
+                  Specify how KMS should sync secrets to GCP. The following options are
                   available:
                 </p>
                 <ul className="flex list-disc flex-col gap-3 pl-4">

@@ -102,7 +102,7 @@ export const SecretSyncOptionsFields = ({ hideInitialSync }: Props) => {
                   syncOption?.canImportSecrets ? (
                     <div className="flex flex-col gap-3">
                       <p>
-                        Specify how Hanzo KMS should resolve the initial sync to {destinationName}.
+                        Specify how KMS should resolve the initial sync to {destinationName}.
                         The following options are available:
                       </p>
                       <ul className="flex list-disc flex-col gap-3 pl-4">
@@ -153,7 +153,7 @@ export const SecretSyncOptionsFields = ({ hideInitialSync }: Props) => {
               <FontAwesomeIcon className="mr-1" size="xs" icon={faTriangleExclamation} />
               {destinationName} only supports overwriting destination secrets.{" "}
               {!currentSyncOption.disableSecretDeletion &&
-                `Secrets not present in Hanzo KMS will be removed from the destination. Consider adding a key schema or disabling secret deletion if you do not want existing secrets to be removed from ${destinationName}.`}
+                `Secrets not present in KMS will be removed from the destination. Consider adding a key schema or disabling secret deletion if you do not want existing secrets to be removed from ${destinationName}.`}
             </p>
           ) : (
             currentSyncOption.initialSyncBehavior ===
@@ -161,10 +161,10 @@ export const SecretSyncOptionsFields = ({ hideInitialSync }: Props) => {
             !currentSyncOption.disableSecretDeletion && (
               <p className="-mt-2.5 mb-2.5 text-xs text-yellow">
                 <FontAwesomeIcon className="mr-1" size="xs" icon={faTriangleExclamation} />
-                Secrets not present in Hanzo KMS will be removed from the destination. If you have
+                Secrets not present in KMS will be removed from the destination. If you have
                 secrets in {destinationName} that you do not want deleted, consider setting initial
                 sync behavior to import destination secrets. Alternatively, configure a key schema
-                or disable secret deletion below to have Hanzo KMS ignore these secrets.
+                or disable secret deletion below to have KMS ignore these secrets.
               </p>
             )
           )}
@@ -213,7 +213,7 @@ export const SecretSyncOptionsFields = ({ hideInitialSync }: Props) => {
                     >
                       key schema
                     </a>{" "}
-                    to ensure that Hanzo KMS only manages secrets in {destinationName} that match
+                    to ensure that KMS only manages secrets in {destinationName} that match
                     the key pattern.
                     <br />
                     <br />
@@ -222,7 +222,7 @@ export const SecretSyncOptionsFields = ({ hideInitialSync }: Props) => {
                 }
               >
                 <div className="text-info">
-                  <span>Hanzo KMS strongly advises configuring a key schema</span>{" "}
+                  <span>KMS strongly advises configuring a key schema</span>{" "}
                   <FontAwesomeIcon icon={faCircleInfo} />
                 </div>
               </Tooltip>
@@ -255,12 +255,12 @@ export const SecretSyncOptionsFields = ({ hideInitialSync }: Props) => {
                     content={
                       <>
                         <p>
-                          When enabled, Hanzo KMS will <span className="font-medium">not</span>{" "}
+                          When enabled, KMS will <span className="font-medium">not</span>{" "}
                           remove secrets from the destination during a sync.
                         </p>
                         <p className="mt-4">
                           Enable this option if you intend to manage some secrets manually outside
-                          of Hanzo KMS.
+                          of KMS.
                         </p>
                       </>
                     }

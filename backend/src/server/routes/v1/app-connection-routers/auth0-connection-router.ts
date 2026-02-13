@@ -21,7 +21,7 @@ export const registerAuth0ConnectionRouter = async (server: FastifyZodProvider) 
     updateSchema: UpdateAuth0ConnectionSchema
   });
 
-  // The below endpoints are not exposed and for Hanzo KMS App use
+  // The below endpoints are not exposed and for KMS App use
 
   server.route({
     method: "GET",

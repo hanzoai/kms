@@ -1,6 +1,6 @@
 ---
 title: "AWS Certificate Manager"
-description: "Learn how to configure an AWS Certificate Manager Certificate Sync for Hanzo KMS PKI."
+description: "Learn how to configure an AWS Certificate Manager Certificate Sync for KMS PKI."
 ---
 
 **Prerequisites:**
@@ -9,9 +9,9 @@ description: "Learn how to configure an AWS Certificate Manager Certificate Sync
 
 <Note>
   The AWS Certificate Manager Certificate Sync requires the following ACM permissions to be set on the IAM user/role
-  for Hanzo KMS to sync certificates to AWS Certificate Manager: `acm:ListCertificates`, `acm:DescribeCertificate`, `acm:ImportCertificate`, `acm:DeleteCertificate`, and `acm:ListTagsForCertificate`.
+  for KMS to sync certificates to AWS Certificate Manager: `acm:ListCertificates`, `acm:DescribeCertificate`, `acm:ImportCertificate`, `acm:DeleteCertificate`, and `acm:ListTagsForCertificate`.
 
-These permissions allow Hanzo KMS to list, import, tag, and manage certificates in your AWS Certificate Manager service.
+These permissions allow KMS to list, import, tag, and manage certificates in your AWS Certificate Manager service.
 
 </Note>
 
@@ -21,7 +21,7 @@ These permissions allow Hanzo KMS to list, import, tag, and manage certificates 
 </Note>
 
 <Tabs>
-    <Tab title="Hanzo KMS UI">
+    <Tab title="KMS UI">
         1. Navigate to **Project** > **Integrations** > **Certificate Syncs** and press **Add Sync**.
         ![Certificate Syncs Tab](/images/platform/pki/certificate-syncs/general/create-certificate-sync.png)
 
@@ -37,10 +37,10 @@ These permissions allow Hanzo KMS to list, import, tag, and manage certificates 
         4. Configure the **Sync Options** to specify how certificates should be synced, then click **Next**.
         ![Configure Options](/images/platform/pki/certificate-syncs/aws-certificate-manager/acm-options.png)
 
-        - **Enable Removal of Expired/Revoked Certificates**: If enabled, Hanzo KMS will remove certificates from the destination if they are no longer active in Hanzo KMS.
-        - **Preserve ARN on Renewal**: If enabled, Hanzo KMS will sync renewed certificates to the destination under the same ARN as the original synced certificate instead of creating a new certificate with a new ARN.
+        - **Enable Removal of Expired/Revoked Certificates**: If enabled, KMS will remove certificates from the destination if they are no longer active in KMS.
+        - **Preserve ARN on Renewal**: If enabled, KMS will sync renewed certificates to the destination under the same ARN as the original synced certificate instead of creating a new certificate with a new ARN.
         - **Include Root CA**: If enabled, the Root CA certificate will be included in the certificate chain when syncing to AWS Certificate Manager. If disabled, only intermediate certificates will be included.
-        - **Certificate Name Schema** (Optional): Customize how certificate tags are generated in AWS Certificate Manager. Must include `{{certificateId}}` as a placeholder for the certificate ID to ensure proper certificate identification and management. If not specified, defaults to `Hanzo KMS-{{certificateId}}`.
+        - **Certificate Name Schema** (Optional): Customize how certificate tags are generated in AWS Certificate Manager. Must include `{{certificateId}}` as a placeholder for the certificate ID to ensure proper certificate identification and management. If not specified, defaults to `KMS-{{certificateId}}`.
         - **Auto-Sync Enabled**: If enabled, certificates will automatically be synced when changes occur. Disable to enforce manual syncing only.
 
         5. Configure the **Details** of your AWS Certificate Manager Certificate Sync, then click **Next**.
@@ -130,10 +130,10 @@ These permissions allow Hanzo KMS to list, import, tag, and manage certificates 
 
 The AWS Certificate Manager Certificate Sync provides:
 
-- **Automatic Deployment**: Deploy certificates in Hanzo KMS to AWS Certificate Manager.
+- **Automatic Deployment**: Deploy certificates in KMS to AWS Certificate Manager.
 - **Certificate Updates**: Update certificates in AWS Certificate Manager when renewals occur.
 - **Expiration Handling**: Optionally remove expired certificates from AWS Certificate Manager (if enabled).
-- **Tagging**: Automatically tag certificates with an Hanzo KMSCertificate tag for easy identification and management.
+- **Tagging**: Automatically tag certificates with an KMSCertificate tag for easy identification and management.
 
 <Note>
   AWS Certificate Manager Certificate Syncs support both automatic and manual
@@ -150,13 +150,13 @@ You can manually trigger certificate synchronization to AWS Certificate Manager 
 - Testing certificate sync configurations
 - Force sync after making changes
 
-To manually sync certificates, use the [Sync Certificates](/api-reference/endpoints/pki/syncs/aws-certificate-manager/sync-certificates) API endpoint or the manual sync option in the Hanzo KMS UI.
+To manually sync certificates, use the [Sync Certificates](/api-reference/endpoints/pki/syncs/aws-certificate-manager/sync-certificates) API endpoint or the manual sync option in the KMS UI.
 
 ## FAQ
 
-<Accordion title="Can I import certificates from AWS Certificate Manager back into Hanzo KMS?">
+<Accordion title="Can I import certificates from AWS Certificate Manager back into KMS?">
   AWS Certificate Manager does not support importing certificates back into
-  Hanzo KMS due to security limitations where private keys cannot be extracted
+  KMS due to security limitations where private keys cannot be extracted
   from AWS Certificate Manager. Only certificates imported into ACM (not
   AWS-issued certificates) can be managed by the sync.
 </Accordion>

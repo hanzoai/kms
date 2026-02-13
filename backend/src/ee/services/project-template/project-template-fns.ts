@@ -13,7 +13,7 @@ export const getDefaultProjectTemplate = (orgId: string, type: ProjectType) => (
   name: KmsProjectTemplate.Default,
   createdAt: new Date(),
   updatedAt: new Date(),
-  description: `Hanzo KMS's ${type} default project template`,
+  description: `KMS's ${type} default project template`,
   environments: type === ProjectType.SecretManager ? ProjectTemplateDefaultEnvironments : null,
   roles: [...getPredefinedRoles({ projectId: "project-template", projectType: type })].map(
     ({ name, slug, permissions }) => ({

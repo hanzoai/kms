@@ -1,13 +1,13 @@
 ---
-title: "Hanzo KMS C++ SDK"
+title: "KMS C++ SDK"
 sidebarTitle: "C++"
 icon: "/images/sdks/languages/cpp.svg"
 ---
 
-If you're working with C++, the official Hanzo KMS C++ SDK package is the easiest way to fetch and work with secrets for your application.
+If you're working with C++, the official KMS C++ SDK package is the easiest way to fetch and work with secrets for your application.
 
 ## Compatible with C++ 17 and later
-The Hanzo KMS C++ SDK is compatible with C++ 17 capable compilers. This implies GCC 8 or newer, and clang 3.8 or newer. Earlier versions of C++ are unsupported.
+The KMS C++ SDK is compatible with C++ 17 capable compilers. This implies GCC 8 or newer, and clang 3.8 or newer. Earlier versions of C++ are unsupported.
 
 ## Dependencies
 - `cURL`: Used internally for crafting HTTP requests.
@@ -16,7 +16,7 @@ The Hanzo KMS C++ SDK is compatible with C++ 17 capable compilers. This implies 
 
 ```bash
 cmake_minimum_required(VERSION 3.14)
-project(Hanzo KMSTest)
+project(KMSTest)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -56,27 +56,27 @@ make
 
 ## Quick-Start Example
 
-Below you'll find an example that uses the Hanzo KMS SDK to fetch a secret with the key `API_KEY` using [Machine Identity Universal Auth](https://kms.hanzo.ai/docs/documentation/platform/identities/universal-auth)
+Below you'll find an example that uses the KMS SDK to fetch a secret with the key `API_KEY` using [Machine Identity Universal Auth](https://kms.hanzo.ai/docs/documentation/platform/identities/universal-auth)
 
 More examples can be found in the [/examples](https://github.com/hanzoai/kms-cpp-sdk/tree/main/examples) folder.
 
 ```cpp
 #include <iostream>
-#include <libkms/Hanzo KMSClient.h>
+#include <libkms/KMSClient.h>
 
 int main() {
 
   try {
-    Hanzo KMS::Hanzo KMSClient client(
-        Hanzo KMS::ConfigBuilder()
-            .withHostUrl("https://kms.hanzo.ai") // Optionally change this to your custom Hanzo KMS instance URL.
+    KMS::KMSClient client(
+        KMS::ConfigBuilder()
+            .withHostUrl("https://kms.hanzo.ai") // Optionally change this to your custom KMS instance URL.
             .withAuthentication(
-                Hanzo KMS::AuthenticationBuilder()
+                KMS::AuthenticationBuilder()
                     .withUniversalAuth("<machine-identity-universal-auth-client-id>", "<machine-identity-universal-auth-client-secret>")
                     .build())
             .build());
 
-    const auto getSecretOptions = Hanzo KMS::Input::GetSecretOptionsBuilder()
+    const auto getSecretOptions = KMS::Input::GetSecretOptionsBuilder()
                                       .withEnvironment("<env-slug>") // dev, staging, prod, etc
                                       .withProjectId("<your-project-id>")
                                       .withSecretKey("API_KEY")
@@ -85,7 +85,7 @@ int main() {
     const auto apiKeySecret = client.secrets().getSecret(getSecretOptions);
 
     printf("Secret retrieved, [key=%s] [value=%s]\n", apiKeySecret.getSecretKey().c_str(), apiKeySecret.getSecretValue().c_str());
-  } catch (const Hanzo KMS::Hanzo KMSError &e) {
+  } catch (const KMS::KMSError &e) {
     std::cerr << "Error: " << e.what() << std::endl;
     return 1;
   }
@@ -99,19 +99,19 @@ The SDK uses [nlohmann/json](https://github.com/nlohmann/json) internally to ser
 
 
 ## Documentation
-The Hanzo KMS C++ SDK follows a builder pattern for all types of input. Below is a detailed documentation of our currently support methods.
+The KMS C++ SDK follows a builder pattern for all types of input. Below is a detailed documentation of our currently support methods.
 
-Everything related to the Hanzo KMS SDK lives inside the `Hanzo KMS` namespace.
+Everything related to the KMS SDK lives inside the `KMS` namespace.
 
-### Hanzo KMSClient Class
-`Hanzo KMSClient(Config &config)`
+### KMSClient Class
+`KMSClient(Config &config)`
 
 ```cpp
-  Hanzo KMS::Hanzo KMSClient client(
-      Hanzo KMS::ConfigBuilder()
+  KMS::KMSClient client(
+      KMS::ConfigBuilder()
           .withHostUrl("https://kms.hanzo.ai")
           .withAuthentication(
-              Hanzo KMS::AuthenticationBuilder()
+              KMS::AuthenticationBuilder()
                   .withUniversalAuth(clientId, clientSecret)
                   .build())
           .build());
@@ -121,31 +121,31 @@ Config is created through the `ConfigBuilder` class. See below for more details
 
 ### Config Class
 
-`Config` defines the configuration of the Hanzo KMS Client itself, such as authentication.
+`Config` defines the configuration of the KMS Client itself, such as authentication.
 
 ```cpp
-Hanzo KMS::Config config = Hanzo KMS::ConfigBuilder()
+KMS::Config config = KMS::ConfigBuilder()
                           .withHostUrl("https://kms.hanzo.ai")
                           .withAuthentication(
-                            Hanzo KMS::AuthenticationBuilder()
+                            KMS::AuthenticationBuilder()
                               .withUniversalAuth(clientId, clientSecret)
                               .build())
                           .build();
 
-Hanzo KMS::Hanzo KMSClient client(config);
+KMS::KMSClient client(config);
 ```
 
-- `withHostUrl(string)` _(optional)_: Specify a custom Hanzo KMS host URL, pointing to your Hanzo KMS instance. Defaults to `https://kms.hanzo.ai`
-- `withAuthentication(Hanzo KMS::Authentication)`: Configure the authentication that will be used by the SDK. See [Authentication Class](#authentication-class) for more details.
+- `withHostUrl(string)` _(optional)_: Specify a custom KMS host URL, pointing to your KMS instance. Defaults to `https://kms.hanzo.ai`
+- `withAuthentication(KMS::Authentication)`: Configure the authentication that will be used by the SDK. See [Authentication Class](#authentication-class) for more details.
 - `build()`: Returns the `Config` object with the options you configured.
 
 ### Authentication Class
 ```cpp
-Hanzo KMS::Authentication auth = Hanzo KMS::AuthenticationBuilder()
+KMS::Authentication auth = KMS::AuthenticationBuilder()
                                   .withUniversalAuth(clientId, clientSecret)
                                   .build();
 
-Hanzo KMS::Config config = Hanzo KMS::ConfigBuilder()
+KMS::Config config = KMS::ConfigBuilder()
                             .withAuthentication(std::move(auth)) // Or use inline declaration
                             .build();
 ```
@@ -175,7 +175,7 @@ The `TSecret` class is the class that's returned by all secret methods (get/list
 
 #### Create Secret
 ```cpp
-const auto createSecretOptions = Hanzo KMS::Input::CreateSecretOptionsBuilder()
+const auto createSecretOptions = KMS::Input::CreateSecretOptionsBuilder()
                                   .withEnvironment("<env-slug>")
                                   .withProjectId("<project-id>")
                                   .withSecretKey("SECRET_KEY_TO_CREATE")
@@ -204,7 +204,7 @@ const auto secret = client.secrets().createSecret(createSecretOptions);
 #### Update Secret
 
 ```cpp
-  const auto updateSecretOptions = Hanzo KMS::Input::UpdateSecretOptionsBuilder()
+  const auto updateSecretOptions = KMS::Input::UpdateSecretOptionsBuilder()
                                     .withEnvironment("<env-slug>")
                                     .withProjectId("<project-id>")
                                     .withSecretKey("<secret-key>") 
@@ -238,7 +238,7 @@ const auto updatedSecret = client.secrets().updateSecret(updateSecretOptions);
 
 #### Get Secret
 ```cpp
-const auto getSecretOptions = Hanzo KMS::Input::GetSecretOptionsBuilder()
+const auto getSecretOptions = KMS::Input::GetSecretOptionsBuilder()
                                 .withEnvironment("<env-slug>")
                                 .withProjectId("<project-id>")
                                 .withSecretKey("<secret-key>") 
@@ -265,7 +265,7 @@ const auto secret = client.secrets().getSecret(getSecretOptions);
 #### Delete Secret
 
 ```cpp
-const auto deleteSecretOptions = Hanzo KMS::Input::DeleteSecretOptionsBuilder()
+const auto deleteSecretOptions = KMS::Input::DeleteSecretOptionsBuilder()
                                   .withEnvironment("<env-slug>")
                                   .withProjectId("<project-id>")
                                   .withSecretKey("<secret-key>")
@@ -290,7 +290,7 @@ const auto deletedSecret = client.secrets().deleteSecret(deleteSecretOptions);
 
 #### List Secrets
 ```cpp
-const auto listSecretsOptions = Hanzo KMS::Input::ListSecretOptionsBuilder()
+const auto listSecretsOptions = KMS::Input::ListSecretOptionsBuilder()
                                   .withProjectId(projectId)
                                   .withEnvironment(environment)
                                   .withSecretPath("/")

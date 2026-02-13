@@ -226,7 +226,7 @@ export const AwsParameterStoreSyncOptionsFields = () => {
                     <>
                       <p>
                         If enabled, metadata attached to secrets will be added as resource tags to
-                        parameters synced by Hanzo KMS.
+                        parameters synced by KMS.
                       </p>
                       <p className="mt-4">
                         Manually configured tags from the field above will take precedence over

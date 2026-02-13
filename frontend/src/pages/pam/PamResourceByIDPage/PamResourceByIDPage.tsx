@@ -215,7 +215,7 @@ export const PamResourceByIDPage = () => {
   return (
     <>
       <Helmet>
-        <title>PAM Resource | Hanzo KMS</title>
+        <title>PAM Resource | KMS</title>
         <link rel="icon" href="/favicon.ico" />
       </Helmet>
       <PageContent />

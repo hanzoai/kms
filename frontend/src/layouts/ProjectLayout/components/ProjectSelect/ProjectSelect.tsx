@@ -221,7 +221,7 @@ const ProjectSelectInner = () => {
       <UpgradePlanModal
         isOpen={popUp.upgradePlan.isOpen}
         onOpenChange={(isOpen) => handlePopUpToggle("upgradePlan", isOpen)}
-        text="You’ve reached the maximum number of projects available on the Free plan. Upgrade to the Hanzo KMS Pro plan to create more projects."
+        text="You’ve reached the maximum number of projects available on the Free plan. Upgrade to the KMS Pro plan to create more projects."
       />
       <NewProjectModal
         isOpen={popUp.addNewWs.isOpen}

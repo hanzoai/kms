@@ -3,11 +3,11 @@ title: "Service tokens"
 description: "Understanding service tokens and their best practices."
 ---
 ​
-Many clients use service tokens to authenticate and read/write secrets from/to Hanzo KMS; they can be created in your project settings.
+Many clients use service tokens to authenticate and read/write secrets from/to KMS; they can be created in your project settings.
 
 ## Anatomy
 
-A service token in Hanzo KMS consists of the token itself, a `string`, and a corresponding document in the storage backend containing its
+A service token in KMS consists of the token itself, a `string`, and a corresponding document in the storage backend containing its
 properties and metadata.
 
 ### Database model
@@ -33,11 +33,11 @@ Note that when using service tokens via select client methods like SDK or CLI, c
 
 ### Issuance
 
-When creating a new service token, it’s important to consider the principle of least privilege(PoLP) when setting its scope and expiration date. For example, if the client using the token only requires access to a staging environment, then you should scope the token to that environment only; you can further scope tokens to path(s) within environment(s) if you happen to use path-based secret storage. Likewise, if the client does not intend to access secrets indefinitely, then you may consider setting a finite lifetime for the token such as 6 months or 1 year from now. Finally, you should consider carefully whether or not your client requires the ability to read and/or write secrets from/to Hanzo KMS.
+When creating a new service token, it’s important to consider the principle of least privilege(PoLP) when setting its scope and expiration date. For example, if the client using the token only requires access to a staging environment, then you should scope the token to that environment only; you can further scope tokens to path(s) within environment(s) if you happen to use path-based secret storage. Likewise, if the client does not intend to access secrets indefinitely, then you may consider setting a finite lifetime for the token such as 6 months or 1 year from now. Finally, you should consider carefully whether or not your client requires the ability to read and/or write secrets from/to KMS.
 
 ### Network access
 
-We recommend configuring the IP whitelist settings of each project to allow either single IP addresses or CIDR-notated range of addresses to read/write secrets to Hanzo KMS. With this feature, you can specify the IP range of your client servers to restrict access to your project in Hanzo KMS.
+We recommend configuring the IP whitelist settings of each project to allow either single IP addresses or CIDR-notated range of addresses to read/write secrets to KMS. With this feature, you can specify the IP range of your client servers to restrict access to your project in KMS.
 
 ### Storage
 
@@ -47,4 +47,4 @@ Since service tokens grant access to your secrets, we recommend storing them sec
 
 We recommend periodically rotating the service token, even in the absence of compromise. Since service tokens are capable of decrypting project keys used to decrypt secrets, all of which use AES-256-GCM encryption, they should be rotated before approximately 2^32 encryptions have been performed; this follows the guidance set forth by [NIST publication 800-38D](https://csrc.nist.gov/pubs/sp/800/38/d/final).
 
-Note that Hanzo KMS keeps track of the number of times that service tokens are used and will alert you when you have reached 90% of the recommended capacity.
+Note that KMS keeps track of the number of times that service tokens are used and will alert you when you have reached 90% of the recommended capacity.

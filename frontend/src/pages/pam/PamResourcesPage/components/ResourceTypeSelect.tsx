@@ -76,7 +76,7 @@ export const ResourceTypeSelect = ({ onSelect }: Props) => {
       resource === PamResourceType.DynamoDB
     ) {
       handlePopUpOpen("upgradePlan", {
-        text: "Your current plan does not include access to this resource type. To unlock this feature, please upgrade to Hanzo KMS Enterprise plan.",
+        text: "Your current plan does not include access to this resource type. To unlock this feature, please upgrade to KMS Enterprise plan.",
         isEnterpriseFeature: true
       });
       return;
@@ -145,7 +145,7 @@ export const ResourceTypeSelect = ({ onSelect }: Props) => {
               className="max-w-sm py-4"
               content={
                 <>
-                  <p className="mb-2">Hanzo KMS is constantly adding support for more resources.</p>
+                  <p className="mb-2">KMS is constantly adding support for more resources.</p>
                   <p>
                     {"If you don't see the resource you're looking for,"}{" "}
                     <a

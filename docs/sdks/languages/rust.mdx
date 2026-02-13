@@ -1,10 +1,10 @@
 ---
-title: "Hanzo KMS Rust SDK"
+title: "KMS Rust SDK"
 sidebarTitle: "Rust"
 icon: "/images/sdks/languages/rust.svg"
 ---
 
-If you're working with Rust, the official Hanzo KMS Rust SDK package is the easiest way to fetch and work with secrets for your application.
+If you're working with Rust, the official KMS Rust SDK package is the easiest way to fetch and work with secrets for your application.
 
 ### Installation
 
@@ -17,10 +17,10 @@ cargo add kms
 The easiest way to get started is to use the builder pattern for both the client and your requests.
 
 ```rust
-use kms::{AuthMethod, Client, Hanzo KMSError, encode_base64, decode_base64};
+use kms::{AuthMethod, Client, KMSError, encode_base64, decode_base64};
 use kms::secrets::GetSecretRequest;
 
-async fn fetch_secret() -> Result<(), Hanzo KMSError> {
+async fn fetch_secret() -> Result<(), KMSError> {
     // 1. Build the client. You can chain methods to configure it.
     let mut client = Client::builder()
         .base_url("https://kms.hanzo.ai") // Optional: defaults to https://kms.hanzo.ai
@@ -54,13 +54,13 @@ The `Client::builder()` provides several configuration options:
 
 ```rust
 let mut client = Client::builder()
-    .base_url("https://kms.hanzo.ai") // Optional: set custom Hanzo KMS instance URL
+    .base_url("https://kms.hanzo.ai") // Optional: set custom KMS instance URL
     .build()
     .await?;
 ```
 
 **Parameters**
-- `.base_url(url)`: Optional method to set the Hanzo KMS instance URL. Defaults to `https://kms.hanzo.ai` for Hanzo KMS Cloud. Use `https://eu.kms.hanzo.ai` for EU and `http://localhost:8080` for local development.
+- `.base_url(url)`: Optional method to set the KMS instance URL. Defaults to `https://kms.hanzo.ai` for KMS Cloud. Use `https://eu.kms.hanzo.ai` for EU and `http://localhost:8080` for local development.
 
 ### Core Methods
 
@@ -89,7 +89,7 @@ println!("Decoded: {}", decoded);
 
 **Available Functions**
 - `encode_base64(data: &str) -> String`: Encodes a string as base64
-- `decode_base64(data: &str) -> Result<String, Hanzo KMSError>`: Decodes a base64 string
+- `decode_base64(data: &str) -> Result<String, KMSError>`: Decodes a base64 string
 
 ### `secrets`
 
@@ -477,8 +477,8 @@ KMS_KMS_PROJECT_ID=your_project_id_here
 
 To obtain the required credentials:
 
-1. **Client ID and Secret**: Create a Universal Auth machine identity in your Hanzo KMS project settings
-2. **Project ID**: Found in your project settings or URL when viewing a project in the Hanzo KMS dashboard
+1. **Client ID and Secret**: Create a Universal Auth machine identity in your KMS project settings
+2. **Project ID**: Found in your project settings or URL when viewing a project in the KMS dashboard
 
 ### Running Tests
 
@@ -492,4 +492,4 @@ cargo test -- --ignored --nocapture
 cargo test test_kms_resource -- --ignored --nocapture
 ```
 
-**Note**: Integration tests require a running Hanzo KMS instance and valid authentication credentials.
+**Note**: Integration tests require a running KMS instance and valid authentication credentials.

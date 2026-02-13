@@ -25,7 +25,7 @@ export const SshHostGroupsSection = () => {
   const handleAddSshHostGroupModal = () => {
     if (!subscription?.sshHostGroups) {
       handlePopUpOpen("upgradePlan", {
-        text: "Managing SSH host groups can be unlocked if you upgrade to Hanzo KMS Enterprise plan.",
+        text: "Managing SSH host groups can be unlocked if you upgrade to KMS Enterprise plan.",
         isEnterpriseFeature: true
       });
     } else {

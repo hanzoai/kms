@@ -80,7 +80,7 @@ export const GitLabSecretScanningFactory = ({ appConnectionDAL, kmsService }: TS
           pushEvents: true,
           enableSslVerification: true,
           // @ts-expect-error gitbeaker is outdated, and the types don't support this field yet
-          name: `Hanzo KMS Secret Scanning - ${name}`
+          name: `KMS Secret Scanning - ${name}`
         });
       } catch (error) {
         if (error instanceof GitbeakerRequestError) {
@@ -124,7 +124,7 @@ export const GitLabSecretScanningFactory = ({ appConnectionDAL, kmsService }: TS
         pushEvents: true,
         enableSslVerification: true,
         // @ts-expect-error gitbeaker is outdated, and the types don't support this field yet
-        name: `Hanzo KMS Secret Scanning - ${name}`
+        name: `KMS Secret Scanning - ${name}`
       });
     } catch (error) {
       if (error instanceof GitbeakerRequestError) {
@@ -169,7 +169,7 @@ export const GitLabSecretScanningFactory = ({ appConnectionDAL, kmsService }: TS
       try {
         await client.ProjectHooks.edit(projectId, hookId, hookUrl, {
           // @ts-expect-error gitbeaker is outdated, and the types don't support this field yet
-          name: `Hanzo KMS Secret Scanning - ${dataSourceId}`,
+          name: `KMS Secret Scanning - ${dataSourceId}`,
           custom_headers: [{ key: "x-data-source-id", value: dataSourceId }]
         });
       } catch (error) {
@@ -191,7 +191,7 @@ export const GitLabSecretScanningFactory = ({ appConnectionDAL, kmsService }: TS
     try {
       await client.GroupHooks.edit(groupId, hookId, hookUrl, {
         // @ts-expect-error gitbeaker is outdated, and the types don't support this field yet
-        name: `Hanzo KMS Secret Scanning - ${dataSourceId}`,
+        name: `KMS Secret Scanning - ${dataSourceId}`,
         custom_headers: [{ key: "x-data-source-id", value: dataSourceId }]
       });
     } catch (error) {

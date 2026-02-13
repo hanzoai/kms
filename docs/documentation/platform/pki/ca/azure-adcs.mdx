@@ -1,6 +1,6 @@
 ---
 title: "Microsoft AD CS"
-description: "Learn how to issue and manage certificates using Microsoft Active Directory Certificate Services (ADCS) with Hanzo KMS."
+description: "Learn how to issue and manage certificates using Microsoft Active Directory Certificate Services (ADCS) with KMS."
 ---
 
 Issue and manage certificates using Microsoft Active Directory Certificate Services (ADCS) for enterprise-grade certificate management integrated with your existing Windows infrastructure.
@@ -12,10 +12,10 @@ Before setting up ADCS integration, ensure you have:
 - Microsoft Active Directory Certificate Services (ADCS) server running and accessible
 - Domain administrator account with certificate management permissions
 - ADCS web enrollment enabled on your server
-- Network connectivity from Hanzo KMS to the ADCS server
-- **IP whitelisting**: Your ADCS server must allow connections from Hanzo KMS's IP addresses
-  - For Hanzo KMS Cloud instances, see [Networking Configuration](/documentation/setup/networking) for the list of IPs to whitelist
-  - For self-hosted instances, whitelist your Hanzo KMS server's IP address
+- Network connectivity from KMS to the ADCS server
+- **IP whitelisting**: Your ADCS server must allow connections from KMS's IP addresses
+  - For KMS Cloud instances, see [Networking Configuration](/documentation/setup/networking) for the list of IPs to whitelist
+  - For self-hosted instances, whitelist your KMS server's IP address
 - Azure ADCS app connection configured (see [Azure ADCS Connection](/integrations/app-connections/azure-adcs))
 
 ## Complete Workflow: From Setup to Certificate Issuance
@@ -24,7 +24,7 @@ This section walks you through the complete end-to-end process of setting up Azu
 
 <Steps>
   <Step title="Navigate to External Certificate Authorities">
-    In your Hanzo KMS project, go to your **Certificate Project** →
+    In your KMS project, go to your **Certificate Project** →
     **Certificate Authority** to access the external CAs page. ![External CA
     Page](/images/platform/pki/azure-adcs/azure-adcs-external-ca-page.png)
   </Step>
@@ -87,7 +87,7 @@ This section walks you through the complete end-to-end process of setting up Azu
 
 ## Certificate Templates
 
-Hanzo KMS automatically retrieves available certificate templates from your ADCS server, ensuring you can only select templates that are properly configured and accessible. The system dynamically discovers templates during the certificate authority setup and certificate issuance process.
+KMS automatically retrieves available certificate templates from your ADCS server, ensuring you can only select templates that are properly configured and accessible. The system dynamically discovers templates during the certificate authority setup and certificate issuance process.
 
 ### Common Template Types
 
@@ -111,7 +111,7 @@ Ensure your ADCS templates are configured with:
 - **Key usage extensions** appropriate for your use case
 
 <Info>
-  **Dynamic Template Discovery**: Hanzo KMS queries your ADCS server in
+  **Dynamic Template Discovery**: KMS queries your ADCS server in
   real-time to populate available templates. Only templates you have permission
   to use will be displayed during certificate issuance.
 </Info>
@@ -121,9 +121,9 @@ Ensure your ADCS templates are configured with:
 ### Immediate Issuance Only
 
 <Warning>
-  **Manual Approval Not Supported**: Hanzo KMS currently supports only
+  **Manual Approval Not Supported**: KMS currently supports only
   **immediate certificate issuance**. Certificates that require manual approval
-  or are held by ADCS policies cannot be issued through Hanzo KMS yet.
+  or are held by ADCS policies cannot be issued through KMS yet.
 </Warning>
 
 For successful certificate issuance, ensure your ADCS templates and policies are configured to:
@@ -137,9 +137,9 @@ For successful certificate issuance, ensure your ADCS templates and policies are
 If a certificate request requires manual approval:
 
 1. The request will be submitted to ADCS successfully
-2. Hanzo KMS will attempt to retrieve the certificate with exponential backoff (up to 5 retries over ~1 minute)
+2. KMS will attempt to retrieve the certificate with exponential backoff (up to 5 retries over ~1 minute)
 3. If the certificate is not approved within this timeframe, the request will **fail**
-4. **No background polling**: Currently, Hanzo KMS does not check for certificates that might be approved hours or days later
+4. **No background polling**: Currently, KMS does not check for certificates that might be approved hours or days later
 
 <Info>
   **Future Enhancement**: Background polling for delayed certificate approvals
@@ -166,7 +166,7 @@ net stop certsvc
 net start certsvc
 ```
 
-This allows Hanzo KMS to control certificate expiration dates directly.
+This allows KMS to control certificate expiration dates directly.
 
 ## Troubleshooting
 
@@ -182,7 +182,7 @@ This allows Hanzo KMS to control certificate expiration dates directly.
 
 - Verify IIS is running and the revocation endpoint is accessible
 - Check IIS application pool permissions
-- Test endpoint connectivity from Hanzo KMS
+- Test endpoint connectivity from KMS
 
 **Template Not Found**
 
@@ -193,16 +193,16 @@ This allows Hanzo KMS to control certificate expiration dates directly.
 
 **Certificate Request Pending/Timeout**
 
-- Check if your ADCS template requires manual approval - Hanzo KMS only supports immediate issuance
+- Check if your ADCS template requires manual approval - KMS only supports immediate issuance
 - Verify the certificate template is configured for auto-approval
 - Ensure your connection account has sufficient permissions to request certificates without approval
 - Review ADCS server policies that might be holding the certificate request
 
 **Network Connectivity Issues**
 
-- Verify your ADCS server's firewall allows connections from Hanzo KMS
-- For Hanzo KMS Cloud: Ensure Hanzo KMS's IP addresses are whitelisted (see [Networking Configuration](/documentation/setup/networking))
-- For self-hosted: Whitelist your Hanzo KMS server's IP address on the ADCS server
+- Verify your ADCS server's firewall allows connections from KMS
+- For KMS Cloud: Ensure KMS's IP addresses are whitelisted (see [Networking Configuration](/documentation/setup/networking))
+- For self-hosted: Whitelist your KMS server's IP address on the ADCS server
 - Test HTTPS connectivity to the ADCS web enrollment endpoint
 - Check for any network security appliances blocking the connection
 
@@ -216,5 +216,5 @@ This allows Hanzo KMS to control certificate expiration dates directly.
 
 - For ADCS servers with self-signed or private certificates: disable "Reject Unauthorized" in the SSL tab of your Azure ADCS app connection, or provide the certificate in PEM format
 - Common SSL errors: `UNABLE_TO_VERIFY_LEAF_SIGNATURE`, `SELF_SIGNED_CERT_IN_CHAIN`, `CERT_HAS_EXPIRED`
-- The SSL configuration applies to all HTTPS communications between Hanzo KMS and your ADCS server
+- The SSL configuration applies to all HTTPS communications between KMS and your ADCS server
 - Only HTTPS URLs are supported - HTTP connections are not allowed for security reasons

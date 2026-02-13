@@ -1,17 +1,17 @@
 ---
 title: "General OIDC"
 sidebarTitle: "Overview"
-description: "Learn how to configure OIDC for Hanzo KMS SSO with any OIDC-compliant identity provider"
+description: "Learn how to configure OIDC for KMS SSO with any OIDC-compliant identity provider"
 ---
 
 <Info>
-  OIDC SSO is a paid feature. If you're using Hanzo KMS Cloud, then it is
-  available under the **Pro Tier**. If you're self-hosting Hanzo KMS, then you
+  OIDC SSO is a paid feature. If you're using KMS Cloud, then it is
+  available under the **Pro Tier**. If you're self-hosting KMS, then you
   should contact sales@kms.hanzo.ai to purchase a self-hosted license to use
   it.
 </Info>
 
-You can configure your organization in Hanzo KMS to have members authenticate with the platform through identity providers via [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html).
+You can configure your organization in KMS to have members authenticate with the platform through identity providers via [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html).
 
 Prerequisites:
 
@@ -20,16 +20,16 @@ Prerequisites:
 
 <Steps>
    <Step title="Setup Identity Provider">
-      1.1. Register your application with the IdP to obtain a **Client ID** and **Client Secret**. These credentials are used by Hanzo KMS to authenticate with your IdP.
+      1.1. Register your application with the IdP to obtain a **Client ID** and **Client Secret**. These credentials are used by KMS to authenticate with your IdP.
 
-      1.2. Configure **Redirect URL** to be `https://kms.hanzo.ai/api/v1/sso/oidc/callback`. If you're self-hosting Hanzo KMS, replace the domain with your own.
+      1.2. Configure **Redirect URL** to be `https://kms.hanzo.ai/api/v1/sso/oidc/callback`. If you're self-hosting KMS, replace the domain with your own.
 
-      1.3. Configure the scopes needed by Hanzo KMS (email, profile, openid) and ensure that they are mapped to the ID token claims.
+      1.3. Configure the scopes needed by KMS (email, profile, openid) and ensure that they are mapped to the ID token claims.
 
       1.4. Access the IdP’s OIDC discovery document (usually located at `https://<idp-domain>/.well-known/openid-configuration`). This document contains important endpoints such as authorization, token, userinfo, and keys.
    </Step>
-   <Step title="Finish configuring OIDC in Hanzo KMS">
-      2.1. Back in Hanzo KMS, head to the **Single Sign-On (SSO)** page and select the **General** tab. Select **Connect** for **OIDC**.
+   <Step title="Finish configuring OIDC in KMS">
+      2.1. Back in KMS, head to the **Single Sign-On (SSO)** page and select the **General** tab. Select **Connect** for **OIDC**.
       ![OIDC SSO Connect](../../../../images/sso/connect-oidc.png)
 
       2.2. You can configure OIDC either through the Discovery URL (Recommended) or by inputting custom endpoints.
@@ -53,17 +53,17 @@ Prerequisites:
 
        </Step>
 
-     <Step title="Enable OIDC SSO in Hanzo KMS">
-      Enabling OIDC SSO allows members in your organization to log into Hanzo KMS via the configured Identity Provider
+     <Step title="Enable OIDC SSO in KMS">
+      Enabling OIDC SSO allows members in your organization to log into KMS via the configured Identity Provider
 
       ![OIDC general enable OIDC](../../../../images/sso/general-oidc/org-oidc-enable.png)
     </Step>
 
-    <Step title="Enforce OIDC SSO in Hanzo KMS">
-      Enforcing OIDC SSO ensures that members in your organization can only access Hanzo KMS
+    <Step title="Enforce OIDC SSO in KMS">
+      Enforcing OIDC SSO ensures that members in your organization can only access KMS
       by logging into the organization via the Identity provider.
 
-      To enforce OIDC SSO, you're required to test out the OpenID connection by successfully authenticating at least one IdP user with Hanzo KMS.
+      To enforce OIDC SSO, you're required to test out the OpenID connection by successfully authenticating at least one IdP user with KMS.
       Once you've completed this requirement, you can toggle the **Enforce OIDC SSO** button to enforce OIDC SSO.
 
       <Warning>
@@ -77,12 +77,12 @@ Prerequisites:
   </Steps>
 
 <Tip>
-    If you are only using one organization on your Hanzo KMS instance, you can configure a default organization in the [Server Admin Console](/documentation/platform/admin-panel/server-admin#default-organization) to expedite OIDC login.
+    If you are only using one organization on your KMS instance, you can configure a default organization in the [Server Admin Console](/documentation/platform/admin-panel/server-admin#default-organization) to expedite OIDC login.
 </Tip>
 
 
 <Note>
-  If you're configuring OIDC SSO on a self-hosted instance of Hanzo KMS, make
+  If you're configuring OIDC SSO on a self-hosted instance of KMS, make
   sure to set the `AUTH_SECRET` and `SITE_URL` environment variable for it to
   work:
     <div class="height:1px;"/>
@@ -90,5 +90,5 @@ Prerequisites:
   can be a random 32-byte base64 string generated with `openssl rand -base64
   32`.
     <div class="height:1px;"/>
-    - `SITE_URL`: The absolute URL of your self-hosted instance of Hanzo KMS including the protocol (e.g. https://kms.hanzo.ai)
+    - `SITE_URL`: The absolute URL of your self-hosted instance of KMS including the protocol (e.g. https://kms.hanzo.ai)
 </Note>

@@ -1,27 +1,27 @@
 ---
 title: "JBoss/WildFly"
-description: "Learn how to issue TLS certificates from Hanzo KMS using ACME enrollment on JBoss/WildFly with Certbot"
+description: "Learn how to issue TLS certificates from KMS using ACME enrollment on JBoss/WildFly with Certbot"
 ---
 
-This guide demonstrates how to use Hanzo KMS to issue TLS certificates for your [JBoss](https://www.jboss.org/)/[WildFly](https://wildfly.org/) application server.
+This guide demonstrates how to use KMS to issue TLS certificates for your [JBoss](https://www.jboss.org/)/[WildFly](https://wildfly.org/) application server.
 
-It uses [Certbot](https://certbot.eff.org/), an installable [ACME](https://en.wikipedia.org/wiki/Automatic_Certificate_Management_Environment) client, to request and renew certificates from Hanzo KMS using the [ACME enrollment method](/documentation/platform/pki/enrollment-methods/acme) configured on a [certificate profile](/documentation/platform/pki/certificates/profiles). JBoss/WildFly requires certificates in Java keystore format, which this guide addresses through the certificate conversion process.
+It uses [Certbot](https://certbot.eff.org/), an installable [ACME](https://en.wikipedia.org/wiki/Automatic_Certificate_Management_Environment) client, to request and renew certificates from KMS using the [ACME enrollment method](/documentation/platform/pki/enrollment-methods/acme) configured on a [certificate profile](/documentation/platform/pki/certificates/profiles). JBoss/WildFly requires certificates in Java keystore format, which this guide addresses through the certificate conversion process.
 
 ## Prerequisites
 
 Before you begin, make sure you have:
 
 - A [JBoss](https://www.jboss.org/)/[WildFly](https://wildfly.org/) application server running on a Linux system with administrative access.
-- A [certificate profile](/documentation/platform/pki/certificates/profiles) configured with the [ACME enrollment method](/documentation/platform/pki/enrollment-methods/acme) in Hanzo KMS.
-- Network connectivity from your JBoss/WildFly server to Hanzo KMS.
+- A [certificate profile](/documentation/platform/pki/certificates/profiles) configured with the [ACME enrollment method](/documentation/platform/pki/enrollment-methods/acme) in KMS.
+- Network connectivity from your JBoss/WildFly server to KMS.
 - Port 80 open and reachable for ACME [HTTP-01](https://letsencrypt.org/docs/challenge-types/#http-01-challenge) validation.
 - [Java Development Kit (JDK)](https://openjdk.org/) installed for keystore management tools.
 
 ## Guide
 
 <Steps>
-    <Step title="Obtain ACME Configuration from Hanzo KMS">
-        Navigate to your certificate management project in Hanzo KMS and locate your [certificate profile](/documentation/platform/pki/certificates/profiles) configured with the [ACME enrollment method](/documentation/platform/pki/enrollment-methods/acme).
+    <Step title="Obtain ACME Configuration from KMS">
+        Navigate to your certificate management project in KMS and locate your [certificate profile](/documentation/platform/pki/certificates/profiles) configured with the [ACME enrollment method](/documentation/platform/pki/enrollment-methods/acme).
         ![Certificate profile with ACME enrollment option](/images/platform/pki/acme/certificate-profile-acme-option.png)
 
         Click the **Reveal ACME EAB** option to view the ACME configuration details.
@@ -30,12 +30,12 @@ Before you begin, make sure you have:
 
         From the ACME configuration, gather the following values:
 
-        - ACME Directory URL: The URL that Certbot will use to communicate with Hanzo KMS's ACME server. This takes the form `https://your-kms-instance.com/api/v1/cert-manager/certificate-profiles/{profile-id}/acme/directory`.
-        - EAB Key Identifier (KID): A unique identifier that tells Hanzo KMS which ACME account is making the request.
-        - EAB Secret: A secret key that authenticates your ACME client with Hanzo KMS.
+        - ACME Directory URL: The URL that Certbot will use to communicate with KMS's ACME server. This takes the form `https://your-kms-instance.com/api/v1/cert-manager/certificate-profiles/{profile-id}/acme/directory`.
+        - EAB Key Identifier (KID): A unique identifier that tells KMS which ACME account is making the request.
+        - EAB Secret: A secret key that authenticates your ACME client with KMS.
 
         <Note>
-            Keep your EAB credentials secure as they authenticate your ACME client with Hanzo KMS PKI. These credentials are unique to each [certificate profile](/documentation/platform/pki/certificates/profiles) and should not be shared.
+            Keep your EAB credentials secure as they authenticate your ACME client with KMS PKI. These credentials are unique to each [certificate profile](/documentation/platform/pki/certificates/profiles) and should not be shared.
         </Note>
     </Step>
 
@@ -62,7 +62,7 @@ Before you begin, make sure you have:
         # sudo systemctl stop jboss
         ```
 
-        Run the following command to request a certificate from Hanzo KMS:
+        Run the following command to request a certificate from KMS:
 
         ```bash
         sudo certbot certonly \
@@ -80,7 +80,7 @@ Before you begin, make sure you have:
 
         - `certonly`: Instructs Certbot to request a certificate without modifying your JBoss/WildFly configuration; this mode is recommended because JBoss/WildFly requires certificates in Java keystore format rather than the PEM format that Certbot provides.
         - `--standalone`: Uses Certbot's standalone authenticator to solve the [HTTP-01](https://letsencrypt.org/docs/challenge-types/#http-01-challenge) challenge by starting a temporary web server on port 80.
-        - `--server`: The Hanzo KMS ACME directory URL from Step 1. This instructs Certbot to communicate with Hanzo KMS's ACME server instead of Let's Encrypt.
+        - `--server`: The KMS ACME directory URL from Step 1. This instructs Certbot to communicate with KMS's ACME server instead of Let's Encrypt.
         - `--eab-kid`: Your External Account Binding (EAB) Key Identifier from Step 1.
         - `--eab-hmac-key`: The EAB secret associated with the KID from Step 1.
         - `-d`: Specifies the domain name for which the certificate is being requested.
@@ -88,7 +88,7 @@ Before you begin, make sure you have:
         - `--agree-tos`: Accepts the ACME server's Terms of Service.
         - `--non-interactive`: Runs Certbot without prompting for user input (recommended for automation).
 
-        The Certbot command generates a private key on your server, creates a Certificate Signing Request (CSR) using that key, and sends the CSR to Hanzo KMS for certificate issuance. Certbot stores the private key and resulting leaf certificate and full certificate chain in `/etc/letsencrypt/live/{domain-name}/`.
+        The Certbot command generates a private key on your server, creates a Certificate Signing Request (CSR) using that key, and sends the CSR to KMS for certificate issuance. Certbot stores the private key and resulting leaf certificate and full certificate chain in `/etc/letsencrypt/live/{domain-name}/`.
 
         Because JBoss/WildFly requires certificates in Java keystore format, you'll need to convert the PEM certificates provided by Certbot in the next step.
     </Step>

@@ -5,7 +5,7 @@ import { Button } from "@app/components/v2";
 
 /**
  * This is the page that shows up when a user's invitation
- * to join a project/organization on Hanzo KMS has expired
+ * to join a project/organization on KMS has expired
  * or when the user is already a member of the organization
  */
 export const RequestNewInvitePage = () => {

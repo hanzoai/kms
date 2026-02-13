@@ -1,21 +1,21 @@
 ---
 title: "Azure SCIM"
-description: "Learn how to configure SCIM provisioning with Azure for Hanzo KMS."
+description: "Learn how to configure SCIM provisioning with Azure for KMS."
 ---
 
 <Info>
     Azure SCIM provisioning is a paid feature.
     
-    If you're using Hanzo KMS Cloud, then it is available under the **Enterprise Tier**. If you're self-hosting Hanzo KMS,
+    If you're using KMS Cloud, then it is available under the **Enterprise Tier**. If you're self-hosting KMS,
     then you should contact sales@kms.hanzo.ai to purchase an enterprise license to use it.
 </Info>
 
 Prerequisites:
-- [Configure Azure SAML for Hanzo KMS](/documentation/platform/sso/azure)
+- [Configure Azure SAML for KMS](/documentation/platform/sso/azure)
 
 <Steps>
-    <Step title="Create a SCIM token in Hanzo KMS">
-        In Hanzo KMS, head to the **Single Sign-On (SSO)** page and select the **Provisioning** tab. Under SCIM Configuration,
+    <Step title="Create a SCIM token in KMS">
+        In KMS, head to the **Single Sign-On (SSO)** page and select the **Provisioning** tab. Under SCIM Configuration,
         press the **Enable SCIM provisioning** toggle to allow Azure to provision/deprovision users for your organization.
         
         ![SCIM enable provisioning](/images/platform/scim/scim-enable-provisioning.png)
@@ -30,7 +30,7 @@ Prerequisites:
     </Step>
     <Step title="Add Users and Groups in Azure">
         In Azure, navigate to Enterprise Application > Users and Groups. Add any users and/or groups to your application that you would like
-        to be provisioned over to Hanzo KMS.
+        to be provisioned over to KMS.
 
         ![SCIM Azure Users and Groups](/images/platform/scim/azure/scim-azure-add-users-and-groups.png)
 
@@ -62,11 +62,11 @@ Prerequisites:
         
         ![SCIM Azure](/images/platform/scim/azure/scim-azure-provisioning-status.png)
         
-        Alternatively, you can go to **Overview** and press **Start provisioning** to have Azure start provisioning/deprovisioning users to Hanzo KMS.
+        Alternatively, you can go to **Overview** and press **Start provisioning** to have Azure start provisioning/deprovisioning users to KMS.
         
         ![SCIM Azure](/images/platform/scim/azure/scim-azure-start-provisioning.png)
         
-        Now Azure can provision/deprovision users to/from your organization in Hanzo KMS.
+        Now Azure can provision/deprovision users to/from your organization in KMS.
     </Step>
 </Steps>
 
@@ -74,7 +74,7 @@ Prerequisites:
 
 <AccordionGroup>
 <Accordion title="Why do SCIM-provisioned users have to finish setting up their account?">
-    Hanzo KMS's SCIM implmentation accounts for retaining the end-to-end encrypted architecture of Hanzo KMS because we decouple the **authentication** and **decryption** steps in the platform. 
+    KMS's SCIM implmentation accounts for retaining the end-to-end encrypted architecture of KMS because we decouple the **authentication** and **decryption** steps in the platform. 
     
     For this reason, SCIM-provisioned users are initialized but must finish setting up their account when logging in the first time by creating a master encryption/decryption key. With this implementation, IdPs and SCIM providers cannot and will not have access to the decryption key needed to decrypt your secrets.
 </Accordion>

@@ -1,9 +1,9 @@
 ---
 sidebarTitle: "Overview"
-description: "Learn how to manage and configure third-party app connections with Hanzo KMS."
+description: "Learn how to manage and configure third-party app connections with KMS."
 ---
 
-App Connections enable you to integrate your Hanzo KMS projects with third-party services in a secure and versatile way.
+App Connections enable you to integrate your KMS projects with third-party services in a secure and versatile way.
 
 <Note>
     App connections can also be created and managed independently in projects now.
@@ -46,7 +46,7 @@ that can be used across multiple features. Example use cases include syncing sec
 
 ## Workflow
 
-App Connections require initial setup in both your third-party application and Hanzo KMS. Follow these steps to establish a secure connection:
+App Connections require initial setup in both your third-party application and KMS. Follow these steps to establish a secure connection:
 
 <Note>
     For step-by-step guides specific to each application, refer to the App Connections section in the sidebar.
@@ -58,7 +58,7 @@ to limit the access of this entity to the minimal permission set required to per
     - For dynamic secrets: Permissions to create temporary credentials
 
 <Tip>
-    Whenever possible, Hanzo KMS encourages creating a designated service account for your App Connection to limit the scope of permissions based on your use-case.
+    Whenever possible, KMS encourages creating a designated service account for your App Connection to limit the scope of permissions based on your use-case.
 </Tip>
 
 2. <strong>Generate Authentication Credentials:</strong> Obtain the required credentials from your third-party application. These can vary between applications and might be:
@@ -66,17 +66,17 @@ to limit the access of this entity to the minimal permission set required to per
     - A client ID and secret pair
     - other credentials, etc.
 
-3. <strong>Create App Connection:</strong> Configure the connection in Hanzo KMS using your generated credentials through either the UI or API.
+3. <strong>Create App Connection:</strong> Configure the connection in KMS using your generated credentials through either the UI or API.
 
 <Info>
     Some App Connections can only be created via the UI such as connections using OAuth.
 </Info>
 
-4. <strong>Utilize the Connection:</strong> Use your App Connection for various features across Hanzo KMS such as our Secrets Sync by selecting it via the dropdown menu
+4. <strong>Utilize the Connection:</strong> Use your App Connection for various features across KMS such as our Secrets Sync by selecting it via the dropdown menu
 in the UI or by passing the associated `connectionId` when generating resources via the API.
 
 
 ## Platform Managed Credentials
 
-Some App Connections support the ability to have their credentials managed by Hanzo KMS. By enabling this option,
-Hanzo KMS will modify the credentials to prevent external use of the configured access entity.
+Some App Connections support the ability to have their credentials managed by KMS. By enabling this option,
+KMS will modify the credentials to prevent external use of the configured access entity.

@@ -70,7 +70,7 @@ export const projectBotServiceFactory = ({
 
       return projectBotDAL.create(
         {
-          name: "Hanzo KMS Bot",
+          name: "KMS Bot",
           projectId,
           tag,
           iv,

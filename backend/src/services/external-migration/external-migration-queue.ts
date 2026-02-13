@@ -22,8 +22,8 @@ import { TSecretV2BridgeServiceFactory } from "../secret-v2-bridge/secret-v2-bri
 import { TSecretVersionV2DALFactory } from "../secret-v2-bridge/secret-version-dal";
 import { TSecretVersionV2TagDALFactory } from "../secret-v2-bridge/secret-version-tag-dal";
 import { SmtpTemplates, TSmtpService } from "../smtp/smtp-service";
-import { importDataIntoHanzo KMSFn } from "./external-migration-fns";
-import { ExternalPlatforms, TImportHanzo KMSDataCreate } from "./external-migration-types";
+import { importDataIntoKmsFn } from "./external-migration-fns";
+import { ExternalPlatforms, TImportKmsDataCreate } from "./external-migration-types";
 
 export type TExternalMigrationQueueFactoryDep = {
   smtpService: TSmtpService;
@@ -105,13 +105,13 @@ export const externalMigrationQueueFactory = ({
           orgId,
           type: NotificationType.IMPORT_STARTED,
           title: "Import Started",
-          body: `An import from **${importType}** to Hanzo KMS has been started.`
+          body: `An import from **${importType}** to KMS has been started.`
         }
       ]);
 
       await smtpService.sendMail({
         recipients: [actorEmail],
-        subjectLine: "Hanzo KMS import started",
+        subjectLine: "KMS import started",
         substitutions: {
           provider: importType
         },
@@ -125,9 +125,9 @@ export const externalMigrationQueueFactory = ({
         tag: data.tag
       });
 
-      const decryptedJson = JSON.parse(decrypted) as TImportHanzo KMSDataCreate;
+      const decryptedJson = JSON.parse(decrypted) as TImportKmsDataCreate;
 
-      const { projectsNotImported } = await importDataIntoHanzo KMSFn({
+      const { projectsNotImported } = await importDataIntoKmsFn({
         input: decryptedJson,
         projectDAL,
         projectEnvDAL,
@@ -162,13 +162,13 @@ export const externalMigrationQueueFactory = ({
           orgId,
           type: NotificationType.IMPORT_SUCCESSFUL,
           title: "Import Successful",
-          body: `An import from **${importType}** to Hanzo KMS has successfully completed.`
+          body: `An import from **${importType}** to KMS has successfully completed.`
         }
       ]);
 
       await smtpService.sendMail({
         recipients: [actorEmail],
-        subjectLine: "Hanzo KMS import successful",
+        subjectLine: "KMS import successful",
         substitutions: {
           provider: importType
         },
@@ -182,13 +182,13 @@ export const externalMigrationQueueFactory = ({
           type: NotificationType.IMPORT_FAILED,
           title: "Import Failed",
           // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-          body: `An import from **${importType}** to Hanzo KMS has failed: ${(err as any)?.message || "Unknown error"}.`
+          body: `An import from **${importType}** to KMS has failed: ${(err as any)?.message || "Unknown error"}.`
         }
       ]);
 
       await smtpService.sendMail({
         recipients: [job.data.actorEmail],
-        subjectLine: "Hanzo KMS import failed",
+        subjectLine: "KMS import failed",
         substitutions: {
           provider: importType,
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment

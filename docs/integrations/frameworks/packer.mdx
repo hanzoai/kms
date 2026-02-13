@@ -1,23 +1,23 @@
 ---
 title: "Packer"
-description: "Learn how to fetch secrets from Hanzo KMS with Packer using a data source"
+description: "Learn how to fetch secrets from KMS with Packer using a data source"
 ---
 
-This guide demonstrates how to use the Hanzo KMS Packer plugin to fetch secret data using a data source. The Packer plugin supports both [Hanzo KMS Cloud](https://kms.hanzo.ai) and [self-hosted instances of Hanzo KMS](https://kms.hanzo.ai/docs/self-hosting/overview).
+This guide demonstrates how to use the KMS Packer plugin to fetch secret data using a data source. The Packer plugin supports both [KMS Cloud](https://kms.hanzo.ai) and [self-hosted instances of KMS](https://kms.hanzo.ai/docs/self-hosting/overview).
 
 ## Prerequisites
 
 Before you begin, make sure you have:
 
 - [Packer](https://developer.hashicorp.com/packer/install) installed
-- An Hanzo KMS account with access to a project
+- An KMS account with access to a project
 - Basic understanding of Packer
 
 ## Project Setup
 
 ### Configure Provider
 
-First, specify the Hanzo KMS provider in your Packer configuration:
+First, specify the KMS provider in your Packer configuration:
 
 ```hcl
 packer {
@@ -52,7 +52,7 @@ Learn more about [machine identities](/documentation/platform/identities/machine
 
 ## Using Secrets in Packer
 
-You're able to fetch secrets from Hanzo KMS using the `kms-secrets` Data Source:
+You're able to fetch secrets from KMS using the `kms-secrets` Data Source:
 
 ```hcl
 # Fetch all secrets from a folder
@@ -87,9 +87,9 @@ build {
 }
 ```
 
-The `local.secrets` object maps secret keys to [secret objects](https://github.com/Hanzo KMS/packer-plugin-kms/blob/main/docs/datasources/secrets.md#secret-object).
+The `local.secrets` object maps secret keys to [secret objects](https://github.com/KMS/packer-plugin-kms/blob/main/docs/datasources/secrets.md#secret-object).
 
 See also:
-- [Packer Plugin Repository Example](https://github.com/Hanzo KMS/packer-plugin-kms/blob/main/example/build.pkr.hcl)
-- [Packer Plugin Repository Docs](https://github.com/Hanzo KMS/packer-plugin-kms/tree/main/docs)
+- [Packer Plugin Repository Example](https://github.com/KMS/packer-plugin-kms/blob/main/example/build.pkr.hcl)
+- [Packer Plugin Repository Docs](https://github.com/KMS/packer-plugin-kms/tree/main/docs)
 - [Machine Identity setup guide](/documentation/platform/identities/machine-identities)

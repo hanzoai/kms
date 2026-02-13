@@ -1,30 +1,30 @@
 ---
 title: "Upgrading"
-description: "How to upgrade Hanzo KMS deployment using linux package"
+description: "How to upgrade KMS deployment using linux package"
 ---
 
-This guide explains how to upgrade Hanzo KMS Linux package installations to newer versions. 
-The Hanzo KMS Linux package includes only the Hanzo KMS service component itself, as PostgreSQL and Redis databases are managed separately. 
+This guide explains how to upgrade KMS Linux package installations to newer versions. 
+The KMS Linux package includes only the KMS service component itself, as PostgreSQL and Redis databases are managed separately. 
 Upgrades for PostgreSQL and Redis are not covered in this guide as they depend on your specific database deployment method.
 
 ## Upgrade Options
 
-There are two primary methods to upgrade Hanzo KMS:
+There are two primary methods to upgrade KMS:
 
-1. **Standard Upgrade (with brief downtime)**: The simplest approach that briefly takes Hanzo KMS offline during the upgrade.
+1. **Standard Upgrade (with brief downtime)**: The simplest approach that briefly takes KMS offline during the upgrade.
 2. **Minimal-Downtime Upgrade**: For multi-node deployments where high availability is required.
 
 ## Before You Begin
 
 ### Checking Your Current Version
 
-Before upgrading, note your current Hanzo KMS version:
+Before upgrading, note your current KMS version:
 
 ```bash
 cat /opt/kms-core/version-manifest.txt
 ```
 
-Look for `kms` component. This will be the version of Hanzo KMS currently installed.
+Look for `kms` component. This will be the version of KMS currently installed.
 
 ### Prerequisites
 
@@ -45,7 +45,7 @@ pg_dump -U <username> -h <db-host> -d <db-name> > kms_backup.sql
 
 ### Database Migrations During Upgrade
 
-By default, Hanzo KMS runs database migrations automatically on startup.  
+By default, KMS runs database migrations automatically on startup.  
 
 - It uses database locks to ensure only one instance runs migrations at a time
 - Other instances will wait for the lock to be released before continuing startup
@@ -56,12 +56,12 @@ By default, Hanzo KMS runs database migrations automatically on startup.
 This method is suitable for single-node deployments or situations where a brief downtime is acceptable.
 
 <Steps>
-  <Step title="Stop the Hanzo KMS service">
+  <Step title="Stop the KMS service">
    ```bash
    kms-ctl stop
    ```
   </Step>
-  <Step title="Upgrade the Hanzo KMS package">
+  <Step title="Upgrade the KMS package">
 To upgrade to the latest version:
 
 <Tabs>
@@ -99,7 +99,7 @@ To upgrade to a specific version:
    ```
   </Step>
 
-  <Step title="Start Hanzo KMS">
+  <Step title="Start KMS">
    ```bash
    kms-ctl start
    ```
@@ -119,7 +119,7 @@ To upgrade to a specific version:
 
 ## Minimal-Downtime Upgrade
 
-For multi-node setups where you need to maintain availability during upgrades, follow this procedure. This approach requires at least two Hanzo KMS nodes behind a load balancer.
+For multi-node setups where you need to maintain availability during upgrades, follow this procedure. This approach requires at least two KMS nodes behind a load balancer.
 
 ### Understanding Traffic Draining
 
@@ -135,7 +135,7 @@ This approach ensures users/machines do not experience sudden connection errors 
 
 1. **Designate a deploy node**: Choose any single node that will run migrations. This node will be upgraded first.
 
-2. **Configure your load balancer**: Ensure your load balancer can perform health checks against Hanzo KMS's `api/status` endpoint.
+2. **Configure your load balancer**: Ensure your load balancer can perform health checks against KMS's `api/status` endpoint.
 
 ### Upgrade Process
 
@@ -178,13 +178,13 @@ Approaches for some common load balancers are provided below:
 Verify no new traffic is arriving before proceeding with the upgrade.
 </Step>
 
-<Step title="Stop Hanzo KMS on this node">
+<Step title="Stop KMS on this node">
 ```bash
 kms-ctl stop
 ```
 </Step>
 
-<Step title="Upgrade the Hanzo KMS package">
+<Step title="Upgrade the KMS package">
    
 To upgrade to the latest version:
 
@@ -246,13 +246,13 @@ Follow the same draining procedure as described for the deploy node:
 - Verify the node is no longer receiving traffic
 </Step>
 
-<Step title="Stop Hanzo KMS on this node">
+<Step title="Stop KMS on this node">
 ```bash
 kms-ctl stop
 ```
 </Step>
 
-<Step title="Upgrade the Hanzo KMS package">
+<Step title="Upgrade the KMS package">
 To upgrade to the latest version:
 
 <Tabs>
@@ -323,10 +323,10 @@ After all nodes are upgraded, verify that the application is functioning correct
 
 ## Rolling Back
 
-If you need to roll back to a previous version of Hanzo KMS, follow steps below.
+If you need to roll back to a previous version of KMS, follow steps below.
 
 <Steps>
-<Step title="Stop the Hanzo KMS service">
+<Step title="Stop the KMS service">
 ```bash
 kms-ctl stop
 ```

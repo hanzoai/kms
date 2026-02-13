@@ -1,27 +1,27 @@
 ---
 title: "Terraform"
-description: "Learn how to fetch secrets from Hanzo KMS with Terraform using both traditional data sources and ephemeral resources"
-url: "https://registry.terraform.io/providers/Hanzo KMS/kms/latest/docs"
+description: "Learn how to fetch secrets from KMS with Terraform using both traditional data sources and ephemeral resources"
+url: "https://registry.terraform.io/providers/KMS/kms/latest/docs"
 ---
 {/* 
-This guide demonstrates how to use Hanzo KMS to manage secrets in your Terraform infrastructure code, supporting both traditional data sources and ephemeral resources for enhanced security. It uses:
+This guide demonstrates how to use KMS to manage secrets in your Terraform infrastructure code, supporting both traditional data sources and ephemeral resources for enhanced security. It uses:
 
-- Hanzo KMS (you can use [Hanzo KMS Cloud](https://kms.hanzo.ai) or a [self-hosted instance of Hanzo KMS](https://kms.hanzo.ai/docs/self-hosting/overview)) to store your secrets
-- The [Terraform Provider](https://registry.terraform.io/providers/Hanzo KMS/kms/latest/docs) to fetch secrets for your infrastructure
+- KMS (you can use [KMS Cloud](https://kms.hanzo.ai) or a [self-hosted instance of KMS](https://kms.hanzo.ai/docs/self-hosting/overview)) to store your secrets
+- The [Terraform Provider](https://registry.terraform.io/providers/KMS/kms/latest/docs) to fetch secrets for your infrastructure
 
 ## Prerequisites
 
 Before you begin, make sure you have:
 
 - [Terraform](https://www.terraform.io/downloads.html) installed (v1.10.0+ for ephemeral resources)
-- An Hanzo KMS account with access to a project
+- An KMS account with access to a project
 - Basic understanding of Terraform and infrastructure as code
 
 ## Project Setup
 
 ### Configure Provider
 
-First, specify the Hanzo KMS provider in your Terraform configuration:
+First, specify the KMS provider in your Terraform configuration:
 
 ```hcl
 terraform {
@@ -69,7 +69,7 @@ provider "kms" {
 
 ## Using Secrets in Terraform
 
-Hanzo KMS provides two methods to fetch and use secrets in your Terraform configurations:
+KMS provides two methods to fetch and use secrets in your Terraform configurations:
 
 ### Method 1: Ephemeral Resources (Recommended)
 
@@ -145,7 +145,7 @@ resource "aws_db_instance" "example" {
   engine_version    = "14.0"
   instance_class    = "db.t3.micro"
   
-  # Securely inject credentials from Hanzo KMS
+  # Securely inject credentials from KMS
   username = jsondecode(ephemeral.kms_secret.db_creds.value)["username"]
   password = jsondecode(ephemeral.kms_secret.db_creds.value)["password"]
 }
@@ -153,8 +153,8 @@ resource "aws_db_instance" "example" {
 
 ### GitOps Workflow with OIDC
 
-To eliminate the need for static credentials, you can authenticate your workflow using [OpenID Connect (OIDC)](https://kms.hanzo.ai/docs/documentation/platform/identities/oidc-auth/general) through providers like the [Hanzo KMS Secrets GitHub Action](https://github.com/Hanzo KMS/secrets-action).
-Once authenticated, you can securely access secrets through the Hanzo KMS provider:
+To eliminate the need for static credentials, you can authenticate your workflow using [OpenID Connect (OIDC)](https://kms.hanzo.ai/docs/documentation/platform/identities/oidc-auth/general) through providers like the [KMS Secrets GitHub Action](https://github.com/KMS/secrets-action).
+Once authenticated, you can securely access secrets through the KMS provider:
 
 ```hcl
 provider "kms" {
@@ -175,7 +175,7 @@ For detailed instructions on setting up OIDC authentication with GitHub Actions,
 
 1. **Use Ephemeral Resources**: Whenever possible, use ephemeral resources instead of data sources for improved security.
 
-2. **Organize Secrets**: Structure your secrets in Hanzo KMS using folders to maintain clean separation:
+2. **Organize Secrets**: Structure your secrets in KMS using folders to maintain clean separation:
    ```hcl
    ephemeral "kms_secret" "db_secret" {
      folder_path = "/databases/postgresql"  # Organized by service
@@ -234,5 +234,5 @@ For detailed instructions on setting up OIDC authentication with GitHub Actions,
 
 See also:
 - [Machine Identity setup guide](/documentation/platform/identities/machine-identities)
-- [Terraform Provider Registry](https://registry.terraform.io/providers/Hanzo KMS/kms/latest/docs)
+- [Terraform Provider Registry](https://registry.terraform.io/providers/KMS/kms/latest/docs)
 - [GitOps Best Practices](https://www.kms.hanzo.ai/blog/gitops-best-practices) */}

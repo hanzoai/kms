@@ -156,14 +156,14 @@ export const licenseServiceFactory = ({
 
         if (!isVerified) {
           isValidOfflineLicense = false;
-          logger.warn(`Hanzo KMS EE offline license verification failed`);
+          logger.warn(`KMS EE offline license verification failed`);
         }
 
         if (contents.license.terminatesAt) {
           const terminationDate = new Date(contents.license.terminatesAt);
           if (terminationDate < new Date()) {
             isValidOfflineLicense = false;
-            logger.warn(`Hanzo KMS EE offline license has expired`);
+            logger.warn(`KMS EE offline license has expired`);
           }
         }
 

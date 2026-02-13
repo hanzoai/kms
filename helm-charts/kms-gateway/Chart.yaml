@@ -1,6 +1,6 @@
 apiVersion: v2
 name: hanzo-kms-gateway
-description: A Helm chart to deploy Hanzo KMS Gateway (fork of Hanzo KMS)
+description: A Helm chart to deploy KMS Gateway (fork of KMS)
 
 # A chart can be either an 'application' or a 'library' chart.
 #

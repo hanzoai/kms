@@ -52,7 +52,7 @@ const initialSyncBehaviors = [
     label: "No Import - Overwrite all values in GitLab",
     value: IntegrationSyncBehavior.OVERWRITE_TARGET
   },
-  { label: "Import - Prefer values from Hanzo KMS", value: IntegrationSyncBehavior.PREFER_SOURCE }
+  { label: "Import - Prefer values from KMS", value: IntegrationSyncBehavior.PREFER_SOURCE }
 ];
 
 const schema = z.object({
@@ -215,7 +215,7 @@ export const GitlabConfigurePage = () => {
       <Card className="max-w-lg rounded-md border border-mineshaft-600">
         <CardTitle
           className="px-6 text-left text-xl"
-          subTitle="Select which environment or folder in Hanzo KMS you want to sync to GitLab's environment variables."
+          subTitle="Select which environment or folder in KMS you want to sync to GitLab's environment variables."
         >
           <div className="flex flex-row items-center">
             <div className="flex items-center pb-0.5">
@@ -452,7 +452,7 @@ export const GitlabConfigurePage = () => {
                       isChecked={value}
                     >
                       <div className="max-w-md">
-                        Mark Hanzo KMS secrets in Gitlab as &apos;Masked&apos; secrets
+                        Mark KMS secrets in Gitlab as &apos;Masked&apos; secrets
                       </div>
                     </Switch>
                   )}
@@ -468,7 +468,7 @@ export const GitlabConfigurePage = () => {
                       onCheckedChange={(isChecked) => onChange(isChecked)}
                       isChecked={value}
                     >
-                      Mark Hanzo KMS secrets in Gitlab as &apos;Protected&apos; secrets
+                      Mark KMS secrets in Gitlab as &apos;Protected&apos; secrets
                     </Switch>
                   )}
                 />

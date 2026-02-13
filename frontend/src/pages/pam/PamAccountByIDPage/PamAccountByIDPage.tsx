@@ -268,7 +268,7 @@ export const PamAccountByIDPage = () => {
   return (
     <>
       <Helmet>
-        <title>PAM Account | Hanzo KMS</title>
+        <title>PAM Account | KMS</title>
         <link rel="icon" href="/favicon.ico" />
       </Helmet>
       <PageContent />

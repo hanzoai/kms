@@ -23,7 +23,7 @@ export const sendEmailNotification = async (
 ): Promise<void> => {
   await smtpService.sendMail({
     recipients: config.recipients,
-    subjectLine: `Hanzo KMS Certificate Alert - ${alertName}`,
+    subjectLine: `KMS Certificate Alert - ${alertName}`,
     substitutions: {
       alertName,
       alertBeforeDays,

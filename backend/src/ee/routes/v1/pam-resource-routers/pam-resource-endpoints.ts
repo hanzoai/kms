@@ -264,7 +264,7 @@ CA_PUBLIC_KEY="${caPublicKey}"
 CA_FILE="/etc/ssh/kms_ca.pub"
 SSHD_CONFIG="/etc/ssh/sshd_config"
 
-echo "==> Hanzo KMS SSH CA Setup"
+echo "==> KMS SSH CA Setup"
 echo ""
 
 if [ "$(id -u)" -ne 0 ]; then
@@ -289,7 +289,7 @@ if grep -q "^TrustedUserCAKeys" "\${SSHD_CONFIG}"; then
 else
     echo "==> Adding TrustedUserCAKeys to \${SSHD_CONFIG}..."
     echo "" >> "\${SSHD_CONFIG}"
-    echo "# Hanzo KMS SSH CA - Added by setup script" >> "\${SSHD_CONFIG}"
+    echo "# KMS SSH CA - Added by setup script" >> "\${SSHD_CONFIG}"
     echo "TrustedUserCAKeys \${CA_FILE}" >> "\${SSHD_CONFIG}"
     echo "    Done."
 fi
@@ -321,7 +321,7 @@ echo "    Done."
 echo ""
 echo "==> Setup complete!"
 echo ""
-echo "Your SSH server is now configured to trust certificates signed by the Hanzo KMS CA."
+echo "Your SSH server is now configured to trust certificates signed by the KMS CA."
 echo ""
 `;
 

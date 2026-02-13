@@ -45,7 +45,7 @@ export const sendApprovalEmailsFn = async ({
   for await (const reviewerUser of policy.userApprovers) {
     await smtpService.sendMail({
       recipients: [reviewerUser?.email as string],
-      subjectLine: "Hanzo KMS Secret Change Request",
+      subjectLine: "KMS Secret Change Request",
 
       substitutions: {
         firstName: reviewerUser.firstName,

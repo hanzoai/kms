@@ -3,17 +3,17 @@ title: "Next.js + Vercel"
 ---
 
 
-This guide demonstrates how to use Hanzo KMS to manage secrets for your Next.js + Vercel stack from local development to production. It uses:
+This guide demonstrates how to use KMS to manage secrets for your Next.js + Vercel stack from local development to production. It uses:
 
-- Hanzo KMS (you can use [Hanzo KMS Cloud](https://kms.hanzo.ai) or a [self-hosted instance of Hanzo KMS](https://kms.hanzo.ai/docs/self-hosting/overview)) to store your secrets.
+- KMS (you can use [KMS Cloud](https://kms.hanzo.ai) or a [self-hosted instance of KMS](https://kms.hanzo.ai/docs/self-hosting/overview)) to store your secrets.
 
 ## Project Setup
 
-To begin, we need to set up a project in Hanzo KMS and add secrets to an environment in it.
+To begin, we need to set up a project in KMS and add secrets to an environment in it.
 
 ### Create a project
 
-1. Create a new project in [Hanzo KMS](https://kms.hanzo.ai/).
+1. Create a new project in [KMS](https://kms.hanzo.ai/).
 
 2. Add a secret to the development environment of this project so we can pull it back for local development. In the **Secrets Overview** page, press **Explore Development** and add a secret with the key `NEXT_PUBLIC_NAME` and value `YOUR_NAME`.
 
@@ -68,7 +68,7 @@ Next, inside `pages/_app.js`, lets add a `console.log()` to print out the enviro
 
 ## KMS CLI for local development environment variables
 
-We'll now use the KMS CLI to fetch secrets from Hanzo KMS into your Next.js app for local development.
+We'll now use the KMS CLI to fetch secrets from KMS into your Next.js app for local development.
 
 ### CLI Installation
 
@@ -86,7 +86,7 @@ Follow the instructions for your operating system to install the KMS CLI.
       Use [Scoop](https://scoop.sh/) package manager
 
         ```console
-        $ scoop bucket add org https://github.com/Hanzo KMS/scoop-kms.git
+        $ scoop bucket add org https://github.com/KMS/scoop-kms.git
         ```
 
         ```console
@@ -99,7 +99,7 @@ Follow the instructions for your operating system to install the KMS CLI.
 		$ apk add --no-cache bash sudo
 		```
 
-    	Add Hanzo KMS repository
+    	Add KMS repository
     	```console
     	$ curl -1sLf \
     		'https://dl.cloudsmith.io/public/ghcr.io/hanzoai/kms-cli/setup.alpine.sh' \
@@ -113,7 +113,7 @@ Follow the instructions for your operating system to install the KMS CLI.
 
    </Tab>
 	 <Tab title="RedHat/CentOs/Amazon">
-	 Add Hanzo KMS repository
+	 Add KMS repository
 		```console
 		$ curl -1sLf \
 		'https://dl.cloudsmith.io/public/ghcr.io/hanzoai/kms-cli/setup.rpm.sh' \
@@ -127,7 +127,7 @@ Follow the instructions for your operating system to install the KMS CLI.
 
    </Tab>
 	 <Tab title="Debian/Ubuntu">
-	 	Add Hanzo KMS repository
+	 	Add KMS repository
 
 		```console
 		$ curl -1sLf \
@@ -153,7 +153,7 @@ Follow the instructions for your operating system to install the KMS CLI.
 
 ### Login
 
-Authenticate the CLI with the Hanzo KMS platform using your email and password.
+Authenticate the CLI with the KMS platform using your email and password.
 
 ```console
 $ hanzo-kms login
@@ -161,7 +161,7 @@ $ hanzo-kms login
 
 ### Initialization
 
-Run the `init` command at the root of the Next.js app. This step connects your local project to the project on the Hanzo KMS platform and creates a `kms.json` file containing a reference to that latter project.
+Run the `init` command at the root of the Next.js app. This step connects your local project to the project on the KMS platform and creates a `kms.json` file containing a reference to that latter project.
 
 ```console
 $ hanzo-kms init
@@ -175,17 +175,17 @@ $ hanzo-kms run -- npm run dev
 
 If you open your browser console, **Hello, YOUR_NAME** should be printed out.
 
-Here, the CLI fetched the secret from Hanzo KMS and injected it into the Next.js app upon starting up. By default,
+Here, the CLI fetched the secret from KMS and injected it into the Next.js app upon starting up. By default,
 the CLI fetches secrets from the development environment which has the slug `dev`; you can inject secrets from different
 environments by modifying the `env` flag as per the [CLI documentation](/cli/usage).
 
 At this stage, you know how to use the KMS CLI to inject secrets into your Next.js app for local development.
 
-## Hanzo KMS-Vercel integration for production environment variables
+## KMS-Vercel integration for production environment variables
 
-Use our [Vercel Secret Syncs](../../integrations/secret-syncs/vercel) guide to sync secrets from Hanzo KMS to Vercel as production environment variables.
+Use our [Vercel Secret Syncs](../../integrations/secret-syncs/vercel) guide to sync secrets from KMS to Vercel as production environment variables.
 
-At this stage, you know how to use the Hanzo KMS-Vercel integration to sync production secrets from Hanzo KMS to Vercel.
+At this stage, you know how to use the KMS-Vercel integration to sync production secrets from KMS to Vercel.
 
 <Warning>
   The following environment variable names are reserved by Vercel and cannot be
@@ -200,9 +200,9 @@ At this stage, you know how to use the Hanzo KMS-Vercel integration to sync prod
 ## FAQ
 
 <AccordionGroup>
-    <Accordion title="Why should I use Hanzo KMS if I can centralize all my Next.js + Vercel environment variables across all environments directly in Vercel?">
+    <Accordion title="Why should I use KMS if I can centralize all my Next.js + Vercel environment variables across all environments directly in Vercel?">
         Vercel does not specialize in secret management which means it lacks many useful features for effectively managing environment variables.
-        Here are some features that teams benefit from by using Hanzo KMS together with Vercel:
+        Here are some features that teams benefit from by using KMS together with Vercel:
 
         - Audit logs: See which team members are creating, reading, updating, and deleting environment variables across all environments.
         - Versioning and point in time recovery: Rolling back secrets and an entire project state.
@@ -210,7 +210,7 @@ At this stage, you know how to use the Hanzo KMS-Vercel integration to sync prod
 
         And much more.
     </Accordion>
-    <Accordion title="Is opting out of end-to-end encryption for the Hanzo KMS-Vercel integration safe?">
+    <Accordion title="Is opting out of end-to-end encryption for the KMS-Vercel integration safe?">
         Yes. Your secrets are still encrypted at rest. To note, most secret managers actually don't support end-to-end encryption.
 
         Check out the [security guide](/internals/security).

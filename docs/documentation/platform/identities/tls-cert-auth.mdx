@@ -1,59 +1,59 @@
 ---
 title: TLS Certificate Auth
-description: "Learn how to authenticate with Hanzo KMS using TLS Certificate."
+description: "Learn how to authenticate with KMS using TLS Certificate."
 ---
 
-**TLS Certificate Auth** is an authentication method that verifies a user's TLS Client certificate using the provided CA Certificate, allowing secure access to Hanzo KMS resources.
+**TLS Certificate Auth** is an authentication method that verifies a user's TLS Client certificate using the provided CA Certificate, allowing secure access to KMS resources.
 
 ## Diagram
 
-The following sequence diagram illustrates the TLS Certificate Auth workflow for authenticating users with Hanzo KMS.
+The following sequence diagram illustrates the TLS Certificate Auth workflow for authenticating users with KMS.
 
 ```mermaid
 sequenceDiagram
   participant Client
-  participant Hanzo KMS
+  participant KMS
 
   Note over Client,Client: Step 1: Setup your TLS request with the client certificate
 
-  Note over Client,Hanzo KMS: Step 2: Login Operation
-  Client->>Hanzo KMS: Send request to /api/v1/auth/tls-cert-auth/login
+  Note over Client,KMS: Step 2: Login Operation
+  Client->>KMS: Send request to /api/v1/auth/tls-cert-auth/login
 
-  Note over Hanzo KMS: Step 3: Request verification using CA Certificate
+  Note over KMS: Step 3: Request verification using CA Certificate
 
-  Hanzo KMS->>Client: Return short-lived access token
+  KMS->>Client: Return short-lived access token
 
-  Note over Client,Hanzo KMS: Step 5: Access Hanzo KMS API with token
-  Client->>Hanzo KMS: Make authenticated requests using the short-lived access token
+  Note over Client,KMS: Step 5: Access KMS API with token
+  Client->>KMS: Make authenticated requests using the short-lived access token
 ```
 
 ## Concept
 
-At a high level, Hanzo KMS authenticates the client's TLS Certificate by verifying its identity and checking that it meets specific requirements (e.g., it is bound to the allowed common names) at the `/api/v1/auth/tls-cert-auth/login` endpoint. If successful, Hanzo KMS returns a short-lived access token that can be used to make authenticated requests to the Hanzo KMS API.
+At a high level, KMS authenticates the client's TLS Certificate by verifying its identity and checking that it meets specific requirements (e.g., it is bound to the allowed common names) at the `/api/v1/auth/tls-cert-auth/login` endpoint. If successful, KMS returns a short-lived access token that can be used to make authenticated requests to the KMS API.
 
 To be more specific:
 
-1. The client sends a TLS request with the client certificate to Hanzo KMS at the `/api/v1/auth/tls-cert-auth/login` endpoint.
-2. Hanzo KMS verifies the incoming request using the provided CA certificate.
-3. Hanzo KMS checks the user's properties against set criteria such as Allowed Common Names.
-4. If all checks pass, Hanzo KMS returns a short-lived access token that the client can use to make authenticated requests to the Hanzo KMS API.
+1. The client sends a TLS request with the client certificate to KMS at the `/api/v1/auth/tls-cert-auth/login` endpoint.
+2. KMS verifies the incoming request using the provided CA certificate.
+3. KMS checks the user's properties against set criteria such as Allowed Common Names.
+4. If all checks pass, KMS returns a short-lived access token that the client can use to make authenticated requests to the KMS API.
 
 <Accordion title="TLS with Load Balancer/Proxy">
-  Most of the time, the Hanzo KMS server will be behind a load balancer or
+  Most of the time, the KMS server will be behind a load balancer or
   proxy. To propagate the TLS certificate from the load balancer to the
   instance, you can configure the TLS to send the client certificate as a header
   that is set as an [environment variable](/self-hosting/configuration/envars#param-identity-tls-cert-auth-client-certificate-header-key).
 </Accordion>
 
 <Note>
-  Hanzo KMS US/EU and dedicated instances are deployed with AWS ALB. TLS Certificate Auth must flow through our ALB mTLS pass-through in order to authenticate.
+  KMS US/EU and dedicated instances are deployed with AWS ALB. TLS Certificate Auth must flow through our ALB mTLS pass-through in order to authenticate.
   When you are authenticating with TLS Certificate Auth, you must use the port `8443` instead of the default `443`. Example: `https://kms.hanzo.ai:8443/api/v1/auth/tls-cert-auth/login`
 </Note>
 
 ## Guide
 
 In the following steps, we explore how to create and use identities for your workloads and applications on TLS Certificate to
-access the Hanzo KMS API using request signing.
+access the KMS API using request signing.
 
 <Warning>
   **Self-Hosted Users:** Before using TLS Certificate Auth, please review the
@@ -112,11 +112,11 @@ Select the identity you want to add to the project and the project-level role yo
 
 ![identities project create](/images/platform/identities/identities-project-create.png)
 
-### Accessing the Hanzo KMS API with the identity
+### Accessing the KMS API with the identity
 
-To access the Hanzo KMS API as the identity, you need to send a TLS request to `/api/v1/auth/tls-cert-auth/login` endpoint.
+To access the KMS API as the identity, you need to send a TLS request to `/api/v1/auth/tls-cert-auth/login` endpoint.
 
-Below is an example of how you can authenticate with Hanzo KMS using NodeJS.
+Below is an example of how you can authenticate with KMS using NodeJS.
 
 ```javascript
 const fs = require("fs");
@@ -127,7 +127,7 @@ try {
   const clientCertificate = fs.readFileSync("client-cert.pem", "utf8");
   const clientKeyCertificate = fs.readFileSync("client-key.pem", "utf8");
 
-  const kmsUrl = "https://kms.hanzo.ai:8443"; // or your self-hosted Hanzo KMS URL
+  const kmsUrl = "https://kms.hanzo.ai:8443"; // or your self-hosted KMS URL
   const identityId = "<your-identity-id>";
 
   // Create HTTPS agent with client certificate and key
@@ -155,7 +155,7 @@ try {
 <Note>
     Each identity access token has a time-to-live (TTL) which you can infer from the response of the login operation; the default TTL is `7200` seconds, which can be adjusted.
 
-    If an identity access token expires, it can no longer access the Hanzo KMS API. A new access token should be obtained by performing another login operation.
+    If an identity access token expires, it can no longer access the KMS API. A new access token should be obtained by performing another login operation.
 
 </Note>
 
@@ -165,7 +165,7 @@ ALL TLS cert [login](/api-reference/endpoints/tls-cert-auth/login) requests **MU
 
 - **REQUIRED:** Configure your load balancer/proxy to **require a proper TLS handshake with client certificate presentation**
 - **REQUIRED:** Ensure the load balancer **verifies the client possesses the private key** corresponding to the certificate (standard TLS behavior)
-- **NEVER** allow direct connections to Hanzo KMS for TLS cert auth - this enables header injection attacks
+- **NEVER** allow direct connections to KMS for TLS cert auth - this enables header injection attacks
 - **NEVER** forward certificate headers without requiring proper TLS certificate presentation
 
 ### Load Balancer Configuration Examples
@@ -174,7 +174,7 @@ ALL TLS cert [login](/api-reference/endpoints/tls-cert-auth/login) requests **MU
 - **NGINX/HAProxy:** Configure SSL client certificate requirement with proper TLS handshake verification
 
 <Note>
-  Hanzo KMS will handle the actual certificate validation against the configured
+  KMS will handle the actual certificate validation against the configured
   CA certificate and determine authentication permissions. The load balancer's
   role is to ensure certificate ownership, not certificate trust validation.
 </Note>

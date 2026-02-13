@@ -41,7 +41,7 @@ export const DatabricksSyncFields = () => {
             errorText={error?.message}
             label="Secret Scope"
             tooltipClassName="max-w-md"
-            tooltipText="Hanzo KMS recommends creating a designated Databricks secret scope for your sync to prevent removal of secrets not managed by Hanzo KMS."
+            tooltipText="KMS recommends creating a designated Databricks secret scope for your sync to prevent removal of secrets not managed by KMS."
             helperText={
               <Tooltip
                 className="max-w-md"

@@ -1,6 +1,6 @@
 ---
 title: "CircleCI Sync"
-description: "Learn how to configure a CircleCI Sync for Hanzo KMS."
+description: "Learn how to configure a CircleCI Sync for KMS."
 ---
 
 **Prerequisites:**
@@ -13,7 +13,7 @@ description: "Learn how to configure a CircleCI Sync for Hanzo KMS."
 
 
 <Tabs>
-    <Tab title="Hanzo KMS UI">
+    <Tab title="KMS UI">
         <Steps>
             <Step title="Add Sync">
                 Navigate to **Project** > **Integrations** and select the **Secret Syncs** tab. Click on the **Add Sync** button.
@@ -49,17 +49,17 @@ description: "Learn how to configure a CircleCI Sync for Hanzo KMS."
 
                 ![Configure Options](/images/secret-syncs/circleci/sync-options.png)
 
-                - **Initial Sync Behavior**: Determines how Hanzo KMS should resolve the initial sync.
-                    - **Overwrite Destination Secrets**: Removes any secrets at the destination endpoint not present in Hanzo KMS.
+                - **Initial Sync Behavior**: Determines how KMS should resolve the initial sync.
+                    - **Overwrite Destination Secrets**: Removes any secrets at the destination endpoint not present in KMS.
                     <Note>
                         CircleCI does not support importing secrets.
                     </Note>
                 - **Key Schema**: Template that determines how secret names are transformed when syncing, using `{{secretKey}}` as a placeholder for the original secret name and `{{environment}}` for the environment.
                 <Note>
-                    We highly recommend using a Key Schema to ensure that Hanzo KMS only manages the specific keys you intend, keeping everything else untouched.
+                    We highly recommend using a Key Schema to ensure that KMS only manages the specific keys you intend, keeping everything else untouched.
                 </Note>
                 - **Auto-Sync Enabled**: If enabled, secrets will automatically be synced from the source location when changes occur. Disable to enforce manual syncing only.
-                - **Disable Secret Deletion**: If enabled, Hanzo KMS will not remove secrets from the sync destination. Enable this option if you intend to manage some secrets manually outside of Hanzo KMS.
+                - **Disable Secret Deletion**: If enabled, KMS will not remove secrets from the sync destination. Enable this option if you intend to manage some secrets manually outside of KMS.
             </Step>
             <Step title="Configure details">
                 Configure the **Details** of your CircleCI Sync, then click **Next**.

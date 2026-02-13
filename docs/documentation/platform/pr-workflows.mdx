@@ -6,8 +6,8 @@ description: "Learn how to enable a set of policies to manage changes to sensiti
 <Info>
     Approval Workflows is a paid feature.
 
-    If you're using Hanzo KMS Cloud, then it is available under the **Pro Tier** and **Enterprise Tier**.
-    If you're self-hosting Hanzo KMS, then you should contact sales@kms.hanzo.ai to purchase an enterprise license to use it.
+    If you're using KMS Cloud, then it is available under the **Pro Tier** and **Enterprise Tier**.
+    If you're self-hosting KMS, then you should contact sales@kms.hanzo.ai to purchase an enterprise license to use it.
 </Info>
 
 ## Problem at hand
@@ -21,7 +21,7 @@ Updating secrets in high-stakes environments (e.g., production) can have a numbe
 
 As a wide-spread software engineering practice, developers have to submit their code as a PR that needs to be approved before the code is merged into the main branch.
 
-In a similar way, to solve the above-mentioned issues, Hanzo KMS provides a feature called `Approval Workflows` for secret management. This is a set of policies and workflows that help advance access controls, compliance procedures, and stability of a particular environment. In other words, **Approval Workflows** help you secure, stabilize, and streamline the change of secrets in high-stakes environments.
+In a similar way, to solve the above-mentioned issues, KMS provides a feature called `Approval Workflows` for secret management. This is a set of policies and workflows that help advance access controls, compliance procedures, and stability of a particular environment. In other words, **Approval Workflows** help you secure, stabilize, and streamline the change of secrets in high-stakes environments.
 
 ### Setting a policy
 
@@ -57,7 +57,7 @@ When a user submits a change to an environment that is under a particular policy
 
 ![secret update change requests](../../images/platform/pr-workflows/secret-update-request.png)
 
-Approvers are notified by email and/or Slack as soon as the request is initiated. In the Hanzo KMS Dashboard, they will be able to `approve` and `merge` (or `deny`) a request for a change in a particular environment. After that, depending on the workflows setup, the change will be automatically propagated to the right applications (e.g., using [KMS Operator](https://kms.hanzo.ai/docs/integrations/platforms/kubernetes)).
+Approvers are notified by email and/or Slack as soon as the request is initiated. In the KMS Dashboard, they will be able to `approve` and `merge` (or `deny`) a request for a change in a particular environment. After that, depending on the workflows setup, the change will be automatically propagated to the right applications (e.g., using [KMS Operator](https://kms.hanzo.ai/docs/integrations/platforms/kubernetes)).
 
 ![secrets update pull request](../../images/platform/pr-workflows/secret-update-pr.png)
 

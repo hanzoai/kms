@@ -1,14 +1,14 @@
 ---
 title: "Kubernetes Agent Injector"
-description: "How to use the Hanzo KMS Kubernetes Agent Injector to inject secrets directly into Kubernetes pods."
+description: "How to use the KMS Kubernetes Agent Injector to inject secrets directly into Kubernetes pods."
 ---
 
 ## Overview
 
-The Hanzo KMS Kubernetes Agent Injector allows you to inject secrets directly into your Kubernetes pods. The Injector will create a [KMS Agent](/integrations/platforms/kms-agent) container within your pod that syncs secrets from Hanzo KMS into a shared volume mount within your pod.
+The KMS Kubernetes Agent Injector allows you to inject secrets directly into your Kubernetes pods. The Injector will create a [KMS Agent](/integrations/platforms/kms-agent) container within your pod that syncs secrets from KMS into a shared volume mount within your pod.
 
 
-The KMS Agent Injector will patch and modify your pod's deployment to contain an [KMS Agent](/integrations/platforms/kms-agent) container which renders your Hanzo KMS secrets into a shared volume mount within your pod.
+The KMS Agent Injector will patch and modify your pod's deployment to contain an [KMS Agent](/integrations/platforms/kms-agent) container which renders your KMS secrets into a shared volume mount within your pod.
 
 The KMS Agent Injector is built on [Kubernetes Mutating Admission Webhooks](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers), and will watch for `CREATE` and `UPDATE` events on pods in your cluster.
 The injector is namespace-agnostic, and will watch for pods in any namespace, but will only patch pods that have the `org.kms.hanzo.ai/inject` annotation set to `true`.
@@ -17,7 +17,7 @@ The injector is namespace-agnostic, and will watch for pods in any namespace, bu
 ```mermaid
 flowchart LR
     subgraph Secrets Management
-        SS(Hanzo KMS) --> INJ(Hanzo KMS Injector)
+        SS(KMS) --> INJ(KMS Injector)
     end
 
     subgraph Pod
@@ -128,7 +128,7 @@ The KMS Agent Injector supports the following annotations:
     The inject mode annotation is used to specify the mode to use to inject the secrets into the pod.
 
     - `init`: The init method will create an init container for the pod that will render the secrets into a shared volume mount within the pod. The agent init container will run before any other containers in the pod runs, including other init containers.
-    - `sidecar`: The sidecar method will create a sidecar container for the pod that will render the secrets into a shared volume mount within the pod. The agent sidecar container will run alongside the main container in the pod. This means that the secrets rendered will always be in sync with your Hanzo KMS secrets.
+    - `sidecar`: The sidecar method will create a sidecar container for the pod that will render the secrets into a shared volume mount within the pod. The agent sidecar container will run alongside the main container in the pod. This means that the secrets rendered will always be in sync with your KMS secrets.
     - `sidecar-init`: The sidecar-init method will create the init container and the sidecar container from the other two methods. The init container will run before any other container and fetch the secrets from the start and the sidecar container will keep the secrets in sync throughout the lifecycle of the deployment.
   </Accordion>
   <Accordion title="org.kms.hanzo.ai/agent-config-map">
@@ -289,7 +289,7 @@ The entire config needs to be of string format and needs to be assigned to the `
 
 <AccordionGroup>
 <Accordion title="kms.address">
-  The address of your Hanzo KMS instance. This field is optional and will default to `https://kms.hanzo.ai` if not provided.
+  The address of your KMS instance. This field is optional and will default to `https://kms.hanzo.ai` if not provided.
 </Accordion>
 
 <Accordion title="kms.revoke-credentials-on-shutdown">
@@ -307,9 +307,9 @@ The entire config needs to be of string format and needs to be assigned to the `
 </Accordion>
 
 <Accordion title="kms.auth.type">
-  The authentication type to use to connect to Hanzo KMS. Currently only the `kubernetes` authentication type is supported.
+  The authentication type to use to connect to KMS. Currently only the `kubernetes` authentication type is supported.
   You can refer to our [Kubernetes Auth](/documentation/platform/identities/kubernetes-auth) documentation for more information on how to create a machine identity for Kubernetes Auth.
-  Please note that the pod's default service account will be used to authenticate with Hanzo KMS.
+  Please note that the pod's default service account will be used to authenticate with KMS.
 </Accordion>
 
 
@@ -492,10 +492,10 @@ spec:
 
 ## Quick Start
 In this section we'll walk through a full example of how to inject secrets into a pod using the KMS Agent Injector.
-In this example we'll create a basic nginx deployment and print a Hanzo KMS secret called `API_KEY` to the container logs.
+In this example we'll create a basic nginx deployment and print a KMS secret called `API_KEY` to the container logs.
 
-### Create secrets in Hanzo KMS
-First you'll need to create the secret in Hanzo KMS.
+### Create secrets in KMS
+First you'll need to create the secret in KMS.
 
 - `API_KEY`: The API key to use for the nginx deployment.
 
@@ -504,14 +504,14 @@ Once you've created the secret, save your project ID, environment slug, and secr
 ### Configuration
 To use the injector you must create a config map in the same namespace as the pod you want to inject secrets into. In this example we'll create a config map in the `test-namespace` namespace.
 
-The agent injector will authenticate with Hanzo KMS using a [Kubernetes Auth](/documentation/platform/identities/kubernetes-auth) machine identity. Please follow the [instructions](/documentation/platform/identities/kubernetes-auth) to create a machine identity configured for Kubernetes Auth.
-The agent injector will use the service account token of the pod to authenticate with Hanzo KMS.
+The agent injector will authenticate with KMS using a [Kubernetes Auth](/documentation/platform/identities/kubernetes-auth) machine identity. Please follow the [instructions](/documentation/platform/identities/kubernetes-auth) to create a machine identity configured for Kubernetes Auth.
+The agent injector will use the service account token of the pod to authenticate with KMS.
 
 The `template-content` will be rendered as a [Go Template](https://pkg.go.dev/text/template) and will have access to the following variables. It follows the templating format and supports the same functions as the [KMS Agent](/integrations/platforms/kms-agent#quick-start-kms-agent)
 The `destination-path` refers to the path within the pod that the secrets will be injected into. In this case we're injecting the secrets into a file called `/kms/secrets`.
 
 
-Replace the `<your-project-id>`, `<your-environment-slug>`, with your project ID and the environment slug of where you created your secrets in Hanzo KMS. Replace `<your-kms-machine-identity-id>` with the ID of your machine identity configured for Kubernetes Auth.
+Replace the `<your-project-id>`, `<your-environment-slug>`, with your project ID and the environment slug of where you created your secrets in KMS. Replace `<your-kms-machine-identity-id>` with the ID of your machine identity configured for Kubernetes Auth.
 ```yaml config-map.yaml
 apiVersion: v1
 kind: ConfigMap
@@ -581,7 +581,7 @@ To apply the deployment, you can use the following command:
 ```bash
 kubectl apply -f nginx.yaml
 ```
-It may take a few minutes for the pod to be ready and for the Hanzo KMS secrets to be injected. You can check the status of the pod by running:
+It may take a few minutes for the pod to be ready and for the KMS secrets to be injected. You can check the status of the pod by running:
 
 ```bash
 kubectl get pods -n test-namespace
@@ -596,14 +596,14 @@ $ kubectl exec -it pod/nginx-pod -n test-namespace -- cat /kms/secrets
 
 Defaulted container "simple-app-demo" out of: simple-app-demo, kms-agent-init (init)
 
-API_KEY=sk_api_... # The secret you created in Hanzo KMS
+API_KEY=sk_api_... # The secret you created in KMS
 ```
 
 Additionally you can now check that the `API_KEY` secret is being logged to the nginx container logs:
 ```bash
 $ kubectl logs pod/nginx-pod -n test-namespace                              
 Defaulted container "simple-app-demo" out of: simple-app-demo, kms-agent-init (init)
-API_KEY is set to: sk_api_... # The secret you created in Hanzo KMS
+API_KEY is set to: sk_api_... # The secret you created in KMS
 ```
 
 
@@ -631,8 +631,8 @@ API_KEY is set to: sk_api_... # The secret you created in Hanzo KMS
   When checking the logs of the agent init container, you may see something like the following:
   ```bash
   Starting hanzo-kms agent...
-  11:10AM INF starting Hanzo KMS agent...
-  11:10AM INF Hanzo KMS instance address set to https://daniel1.tunn.dev
+  11:10AM INF starting KMS agent...
+  11:10AM INF KMS instance address set to https://daniel1.tunn.dev
   11:10AM INF template engine started for template 1...
   11:10AM INF attempting to authenticate...
   11:10AM INF new access token saved to file at path '/home/kms/config/identity-access-token'

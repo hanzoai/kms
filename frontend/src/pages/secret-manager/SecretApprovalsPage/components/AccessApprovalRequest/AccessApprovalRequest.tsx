@@ -312,7 +312,7 @@ export const AccessApprovalRequest = ({
               onClick={() => {
                 if (subscription && !subscription?.secretApproval) {
                   handlePopUpOpen("upgradePlan", {
-                    text: "Access requests feature can be unlocked if you upgrade to Hanzo KMS Pro plan."
+                    text: "Access requests feature can be unlocked if you upgrade to KMS Pro plan."
                   });
                   return;
                 }

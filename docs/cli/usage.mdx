@@ -7,7 +7,7 @@ The CLI is designed for a variety of secret management applications ranging from
 
 <Tabs>
   <Tab title="Local development">
-    In the following steps, we explore how to use the KMS CLI to fetch back environment variables from Hanzo KMS
+    In the following steps, we explore how to use the KMS CLI to fetch back environment variables from KMS
     and inject them into your local development process.
     
     <Note>
@@ -16,7 +16,7 @@ The CLI is designed for a variety of secret management applications ranging from
 
     <Steps>
       <Step title="Log in with the CLI">
-        Start by running the `hanzo-kms login` command to authenticate with Hanzo KMS.
+        Start by running the `hanzo-kms login` command to authenticate with KMS.
 
         ```bash
         hanzo-kms login
@@ -25,8 +25,8 @@ The CLI is designed for a variety of secret management applications ranging from
           If you are in a containerized environment such as WSL 2 or Codespaces, run `hanzo-kms login -i` to avoid browser based login
         </Note>
       </Step>
-      <Step title="Initialize Hanzo KMS for your project">
-        Next, navigate to your project and initialize Hanzo KMS.
+      <Step title="Initialize KMS for your project">
+        Next, navigate to your project and initialize KMS.
 
         ```bash
         # navigate to your project
@@ -43,7 +43,7 @@ The CLI is designed for a variety of secret management applications ranging from
         </Note>
       </Step>
       <Step title="Inject environment variables">
-        Finally, pass environment variables from Hanzo KMS into your application.
+        Finally, pass environment variables from KMS into your application.
 
         <Tabs>
           <Tab title="Feed secrets to your application">
@@ -62,7 +62,7 @@ The CLI is designed for a variety of secret management applications ranging from
 
           </Tab>
           <Tab title="Feed secrets via custom aliases (advanced)">
-            Custom aliases can utilize secrets from Hanzo KMS. Suppose there is a custom alias `yd` in `custom.sh` that runs `yarn dev` and needs the secrets provided by Hanzo KMS.
+            Custom aliases can utilize secrets from KMS. Suppose there is a custom alias `yd` in `custom.sh` that runs `yarn dev` and needs the secrets provided by KMS.
             ```bash
             #!/bin/sh
 
@@ -71,7 +71,7 @@ The CLI is designed for a variety of secret management applications ranging from
             }
             ```
 
-            To make the secrets available from Hanzo KMS to `yd`, you can run the following command:
+            To make the secrets available from KMS to `yd`, you can run the following command:
 
             ```bash
             hanzo-kms run --env=prod --path=/apps/reddit --command="source custom.sh && yd"
@@ -93,7 +93,7 @@ The CLI is designed for a variety of secret management applications ranging from
         Follow the steps listed [here](/documentation/platform/identities/universal-auth) to create a machine identity and obtain a **client ID** and **client secret** for it.
       </Step>
       <Step title="Obtain a machine identity access token">
-        Run the following command to authenticate with Hanzo KMS using the **client ID** and **client secret** credentials from step 1 and set the `KMS_TOKEN` environment variable to the retrieved access token.
+        Run the following command to authenticate with KMS using the **client ID** and **client secret** credentials from step 1 and set the `KMS_TOKEN` environment variable to the retrieved access token.
         
         ```bash
         export KMS_TOKEN=$(hanzo-kms login --method=universal-auth --client-id=<identity-client-id> --client-secret=<identity-client-secret> --silent --plain) # --plain flag will output only the token, so it can be fed to an environment variable. --silent will disable any update messages.
@@ -109,7 +109,7 @@ The CLI is designed for a variety of secret management applications ranging from
         </Info>
       </Step>
       <Step title="Export environment variables back into a file">
-        Finally, export the environment variables from Hanzo KMS to a file of choice.
+        Finally, export the environment variables from KMS to a file of choice.
 
         ```bash
         # export variables to a .env file (with export keyword)
@@ -125,7 +125,7 @@ The CLI is designed for a variety of secret management applications ranging from
 </Tabs>
 
 <Note>
-  Starting with CLI version v0.4.0, you can now choose to log in via Hanzo KMS Cloud (US/EU) or your own self-hosted instance by simply running `hanzo-kms login` and following the on-screen instructions — no need to manually set the `KMS_API_URL` environment variable.
+  Starting with CLI version v0.4.0, you can now choose to log in via KMS Cloud (US/EU) or your own self-hosted instance by simply running `hanzo-kms login` and following the on-screen instructions — no need to manually set the `KMS_API_URL` environment variable.
 
 For versions prior to v0.4.0, the CLI defaults to US Cloud. To connect to EU Cloud or a self-hosted instance, set the `KMS_API_URL` environment variable to `https://eu.kms.hanzo.ai` or your custom URL.
 
@@ -196,19 +196,19 @@ The KMS CLI supports custom HTTP headers for requests to servers protected by au
 # Syntax: headername1=headervalue1 headername2=headervalue2
 export KMS_CUSTOM_HEADERS="Access-Client-Id=your-client-id Access-Client-Secret=your-client-secret"
 
-# Execute Hanzo KMS commands after setting the environment variable
+# Execute KMS commands after setting the environment variable
 hanzo-kms secrets
 ```
 
-This functionality enables secure interaction with Hanzo KMS instances that require specific authentication headers.
+This functionality enables secure interaction with KMS instances that require specific authentication headers.
 
 </Tip>
 
 ## History
 
-Your terminal keeps a history with the commands you run. When you create Hanzo KMS secrets directly from your terminal, they'll stay there for a while.
+Your terminal keeps a history with the commands you run. When you create KMS secrets directly from your terminal, they'll stay there for a while.
 
-For security and privacy concerns, we recommend you to configure your terminal to ignore those specific Hanzo KMS commands.
+For security and privacy concerns, we recommend you to configure your terminal to ignore those specific KMS commands.
 
 <Accordion title="Ignore commands">
   <Tabs>
@@ -242,16 +242,16 @@ For security and privacy concerns, we recommend you to configure your terminal t
 ## FAQ
 
 <AccordionGroup>
-  <Accordion title="Can I connect the CLI to my self-hosted or non-US Cloud Hanzo KMS instance?">
-    Yes. The CLI is set to connect to Hanzo KMS US Cloud by default, but if you're using EU Cloud or a self-hosted instance you can configure the domain for **all CLI commands**.
+  <Accordion title="Can I connect the CLI to my self-hosted or non-US Cloud KMS instance?">
+    Yes. The CLI is set to connect to KMS US Cloud by default, but if you're using EU Cloud or a self-hosted instance you can configure the domain for **all CLI commands**.
 
     #### Method 1: Use the updated CLI (v0.4.0+)
 
-    Beginning with CLI version V0.4.0, you can choose between logging in through Hanzo KMS US Cloud, EU Cloud, or your own self-hosted instance. Simply execute the `hanzo-kms login` command and follow the on-screen instructions.
+    Beginning with CLI version V0.4.0, you can choose between logging in through KMS US Cloud, EU Cloud, or your own self-hosted instance. Simply execute the `hanzo-kms login` command and follow the on-screen instructions.
 
      #### Method 2: Export environment variable
 
-    You can point the CLI to the self-hosted Hanzo KMS instance by exporting the environment variable `KMS_API_URL` in your terminal.
+    You can point the CLI to the self-hosted KMS instance by exporting the environment variable `KMS_API_URL` in your terminal.
 
     <Tabs>
     <Tab title="Linux/MacOs">
@@ -304,7 +304,7 @@ For security and privacy concerns, we recommend you to configure your terminal t
 
   </Accordion>
   <Accordion title="Can I use the CLI with service tokens?">
-    To use Hanzo KMS for non local development scenarios, please create a service token. The service token will allow you to authenticate and interact with Hanzo KMS. Once you have created a service token with the required permissions, you’ll need to feed the token to the CLI.
+    To use KMS for non local development scenarios, please create a service token. The service token will allow you to authenticate and interact with KMS. Once you have created a service token with the required permissions, you’ll need to feed the token to the CLI.
 
     ```bash
       hanzo-kms export --token=<service-token>

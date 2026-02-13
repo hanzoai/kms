@@ -1,11 +1,11 @@
 ---
 title: "Terraform Cloud Connection"
-description: "Learn how to configure a Terraform Cloud Connection for Hanzo KMS."
+description: "Learn how to configure a Terraform Cloud Connection for KMS."
 ---
 
-Hanzo KMS supports connecting to Terraform Cloud using a service user.
+KMS supports connecting to Terraform Cloud using a service user.
 
-## Setup Terraform Cloud Connection in Hanzo KMS
+## Setup Terraform Cloud Connection in KMS
 
 <Steps>
     <Step title="Move to Account Settings on Terraform Cloud">
@@ -17,7 +17,7 @@ Hanzo KMS supports connecting to Terraform Cloud using a service user.
         ![Terraform Cloud Tokens Tab](/images/app-connections/terraform-cloud/terraform-cloud-tokens-tab.png)
     </Step>
     <Step title="Create the API Token">
-        Create the API token to be used by Hanzo KMS.
+        Create the API token to be used by KMS.
         <Note>
             If you configure an expiry date for your API token you will need to manually rotate to a new token prior to expiration to avoid integration downtime.
         </Note>
@@ -27,9 +27,9 @@ Hanzo KMS supports connecting to Terraform Cloud using a service user.
         The API token will be displayed after creating it. Save the token in a secure location for later use in the following steps.
         ![Terraform Cloud Copy API Token](/images/app-connections/terraform-cloud/terraform-cloud-copy-api-token.png)
     </Step>
-    <Step title="Add Terraform Cloud Connection in Hanzo KMS">
+    <Step title="Add Terraform Cloud Connection in KMS">
         <Tabs>
-            <Tab title="Hanzo KMS UI">
+            <Tab title="KMS UI">
                 1. Navigate to the **Integrations** tab in the desired project, then select **App Connections**.
                 ![App Connections Tab](/images/app-connections/general/add-connection.png)
                 2. Select the **Terraform Cloud Connection** option from the connection options modal.

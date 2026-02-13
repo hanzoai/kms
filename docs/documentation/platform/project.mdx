@@ -1,17 +1,17 @@
 ---
 title: "Overview"
-description: "Learn more and understand the concept of Hanzo KMS projects."
+description: "Learn more and understand the concept of KMS projects."
 ---
 
 ## Projects
 
-A project defines a specific scope of work for a given product line in Hanzo KMS.
+A project defines a specific scope of work for a given product line in KMS.
 
 Projects are created within an [organization](/documentation/platform/organization), and an organization can contain multiple projects across different product types.
 
 ## Project Types
 
-Hanzo KMS supports project types, each representing a different security product with its own dashboard, workflows, and capabilities.
+KMS supports project types, each representing a different security product with its own dashboard, workflows, and capabilities.
 
 ![project types](/images/platform/project/project-types.png)
 
@@ -19,9 +19,9 @@ The supported project types are:
 
 - [Secrets Management](/documentation/platform/secrets-mgmt/overview): Securely store, access, and distribute secrets across environments with fine-grained controls, automatic rotation, and audit logging.
 - [Secrets Scanning](/documentation/platform/secret-scanning/overview): Detect hardcoded secrets in code, CI pipelines, and infrastructure—integrated with GitHub, GitLab, Bitbucket, and more.
-- [Hanzo KMS PKI](/documentation/platform/pki/overview): Issue and manage X.509 certificates using protocols like EST, with support for internal and external CAs.
-- [Hanzo KMS KMS](/documentation/platform/kms/overview): Encrypt and decrypt data using centrally managed keys with enforced access policies and full audit visibility.
-- [Hanzo KMS PAM](/documentation/platform/pam/overview): Manage access to resources like databases, servers, and accounts with policy-based controls and approvals.
+- [KMS PKI](/documentation/platform/pki/overview): Issue and manage X.509 certificates using protocols like EST, with support for internal and external CAs.
+- [KMS KMS](/documentation/platform/kms/overview): Encrypt and decrypt data using centrally managed keys with enforced access policies and full audit visibility.
+- [KMS PAM](/documentation/platform/pam/overview): Manage access to resources like databases, servers, and accounts with policy-based controls and approvals.
 
 ## Roles and Access Control
 
@@ -29,7 +29,7 @@ The supported project types are:
 
 Project access is strictly scoped: only members of a project can view or manage its resources. If someone needs access but isn’t part of the project, they can submit an access request.
 
-Each project in Hanzo KMS has its own [access control model](/documentation/platform/access-controls/role-based-access-controls#project-level-access-controls), distinct from [organization-level access control](/documentation/platform/access-controls/role-based-access-controls#organization-level-access-controls). While organization roles govern broader administrative access, project-level roles control what users, groups, and machine identities can do within the boundaries of a specific project—such as managing secrets, issuing certificates, or configuring PAM access.
+Each project in KMS has its own [access control model](/documentation/platform/access-controls/role-based-access-controls#project-level-access-controls), distinct from [organization-level access control](/documentation/platform/access-controls/role-based-access-controls#organization-level-access-controls). While organization roles govern broader administrative access, project-level roles control what users, groups, and machine identities can do within the boundaries of a specific project—such as managing secrets, issuing certificates, or configuring PAM access.
 
 Depending on the project type (e.g. Secrets Management, PKI, PAM), project-level access control supports advanced features like [temporary access](/documentation/platform/access-controls/temporary-access), [access requests](/documentation/platform/access-controls/access-requests), and [additional privileges](/documentation/platform/access-controls/additional-privileges).
 
@@ -39,7 +39,7 @@ To learn more about how permissions work in detail, refer to the [access control
 
 ## Audit Logs
 
-Hanzo KMS provides [audit logging](/documentation/platform/audit-logs) at the project level to help teams monitor activity and maintain accountability within a specific project. These logs capture all relevant events—such as secret access, certificate issuance, and PAM activity—that occur within the boundaries of that project.
+KMS provides [audit logging](/documentation/platform/audit-logs) at the project level to help teams monitor activity and maintain accountability within a specific project. These logs capture all relevant events—such as secret access, certificate issuance, and PAM activity—that occur within the boundaries of that project.
 
 Unlike the organization-level audit view, which aggregates logs across all projects in one centralized interface, the project-level audit view is scoped to a single project. This enables relevant project admins and contributors to review activity relevant to their work without having broader access to audit logs in other projects that they are not part of.
 

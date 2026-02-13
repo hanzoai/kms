@@ -4,20 +4,20 @@ title: "Request a Certificate via API"
 
 import RequestCertSetup from "/snippets/documentation/platform/pki/guides/request-cert-setup.mdx";
 
-The [API enrollment method](/documentation/platform/pki/enrollment-methods/api) lets you programmatically request TLS and other X.509 certificates from Hanzo KMS.
+The [API enrollment method](/documentation/platform/pki/enrollment-methods/api) lets you programmatically request TLS and other X.509 certificates from KMS.
 
-This is the most flexible way to request certificates from Hanzo KMS but requires you to implement certificate request and renewal logic on your own.
+This is the most flexible way to request certificates from KMS but requires you to implement certificate request and renewal logic on your own.
 For a more automated way to request certificates, we highly recommend you check out the guide for requesting certificates using the [KMS Agent](/integrations/platforms/certificate-agent) [here](/documentation/platform/pki/guides/request-cert-agent).
 
 ## Diagram
 
-The following sequence diagram illustrates the certificate issuance workflow for requesting a certificate via API from Hanzo KMS.
+The following sequence diagram illustrates the certificate issuance workflow for requesting a certificate via API from KMS.
 
 ```mermaid
 sequenceDiagram
   autonumber
   participant Client as Client
-  participant Infis as Hanzo KMS
+  participant Infis as KMS
   participant CA as CA<br/>(Internal or External)
 
   Client->>Infis: POST /certificate<br/>(profileId, conditional subject/SANs, ttl,<br/>key usages, conditional CSR, etc.)
@@ -37,7 +37,7 @@ sequenceDiagram
 
 ## Guide
 
-In the following steps, we explore an end-to-end workflow for requesting a certificate via API from Hanzo KMS.
+In the following steps, we explore an end-to-end workflow for requesting a certificate via API from KMS.
 
 <Steps>
   <RequestCertSetup />
@@ -67,7 +67,7 @@ In the following steps, we explore an end-to-end workflow for requesting a certi
 
     <Note>
         We recommend reading the guide [here](/documentation/platform/pki/certificates/certificates#guide-to-renewing-certificates) to learn more about all the ways to renew a certificate
-        with Hanzo KMS including [server-driven certificate renewal](/documentation/platform/pki/certificates/certificates#server-driven-certificate-renewal).
+        with KMS including [server-driven certificate renewal](/documentation/platform/pki/certificates/certificates#server-driven-certificate-renewal).
     </Note>
 
   </Step>
@@ -76,4 +76,4 @@ In the following steps, we explore an end-to-end workflow for requesting a certi
 Note that depending on your environment and infrastructure use-case, you may wish to use a different [enrollment method](/documentation/platform/pki/enrollment-methods/overview) to request certificates.
 
 For more automated certificate management, you may wish to request certificates using a client that can monitor expiring certificates and request renewals for you.
-For example, you can install the KMS Agent on a VM and have it request and renew certificates for you or use an [ACME client](https://letsencrypt.org/docs/client-options/) paired with Hanzo KMS's [ACME enrollment method](/documentation/platform/pki/enrollment-methods/acme).
+For example, you can install the KMS Agent on a VM and have it request and renew certificates for you or use an [ACME client](https://letsencrypt.org/docs/client-options/) paired with KMS's [ACME enrollment method](/documentation/platform/pki/enrollment-methods/acme).

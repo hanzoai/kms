@@ -396,7 +396,7 @@ export const ShareSecretForm = ({
                     <FormControl
                       label="Authorized Emails"
                       isOptional
-                      helperText="Recipients must have an Hanzo KMS account to verify identity"
+                      helperText="Recipients must have an KMS account to verify identity"
                       tooltipText={
                         <>
                           <p>
@@ -404,7 +404,7 @@ export const ShareSecretForm = ({
                             only be accessible to those links.
                           </p>
                           <p className="mt-2">
-                            Recipients must have an Hanzo KMS account to verify their identity.
+                            Recipients must have an KMS account to verify their identity.
                           </p>
                         </>
                       }

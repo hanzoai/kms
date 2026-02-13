@@ -1,19 +1,19 @@
-# Hanzo KMS Helm Charts
+# KMS Helm Charts
 
-Welcome to Hanzo KMS Helm Charts repository! Find instructions below to setup and install our charts.
+Welcome to KMS Helm Charts repository! Find instructions below to setup and install our charts.
 
 ## Installation
 
 ```sh
-# Add the Hanzo KMS repository
+# Add the KMS repository
 helm repo add kms 'https://dl.cloudsmith.io/public/hanzoai/kms-helm-charts/helm/charts/' && helm repo update
 
-# Install Hanzo KMS (default values)
+# Install KMS (default values)
 helm upgrade --install --atomic \
   -n kms --create-namespace \
   kms ghcr.io/hanzoai/kms
   
-# Install Hanzo KMS Secrets Operator (default values)
+# Install KMS Secrets Operator (default values)
 helm upgrade --install --atomic \
   -n kms --create-namespace \
   kms-secrets-operator kms/secrets-operator

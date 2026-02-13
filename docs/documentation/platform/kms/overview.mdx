@@ -1,14 +1,14 @@
 ---
 title: "Key Management Service (KMS)"
 sidebarTitle: "Overview"
-description: "Learn how to manage and use cryptographic keys with Hanzo KMS."
+description: "Learn how to manage and use cryptographic keys with KMS."
 ---
 
 ## Concept
 
-Hanzo KMS can be used as a Key Management System (KMS), referred to as Hanzo KMS KMS, to centralize management of keys to be used for cryptographic operations like encryption/decryption.
+KMS can be used as a Key Management System (KMS), referred to as KMS KMS, to centralize management of keys to be used for cryptographic operations like encryption/decryption.
 
-By default your Hanzo KMS data such as projects and the data within them are encrypted at rest using Hanzo KMS's own KMS. This ensures that your data is secure and protected from unauthorized access.
+By default your KMS data such as projects and the data within them are encrypted at rest using KMS's own KMS. This ensures that your data is secure and protected from unauthorized access.
 
 If you are on-premise, your KMS root key will be created at random with the `ROOT_ENCRYPTION_KEY` environment variable. You can also use a Hardware Security Module (HSM), to create the root key. Read more about [HSM](/documentation/platform/kms/hsm-integration). 
 
@@ -19,14 +19,14 @@ If you are on-premise, your KMS root key will be created at random with the `ROO
 
 ## Workflow
 
-The typical workflow for using Hanzo KMS KMS consists of the following steps:
+The typical workflow for using KMS KMS consists of the following steps:
 
 1. Creating a KMS key. As part of this step, you specify a name for the key and the encryption algorithm meant to be used for it (e.g. `AES-GCM-128`, `AES-GCM-256`).
-2. Encryption: To encrypt data, you would make a request to the Hanzo KMS KMS API endpoint, specifying the base64-encoded plaintext and the intended key to use for encryption; the API would return the base64-encoded ciphertext.
-3. Decryption: To decrypt data, you would make a request to the Hanzo KMS KMS API endpoint, specifying the base64-encoded ciphertext and the intended key to use for decryption; the API would return the base64-encoded plaintext.
+2. Encryption: To encrypt data, you would make a request to the KMS KMS API endpoint, specifying the base64-encoded plaintext and the intended key to use for encryption; the API would return the base64-encoded ciphertext.
+3. Decryption: To decrypt data, you would make a request to the KMS KMS API endpoint, specifying the base64-encoded ciphertext and the intended key to use for decryption; the API would return the base64-encoded plaintext.
 
 <Note>
-  Note that this workflow can be executed via the Hanzo KMS UI or manually such
+  Note that this workflow can be executed via the KMS UI or manually such
   as via API.
 </Note>
 
@@ -37,7 +37,7 @@ The typical workflow for using Hanzo KMS KMS consists of the following steps:
 In the following steps, we explore how to generate a key and use it to encrypt data.
 
 <Tabs>
-    <Tab title="Hanzo KMS UI">
+    <Tab title="KMS UI">
         <Steps>
             <Step title="Creating a KMS key">
                 Navigate to Project > Key Management and tap on the **Add Key** button.
@@ -142,10 +142,10 @@ In the following steps, we explore how to generate a key and use it to encrypt d
 
 ### Guide to Decrypting Data
 
-In the following steps, we explore how to use decrypt data using an existing key in Hanzo KMS KMS.
+In the following steps, we explore how to use decrypt data using an existing key in KMS KMS.
 
 <Tabs>
-    <Tab title="Hanzo KMS UI">
+    <Tab title="KMS UI">
         <Steps>
             <Step title="Accessing your key">
                 Navigate to Project > Key Management and open the options menu for the key used to encrypt the data
@@ -203,7 +203,7 @@ In the following steps, we explore how to use decrypt data using an existing key
 In the following steps, we explore how to generate a key and use it to sign data.
 
 <Tabs>
-    <Tab title="Hanzo KMS UI">
+    <Tab title="KMS UI">
         <Steps>
             <Step title="Creating a KMS key">
                 Navigate to Project > Key Management and tap on the **Add Key** button.
@@ -294,10 +294,10 @@ In the following steps, we explore how to generate a key and use it to sign data
 
 ### Guide to Verifying Data
 
-In the following steps, we explore how to verify data using an existing key in Hanzo KMS KMS.
+In the following steps, we explore how to verify data using an existing key in KMS KMS.
 
 <Tabs>
-    <Tab title="Hanzo KMS UI">
+    <Tab title="KMS UI">
         <Steps>
             <Step title="Accessing your key">
                 Navigate to Project > Key Management and open the options menu for the key used to sign the data
@@ -357,16 +357,16 @@ In the following steps, we explore how to verify data using an existing key in H
 ## FAQ
 
 <AccordionGroup>
-  <Accordion title="Is my data stored in Hanzo KMS KMS?">
-    No. Hanzo KMS's KMS only provides cryptographic services and does not store
+  <Accordion title="Is my data stored in KMS KMS?">
+    No. KMS's KMS only provides cryptographic services and does not store
     any encrypted or decrypted data.
   </Accordion>
-  <Accordion title="Can key material be accessed outside of Hanzo KMS KMS?">
-    No. Hanzo KMS's KMS will never expose your keys, encrypted or decrypted, to
+  <Accordion title="Can key material be accessed outside of KMS KMS?">
+    No. KMS's KMS will never expose your keys, encrypted or decrypted, to
     external sources.
   </Accordion>
-  <Accordion title="What algorithms does Hanzo KMS KMS support?">
-    Currently Hanzo KMS supports 4 different key algorithms with different purposes:
+  <Accordion title="What algorithms does KMS KMS support?">
+    Currently KMS supports 4 different key algorithms with different purposes:
 
     - `RSA_4096`: For signing and verifying data.
     - `ECC_NIST_P256`: For signing and verifying data.
@@ -376,8 +376,8 @@ In the following steps, we explore how to verify data using an existing key in H
 
     We anticipate to further expand our supported algorithms and support cryptographic operations in the future.
   </Accordion>
-  <Accordion title="How do I sign and verify a digest using the Hanzo KMS KMS?">
-    To sign and verify a digest using the Hanzo KMS KMS, you can use the `Sign` and `Verify` endpoints respectively.
+  <Accordion title="How do I sign and verify a digest using the KMS KMS?">
+    To sign and verify a digest using the KMS KMS, you can use the `Sign` and `Verify` endpoints respectively.
     You will need to pass `"isDigest": true` in the request body to indicate that you are signing or verifying a digest.
     The data you are signing or verifying will need to be a base64 encoded digest of the data you wish to sign or verify.
     It's important that the digest is created using the same hashing algorithm as the signing algorithm. As an example, you would create the digest with `SHA512` if you are using the `RSASSA_PKCS1_V1_5_SHA_512` signing algorithm.

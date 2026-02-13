@@ -161,7 +161,7 @@ export const certificateEstV3ServiceFactory = ({
 
     if (result.status === CertificateRequestStatus.PENDING_APPROVAL) {
       throw new BadRequestError({
-        message: `Certificate request requires approval. Certificate Request ID: ${result.certificateRequestId}. Manage the approval request in the Hanzo KMS UI.`
+        message: `Certificate request requires approval. Certificate Request ID: ${result.certificateRequestId}. Manage the approval request in the KMS UI.`
       });
     }
 
@@ -297,7 +297,7 @@ export const certificateEstV3ServiceFactory = ({
 
     if (result.status === CertificateRequestStatus.PENDING_APPROVAL) {
       throw new BadRequestError({
-        message: `Certificate re-enrollment request requires approval. Certificate Request ID: ${result.certificateRequestId}. Manage the approval request in the Hanzo KMS UI.`
+        message: `Certificate re-enrollment request requires approval. Certificate Request ID: ${result.certificateRequestId}. Manage the approval request in the KMS UI.`
       });
     }
 

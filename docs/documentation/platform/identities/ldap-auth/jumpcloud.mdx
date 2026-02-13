@@ -1,16 +1,16 @@
 ---
 title: JumpCloud
-description: "Learn how to authenticate with Hanzo KMS using LDAP with JumpCloud."
+description: "Learn how to authenticate with KMS using LDAP with JumpCloud."
 ---
 
-**LDAP Auth** is an LDAP based authentication method that allows you to authenticate with Hanzo KMS using a machine identity configured with an [LDAP](https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol) directory.
+**LDAP Auth** is an LDAP based authentication method that allows you to authenticate with KMS using a machine identity configured with an [LDAP](https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol) directory.
 
 ## Guide
 <Steps>
 
   <Step title="Prepare LDAP in JumpCloud">
     In JumpCloud, head to USER MANAGEMENT > Users and create a new user via the Manual user entry option.
-    This user will be used as a privileged service account to facilitate Hanzo KMS's ability to bind/search the LDAP directory.
+    This user will be used as a privileged service account to facilitate KMS's ability to bind/search the LDAP directory.
 
     Next after creating the user, under User Security Settings and Permissions > Permission Settings, check the box next to Enable as LDAP Bind DN.
 

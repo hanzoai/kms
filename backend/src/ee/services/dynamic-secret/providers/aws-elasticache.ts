@@ -51,7 +51,7 @@ const ElastiCacheUserManager = (credentials: TBasicAWSCredentials, region: strin
 
   const kmsGroup = "kms-managed-group-elasticache";
 
-  const ensureHanzo KMSGroupExists = async (clusterName: string) => {
+  const ensureKmsGroupExists = async (clusterName: string) => {
     const replicationGroups = await elastiCache.send(new DescribeUserGroupsCommand());
 
     const existingGroup = replicationGroups.UserGroups?.find((group) => group.UserGroupId === kmsGroup);
@@ -90,7 +90,7 @@ const ElastiCacheUserManager = (credentials: TBasicAWSCredentials, region: strin
     }
   };
 
-  const $addUserToHanzo KMSGroup = async (userId: string) => {
+  const $addUserToKmsGroup = async (userId: string) => {
     // figure out if the default user is already in the group, if it is, then we shouldn't add it again
 
     const addUserToGroupCommand = new ModifyUserGroupCommand({
@@ -103,10 +103,10 @@ const ElastiCacheUserManager = (credentials: TBasicAWSCredentials, region: strin
   };
 
   const createUser = async (creationInput: TCreateElastiCacheUserInput, clusterName: string) => {
-    await ensureHanzo KMSGroupExists(clusterName);
+    await ensureKmsGroupExists(clusterName);
 
     await elastiCache.send(new CreateUserCommand(creationInput)); // First create the user
-    await $addUserToHanzo KMSGroup(creationInput.UserId); // Then add the user to the group. We know the group is already a part of the cluster because of ensureHanzo KMSGroupExists()
+    await $addUserToKmsGroup(creationInput.UserId); // Then add the user to the group. We know the group is already a part of the cluster because of ensureKmsGroupExists()
 
     return {
       userId: creationInput.UserId,

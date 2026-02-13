@@ -37,7 +37,7 @@ export const OrgSSOSection = (): JSX.Element => {
 
     if (!subscription?.samlSSO) {
       handlePopUpOpen("upgradePlan", {
-        text: "Your current plan does not include access to SAML SSO. To unlock this feature, please upgrade to Hanzo KMS Pro plan."
+        text: "Your current plan does not include access to SAML SSO. To unlock this feature, please upgrade to KMS Pro plan."
       });
       return;
     }
@@ -59,7 +59,7 @@ export const OrgSSOSection = (): JSX.Element => {
     if (!subscription?.samlSSO || !subscription?.groups) {
       handlePopUpOpen("upgradePlan", {
         isEnterpriseFeature: true,
-        text: "Your current plan does not include access to SAML group mapping. To unlock this feature, please upgrade to Hanzo KMS Enterprise plan."
+        text: "Your current plan does not include access to SAML group mapping. To unlock this feature, please upgrade to KMS Enterprise plan."
       });
       return;
     }
@@ -94,7 +94,7 @@ export const OrgSSOSection = (): JSX.Element => {
         handlePopUpOpen("addSSO");
       } else {
         handlePopUpOpen("upgradePlan", {
-          text: "Your current plan does not include access to SAML SSO. To unlock this feature, please upgrade to Hanzo KMS Pro plan."
+          text: "Your current plan does not include access to SAML SSO. To unlock this feature, please upgrade to KMS Pro plan."
         });
       }
     } catch (err) {
@@ -153,7 +153,7 @@ export const OrgSSOSection = (): JSX.Element => {
           )}
         </div>
         <p className="text-sm text-mineshaft-300">
-          Allow members to authenticate into Hanzo KMS with SAML
+          Allow members to authenticate into KMS with SAML
         </p>
       </div>
       {data && GROUP_SYNC_SUPPORTED_PROVIDERS.includes(data.authProvider) && (
@@ -166,9 +166,9 @@ export const OrgSSOSection = (): JSX.Element => {
                 content={
                   <>
                     <p>
-                      When this feature is enabled, Hanzo KMS will automatically sync group
-                      memberships between the SAML provider and Hanzo KMS. Users will be added to
-                      Hanzo KMS groups that match their SAML group names.
+                      When this feature is enabled, KMS will automatically sync group
+                      memberships between the SAML provider and KMS. Users will be added to
+                      KMS groups that match their SAML group names.
                     </p>
                     <p className="mt-4">
                       To use this feature you must include group claims in the SAML response as a
@@ -184,10 +184,10 @@ export const OrgSSOSection = (): JSX.Element => {
                     </a>
                     <p className="mt-4 text-yellow">
                       <FontAwesomeIcon className="mr-1" icon={faWarning} />
-                      Group membership changes in the SAML provider only sync with Hanzo KMS when a
+                      Group membership changes in the SAML provider only sync with KMS when a
                       user logs in via SAML. For example, if you remove a user from a group in the
-                      SAML provider, this change will not be reflected in Hanzo KMS until their next
-                      SAML login. To ensure this behavior, Hanzo KMS recommends enabling Enforce
+                      SAML provider, this change will not be reflected in KMS until their next
+                      SAML login. To ensure this behavior, KMS recommends enabling Enforce
                       SAML SSO.
                     </p>
                   </>
@@ -212,7 +212,7 @@ export const OrgSSOSection = (): JSX.Element => {
             </OrgPermissionCan>
           </div>
           <p className="text-sm text-mineshaft-300">
-            Hanzo KMS will manage user group memberships based on the SAML provider
+            KMS will manage user group memberships based on the SAML provider
           </p>
         </div>
       )}

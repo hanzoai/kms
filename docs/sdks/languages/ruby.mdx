@@ -1,10 +1,10 @@
 ---
-title: "Hanzo KMS Ruby SDK"
+title: "KMS Ruby SDK"
 sidebarTitle: "Ruby"
 icon: "/images/sdks/languages/ruby.svg"
 ---
 
-If you're working with Ruby, the official Hanzo KMS Ruby SDK package is the easiest way to fetch and work with secrets for your application.
+If you're working with Ruby, the official KMS Ruby SDK package is the easiest way to fetch and work with secrets for your application.
 
 - [Ruby Package](https://rubygems.org/gems/kms-sdk)
 - [Github Repository](https://github.com/kms/sdk)
@@ -12,7 +12,7 @@ If you're working with Ruby, the official Hanzo KMS Ruby SDK package is the easi
 <Warning>
   **Deprecation Notice**
 
-  All versions prior to **2.3.9** should be considered deprecated and are no longer supported by Hanzo KMS. Please update to version **2.3.9** or newer. All changes are fully backwards compatible with older versions.
+  All versions prior to **2.3.9** should be considered deprecated and are no longer supported by KMS. Please update to version **2.3.9** or newer. All changes are fully backwards compatible with older versions.
 </Warning>
 
 ## Basic Usage
@@ -20,8 +20,8 @@ If you're working with Ruby, the official Hanzo KMS Ruby SDK package is the easi
 ```ruby
 require 'kms-sdk'
 
-# 1. Create the Hanzo KMS client
-kms = Hanzo KMSSDK::Hanzo KMSClient.new('https://kms.hanzo.ai')
+# 1. Create the KMS client
+kms = KMSSDK::KMSClient.new('https://kms.hanzo.ai')
 
 kms.auth.universal_auth(client_id: 'YOUR_CLIENT_ID', client_secret: 'YOUR_CLIENT_SECRET')
 
@@ -33,7 +33,7 @@ test_secret = kms.secrets.get(
 puts "Secret: #{single_test_secret}"
 ```
 
-This example demonstrates how to use the Hanzo KMS Ruby SDK in a simple Ruby application. The application retrieves a secret named `API_KEY` from the `dev` environment of the `YOUR_PROJECT_ID` project.
+This example demonstrates how to use the KMS Ruby SDK in a simple Ruby application. The application retrieves a secret named `API_KEY` from the `dev` environment of the `YOUR_PROJECT_ID` project.
 
 <Warning>
     We do not recommend hardcoding your [Machine Identity Tokens](/documentation/platform/identities/machine-identities). Setting it as an environment variable would be best.
@@ -49,7 +49,7 @@ $ gem install kms-sdk
 Import the SDK and create a client instance.
 
 ```ruby
-kms = Hanzo KMSSDK::Hanzo KMSClient.new('https://kms.hanzo.ai') # Optional parameter, default is https://api.kms.hanzo.ai
+kms = KMSSDK::KMSClient.new('https://kms.hanzo.ai') # Optional parameter, default is https://api.kms.hanzo.ai
 ```
 
 ### Client parameters
@@ -57,7 +57,7 @@ kms = Hanzo KMSSDK::Hanzo KMSClient.new('https://kms.hanzo.ai') # Optional param
 <ParamField query="options" type="object">
     <Expandable title="properties">
         <ParamField query="Site URL" type="string" optional>
-            The URL of the Hanzo KMS API. Default is `https://api.kms.hanzo.ai`.
+            The URL of the KMS API. Default is `https://api.kms.hanzo.ai`.
         </ParamField>
 
         <ParamField query="Cache TTL" type="string" required>
@@ -94,7 +94,7 @@ kms.auth.universal_auth(client_id: 'your-client-id', client_secret: 'your-client
 
 Call `.auth.gcp_id_token_auth()` with empty arguments to use the following environment variables:
 
-- `KMS_GCP_AUTH_IDENTITY_ID` - Your Hanzo KMS Machine Identity ID.
+- `KMS_GCP_AUTH_IDENTITY_ID` - Your KMS Machine Identity ID.
 
 **Using the SDK directly**
 ```ruby
@@ -107,7 +107,7 @@ kms.auth.gcp_id_token_auth(identity_id: 'MACHINE_IDENTITY_ID')
 
 Call `.auth.gcp_iam_auth()` with empty arguments to use the following environment variables:
 
-- `KMS_GCP_IAM_AUTH_IDENTITY_ID` - Your Hanzo KMS Machine Identity ID.
+- `KMS_GCP_IAM_AUTH_IDENTITY_ID` - Your KMS Machine Identity ID.
 - `KMS_GCP_IAM_SERVICE_ACCOUNT_KEY_FILE_PATH` - The path to your GCP service account key file.
 
 **Using the SDK directly**
@@ -125,7 +125,7 @@ kms.auth.gcp_iam_auth(identity_id: 'MACHINE_IDENTITY_ID', service_account_key_fi
 
 Call `.auth.aws_iam_auth()` with empty arguments to use the following environment variables:
 
-- `KMS_AWS_IAM_AUTH_IDENTITY_ID` - Your Hanzo KMS Machine Identity ID.
+- `KMS_AWS_IAM_AUTH_IDENTITY_ID` - Your KMS Machine Identity ID.
 
 **Using the SDK directly**
 ```ruby
@@ -143,7 +143,7 @@ kms.auth.aws_iam_auth(identity_id: 'MACHINE_IDENTITY_ID')
 
 Call `.auth.azure_auth()` with empty arguments to use the following environment variables:
 
-- `KMS_AZURE_AUTH_IDENTITY_ID` - Your Hanzo KMS Machine Identity ID.
+- `KMS_AZURE_AUTH_IDENTITY_ID` - Your KMS Machine Identity ID.
 
 **Using the SDK directly**
 ```ruby
@@ -160,7 +160,7 @@ kms.auth.azure_auth(identity_id: 'MACHINE_IDENTITY_ID')
 
 Call `.auth.kubernetes_auth()` with empty arguments to use the following environment variables:
 
-- `KMS_KUBERNETES_IDENTITY_ID` - Your Hanzo KMS Machine Identity ID.
+- `KMS_KUBERNETES_IDENTITY_ID` - Your KMS Machine Identity ID.
 - `KMS_KUBERNETES_SERVICE_ACCOUNT_TOKEN_PATH_ENV_NAME` - The environment variable name that contains the path to the service account token. This is optional and will default to `/var/run/secrets/kubernetes.io/serviceaccount/token`.
 
 **Using the SDK directly**
@@ -181,7 +181,7 @@ secrets = kms.secrets.list(
 )
 ```
 
-Retrieve all secrets within the Hanzo KMS project and environment that client is connected to
+Retrieve all secrets within the KMS project and environment that client is connected to
 
 #### Parameters
 
@@ -228,7 +228,7 @@ secret = kms.secrets.get(
 )
 ```
 
-Retrieve a secret from Hanzo KMS.
+Retrieve a secret from KMS.
 
 By default, `Secrets().Retrieve()` fetches and returns a shared secret.
 
@@ -265,7 +265,7 @@ new_secret = kms.secrets.create(
 )
 ```
 
-Create a new secret in Hanzo KMS.
+Create a new secret in KMS.
 
 #### Parameters
 
@@ -306,7 +306,7 @@ updated_secret = kms.secrets.update(
 )
 ```
 
-Update an existing secret in Hanzo KMS.
+Update an existing secret in KMS.
 
 #### Parameters
 
@@ -346,7 +346,7 @@ deleted_secret = kms.secrets.delete(
 )
 ```
 
-Delete a secret in Hanzo KMS.
+Delete a secret in KMS.
 
 #### Parameters
 

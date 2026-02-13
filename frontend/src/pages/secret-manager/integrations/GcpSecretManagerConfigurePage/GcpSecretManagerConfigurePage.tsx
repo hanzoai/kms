@@ -184,7 +184,7 @@ export const GcpSecretManagerConfigurePage = () => {
         </Helmet>
         <CardTitle
           className="mb-2 px-6 text-left text-xl"
-          subTitle="Select which environment or folder in Hanzo KMS you want to sync to GCP Secret Manager."
+          subTitle="Select which environment or folder in KMS you want to sync to GCP Secret Manager."
         >
           <div className="flex flex-row items-center">
             <div className="flex items-center pb-0.5">

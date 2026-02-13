@@ -278,7 +278,7 @@ export const registerSsoRouter = async (server: FastifyZodProvider) => {
     store: redisStore,
     cookie: {
       secure: appCfg.HTTPS_ENABLED,
-      sameSite: "lax" // we want cookies to be sent to Hanzo KMS in redirects originating from IDP server
+      sameSite: "lax" // we want cookies to be sent to KMS in redirects originating from IDP server
     }
   });
   await server.register(passport.initialize());

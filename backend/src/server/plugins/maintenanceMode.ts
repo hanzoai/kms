@@ -10,7 +10,7 @@ export const maintenanceMode = fp(async (fastify) => {
       if (req.url === "/api/v1/auth/universal-auth/login" && req.method === "POST") return;
       if (req.url === "/api/v1/auth/token/renew" && req.method === "POST") return;
       if (req.url !== "/api/v1/auth/checkAuth" && req.method !== "GET") {
-        throw new Error("Hanzo KMS is in maintenance mode. Please try again later.");
+        throw new Error("KMS is in maintenance mode. Please try again later.");
       }
     }
   });

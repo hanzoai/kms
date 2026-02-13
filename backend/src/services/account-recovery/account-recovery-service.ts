@@ -72,7 +72,7 @@ export const accountRecoveryServiceFactory = ({
         await smtpService.sendMail({
           template: SmtpTemplates.ResetPassword,
           recipients: [email],
-          subjectLine: "Hanzo KMS account recovery",
+          subjectLine: "KMS account recovery",
           substitutions
         });
       }

@@ -71,7 +71,7 @@ export const PkiSyncSelect = ({ onSelect }: Props) => {
                 enterprise && !subscription.enterpriseCertificateSyncs
                   ? handlePopUpOpen("upgradePlan", {
                       isEnterpriseFeature: true,
-                      text: "All Certificate Syncs can be unlocked if you switch to Hanzo KMS Enterprise plan."
+                      text: "All Certificate Syncs can be unlocked if you switch to KMS Enterprise plan."
                     })
                   : onSelect(destination)
               }
@@ -106,7 +106,7 @@ export const PkiSyncSelect = ({ onSelect }: Props) => {
               className="max-w-sm py-4"
               content={
                 <>
-                  <p className="mb-2">Hanzo KMS is constantly adding support for more services.</p>
+                  <p className="mb-2">KMS is constantly adding support for more services.</p>
                   <p>
                     {`If you don't see the third-party
             service you're looking for,`}{" "}

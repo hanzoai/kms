@@ -21,7 +21,7 @@ export const registerTeamCityConnectionRouter = async (server: FastifyZodProvide
     updateSchema: UpdateTeamCityConnectionSchema
   });
 
-  // The following endpoints are for internal Hanzo KMS App use only and not part of the public API
+  // The following endpoints are for internal KMS App use only and not part of the public API
   server.route({
     method: "GET",
     url: `/:connectionId/projects`,

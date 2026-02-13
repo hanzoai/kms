@@ -59,7 +59,7 @@ export const auditLogStreamServiceFactory = ({
     const totalStreams = await auditLogStreamDAL.find({ orgId: actor.orgId });
     if (totalStreams.length >= plan.auditLogStreamLimit) {
       throw new BadRequestError({
-        message: "Failed to create Audit Log Stream: Plan limit reached. Contact Hanzo KMS to increase quota."
+        message: "Failed to create Audit Log Stream: Plan limit reached. Contact KMS to increase quota."
       });
     }
 

@@ -1,16 +1,16 @@
 ---
 title: "Session Recording"
 sidebarTitle: "Session Recording"
-description: "Learn how Hanzo KMS records and stores session activity for auditing and monitoring."
+description: "Learn how KMS records and stores session activity for auditing and monitoring."
 ---
 
-Hanzo KMS PAM provides robust session recording capabilities to help you audit and monitor user activity across your infrastructure.
+KMS PAM provides robust session recording capabilities to help you audit and monitor user activity across your infrastructure.
 
 ## How It Works
 
 When a user initiates a session by accessing an account, a recording of the session begins. The Gateway securely caches all recording data in temporary encrypted files on its local system.
 
-Once the session concludes, the gateway transmits the complete recording to the Hanzo KMS platform for long-term, centralized storage. This asynchronous process ensures that sessions remain operational even if the connection to the Hanzo KMS platform is temporarily lost. After the upload is complete, administrators can search and review the session logs on the Hanzo KMS platform.
+Once the session concludes, the gateway transmits the complete recording to the KMS platform for long-term, centralized storage. This asynchronous process ensures that sessions remain operational even if the connection to the KMS platform is temporarily lost. After the upload is complete, administrators can search and review the session logs on the KMS platform.
 
 ## What's Captured
 
@@ -18,10 +18,10 @@ The content captured during a session depends on the type of resource being acce
 
 <AccordionGroup>
     <Accordion title="Database Sessions">
-        Hanzo KMS captures all queries executed and their corresponding responses, including timestamps for each action.
+        KMS captures all queries executed and their corresponding responses, including timestamps for each action.
     </Accordion>
     <Accordion title="SSH Sessions">
-        Hanzo KMS captures all commands executed and their corresponding responses, including timestamps for each action.
+        KMS captures all commands executed and their corresponding responses, including timestamps for each action.
     </Accordion>
 </AccordionGroup>
 
@@ -55,6 +55,6 @@ You can use the search bar to quickly find relevant information:
         Yes. All session recordings are encrypted at rest by default, ensuring your data is always secure.
     </Accordion>
     <Accordion title="Why aren't recordings streamed in real-time?">
-        Currently, Hanzo KMS uses an asynchronous approach where the gateway records the entire session locally before uploading it. This design makes your PAM sessions more resilient, as they don't depend on a constant, active connection to the Hanzo KMS platform. We may introduce live streaming capabilities in a future release.
+        Currently, KMS uses an asynchronous approach where the gateway records the entire session locally before uploading it. This design makes your PAM sessions more resilient, as they don't depend on a constant, active connection to the KMS platform. We may introduce live streaming capabilities in a future release.
     </Accordion>
 </AccordionGroup>

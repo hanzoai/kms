@@ -13,7 +13,7 @@ export enum VaultMappingType {
   Custom = "custom"
 }
 
-export type Hanzo KMSImportData = {
+export type KmsImportData = {
   projects: Array<{ name: string; id: string }>;
   environments: Array<{ name: string; id: string; projectId: string; envParentId?: string }>;
   folders: Array<{ id: string; name: string; environmentId: string; parentFolderId?: string }>;
@@ -44,8 +44,8 @@ export type TImportVaultDataDTO = {
   gatewayId?: string;
 } & Omit<TOrgPermission, "orgId">;
 
-export type TImportHanzo KMSDataCreate = {
-  data: Hanzo KMSImportData;
+export type TImportKmsDataCreate = {
+  data: KmsImportData;
   actor: ActorType;
   actorId: string;
   actorOrgId: string;

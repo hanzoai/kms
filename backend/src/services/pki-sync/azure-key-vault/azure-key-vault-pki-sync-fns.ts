@@ -35,7 +35,7 @@ const extractCertificateNameFromId = (certificateId: string): string => {
   return certificateId.substring(certificateId.lastIndexOf("/") + 1);
 };
 
-const isHanzo KMSManagedCertificate = (certificateName: string, pkiSync: TPkiSyncWithCredentials): boolean => {
+const isKmsManagedCertificate = (certificateName: string, pkiSync: TPkiSyncWithCredentials): boolean => {
   const syncOptions = pkiSync.syncOptions as
     | { certificateNameSchema?: string; canRemoveCertificates?: boolean }
     | undefined;
@@ -46,7 +46,7 @@ const isHanzo KMSManagedCertificate = (certificateName: string, pkiSync: TPkiSyn
     return matchesCertificateNameSchema(certificateName, environment, certificateNameSchema);
   }
 
-  return certificateName.startsWith("Hanzo KMS-PKI-Sync-");
+  return certificateName.startsWith("KMS-PKI-Sync-");
 };
 
 type TAzureKeyVaultPkiSyncFactoryDeps = {
@@ -446,9 +446,9 @@ export const azureKeyVaultPkiSyncFactory = ({
       });
 
       Object.keys(vaultCertificates).forEach((certificateName) => {
-        const isHanzo KMSManaged = isHanzo KMSManagedCertificate(certificateName, pkiSync);
+        const isKmsManaged = isKmsManagedCertificate(certificateName, pkiSync);
 
-        if (isHanzo KMSManaged) {
+        if (isKmsManaged) {
           const isTrackedInSyncRecords = existingSyncRecords.some(
             (record) => record.externalIdentifier === certificateName
           );

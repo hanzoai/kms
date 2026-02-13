@@ -147,7 +147,7 @@ export const newOrgMembershipUserFactory = ({
       if (emails.length) {
         await smtpService.sendMail({
           template: SmtpTemplates.SubOrgInvite,
-          subjectLine: "Hanzo KMS sub-organization invitation",
+          subjectLine: "KMS sub-organization invitation",
           recipients: emails,
           substitutions: {
             subOrganizationName: orgDetails.slug,
@@ -174,7 +174,7 @@ export const newOrgMembershipUserFactory = ({
 
             await smtpService.sendMail({
               template: SmtpTemplates.OrgInvite,
-              subjectLine: "Hanzo KMS organization invitation",
+              subjectLine: "KMS organization invitation",
               recipients: [el.email],
               substitutions: {
                 inviterFirstName: actorDetails?.firstName,

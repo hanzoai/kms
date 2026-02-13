@@ -1,13 +1,13 @@
 ---
 title: "Terraform"
-description: "How to deploy Hanzo KMS Relay Servers using Terraform"
+description: "How to deploy KMS Relay Servers using Terraform"
 ---
 
-This guide walks you through deploying an Hanzo KMS Relay server using Terraform. Select a provider below for specific instructions.
+This guide walks you through deploying an KMS Relay server using Terraform. Select a provider below for specific instructions.
 
 <Tabs>
 <Tab title="AWS EC2">
-The provided configuration automates the creation of the EC2 instance, sets up the necessary security group rules, and uses a startup script to install and configure the Hanzo KMS Relay service.
+The provided configuration automates the creation of the EC2 instance, sets up the necessary security group rules, and uses a startup script to install and configure the KMS Relay service.
 
 ### Prerequisites
 
@@ -15,11 +15,11 @@ Before you start, make sure you have the following:
 - An AWS account with permissions to create EC2 instances, Security Groups, and Elastic IPs.
 - An existing VPC and Subnet ID in your desired AWS region.
 - The AMI ID for your chosen OS (this guide uses an Ubuntu 22.04 LTS AMI).
-- Credentials for the Hanzo KMS Relay to authenticate with your Hanzo KMS instance. This guide uses a Machine Identity token, but other methods are available. You can find a full list of authentication options [here](/cli/commands/relay#available-authentication-methods).
+- Credentials for the KMS Relay to authenticate with your KMS instance. This guide uses a Machine Identity token, but other methods are available. You can find a full list of authentication options [here](/cli/commands/relay#available-authentication-methods).
 
 ### Terraform Configuration
 
-Here is the complete Terraform configuration to deploy the Hanzo KMS Relay.
+Here is the complete Terraform configuration to deploy the KMS Relay.
 
 ```terraform
 terraform {
@@ -35,13 +35,13 @@ provider "aws" {
   region = "us-west-2" # Change to your desired AWS region
 }
 
-# Security Group for the Hanzo KMS Relay instance
+# Security Group for the KMS Relay instance
 resource "aws_security_group" "kms_relay_sg" {
   name        = "kms-relay-sg"
-  description = "Allows inbound traffic for Hanzo KMS Relay and SSH"
+  description = "Allows inbound traffic for KMS Relay and SSH"
   vpc_id      = "vpc-0c71f9c5709d88d18" # Change to your VPC ID
 
-  # Inbound: Allows the Hanzo KMS platform to securely communicate with the Relay server.
+  # Inbound: Allows the KMS platform to securely communicate with the Relay server.
   ingress {
     from_port   = 8443
     to_port     = 8443
@@ -65,7 +65,7 @@ resource "aws_security_group" "kms_relay_sg" {
     cidr_blocks = ["0.0.0.0/0"] # Restrict this to your IP in production
   }
 
-  # Outbound: Allows the Relay server to make necessary outbound connections to the Hanzo KMS platform.
+  # Outbound: Allows the Relay server to make necessary outbound connections to the KMS platform.
   egress {
     from_port   = 0
     to_port     = 0
@@ -85,7 +85,7 @@ resource "aws_eip" "kms_relay_eip" {
   }
 }
 
-# EC2 instance to run Hanzo KMS Relay
+# EC2 instance to run KMS Relay
 module "kms_relay_instance" {
   source  = "terraform-aws-modules/ec2-instance/aws"
   version = "~> 5.6"
@@ -135,12 +135,12 @@ The provided security group rules are open to the internet (`0.0.0.0/0`) for sim
 ### How to Deploy
 
 1.  **Save the configuration:** Save the code above to a file named `main.tf`.
-2.  **Customize values:** Update the placeholder values in `main.tf` to match your AWS environment and Hanzo KMS credentials. You'll need to replace:
+2.  **Customize values:** Update the placeholder values in `main.tf` to match your AWS environment and KMS credentials. You'll need to replace:
     - `region` in the `provider` block.
     - `vpc_id` in the `aws_security_group` resource.
     - `ami` and `subnet_id` in the `kms_relay_instance` module.
     - The `KMS_TOKEN` environment variable in the `user_data` script (e.g., `export KMS_TOKEN="your-machine-identity-token"`).
-    - The `--domain` in the `user_data` script if you are self-hosting Hanzo KMS.
+    - The `--domain` in the `user_data` script if you are self-hosting KMS.
 3.  **Apply the configuration:** Run the following Terraform commands in your terminal:
     ```bash
     terraform init

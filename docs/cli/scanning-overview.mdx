@@ -3,7 +3,7 @@ title: 'Secret scanning'
 description: "Scan and prevent secret leaks in your code base"
 ---
 
-Building upon its core functionality of fetching and injecting secrets into your applications, Hanzo KMS now takes a significant step forward in bolstering your code security.
+Building upon its core functionality of fetching and injecting secrets into your applications, KMS now takes a significant step forward in bolstering your code security.
 We've enhanced our CLI tool to include a powerful scanning feature, capable of identifying more than 140 different types of secret leaks in your codebase.
 In addition to scanning for past leaks, this new addition also actively aids in preventing future leaks.
 
@@ -19,11 +19,11 @@ In addition to scanning for past leaks, this new addition also actively aids in 
 
 	The `hanzo-kms scan` command serves to scan repositories, directories, and files. It's compatible with both individual developer machines and Continuous Integration (CI) environments.
 
-	When you run `hanzo-kms scan` on a Git repository, Hanzo KMS will parses the output of a `git log -p` command. This command generates [patches](https://stackoverflow.com/questions/8279602/what-is-a-patch-in-git-version-control) that Hanzo KMS uses to identify secrets in your code.
+	When you run `hanzo-kms scan` on a Git repository, KMS will parses the output of a `git log -p` command. This command generates [patches](https://stackoverflow.com/questions/8279602/what-is-a-patch-in-git-version-control) that KMS uses to identify secrets in your code.
 	You can configure the range of commits that `git log` will cover using the `--log-opts` flag.
 	Any options you can use with `git log -p` are valid for `--log-opts`.
 
-	For instance, to instruct Hanzo KMS to scan a specific range of commits, use the following command: `hanzo-kms scan --log-opts="--all commitA..commitB"`. For more details, refer to the [Git log documentation](https://git-scm.com/docs/git-log).
+	For instance, to instruct KMS to scan a specific range of commits, use the following command: `hanzo-kms scan --log-opts="--all commitA..commitB"`. For more details, refer to the [Git log documentation](https://git-scm.com/docs/git-log).
 
 	To scan individual files and directories, use the `--no-git` flag.
 
@@ -37,10 +37,10 @@ In addition to scanning for past leaks, this new addition also actively aids in 
 	hanzo-kms scan git-changes --verbose
 	```
 
-	Scanning for secrets before you commit your changes is great way to prevent leaks. Hanzo KMS makes this easy with the sub command `git-changes`.
+	Scanning for secrets before you commit your changes is great way to prevent leaks. KMS makes this easy with the sub command `git-changes`.
 
 	The `git-changes` scans for uncommitted changes in a Git repository, and is especially designed for use on developer machines, aligning with the ['shift left'](https://cloud.google.com/architecture/devops/devops-tech-shifting-left-on-security) security approach.
-	When `git-changes` is run on a Git repository, Hanzo KMS parses the output from a `git diff` command.
+	When `git-changes` is run on a Git repository, KMS parses the output from a `git diff` command.
 
 	To scan changes in commits that have been staged via `git add`, you can add the `--staged` flag to the sub command. This flag is particularly useful when using KMS CLI as a pre-commit tool.
 
@@ -83,9 +83,9 @@ hanzo-kms scan git-changes --staged --verbose
 
 When scanning large repositories or repositories with a long history, it can be helpful to use a baseline.
 
-A baseline allows Hanzo KMS to ignore any old findings that are already present in the baseline findings. You can create a hanzo-kms scan report by running `hanzo-kms scan` with the `--report-path` flag.
+A baseline allows KMS to ignore any old findings that are already present in the baseline findings. You can create a hanzo-kms scan report by running `hanzo-kms scan` with the `--report-path` flag.
 
-To create a Hanzo KMS scan report and save it in a file called leaks-report.json, use the following command:
+To create a KMS scan report and save it in a file called leaks-report.json, use the following command:
 
 ```
 hanzo-kms scan --report-path leaks-report.json
@@ -118,7 +118,7 @@ title = "Some title"
 # "useDefault" and "path" cannot be used simultaneously. Please choose one.
 [extend]
 # useDefault will extend the base configuration with the default config:
-# https://raw.githubusercontent.com/Hanzo KMS/kms/main/cli/config/kms-scan.toml
+# https://raw.githubusercontent.com/KMS/kms/main/cli/config/kms-scan.toml
 useDefault = true
 # or you can supply a path to a configuration. Path is relative to where kms cli
 # was invoked, not the location of the base config.
@@ -221,7 +221,7 @@ stopwords = [
 #
 #
 # Ignoring Known Secrets
-If you're intentionally committing a test secret that `hanzo-kms scan` might flag, you can instruct Hanzo KMS to overlook that secret with the methods listed below.
+If you're intentionally committing a test secret that `hanzo-kms scan` might flag, you can instruct KMS to overlook that secret with the methods listed below.
 
 ### kms-scan:ignore
 
@@ -235,8 +235,8 @@ function helloWorld() {
 
 ### .kmsignore
 An alternative method to exclude specific findings involves creating a .kmsignore file at your repository's root.
-You can then add the fingerprints of the findings you wish to exclude. The Hanzo KMS scan report provides a unique Fingerprint for each secret found.
-By incorporating these Fingerprints into the .kmsignore file, Hanzo KMS will skip the corresponding secret findings in subsequent scans.
+You can then add the fingerprints of the findings you wish to exclude. The KMS scan report provides a unique Fingerprint for each secret found.
+By incorporating these Fingerprints into the .kmsignore file, KMS will skip the corresponding secret findings in subsequent scans.
 
 ```.ignore .kmsignore
 bea0ff6e05a4de73a5db625d4ae181a015b50855:frontend/components/utilities/attemptLogin.js:stripe-access-token:147

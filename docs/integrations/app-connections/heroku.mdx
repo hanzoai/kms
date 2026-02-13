@@ -1,20 +1,20 @@
 ---
 title: "Heroku Connection"
-description: "Learn how to configure a Heroku Connection for Hanzo KMS using OAuth or Auth Token methods."
+description: "Learn how to configure a Heroku Connection for KMS using OAuth or Auth Token methods."
 ---
 
-Hanzo KMS supports two methods for connecting to Heroku: **OAuth** and **Auth Token**. Choose the method that best fits your setup and security requirements.
+KMS supports two methods for connecting to Heroku: **OAuth** and **Auth Token**. Choose the method that best fits your setup and security requirements.
 
 <Tabs>
   <Tab title="OAuth Method">
     The OAuth method provides secure authentication through Heroku's OAuth flow.
 
     <Accordion title="Self-Hosted Instance Setup">
-      Using the Heroku Connection with OAuth on a self-hosted instance of Hanzo KMS requires configuring an API client in Heroku and registering your instance with it.
+      Using the Heroku Connection with OAuth on a self-hosted instance of KMS requires configuring an API client in Heroku and registering your instance with it.
 
       **Prerequisites:**
       - A Heroku account with existing applications
-      - Self-hosted Hanzo KMS instance
+      - Self-hosted KMS instance
 
       <Steps>
         <Step title="Create an API client in Heroku">
@@ -27,27 +27,27 @@ Hanzo KMS supports two methods for connecting to Heroku: **OAuth** and **Auth To
           Create the API client. As part of the form, set the **OAuth callback URL** to `https://your-domain.com/organization/app-connections/heroku/oauth/callback`.
 
           <Tip>
-            The domain you defined in the OAuth callback URL should be equivalent to the `SITE_URL` configured in your Hanzo KMS instance.
+            The domain you defined in the OAuth callback URL should be equivalent to the `SITE_URL` configured in your KMS instance.
           </Tip>
 
           ![Heroku config new app form](/images/integrations/heroku/integrations-heroku-config-new-app-form.png)
         </Step>
-        <Step title="Add your Heroku API client credentials to Hanzo KMS">
+        <Step title="Add your Heroku API client credentials to KMS">
           Obtain the **Client ID** and **Client Secret** for your Heroku API client.
 
           ![Heroku config credentials](/images/integrations/heroku/integrations-heroku-config-credentials.png)
 
-          Back in your Hanzo KMS instance, add two new environment variables for the credentials of your Heroku API client:
+          Back in your KMS instance, add two new environment variables for the credentials of your Heroku API client:
 
           - `INF_APP_CONNECTION_HEROKU_OAUTH_CLIENT_ID`: The **Client ID** of your Heroku API client.
           - `INF_APP_CONNECTION_HEROKU_OAUTH_CLIENT_SECRET`: The **Client Secret** of your Heroku API client.
 
-          Once added, restart your Hanzo KMS instance and use the Heroku Connection.
+          Once added, restart your KMS instance and use the Heroku Connection.
         </Step>
       </Steps>
     </Accordion>
 
-    ## Setup Heroku OAuth Connection in Hanzo KMS
+    ## Setup Heroku OAuth Connection in KMS
 
     <Steps>
       <Step title="Navigate to App Connections">
@@ -64,7 +64,7 @@ Hanzo KMS supports two methods for connecting to Heroku: **OAuth** and **Auth To
         ![Connect via Heroku OAuth](/images/app-connections/heroku/heroku-create-oauth-method.png)
       </Step>
       <Step title="Grant Access">
-        You will be redirected to Heroku to grant Hanzo KMS access to your Heroku account. Once granted, you will be redirected back to Hanzo KMS's App Connections page.
+        You will be redirected to Heroku to grant KMS access to your Heroku account. Once granted, you will be redirected back to KMS's App Connections page.
         ![Heroku Authorization](/images/integrations/heroku/integrations-heroku-auth.png)
       </Step>
       <Step title="Connection Created">
@@ -78,7 +78,7 @@ Hanzo KMS supports two methods for connecting to Heroku: **OAuth** and **Auth To
   <Tab title="Auth Token Method">
     The Auth Token method uses a Heroku API token for authentication, providing a straightforward setup process.
 
-    ## Setup Heroku Auth Token Connection in Hanzo KMS
+    ## Setup Heroku Auth Token Connection in KMS
 
     <Steps>
       <Step title="Generate Heroku API Token">

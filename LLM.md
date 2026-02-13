@@ -1,12 +1,12 @@
-# AI Assistant Knowledge Base - Hanzo KMS
+# AI Assistant Knowledge Base - KMS
 
 **Last Updated**: 2026-01-26
-**Project**: Hanzo KMS
+**Project**: KMS
 **Organization**: Hanzo AI
 
 ## Project Overview
 
-Hanzo KMS is an open-source Key Management Service for managing secrets, API keys, certificates, and encryption keys across infrastructure. It is a fork of [Infisical](https://github.com/Infisical/infisical).
+KMS is an open-source Key Management Service for managing secrets, API keys, certificates, and encryption keys across infrastructure. It is a fork of [Infisical](https://github.com/Infisical/infisical).
 
 ## Essential Commands
 

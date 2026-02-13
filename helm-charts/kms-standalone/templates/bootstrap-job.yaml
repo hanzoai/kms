@@ -32,12 +32,12 @@ spec:
         command: ['sh', '-c']
         args:
         - |
-          echo "Waiting for Hanzo KMS to be ready..."
+          echo "Waiting for KMS to be ready..."
           until curl -f http://{{ include "kms.fullname" . }}:8080/api/status; do
-            echo "Hanzo KMS not ready yet, retrying in 10 seconds..."
+            echo "KMS not ready yet, retrying in 10 seconds..."
             sleep 10
           done
-          echo "Hanzo KMS is ready! Proceeding with bootstrap..."
+          echo "KMS is ready! Proceeding with bootstrap..."
       containers:
         - name: kms-bootstrap
           image: "ghcr.io/hanzoai/kms-cli:{{ $kmsValues.autoBootstrap.image.tag }}"

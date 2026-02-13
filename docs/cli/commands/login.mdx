@@ -1,6 +1,6 @@
 ---
 title: "hanzo-kms login"
-description: "Login into Hanzo KMS from the CLI"
+description: "Login into KMS from the CLI"
 ---
 
 ```bash
@@ -107,7 +107,7 @@ Machine identity authentication methods are designed for automated systems, serv
 
 <AccordionGroup>
 <Accordion title="Universal Auth">
-  The Universal Auth method is a simple and secure way to authenticate with Hanzo KMS. It requires a client ID and a client secret to authenticate with Hanzo KMS.
+  The Universal Auth method is a simple and secure way to authenticate with KMS. It requires a client ID and a client secret to authenticate with KMS.
 
     <ParamField query="Flags">
     <Expandable title="properties">
@@ -136,7 +136,7 @@ Machine identity authentication methods are designed for automated systems, serv
   </Steps>
 </Accordion>
 <Accordion title="Native Kubernetes">
-  The Native Kubernetes method is used to authenticate with Hanzo KMS when running in a Kubernetes environment. It requires a service account token to authenticate with Hanzo KMS.
+  The Native Kubernetes method is used to authenticate with KMS when running in a Kubernetes environment. It requires a service account token to authenticate with KMS.
 
     <ParamField query="Flags">
     <Expandable title="properties">
@@ -167,7 +167,7 @@ Machine identity authentication methods are designed for automated systems, serv
 
 </Accordion>
   <Accordion title="Native Azure">
-    The Native Azure method is used to authenticate with Hanzo KMS when running in an Azure environment.
+    The Native Azure method is used to authenticate with KMS when running in an Azure environment.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -192,7 +192,7 @@ Machine identity authentication methods are designed for automated systems, serv
 
   </Accordion>
   <Accordion title="Native GCP ID Token">
-    The Native GCP ID Token method is used to authenticate with Hanzo KMS when running in a GCP environment.
+    The Native GCP ID Token method is used to authenticate with KMS when running in a GCP environment.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -217,7 +217,7 @@ Machine identity authentication methods are designed for automated systems, serv
 
   </Accordion>
   <Accordion title="GCP IAM">
-    The GCP IAM method is used to authenticate with Hanzo KMS with a GCP service account key.
+    The GCP IAM method is used to authenticate with KMS with a GCP service account key.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -245,7 +245,7 @@ Machine identity authentication methods are designed for automated systems, serv
 
   </Accordion>
   <Accordion title="Native AWS IAM">
-    The AWS IAM method is used to authenticate with Hanzo KMS with an AWS IAM role while running in an AWS environment like EC2, Lambda, etc.
+    The AWS IAM method is used to authenticate with KMS with an AWS IAM role while running in an AWS environment like EC2, Lambda, etc.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -270,7 +270,7 @@ Machine identity authentication methods are designed for automated systems, serv
 
   </Accordion>
   <Accordion title="OIDC Auth">
-    The OIDC Auth method is used to authenticate with Hanzo KMS via identity tokens with OIDC.
+    The OIDC Auth method is used to authenticate with KMS via identity tokens with OIDC.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -299,7 +299,7 @@ Machine identity authentication methods are designed for automated systems, serv
   </Accordion>
 
   <Accordion title="JWT Auth">
-    The JWT Auth method is used to authenticate with Hanzo KMS via a JWT token.
+    The JWT Auth method is used to authenticate with KMS via a JWT token.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -529,7 +529,7 @@ The login command supports a number of flags that you can use for different auth
     ```
 
     #### Description
-    Specifies the Hanzo KMS API URL for non-US Cloud instances. This flag is required when connecting to any instance other than US Cloud (e.g. EU Cloud or self-hosted).
+    Specifies the KMS API URL for non-US Cloud instances. This flag is required when connecting to any instance other than US Cloud (e.g. EU Cloud or self-hosted).
 
     ```bash
     # Example for EU Cloud
@@ -562,7 +562,7 @@ The following examples demonstrate different ways to authenticate as a user with
     hanzo-kms login
     ```
 
-    The browser will open to the Hanzo KMS login page, and upon successful authentication, the CLI will be automatically authenticated.
+    The browser will open to the KMS login page, and upon successful authentication, the CLI will be automatically authenticated.
 
   </Accordion>
 
@@ -630,7 +630,7 @@ The following examples demonstrate different ways to authenticate as a user with
 
 ### Machine Identity Authentication Quick Start
 
-In this example we'll be using the `universal-auth` method to login to obtain an Hanzo KMS access token, which we will then use to fetch secrets with.
+In this example we'll be using the `universal-auth` method to login to obtain an KMS access token, which we will then use to fetch secrets with.
 
 <Steps>
   <Step title="Obtain an access token">
@@ -642,7 +642,7 @@ In this example we'll be using the `universal-auth` method to login to obtain an
           **For non-US Cloud instances:** If you're using EU Cloud or a self-hosted instance, you must set `KMS_API_URL` before login or use `--domain` on all commands. Refer to the [Domain Configuration](/cli/usage#domain-configuration) section for more details.
         </Warning>
 
-        Now that we've set the `KMS_TOKEN` environment variable, we can use the CLI to interact with Hanzo KMS. The CLI will automatically check for the presence of the `KMS_TOKEN` environment variable and use it for authentication.
+        Now that we've set the `KMS_TOKEN` environment variable, we can use the CLI to interact with KMS. The CLI will automatically check for the presence of the `KMS_TOKEN` environment variable and use it for authentication.
 
 
         Alternatively, if you would rather use the `--token` flag to pass the token directly, you can do so by running the following command:

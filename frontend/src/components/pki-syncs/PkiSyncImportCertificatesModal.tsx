@@ -44,7 +44,7 @@ const Content = ({ pkiSync, onComplete }: ContentProps) => {
     >
       <p className="mb-8 text-sm text-mineshaft-200">
         Are you sure you want to import certificates from this {destinationName} destination into
-        Hanzo KMS?
+        KMS?
       </p>
       <p className="mb-6 text-xs text-bunker-300">
         This operation will retrieve certificates from {destinationName} and make them available in
@@ -77,7 +77,7 @@ export const PkiSyncImportCertificatesModal = ({ isOpen, onOpenChange, pkiSync }
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent
         title="Import Certificates"
-        subTitle={`Import certificates into Hanzo KMS from this ${destinationName} Sync destination.`}
+        subTitle={`Import certificates into KMS from this ${destinationName} Sync destination.`}
       >
         <Content pkiSync={pkiSync} onComplete={() => onOpenChange(false)} />
       </ModalContent>

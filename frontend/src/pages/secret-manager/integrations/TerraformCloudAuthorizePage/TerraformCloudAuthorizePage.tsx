@@ -68,7 +68,7 @@ export const TerraformCloudAuthorizePage = () => {
       <Card className="max-w-lg rounded-md border border-mineshaft-600">
         <CardTitle
           className="px-6 text-left text-xl"
-          subTitle="After adding the details below, you will be prompted to set up an integration for a particular Hanzo KMS project and environment."
+          subTitle="After adding the details below, you will be prompted to set up an integration for a particular KMS project and environment."
         >
           <div className="flex flex-row items-center">
             <div className="flex items-center">

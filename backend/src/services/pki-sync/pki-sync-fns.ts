@@ -181,30 +181,30 @@ export const PkiSyncFns = {
     switch (pkiSync.destination) {
       case PkiSync.AzureKeyVault: {
         throw new Error(
-          "Azure Key Vault does not support importing certificates into Hanzo KMS (private keys cannot be extracted)"
+          "Azure Key Vault does not support importing certificates into KMS (private keys cannot be extracted)"
         );
       }
       case PkiSync.AwsCertificateManager: {
         throw new Error(
-          "AWS Certificate Manager does not support importing certificates into Hanzo KMS (private keys cannot be extracted)"
+          "AWS Certificate Manager does not support importing certificates into KMS (private keys cannot be extracted)"
         );
       }
       case PkiSync.AwsSecretsManager: {
-        throw new Error("AWS Secrets Manager does not support importing certificates into Hanzo KMS");
+        throw new Error("AWS Secrets Manager does not support importing certificates into KMS");
       }
       case PkiSync.Chef: {
         throw new Error(
-          "Chef does not support importing certificates into Hanzo KMS (private keys cannot be extracted securely)"
+          "Chef does not support importing certificates into KMS (private keys cannot be extracted securely)"
         );
       }
       case PkiSync.AwsElasticLoadBalancer: {
         throw new Error(
-          "AWS Elastic Load Balancer does not support importing certificates into Hanzo KMS (certificates are stored in ACM)"
+          "AWS Elastic Load Balancer does not support importing certificates into KMS (certificates are stored in ACM)"
         );
       }
       case PkiSync.CloudflareCustomCertificate: {
         throw new Error(
-          "Cloudflare Custom SSL Certificate does not support importing certificates into Hanzo KMS (private keys cannot be extracted)"
+          "Cloudflare Custom SSL Certificate does not support importing certificates into KMS (private keys cannot be extracted)"
         );
       }
       default:

@@ -119,7 +119,7 @@ export const GatewayTab = withPermission(
           </div>
         </div>
         <p className="mb-4 text-sm text-mineshaft-400">
-          Create and configure gateway to access private network resources from Hanzo KMS
+          Create and configure gateway to access private network resources from KMS
         </p>
         <div>
           <div className="flex gap-2">

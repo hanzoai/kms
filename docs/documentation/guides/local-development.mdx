@@ -13,22 +13,22 @@ There are a number of issues that arise with secret management in local developm
 
 ## Solution
 
-One of the main benefits of Hanzo KMS is the facilitation of secret management workflows in local development use cases. In particular, Hanzo KMS heavily follows the "Security Shift Left" principle to enable developers to effortlessly follow secure practices when coding.
+One of the main benefits of KMS is the facilitation of secret management workflows in local development use cases. In particular, KMS heavily follows the "Security Shift Left" principle to enable developers to effortlessly follow secure practices when coding.
 
 ### CLI
 
-[KMS CLI](/cli/overview) is the most frequently used Hanzo KMS tool for secret management in local development environments. It makes it easy to inject secrets right into the local application environments based on the permissions given to corresponding developers.
+[KMS CLI](/cli/overview) is the most frequently used KMS tool for secret management in local development environments. It makes it easy to inject secrets right into the local application environments based on the permissions given to corresponding developers.
 
 ### Dashboard
 
-On top of that, Hanzo KMS provides a great [Web Dashboard](https://kms.hanzo.ai/signup) that can be used to making quick secret updates.
+On top of that, KMS provides a great [Web Dashboard](https://kms.hanzo.ai/signup) that can be used to making quick secret updates.
 
 ![project dashboard](../../images/dashboard.png)
 
 ### Personal Overrides
 
-By default, all the secrets in the Hanzo KMS environments are shared among project members who have the permission to access those environment. At the same time, when doing local development, it is often desirable to change the value of a certain secret only for a particular self. For such use cases, Hanzo KMS supports the functionality of **Personal Overrides** – which allow developers to override values of any secrets without affecting the workflows of the rest of the team. Personal Overrides can be created both in the dashboard or via [KMS CLI](/cli/overview). 
+By default, all the secrets in the KMS environments are shared among project members who have the permission to access those environment. At the same time, when doing local development, it is often desirable to change the value of a certain secret only for a particular self. For such use cases, KMS supports the functionality of **Personal Overrides** – which allow developers to override values of any secrets without affecting the workflows of the rest of the team. Personal Overrides can be created both in the dashboard or via [KMS CLI](/cli/overview). 
 
 ### Secret Scanning
 
-In addition, Hanzo KMS also provides a set of tools to automatically prevent secret leaks to git history. This functionality can be set up on the level of [KMS CLI using pre-commit hooks](/cli/scanning-overview#automatically-scan-changes-before-you-commit) or through a direct integration with platforms like GitHub.
+In addition, KMS also provides a set of tools to automatically prevent secret leaks to git history. This functionality can be set up on the level of [KMS CLI using pre-commit hooks](/cli/scanning-overview#automatically-scan-changes-before-you-commit) or through a direct integration with platforms like GitHub.

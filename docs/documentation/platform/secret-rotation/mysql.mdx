@@ -3,7 +3,7 @@ title: "MySQL/MariaDB"
 description: "Learn how to automatically rotate MySQL/MariaDB user passwords."
 ---
 
-The Hanzo KMS MySQL secret rotation allows you to automatically rotate your MySQL database user's password at a predefined interval.
+The KMS MySQL secret rotation allows you to automatically rotate your MySQL database user's password at a predefined interval.
 
 
 ## Prerequisite
@@ -15,7 +15,7 @@ To learn more about MySQL permission system, please visit this [documentation](h
 
 ## How it works 
 
-1. Hanzo KMS connects to your database using the provided `admin` user account.
+1. KMS connects to your database using the provided `admin` user account.
 2. A random value is generated and the password for `user-a` is updated with the new value.
 3. The new password is then tested by logging into the database
 4. If test is success, it's saved to the output secret mappings so that rest of the system gets the newly rotated value(s).
@@ -95,7 +95,7 @@ To learn more about MySQL permission system, please visit this [documentation](h
 	To avoid causing failure for them, the old credentials are not removed. Instead, in the next rotation, the previous user's credentials are updated.
   </Accordion>
   <Accordion title="Why do you need root user account?">
-	The admin account is used by Hanzo KMS to update the credentials for `user-a` and `user-b`. 
+	The admin account is used by KMS to update the credentials for `user-a` and `user-b`. 
 
 	You don't need to grant all permission for your admin account but rather just the permissions to update both of the user's passwords.
   </Accordion>

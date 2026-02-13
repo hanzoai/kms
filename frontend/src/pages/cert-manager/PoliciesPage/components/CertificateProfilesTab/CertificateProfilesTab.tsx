@@ -110,7 +110,7 @@ export const CertificateProfilesTab = () => {
         isOpen={popUp.upgradePlan.isOpen}
         onOpenChange={(isOpen) => handlePopUpToggle("upgradePlan", isOpen)}
         isEnterpriseFeature={popUp.upgradePlan.data?.isEnterpriseFeature}
-        text="Your current plan does not include access to managing template enrollment options for ACME. To unlock this feature, please upgrade to Hanzo KMS Enterprise plan."
+        text="Your current plan does not include access to managing template enrollment options for ACME. To unlock this feature, please upgrade to KMS Enterprise plan."
       />
 
       {selectedProfile && (

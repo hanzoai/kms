@@ -168,7 +168,7 @@ export const secretRotationV2QueueServiceFactory = async ({
             rotationType,
             content: `Your ${rotationType} Rotation failed to rotate during it's scheduled rotation. The last rotation attempt occurred at ${new Date(
               lastRotationAttemptedAt
-            ).toISOString()}. Please check the rotation status in Hanzo KMS for more details.`,
+            ).toISOString()}. Please check the rotation status in KMS for more details.`,
             secretPath: folder.path,
             environment: environment.name,
             projectName: project.name,

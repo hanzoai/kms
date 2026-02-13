@@ -48,7 +48,7 @@ const sleep = async () =>
     setTimeout(resolve, 1000);
   });
 
-const isHanzo KMSManagedCertificate = (secretName: string, pkiSync: TPkiSyncWithCredentials): boolean => {
+const isKmsManagedCertificate = (secretName: string, pkiSync: TPkiSyncWithCredentials): boolean => {
   const syncOptions = pkiSync.syncOptions as { certificateNameSchema?: string } | undefined;
   const certificateNameSchema = syncOptions?.certificateNameSchema;
 
@@ -145,7 +145,7 @@ export const awsSecretsManagerPkiSyncFactory = ({
           output.SecretList.forEach((secretEntry) => {
             if (
               secretEntry.Name &&
-              isHanzo KMSManagedCertificate(secretEntry.Name, pkiSync as unknown as TPkiSyncWithCredentials)
+              isKmsManagedCertificate(secretEntry.Name, pkiSync as unknown as TPkiSyncWithCredentials)
             ) {
               secrets[secretEntry.Name] = secretEntry.ARN || secretEntry.Name;
             }
@@ -378,7 +378,7 @@ export const awsSecretsManagerPkiSyncFactory = ({
                   Name: targetSecretName,
                   SecretString: secretValue,
                   KmsKeyId: keyId,
-                  Description: `Certificate managed by Hanzo KMS`
+                  Description: `Certificate managed by KMS`
                 })
               ),
             {

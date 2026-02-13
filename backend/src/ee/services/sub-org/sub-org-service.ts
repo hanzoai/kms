@@ -51,7 +51,7 @@ export const subOrgServiceFactory = ({
     const orgLicensePlan = await licenseService.getPlan(permissionActor.rootOrgId);
     if (!orgLicensePlan.subOrganization) {
       throw new BadRequestError({
-        message: "Sub-organization creation failed. Please upgrade your instance to Hanzo KMS's Enterprise plan."
+        message: "Sub-organization creation failed. Please upgrade your instance to KMS's Enterprise plan."
       });
     }
 

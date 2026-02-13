@@ -1,11 +1,11 @@
 ---
 title: "TeamCity Connection"
-description: "Learn how to configure a TeamCity Connection for Hanzo KMS."
+description: "Learn how to configure a TeamCity Connection for KMS."
 ---
 
-Hanzo KMS supports connecting to TeamCity using Access Tokens.
+KMS supports connecting to TeamCity using Access Tokens.
 
-## Setup TeamCity Connection in Hanzo KMS
+## Setup TeamCity Connection in KMS
 
 <Steps>
     <Step title="Navigate to your profile on TeamCity">
@@ -17,7 +17,7 @@ Hanzo KMS supports connecting to TeamCity using Access Tokens.
         ![TeamCity Token Page](/images/app-connections/teamcity/teamcity-token-page.png)
     </Step>
     <Step title="Create the Access Token">
-        Click the **Create access token** button and provide a name for your token (e.g., "Hanzo KMS Integration"). You may set an expiration date or leave it blank for no expiry.
+        Click the **Create access token** button and provide a name for your token (e.g., "KMS Integration"). You may set an expiration date or leave it blank for no expiry.
         The permission scope can either be **Same as current user** or **Limit per project**.
 
         If you're choosing **Limit per project**, make sure you select the relevant project and enable the permissions relevant to your use case:
@@ -46,12 +46,12 @@ Hanzo KMS supports connecting to TeamCity using Access Tokens.
         You should now see your newly created token in the list of access tokens.
         ![TeamCity Token Created](/images/app-connections/teamcity/teamcity-token-created.png)
     </Step>
-    <Step title="Setup TeamCity Connection in Hanzo KMS">
+    <Step title="Setup TeamCity Connection in KMS">
         <Tabs>
-            <Tab title="Hanzo KMS UI">
+            <Tab title="KMS UI">
                 1. Navigate to App Connections
 
-                    In your Hanzo KMS dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
+                    In your KMS dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
                     ![App Connections Tab](/images/app-connections/general/add-connection.png)
                 2. Add Connection
 
@@ -68,7 +68,7 @@ Hanzo KMS supports connecting to TeamCity using Access Tokens.
                     ![TeamCity Connection Modal](/images/app-connections/teamcity/teamcity-app-connection-modal.png)
                 4. Connection Created
 
-                    After clicking Create, your **TeamCity Connection** is established and ready to use with your Hanzo KMS project.
+                    After clicking Create, your **TeamCity Connection** is established and ready to use with your KMS project.
                     ![TeamCity Connection Created](/images/app-connections/teamcity/teamcity-app-connection-created.png)
             </Tab>
             <Tab title="API">

@@ -108,7 +108,7 @@ export const FlyioConfigurePage = () => {
       <Card className="max-w-lg rounded-md border border-mineshaft-600">
         <CardTitle
           className="px-6 text-left text-xl"
-          subTitle="Choose which environment or folder in Hanzo KMS you want to sync to Fly.io environment variables."
+          subTitle="Choose which environment or folder in KMS you want to sync to Fly.io environment variables."
         >
           <div className="flex flex-row items-center">
             <div className="flex items-center pb-0.5">
@@ -135,7 +135,7 @@ export const FlyioConfigurePage = () => {
           <Alert hideTitle variant="warning">
             <AlertDescription>
               All current secrets linked to the related Fly.io project will be deleted before
-              Hanzo KMS secrets are pushed to your Fly.io project.
+              KMS secrets are pushed to your Fly.io project.
             </AlertDescription>
           </Alert>
         </div>
@@ -204,7 +204,7 @@ export const FlyioConfigurePage = () => {
         </div>
         <span className="mt-4 text-sm text-mineshaft-300">
           After creating an integration, your secrets will start syncing immediately. This might
-          cause an unexpected override of current secrets in Fly.io with secrets from Hanzo KMS.
+          cause an unexpected override of current secrets in Fly.io with secrets from KMS.
         </span>
       </div>
     </div>

@@ -5,7 +5,7 @@ export const NotFoundPage = () => {
   return (
     <div className="flex flex-col justify-between bg-bunker-800 md:h-screen">
       <Helmet>
-        <title>Hanzo KMS | Page Not Found</title>
+        <title>KMS | Page Not Found</title>
       </Helmet>
       <div className="flex h-screen w-screen flex-col items-center justify-center text-gray-200">
         <p className="mt-32 text-4xl">Oops, something went wrong</p>

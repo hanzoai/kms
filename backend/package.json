@@ -1,7 +1,7 @@
 {
   "name": "@hanzo/kms-backend",
   "version": "1.0.0",
-  "description": "Hanzo KMS Backend API Server",
+  "description": "KMS Backend API Server",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/hanzoai/kms.git",

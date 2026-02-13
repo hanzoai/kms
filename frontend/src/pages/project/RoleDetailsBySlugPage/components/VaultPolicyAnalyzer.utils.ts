@@ -49,7 +49,7 @@ const canTranslateBlock = (
       return {
         canTranslate: false,
         reason: isMetadata
-          ? "Cannot translate list/read capabilities for metadata (Hanzo KMS only supports translation for create, update, delete)"
+          ? "Cannot translate list/read capabilities for metadata (KMS only supports translation for create, update, delete)"
           : "No translatable capabilities found"
       };
     }
@@ -104,7 +104,7 @@ const canTranslateBlock = (
     return {
       canTranslate: false,
       reason: isMetadata
-        ? "Cannot translate list/read capabilities for metadata (Hanzo KMS only supports translation for create, update, delete)"
+        ? "Cannot translate list/read capabilities for metadata (KMS only supports translation for create, update, delete)"
         : "No translatable capabilities found"
     };
   }

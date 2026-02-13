@@ -3,7 +3,7 @@ import opentelemetry from "@opentelemetry/api";
 
 import { getConfig } from "../config/env";
 
-const kmsMeter = opentelemetry.metrics.getMeter("Hanzo KMS");
+const kmsMeter = opentelemetry.metrics.getMeter("KMS");
 
 export enum AuthAttemptAuthMethod {
   EMAIL = "email",

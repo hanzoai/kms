@@ -1,15 +1,15 @@
 ---
 title: "Setup"
 sidebarTitle: "Setup"
-description: "This guide provides a step-by-step walkthrough for configuring Hanzo KMS's Privileged Access Management (PAM). Learn how to deploy a gateway, define resources, and grant your team secure, audited access to critical infrastructure."
+description: "This guide provides a step-by-step walkthrough for configuring KMS's Privileged Access Management (PAM). Learn how to deploy a gateway, define resources, and grant your team secure, audited access to critical infrastructure."
 ---
 
-Hanzo KMS's Privileged Access Management (PAM) solution enables you to provide developers with secure, just-in-time access to your critical infrastructure, such as databases, servers, and web applications. Instead of sharing static credentials, your team can request temporary access through Hanzo KMS, which is then brokered through a secure gateway with full auditing and session recording.
+KMS's Privileged Access Management (PAM) solution enables you to provide developers with secure, just-in-time access to your critical infrastructure, such as databases, servers, and web applications. Instead of sharing static credentials, your team can request temporary access through KMS, which is then brokered through a secure gateway with full auditing and session recording.
 
 Getting started involves a few key components:
 - **Gateways:** A lightweight service you deploy in your own infrastructure to act as a secure entry point to your private resources.
 - **Resources:** The specific systems you want to manage access to (e.g., a PostgreSQL database or an SSH server).
-- **Accounts:** The privileged credentials (e.g., a database user or an SSH user) that Hanzo KMS uses to connect to a resource on behalf of a user.
+- **Accounts:** The privileged credentials (e.g., a database user or an SSH user) that KMS uses to connect to a resource on behalf of a user.
 
 The following steps will guide you through the entire setup process, from deploying your first gateway to establishing a secure connection.
 
@@ -20,7 +20,7 @@ The following steps will guide you through the entire setup process, from deploy
     [Read the Gateway Deployment Guide](/documentation/platform/gateways/gateway-deployment)
   </Step>
   <Step title="Create a Resource">
-    Once the Gateway is active, define a **Resource** in Hanzo KMS (e.g., "Production Database"). You will link this resource to your deployed Gateway so Hanzo KMS knows how to reach it.
+    Once the Gateway is active, define a **Resource** in KMS (e.g., "Production Database"). You will link this resource to your deployed Gateway so KMS knows how to reach it.
 
     [Learn about Resources](/documentation/platform/pam/getting-started/resources)
   </Step>

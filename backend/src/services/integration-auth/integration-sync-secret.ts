@@ -913,7 +913,7 @@ const syncSecretsAWSParameterStore = async ({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if ((error as any).code === "AccessDeniedException") {
         logger.error(
-          `AWS Parameter Store Error [integration=${integration.id}]: double check AWS account permissions (refer to the Hanzo KMS docs)`
+          `AWS Parameter Store Error [integration=${integration.id}]: double check AWS account permissions (refer to the KMS docs)`
         );
       }
 
@@ -974,7 +974,7 @@ const syncSecretsAWSParameterStore = async ({
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               if ((err as any).code === "AccessDeniedException") {
                 logger.error(
-                  `AWS Parameter Store Error [integration=${integration.id}]: double check AWS account permissions (refer to the Hanzo KMS docs)`
+                  `AWS Parameter Store Error [integration=${integration.id}]: double check AWS account permissions (refer to the KMS docs)`
                 );
               }
 
@@ -1036,7 +1036,7 @@ const syncSecretsAWSParameterStore = async ({
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             if ((err as any).code === "AccessDeniedException") {
               logger.error(
-                `AWS Parameter Store Error [integration=${integration.id}]: double check AWS account permissions (refer to the Hanzo KMS docs)`
+                `AWS Parameter Store Error [integration=${integration.id}]: double check AWS account permissions (refer to the KMS docs)`
               );
             }
 
@@ -1545,7 +1545,7 @@ const syncSecretsVercel = async ({
     metadata.initialSyncBehavior = IntegrationInitialSyncBehavior.OVERWRITE_TARGET;
   }
 
-  const secretsToAddToHanzo KMS: { [key: string]: VercelSecret } = {};
+  const secretsToAddToKms: { [key: string]: VercelSecret } = {};
 
   Object.keys(res).forEach((vercelKey) => {
     if (!integration.lastUsed) {
@@ -1558,12 +1558,12 @@ const syncSecretsVercel = async ({
           break;
         }
         case IntegrationInitialSyncBehavior.PREFER_SOURCE: {
-          // if the vercel secret is not in Hanzo KMS, we need to add it to Hanzo KMS
+          // if the vercel secret is not in KMS, we need to add it to KMS
           if (!(vercelKey in kmsSecrets)) {
             kmsSecrets[vercelKey] = {
               value: res[vercelKey].value
             };
-            secretsToAddToHanzo KMS[vercelKey] = res[vercelKey];
+            secretsToAddToKms[vercelKey] = res[vercelKey];
           }
           break;
         }
@@ -1576,14 +1576,14 @@ const syncSecretsVercel = async ({
     }
   });
 
-  if (Object.keys(secretsToAddToHanzo KMS).length) {
+  if (Object.keys(secretsToAddToKms).length) {
     await createManySecretsRawFn({
       projectId: integration.projectId,
       environment: integration.environment.slug,
       path: integration.secretPath,
-      secrets: Object.keys(secretsToAddToHanzo KMS).map((key) => ({
+      secrets: Object.keys(secretsToAddToKms).map((key) => ({
         secretName: key,
-        secretValue: secretsToAddToHanzo KMS[key].value,
+        secretValue: secretsToAddToKms[key].value,
         type: SecretType.Shared,
         secretComment: ""
       }))
@@ -1734,7 +1734,7 @@ const syncSecretsNetlify = async ({
   // identify secrets to create and update
   Object.keys(secrets).forEach((key) => {
     if (!(key in res)) {
-      // case: Hanzo KMS secret does not exist in Netlify -> create secret
+      // case: KMS secret does not exist in Netlify -> create secret
       newSecrets.push({
         key,
         values: [
@@ -1745,7 +1745,7 @@ const syncSecretsNetlify = async ({
         ]
       });
     } else {
-      // case: Hanzo KMS secret exists in Netlify
+      // case: KMS secret exists in Netlify
       const contexts = res[key].values.reduce(
         (obj, value) => ({
           ...obj,
@@ -1757,7 +1757,7 @@ const syncSecretsNetlify = async ({
       if ((integration.targetEnvironment as string) in contexts) {
         // case: Netlify secret value exists in integration context
         if (secrets[key].value !== contexts[integration.targetEnvironment as string].value) {
-          // case: Hanzo KMS and Netlify secret values are different
+          // case: KMS and Netlify secret values are different
           // -> update Netlify secret context and value
           updateSecrets.push({
             key,
@@ -1790,7 +1790,7 @@ const syncSecretsNetlify = async ({
   Object.keys(res).forEach((key) => {
     // loop through each key's context
     if (!(key in secrets)) {
-      // case: Netlify secret does not exist in Hanzo KMS
+      // case: Netlify secret does not exist in KMS
 
       const numberOfValues = res[key].values.length;
 
@@ -2901,7 +2901,7 @@ const syncSecretsGitLab = async ({
     });
 
   if (!integration.lastUsed) {
-    const secretsToAddToHanzo KMS: { [key: string]: GitLabSecret } = {};
+    const secretsToAddToKms: { [key: string]: GitLabSecret } = {};
     const secretsToRemoveInGitlab: GitLabSecret[] = [];
 
     if (!metadata.initialSyncBehavior) {
@@ -2920,12 +2920,12 @@ const syncSecretsGitLab = async ({
           break;
         }
         case IntegrationInitialSyncBehavior.PREFER_SOURCE: {
-          // if the secret is not in Hanzo KMS, we need to add it to Hanzo KMS
+          // if the secret is not in KMS, we need to add it to KMS
           if (!(gitlabSecret.key in secrets)) {
             secrets[gitlabSecret.key] = {
               value: gitlabSecret.value
             };
-            // need to remove prefix and suffix from what we're saving to Hanzo KMS
+            // need to remove prefix and suffix from what we're saving to KMS
             const prefix = metadata?.secretPrefix || "";
             const suffix = metadata?.secretSuffix || "";
             let processedKey = gitlabSecret.key;
@@ -2940,7 +2940,7 @@ const syncSecretsGitLab = async ({
               processedKey = processedKey.slice(0, -suffix.length);
             }
 
-            secretsToAddToHanzo KMS[processedKey] = gitlabSecret;
+            secretsToAddToKms[processedKey] = gitlabSecret;
           }
           break;
         }
@@ -2950,14 +2950,14 @@ const syncSecretsGitLab = async ({
       }
     });
 
-    if (Object.keys(secretsToAddToHanzo KMS).length) {
+    if (Object.keys(secretsToAddToKms).length) {
       await createManySecretsRawFn({
         projectId: integration.projectId,
         environment: integration.environment.slug,
         path: integration.secretPath,
-        secrets: Object.keys(secretsToAddToHanzo KMS).map((key) => ({
+        secrets: Object.keys(secretsToAddToKms).map((key) => ({
           secretName: key,
-          secretValue: secretsToAddToHanzo KMS[key].value,
+          secretValue: secretsToAddToKms[key].value,
           type: SecretType.Shared
         }))
       });
@@ -4508,7 +4508,7 @@ const syncSecretsRundeck = async ({
     }
   } catch (err: unknown) {
     throw new Error(
-      `Ensure that the provided Rundeck URL is accessible by Hanzo KMS and that the linked API token has sufficient permissions.\n\n${
+      `Ensure that the provided Rundeck URL is accessible by KMS and that the linked API token has sufficient permissions.\n\n${
         (err as Error).message
       }`
     );

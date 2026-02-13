@@ -4,15 +4,15 @@ sidebarTitle: "Kubernetes Operator"
 description: "How to use the KMS Operator to Push Secrets, Pull Secrets, and Generate Dynamic Secrets within your clusters."
 ---
 
-Hanzo KMS's Kubernetes Operator provides a seamless, secure, and automated way to synchronize secrets between your Hanzo KMS instance and your Kubernetes clusters. The Operator's three Custom Resource Definitions (CRDs) make this possible. In this guide, we provide the necessary CRDs and configurations for your kubernetes cluster, but you can customize them to fit your use-case.
+KMS's Kubernetes Operator provides a seamless, secure, and automated way to synchronize secrets between your KMS instance and your Kubernetes clusters. The Operator's three Custom Resource Definitions (CRDs) make this possible. In this guide, we provide the necessary CRDs and configurations for your kubernetes cluster, but you can customize them to fit your use-case.
 
 In this guide, we'll walk through how to:
 
 1. **Install the KMS Operator on your Kubernetes cluster**.
 2. **Configure Authentication using Kubernetes Service Accounts**.
 3. **Use Each of the three CRDs**.
-        - **KmsSecret** [Sync secrets from Hanzo KMS to Kubernetes]
-        - **KmsPushSecret** [Sync secrets from Kubernetes to Hanzo KMS]
+        - **KmsSecret** [Sync secrets from KMS to Kubernetes]
+        - **KmsPushSecret** [Sync secrets from Kubernetes to KMS]
         - **KmsDynamicSecret** [Manage Dynamic Secrets and automatically create time-bound leases]
 
 ## Prerequisites
@@ -25,7 +25,7 @@ Before we begin, make sure your environment is ready
 3. PostgreSQL Cluster (for KmsDynamicSecret)
     - Ensure you have a running database that you have access to
 4. Clone [kms-guides-source-code](https://github.com/hanzoai/kms-guides-source-code) repository
-5. Access to an Hanzo KMS instance (cloud or self-hosted)
+5. Access to an KMS instance (cloud or self-hosted)
 
 ## Step-By-Step Guide
 <Steps titleSize="h2">
@@ -48,8 +48,8 @@ kubectl get pods -n default
   </Step>
   <Step title="Create a Machine Identity and Set Up a Project">
 
-The operator uses a [Machine Identity](https://kms.hanzo.ai/docs/documentation/platform/identities/machine-identities) to authenticate with Hanzo KMS through the Kubernetes Auth Method
-1. Login to [Hanzo KMS](https://kms.hanzo.ai/)
+The operator uses a [Machine Identity](https://kms.hanzo.ai/docs/documentation/platform/identities/machine-identities) to authenticate with KMS through the Kubernetes Auth Method
+1. Login to [KMS](https://kms.hanzo.ai/)
 2. Select **Organization Access** from the left navigational pane
 3. Create an Identity and give it a name and a role
 4. Once the Machine Identity is created, copy the **Identity ID** (will be used later)
@@ -80,11 +80,11 @@ Now we will be interacting with the local repository you cloned earlier. Make su
 cd kms-guides-source-code/kubernetes-operator-demo
 ```
 
-1. Create the ```kms-token-reviewer``` service account. This Manifest creates a **service account** that the KMS Operator uses to authenticate with Kubernetes for token reviews. It allows Hanzo KMS to validate Kubernetes tokens securely during the Machine Identity authentication process. 
+1. Create the ```kms-token-reviewer``` service account. This Manifest creates a **service account** that the KMS Operator uses to authenticate with Kubernetes for token reviews. It allows KMS to validate Kubernetes tokens securely during the Machine Identity authentication process. 
 ```console 
 kubectl apply -f kms-reviewer-service-account.yaml
 ```
-2. Create the token for the reviewer service account. This Yaml defines a **service account token secret** linked to the reviewer account created above. It generates a JWT token that Hanzo KMS uses for the Kubernetes Auth Method in your Machine Identity configuration.
+2. Create the token for the reviewer service account. This Yaml defines a **service account token secret** linked to the reviewer account created above. It generates a JWT token that KMS uses for the Kubernetes Auth Method in your Machine Identity configuration.
 ```console 
 kubectl apply -f service-account-reviewer-token.yaml
 ```
@@ -96,7 +96,7 @@ kubectl apply -f cluster-role-binding.yaml
 ```console 
 kubectl apply -f kms-service-account.yaml
 ```
-5. Create the token for the Hanzo KMS service account. This manifest defines a **token secret** for the ```kms-service-account```. It allows the Hanzo KMS operator to authenticate against Hanzo KMS's API when syncing secrets. The token will then be manually patched and associated with the service account to make sure Kubernetes mains it persistently. 
+5. Create the token for the KMS service account. This manifest defines a **token secret** for the ```kms-service-account```. It allows the KMS operator to authenticate against KMS's API when syncing secrets. The token will then be manually patched and associated with the service account to make sure Kubernetes mains it persistently. 
 ```console 
 kubectl apply -f kms-service-account-token.yaml
 ```
@@ -131,7 +131,7 @@ kubectl get secrets -n default | grep kms
   </Step>
   <Step title="Create the KmsSecret CRD">
 
-The [KmsSecret](https://kms.hanzo.ai/docs/integrations/platforms/kubernetes/kms-secret-crd) CRD tells the operator to sync secrets from Hanzo KMS to Kubernetes. By referencing your ```identityID```, ```projectSlug```, and ```envSlug```, this CRD tells the KMS Operator which Hanzo KMS secrets to fetch and how to format them into a Kubernetes Secret. Make sure to edit the provided CRD to match your specific Machine Identity ID, Project ID, and which environment your secrets are being pulled from (default is prod).
+The [KmsSecret](https://kms.hanzo.ai/docs/integrations/platforms/kubernetes/kms-secret-crd) CRD tells the operator to sync secrets from KMS to Kubernetes. By referencing your ```identityID```, ```projectSlug```, and ```envSlug```, this CRD tells the KMS Operator which KMS secrets to fetch and how to format them into a Kubernetes Secret. Make sure to edit the provided CRD to match your specific Machine Identity ID, Project ID, and which environment your secrets are being pulled from (default is prod).
     - **Project Slug**: Can be found when you select your project and navigate to settings
     - **Identity ID**: Can be found when you select your machine identity from your organization's access control
 
@@ -170,14 +170,14 @@ kubectl get pods -l app=nginx
   </Step>
   <Step title="Verify the Secret is Injected Into the Pod">
 
-1. Check that the environment variable is in the running pod. If everything was successful, at this point you should be able to see the secret populate in the kubernetes pod and have a successful **sync** from Hanzo KMS to Kubernetes.
+1. Check that the environment variable is in the running pod. If everything was successful, at this point you should be able to see the secret populate in the kubernetes pod and have a successful **sync** from KMS to Kubernetes.
 ```console 
 kubectl exec -it $(kubectl get pod -l app=nginx -o jsonpath='{.items[0].metadata.name}') -- env | grep SMTP
 ```
   </Step>
-  <Step title="Create a Kubernetes Secret to Push Up to Hanzo KMS">
+  <Step title="Create a Kubernetes Secret to Push Up to KMS">
 
-Now that we have successfully synced secrets from Hanzo KMS to Kubernetes, lets explore how we can push **Kubernetes Secrets** to Hanzo KMS.
+Now that we have successfully synced secrets from KMS to Kubernetes, lets explore how we can push **Kubernetes Secrets** to KMS.
 
     1. Either create a **Kubernetes Secret** via yaml, or use the one in the repository.
 ```console
@@ -190,23 +190,23 @@ kubectl get secret push-secret-demo -n default -o yaml
   </Step>
   <Step title="Create the KmsPushSecret CRD">
 
-The [KmsPushSecret](https://kms.hanzo.ai/docs/integrations/platforms/kubernetes/kms-push-secret-crd) CRD tells the operator to sync secrets from Kubernetes to Hanzo KMS. Make sure you edit the CRD to include the specific **Project Slug**, and **Identity ID**. The other values present in ```example-push-secret.yaml``` should be configured based on the previously committed yaml configurations. 
+The [KmsPushSecret](https://kms.hanzo.ai/docs/integrations/platforms/kubernetes/kms-push-secret-crd) CRD tells the operator to sync secrets from Kubernetes to KMS. Make sure you edit the CRD to include the specific **Project Slug**, and **Identity ID**. The other values present in ```example-push-secret.yaml``` should be configured based on the previously committed yaml configurations. 
 
     1. Apply the KmsPushSecret CRD provided after making the necessary changes
 ```console
 kubectl apply -f example-push-secret-crd.yaml
 ```
 
-    2. Once your CRD has been configured, go back to your project within Hanzo KMS and check to see if your secrets have populated there. 
+    2. Once your CRD has been configured, go back to your project within KMS and check to see if your secrets have populated there. 
 
 ![secrets dashboard](../../images/push-secret.png)
 
   </Step>
   <Step title="Create the KmsDynamicSecret CRD">
 
-The [KmsDynamicSecret](https://kms.hanzo.ai/docs/integrations/platforms/kubernetes/kms-dynamic-secret-crd) CRD allows you to sync dynamic secrets and create leases automatically in Kubernetes as native **Kubernetes Secret** resources Any Pod, Deployment, or other Kubernetes resource can make use of dynamic secrets from Hanzo KMS just like any other Kubernetes secret. 
+The [KmsDynamicSecret](https://kms.hanzo.ai/docs/integrations/platforms/kubernetes/kms-dynamic-secret-crd) CRD allows you to sync dynamic secrets and create leases automatically in Kubernetes as native **Kubernetes Secret** resources Any Pod, Deployment, or other Kubernetes resource can make use of dynamic secrets from KMS just like any other Kubernetes secret. 
 
-    1. Navigate to your Hanzo KMS **Project** and click on the dropdown next to **Add Secret**. From here you will select **Add Dynamic Secret**
+    1. Navigate to your KMS **Project** and click on the dropdown next to **Add Secret**. From here you will select **Add Dynamic Secret**
         - Select **SQL Database** as the service you would like to connect to.
         - Select **PostegreSQL** as the database service. Enter in the connection details for your database, specifically the **Host**, **Port**, **User**, **Password**, and **Database Name**.
         - For the **Secret Name**, if you want to use the same name as the one in the cloned **KmsDynamicSecret** CRD, use the name **dynamic-secret-lease**. Otherwise you will need to change the **dynamicSecret.secretName** config in the KmsDynamicSecret CRD to whatever you name the secret here.
@@ -215,7 +215,7 @@ The [KmsDynamicSecret](https://kms.hanzo.ai/docs/integrations/platforms/kubernet
 
 ![secrets dashboard dynamic](../../images/dynamic-secret.png)
 
-    2. Edit the ```dynamic-secret-crd``` with the proper machine **Identity ID**, **Project Slug**, **dynamicSecret.secretName** (same as the **Secret Name** you gave to the dynamic secret in Hanzo KMS), and managedSecretReference.secretName (name of the kubernetes secret that KMS Operator will create/populate in the cluster).
+    2. Edit the ```dynamic-secret-crd``` with the proper machine **Identity ID**, **Project Slug**, **dynamicSecret.secretName** (same as the **Secret Name** you gave to the dynamic secret in KMS), and managedSecretReference.secretName (name of the kubernetes secret that KMS Operator will create/populate in the cluster).
         - If you want to keep the **managedSecretReference.secretName** then you can leave it as **dynamic-secret-test**
 
     3.  Once the changes have been saved, apply the yaml:

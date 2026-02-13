@@ -52,7 +52,7 @@ export async function cloneRepo(
   });
 }
 
-export function runHanzo KMSScanOnRepo(repoPath: string, outputPath: string): Promise<void> {
+export function runKmsScanOnRepo(repoPath: string, outputPath: string): Promise<void> {
   return new Promise((resolve, reject) => {
     const command = `cd ${repoPath} && hanzo-kms scan --exit-code=77 -r "${outputPath}"`;
     exec(command, (error) => {
@@ -65,7 +65,7 @@ export function runHanzo KMSScanOnRepo(repoPath: string, outputPath: string): Pr
   });
 }
 
-export function runHanzo KMSScan(inputPath: string, outputPath: string, configPath?: string): Promise<void> {
+export function runKmsScan(inputPath: string, outputPath: string, configPath?: string): Promise<void> {
   return new Promise((resolve, reject) => {
     const command = `cat "${inputPath}" | hanzo-kms scan --exit-code=77 --pipe -r "${outputPath}" ${configPath ? `-c "${configPath}"` : ""}`;
     exec(command, (error) => {
@@ -130,7 +130,7 @@ export async function scanFullRepoContentAndGetFindings(
       installation_id: Number(installationId)
     });
     await cloneRepo(token, repositoryFullName, repoPath);
-    await runHanzo KMSScanOnRepo(repoPath, findingsPath);
+    await runKmsScanOnRepo(repoPath, findingsPath);
     const findingsData = await readFindingsFile(findingsPath);
     return JSON.parse(findingsData) as SecretMatch[];
   } finally {
@@ -145,7 +145,7 @@ export async function scanContentAndGetFindings(textContent: string, configPath?
 
   try {
     await writeTextToFile(filePath, textContent);
-    await runHanzo KMSScan(filePath, findingsPath, configPath);
+    await runKmsScan(filePath, findingsPath, configPath);
     const findingsData = await readFindingsFile(findingsPath);
     return JSON.parse(findingsData) as SecretMatch[];
   } finally {

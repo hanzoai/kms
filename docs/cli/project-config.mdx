@@ -3,9 +3,9 @@ title: "Project config file"
 description: "Project config file & customization options"
 ---
 
-To link your local project on your machine with an Hanzo KMS project, we suggest using the hanzo-kms init CLI command. This will generate a `.kms.json` file in the root directory of your project.
+To link your local project on your machine with an KMS project, we suggest using the hanzo-kms init CLI command. This will generate a `.kms.json` file in the root directory of your project.
 
-The `.kms.json` file specifies various parameters, such as the Hanzo KMS project to retrieve secrets from, along with other configuration options. Furthermore, you can define additional properties in the file to further tailor your local development experience.
+The `.kms.json` file specifies various parameters, such as the KMS project to retrieve secrets from, along with other configuration options. Furthermore, you can define additional properties in the file to further tailor your local development experience.
 
 ## Set default environment
 If you need to change environments while using the CLI, you can do so by including the `--env` flag in your command. 
@@ -25,8 +25,8 @@ If both `defaultEnvironment` and `gitBranchToEnvironmentMapping` are configured,
 However, if `gitBranchToEnvironmentMapping` is not set and `defaultEnvironment` is, then the `defaultEnvironment` will be used to execute your KMS CLI commands.
 If you wish to override the `defaultEnvironment`, you can do so by using the `--env` flag explicitly.
 
-## Set Hanzo KMS environment based on GitHub branch 
-When fetching your secrets from Hanzo KMS, you can switch between environments by using the `--env` flag. However, in certain cases, you may prefer the environment to be automatically mapped based on the current GitHub branch you are working on. 
+## Set KMS environment based on GitHub branch 
+When fetching your secrets from KMS, you can switch between environments by using the `--env` flag. However, in certain cases, you may prefer the environment to be automatically mapped based on the current GitHub branch you are working on. 
 To achieve this, simply add the `gitBranchToEnvironmentMapping` property to your configuration file, as shown below.
 
 ```json .kms.json

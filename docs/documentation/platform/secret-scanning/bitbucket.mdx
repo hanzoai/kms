@@ -8,10 +8,10 @@ description: "Learn how to configure secret scanning for Bitbucket."
 
 - Create a [Bitbucket Connection](/integrations/app-connections/bitbucket) with Secret Scanning permissions
 
-## Create a Bitbucket Data Source in Hanzo KMS
+## Create a Bitbucket Data Source in KMS
 
 <Tabs>
-    <Tab title="Hanzo KMS UI">
+    <Tab title="KMS UI">
         1. Navigate to your Secret Scanning Project's Dashboard and click the **Add Data Source** button.
         ![Secret Scanning Dashboard](/images/platform/secret-scanning/github/github-data-source-step-1.png)
 
@@ -25,9 +25,9 @@ description: "Learn how to configure secret scanning for Bitbucket."
             - **Bitbucket Connection** - the connection that has access to the repositories you want to scan.
             - **Workspace** - the Bitbucket workspace to scan secrets in.
             - **Scan Repositories** - select which repositories you would like to scan.
-                - **All Repositories** - Hanzo KMS will scan all repositories associated with your connection.
-                - **Select Repositories** - Hanzo KMS will scan the selected repositories.
-            - **Auto-Scan Enabled** - whether Hanzo KMS should automatically perform a scan when a push is made to configured repositories.
+                - **All Repositories** - KMS will scan all repositories associated with your connection.
+                - **Select Repositories** - KMS will scan the selected repositories.
+            - **Auto-Scan Enabled** - whether KMS should automatically perform a scan when a push is made to configured repositories.
 
         4. Give your data source a name and description (optional). Then click **Next**.
         ![Data Source Details](/images/platform/secret-scanning/bitbucket/step-4.png)

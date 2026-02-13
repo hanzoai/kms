@@ -218,7 +218,7 @@ export const reminderServiceFactory = ({
           }
           await smtpService.sendMail({
             template: SmtpTemplates.SecretReminder,
-            subjectLine: "Hanzo KMS secret reminder",
+            subjectLine: "KMS secret reminder",
             recipients,
             substitutions: {
               reminderNote: reminder.message || "",

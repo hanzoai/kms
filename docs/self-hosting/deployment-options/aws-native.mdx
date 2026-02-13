@@ -1,16 +1,16 @@
 ---
 title: "AWS (ECS with Fargate)"
-description: "Deploy Hanzo KMS on AWS using ECS Fargate, RDS, ElastiCache, and ALB."
+description: "Deploy KMS on AWS using ECS Fargate, RDS, ElastiCache, and ALB."
 ---
 
-Learn how to deploy **Hanzo KMS** on Amazon Web Services using **Elastic Container Service (ECS)** with Fargate. This guide covers setting up Hanzo KMS in a production-ready AWS environment using **Amazon RDS** (PostgreSQL) for the database, **Amazon ElastiCache** (Redis) for caching, and an **Application Load Balancer (ALB)** for routing traffic.
+Learn how to deploy **KMS** on Amazon Web Services using **Elastic Container Service (ECS)** with Fargate. This guide covers setting up KMS in a production-ready AWS environment using **Amazon RDS** (PostgreSQL) for the database, **Amazon ElastiCache** (Redis) for caching, and an **Application Load Balancer (ALB)** for routing traffic.
 
 ## Prerequisites
 
 - An AWS account with permissions to create VPCs, ECS clusters, RDS, ElastiCache, and ALB resources
 - Basic knowledge of AWS networking (VPC, subnets, security groups) and ECS concepts
 - [AWS CLI](https://aws.amazon.com/cli/) installed and configured (optional, for CLI examples)
-- An Hanzo KMS Docker image tag from [Docker Hub](https://hub.docker.com/r/ghcr.io/hanzoai/kms/tags)
+- An KMS Docker image tag from [Docker Hub](https://hub.docker.com/r/ghcr.io/hanzoai/kms/tags)
 
 <Warning>
   Do not use the `latest` tag in production. Always pin to a specific version to avoid unexpected changes during upgrades.
@@ -18,7 +18,7 @@ Learn how to deploy **Hanzo KMS** on Amazon Web Services using **Elastic Contain
 
 ## System Requirements
 
-The following are minimum requirements for running Hanzo KMS on AWS ECS:
+The following are minimum requirements for running KMS on AWS ECS:
 
 | Component | Minimum | Recommended (Production) |
 |-----------|---------|--------------------------|
@@ -33,7 +33,7 @@ For production deployments with many users or secrets, increase these values acc
 
 <Steps>
 <Step title="Set up network infrastructure (VPC, subnets, security groups)">
-  Create an AWS Virtual Private Cloud (VPC) network for hosting Hanzo KMS:
+  Create an AWS Virtual Private Cloud (VPC) network for hosting KMS:
 
   **VPC and Subnets:**
   - Create a VPC spanning at least two Availability Zones
@@ -55,7 +55,7 @@ For production deployments with many users or secrets, increase these values acc
   | Redis SG | 6379 from ECS Tasks SG | Allow Redis from ECS |
 
   <Note>
-    For additional security, consider placing CloudFront in front of the ALB, using AWS WAF for web application firewall protection, or restricting the ALB security group to specific IP ranges if your users access Hanzo KMS from known networks.
+    For additional security, consider placing CloudFront in front of the ALB, using AWS WAF for web application firewall protection, or restricting the ALB security group to specific IP ranges if your users access KMS from known networks.
   </Note>
 
   **Verify:** After creating the VPC, confirm you have:
@@ -71,7 +71,7 @@ For production deployments with many users or secrets, increase these values acc
 </Step>
 
 <Step title="Provision the database (PostgreSQL) and cache (Redis)">
-  Set up the persistence layers for Hanzo KMS:
+  Set up the persistence layers for KMS:
 
   **Amazon RDS (PostgreSQL):**
   - Create a PostgreSQL 14+ database instance in the private subnets
@@ -106,7 +106,7 @@ For production deployments with many users or secrets, increase these values acc
   ```bash
   aws elasticache create-replication-group \
     --replication-group-id kms-redis \
-    --replication-group-description "Redis for Hanzo KMS" \
+    --replication-group-description "Redis for KMS" \
     --engine redis \
     --cache-node-type cache.t3.small \
     --num-cache-clusters 2 \
@@ -132,7 +132,7 @@ For production deployments with many users or secrets, increase these values acc
   - **Redis URI:** `redis://<elasticache-endpoint>:6379`
 </Step>
 
-<Step title="Securely store Hanzo KMS secrets and configuration">
+<Step title="Securely store KMS secrets and configuration">
   Generate and store the required secrets using AWS Systems Manager Parameter Store or Secrets Manager:
 
   **Generate secrets:**
@@ -206,12 +206,12 @@ For production deployments with many users or secrets, increase these values acc
   ```bash
   # Create the execution role
   aws iam create-role \
-    --role-name Hanzo KMSECSExecutionRole \
+    --role-name KMSECSExecutionRole \
     --assume-role-policy-document file://ecs-task-execution-trust-policy.json
 
   # Attach the managed policy
   aws iam attach-role-policy \
-    --role-name Hanzo KMSECSExecutionRole \
+    --role-name KMSECSExecutionRole \
     --policy-arn arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
   ```
 
@@ -262,12 +262,12 @@ For production deployments with many users or secrets, increase these values acc
   ```bash
   # Create the task role
   aws iam create-role \
-    --role-name Hanzo KMSTaskRole \
+    --role-name KMSTaskRole \
     --assume-role-policy-document file://ecs-task-execution-trust-policy.json
 
   # Create and attach the custom policy
   aws iam put-role-policy \
-    --role-name Hanzo KMSTaskRole \
+    --role-name KMSTaskRole \
     --policy-name KmsSecretsAccess \
     --policy-document file://kms-task-policy.json
   ```
@@ -290,8 +290,8 @@ For production deployments with many users or secrets, increase these values acc
 
   **Verify:** Confirm roles are created:
   ```bash
-  aws iam get-role --role-name Hanzo KMSECSExecutionRole
-  aws iam get-role --role-name Hanzo KMSTaskRole
+  aws iam get-role --role-name KMSECSExecutionRole
+  aws iam get-role --role-name KMSTaskRole
   ```
 </Step>
 
@@ -314,8 +314,8 @@ For production deployments with many users or secrets, increase these values acc
     "requiresCompatibilities": ["FARGATE"],
     "cpu": "1024",
     "memory": "2048",
-    "executionRoleArn": "arn:aws:iam::<account-id>:role/Hanzo KMSECSExecutionRole",
-    "taskRoleArn": "arn:aws:iam::<account-id>:role/Hanzo KMSTaskRole",
+    "executionRoleArn": "arn:aws:iam::<account-id>:role/KMSECSExecutionRole",
+    "taskRoleArn": "arn:aws:iam::<account-id>:role/KMSTaskRole",
     "containerDefinitions": [
       {
         "name": "kms",
@@ -420,7 +420,7 @@ For production deployments with many users or secrets, increase these values acc
   aws elbv2 describe-load-balancers --names kms-alb --query 'LoadBalancers[0].State.Code'
   ```
 
-  Note the ALB DNS name for accessing Hanzo KMS:
+  Note the ALB DNS name for accessing KMS:
   ```bash
   aws elbv2 describe-load-balancers --names kms-alb --query 'LoadBalancers[0].DNSName' --output text
   ```
@@ -456,18 +456,18 @@ For production deployments with many users or secrets, increase these values acc
   aws elbv2 describe-target-health --target-group-arn <target-group-arn>
   ```
 
-  Once tasks are running and healthy, access Hanzo KMS via the ALB DNS name:
+  Once tasks are running and healthy, access KMS via the ALB DNS name:
   ```bash
   curl http://<alb-dns-name>/api/status
   ```
 
   <Tip>
-    For production, run at least **2 Hanzo KMS tasks** spread across different Availability Zones for high availability and zero-downtime deployments.
+    For production, run at least **2 KMS tasks** spread across different Availability Zones for high availability and zero-downtime deployments.
   </Tip>
 </Step>
 </Steps>
 
-After completing the above steps, your Hanzo KMS instance should be running on AWS. Visit `http://<alb-dns-name>` to access the Hanzo KMS web interface and create your admin account.
+After completing the above steps, your KMS instance should be running on AWS. Visit `http://<alb-dns-name>` to access the KMS web interface and create your admin account.
 
 ![self-hosted sign up](/images/self-hosting/applicable-to-all/selfhost-signup.png)
 
@@ -550,7 +550,7 @@ After completing the above steps, your Hanzo KMS instance should be running on A
         { "name": "SMTP_PORT", "value": "587" },
         { "name": "SMTP_SECURE", "value": "false" },
         { "name": "SMTP_FROM_ADDRESS", "value": "noreply@example.com" },
-        { "name": "SMTP_FROM_NAME", "value": "Hanzo KMS" }
+        { "name": "SMTP_FROM_NAME", "value": "KMS" }
       ],
       "secrets": [
         { "name": "SMTP_USERNAME", "valueFrom": "arn:aws:ssm:<region>:<account-id>:parameter/kms/SMTP_USERNAME" },
@@ -605,7 +605,7 @@ After completing the above steps, your Hanzo KMS instance should be running on A
       --security-group-ids <vpc-endpoint-sg>
     ```
 
-    **Push Hanzo KMS image to ECR:**
+    **Push KMS image to ECR:**
     ```bash
     # Create ECR repository
     aws ecr create-repository --repository-name kms
@@ -623,7 +623,7 @@ After completing the above steps, your Hanzo KMS instance should be running on A
   </Accordion>
 
   <Accordion title="Database Migrations">
-    Hanzo KMS automatically runs database migrations on startup. For manual migration handling:
+    KMS automatically runs database migrations on startup. For manual migration handling:
 
     **Check migration status:**
     ```bash
@@ -861,7 +861,7 @@ After completing the above steps, your Hanzo KMS instance should be running on A
 
 <AccordionGroup>
   <Accordion title="Terraform Example">
-    A basic Terraform configuration for deploying Hanzo KMS on AWS:
+    A basic Terraform configuration for deploying KMS on AWS:
 
     ```hcl
     # main.tf
@@ -978,7 +978,7 @@ After completing the above steps, your Hanzo KMS instance should be running on A
     # ElastiCache Redis
     resource "aws_elasticache_replication_group" "redis" {
       replication_group_id = "kms-redis"
-      description          = "Redis for Hanzo KMS"
+      description          = "Redis for KMS"
 
       node_type            = "cache.t3.small"
       num_cache_clusters   = var.environment == "production" ? 2 : 1
@@ -1015,12 +1015,12 @@ After completing the above steps, your Hanzo KMS instance should be running on A
   </Accordion>
 
   <Accordion title="CloudFormation Example">
-    A CloudFormation template for deploying Hanzo KMS on AWS:
+    A CloudFormation template for deploying KMS on AWS:
 
     ```yaml
     # kms-cloudformation.yaml
     AWSTemplateFormatVersion: '2010-09-09'
-    Description: 'Hanzo KMS on AWS ECS Fargate'
+    Description: 'KMS on AWS ECS Fargate'
 
     Parameters:
       Environment:
@@ -1028,13 +1028,13 @@ After completing the above steps, your Hanzo KMS instance should be running on A
         Default: production
         AllowedValues: [development, staging, production]
       
-      Hanzo KMSVersion:
+      KMSVersion:
         Type: String
         Default: v0.151.0
       
       DomainName:
         Type: String
-        Description: Domain name for Hanzo KMS (e.g., kms.example.com)
+        Description: Domain name for KMS (e.g., kms.example.com)
 
     Conditions:
       IsProduction: !Equals [!Ref Environment, production]
@@ -1126,7 +1126,7 @@ After completing the above steps, your Hanzo KMS instance should be running on A
           TaskRoleArn: !GetAtt ECSTaskRole.Arn
           ContainerDefinitions:
             - Name: kms
-              Image: !Sub ghcr.io/hanzoai/kms:${Hanzo KMSVersion}
+              Image: !Sub ghcr.io/hanzoai/kms:${KMSVersion}
               Essential: true
               PortMappings:
                 - ContainerPort: 8080
@@ -1285,7 +1285,7 @@ After completing the above steps, your Hanzo KMS instance should be running on A
     - Health check timeout is too short (increase to 10 seconds)
   </Accordion>
 
-  <Accordion title="Cannot access Hanzo KMS in browser">
+  <Accordion title="Cannot access KMS in browser">
     **Check ALB is accessible:**
     ```bash
     curl -v http://<alb-dns-name>/api/status
@@ -1364,7 +1364,7 @@ After completing the above steps, your Hanzo KMS instance should be running on A
     aws ecs describe-services --cluster kms-cluster --services kms-service --query 'services[0].enableExecuteCommand'
 
     # Check task role has SSM permissions
-    aws iam get-role-policy --role-name Hanzo KMSTaskRole --policy-name KmsSecretsAccess
+    aws iam get-role-policy --role-name KMSTaskRole --policy-name KmsSecretsAccess
     ```
 
     **Check managed agent status:**

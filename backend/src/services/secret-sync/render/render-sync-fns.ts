@@ -282,16 +282,16 @@ export const RenderSyncFns = {
 
     // Step 1: Process existing Render secrets - determine what to keep or delete
     for (const renderSecret of renderSecrets) {
-      const existsInHanzo KMS = Boolean(secretMap[renderSecret.key]);
+      const existsInKms = Boolean(secretMap[renderSecret.key]);
       const isManagedByThisSync = matchesSchema(renderSecret.key, environmentSlug, keySchema);
 
-      if (existsInHanzo KMS) {
-        // Secret exists in both Render and Hanzo KMS - will be updated in Step 2
+      if (existsInKms) {
+        // Secret exists in both Render and KMS - will be updated in Step 2
         // eslint-disable-next-line no-continue
         continue;
       }
 
-      // Secret exists in Render but NOT in Hanzo KMS
+      // Secret exists in Render but NOT in KMS
       if (isManagedByThisSync) {
         if (disableSecretDeletion) {
           finalEnvVars.push({ key: renderSecret.key, value: renderSecret.value });
@@ -304,7 +304,7 @@ export const RenderSyncFns = {
       }
     }
 
-    // Step 2: Process all secrets from Hanzo KMS (these will overwrite any duplicates from Step 1)
+    // Step 2: Process all secrets from KMS (these will overwrite any duplicates from Step 1)
     for (const [key, secret] of Object.entries(secretMap)) {
       // Skip empty values as Render does not allow empty variables
       if (secret.value === "") {
@@ -318,7 +318,7 @@ export const RenderSyncFns = {
     // Step 3: Batch update all secrets in Render
     await batchUpdateEnvironmentSecrets(secretSync, finalEnvVars);
 
-    // Step 4: Delete secrets that were removed from Hanzo KMS, only for environment groups because it doesn't delete on the update call
+    // Step 4: Delete secrets that were removed from KMS, only for environment groups because it doesn't delete on the update call
     if (secretsToDelete.length > 0 && secretSync.destinationConfig.scope === RenderSyncScope.EnvironmentGroup) {
       await Promise.all(secretsToDelete.map((envVar) => deleteEnvironmentSecret(secretSync, envVar)));
     }

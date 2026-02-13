@@ -1,20 +1,20 @@
 ---
 
 title: "Replication"
-description: "Learn how Hanzo KMS supports multi-region replication"
+description: "Learn how KMS supports multi-region replication"
 
 ---
 
 <Info>
-    Hanzo KMS replication is a paid feature.
+    KMS replication is a paid feature.
 
-    If you're using Hanzo KMS Cloud, then it is available under the **Enterprise Tier**. If you're self-hosting Hanzo KMS,
+    If you're using KMS Cloud, then it is available under the **Enterprise Tier**. If you're self-hosting KMS,
     then you should contact team@kms.hanzo.ai to purchase an enterprise license to use it.
 </Info>
 
-Multi-region replication is available in Hanzo KMS Enterprise to support globally distributed deployments. Understanding the architecture, use cases, and operational considerations is essential before implementing this feature in production environments.
+Multi-region replication is available in KMS Enterprise to support globally distributed deployments. Understanding the architecture, use cases, and operational considerations is essential before implementing this feature in production environments.
 
-Hanzo KMS uses a primary/secondary (1:N) architecture with asynchronous PostgreSQL replication. This design prioritizes high availability and minimal read latency for applications deployed across multiple geographic regions.
+KMS uses a primary/secondary (1:N) architecture with asynchronous PostgreSQL replication. This design prioritizes high availability and minimal read latency for applications deployed across multiple geographic regions.
 
 ## Use cases
 
@@ -32,23 +32,23 @@ In order to address the common use cases, the implementation reflects several co
 
 - **Conflict-Free Architecture**: All mutations flow through the primary instance exclusively. This prevents write conflicts and split-brain scenarios that plague multi-master systems. The trade-off ensures data integrity without requiring conflict resolution strategies.
 
-- **Zero Client Changes**: Existing Hanzo KMS integrations, SDKs, and CLI tools work without modification. Regional instances route write operations to the primary while handling reads locally. Authentication tokens and API keys function identically across all instances.
+- **Zero Client Changes**: Existing KMS integrations, SDKs, and CLI tools work without modification. Regional instances route write operations to the primary while handling reads locally. Authentication tokens and API keys function identically across all instances.
 
 - **Operational Simplicity**: Deploying additional regions requires minimal configuration. PostgreSQL handles replication complexity, and the stateless application tier scales horizontally without coordination overhead.
 
 # Architecture
 
-Hanzo KMS distinguishes between _primary_ and _secondary_ instances. The primary holds write authority and is the sole instance permitted to modify the PostgreSQL database. Secondary instances handle read traffic locally and proxy write operations to the primary.
+KMS distinguishes between _primary_ and _secondary_ instances. The primary holds write authority and is the sole instance permitted to modify the PostgreSQL database. Secondary instances handle read traffic locally and proxy write operations to the primary.
 
 ## Infrastructure components
 
-Two data stores form Hanzo KMS's persistence layer:
+Two data stores form KMS's persistence layer:
 
 - **PostgreSQL** maintains the authoritative dataset including secrets with their version history, authentication credentials, user identities, project configurations, access policies, audit trails, and integration settings. All persistent state lives in PostgreSQL.
 
 - **Redis** accelerates read operations through caching and manages asynchronous job queues. Each regional deployment maintains an independent Redis instance optimized for local access patterns.
 
-The Hanzo KMS application servers are stateless and therefore hold no persistent data internally. This design simplifies regional deployment and horizontal scaling.
+The KMS application servers are stateless and therefore hold no persistent data internally. This design simplifies regional deployment and horizontal scaling.
 
 
 <Tabs>
@@ -70,7 +70,7 @@ The Hanzo KMS application servers are stateless and therefore hold no persistent
 
    Configuring a secondary region requires four main environment variables:
 
-   1. `KMS_PRIMARY_INSTANCE_URL`: The primary region's Hanzo KMS API endpoint
+   1. `KMS_PRIMARY_INSTANCE_URL`: The primary region's KMS API endpoint
    2. Postgres primary instance connection details. View related [environment variables](/self-hosting/configuration/envars#postgresql).
    3. Postgres read replica connection details. View related [environment variables](/self-hosting/configuration/envars#postgresql).
    4. Redis connection details. View related [environment variables](/self-hosting/configuration/envars#redis).
@@ -105,24 +105,24 @@ Secrets use versioned caching. When a secret changes, its version identifier cha
 
 # Technical Details 
 
-Understanding the implementation details can help evaluate whether Hanzo KMS's replication characteristics align with your requirements. 
+Understanding the implementation details can help evaluate whether KMS's replication characteristics align with your requirements. 
 The following sections provide deeper insight into performance behavior, failure modes, and the underlying mechanisms that drive the replication system.
 
 ### PostgreSQL streaming replication
 
-Hanzo KMS relies on PostgreSQL's native replication, which provides:
+KMS relies on PostgreSQL's native replication, which provides:
 
 - **Asynchronous operation**: The primary commits transactions immediately without waiting for replicas to confirm receipt. Replicas receive and apply changes continuously with typical lag measured in milliseconds to low seconds, depending on network conditions and write volume.
 
 - **Binary-level consistency**: Replication occurs at the storage layer using write-ahead logs, guaranteeing replicas are byte-for-byte identical to the primary at the block level.
 
-- **Promotion capability**: Read replicas can be promoted to primary during disaster recovery. Promotion requires updating Hanzo KMS configuration to designate the promoted instance as primary and reconfiguring other secondaries.
+- **Promotion capability**: Read replicas can be promoted to primary during disaster recovery. Promotion requires updating KMS configuration to designate the promoted instance as primary and reconfiguring other secondaries.
 
 Consult PostgreSQL's official documentation for replication setup instructions specific to your hosting environment (RDS, Cloud SQL, self-managed, etc.).
 
 ### Version management
 
-All Hanzo KMS instances must run identical versions (mixing versions risks database schema mismatches or incompatible API behavior). Database migrations execute only on the primary and replicate to secondaries through standard PostgreSQL mechanisms.
+All KMS instances must run identical versions (mixing versions risks database schema mismatches or incompatible API behavior). Database migrations execute only on the primary and replicate to secondaries through standard PostgreSQL mechanisms.
 
 During upgrades:
 1. Upgrade the primary instance (migrations run automatically)
@@ -140,7 +140,7 @@ When a secondary receives a mutation request (POST, PUT, PATCH, DELETE), it func
 
 ### Cache management
 
-Hanzo KMS uses versioned caching rather than active invalidation:
+KMS uses versioned caching rather than active invalidation:
 
 1. Secrets and other cached entities include version identifiers
 2. When data mutates, its version changes in the database

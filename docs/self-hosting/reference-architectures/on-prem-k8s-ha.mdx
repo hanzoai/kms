@@ -1,8 +1,8 @@
 ---
 title: "Kubernetes (HA)"
-description: "Reference architecture for self-hosting Hanzo KMS on Kubernetes (HA)"
+description: "Reference architecture for self-hosting KMS on Kubernetes (HA)"
 ---
-Deploying Hanzo KMS on-premise with high availability requires expertise in networking, container orchestration, and database management. 
+Deploying KMS on-premise with high availability requires expertise in networking, container orchestration, and database management. 
 This guide serves as a reference architecture and a starting point. Actual deployments may vary depending on your organization's existing infrastructure and capabilities.
 
 
@@ -27,7 +27,7 @@ flowchart TB
         direction TB
         subgraph k8s1["Kubernetes Cluster"]
             ing1["Ingress Controller"]
-            app1["Hanzo KMS Deployment"]
+            app1["KMS Deployment"]
             
             subgraph db1["CloudNativePG"]
                 pg1p["PostgreSQL Primary"]
@@ -44,7 +44,7 @@ flowchart TB
         direction TB
         subgraph k8s2["Kubernetes Cluster"]
             ing2["Ingress Controller"]
-            app2["Hanzo KMS Deployment"]
+            app2["KMS Deployment"]
             
             subgraph db2["CloudNativePG"]
                 pg2["PostgreSQL Replicas"]
@@ -102,9 +102,9 @@ However, if you lack deep expertise in Kubernetes operators or database manageme
 
 ## Core Components
 ### Kubernetes Cluster
-Hanzo KMS is deployed on a Kubernetes cluster, which allows for container management, auto-scaling, and self-healing capabilities. 
+KMS is deployed on a Kubernetes cluster, which allows for container management, auto-scaling, and self-healing capabilities. 
 A load balancer sits in front of the Kubernetes cluster, directing traffic and making sure there is an even load distribution across the application nodes.
-This is the entry point where all other services will interact with Hanzo KMS.
+This is the entry point where all other services will interact with KMS.
 
 ### Object Storage
 The architecture requires S3-compatible object storage for database backups and cross-datacenter replication. This can be provided by:
@@ -129,11 +129,11 @@ Redis is deployed using the [Bitnami Helm chart](https://github.com/bitnami/char
 - Restore from backup during failover
 
 <Note>
-Hanzo KMS does not support Redis cluster mode, and since this is an active-passive setup, we use a simple Redis deployment with backup/restore for failover.
+KMS does not support Redis cluster mode, and since this is an active-passive setup, we use a simple Redis deployment with backup/restore for failover.
 </Note>
 
 #### PostgreSQL Backup and Restore
-PostgreSQL is the single source of truth for nearly all application data on Hanzo KMS.
+PostgreSQL is the single source of truth for nearly all application data on KMS.
 
 CloudNativePG provides well defined backup and restore capabilities:
 - **Continuous Backup:** The operator continuously archives WAL files to object storage
@@ -177,19 +177,19 @@ Each Redis instance is backed up through a Kubernetes CronJob that:
 During failover, the latest Redis backup is restored from object storage to the passive data center. This process is manual and requires operator intervention.
 
 ## Multi Data Center Deployment
-Hanzo KMS can be deployed across multiple data centers in an active-passive configuration for disaster recovery. In this setup, one data center serves as the active site while others remain as passive standbys.
+KMS can be deployed across multiple data centers in an active-passive configuration for disaster recovery. In this setup, one data center serves as the active site while others remain as passive standbys.
 
 ### Active Data Center 
 The active data center contains:
 - The primary PostgreSQL cluster managed by CloudNativePG handling all write operations
 - The active Redis instance handling all traffic
-- The active Hanzo KMS deployment serving all user traffic
+- The active KMS deployment serving all user traffic
 
 ### Passive Data Centers
 Passive data centers act as disaster recovery sites. Each contains:
 - A replica PostgreSQL cluster that replicates from the active site's primary cluster
 - A standby Redis instance (not receiving traffic)
-- A standby Hanzo KMS deployment (not receiving traffic)
+- A standby KMS deployment (not receiving traffic)
 
 ### Traffic Management and Failover
 Traffic routing between data centers requires:

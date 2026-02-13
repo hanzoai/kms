@@ -23,7 +23,7 @@ This is a documented limitation in Vite's official guidance: [Load Error Handlin
 
 ### Current Behavior
 
-Hanzo KMS includes a built-in workaround that detects version mismatches and triggers a page reload. While functional, this introduces a noticeable delay for users during deployments.
+KMS includes a built-in workaround that detects version mismatches and triggers a page reload. While functional, this introduces a noticeable delay for users during deployments.
 
 ## The Solution: External Asset Storage
 
@@ -50,11 +50,11 @@ The key points:
 - **Long cache TTL**: Content-hashed files can be cached indefinitely (we recommend 30 days)
 - **Automatic cleanup**: Configure lifecycle rules to expire old assets after 30 days
 
-At Hanzo KMS, we use **CloudFront + S3** for this purpose, but you can use any CDN and object storage combination that fits your infrastructure.
+At KMS, we use **CloudFront + S3** for this purpose, but you can use any CDN and object storage combination that fits your infrastructure.
 
 ## Exporting Assets
 
-Hanzo KMS provides a built-in command to export frontend assets from the Docker image:
+KMS provides a built-in command to export frontend assets from the Docker image:
 
 ```bash
 # Export as tar archive to stdout
@@ -86,7 +86,7 @@ These files are safe to cache with long TTLs because their filenames change when
 
 The general deployment flow should be:
 
-1. **Build** your new Docker image (or pull the official Hanzo KMS image)
+1. **Build** your new Docker image (or pull the official KMS image)
 2. **Export** assets using `npm run assets:export`
 3. **Upload** assets to your object storage
 4. **Deploy** the new container version

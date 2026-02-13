@@ -1,6 +1,6 @@
 ---
 title: Universal Auth
-description: "Learn how to authenticate to Hanzo KMS from any platform or environment."
+description: "Learn how to authenticate to KMS from any platform or environment."
 ---
 
 **Universal Auth** is a platform-agnostic authentication method that can be configured for a [machine identity](/documentation/platform/identities/machine-identities) to authenticate from any platform/environment using a Client ID and Client Secret.
@@ -8,12 +8,12 @@ This authentication method supports setting token periods, which can help [overc
 
 ## Diagram
 
-The following sequence diagram illustrates the Universal Auth workflow for authenticating clients with Hanzo KMS.
+The following sequence diagram illustrates the Universal Auth workflow for authenticating clients with KMS.
 
 ```mermaid
 sequenceDiagram
   participant Client as Client
-  participant Infis as Hanzo KMS
+  participant Infis as KMS
 
   Note over Client,Infis: Step 1: Login Operation
   Client->>Infis: Send Client ID and Client Secret
@@ -21,24 +21,24 @@ sequenceDiagram
   Note over Infis: Step 2: Client ID and Client Secret validation
   Infis->>Client: Return short-lived access token
 
-  Note over Client,Infis: Step 3: Access Hanzo KMS API with Token
+  Note over Client,Infis: Step 3: Access KMS API with Token
   Client->>Infis: Make authenticated requests using the short-lived access token
 ```
 
 ## Concept
 
-In this method, Hanzo KMS authenticates a client by verifying the credentials issued for it at the `/api/v1/auth/universal-auth/login` endpoint. If successful,
-then Hanzo KMS returns a short-lived access token that can be used to make authenticated requests to the Hanzo KMS API.
+In this method, KMS authenticates a client by verifying the credentials issued for it at the `/api/v1/auth/universal-auth/login` endpoint. If successful,
+then KMS returns a short-lived access token that can be used to make authenticated requests to the KMS API.
 
 To be more specific:
 
-1. The client submits a **Client ID** and **Client Secret** to Hanzo KMS at the `/api/v1/auth/universal-auth/login` endpoint.
-2. Hanzo KMS verifies the credential pair.
-3. If all is well, Hanzo KMS returns a short-lived access token that the client can use to make authenticated requests to the Hanzo KMS API.
+1. The client submits a **Client ID** and **Client Secret** to KMS at the `/api/v1/auth/universal-auth/login` endpoint.
+2. KMS verifies the credential pair.
+3. If all is well, KMS returns a short-lived access token that the client can use to make authenticated requests to the KMS API.
 
 ## Guide
 
-In the following steps, we explore how to create and use identities for your workloads and applications to access the Hanzo KMS API
+In the following steps, we explore how to create and use identities for your workloads and applications to access the KMS API
 using the Universal Auth authentication method.
 
 <Steps>
@@ -95,14 +95,14 @@ using the Universal Auth authentication method.
     <Warning>
     Restricting **Client Secret** and access token usage to specific trusted IPs is a paid feature.
 
-    If you're using Hanzo KMS Cloud, then it is available under the Pro Tier. If you're self-hosting Hanzo KMS, then you should contact sales@kms.hanzo.ai to purchase an enterprise license to use it.
+    If you're using KMS Cloud, then it is available under the Pro Tier. If you're self-hosting KMS, then you should contact sales@kms.hanzo.ai to purchase an enterprise license to use it.
     </Warning>
 
   </Step>
   <Step title="Creating a Client Secret">
     In order to use the identity, you'll need the non-sensitive **Client ID**
     of the identity and a **Client Secret** for it; you can think of these credentials akin to a username
-    and password used to authenticate with the Hanzo KMS API.
+    and password used to authenticate with the KMS API.
     With that, press **Create Client Secret**.
 
     ![identities client secret create](/images/platform/identities/identities-universal-auth-create-1.png)
@@ -128,16 +128,16 @@ using the Universal Auth authentication method.
     ![identities project create](/images/platform/identities/identities-project-create.png)
 
   </Step>
-  <Step title="Accessing the Hanzo KMS API with the identity">
-    To access the Hanzo KMS API as the identity, you should first perform a login operation
+  <Step title="Accessing the KMS API with the identity">
+    To access the KMS API as the identity, you should first perform a login operation
     that is to exchange the **Client ID** and **Client Secret** of the identity for an access token
     by making a request to the `/api/v1/auth/universal-auth/login` endpoint.
 
     <Tip>
       Choose the correct base URL based on your region:
 
-      - For Hanzo KMS Cloud US users: `https://kms.hanzo.ai`
-      - For Hanzo KMS Cloud EU users: `https://eu.kms.hanzo.ai`
+      - For KMS Cloud US users: `https://kms.hanzo.ai`
+      - For KMS Cloud EU users: `https://eu.kms.hanzo.ai`
     </Tip>
 
     #### Sample request
@@ -160,13 +160,13 @@ using the Universal Auth authentication method.
     }
     ```
 
-    Next, you can use the access token to authenticate with the [Hanzo KMS API](/api-reference/overview/introduction)
+    Next, you can use the access token to authenticate with the [KMS API](/api-reference/overview/introduction)
 
     <Note>
       Each identity access token has a time-to-live (TTL) which you can infer from the response of the login operation;
       the default TTL is `7200` seconds which can be adjusted in the Universal Auth configuration.
 
-      If an identity access token expires, it can no longer authenticate with the Hanzo KMS API. In this case,
+      If an identity access token expires, it can no longer authenticate with the KMS API. In this case,
       a new access token should be obtained by performing another login operation.
     </Note>
 
@@ -191,7 +191,7 @@ A common challenge in cloud-native and automated environments is the "secret zer
 1. Configure Universal Auth for your identity and set **Access Token Period** (e.g., `3600` for 1 hour).
 2. For improved security, configure the Client Secret with a low number of uses (e.g., `1`) or a short TTL. This ensures that after the initial login, the Client Secret cannot be reused, and any disruption in token renewal will require manual intervention.
 3. Deploy your workload with the **Client Secret** and **Client ID**.
-4. The workload authenticates with Hanzo KMS using the Client Secret and Client ID to obtain the initial access token (JWT).
+4. The workload authenticates with KMS using the Client Secret and Client ID to obtain the initial access token (JWT).
 5. The workload uses the access token to authenticate and continuously renews it before expiration:
 
 ```bash
@@ -199,12 +199,12 @@ curl --location --request POST 'https://kms.hanzo.ai/api/v1/auth/universal-auth/
   --header 'Authorization: Bearer <accessToken>'
 ```
 
-This approach allows your workload to securely bootstrap and maintain access to Hanzo KMS without hard-coded secrets, solving the secret zero problem.
+This approach allows your workload to securely bootstrap and maintain access to KMS without hard-coded secrets, solving the secret zero problem.
 
 **FAQ**
 
 <AccordionGroup>
-  <Accordion title="Why is the Hanzo KMS API rejecting my identity credentials?">
+  <Accordion title="Why is the KMS API rejecting my identity credentials?">
     There are a few reasons for why this might happen:
     - The client secret or access token has expired.
     - The identity is insufficiently permissioned to interact with the resources you wish to access.

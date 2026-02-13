@@ -68,7 +68,7 @@ export const GitlabAuthorizePage = () => {
       <Card className="mb-12 max-w-lg rounded-md border border-mineshaft-600">
         <CardTitle
           className="px-6 text-left text-xl"
-          subTitle="Authorize this integration to sync secrets from Hanzo KMS to GitLab. If no self-hosted GitLab URL is specified, then Hanzo KMS will connect you to GitLab Cloud."
+          subTitle="Authorize this integration to sync secrets from KMS to GitLab. If no self-hosted GitLab URL is specified, then KMS will connect you to GitLab Cloud."
         >
           <div className="flex flex-row items-center">
             <div className="flex items-center pb-0.5">

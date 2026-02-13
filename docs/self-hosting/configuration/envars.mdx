@@ -1,9 +1,9 @@
 ---
 title: "Environment Variables"
-description: "Read how to configure environment variables for self-hosted Hanzo KMS."
+description: "Read how to configure environment variables for self-hosted KMS."
 ---
 
-Hanzo KMS accepts all configurations via environment variables. For a minimal self-hosted instance, at least `ENCRYPTION_KEY`, `AUTH_SECRET`, `DB_CONNECTION_URI` and `REDIS_URL` must be defined.
+KMS accepts all configurations via environment variables. For a minimal self-hosted instance, at least `ENCRYPTION_KEY`, `AUTH_SECRET`, `DB_CONNECTION_URI` and `REDIS_URL` must be defined.
 However, you can configure additional settings to activate more features as needed.
 
 ## General platform
@@ -30,9 +30,9 @@ Used to configure platform-specific security and operational settings
 </ParamField>
 
 <ParamField query="HOST" type="string" default="localhost" optional>
-  Specifies the network interface Hanzo KMS will bind to when accepting incoming connections.
+  Specifies the network interface KMS will bind to when accepting incoming connections.
 
-By default, Hanzo KMS binds to `localhost`, which restricts access to connections from the same machine.
+By default, KMS binds to `localhost`, which restricts access to connections from the same machine.
 
 To make the application accessible externally (e.g., for self-hosted deployments), set this to `0.0.0.0`, which tells the server to listen on all network interfaces.
 
@@ -45,7 +45,7 @@ Example values:
 </ParamField>
 
 <ParamField query="TELEMETRY_ENABLED" type="string" default="true" optional>
-  Telemetry helps us improve Hanzo KMS but if you want to disable it you may set
+  Telemetry helps us improve KMS but if you want to disable it you may set
   this to `false`.
 </ParamField>
 
@@ -65,7 +65,7 @@ Example values:
   default="false"
   optional
 >
-  Determines whether your Hanzo KMS instance can automatically read the service
+  Determines whether your KMS instance can automatically read the service
   account token of the pod it's running on. Used for features such as the IRSA
   auth method.
 </ParamField>
@@ -78,11 +78,11 @@ Example values:
 ## CORS
 
 Cross-Origin Resource Sharing (CORS) is a security feature that allows web applications running on one domain to access resources from another domain.
-The following environment variables can be used to configure the Hanzo KMS Rest API to allow or restrict access to resources from different origins.
+The following environment variables can be used to configure the KMS Rest API to allow or restrict access to resources from different origins.
 
 <ParamField query="CORS_ALLOWED_ORIGINS" type="string" optional>
 
-Specify a list of origins that are allowed to access the Hanzo KMS API.
+Specify a list of origins that are allowed to access the KMS API.
 
 An example value would be `CORS_ALLOWED_ORIGINS=["https://example.com"]`.
 
@@ -105,7 +105,7 @@ The platform utilizes Postgres to persist all of its data and Redis for caching 
 
 <Info>
   Please note that the database user you create must be granted all privileges
-  on the Hanzo KMS database. This includes the ability to create new schemas,
+  on the KMS database. This includes the ability to create new schemas,
   create, update, delete, modify tables and indexes, etc.
 </Info>
 
@@ -261,7 +261,7 @@ For Redis Sentinel or Cluster mode, use the `REDIS_SENTINEL_ENABLE_TLS` or `REDI
 
 ## Email Service
 
-Without email configuration, Hanzo KMS's core functions like sign-up/login and secret operations work, but this disables multi-factor authentication, email invites for projects, alerts for suspicious logins, and all other email-dependent features.
+Without email configuration, KMS's core functions like sign-up/login and secret operations work, but this disables multi-factor authentication, email invites for projects, alerts for suspicious logins, and all other email-dependent features.
 
 <Accordion title="Generic Configuration">
 <ParamField query="SMTP_HOST" type="string" default="none" optional>
@@ -294,7 +294,7 @@ Without email configuration, Hanzo KMS's core functions like sign-up/login and s
 </ParamField>
 
 <ParamField query="SMTP_REQUIRE_TLS" type="bool" default="true" optional>
-  If this is `true` and `SMTP_PORT` is not 465 then Hanzo KMS tries to use
+  If this is `true` and `SMTP_PORT` is not 465 then KMS tries to use
   STARTTLS even if the server does not advertise support for it. If the
   connection can not be encrypted then message is not sent.
 </ParamField>
@@ -305,7 +305,7 @@ Without email configuration, Hanzo KMS's core functions like sign-up/login and s
   default="true"
   optional
 >
-  If this is `true`, Hanzo KMS will validate the server's SSL/TLS certificate
+  If this is `true`, KMS will validate the server's SSL/TLS certificate
   and reject the connection if the certificate is invalid or not trusted. If set
   to `false`, the client will accept the server's certificate regardless of its
   validity, which can be useful in development or testing environments but is
@@ -313,11 +313,11 @@ Without email configuration, Hanzo KMS's core functions like sign-up/login and s
 </ParamField>
 
 <ParamField query="SMTP_CUSTOM_CA_CERT" type="string" default="none" optional>
-    If your SMTP server uses a certificate signed by a custom Certificate Authority, you should set this variable so that Hanzo KMS can trust the custom CA.
+    If your SMTP server uses a certificate signed by a custom Certificate Authority, you should set this variable so that KMS can trust the custom CA.
 
     This variable **must be a base64 encoded PEM certificate**. Use the following command to encode your certificate: `echo "<certificate>" | base64`
 
-    Hanzo KMS highly encourages the following variables be used alongside this one for maximum security:
+    KMS highly encourages the following variables be used alongside this one for maximum security:
     - `SMTP_REQUIRE_TLS=true`
     - `SMTP_TLS_REJECT_UNAUTHORIZED=true`
 
@@ -328,7 +328,7 @@ Without email configuration, Hanzo KMS's core functions like sign-up/login and s
 
 1. Create an account and configure [SendGrid](https://sendgrid.com) to send emails.
 2. Create a SendGrid API Key under Settings > [API Keys](https://app.sendgrid.com/settings/api_keys)
-3. Set a name for your API Key, we recommend using "Hanzo KMS," and select the "Restricted Key" option. You will need to enable the "Mail Send" permission as shown below:
+3. Set a name for your API Key, we recommend using "KMS," and select the "Restricted Key" option. You will need to enable the "Mail Send" permission as shown below:
 
 ![creating sendgrid api key](../../images/self-hosting/configuration/email/email-sendgrid-create-key.png)
 
@@ -342,11 +342,11 @@ SMTP_USERNAME=apikey
 SMTP_PASSWORD=SG.rqFsfjxYPiqE1lqZTgD_lz7x8IVLx # your SendGrid API Key from step above
 SMTP_PORT=587
 SMTP_FROM_ADDRESS=hey@example.com # your email address being used to send out emails
-SMTP_FROM_NAME=Hanzo KMS
+SMTP_FROM_NAME=KMS
 ```
 
   <Info>
-    Remember that you will need to restart Hanzo KMS for this to work properly.
+    Remember that you will need to restart KMS for this to work properly.
   </Info>
 </Accordion>
 
@@ -364,7 +364,7 @@ SMTP_USERNAME=postmaster@example.mailgun.org # obtained from credentials page
 SMTP_PASSWORD=password # obtained from credentials page
 SMTP_PORT=587
 SMTP_FROM_ADDRESS=hey@example.com # your email address being used to send out emails
-SMTP_FROM_NAME=Hanzo KMS
+SMTP_FROM_NAME=KMS
 ```
 
 </Accordion>
@@ -386,7 +386,7 @@ SMTP_FROM_NAME=Hanzo KMS
       ![creating AWS IAM SES user](../../images/self-hosting/configuration/email/email-aws-ses-user.png)
     </Step>
     <Step title="Set up your SMTP environment variables">
-      With your AWS SES SMTP credentials, you can now set up your SMTP environment variables for your Hanzo KMS instance.
+      With your AWS SES SMTP credentials, you can now set up your SMTP environment variables for your KMS instance.
 
       ```
       SMTP_HOST=email-smtp.ap-northeast-1.amazonaws.com # SMTP endpoint obtained from SMTP settings
@@ -394,14 +394,14 @@ SMTP_FROM_NAME=Hanzo KMS
       SMTP_PASSWORD=xxx # your SMTP password
       SMTP_PORT=465
       SMTP_FROM_ADDRESS=hey@example.com # your email address being used to send out emails
-      SMTP_FROM_NAME=Hanzo KMS
+      SMTP_FROM_NAME=KMS
       ```
     </Step>
 
   </Steps>
 
   <Info>
-    Remember that you will need to restart Hanzo KMS for this to work properly.
+    Remember that you will need to restart KMS for this to work properly.
   </Info>
 </Accordion>
 
@@ -421,7 +421,7 @@ SMTP_USERNAME=username # obtained from your credentials
 SMTP_PASSWORD=password # obtained from your credentials
 SMTP_PORT=587
 SMTP_FROM_ADDRESS=hey@example.com # your email address being used to send out emails
-SMTP_FROM_NAME=Hanzo KMS
+SMTP_FROM_NAME=KMS
 ```
 
 {" "}
@@ -436,7 +436,7 @@ SMTP_FROM_NAME=Hanzo KMS
 ![SocketLabs domain management](../../images/self-hosting/configuration/email/email-socketlabs-domains.png)
 
   <Info>
-    Remember that you will need to restart Hanzo KMS for this to work properly.
+    Remember that you will need to restart KMS for this to work properly.
   </Info>
 </Accordion>
 
@@ -462,18 +462,18 @@ SMTP_USERNAME=resend
 SMTP_PASSWORD=YOUR_API_KEY
 SMTP_PORT=587
 SMTP_FROM_ADDRESS=hey@example.com # your email address being used to send out emails
-SMTP_FROM_NAME=Hanzo KMS
+SMTP_FROM_NAME=KMS
 ```
 
     <Info>
-      Remember that you will need to restart Hanzo KMS for this to work properly.
+      Remember that you will need to restart KMS for this to work properly.
     </Info>
 
 </Accordion>
 
 <Accordion title="Gmail">
   Create an account and enable "less secure app access" in Gmail Account Settings > Security. This will allow
-  applications like Hanzo KMS to authenticate with Gmail via your username and password.
+  applications like KMS to authenticate with Gmail via your username and password.
 
 ![Gmail secure app access](../../images/self-hosting/configuration/email/email-gmail-app-access.png)
 
@@ -485,7 +485,7 @@ SMTP_USERNAME=hey@gmail.com # your email
 SMTP_PASSWORD=password # your password
 SMTP_PORT=587
 SMTP_FROM_ADDRESS=hey@gmail.com
-SMTP_FROM_NAME=Hanzo KMS
+SMTP_FROM_NAME=KMS
 ```
 
   <Warning>
@@ -508,7 +508,7 @@ SMTP_USERNAME=username@yourdomain.com # your username
 SMTP_PASSWORD=password # your password
 SMTP_PORT=587
 SMTP_FROM_ADDRESS=username@yourdomain.com
-SMTP_FROM_NAME=Hanzo KMS
+SMTP_FROM_NAME=KMS
 ```
 
 </Accordion>
@@ -524,7 +524,7 @@ SMTP_USERNAME=username # your email
 SMTP_PASSWORD=password # your password
 SMTP_PORT=587
 SMTP_FROM_ADDRESS=hey@example.com # your personal Zoho email or domain-based email linked to Zoho Mail
-SMTP_FROM_NAME=Hanzo KMS
+SMTP_FROM_NAME=KMS
 ```
 
 {" "}
@@ -537,7 +537,7 @@ SMTP_FROM_NAME=Hanzo KMS
 </Note>
 
   <Info>
-    Remember that you will need to restart Hanzo KMS for this to work properly.
+    Remember that you will need to restart KMS for this to work properly.
   </Info>
 </Accordion>
 
@@ -550,7 +550,7 @@ SMTP_PORT=You can use one of the following ports: 2525, 80, 25, 8025, or 587
 SMTP_USERNAME=username #Your SMTP2GO account's SMTP username
 SMTP_PASSWORD=password #Your SMTP2GO account's SMTP password
 SMTP_FROM_ADDRESS=hey@example.com # your email address being used to send out emails
-SMTP_FROM_NAME=Hanzo KMS
+SMTP_FROM_NAME=KMS
 ```
 {" "}
 
@@ -566,11 +566,11 @@ SSL: Available on ports 465, 8465, and 443
 ## Authentication
 
 By default, users can only login via email/password based login method.
-To login into Hanzo KMS with OAuth providers such as Google, configure the associated variables.
+To login into KMS with OAuth providers such as Google, configure the associated variables.
 
 <ParamField query="DEFAULT_SAML_ORG_SLUG" type="string">
 
-When set, all visits to the Hanzo KMS login page will automatically redirect users of your Hanzo KMS instance to the SAML identity provider associated with the specified organization slug.
+When set, all visits to the KMS login page will automatically redirect users of your KMS instance to the SAML identity provider associated with the specified organization slug.
 
 </ParamField>
 
@@ -627,7 +627,7 @@ When set, all visits to the Hanzo KMS login page will automatically redirect use
 
 ## App Connections
 
-You can configure third-party app connections for re-use across Hanzo KMS Projects.
+You can configure third-party app connections for re-use across KMS Projects.
 
 <Accordion title="AWS Assume Role Connection">
     <ParamField query="INF_APP_CONNECTION_AWS_ACCESS_KEY_ID" type="string" default="none" optional>
@@ -758,7 +758,7 @@ You can configure third-party app connections for re-use across Hanzo KMS Projec
 
 ## Observability
 
-You can configure Hanzo KMS to collect and expose telemetry data for analytics and monitoring.
+You can configure KMS to collect and expose telemetry data for analytics and monitoring.
 
 <ParamField
   query="OTEL_TELEMETRY_COLLECTION_ENABLED"

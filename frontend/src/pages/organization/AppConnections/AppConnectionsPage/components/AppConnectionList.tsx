@@ -124,7 +124,7 @@ export const AppConnectionsSelect = ({ onSelect, projectType }: Props) => {
               className="max-w-sm py-4"
               content={
                 <>
-                  <p className="mb-2">Hanzo KMS is constantly adding support for more services.</p>
+                  <p className="mb-2">KMS is constantly adding support for more services.</p>
                   <p>
                     {`If you don't see the third-party
             service you're looking for,`}{" "}
@@ -169,7 +169,7 @@ export const AppConnectionsSelect = ({ onSelect, projectType }: Props) => {
       <UpgradePlanModal
         isOpen={popUp.upgradePlan.isOpen}
         onOpenChange={(isOpen) => handlePopUpToggle("upgradePlan", isOpen)}
-        text="All App Connections can be unlocked if you switch to Hanzo KMS Enterprise plan."
+        text="All App Connections can be unlocked if you switch to KMS Enterprise plan."
         isEnterpriseFeature={popUp.upgradePlan.data?.isEnterpriseFeature}
       />
     </div>

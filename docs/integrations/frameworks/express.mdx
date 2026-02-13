@@ -1,11 +1,11 @@
 ---
 title: "Express, Fastify, Koa"
-description: "How to use Hanzo KMS to inject environment variables and secrets into an Express app."
+description: "How to use KMS to inject environment variables and secrets into an Express app."
 ---
 
 Prerequisites:
 
-- Set up and add envars to [Hanzo KMS Cloud](https://kms.hanzo.ai)
+- Set up and add envars to [KMS Cloud](https://kms.hanzo.ai)
 - [Install the CLI](/cli/overview)
 
 The steps apply to the following non-exhaustive list of frameworks:
@@ -14,17 +14,17 @@ The steps apply to the following non-exhaustive list of frameworks:
 - [Fastify](https://www.fastify.io)
 - [Koa](https://koajs.com)
 
-## Initialize Hanzo KMS for your app
+## Initialize KMS for your app
 
 ```bash
 # navigate to the root of your of your project 
 cd /path/to/project
 
-# then initialize Hanzo KMS
+# then initialize KMS
 hanzo-kms init
 ```
 
-## Start your application as usual but with Hanzo KMS
+## Start your application as usual but with KMS
 
 ```bash
 hanzo-kms run -- <your application start command>

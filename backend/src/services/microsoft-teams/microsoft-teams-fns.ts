@@ -401,7 +401,7 @@ export const buildTeamsPayload = (orgId: string, notification: TNotification) =>
         actions: [
           {
             type: "Action.OpenUrl",
-            title: "View request in Hanzo KMS",
+            title: "View request in KMS",
             url: `${appCfg.SITE_URL}/organizations/${orgId}/projects/secret-management/${payload.projectId}/approval?requestId=${payload.requestId}`
           }
         ]
@@ -451,7 +451,7 @@ export const buildTeamsPayload = (orgId: string, notification: TNotification) =>
         actions: [
           {
             type: "Action.OpenUrl",
-            title: "View request in Hanzo KMS",
+            title: "View request in KMS",
             url: payload.approvalUrl
           }
         ]
@@ -499,7 +499,7 @@ export const buildTeamsPayload = (orgId: string, notification: TNotification) =>
         actions: [
           {
             type: "Action.OpenUrl",
-            title: "View request in Hanzo KMS",
+            title: "View request in KMS",
             url: payload.approvalUrl
           }
         ]
@@ -574,7 +574,7 @@ export class TeamsBot extends TeamsActivityHandler {
 
         // This is required in order for the bot to send proactive messages, which is required for the bot to pass the bot release validation step.
         await context.sendActivity(
-          "👋 Thanks for installing the Hanzo KMS app! You can now use the bot to send notifications to your selected teams."
+          "👋 Thanks for installing the KMS app! You can now use the bot to send notifications to your selected teams."
         );
       }
     });

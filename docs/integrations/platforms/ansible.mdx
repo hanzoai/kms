@@ -1,22 +1,22 @@
 ---
 title: "Ansible"
-description: "Learn how to use Hanzo KMS for secret management in Ansible."
+description: "Learn how to use KMS for secret management in Ansible."
 ---
 
-You can find the Hanzo KMS Ansible collection on [Ansible Galaxy](https://galaxy.ansible.com/ui/repo/published/kms/vault/).
+You can find the KMS Ansible collection on [Ansible Galaxy](https://galaxy.ansible.com/ui/repo/published/kms/vault/).
 
-This Ansible Hanzo KMS collection includes a variety of Ansible content to help automate the management of Hanzo KMS services. This collection is maintained by the Hanzo KMS team.
+This Ansible KMS collection includes a variety of Ansible content to help automate the management of KMS services. This collection is maintained by the KMS team.
 
 ## Ansible version compatibility
 Tested with the Ansible Core >= 2.12.0 versions, and the current development version of Ansible. Ansible Core versions prior to 2.12.0 have not been tested.
 
 ## Python version compatibility
-This collection depends on the Hanzo KMS SDK for Python.
+This collection depends on the KMS SDK for Python.
 
 Requires Python 3.7 or greater.
 
 ## Installing this collection
-You can install the Hanzo KMS collection with the Ansible Galaxy CLI:
+You can install the KMS collection with the Ansible Galaxy CLI:
 
 ```bash
 ansible-galaxy collection install kms.vault
@@ -34,14 +34,14 @@ You can either call modules by their Fully Qualified Collection Name (FQCN), suc
 
 ## Authentication
 
-The Hanzo KMS Ansible Collection supports [Universal Auth](/documentation/platform/identities/universal-auth), [OIDC Auth](/documentation/platform/identities/oidc-auth/general), and [Token Auth](/documentation/platform/identities/token-auth) for authenticating against Hanzo KMS.
+The KMS Ansible Collection supports [Universal Auth](/documentation/platform/identities/universal-auth), [OIDC Auth](/documentation/platform/identities/oidc-auth/general), and [Token Auth](/documentation/platform/identities/token-auth) for authenticating against KMS.
 
 ### Login Module (Recommended)
 
 The recommended approach is to use the `login` module to authenticate once and reuse the credentials across multiple tasks. This reduces authentication overhead and makes playbooks cleaner. Alternatively, you can still pass credentials directly to each plugin/module if preferred.
 
 ```yaml
-- name: Login to Hanzo KMS
+- name: Login to KMS
   kms.vault.login:
     url: "https://kms.hanzo.ai"
     auth_method: universal_auth
@@ -67,7 +67,7 @@ The recommended approach is to use the `login` module to authenticate once and r
   <Accordion title="Universal Auth">
     Using Universal Auth for authentication is the most straight-forward way to get started with using the Ansible collection.
 
-    To use Universal Auth, you need to provide the Client ID and Client Secret of your Hanzo KMS Machine Identity.
+    To use Universal Auth, you need to provide the Client ID and Client Secret of your KMS Machine Identity.
 
     ```yaml
     - name: Login with Universal Auth
@@ -145,7 +145,7 @@ The recommended approach is to use the `login` module to authenticate once and r
 
 ### Lookup Plugins
 - `kms.vault.login` - Authenticate and return reusable login data
-- `kms.vault.read_secrets` - Read secrets from Hanzo KMS
+- `kms.vault.read_secrets` - Read secrets from KMS
 
 ### Modules
 
@@ -153,7 +153,7 @@ The recommended approach is to use the `login` module to authenticate once and r
 - `kms.vault.login` - Authenticate and return reusable login data
 
 **Static Secrets:**
-- `kms.vault.read_secrets` - Read secrets from Hanzo KMS
+- `kms.vault.read_secrets` - Read secrets from KMS
 - `kms.vault.create_secret` - Create a new secret
 - `kms.vault.update_secret` - Update an existing secret
 - `kms.vault.delete_secret` - Delete a secret
@@ -176,12 +176,12 @@ The recommended approach is to use the `login` module to authenticate once and r
 
 ```yaml
 ---
-- name: Read secrets from Hanzo KMS
+- name: Read secrets from KMS
   hosts: localhost
   gather_facts: false
 
   tasks:
-    - name: Login to Hanzo KMS
+    - name: Login to KMS
       kms.vault.login:
         url: "https://kms.hanzo.ai"
         auth_method: universal_auth

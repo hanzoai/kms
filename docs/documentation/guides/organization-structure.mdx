@@ -1,14 +1,14 @@
 ---
-title: "Hanzo KMS Organizational Structure Blueprint"
+title: "KMS Organizational Structure Blueprint"
 sidebarTitle: "Organization Structure"
-description: "Learn how to structure your projects, secrets, and other resources within Hanzo KMS."
+description: "Learn how to structure your projects, secrets, and other resources within KMS."
 ---
 
-Hanzo KMS is designed to provide comprehensive, centralized, and efficient management of secrets, certificates, and encryption keys within organizations. Below is an overview of Hanzo KMS's structured components, which developers and administrators can leverage for optimal project management and security posture.
+KMS is designed to provide comprehensive, centralized, and efficient management of secrets, certificates, and encryption keys within organizations. Below is an overview of KMS's structured components, which developers and administrators can leverage for optimal project management and security posture.
 
 ### 0. Cluster/Instance
 
-- **Best Practice**: In most cases, a single Hanzo KMS instance or cluster is sufficient. Multiple clusters are typically only necessary for large, globally distributed organizations.
+- **Best Practice**: In most cases, a single KMS instance or cluster is sufficient. Multiple clusters are typically only necessary for large, globally distributed organizations.
 - **Use Cases**:
     - **Cloud-hosted** deployments typically use a single cluster. While technically possible, using multiple clusters is not a common practice and is generally unnecessary.
     - **Self-hosted** deployments can be configured with multiple clusters if needed.
@@ -16,7 +16,7 @@ Hanzo KMS is designed to provide comprehensive, centralized, and efficient manag
 
 ### 1. Organization
 
-- **Definition**: An Hanzo KMS [organization](/documentation/platform/organization) is a set of projects that use the same billing.
+- **Definition**: An KMS [organization](/documentation/platform/organization) is a set of projects that use the same billing.
 - **Use Cases**: 
     - In **self-hosted** setups, you can create multiple organizations (e.g., one for each department or business unit).
     - In **cloud-hosted deployments**, it's standard to use a single organization.
@@ -33,7 +33,7 @@ For detailed information on resource inheritance, project ownership, and enterpr
 
 ### 2. Projects
 
-- **Definition and Role**: [Projects](/documentation/platform/project) are the highest-level construct within an [organization](/documentation/platform/organization) in Hanzo KMS. They serve as the primary container for all functionalities.
+- **Definition and Role**: [Projects](/documentation/platform/project) are the highest-level construct within an [organization](/documentation/platform/organization) in KMS. They serve as the primary container for all functionalities.
 - **Common Project Mappings**: Projects typically align with applications, services, or code repositories — each being a valid and common approach depending on your organizational structure.
 - **Functional Capabilities**: Each project encompasses features for managing secrets, certificates, and encryption keys, serving as the central hub for these resources.
 
@@ -52,7 +52,7 @@ For detailed information on resource inheritance, project ownership, and enterpr
 
 ### 5. Imports
 
-- **Purpose and Benefits**: To promote reusability and avoid redundancy within a project, Hanzo KMS supports the use of imports and references. This allows secrets, folders, or entire environments to be referenced within the same project as needed.
+- **Purpose and Benefits**: To promote reusability and avoid redundancy within a project, KMS supports the use of imports and references. This allows secrets, folders, or entire environments to be referenced within the same project as needed.
 - **Project Isolation**: Imports and references only work within a single project. Secrets cannot be imported or referenced across different projects, as projects are isolated from one another.
 - **Best Practice**: Utilizing [secret imports](/documentation/platform/secret-reference#secret-imports) or [references](/documentation/platform/secret-reference#secret-referencing) ensures consistency and minimizes manual overhead when managing secrets within a project.
 
@@ -65,7 +65,7 @@ For detailed information on resource inheritance, project ownership, and enterpr
 
 ### 7. Access Controls
 
-Hanzo KMS’s access control framework is unified for both human users and machine identities, ensuring consistent management across the board.
+KMS’s access control framework is unified for both human users and machine identities, ensuring consistent management across the board.
 
 ### 7.1 Roles
 
@@ -94,6 +94,6 @@ Hanzo KMS’s access control framework is unified for both human users and machi
 
 ### **Implementation Note**
 
-For larger-scale organizations, automating configurations through **Terraform** or other infrastructure-as-code (IaC) tools is advisable. Manual configurations may lead to errors, so leveraging IaC enhances reliability and consistency in managing Hanzo KMS's robust capabilities.
+For larger-scale organizations, automating configurations through **Terraform** or other infrastructure-as-code (IaC) tools is advisable. Manual configurations may lead to errors, so leveraging IaC enhances reliability and consistency in managing KMS's robust capabilities.
 
-This structured approach ensures that Hanzo KMS's functionalities are fully leveraged, providing both flexibility and rigorous control over an organization's sensitive information and access needs.
+This structured approach ensures that KMS's functionalities are fully leveraged, providing both flexibility and rigorous control over an organization's sensitive information and access needs.

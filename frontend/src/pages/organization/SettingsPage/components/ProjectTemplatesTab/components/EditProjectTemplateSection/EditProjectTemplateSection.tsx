@@ -16,15 +16,15 @@ type Props = {
 };
 
 export const EditProjectTemplateSection = ({ template, onBack }: Props) => {
-  const isHanzo KMSTemplate = Object.values(KmsProjectTemplate).includes(
+  const isKmsTemplate = Object.values(KmsProjectTemplate).includes(
     template.name as KmsProjectTemplate
   );
 
   const { data: projectTemplate, isPending } = useGetProjectTemplateById(template.id, {
     initialData: template,
-    enabled: !isHanzo KMSTemplate
+    enabled: !isKmsTemplate
   });
-  const finalTemplate = isHanzo KMSTemplate ? template : projectTemplate;
+  const finalTemplate = isKmsTemplate ? template : projectTemplate;
 
   return (
     <div>
@@ -44,7 +44,7 @@ export const EditProjectTemplateSection = ({ template, onBack }: Props) => {
         </div>
       ) : finalTemplate ? (
         <EditProjectTemplate
-          isHanzo KMSTemplate={isHanzo KMSTemplate}
+          isKmsTemplate={isKmsTemplate}
           projectTemplate={finalTemplate}
           onBack={onBack}
         />

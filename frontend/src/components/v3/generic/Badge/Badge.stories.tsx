@@ -365,7 +365,7 @@ export const IsTruncatable: Story = {
     children: (
       <>
         <OrgIcon />
-        <span>Hanzo KMS Infrastructure</span>
+        <span>KMS Infrastructure</span>
       </>
     )
   },

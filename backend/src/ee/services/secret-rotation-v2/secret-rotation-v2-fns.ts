@@ -255,7 +255,7 @@ export const expandSecretRotation = async (
 const MAX_MESSAGE_LENGTH = 1024;
 
 export const parseRotationErrorMessage = (err: unknown): string => {
-  let errorMessage = `Hanzo KMS encountered an issue while generating credentials with the configured inputs: `;
+  let errorMessage = `KMS encountered an issue while generating credentials with the configured inputs: `;
 
   if (err instanceof AxiosError) {
     errorMessage += err?.response?.data

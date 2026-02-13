@@ -868,7 +868,7 @@ const Page = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Hanzo KMS CLI
+              KMS CLI
             </a>
             ,
             <a
@@ -877,7 +877,7 @@ const Page = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Hanzo KMS API
+              KMS API
             </a>
             ,
             <a
@@ -886,7 +886,7 @@ const Page = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Hanzo KMS SDKs
+              KMS SDKs
             </a>
             , and
             <a

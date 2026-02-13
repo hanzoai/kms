@@ -5,13 +5,13 @@ description: "Learn what is secret scanning and why it matters for building secu
 
 ## Introduction
 
-Monitor and detect exposed secrets across your data sources, including code repositories, with Hanzo KMS Secret Scanning.
+Monitor and detect exposed secrets across your data sources, including code repositories, with KMS Secret Scanning.
 
 For additional security, we recommend using our [CLI Secret Scanner](/cli/scanning-overview#automatically-scan-changes-before-you-commit) to check for exposed secrets before pushing your code changes.
 
 <Note>
-  Secret Scanning is a paid feature. If you're using Hanzo KMS Cloud, then it is
-  available under the **Enterprise Tier**. If you're self-hosting Hanzo KMS,
+  Secret Scanning is a paid feature. If you're using KMS Cloud, then it is
+  available under the **Enterprise Tier**. If you're self-hosting KMS,
   then you should contact team@kms.hanzo.ai to purchase an enterprise license
   to use it.
 </Note>
@@ -53,7 +53,7 @@ Scans can be initiated in two ways:
 
 2. **Diff Scan** - Automatically executed when **Auto-Scan** is enabled on a data source. This scan type specifically focuses on updates to existing resources.
 
-All scan activities can be monitored in real-time through the Hanzo KMS UI, which displays:
+All scan activities can be monitored in real-time through the KMS UI, which displays:
 
 - Current scan status
 - Timestamp of the scan
@@ -106,7 +106,7 @@ For detailed configuration options, expand the example configuration below.
     # "useDefault" and "path" cannot be used simultaneously. Please choose one.
     [extend]
     # useDefault will extend the base configuration with the default config:
-    # https://raw.githubusercontent.com/Hanzo KMS/kms/main/cli/config/kms-scan.toml
+    # https://raw.githubusercontent.com/KMS/kms/main/cli/config/kms-scan.toml
     useDefault = true
     # or you can supply a path to a configuration. Path is relative to where kms cli
     # was invoked, not the location of the base config.
@@ -211,7 +211,7 @@ For detailed configuration options, expand the example configuration below.
 
 ## Ignoring Known Secrets
 
-If you're intentionally committing a test secret that the secret scanner might flag, you can instruct Hanzo KMS to overlook that secret with the methods listed below.
+If you're intentionally committing a test secret that the secret scanner might flag, you can instruct KMS to overlook that secret with the methods listed below.
 
 ### kms-scan:ignore
 
@@ -226,8 +226,8 @@ function helloWorld() {
 ### .kmsignore
 
 An alternative method to exclude specific findings involves creating a .kmsignore file at your repository's root.
-You can then add the fingerprints of the findings you wish to exclude. The [Hanzo KMS scan](/cli/scanning-overview) report provides a unique Fingerprint for each secret found.
-By incorporating these Fingerprints into the .kmsignore file, Hanzo KMS will skip the corresponding secret findings in subsequent scans.
+You can then add the fingerprints of the findings you wish to exclude. The [KMS scan](/cli/scanning-overview) report provides a unique Fingerprint for each secret found.
+By incorporating these Fingerprints into the .kmsignore file, KMS will skip the corresponding secret findings in subsequent scans.
 
 ```.ignore .kmsignore
 bea0ff6e05a4de73a5db625d4ae181a015b50855:frontend/components/utilities/attemptLogin.js:stripe-access-token:147

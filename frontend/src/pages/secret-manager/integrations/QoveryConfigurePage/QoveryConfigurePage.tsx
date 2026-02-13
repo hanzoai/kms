@@ -37,7 +37,7 @@ const qoveryScopes = [
 ];
 
 enum TabSections {
-  Hanzo KMSSettings = "kmsSettings",
+  KmsSettings = "kmsSettings",
   QoverySettings = "qoverySettings"
 }
 
@@ -198,7 +198,7 @@ export const QoveryConfigurePage = () => {
       <Card className="max-w-lg rounded-md border border-mineshaft-600 p-0">
         <CardTitle
           className="px-6 text-left text-xl"
-          subTitle="Choose which environment in Hanzo KMS you want to sync to Checkly environment variables."
+          subTitle="Choose which environment in KMS you want to sync to Checkly environment variables."
         >
           <div className="flex flex-row items-center">
             <div className="flex items-center pb-0.5">
@@ -221,14 +221,14 @@ export const QoveryConfigurePage = () => {
             </a>
           </div>
         </CardTitle>
-        <Tabs defaultValue={TabSections.Hanzo KMSSettings} className="px-6">
+        <Tabs defaultValue={TabSections.KmsSettings} className="px-6">
           <TabList>
             <div className="flex w-full flex-row border-b border-mineshaft-600">
-              <Tab value={TabSections.Hanzo KMSSettings}>Hanzo KMS Settings</Tab>
+              <Tab value={TabSections.KmsSettings}>KMS Settings</Tab>
               <Tab value={TabSections.QoverySettings}>Qovery Settings</Tab>
             </div>
           </TabList>
-          <TabPanel value={TabSections.Hanzo KMSSettings}>
+          <TabPanel value={TabSections.KmsSettings}>
             <motion.div
               key="panel-1"
               transition={{ duration: 0.15 }}
@@ -236,7 +236,7 @@ export const QoveryConfigurePage = () => {
               animate={{ opacity: 1, translateX: 0 }}
               exit={{ opacity: 0, translateX: 30 }}
             >
-              <FormControl label="Hanzo KMS Project Environment">
+              <FormControl label="KMS Project Environment">
                 <Select
                   value={selectedSourceEnvironment}
                   onValueChange={(val) => setSelectedSourceEnvironment(val)}
@@ -399,7 +399,7 @@ export const QoveryConfigurePage = () => {
       {/* <div className="border-t border-mineshaft-800 w-full max-w-md mt-6"/>
       <div className="flex flex-col bg-mineshaft-800 border border-mineshaft-600 w-full p-4 max-w-lg mt-6 rounded-md">
         <div className="flex flex-row items-center"><FontAwesomeIcon icon={faCircleInfo} className="text-mineshaft-200 text-xl"/> <span className="ml-3 text-md text-mineshaft-100">Pro Tip</span></div>
-        <span className="text-mineshaft-300 text-sm mt-4">After creating an integration, your secrets will start syncing immediately. This might cause an unexpected override of current secrets in Qovery with secrets from Hanzo KMS.</span>
+        <span className="text-mineshaft-300 text-sm mt-4">After creating an integration, your secrets will start syncing immediately. This might cause an unexpected override of current secrets in Qovery with secrets from KMS.</span>
       </div> */}
     </div>
   ) : (

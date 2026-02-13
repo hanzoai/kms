@@ -3,7 +3,7 @@ title: "Kubernetes"
 description: "Learn how to dynamically generate Kubernetes service account tokens."
 ---
 
-The Hanzo KMS Kubernetes dynamic secret allows you to generate short-lived service account tokens on demand.
+The KMS Kubernetes dynamic secret allows you to generate short-lived service account tokens on demand.
 
 ## Overview
 
@@ -12,7 +12,7 @@ The Kubernetes dynamic secret feature enables you to generate short-lived servic
 - **Secure Access Management**: Instead of using long-lived service account tokens, you can generate short-lived tokens that automatically expire, reducing the risk of token exposure.
 - **Temporary Access**: Generate tokens with specific TTLs (Time To Live) for temporary access to your Kubernetes clusters.
 - **Audit Trail**: Each token generation is tracked, providing better visibility into who accessed your cluster and when.
-- **Integration with Private Clusters**: Seamlessly work with private Kubernetes clusters using Hanzo KMS's Gateway feature.
+- **Integration with Private Clusters**: Seamlessly work with private Kubernetes clusters using KMS's Gateway feature.
 
 <Note>
   Kubernetes service account tokens cannot be revoked once issued. This is why
@@ -81,7 +81,7 @@ This feature is ideal for scenarios where you need to:
             - You want to explicitly control which service account is used for operations
 
             <Note>
-              With Token (API) authentication, Hanzo KMS uses the provided service account token
+              With Token (API) authentication, KMS uses the provided service account token
               to make API calls to your Kubernetes cluster. This token must have the necessary
               permissions to generate tokens for the target service account.
             </Note>
@@ -156,7 +156,7 @@ This feature is ideal for scenarios where you need to:
             - You want centralized management of cluster operations
 
             <Note>
-              With Gateway authentication, Hanzo KMS communicates with the Gateway, which then
+              With Gateway authentication, KMS communicates with the Gateway, which then
               uses its own service account to make API calls to the Kubernetes API server.
               The Gateway's service account must have the necessary permissions to generate
               tokens for the target service account.
@@ -242,7 +242,7 @@ This feature is ideal for scenarios where you need to:
             - You want to explicitly control which service account is used for operations
 
             <Note>
-              With Token (API) authentication, Hanzo KMS uses the provided service account token
+              With Token (API) authentication, KMS uses the provided service account token
               to make API calls to your Kubernetes cluster. This token must have the necessary
               permissions to create and manage service accounts, their tokens, and RBAC resources.
             </Note>
@@ -329,7 +329,7 @@ This feature is ideal for scenarios where you need to:
             - You want centralized management of cluster operations
 
             <Note>
-              With Gateway authentication, Hanzo KMS communicates with the Gateway, which then
+              With Gateway authentication, KMS communicates with the Gateway, which then
               uses its own service account to make API calls to the Kubernetes API server.
               The Gateway's service account must have the necessary permissions to create and
               manage service accounts, their tokens, and RBAC resources.
@@ -506,7 +506,7 @@ Once you have created one or more leases, you will be able to access them by cli
 This will allow you to see the lease details and delete the lease ahead of its expiration time.
 
 <Note>
-  While you can delete the lease from Hanzo KMS, the actual Kubernetes service
+  While you can delete the lease from KMS, the actual Kubernetes service
   account token cannot be revoked. The token will remain valid until its TTL
   expires. This is why it's crucial to use appropriate TTL values when
   generating tokens.

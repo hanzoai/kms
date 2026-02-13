@@ -18,6 +18,6 @@ export const CHEF_PKI_SYNC_DATA_BAG_NAMING = {
 export const CHEF_PKI_SYNC_DEFAULTS = {
   CERTIFICATE_DATA_BAG: "ssl_certificates",
   ITEM_NAME_TEMPLATE: "{{certificateId}}",
-  KMS_PREFIX: "Hanzo KMS-",
+  KMS_PREFIX: "KMS-",
   DEFAULT_ENVIRONMENT: "global"
 } as const;

@@ -8,10 +8,10 @@ const latencyHistogram = apiMeter.createHistogram("API_latency", {
   unit: "ms"
 });
 
-const kmsMeter = opentelemetry.metrics.getMeter("Hanzo KMS");
+const kmsMeter = opentelemetry.metrics.getMeter("KMS");
 
 const requestCounter = kmsMeter.createCounter("kms.http.server.request.count", {
-  description: "Total number of API requests to Hanzo KMS (covers both human users and machine identities)",
+  description: "Total number of API requests to KMS (covers both human users and machine identities)",
   unit: "{request}"
 });
 

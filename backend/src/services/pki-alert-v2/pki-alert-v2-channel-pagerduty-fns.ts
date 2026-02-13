@@ -85,7 +85,7 @@ export const buildPagerDutyPayload = ({
     event_action: "trigger",
     dedup_key: alert.id,
     payload: {
-      summary: `Hanzo KMS: ${totalCertificates} certificate(s) expiring within ${alert.alertBefore} - Alert: ${alert.name}`,
+      summary: `KMS: ${totalCertificates} certificate(s) expiring within ${alert.alertBefore} - Alert: ${alert.name}`,
       severity,
       source: "kms-pki-alerts",
       timestamp: now.toISOString(),
@@ -109,7 +109,7 @@ export const buildPagerDutyPayload = ({
         view_url: viewUrl
       }
     },
-    links: [{ href: viewUrl, text: "View certificates in Hanzo KMS" }]
+    links: [{ href: viewUrl, text: "View certificates in KMS" }]
   };
 };
 

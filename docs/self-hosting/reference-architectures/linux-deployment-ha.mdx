@@ -1,9 +1,9 @@
 ---
 title: "Linux (HA)"
-description: "Hanzo KMS High Availability Deployment architecture for Linux"
+description: "KMS High Availability Deployment architecture for Linux"
 ---
 
-This guide describes how to achieve a highly available deployment of Hanzo KMS on Linux machines without containerization. The architecture provided serves as a foundation for minimum high availability, which you can scale based on your specific requirements.
+This guide describes how to achieve a highly available deployment of KMS on Linux machines without containerization. The architecture provided serves as a foundation for minimum high availability, which you can scale based on your specific requirements.
 
 ## Architecture Overview
 
@@ -18,7 +18,7 @@ The deployment consists of the following key components:
 | Etcd Cluster              | 3     | 4 vCPU, 4 GB memory      | n1-highcpu-4   | c5n.xlarge   |
 | PostgreSQL Cluster        | 3     | 2 vCPU, 8 GB memory      | n1-standard-2  | m5.large     |
 | Redis + Sentinel          | 3+3   | 2 vCPU, 8 GB memory      | n1-standard-2  | m5.large     |
-| Hanzo KMS Core           | 3     | 2 vCPU, 4 GB memory      |  n1-highcpu-2   | c5.large   |
+| KMS Core           | 3     | 2 vCPU, 4 GB memory      |  n1-highcpu-2   | c5.large   |
 
 ### Network Architecture
 
@@ -40,9 +40,9 @@ All servers operate within the 52.1.0.0/24 private network range with the follow
 | Sentinel Node 1      | 52.1.0.12  |
 | Sentinel Node 2      | 52.1.0.13  |
 | Sentinel Node 3      | 52.1.0.14  |
-| Hanzo KMS Core 1     | 52.1.0.15  |
-| Hanzo KMS Core 2     | 52.1.0.16  |
-| Hanzo KMS Core 3     | 52.1.0.17  |
+| KMS Core 1     | 52.1.0.15  |
+| KMS Core 2     | 52.1.0.16  |
+| KMS Core 3     | 52.1.0.17  |
 
 ## Component Setup Guide
 
@@ -310,15 +310,15 @@ backend kms_backend
     server kms-3 52.1.0.17:8080 check inter 1s
 ```
 
-### 5. Deploy Hanzo KMS Core
+### 5. Deploy KMS Core
 <Tabs>
   <Tab title="Debian/Ubuntu">
-    First, add the Hanzo KMS repository:
+    First, add the KMS repository:
     ```bash
     curl -1sLf 'https://artifacts-kms-core.kms.hanzo.ai/setup.deb.sh' | sudo -E bash
     ```
 
-    Then install Hanzo KMS:
+    Then install KMS:
     ```bash
     sudo apt-get update && sudo apt-get install -y kms-core
     ```
@@ -329,12 +329,12 @@ backend kms_backend
   </Tab>
 
   <Tab title="RedHat/CentOS/Amazon Linux">
-    First, add the Hanzo KMS repository:
+    First, add the KMS repository:
     ```bash
     curl -1sLf 'https://artifacts-kms-core.kms.hanzo.ai/setup.rpm.sh' | sudo -E bash
     ```
 
-    Then install Hanzo KMS:
+    Then install KMS:
     ```bash
     sudo yum install kms-core
     ```
@@ -372,7 +372,7 @@ sudo kms-ctl status
 ## Monitoring and Maintenance
 
 1. Monitor HAProxy stats: `http://52.1.0.2:7000/haproxy?stats`
-2. Monitor Hanzo KMS logs: `sudo kms-ctl tail`
+2. Monitor KMS logs: `sudo kms-ctl tail`
 3. Check cluster health:
    - Etcd: `etcdctl cluster-health`
    - PostgreSQL: `patronictl list`

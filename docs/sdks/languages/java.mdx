@@ -1,10 +1,10 @@
 ---
-title: "Hanzo KMS Java SDK"
+title: "KMS Java SDK"
 sidebarTitle: "Java"
 icon: "/images/sdks/languages/java.svg"
 ---
 
-If you're working with Java, the official Hanzo KMS Java SDK package is the easiest way to fetch and work with secrets for your application. 
+If you're working with Java, the official KMS Java SDK package is the easiest way to fetch and work with secrets for your application. 
 
 ## Installation
 
@@ -36,13 +36,13 @@ For other build tools, please check our [package snippets](https://central.sonat
 ```java
 package com.example.example;
 
-import com.kms.sdk.Hanzo KMSSdk;
+import com.kms.sdk.KMSSdk;
 import com.kms.sdk.SdkConfig;
 
 public class Example {
 
   public static void main(String[] args) {
-    var sdk = new Hanzo KMSSdk(
+    var sdk = new KMSSdk(
       new SdkConfig.Builder()
         // Optional, will default to https://kms.hanzo.ai
         .withSiteUrl("https://your-kms-instance.com")
@@ -90,7 +90,7 @@ public void UniversalAuthLogin(
   String clientId,
   String clientSecret
 )
-throws Hanzo KMSException
+throws KMSException
 ```
 
 ```java
@@ -111,7 +111,7 @@ sdk.Auth().UniversalAuthLogin(
 public void AwsAuthLogin(
   String identityId
 )
-throws Hanzo KMSException
+throws KMSException
 ```
 
 ```java
@@ -127,7 +127,7 @@ sdk.Auth().AwsAuthLogin("<machine-identity-id>");
 public void LdapAuthLogin(
   LdapAuthLoginInput input
 )
-throws Hanzo KMSException
+throws KMSException
 ```
 
 ```java
@@ -155,7 +155,7 @@ sdk.Auth().LdapAuthLogin(input);
 public void SetAccessToken(
   String accessToken
 )
-throws Hanzo KMSException
+throws KMSException
 ```
 
 ```java
@@ -182,7 +182,7 @@ public List<Secret> ListSecrets(
     Boolean setSecretsOnSystemProperties
 )
 
-throws Hanzo KMSException
+throws KMSException
 ```
 
 ```java
@@ -220,7 +220,7 @@ public Secret CreateSecret(
     String environmentSlug,
     String secretPath
 )
-throws Hanzo KMSException
+throws KMSException
 ```
 
 ```java
@@ -255,7 +255,7 @@ public Secret UpdateSecret(
     String newSecretName
   )
     
-throws Hanzo KMSException
+throws KMSException
 ```
 
 
@@ -293,7 +293,7 @@ public Secret GetSecret(
     Boolean includeImports,
     String secretType
   )
-throws Hanzo KMSException
+throws KMSException
 ```
 
 ```java
@@ -331,7 +331,7 @@ public Secret DeleteSecret(
     String environmentSlug,
     String secretPath
   )
-throws Hanzo KMSException
+throws KMSException
 ```
 
 ```java
@@ -361,7 +361,7 @@ Secret deletedSecret = sdk.Secrets().DeleteSecret(
 public Folder Get(
   String folderId
 );
-throws Hanzo KMSException
+throws KMSException
 ```
 
 ```java
@@ -380,7 +380,7 @@ Folder folder = sdk.Folders().Get("<folder-id>");
 public List<Folder> List(
   ListFoldersInput input
 )
-throws Hanzo KMSException
+throws KMSException
 ```
 
 ```java
@@ -412,7 +412,7 @@ List<Folder> folders = sdk.Folders().List(input);
 public Folder Create(
   CreateFolderInput input
 )
-throws Hanzo KMSException
+throws KMSException
 ```
 
 ```java
@@ -445,7 +445,7 @@ Folder createdFolder = sdk.Folders().Create(input);
 public Folder Update(
   UpdateFolderInput input
 )
-throws Hanzo KMSException
+throws KMSException
 ```
 
 ```java
@@ -478,7 +478,7 @@ Folder updatedFolder = sdk.Folders().Update(input);
 public Folder Delete(
   DeleteFolderInput input
 )
-throws Hanzo KMSException
+throws KMSException
 ```
 
 ```java

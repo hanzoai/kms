@@ -1,32 +1,32 @@
 ---
 title: "Overview"
-description: "How to deploy Hanzo KMS Relay Servers"
+description: "How to deploy KMS Relay Servers"
 ---
 
-Hanzo KMS Relay is a secure routing layer that allows Hanzo KMS to connect to your private network resources, such as databases or internal APIs, without exposing them to the public internet.
-The relay acts as an intermediary, forwarding encrypted traffic between Hanzo KMS and your deployed gateways. This ensures that your sensitive data remains protected and never leaves your network unencrypted.
-With this architecture, you can achieve secure, firewall-friendly access across network boundaries, making it possible for Hanzo KMS to interact with resources even in highly restricted environments.
+KMS Relay is a secure routing layer that allows KMS to connect to your private network resources, such as databases or internal APIs, without exposing them to the public internet.
+The relay acts as an intermediary, forwarding encrypted traffic between KMS and your deployed gateways. This ensures that your sensitive data remains protected and never leaves your network unencrypted.
+With this architecture, you can achieve secure, firewall-friendly access across network boundaries, making it possible for KMS to interact with resources even in highly restricted environments.
 
-Before diving in, it's important to determine whether you actually need to deploy your own relay server or if you can use Hanzo KMS's managed infrastructure.
+Before diving in, it's important to determine whether you actually need to deploy your own relay server or if you can use KMS's managed infrastructure.
 
 ## Do You Need to Deploy a Relay?
 
-Not all users need to deploy their own relay servers. Hanzo KMS provides managed relay infrastructure in US/EU regions for Hanzo KMS Cloud users, which requires no setup or maintenance. You only need to deploy a relay if you:
+Not all users need to deploy their own relay servers. KMS provides managed relay infrastructure in US/EU regions for KMS Cloud users, which requires no setup or maintenance. You only need to deploy a relay if you:
 
-- Are self-hosting Hanzo KMS
-- Have a dedicated enterprise instance of Hanzo KMS (managed by Hanzo KMS)
+- Are self-hosting KMS
+- Have a dedicated enterprise instance of KMS (managed by KMS)
 - Require closer geographic proximity to target resources than managed relays provide for lower latency and reduced network congestion when accessing resources through the relay
 - Need full control over relay infrastructure and traffic routing
 
-If you are using Hanzo KMS Cloud and do not have specific requirements, you can use the managed relays provided by Hanzo KMS and skip the rest of this guide.
+If you are using KMS Cloud and do not have specific requirements, you can use the managed relays provided by KMS and skip the rest of this guide.
 
 ## Deployment Steps
 
-To successfully deploy an Hanzo KMS Relay for use, follow these steps in order.
+To successfully deploy an KMS Relay for use, follow these steps in order.
 
 <Steps>
    <Step title="Provision a Machine Identity">
-   Create a machine identity with the correct permissions to create and manage relays. This identity is used by the relay to authenticate with Hanzo KMS and should be provisioned in advance.
+   Create a machine identity with the correct permissions to create and manage relays. This identity is used by the relay to authenticate with KMS and should be provisioned in advance.
    The relay supports several [machine identity auth methods](/documentation/platform/identities/machine-identities) for authentication, as listed below. Choose the one that best fits your environment and set the corresponding environment variables when deploying the relay.
 
    <AccordionGroup>
@@ -108,7 +108,7 @@ To successfully deploy an Hanzo KMS Relay for use, follow these steps in order.
    </Step>
 
    <Step title="Provision a Server">
-    Provision a server or virtual machine where you plan to deploy the relay. This server must have a static IP address or DNS name to be identifiable by the Hanzo KMS platform.
+    Provision a server or virtual machine where you plan to deploy the relay. This server must have a static IP address or DNS name to be identifiable by the KMS platform.
    </Step>
 
    <Step title="Configure Network & Firewall">
@@ -118,17 +118,17 @@ To successfully deploy an Hanzo KMS Relay for use, follow these steps in order.
     | Protocol | Source             | Port | Purpose                          |
     | -------- | ------------------ | ---- | -------------------------------- |
     | TCP      | Gateways           | 2222 | SSH reverse tunnel establishment |
-    | TCP      | Hanzo KMS instance host (US/EU, other) | 8443 | Platform-to-relay communication  |
+    | TCP      | KMS instance host (US/EU, other) | 8443 | Platform-to-relay communication  |
 
     **Outbound Connections Rules:**
     | Protocol | Destination                          | Port | Purpose                                    |
     | -------- | ------------------------------------ | ---- | ------------------------------------------ |
-    | TCP      | Hanzo KMS instance host (US/EU, other) | 443  | API communication and certificate requests |
+    | TCP      | KMS instance host (US/EU, other) | 443  | API communication and certificate requests |
 
   </Step>
 
    <Step title="Select a Deployment Method">
-      You can deploy the Hanzo KMS Relay in various ways. This guide provides a manual setup example using the KMS CLI. For an infrastructure-as-code approach, see our [Terraform guide](/documentation/platform/gateways/relay-deployment/terraform).
+      You can deploy the KMS Relay in various ways. This guide provides a manual setup example using the KMS CLI. For an infrastructure-as-code approach, see our [Terraform guide](/documentation/platform/gateways/relay-deployment/terraform).
 
       The KMS CLI is used to install and start the relay in your chosen environment. The CLI provides commands for both production and development scenarios, and supports a variety of options/flags to configure your deployment.
 
@@ -219,7 +219,7 @@ For detailed troubleshooting:
 **Test network connectivity:**
 
 ```bash
-# Test outbound API access from relay. Replace URL with your Hanzo KMS instance if self-hosted
+# Test outbound API access from relay. Replace URL with your KMS instance if self-hosted
 curl -I https://kms.hanzo.ai
 
 # Test TCP with TLS port from platform
@@ -231,7 +231,7 @@ openssl s_client -connect <relay-ip>:8443
 Relay server outages affect gateway connectivity:
 
 - **Gateway reconnection**: Gateways will automatically attempt to reconnect when the relay comes back online
-- **Service interruption**: While the relay is down, the Hanzo KMS platform cannot reach gateways through that relay. As a result, any secrets or resources accessed via those gateways will be temporarily unavailable until connectivity is restored.
+- **Service interruption**: While the relay is down, the KMS platform cannot reach gateways through that relay. As a result, any secrets or resources accessed via those gateways will be temporarily unavailable until connectivity is restored.
 - **Multiple relays**: Deploy multiple relay servers for redundancy and high availability
 - **Automatic restart**: Use systemd or container orchestration to automatically restart failed relay services
 

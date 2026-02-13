@@ -1150,7 +1150,7 @@ const getAppsOctopusDeploy = async ({
   const client = await OctopusDeployClient.create({
     instanceURL,
     apiKey,
-    userAgentApp: "Hanzo KMS Integration"
+    userAgentApp: "KMS Integration"
   });
 
   const repository = new OctopusDeployRepository(client, spaceName);

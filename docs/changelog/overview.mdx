@@ -20,24 +20,24 @@ The changelog below reflects new product developments and updates on a monthly b
 - Added support for Azure Auth in ESO. 
 - [Kubernetes auth](https://kms.hanzo.ai/docs/documentation/platform/identities/kubernetes-auth) now supports gateway as a token reviewer.
 - Revamped [KMS CLI](https://kms.hanzo.ai/docs/cli/commands/login) to auto-open login link. 
-- Rolled out [Hanzo KMS Packer integration](https://kms.hanzo.ai/docs/integrations/frameworks/packer).
+- Rolled out [KMS Packer integration](https://kms.hanzo.ai/docs/integrations/frameworks/packer).
 - Released [AliCloud Authentication method](https://kms.hanzo.ai/docs/documentation/platform/identities/alicloud-auth).
 - Added support for [multi-step approval workflows](https://kms.hanzo.ai/docs/documentation/platform/pr-workflows).
 - Revamped UI for Access Controls, Access Tree, Policies, and Approval Workflows. 
 - Released [TLS Certificate Authentication method](https://kms.hanzo.ai/docs/documentation/platform/identities/tls-cert-auth). 
-- Added ability to copy session tokens in the Hanzo KMS Dashboard.
-- Expanded resource support for [Hanzo KMS Terraform Provider](https://registry.terraform.io/providers/Hanzo KMS/kms/latest/docs).
+- Added ability to copy session tokens in the KMS Dashboard.
+- Expanded resource support for [KMS Terraform Provider](https://registry.terraform.io/providers/KMS/kms/latest/docs).
 
 
 ## May 2025
 - Added support for [Microsoft Teams integration](https://kms.hanzo.ai/docs/documentation/platform/workflow-integrations/microsoft-teams-integration).
-- Released [KMS Gateway](https://kms.hanzo.ai/docs/documentation/platform/gateways/overview) for accessing private network resources from Hanzo KMS. 
-- Added support for [Host Groups](https://kms.hanzo.ai/docs/documentation/platform/ssh/host-groups) in Hanzo KMS SSH.
-- Updated the designs of all emails send by Hanzo KMS. 
+- Released [KMS Gateway](https://kms.hanzo.ai/docs/documentation/platform/gateways/overview) for accessing private network resources from KMS. 
+- Added support for [Host Groups](https://kms.hanzo.ai/docs/documentation/platform/ssh/host-groups) in KMS SSH.
+- Updated the designs of all emails send by KMS. 
 - Added secret rotation support for [Azure Client](https://kms.hanzo.ai/docs/documentation/platform/secret-rotation/azure-client-secret).
 - Released secret sync for [HashiCorp Vault](https://kms.hanzo.ai/docs/integrations/secret-syncs/hashicorp-vault).  
-- Made significant improvements to [Hanzo KMS Secret Scanning](https://kms.hanzo.ai/docs/documentation/platform/secret-scanning/overview).
-- Released [Hanzo KMS ACME Client](https://kms.hanzo.ai/docs/documentation/platform/pki/acme-ca#certificates-with-acme-ca).
+- Made significant improvements to [KMS Secret Scanning](https://kms.hanzo.ai/docs/documentation/platform/secret-scanning/overview).
+- Released [KMS ACME Client](https://kms.hanzo.ai/docs/documentation/platform/pki/acme-ca#certificates-with-acme-ca).
 - [Access requests](https://kms.hanzo.ai/docs/documentation/platform/access-controls/access-requests) now support "break-glass" policies.
 - Updated [Point-in-time Recovery](https://kms.hanzo.ai/docs/documentation/platform/pit-recovery) UI/UX.
 - Redesigned [Approval Workflows and Change Requests](https://kms.hanzo.ai/docs/documentation/platform/pr-workflows) user interface. 
@@ -47,14 +47,14 @@ The changelog below reflects new product developments and updates on a monthly b
 
 - Released ability to [request access to projects](https://kms.hanzo.ai/docs/documentation/platform/access-controls/project-access-requests#project-access-requests). 
 - Updated UI for Audit Logs and Log Filtering.
-- Launched [Hanzo KMS SSH V2](https://kms.hanzo.ai/docs/documentation/platform/ssh/overview).
-- Developer [Hanzo KMS MCP](https://github.com/hanzoai/kms-mcp-server).
-- Added support for [Spotify Backstage Hanzo KMS plugin](https://kms.hanzo.ai/docs/integrations/external/backstage).
+- Launched [KMS SSH V2](https://kms.hanzo.ai/docs/documentation/platform/ssh/overview).
+- Developer [KMS MCP](https://github.com/hanzoai/kms-mcp-server).
+- Added support for [Spotify Backstage KMS plugin](https://kms.hanzo.ai/docs/integrations/external/backstage).
 - Added secret syncs for Terraform Cloud, Vercel, Windmill, TeamCity, and Camunda.
 - Released [Auth0 Client Secret Rotation](https://kms.hanzo.ai/docs/documentation/platform/secret-rotation/auth0-client-secret).
-- Launched [Hanzo KMS C++ SDK](https://github.com/hanzoai/kms-cpp-sdk).
+- Launched [KMS C++ SDK](https://github.com/hanzoai/kms-cpp-sdk).
 - Service tokens will now get expiry notifications. 
-- Added Hanzo KMS [Linux binary](https://kms.hanzo.ai/docs/self-hosting/reference-architectures/linux-deployment-ha#linux-ha). 
+- Added KMS [Linux binary](https://kms.hanzo.ai/docs/self-hosting/reference-architectures/linux-deployment-ha#linux-ha). 
 - Released ability to perform user impersonation. 
 - Added support for [LDAP password rotation](https://kms.hanzo.ai/docs/documentation/platform/secret-rotation/ldap-password). 
 
@@ -62,7 +62,7 @@ The changelog below reflects new product developments and updates on a monthly b
 ## March 2025
 
 - Released [KMS Gateway](https://kms.hanzo.ai/docs/documentation/platform/gateways/overview) for secure access to private resources without needing direct inbound connections to private networks.
-- Enhanced [Terraform](https://registry.terraform.io/providers/Hanzo KMS/kms/latest/docs) capabilities with token authentication, ability to import existing Hanzo KMS secrets as resources, and support for project templates. 
+- Enhanced [Terraform](https://registry.terraform.io/providers/KMS/kms/latest/docs) capabilities with token authentication, ability to import existing KMS secrets as resources, and support for project templates. 
 - Self-hosted improvements: Usage and billing visibility for enabled features, ability to delete users, and support for multiple super admins.
 - UI and UX updates: Improved secret import interface on the overview page, password reset without backup PDF.
 - CLI enhancements: Various improvements including multiline secret support and ability to pass headers.
@@ -74,7 +74,7 @@ The changelog below reflects new product developments and updates on a monthly b
 - Performed significant performance optimizations including a 50% reduction in database usage and optimized client secret handling for universal auth.
 - Enhanced security features with ability to add custom instance banners (useful for regulated industries), short-lived tokens for Kubernetes auth, and OIDC claim passing from machine identity login to permissions.
 - [Golang SDK](https://kms.hanzo.ai/docs/sdks/languages/go#kms-go-sdk): New API added for enhanced functionality
-- Added capability to programmatically configure an Hanzo KMS instance from start to finish without UI interaction.
+- Added capability to programmatically configure an KMS instance from start to finish without UI interaction.
 
 ## February 2025
 
@@ -84,16 +84,16 @@ The changelog below reflects new product developments and updates on a monthly b
 - Introduced more comprehensive logging with detailed records for secret sharing and metadata in audit logs.
 - Introduced new [permission types](https://kms.hanzo.ai/docs/internals/permissions/project-permissions#subject-secrets): \"View Value\" vs \"Describe Value\" for more granular access control over secrets.
 - Updated encryption logic with unified approach for all platform data, ensuring consistency across the system.
-- Added support for [OIDC group mapping](https://kms.hanzo.ai/docs/documentation/platform/sso/general-oidc) to automatically map groups to Hanzo KMS for role-based access control.
+- Added support for [OIDC group mapping](https://kms.hanzo.ai/docs/documentation/platform/sso/general-oidc) to automatically map groups to KMS for role-based access control.
 - Added [Terraform Cloud support for OIDC](https://kms.hanzo.ai/docs/documentation/platform/identities/oidc-auth/terraform-cloud#terraform-cloud).
 
 ## January 2025
 
 - Released new integration architecture with decoupled authentication, replacing native integrations with [App Connections](https://kms.hanzo.ai/docs/integrations/app-connections/overview) and [Secret Syncs](https://kms.hanzo.ai/docs/integrations/secret-syncs/overview). Initial support for AWS Parameter Store, GitHub, and GCP Secret Manager with improved API and Terraform integration capabilities.
-- Added support for OIDC group mapping in [Keycloak](https://kms.hanzo.ai/docs/documentation/platform/sso/keycloak-oidc/overview), enabling automatic mapping of Keycloak groups to Hanzo KMS for role-based access control.
-- Enhanced [Kubernetes operator](https://kms.hanzo.ai/docs/integrations/platforms/kubernetes/overview#kubernetes-operator) with namespaced group support, bi-directional secret sync (push to Hanzo KMS), [dynamic secrets](https://kms.hanzo.ai/docs/documentation/platform/dynamic-secrets/overview#dynamic-secrets) capabilities, and support for multiple operator instances.
+- Added support for OIDC group mapping in [Keycloak](https://kms.hanzo.ai/docs/documentation/platform/sso/keycloak-oidc/overview), enabling automatic mapping of Keycloak groups to KMS for role-based access control.
+- Enhanced [Kubernetes operator](https://kms.hanzo.ai/docs/integrations/platforms/kubernetes/overview#kubernetes-operator) with namespaced group support, bi-directional secret sync (push to KMS), [dynamic secrets](https://kms.hanzo.ai/docs/documentation/platform/dynamic-secrets/overview#dynamic-secrets) capabilities, and support for multiple operator instances.
 - Restructured navigation with dedicated sections for Secrets Management, [Certificate Management (PKI)](https://kms.hanzo.ai/docs/documentation/platform/pki/overview), [Key Management (KMS)](https://kms.hanzo.ai/docs/documentation/platform/kms/overview#key-management-service-kms), and [SSH Key Management](https://kms.hanzo.ai/docs/documentation/platform/ssh).
-- Added [ephemeral Terraform resource](https://registry.terraform.io/providers/Hanzo KMS/kms/latest/docs) support and improved secret sync architecture.
+- Added [ephemeral Terraform resource](https://registry.terraform.io/providers/KMS/kms/latest/docs) support and improved secret sync architecture.
 - Released [.NET provider](https://github.com/hanzoai/kms-dotnet-configuration) with first-party Azure authentication support and Azure CLI integration.
 - Implemented secret Access Visibility allowing users to view all entities with access to specific secrets in the secret side panel.
 - Added secret filtering by metadata and SSH assigned certificates (Version 1).
@@ -101,10 +101,10 @@ The changelog below reflects new product developments and updates on a monthly b
 ## December 2024
 - Added [GCP KMS](https://kms.hanzo.ai/docs/documentation/platform/kms/overview) integration support.
 - Added support for [K8s CSI integration](https://kms.hanzo.ai/docs/integrations/platforms/kubernetes-csi) and ability to point K8s operator to specific secret versions.
-- Fixed [Java SDK](https://github.com/Hanzo KMS/java-sdk) compatibility issues with Alpine Linux.
+- Fixed [Java SDK](https://github.com/KMS/java-sdk) compatibility issues with Alpine Linux.
 - Fixed SCIM group role assignment issues.
 - Added Group View Page for improved team management.
-- Added instance URL to email verification for Hanzo KMS accounts.
+- Added instance URL to email verification for KMS accounts.
 - Added ability to copy full path of nested folders.
 - Added custom templating support for K8s operator, allowing flexible secret key mapping and additional fields.
 - Optimized secrets versions table performance.
@@ -112,7 +112,7 @@ The changelog below reflects new product developments and updates on a monthly b
 ## November 2024
 - Improved EnvKey migration functionality with support for Blocks, Inheritance, and Branches.
 - Added [Hardware Security Module (HSM) Encryption](https://kms.hanzo.ai/docs/documentation/platform/kms/hsm-integration) support.
-- Updated permissions handling in [Hanzo KMS Terraform Provider](https://registry.terraform.io/providers/Hanzo KMS/kms/latest/docs) to use lists instead of sets.
+- Updated permissions handling in [KMS Terraform Provider](https://registry.terraform.io/providers/KMS/kms/latest/docs) to use lists instead of sets.
 - Enhanced [SCIM](https://kms.hanzo.ai/docs/documentation/platform/scim/overview) implementation to remove SAML dependency.
 - Enhanced [OIDC Authentication](https://kms.hanzo.ai/docs/documentation/platform/identities/oidc-auth/general) implementation and added Default Org Slug support.
 - Added support for multiple authentication methods per identity.
@@ -124,22 +124,22 @@ The changelog below reflects new product developments and updates on a monthly b
 - Significantly improved performance of audit log operations in UI. 
 - Released [Databricks integration](https://kms.hanzo.ai/docs/integrations/cloud/databricks). 
 - Added ability to enforce 2FA organization-wide.
-- Added multiple resource to the [Hanzo KMS Terraform Provider](https://registry.terraform.io/providers/Hanzo KMS/kms/latest/docs), including AWS and GCP integrations. 
-- Released [Hanzo KMS KMS](https://kms.hanzo.ai/docs/documentation/platform/kms/overview).
+- Added multiple resource to the [KMS Terraform Provider](https://registry.terraform.io/providers/KMS/kms/latest/docs), including AWS and GCP integrations. 
+- Released [KMS KMS](https://kms.hanzo.ai/docs/documentation/platform/kms/overview).
 - Added support for [LDAP dynamic secrets](https://kms.hanzo.ai/docs/documentation/platform/ldap/overview).
 - Enabled changing auth methods for machine identities in the UI.
-- Launched [Hanzo KMS EU Cloud](https://eu.kms.hanzo.ai). 
+- Launched [KMS EU Cloud](https://eu.kms.hanzo.ai). 
 
 ## September 2024
 - Improved paginations for identities and secrets. 
-- Significant improvements to the [Hanzo KMS Terraform Provider](https://registry.terraform.io/providers/Hanzo KMS/kms/latest/docs). 
+- Significant improvements to the [KMS Terraform Provider](https://registry.terraform.io/providers/KMS/kms/latest/docs). 
 - Created [Slack Integration](https://kms.hanzo.ai/docs/documentation/platform/workflow-integrations/slack-integration#slack-integration) for Access Requests and Approval Workflows. 
 - Added Dynamic Secrets for [Elaticsearch](https://kms.hanzo.ai/docs/documentation/platform/dynamic-secrets/elastic-search) and [MongoDB](https://kms.hanzo.ai/docs/documentation/platform/dynamic-secrets/mongo-db). 
-- More authentication methods are now supported by Hanzo KMS SDKs and Agent. 
+- More authentication methods are now supported by KMS SDKs and Agent. 
 - Integrations now have dedicated audit logs and an overview screen. 
 - Added support for secret referencing in the Terraform Provider. 
-- Released support for [older versions of .NET](https://www.nuget.org/packages/Hanzo KMS.Sdk#supportedframeworks-body-tab) via SDK.
-- Released Hanzo KMS PKI Issuer which works alongside `cert-manager` to manage certificates in Kubernetes.
+- Released support for [older versions of .NET](https://www.nuget.org/packages/KMS.Sdk#supportedframeworks-body-tab) via SDK.
+- Released KMS PKI Issuer which works alongside `cert-manager` to manage certificates in Kubernetes.
 
 ## August 2024
 - Added [Azure DevOps integration](https://kms.hanzo.ai/docs/integrations/cloud/azure-devops).
@@ -161,14 +161,14 @@ The changelog below reflects new product developments and updates on a monthly b
 - Redesigned and simplified the Machine Identities page. 
 - Added the ability to move secrets/folders to another location. 
 - Added [OIDC](https://kms.hanzo.ai/docs/documentation/platform/identities/oidc-auth/general) support to CLI, Go SDK, and more. 
-- Released [Linux installer for Hanzo KMS](https://kms.hanzo.ai/docs/self-hosting/deployment-options/native/standalone-binary).
+- Released [Linux installer for KMS](https://kms.hanzo.ai/docs/self-hosting/deployment-options/native/standalone-binary).
 
 ## June 2024
-- Released [Hanzo KMS PKI](https://kms.hanzo.ai/docs/documentation/platform/pki/overview). 
+- Released [KMS PKI](https://kms.hanzo.ai/docs/documentation/platform/pki/overview). 
 - Released the official [Go SDK](https://kms.hanzo.ai/docs/sdks/languages/go). 
 - Released [OIDC Authentication method](https://kms.hanzo.ai/docs/documentation/platform/identities/oidc-auth/general). 
 - Allowed users to configure log retention periods on self-hosted instances. 
-- Added [tags](https://registry.terraform.io/providers/Hanzo KMS/kms/latest/docs/resources/secret_tag) to terraform provider. 
+- Added [tags](https://registry.terraform.io/providers/KMS/kms/latest/docs/resources/secret_tag) to terraform provider. 
 - Released [public secret sharing](https://share.kms.hanzo.ai). 
 - Built a [native integration with Rundeck](https://kms.hanzo.ai/docs/integrations/cicd/rundeck).
 - Added list view for projects in the dashboard. 
@@ -178,13 +178,13 @@ The changelog below reflects new product developments and updates on a monthly b
 ## May 2024
 - Released [AWS](https://kms.hanzo.ai/docs/documentation/platform/identities/aws-auth), [GCP](https://kms.hanzo.ai/docs/documentation/platform/identities/gcp-auth), [Azure](https://kms.hanzo.ai/docs/documentation/platform/identities/azure-auth), and [Kubernetes](https://kms.hanzo.ai/docs/documentation/platform/identities/kubernetes-auth) Native Auth Methods.
 - Added [Secret Sharing](https://kms.hanzo.ai/docs/documentation/platform/secret-sharing) functionality for sharing sensitive data through encrypted links – within and outside of an organization.
-- Updated [Secret Referencing](https://kms.hanzo.ai/docs/documentation/platform/secret-reference) to be supported in all Hanzo KMS clients. Hanzo KMS UI is now able to provide automatic reference suggestions when typing. 
-- Released new [Hanzo KMS Jenkins Plugin](https://kms.hanzo.ai/docs/integrations/cicd/jenkins). 
+- Updated [Secret Referencing](https://kms.hanzo.ai/docs/documentation/platform/secret-reference) to be supported in all KMS clients. KMS UI is now able to provide automatic reference suggestions when typing. 
+- Released new [KMS Jenkins Plugin](https://kms.hanzo.ai/docs/integrations/cicd/jenkins). 
 - Added statuses and manual sync option to integrations in the Dashboard UI. 
 - Released universal [Audit Log Streaming](https://kms.hanzo.ai/docs/documentation/platform/audit-log-streams). 
 - Added [Dynamic Secret template for AWS IAM](https://kms.hanzo.ai/docs/documentation/platform/dynamic-secrets/aws-iam). 
 - Added support for syncing tags and custom KMS keys to [AWS Secrets Manager](https://kms.hanzo.ai/docs/integrations/cloud/aws-secret-manager) and [Parameter Store](https://kms.hanzo.ai/docs/integrations/cloud/aws-parameter-store) Integrations.
-- Officially released Hanzo KMS on [AWS Marketplace](https://kms.hanzo.ai/blog/kms-launches-on-aws-marketplace).
+- Officially released KMS on [AWS Marketplace](https://kms.hanzo.ai/blog/kms-launches-on-aws-marketplace).
 
 ## April 2024
 - Added [Access Requests](https://kms.hanzo.ai/docs/documentation/platform/access-controls/access-requests) as part of self-serve secrets management workflows. 
@@ -204,15 +204,15 @@ The changelog below reflects new product developments and updates on a monthly b
 - Fixed + improved various analytics/telemetry-related items.
 - Fixed various issues associated with the Python SDK: build during installation on Mac OS, Rust dependency.
 - Updated self-hosting documentation to reflect [new backend](https://kms.hanzo.ai/docs/self-hosting/overview).
-- Released [Postgres-based Hanzo KMS helm chart](https://cloudsmith.io/~kms/repos/helm-charts/packages/detail/helm/kms-standalone/).
+- Released [Postgres-based KMS helm chart](https://cloudsmith.io/~kms/repos/helm-charts/packages/detail/helm/kms-standalone/).
 - Added checks to ensure that breaking API changes don't get released.
-- Automated API reference documentation to be inline with latest releases of Hanzo KMS.
+- Automated API reference documentation to be inline with latest releases of KMS.
 
 ## Jan 2024
 - Completed Postgres migration initiative with restructed Fastify-based backend.
-- Reduced size of Hanzo KMS Node.js SDK by ≈90%.
+- Reduced size of KMS Node.js SDK by ≈90%.
 - Added secret fallback support to all SDK's.
-- Added Machine Identity support to [Terraform Provider](https://registry.terraform.io/providers/Hanzo KMS/kms/latest/docs).
+- Added Machine Identity support to [Terraform Provider](https://registry.terraform.io/providers/KMS/kms/latest/docs).
 - Released [.NET SDK](https://kms.hanzo.ai/docs/sdks/languages/csharp).
 - Added symmetric encryption support to all SDK's.
 - Fixed secret reminders bug, where reminders were not being updated correctly.
@@ -235,15 +235,15 @@ The changelog below reflects new product developments and updates on a monthly b
 
 - Added support for [GitLab SSO](https://kms.hanzo.ai/docs/documentation/platform/sso/gitlab).
 - Became SOC 2 (Type II) certified.
-- Reduced required JWT configuration from 5-6 secrets to 1 secret for self-hosting Hanzo KMS.
-- Compacted Hanzo KMS into 1 Docker image.
+- Reduced required JWT configuration from 5-6 secrets to 1 secret for self-hosting KMS.
+- Compacted KMS into 1 Docker image.
 - Added native [Hasura Cloud integration](https://kms.hanzo.ai/docs/integrations/cloud/hasura-cloud).
 - Updated resource deletion logic for user, organization, and project deletion.
 
 ## Sep 2023
 
 - Released [secret approvals](https://kms.hanzo.ai/docs/documentation/platform/pr-workflows) feature.
-- Released an update to access controls; every user role now clearly defines and enforces a certain set of conditions across Hanzo KMS.
+- Released an update to access controls; every user role now clearly defines and enforces a certain set of conditions across KMS.
 - Updated UI/UX for integrations. 
 - Added a native integration with [Qovery](https://kms.hanzo.ai/docs/integrations/cloud/qovery).
 - Added service token generation capability for the CLI.
@@ -276,7 +276,7 @@ The changelog below reflects new product developments and updates on a monthly b
 
 ## June 2023
 
-- Released the [Terraform Provider](https://registry.terraform.io/providers/Hanzo KMS/kms/latest/docs).
+- Released the [Terraform Provider](https://registry.terraform.io/providers/KMS/kms/latest/docs).
 - Updated the usage and billing page. Added the free trial for the professional tier.
 - Added native integrations with [Checkly](https://kms.hanzo.ai/docs/integrations/cloud/checkly), [Hashicorp Vault](https://kms.hanzo.ai/docs/integrations/cloud/hashicorp-vault), and [Cloudflare Pages](https://kms.hanzo.ai/docs/integrations/cloud/cloudflare-pages).
 - Completed a penetration test with a `very good` result.
@@ -285,7 +285,7 @@ The changelog below reflects new product developments and updates on a monthly b
 ## May 2023
 
 - Released secret scanning capability for the CLI.
-- Released customer / license service to manage customer billing information, cloud plans, and self-hosted enterprise licenses; all instances of Hanzo KMSs now fetch/relay information from this service.
+- Released customer / license service to manage customer billing information, cloud plans, and self-hosted enterprise licenses; all instances of KMSs now fetch/relay information from this service.
 - Completed penetration test.
 - Released new landing page.
 - Started SOC 2 (Type II) compliance certification preparation.
@@ -346,7 +346,7 @@ The changelog below reflects new product developments and updates on a monthly b
 
 ## Nov 2022
 
-- Hanzo KMS is open sourced.
+- KMS is open sourced.
 - Added KMS CLI support for Docker and Docker Compose.
 - Rewrote the KMS CLI in Golang to be platform-agnostic.
 - Rewrote the documentation.
@@ -359,7 +359,7 @@ The changelog below reflects new product developments and updates on a monthly b
 - Added persistence for logging into the organization and project that users left from in their previous session.
 - Added password recovery emergency kit with automatic download enforcement upon account creation.
 - Added capability to copy-to-clipboard capabilities.
-- Released first native integration between Hanzo KMS and Heroku; environment variables can now be sent and kept in sync with Heroku.
+- Released first native integration between KMS and Heroku; environment variables can now be sent and kept in sync with Heroku.
 
 ## Sep 2022
 
@@ -378,7 +378,7 @@ The changelog below reflects new product developments and updates on a monthly b
 
 ## Aug 2022
 
-- Released first version of the Hanzo KMS platform with push/pull capability and end-to-end encryption.
+- Released first version of the KMS platform with push/pull capability and end-to-end encryption.
 - Improved security handling of authentication tokens by storing refresh tokens in HttpOnly cookies.
 - Added hiding key values on client-side.
 - Added search bar to dashboard to query for keys on client-side.

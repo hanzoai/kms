@@ -5,17 +5,17 @@ nameOverride: ""
 fullnameOverride: ""
 
 kms:
-  # -- Enable Hanzo KMS chart deployment
+  # -- Enable KMS chart deployment
   enabled: true
   # -- Sets the name of the deployment within this chart
   name: kms
 
   autoBootstrap:
-    # -- Enable auto-bootstrap of the Hanzo KMS instance
+    # -- Enable auto-bootstrap of the KMS instance
     enabled: false
 
     image:
-      # -- Hanzo KMS Hanzo KMS CLI image tag version
+      # -- KMS KMS CLI image tag version
       tag: "0.41.86"
 
     # -- Template for the data/stringData section of the Kubernetes secret. Available functions: encodeBase64
@@ -28,7 +28,7 @@ kms:
       # -- Namespace to create the bootstrap secret in. If not provided, the secret will be created in the same namespace as the release.
       namespace: "default"
 
-    # -- Hanzo KMS organization to create in the Hanzo KMS instance during auto-bootstrap
+    # -- KMS organization to create in the KMS instance during auto-bootstrap
     organization: "default-org"
 
     credentialSecret:
@@ -52,19 +52,19 @@ kms:
     # -- Optional custom service account name, if existing service account is used
     name: null
 
-  # -- Override for the full name of Hanzo KMS resources in this deployment
+  # -- Override for the full name of KMS resources in this deployment
   fullnameOverride: ""
-  # -- Custom annotations for Hanzo KMS pods
+  # -- Custom annotations for KMS pods
   podAnnotations: {}
-  # -- Custom annotations for Hanzo KMS deployment
+  # -- Custom annotations for KMS deployment
   deploymentAnnotations: {}
   # -- Number of pod replicas for high availability
   replicaCount: 2
 
   image:
-    # -- Image repository for the Hanzo KMS service
+    # -- Image repository for the KMS service
     repository: ghcr.io/hanzoai/kms
-    # -- Specific version tag of the Hanzo KMS image. View the latest version here https://hub.docker.com/r/ghcr.io/hanzoai/kms
+    # -- Specific version tag of the KMS image. View the latest version here https://hub.docker.com/r/ghcr.io/hanzoai/kms
     tag: "v0.151.0"
     # -- Pulls image only if not already present on the node
     pullPolicy: IfNotPresent
@@ -81,11 +81,11 @@ kms:
   # -- Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
   topologySpreadConstraints: []
 
-  # -- Kubernetes Secret reference containing Hanzo KMS root credentials
+  # -- Kubernetes Secret reference containing KMS root credentials
   kubeSecretRef: "kms-secrets"
 
   service:
-    # -- Custom annotations for Hanzo KMS service
+    # -- Custom annotations for KMS service
     annotations: {}
     # -- Service type, can be changed based on exposure needs (e.g., LoadBalancer)
     type: ClusterIP
@@ -94,10 +94,10 @@ kms:
 
   resources:
     limits:
-      # -- Memory limit for Hanzo KMS container
+      # -- Memory limit for KMS container
       memory: 1000Mi
     requests:
-      # -- CPU request for Hanzo KMS container
+      # -- CPU request for KMS container
       cpu: 350m
 
 ingress:
@@ -141,7 +141,7 @@ postgresql:
     username: kms
     # -- Password for PostgreSQL database access
     password: root
-    # -- Database name for Hanzo KMS
+    # -- Database name for KMS
     database: kmsDB
 
   useExistingPostgresSecret:

@@ -59,7 +59,7 @@ export const webAuthnServiceFactory = ({
   const appCfg = getConfig();
 
   // Relying Party (RP) information - extracted from SITE_URL
-  const RP_NAME = "Hanzo KMS";
+  const RP_NAME = "KMS";
   const RP_ID = new URL(appCfg.SITE_URL || "http://localhost:8080").hostname;
   const ORIGIN = appCfg.SITE_URL || "http://localhost:8080";
   /**

@@ -1,22 +1,22 @@
 ---
 title: "OracleDB Connection"
-description: "Learn how to configure a Oracle Database Connection for Hanzo KMS."
+description: "Learn how to configure a Oracle Database Connection for KMS."
 ---
 
 <Info>
     OracleDB App Connection is a paid feature.
 
-    If you're using Hanzo KMS Cloud, then it is available under the **Enterprise Tier**. If you're self-hosting Hanzo KMS,
+    If you're using KMS Cloud, then it is available under the **Enterprise Tier**. If you're self-hosting KMS,
     then you should contact team@kms.hanzo.ai to purchase an enterprise license to use it.
 </Info>
 
-Hanzo KMS supports connecting to OracleDB using a database user.
+KMS supports connecting to OracleDB using a database user.
 
-## Configure an Oracle Database User for Hanzo KMS
+## Configure an Oracle Database User for KMS
 
 <Steps>
     <Step title="Create a User">
-        Hanzo KMS recommends creating a designated user in your Oracle Database for your connection.
+        KMS recommends creating a designated user in your Oracle Database for your connection.
         ```SQL
         -- create user
         CREATE USER kms IDENTIFIED BY "my-password";
@@ -35,7 +35,7 @@ Hanzo KMS supports connecting to OracleDB using a database user.
         </Tip>
         <Tabs>
             <Tab title="Secret Rotation">
-                For Secret Rotations, your Hanzo KMS user will require the ability to alter other users' passwords:
+                For Secret Rotations, your KMS user will require the ability to alter other users' passwords:
                 ```SQL
                 -- enable permissions to alter login credentials
                 GRANT ALTER USER TO kms;
@@ -55,18 +55,18 @@ Hanzo KMS supports connecting to OracleDB using a database user.
                 - `sslCertificate` (optional) - The SSL certificate required for connection (if configured)
 
                 <Note>
-                    If you are self-hosting Hanzo KMS and intend to connect to an internal/private IP address, be sure to set the `ALLOW_INTERNAL_IP_CONNECTIONS` environment variable to `true`.
+                    If you are self-hosting KMS and intend to connect to an internal/private IP address, be sure to set the `ALLOW_INTERNAL_IP_CONNECTIONS` environment variable to `true`.
                 </Note>
             </Tab>
             <Tab title="Mutual TLS (Wallet)">
                 <Info>
-                    This configuration can only be done on self-hosted or dedicated instances of Hanzo KMS.
+                    This configuration can only be done on self-hosted or dedicated instances of KMS.
                 </Info>
 
-                Hanzo KMS includes Oracle Instant Client by default, enabling mTLS wallet-based connections without modifying the Docker image. You only need to mount your Oracle Wallet and configure the environment.
+                KMS includes Oracle Instant Client by default, enabling mTLS wallet-based connections without modifying the Docker image. You only need to mount your Oracle Wallet and configure the environment.
 
                 <Warning>
-                    When `TNS_ADMIN` is set and points to a valid wallet directory, **all Oracle Database connections** in your Hanzo KMS instance will use the wallet for authentication.
+                    When `TNS_ADMIN` is set and points to a valid wallet directory, **all Oracle Database connections** in your KMS instance will use the wallet for authentication.
 
                     **Gateway Limitation**: Wallet-based connections do not support [KMS Gateway](/documentation/platform/gateways/overview). The connection details (host, port, protocol) are read directly from the `tnsnames.ora` file in the wallet, bypassing the gateway routing.
                 </Warning>
@@ -113,7 +113,7 @@ Hanzo KMS supports connecting to OracleDB using a database user.
                                 docker run -d \
                                   -v /path/to/your/wallet:/app/wallet:ro \
                                   --env-file .env \
-                                  # ... other Hanzo KMS configuration ...
+                                  # ... other KMS configuration ...
                                   ghcr.io/hanzoai/kms:latest
                                 ```
                             </Tab>
@@ -126,13 +126,13 @@ Hanzo KMS supports connecting to OracleDB using a database user.
                                       - .env
                                     volumes:
                                       - /path/to/your/wallet:/app/wallet:ro
-                                    # ... other Hanzo KMS configuration ...
+                                    # ... other KMS configuration ...
                                 ```
                             </Tab>
                         </Tabs>
                     </Step>
                     <Step title="Create the connection">
-                        You'll need the following information to create the connection in Hanzo KMS:
+                        You'll need the following information to create the connection in KMS:
                         - `host` - The hostname or IP address of your Oracle Database server (required field, but not used for wallet connections).
                         - `port` - The port number your Oracle Database server is listening on (required field, but not used for wallet connections).
                         - `database` - The TNS alias for your Oracle Database from your `tnsnames.ora` file.
@@ -147,17 +147,17 @@ Hanzo KMS supports connecting to OracleDB using a database user.
                 </Steps>
 
                 <Note>
-                    If you are self-hosting Hanzo KMS and intend to connect to an internal/private IP address, be sure to set the `ALLOW_INTERNAL_IP_CONNECTIONS` environment variable to `true`.
+                    If you are self-hosting KMS and intend to connect to an internal/private IP address, be sure to set the `ALLOW_INTERNAL_IP_CONNECTIONS` environment variable to `true`.
                 </Note>
             </Tab>
         </Tabs>
     </Step>
 </Steps>
 
-## Create Connection in Hanzo KMS
+## Create Connection in KMS
 
 <Tabs>
-    <Tab title="Hanzo KMS UI">
+    <Tab title="KMS UI">
         1. Navigate to the **Integrations** tab in the desired project, then select **App Connections**.
         ![App Connections Tab](/images/app-connections/general/add-connection.png)
 
@@ -167,8 +167,8 @@ Hanzo KMS supports connecting to OracleDB using a database user.
         3. Select the **Username & Password** method option and provide the details obtained from the previous section and press **Connect to OracleDB**.
 
         <Note>
-            Optionally, if you'd like Hanzo KMS to manage the credentials of this connection, you can enable the Platform Managed Credentials option.
-            If enabled, Hanzo KMS will update the password of the connection on creation to prevent external access to this database user.
+            Optionally, if you'd like KMS to manage the credentials of this connection, you can enable the Platform Managed Credentials option.
+            If enabled, KMS will update the password of the connection on creation to prevent external access to this database user.
         </Note>
 
         ![Create OracleDB Connection](/images/app-connections/oracledb/create-username-and-password-method.png)
@@ -180,8 +180,8 @@ Hanzo KMS supports connecting to OracleDB using a database user.
         To create an Oracle Database Connection, make an API request to the [Create OracleDB Connection](/api-reference/endpoints/app-connections/oracledb/create) API endpoint.
 
         <Note>
-            Optionally, if you'd like Hanzo KMS to manage the credentials of this connection, you can set the `isPlatformManagedCredentials` option to `true`.
-            If enabled, Hanzo KMS will update the password of the connection on creation to prevent external access to this database user.
+            Optionally, if you'd like KMS to manage the credentials of this connection, you can set the `isPlatformManagedCredentials` option to `true`.
+            If enabled, KMS will update the password of the connection on creation to prevent external access to this database user.
         </Note>
 
         ### Sample request

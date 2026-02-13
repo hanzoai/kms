@@ -6,12 +6,12 @@ description: "Learn how to setup the Microsoft Teams integration"
 import MicrosoftTeamsWorkflowIntegration from '/snippets/documentation/platform/workflow-integrations/microsoft-teams-integration.mdx';
 
 
-This guide will provide step by step instructions on how to configure Microsoft Teams integration for your Hanzo KMS projects.
+This guide will provide step by step instructions on how to configure Microsoft Teams integration for your KMS projects.
 
 ## Setting up Microsoft Teams integration in your projects
 
 <Tabs>
-  <Tab title="Hanzo KMS Cloud">
+  <Tab title="KMS Cloud">
     <MicrosoftTeamsWorkflowIntegration />
   </Tab>
   <Tab title="Self-hosted setup">
@@ -45,7 +45,7 @@ This guide will provide step by step instructions on how to configure Microsoft 
         <Step title="Add a message endpoint to the bot">
           After creating the bot, you'll need to add a message endpoint to the bot. Navigate to the "Configure" tab, and input the following endpoint under "Endpoint address":
           `https://<your-kms-instance-url>/api/v1/workflow-integrations/microsoft-teams/message-endpoint`
-          Replace `<your-kms-instance-url>` with the URL of your Hanzo KMS instance.
+          Replace `<your-kms-instance-url>` with the URL of your KMS instance.
 
           Press the "Save" button to save the changes.
 
@@ -79,13 +79,13 @@ This guide will provide step by step instructions on how to configure Microsoft 
 
         <Step title="Add a new web application to the App Registration">
           Navigate to the "Authentication" section of the App Registration, and press the "Add a platform" button. Select the "Web" platform and enter the following redirect URI:
-          `https://<your-kms-instance-url>/organization/settings/oauth/callback`. Replace `<your-kms-instance-url>` with the URL of your Hanzo KMS instance.
+          `https://<your-kms-instance-url>/organization/settings/oauth/callback`. Replace `<your-kms-instance-url>` with the URL of your KMS instance.
 
           ![azure-app-registration-register-callback](/images/platform/workflow-integrations/microsoft-teams-integration/azure-app-registration-register-callback.png)
         </Step>
 
         <Step title="Get App Registration Client ID and Client Secret">
-          Next we need to get the application client ID and create a new client secret. **Save these values for later, as they're required to configure the Microsoft Teams integration in Hanzo KMS.**
+          Next we need to get the application client ID and create a new client secret. **Save these values for later, as they're required to configure the Microsoft Teams integration in KMS.**
 
           **Get the Application (Client) ID**
 
@@ -100,7 +100,7 @@ This guide will provide step by step instructions on how to configure Microsoft 
           ![create-client-secret](/images/platform/workflow-integrations/microsoft-teams-integration/azure-app-registration-create-client-secret.png)
 
           <Warning>
-            Remember to rotate your client secret before it expires. Consider setting up a reminder or automated process to replace the secret and update your Hanzo KMS configuration before expiration.
+            Remember to rotate your client secret before it expires. Consider setting up a reminder or automated process to replace the secret and update your KMS configuration before expiration.
           </Warning>
         </Step>
 
@@ -129,7 +129,7 @@ This guide will provide step by step instructions on how to configure Microsoft 
         <Step title="Run an app validation test (Recommended)">
           To ensure that the Microsoft Teams App is working correctly, you can run an app validation test. This step is optional, but recommended to ensure the app is working correctly.
 
-          You should expect to see two errors related to sending welcome messages, because we haven't configured the Microsoft Teams App inside Hanzo KMS yet, which is required for proactive messages.
+          You should expect to see two errors related to sending welcome messages, because we haven't configured the Microsoft Teams App inside KMS yet, which is required for proactive messages.
 
           ![microsoft-teams-app-validation-test](/images/platform/workflow-integrations/microsoft-teams-integration/teams-dev-portal-app-validation.png)
 
@@ -140,7 +140,7 @@ This guide will provide step by step instructions on how to configure Microsoft 
           ![microsoft-teams-app-validation-test-results](/images/platform/workflow-integrations/microsoft-teams-integration/teams-dev-portal-app-validation-result.png)
 
           <Note>
-            If you see two errors for bot welcome messages, you can ignore them. This is expected until you configure the Microsoft Teams App inside Hanzo KMS.
+            If you see two errors for bot welcome messages, you can ignore them. This is expected until you configure the Microsoft Teams App inside KMS.
           </Note>
         </Step>
 
@@ -151,9 +151,9 @@ This guide will provide step by step instructions on how to configure Microsoft 
         </Step>
     </Steps>
 
-    ### Configure Microsoft Teams Bot in Hanzo KMS
+    ### Configure Microsoft Teams Bot in KMS
 
-    After creating the Microsoft Teams App and Bot, you are ready to configure the Microsoft Teams integration in Hanzo KMS.
+    After creating the Microsoft Teams App and Bot, you are ready to configure the Microsoft Teams integration in KMS.
     Please note that you must be an instance admin in order to configure the Microsoft Teams instance-wide settings.
 
     <Steps>
@@ -183,8 +183,8 @@ This guide will provide step by step instructions on how to configure Microsoft 
 </Accordion>
 
 <Accordion title="Workflow Integration is stuck on 'Pending' status">
-  The workflow integration can get stuck on Pending if you created the workflow integration before the Hanzo KMS Microsoft Teams bot was installed in the tenant.
-  To resolve this, make sure you have installed the Hanzo KMS Microsoft Teams app in your tenant.
+  The workflow integration can get stuck on Pending if you created the workflow integration before the KMS Microsoft Teams bot was installed in the tenant.
+  To resolve this, make sure you have installed the KMS Microsoft Teams app in your tenant.
 
   You can manually recheck the installation status by pressing the "Check Installation Status" button in the workflow organization settings.
 

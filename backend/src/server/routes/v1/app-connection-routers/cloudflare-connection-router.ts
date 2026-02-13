@@ -21,7 +21,7 @@ export const registerCloudflareConnectionRouter = async (server: FastifyZodProvi
     updateSchema: UpdateCloudflareConnectionSchema
   });
 
-  // The below endpoints are not exposed and for Hanzo KMS App use
+  // The below endpoints are not exposed and for KMS App use
   server.route({
     method: "GET",
     url: `/:connectionId/cloudflare-pages-projects`,

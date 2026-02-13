@@ -27,7 +27,7 @@ export const UpgradePlanModal = ({
       return "https://hanzo.ai/scheduledemo";
     }
 
-    // Hanzo KMS cloud
+    // KMS cloud
     if (isEnterpriseFeature) {
       return "https://hanzo.ai/talk-to-us";
     }
@@ -72,7 +72,7 @@ export const UpgradePlanModal = ({
 
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-      <ModalContent title="Unleash Hanzo KMS's Full Power">
+      <ModalContent title="Unleash KMS's Full Power">
         <p className="mb-2 text-bunker-300">{text}</p>
         <p className="text-bunker-300">
           Upgrade and get access to this, as well as to other powerful enhancements.

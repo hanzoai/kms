@@ -1,18 +1,18 @@
 ---
 title: "LDAP Overview"
 sidebarTitle: "Overview"
-description: "Learn how to authenticate into Hanzo KMS with LDAP."
+description: "Learn how to authenticate into KMS with LDAP."
 ---
 
 <Info>
     LDAP is a paid feature.
 
-If you're using Hanzo KMS Cloud, then it is available under the **Enterprise Tier**. If you're self-hosting Hanzo KMS,
+If you're using KMS Cloud, then it is available under the **Enterprise Tier**. If you're self-hosting KMS,
 then you should contact sales@kms.hanzo.ai to purchase an enterprise license to use it.
 
 </Info>
 
-You can configure your organization in Hanzo KMS to have members authenticate with the platform via [LDAP](https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol).
+You can configure your organization in KMS to have members authenticate with the platform via [LDAP](https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol).
 
 LDAP providers:
 
@@ -28,14 +28,14 @@ If the documentation for your required identity provider is not shown in the lis
 ## FAQ
 
 <AccordionGroup>
-  <Accordion title="Why does Hanzo KMS require additional email verification for users connected via LDAP?">
-    By default, Hanzo KMS Cloud is configured to not trust emails from external
+  <Accordion title="Why does KMS require additional email verification for users connected via LDAP?">
+    By default, KMS Cloud is configured to not trust emails from external
     identity providers to prevent any malicious account takeover attempts via
-    email spoofing. Accordingly, Hanzo KMS creates a new user for anyone provisioned
+    email spoofing. Accordingly, KMS creates a new user for anyone provisioned
     through an external identity provider and requires an additional email
     verification step upon their first login.
 
-    If you're running a self-hosted instance of Hanzo KMS and would like it to trust emails from external identity providers,
+    If you're running a self-hosted instance of KMS and would like it to trust emails from external identity providers,
     you can configure this behavior in the Server Admin Console.
 
   </Accordion>

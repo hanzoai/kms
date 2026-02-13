@@ -1,20 +1,20 @@
 ---
 title: "Monitoring and Telemetry Setup"
-description: "Learn how to set up monitoring and telemetry for your self-hosted Hanzo KMS instance using Grafana, Prometheus, and OpenTelemetry."
+description: "Learn how to set up monitoring and telemetry for your self-hosted KMS instance using Grafana, Prometheus, and OpenTelemetry."
 ---
 
-Hanzo KMS provides comprehensive monitoring and telemetry capabilities to help you monitor the health, performance, and usage of your self-hosted instance. This guide covers setting up monitoring using Grafana with two different telemetry collection approaches.
+KMS provides comprehensive monitoring and telemetry capabilities to help you monitor the health, performance, and usage of your self-hosted instance. This guide covers setting up monitoring using Grafana with two different telemetry collection approaches.
 
 ## Overview
 
-Hanzo KMS exports metrics in **OpenTelemetry (OTEL) format**, which provides maximum flexibility for your monitoring infrastructure. While this guide focuses on Grafana, the OTEL format means you can easily integrate with:
+KMS exports metrics in **OpenTelemetry (OTEL) format**, which provides maximum flexibility for your monitoring infrastructure. While this guide focuses on Grafana, the OTEL format means you can easily integrate with:
 
 - **Cloud-native monitoring**: AWS CloudWatch, Google Cloud Monitoring, Azure Monitor
 - **Observability platforms**: Datadog, New Relic, Splunk, Dynatrace
 - **Custom backends**: Any system that supports OTEL ingestion
 - **Traditional monitoring**: Prometheus, Grafana (as covered in this guide)
 
-Hanzo KMS supports two telemetry collection methods:
+KMS supports two telemetry collection methods:
 
 1. **Pull-based (Prometheus)**: Exposes metrics on a dedicated endpoint for Prometheus to scrape
 2. **Push-based (OTLP)**: Sends metrics to an OpenTelemetry Collector via OTLP protocol
@@ -23,7 +23,7 @@ Both approaches provide the same metrics data in OTEL format, so you can choose 
 
 ## Prerequisites
 
-- Self-hosted Hanzo KMS instance running
+- Self-hosted KMS instance running
 - Access to deploy monitoring services (Prometheus, Grafana, etc.)
 - Basic understanding of Prometheus and Grafana
 
@@ -31,7 +31,7 @@ Both approaches provide the same metrics data in OTEL format, so you can choose 
 
 ### Environment Variables
 
-Configure the following environment variables in your Hanzo KMS backend:
+Configure the following environment variables in your KMS backend:
 
 ```bash
 # Enable telemetry collection
@@ -48,7 +48,7 @@ OTEL_EXPORT_TYPE=prometheus
     ### Configuration
 
 <Steps>
-  <Step title="Enable Prometheus export in Hanzo KMS">
+  <Step title="Enable Prometheus export in KMS">
 ```bash
 OTEL_TELEMETRY_COLLECTION_ENABLED=true
 OTEL_EXPORT_TYPE=prometheus
@@ -56,7 +56,7 @@ OTEL_EXPORT_TYPE=prometheus
   </Step>
 
   <Step title="Expose the metrics port">
-    Expose the metrics port in your Hanzo KMS backend:
+    Expose the metrics port in your KMS backend:
 
     - **Docker**: Expose port 9464
     - **Kubernetes**: Create a service exposing port 9464
@@ -80,7 +80,7 @@ scrape_configs:
 ```
 
 <Note>
-Replace `kms-backend:9464` with the actual hostname and port where your Hanzo KMS backend is running. This could be:
+Replace `kms-backend:9464` with the actual hostname and port where your KMS backend is running. This could be:
 
 - **Docker Compose**: `kms-backend:9464` (service name)
 - **Kubernetes**: `kms-backend.default.svc.cluster.local:9464` (service name)
@@ -92,7 +92,7 @@ Replace `kms-backend:9464` with the actual hostname and port where your Hanzo KM
 
     ### Deployment Options
 
-    Once you've configured Hanzo KMS to expose metrics, you'll need to deploy Prometheus to scrape and store them. Below are examples for different deployment environments. Choose the option that matches your infrastructure.
+    Once you've configured KMS to expose metrics, you'll need to deploy Prometheus to scrape and store them. Below are examples for different deployment environments. Choose the option that matches your infrastructure.
 
     <Tabs>
       <Tab title="Docker Compose">
@@ -179,7 +179,7 @@ Replace `kms-backend:9464` with the actual hostname and port where your Hanzo KM
     ### Configuration
 
 <Steps>
-  <Step title="Enable OTLP export in Hanzo KMS">
+  <Step title="Enable OTLP export in KMS">
 ```bash
 OTEL_TELEMETRY_COLLECTION_ENABLED=true
 OTEL_EXPORT_TYPE=otlp
@@ -243,7 +243,7 @@ service:
 ```
 
 <Warning>
-Replace `your_username:your_password` with your chosen credentials. These must match the values you set in Hanzo KMS's `OTEL_COLLECTOR_BASIC_AUTH_USERNAME` and `OTEL_COLLECTOR_BASIC_AUTH_PASSWORD` environment variables.
+Replace `your_username:your_password` with your chosen credentials. These must match the values you set in KMS's `OTEL_COLLECTOR_BASIC_AUTH_USERNAME` and `OTEL_COLLECTOR_BASIC_AUTH_PASSWORD` environment variables.
 </Warning>
   </Step>
 
@@ -276,7 +276,7 @@ Replace `otel-collector:8889` with the actual hostname and port where your OpenT
 
     ### Deployment Options
 
-    After configuring Hanzo KMS and the OpenTelemetry Collector, you'll need to deploy the collector to receive metrics from Hanzo KMS. Below are examples for different deployment environments. Choose the option that matches your infrastructure.
+    After configuring KMS and the OpenTelemetry Collector, you'll need to deploy the collector to receive metrics from KMS. Below are examples for different deployment environments. Choose the option that matches your infrastructure.
 
     <Tabs>
       <Tab title="Docker Compose">
@@ -340,11 +340,11 @@ Replace `otel-collector:8889` with the actual hostname and port where your OpenT
 
 ## Available Metrics
 
-Hanzo KMS exposes the following key metrics in OpenTelemetry format:
+KMS exposes the following key metrics in OpenTelemetry format:
 
 ### Core API Metrics
 
-These metrics track all HTTP API requests to Hanzo KMS, including request counts, latency, and errors. Use these to monitor overall API health, identify performance bottlenecks, and track usage patterns across users and machine identities.
+These metrics track all HTTP API requests to KMS, including request counts, latency, and errors. Use these to monitor overall API health, identify performance bottlenecks, and track usage patterns across users and machine identities.
 
 <AccordionGroup>
   <Accordion title="Total API Requests">
@@ -354,7 +354,7 @@ These metrics track all HTTP API requests to Hanzo KMS, including request counts
 
     **Unit**: `{request}`
 
-    **Description**: Total number of API requests to Hanzo KMS (covers both human users and machine identities)
+    **Description**: Total number of API requests to KMS (covers both human users and machine identities)
 
     **Attributes**:
       - `kms.organization.id` (string): Organization ID
@@ -515,7 +515,7 @@ These metrics track Key Management Interoperability Protocol (KMIP) operations, 
 
 ### Integration & Secret Sync Metrics
 
-These metrics monitor secret synchronization operations between Hanzo KMS and external systems, helping you track sync health, identify integration failures, and troubleshoot connectivity issues.
+These metrics monitor secret synchronization operations between KMS and external systems, helping you track sync health, identify integration failures, and troubleshoot connectivity issues.
 
 <AccordionGroup>
   <Accordion title="integration_secret_sync_errors">
@@ -566,18 +566,18 @@ These low-level HTTP metrics are automatically collected by OpenTelemetry's inst
 <Accordion title="Metrics not appearing">
   If your metrics are not showing up in Prometheus or your monitoring system, check the following:
 
-  - Verify `OTEL_TELEMETRY_COLLECTION_ENABLED=true` is set in your Hanzo KMS environment variables
+  - Verify `OTEL_TELEMETRY_COLLECTION_ENABLED=true` is set in your KMS environment variables
   - Ensure the correct `OTEL_EXPORT_TYPE` is set (`prometheus` or `otlp`)
-  - Check network connectivity between Hanzo KMS and your monitoring services (Prometheus or OTLP collector)
+  - Check network connectivity between KMS and your monitoring services (Prometheus or OTLP collector)
   - For pull-based monitoring: Verify port 9464 is exposed and accessible
   - For push-based monitoring: Verify the OTLP endpoint URL is correct and reachable
-  - Check Hanzo KMS backend logs for any errors related to metrics export
+  - Check KMS backend logs for any errors related to metrics export
 </Accordion>
 
 <Accordion title="Authentication errors">
   If you're experiencing authentication errors with the OpenTelemetry Collector:
 
-  - Verify basic auth credentials in your OTLP configuration match between Hanzo KMS and the collector
+  - Verify basic auth credentials in your OTLP configuration match between KMS and the collector
   - Check that `OTEL_COLLECTOR_BASIC_AUTH_USERNAME` and `OTEL_COLLECTOR_BASIC_AUTH_PASSWORD` match the credentials in your `otel-collector-config.yaml`
   - Ensure the htpasswd format in the collector configuration is correct
   - Test the collector endpoint manually using curl with the same credentials to verify they work

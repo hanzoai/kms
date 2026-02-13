@@ -349,7 +349,7 @@ export const SecretDetailSidebar = ({
         onOpenChange={(isUpgradeModalOpen) =>
           handlePopUpToggle("secretAccessUpgradePlan", isUpgradeModalOpen)
         }
-        text="Secret access analysis feature can be unlocked if you upgrade to Hanzo KMS Pro plan."
+        text="Secret access analysis feature can be unlocked if you upgrade to KMS Pro plan."
       />
       <Modal
         isOpen={popUp.secretReferenceTree.isOpen}

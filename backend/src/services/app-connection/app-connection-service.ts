@@ -410,7 +410,7 @@ export const appConnectionServiceFactory = ({
       if (!plan.gateway) {
         throw new BadRequestError({
           message:
-            "Your current plan does not support gateway usage with app connections. Please upgrade your plan or contact Hanzo KMS Sales for assistance."
+            "Your current plan does not support gateway usage with app connections. Please upgrade your plan or contact KMS Sales for assistance."
         });
       }
 

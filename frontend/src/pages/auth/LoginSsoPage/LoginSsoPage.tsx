@@ -56,7 +56,7 @@ export const LoginSsoPage = () => {
           <img
             src="/images/gradientLogo.svg"
             style={{ height: "90px", width: "120px" }}
-            alt="Hanzo KMS logo"
+            alt="KMS logo"
           />
         </div>
       </Link>

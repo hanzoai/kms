@@ -73,7 +73,7 @@ export const getMigrationEnvConfig = async (
     console.error("Invalid environment variables. Check the error below");
     // eslint-disable-next-line no-console
     console.error(
-      "Hanzo KMS now automatically runs database migrations during boot up, so you no longer need to run them separately."
+      "KMS now automatically runs database migrations during boot up, so you no longer need to run them separately."
     );
     // eslint-disable-next-line no-console
     console.error(parsedEnv.error.issues);

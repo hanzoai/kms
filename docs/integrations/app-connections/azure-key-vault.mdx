@@ -1,12 +1,12 @@
 ---
 title: "Azure Key Vault Connection"
-description: "Learn how to configure a Azure Key Vault Connection for Hanzo KMS."
+description: "Learn how to configure a Azure Key Vault Connection for KMS."
 ---
 
-Hanzo KMS currently only supports two methods for connecting to Azure, which are OAuth and Client Secrets.
+KMS currently only supports two methods for connecting to Azure, which are OAuth and Client Secrets.
 
 <Accordion title="Self-Hosted Instance">
-  Using the Azure Key Vault connection on a self-hosted instance of Hanzo KMS requires configuring an application in Azure
+  Using the Azure Key Vault connection on a self-hosted instance of KMS requires configuring an application in Azure
   and registering your instance with it.
 
   **Prerequisites:**
@@ -25,7 +25,7 @@ Hanzo KMS currently only supports two methods for connecting to Azure, which are
 
       Create the application. As part of the form, set the **Redirect URI** to `https://your-domain.com/organization/app-connections/azure/oauth/callback`.
       <Tip>
-        The domain you defined in the Redirect URI should be equivalent to the `SITE_URL` configured in your Hanzo KMS instance.
+        The domain you defined in the Redirect URI should be equivalent to the `SITE_URL` configured in your KMS instance.
       </Tip>
 
       ![Azure key vault](/images/app-connections/azure/register-callback.png)
@@ -40,19 +40,19 @@ Hanzo KMS currently only supports two methods for connecting to Azure, which are
       ![Azure key vault](/images/app-connections/azure/keyvault-azure-permissions.png)
 
     </Step>
-    <Step title="Add your application credentials to Hanzo KMS">
+    <Step title="Add your application credentials to KMS">
       Obtain the **Application (Client) ID** in Overview and generate a **Client Secret** in Certificate & secrets for your Azure application.
 
       ![Azure key vault](../../images/integrations/azure-app-configuration/config-credentials-1.png)
       ![Azure key vault](../../images/integrations/azure-app-configuration/config-credentials-2.png)
       ![Azure key vault](../../images/integrations/azure-app-configuration/config-credentials-3.png)
 
-      Back in your Hanzo KMS instance, add two new environment variables for the credentials of your Azure application.
+      Back in your KMS instance, add two new environment variables for the credentials of your Azure application.
 
       - `INF_APP_CONNECTION_AZURE_KEY_VAULT_CLIENT_ID`: The **Application (Client) ID** of your Azure application.
       - `INF_APP_CONNECTION_AZURE_KEY_VAULT_CLIENT_SECRET`: The **Client Secret** of your Azure application.
 
-      Once added, restart your Hanzo KMS instance and use the Azure Key Vault connection.
+      Once added, restart your KMS instance and use the Azure Key Vault connection.
     </Step>
     </Steps>    
 
@@ -79,7 +79,7 @@ Hanzo KMS currently only supports two methods for connecting to Azure, which are
   </Steps>
 </Accordion>
 
-## Setup Azure Connection in Hanzo KMS
+## Setup Azure Connection in KMS
 
 <Steps>
 	<Step title="Navigate to App Connections">
@@ -104,8 +104,8 @@ Hanzo KMS currently only supports two methods for connecting to Azure, which are
 
           </Step>
           <Step title="Grant Access">
-            You will then be redirected to Azure to grant Hanzo KMS access to your Azure account. Once granted,
-            you will redirect you back to Hanzo KMS's App Connections page. ![Azure Key Vault
+            You will then be redirected to Azure to grant KMS access to your Azure account. Once granted,
+            you will redirect you back to KMS's App Connections page. ![Azure Key Vault
             Authorization](/images/app-connections/azure/grant-access.png)
           </Step>
         </Steps>

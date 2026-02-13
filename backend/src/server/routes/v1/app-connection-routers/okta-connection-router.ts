@@ -21,7 +21,7 @@ export const registerOktaConnectionRouter = async (server: FastifyZodProvider) =
     updateSchema: UpdateOktaConnectionSchema
   });
 
-  // The below endpoints are not exposed and for Hanzo KMS App use
+  // The below endpoints are not exposed and for KMS App use
 
   server.route({
     method: "GET",

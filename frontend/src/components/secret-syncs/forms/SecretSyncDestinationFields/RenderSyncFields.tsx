@@ -58,7 +58,7 @@ export const RenderSyncFields = () => {
             tooltipText={
               <div className="flex flex-col gap-3">
                 <p>
-                  Specify how Hanzo KMS should manage secrets from Render. The following options are
+                  Specify how KMS should manage secrets from Render. The following options are
                   available:
                 </p>
                 <ul className="flex list-disc flex-col gap-3 pl-4">

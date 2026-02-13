@@ -3,27 +3,27 @@ title: 'Docker Swarm'
 description: "Learn how to manage secrets in Docker Swarm services."
 ---
 
-In this guide, we'll demonstrate how to use Hanzo KMS for managing secrets within Docker Swarm. 
-Specifically, we'll set up a sidecar container using the [KMS Agent](/integrations/platforms/kms-agent), which authenticates with Hanzo KMS to retrieve secrets and access tokens. 
+In this guide, we'll demonstrate how to use KMS for managing secrets within Docker Swarm. 
+Specifically, we'll set up a sidecar container using the [KMS Agent](/integrations/platforms/kms-agent), which authenticates with KMS to retrieve secrets and access tokens. 
 These secrets are then stored in a shared volume accessible by other services in your Docker Swarm.
 
 ## Prerequisites
-- Hanzo KMS account
+- KMS account
 - Docker version 20.10.24 or newer
 - Basic knowledge of Docker Swarm
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed on your system
 - Familiarity with the [KMS Agent](/integrations/platforms/kms-agent)
 
 ## Objective
-Our goal is to deploy an Nginx instance in your Docker Swarm cluster, configured to display Hanzo KMS secrets on its landing page. This will provide hands-on experience in fetching and utilizing secrets from Hanzo KMS within Docker Swarm. The principles demonstrated here are also applicable to Docker Compose deployments.
+Our goal is to deploy an Nginx instance in your Docker Swarm cluster, configured to display KMS secrets on its landing page. This will provide hands-on experience in fetching and utilizing secrets from KMS within Docker Swarm. The principles demonstrated here are also applicable to Docker Compose deployments.
 
 <Steps>
   <Step title="Cloning the Guide Assets Repository">
-    Start by cloning the [Hanzo KMS guide assets repository](https://github.com/hanzoai/kms-guides.git) from Github. This repository includes necessary assets for this and other Hanzo KMS guides. Focus on the `docker-swarm-with-agent` sub-directory, which we'll use as our working directory.
+    Start by cloning the [KMS guide assets repository](https://github.com/hanzoai/kms-guides.git) from Github. This repository includes necessary assets for this and other KMS guides. Focus on the `docker-swarm-with-agent` sub-directory, which we'll use as our working directory.
   </Step>
 
-  <Step title="Setting Up Authentication with Hanzo KMS">
-    To allow the agent to fetch your Hanzo KMS secrets, choose an authentication method for the agent. For this guide, we will use [Universal Auth](/documentation/platform/identities/universal-auth) for authentication. Follow the instructions [here](/documentation/platform/identities/universal-auth) to generate a client ID and client secret.
+  <Step title="Setting Up Authentication with KMS">
+    To allow the agent to fetch your KMS secrets, choose an authentication method for the agent. For this guide, we will use [Universal Auth](/documentation/platform/identities/universal-auth) for authentication. Follow the instructions [here](/documentation/platform/identities/universal-auth) to generate a client ID and client secret.
   </Step>
 
   <Step title="Entering Universal Auth Credentials">
@@ -37,7 +37,7 @@ Our goal is to deploy an Nginx instance in your Docker Swarm cluster, configured
     In the example template, the secrets are rendered as an HTML page, which will be set as Nginx's home page to demonstrate successful secret retrieval and utilization.
 
     <Tip>
-      Remember to add your project id, environment slug and path of corresponding Hanzo KMS project to the secret template.
+      Remember to add your project id, environment slug and path of corresponding KMS project to the secret template.
     </Tip>
     <Tabs>
       <Tab title="Agent Configuration">
@@ -69,8 +69,8 @@ Our goal is to deploy an Nginx instance in your Docker Swarm cluster, configured
         <!DOCTYPE html>
         <html lang="en">
         <body>
-            <h1>This file is rendered by Hanzo KMS agent template engine</h1>
-            <p>Here are the secrets that have been fetched from Hanzo KMS and stored in your volume mount</p>
+            <h1>This file is rendered by KMS agent template engine</h1>
+            <p>Here are the secrets that have been fetched from KMS and stored in your volume mount</p>
             <ol>
               {{- with secret "7df67a5f-d26a-4988-a375-7153c08149da" "dev" "/" }}
               {{- range . }}
@@ -147,9 +147,9 @@ Our goal is to deploy an Nginx instance in your Docker Swarm cluster, configured
   </Step>
 
   <Step title="Verifying Secret Consumption">
-    To confirm that secrets are properly rendered and accessible, navigate to `http://localhost`. You should see the Hanzo KMS secrets displayed on the Nginx landing page.
+    To confirm that secrets are properly rendered and accessible, navigate to `http://localhost`. You should see the KMS secrets displayed on the Nginx landing page.
 
-    ![Nginx displaying Hanzo KMS secrets](/images/docker-swarm-secrets-complete.png)
+    ![Nginx displaying KMS secrets](/images/docker-swarm-secrets-complete.png)
   </Step>
 
   <Step title="Clean up">

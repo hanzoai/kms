@@ -5,7 +5,7 @@ description: "Learn how to dynamically generate Azure SQL Database user credenti
 
 import DynamicSecretUsernameTemplateParamField from "/snippets/documentation/platform/dynamic-secrets/dynamic-secret-username-template-field.mdx";
 
-The Hanzo KMS Azure SQL Database dynamic secret allows you to generate Azure SQL Database user credentials on demand based on configured roles.
+The KMS Azure SQL Database dynamic secret allows you to generate Azure SQL Database user credentials on demand based on configured roles.
 
 ## How Azure SQL Database Authentication Works
 
@@ -14,7 +14,7 @@ Azure SQL Database uses a two-tier authentication system that differs from tradi
 1. **Master Database**: Contains server-level logins that can authenticate to the Azure SQL Database server
 2. **User Databases**: Individual databases that contain database users mapped to server logins
 
-When creating dynamic credentials for Azure SQL Database, Hanzo KMS performs a two-step process:
+When creating dynamic credentials for Azure SQL Database, KMS performs a two-step process:
 1. **Create Login in Master Database**: Creates a server-level login with the specified password
 2. **Create User in Target Database**: Creates a database user mapped to the login and grants the necessary permissions
 
@@ -146,7 +146,7 @@ The user needs:
 Once you have created one or more leases, you will be able to access them by clicking on the respective dynamic secret item on the dashboard.
 This will allow you to see the expiration time of the lease or delete the lease before its set time to live.
 
-When a lease is revoked or expires, Hanzo KMS automatically:
+When a lease is revoked or expires, KMS automatically:
 1. **Drops the user** from the target database
 2. **Drops the login** from the master database
 

@@ -27,7 +27,7 @@ export const awsIamResourceFactory: TPamResourceFactory<TAwsIamResourceConnectio
       if (!isValid) {
         throw new BadRequestError({
           message:
-            "Unable to assume the PAM role. Verify the role ARN and ensure the trust policy allows Hanzo KMS to assume the role."
+            "Unable to assume the PAM role. Verify the role ARN and ensure the trust policy allows KMS to assume the role."
         });
       }
 

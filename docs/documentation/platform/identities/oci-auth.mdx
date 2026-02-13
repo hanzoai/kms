@@ -1,47 +1,47 @@
 ---
 title: OCI Auth
-description: "Learn how to authenticate with Hanzo KMS using OCI user accounts."
+description: "Learn how to authenticate with KMS using OCI user accounts."
 ---
 
-**OCI Auth** is an OCI-native authentication method that verifies Oracle Cloud Infrastructure users through signature validation, allowing secure access to Hanzo KMS resources.
+**OCI Auth** is an OCI-native authentication method that verifies Oracle Cloud Infrastructure users through signature validation, allowing secure access to KMS resources.
 
 ## Diagram
 
-The following sequence diagram illustrates the OCI Auth workflow for authenticating OCI users with Hanzo KMS.
+The following sequence diagram illustrates the OCI Auth workflow for authenticating OCI users with KMS.
 
 ```mermaid
 sequenceDiagram
   participant Client
-  participant Hanzo KMS
+  participant KMS
   participant OCI
 
   Note over Client,Client: Step 1: Sign user identity request
 
-  Note over Client,Hanzo KMS: Step 2: Login Operation
-  Client->>Hanzo KMS: Send signed request details to /api/v1/auth/oci-auth/login
+  Note over Client,KMS: Step 2: Login Operation
+  Client->>KMS: Send signed request details to /api/v1/auth/oci-auth/login
 
-  Note over Hanzo KMS,OCI: Step 3: Request verification
-  Hanzo KMS->>OCI: Forward signed request
-  OCI-->>Hanzo KMS: Return user details
+  Note over KMS,OCI: Step 3: Request verification
+  KMS->>OCI: Forward signed request
+  OCI-->>KMS: Return user details
 
-  Note over Hanzo KMS: Step 4: Identity property validation
-  Hanzo KMS->>Client: Return short-lived access token
+  Note over KMS: Step 4: Identity property validation
+  KMS->>Client: Return short-lived access token
 
-  Note over Client,Hanzo KMS: Step 5: Access Hanzo KMS API with token
-  Client->>Hanzo KMS: Make authenticated requests using the short-lived access token
+  Note over Client,KMS: Step 5: Access KMS API with token
+  Client->>KMS: Make authenticated requests using the short-lived access token
 ```
 
 ## Concept
 
-At a high level, Hanzo KMS authenticates an OCI user by verifying its identity and checking that it meets specific requirements (e.g., its username is authorized, its part of a tenancy) at the `/api/v1/auth/oci-auth/login` endpoint. If successful,
-then Hanzo KMS returns a short-lived access token that can be used to make authenticated requests to the Hanzo KMS API.
+At a high level, KMS authenticates an OCI user by verifying its identity and checking that it meets specific requirements (e.g., its username is authorized, its part of a tenancy) at the `/api/v1/auth/oci-auth/login` endpoint. If successful,
+then KMS returns a short-lived access token that can be used to make authenticated requests to the KMS API.
 
 To be more specific:
 1. The client [signs](https://docs.oracle.com/en-us/iaas/Content/API/Concepts/signingrequests.htm) a `/20160918/users/{userId}` request using an OCI user's [private key](https://docs.oracle.com/en-us/iaas/Content/API/Concepts/apisigningkey.htm#Required_Keys_and_OCIDs); this is done using the [OCI SDK](https://kms.hanzo.ai/docs/documentation/platform/identities/oci-auth#accessing-the-kms-api-with-the-identity) or API.
-2. The client sends the signed request's headers and their user OCID to Hanzo KMS at the `/api/v1/auth/oci-auth/login` endpoint.
-3. Hanzo KMS reconstructs the request and sends it to OCI via the [Get User](https://docs.oracle.com/en/engineered-systems/private-cloud-appliance/3.0-latest/ceapi/op-20160918-users-user_id-get.html) endpoint for verification and obtains the identity associated with the OCI user.
-4. Hanzo KMS checks the user's properties against set criteria such as **Allowed Usernames** and **Tenancy OCID**.
-5. If all checks pass, Hanzo KMS returns a short-lived access token that the client can use to make authenticated requests to the Hanzo KMS API.
+2. The client sends the signed request's headers and their user OCID to KMS at the `/api/v1/auth/oci-auth/login` endpoint.
+3. KMS reconstructs the request and sends it to OCI via the [Get User](https://docs.oracle.com/en/engineered-systems/private-cloud-appliance/3.0-latest/ceapi/op-20160918-users-user_id-get.html) endpoint for verification and obtains the identity associated with the OCI user.
+4. KMS checks the user's properties against set criteria such as **Allowed Usernames** and **Tenancy OCID**.
+5. If all checks pass, KMS returns a short-lived access token that the client can use to make authenticated requests to the KMS API.
 
 ## Prerequisite
 
@@ -53,7 +53,7 @@ In order to sign requests, you must have an OCI user with credentials such as th
             ![Search Domains](/images/app-connections/oci/search-domains.png)
         </Step>
         <Step title="Select domain">
-            Select the domain in which you want to create the Hanzo KMS user account.
+            Select the domain in which you want to create the KMS user account.
 
             ![Select Domain](/images/app-connections/oci/select-domain.png)
         </Step>
@@ -94,7 +94,7 @@ In order to sign requests, you must have an OCI user with credentials such as th
 ## Guide
 
 In the following steps, we explore how to create and use identities for your workloads and applications on OCI to
-access the Hanzo KMS API using the OCI request signing authentication method.
+access the KMS API using the OCI request signing authentication method.
 
 ### Creating an identity
 
@@ -126,7 +126,7 @@ Now create a new OCI Auth Method.
 
 Here's some information about each field:
 - **Tenancy OCID:** The OCID of your tenancy. All users authenticating must be part of this Tenancy.
-- **Allowed Usernames:** A comma-separated list of trusted OCI users that are allowed to authenticate with Hanzo KMS.
+- **Allowed Usernames:** A comma-separated list of trusted OCI users that are allowed to authenticate with KMS.
 - **Access Token TTL (default is `2592000` equivalent to 30 days):** The lifetime for an access token in seconds. This value will be referenced at renewal time.
 - **Access Token Max TTL (default is `2592000` equivalent to 30 days):** The maximum lifetime for an access token in seconds. This value will be referenced at renewal time.
 - **Access Token Max Number of Uses (default is `0`):** The maximum number of times that an access token can be used; a value of `0` implies an infinite number of uses.
@@ -144,11 +144,11 @@ Select the identity you want to add to the project and the project-level role yo
 
 ![identities project create](/images/platform/identities/identities-project-create.png)
 
-### Accessing the Hanzo KMS API with the identity
+### Accessing the KMS API with the identity
 
-To access the Hanzo KMS API as the identity, you need to construct a signed [Get User](https://docs.oracle.com/en/engineered-systems/private-cloud-appliance/3.0-latest/ceapi/op-20160918-users-user_id-get.html) request using [OCI Signature v1](https://docs.oracle.com/en-us/iaas/Content/API/Concepts/signingrequests.htm#Request_Signatures) and then make a request to the `/api/v1/auth/oci-auth/login` endpoint passing the signed header data and user OCID.
+To access the KMS API as the identity, you need to construct a signed [Get User](https://docs.oracle.com/en/engineered-systems/private-cloud-appliance/3.0-latest/ceapi/op-20160918-users-user_id-get.html) request using [OCI Signature v1](https://docs.oracle.com/en-us/iaas/Content/API/Concepts/signingrequests.htm#Request_Signatures) and then make a request to the `/api/v1/auth/oci-auth/login` endpoint passing the signed header data and user OCID.
 
-Below is an example of how you can authenticate with Hanzo KMS using the `oci-sdk` for NodeJS.
+Below is an example of how you can authenticate with KMS using the `oci-sdk` for NodeJS.
 
 ```typescript
 import { common } from "oci-sdk";
@@ -185,7 +185,7 @@ const request: common.HttpRequest = {
 const signer = new common.DefaultRequestSigner(provider);
 await signer.signHttpRequest(request);
 
-// Forward signed request to Hanzo KMS
+// Forward signed request to KMS
 const requestAsJson = {
   identityId: "2dd11664-68e3-471d-b366-907206ab1bff",
   userOcid: userId,
@@ -202,11 +202,11 @@ const res = await fetch("https://kms.hanzo.ai/api/v1/auth/oci-auth/login", {
 
 const json = await res.json();
 
-console.log("Hanzo KMS Response:", json);
+console.log("KMS Response:", json);
 ```
 
 <Note>
     Each identity access token has a time-to-live (TTL) which you can infer from the response of the login operation; the default TTL is `7200` seconds, which can be adjusted.
 
-    If an identity access token expires, it can no longer access the Hanzo KMS API. A new access token should be obtained by performing another login operation.
+    If an identity access token expires, it can no longer access the KMS API. A new access token should be obtained by performing another login operation.
 </Note>

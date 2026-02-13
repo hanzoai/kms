@@ -43,7 +43,7 @@ const initialSyncBehaviors = [
     value: IntegrationSyncBehavior.OVERWRITE_TARGET
   },
   {
-    label: "Import - Prefer values from Hanzo KMS",
+    label: "Import - Prefer values from KMS",
     value: IntegrationSyncBehavior.PREFER_SOURCE
   }
 ];
@@ -178,7 +178,7 @@ export const VercelConfigurePage = () => {
       <Card className="max-w-lg rounded-md border border-mineshaft-600 p-0">
         <CardTitle
           className="px-6 text-left text-xl"
-          subTitle="Select which environment or folder in Hanzo KMS you want to sync to Vercel's environment variables."
+          subTitle="Select which environment or folder in KMS you want to sync to Vercel's environment variables."
         >
           <div className="flex flex-row items-center">
             <div className="flex items-center">
@@ -201,7 +201,7 @@ export const VercelConfigurePage = () => {
             </a>
           </div>
         </CardTitle>
-        <FormControl label="Hanzo KMS Project Environment" className="px-6">
+        <FormControl label="KMS Project Environment" className="px-6">
           <Select
             value={selectedSourceEnvironment}
             onValueChange={(val) => setSelectedSourceEnvironment(val)}
@@ -229,7 +229,7 @@ export const VercelConfigurePage = () => {
           helperText={
             <Tooltip
               className="max-w-md"
-              content="Double check Hanzo KMS's access permissions in Vercel by navigating to Team > Integrations > Hanzo KMS > Settings > Manage Access."
+              content="Double check KMS's access permissions in Vercel by navigating to Team > Integrations > KMS > Settings > Manage Access."
             >
               <div>
                 <span>Don&#39;t see the project you&#39;re looking for?</span>{" "}
@@ -332,7 +332,7 @@ export const VercelConfigurePage = () => {
         </div>
         <span className="mt-4 text-sm text-mineshaft-300">
           After creating an integration, your secrets will start syncing immediately. This might
-          cause an unexpected override of current secrets in Vercel with secrets from Hanzo KMS.
+          cause an unexpected override of current secrets in Vercel with secrets from KMS.
         </span>
       </div>
     </div>

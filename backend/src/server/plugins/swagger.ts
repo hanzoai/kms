@@ -9,7 +9,7 @@ export const fastifySwagger = fp(async (fastify) => {
     transform: jsonSchemaTransform,
     openapi: {
       info: {
-        title: "Hanzo KMS API",
+        title: "KMS API",
         description: "List of all available APIs that can be consumed",
         version: "0.0.1"
       },
@@ -33,7 +33,7 @@ export const fastifySwagger = fp(async (fastify) => {
             type: "http",
             scheme: "bearer",
             bearerFormat: "JWT",
-            description: "An access token in Hanzo KMS"
+            description: "An access token in KMS"
           }
         }
       }

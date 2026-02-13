@@ -1,15 +1,15 @@
 ---
 title: "Microsoft SQL Server Connection"
-description: "Learn how to configure a Microsoft SQL Server Connection for Hanzo KMS."
+description: "Learn how to configure a Microsoft SQL Server Connection for KMS."
 ---
 
-Hanzo KMS supports connecting to Microsoft SQL Server using database principals.
+KMS supports connecting to Microsoft SQL Server using database principals.
 
-## Configure a Microsoft SQL Server Principal for Hanzo KMS
+## Configure a Microsoft SQL Server Principal for KMS
 
 <Steps>
     <Step title="Create a Principal">
-        Hanzo KMS recommends creating a designated server login and database user in your Microsoft SQL Server database for your connection.
+        KMS recommends creating a designated server login and database user in your Microsoft SQL Server database for your connection.
         ```SQL
         -- Create login at the server level
         CREATE LOGIN [kms_app] WITH PASSWORD = 'my-password';
@@ -36,7 +36,7 @@ Hanzo KMS supports connecting to Microsoft SQL Server using database principals.
 
         <Tabs>
             <Tab title="Secret Rotation">
-                For Secret Rotations, your Hanzo KMS user will require the ability to alter other logins' passwords:
+                For Secret Rotations, your KMS user will require the ability to alter other logins' passwords:
                 ```SQL
                 GRANT ALTER ANY LOGIN TO kms_login;
                 ```
@@ -53,15 +53,15 @@ Hanzo KMS supports connecting to Microsoft SQL Server using database principals.
         - `sslCertificate` (optional) - The SSL certificate required for connection (if configured)
 
         <Note>
-            If you are self-hosting Hanzo KMS and intend to connect to an internal/private IP address, be sure to set the `ALLOW_INTERNAL_IP_CONNECTIONS` environment variable to `true`.
+            If you are self-hosting KMS and intend to connect to an internal/private IP address, be sure to set the `ALLOW_INTERNAL_IP_CONNECTIONS` environment variable to `true`.
         </Note>
     </Step>
 </Steps>
 
-## Create Connection in Hanzo KMS
+## Create Connection in KMS
 
 <Tabs>
-    <Tab title="Hanzo KMS UI">
+    <Tab title="KMS UI">
         1. Navigate to the **Integrations** tab in the desired project, then select **App Connections**.
         ![App Connections Tab](/images/app-connections/general/add-connection.png)
 
@@ -70,8 +70,8 @@ Hanzo KMS supports connecting to Microsoft SQL Server using database principals.
 
         3. Select the **Username & Password** method option and provide the details obtained from the previous section and press **Connect to Microsoft SQL Server**.
         <Note>
-            Optionally, if you'd like Hanzo KMS to manage the credentials of this connection, you can enable the Platform Managed Credentials option.
-            If enabled, Hanzo KMS will update the password of the connection on creation to prevent external access to this database role.
+            Optionally, if you'd like KMS to manage the credentials of this connection, you can enable the Platform Managed Credentials option.
+            If enabled, KMS will update the password of the connection on creation to prevent external access to this database role.
         </Note>
         ![Create Microsoft SQL Server Connection](/images/app-connections/mssql/create-username-and-password-method.png)
 
@@ -83,8 +83,8 @@ Hanzo KMS supports connecting to Microsoft SQL Server using database principals.
         Connection](/api-reference/endpoints/app-connections/mssql/create) API endpoint.
 
         <Note>
-            Optionally, if you'd like Hanzo KMS to manage the credentials of this connection, you can set the `isPlatformManagedCredentials` option to `true`.
-            If enabled, Hanzo KMS will update the password of the connection on creation to prevent external access to this database role.
+            Optionally, if you'd like KMS to manage the credentials of this connection, you can set the `isPlatformManagedCredentials` option to `true`.
+            If enabled, KMS will update the password of the connection on creation to prevent external access to this database role.
         </Note>
 
         ### Sample request

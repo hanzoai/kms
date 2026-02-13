@@ -1,26 +1,26 @@
 ---
 title: "Adding Custom Certificates"
-description: "Learn how to configure Hanzo KMS with custom certificates"
+description: "Learn how to configure KMS with custom certificates"
 ---
 
-By default, the Hanzo KMS Docker image includes certificates from well-known public certificate authorities.
-However, some integrations with Hanzo KMS may need to communicate with your internal services that use private certificate authorities.
-To configure trust for custom certificates, follow these steps. This is particularly useful for connecting Hanzo KMS with self-hosted services like GitLab.
+By default, the KMS Docker image includes certificates from well-known public certificate authorities.
+However, some integrations with KMS may need to communicate with your internal services that use private certificate authorities.
+To configure trust for custom certificates, follow these steps. This is particularly useful for connecting KMS with self-hosted services like GitLab.
 
 ## Prerequisites
 
 - Docker
-- Standalone [Hanzo KMS image](https://hub.docker.com/r/ghcr.io/hanzoai/kms)
+- Standalone [KMS image](https://hub.docker.com/r/ghcr.io/hanzoai/kms)
 - Certificate public key `.crt` files
 
 ## Setup
 
 1. Place all your public key `.crt` files into a single directory.
-2. Mount the directory containing the `.crt` files to the `/usr/local/share/ca-certificates/` path in the Hanzo KMS container.
-3. Set the following environment variable on your Hanzo KMS container:
+2. Mount the directory containing the `.crt` files to the `/usr/local/share/ca-certificates/` path in the KMS container.
+3. Set the following environment variable on your KMS container:
    ```
    NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt
    ```
-4. Start the Hanzo KMS container.
+4. Start the KMS container.
 
-By following these steps, your Hanzo KMS container will trust the specified certificates, allowing you to securely connect Hanzo KMS to your internal services.
+By following these steps, your KMS container will trust the specified certificates, allowing you to securely connect KMS to your internal services.

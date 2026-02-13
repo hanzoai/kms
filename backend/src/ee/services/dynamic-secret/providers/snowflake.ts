@@ -51,7 +51,7 @@ export const SnowflakeProvider = (): TDynamicProviderFns => {
       account: `${providerInputs.orgId}-${providerInputs.accountId}`,
       username: providerInputs.username,
       password: providerInputs.password,
-      application: "Hanzo KMS"
+      application: "KMS"
     });
 
     await client.connectAsync(noop);

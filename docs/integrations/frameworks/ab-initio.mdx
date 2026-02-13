@@ -1,27 +1,27 @@
 ---
 title: "AB Initio"
-description: "How to use Hanzo KMS secrets in AB Initio."
+description: "How to use KMS secrets in AB Initio."
 ---
 
 ## Prerequisites
 
-- Set up and add envars to [Hanzo KMS](https://kms.hanzo.ai).
+- Set up and add envars to [KMS](https://kms.hanzo.ai).
 - Install the [KMS CLI](https://kms.hanzo.ai/docs/cli/overview) to your server.
 
 ## Setup
 
 <Steps>
-    <Step title="Authorize Hanzo KMS for AB Initio">
-        Create a [machine identity](https://kms.hanzo.ai/docs/documentation/platform/identities/machine-identities#machine-identities) in Hanzo KMS and give it the appropriate read permissions for the desired project and secret paths.
+    <Step title="Authorize KMS for AB Initio">
+        Create a [machine identity](https://kms.hanzo.ai/docs/documentation/platform/identities/machine-identities#machine-identities) in KMS and give it the appropriate read permissions for the desired project and secret paths.
     </Step>
     <Step title="Add KMS CLI to your workflow">
-        Update your AB Initio workflows to use KMS CLI to inject Hanzo KMS secrets as environment variables.
+        Update your AB Initio workflows to use KMS CLI to inject KMS secrets as environment variables.
     
         ```bash
         # Login using the machine identity. Modify this accordingly based on the authentication method used.
         export KMS_TOKEN=$(hanzo-kms login --method=universal-auth --client-id=$KMS_CLIENT_ID --client-secret=$KMS_CLIENT_SECRET --silent --plain)
 
-        # Fetch secrets from Hanzo KMS
+        # Fetch secrets from KMS
         hanzo-kms export --projectId="<>" --env="prod" > kms.env
 
         # Inject secrets as environment variables

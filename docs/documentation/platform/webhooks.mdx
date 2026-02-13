@@ -1,6 +1,6 @@
 ---
 title: "Webhooks"
-description: "Learn the fundamentals of Hanzo KMS webhooks."
+description: "Learn the fundamentals of KMS webhooks."
 ---
 
 Webhooks can be used to trigger changes to your integrations when secrets are modified, providing smooth integration with other third-party applications.
@@ -9,19 +9,19 @@ Webhooks can be used to trigger changes to your integrations when secrets are mo
 
 To create a webhook for a particular project, go to `Project Settings > Webhooks`.
 
-Hanzo KMS supports two webhook types - General and Slack. If you need to integrate with Slack, use the Slack type with an [Incoming Webhook](https://api.slack.com/messaging/webhooks). When creating a webhook, you can specify an environment and folder path to trigger only specific integrations.
+KMS supports two webhook types - General and Slack. If you need to integrate with Slack, use the Slack type with an [Incoming Webhook](https://api.slack.com/messaging/webhooks). When creating a webhook, you can specify an environment and folder path to trigger only specific integrations.
 
 ![webhook-create](../../images/webhook-create.png)
 
 ## Secret Key Verification
 
-A secret key is a way for users to verify that a webhook request was sent by Hanzo KMS and is intended for the correct integration.
+A secret key is a way for users to verify that a webhook request was sent by KMS and is intended for the correct integration.
 
-When you provide a secret key, Hanzo KMS will sign the payload of the webhook request using the key and attach a header called `x-kms-signature` to the request with a payload.
+When you provide a secret key, KMS will sign the payload of the webhook request using the key and attach a header called `x-kms-signature` to the request with a payload.
 
 The header will be in the format `t=<timestamp>;<signature>`. You can then generate the signature yourself by generating a SHA256 hash of the payload with the secret key that you know.
 
-If the signature in the header matches the signature that you generated, then you can be sure that the request was sent by Hanzo KMS and is intended for your integration. The timestamp in the header ensures that the request is not replayed.
+If the signature in the header matches the signature that you generated, then you can be sure that the request was sent by KMS and is intended for your integration. The timestamp in the header ensures that the request is not replayed.
 
 ### Webhook Payload Format
 

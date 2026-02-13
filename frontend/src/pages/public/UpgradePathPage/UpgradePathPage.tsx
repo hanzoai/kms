@@ -133,13 +133,13 @@ export const UpgradePathPage = () => {
   return (
     <>
       <Helmet>
-        <title>Hanzo KMS Upgrade Path Tool | Hanzo KMS</title>
+        <title>KMS Upgrade Path Tool | KMS</title>
         <link rel="icon" href="/hanzo.ico" />
         <meta property="og:image" content="/images/message.png" />
-        <meta property="og:title" content="Hanzo KMS Upgrade Path Tool" />
+        <meta property="og:title" content="KMS Upgrade Path Tool" />
         <meta
           name="og:description"
-          content="Plan your Hanzo KMS upgrade path safely and efficiently."
+          content="Plan your KMS upgrade path safely and efficiently."
         />
       </Helmet>
       <div className="dark h-full">
@@ -154,13 +154,13 @@ export const UpgradePathPage = () => {
                     src="/images/gradientLogo.svg"
                     height={90}
                     width={120}
-                    alt="Hanzo KMS logo"
+                    alt="KMS logo"
                     className="cursor-pointer"
                   />
                 </a>
               </div>
               <h1 className="bg-linear-to-b from-white to-bunker-200 bg-clip-text text-center text-4xl font-medium text-transparent">
-                Upgrade your Hanzo KMS Version
+                Upgrade your KMS Version
               </h1>
             </div>
 

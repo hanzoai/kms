@@ -99,7 +99,7 @@ export const OrgRoleTable = () => {
 
     if (isCustomRole && subscription && !subscription?.rbac) {
       handlePopUpOpen("upgradePlan", {
-        text: "Your current plan does not include access to set a custom default organization role. To unlock this feature, please upgrade to Hanzo KMS Pro plan."
+        text: "Your current plan does not include access to set a custom default organization role. To unlock this feature, please upgrade to KMS Pro plan."
       });
       return;
     }

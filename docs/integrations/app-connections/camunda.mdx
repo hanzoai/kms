@@ -1,11 +1,11 @@
 ---
 title: "Camunda Connection"
-description: "Learn how to configure a Camunda Connection for Hanzo KMS."
+description: "Learn how to configure a Camunda Connection for KMS."
 ---
 
-Hanzo KMS supports connecting to Camunda APIs using [client credentials](https://docs.camunda.io/docs/apis-tools/administration-api/authentication/#client-credentials-and-scopes).
+KMS supports connecting to Camunda APIs using [client credentials](https://docs.camunda.io/docs/apis-tools/administration-api/authentication/#client-credentials-and-scopes).
 
-## Configure Client Credentials for Hanzo KMS
+## Configure Client Credentials for KMS
 
 <Steps>
     <Step title="Navigate to Organization Management">
@@ -25,7 +25,7 @@ Hanzo KMS supports connecting to Camunda APIs using [client credentials](https:/
         - **Cluster**: Enable read access (Get)
         - **Connector secrets**: Enable all operations (Get, Create, Update, Delete)
 
-        These specific permissions are required for Hanzo KMS to properly sync and manage your Camunda secrets.
+        These specific permissions are required for KMS to properly sync and manage your Camunda secrets.
         ![Set Permissions](/images/app-connections/camunda/camunda-create-client-1.png)
         ![Set Permissions 2](/images/app-connections/camunda/camunda-create-client-2.png)
     </Step>
@@ -33,7 +33,7 @@ Hanzo KMS supports connecting to Camunda APIs using [client credentials](https:/
         Click the **Create** button to generate your client credentials.
     </Step>
     <Step title="Save Your Credentials">
-        After creation, you'll be shown your client credentials. For the Hanzo KMS connection, you'll need:
+        After creation, you'll be shown your client credentials. For the KMS connection, you'll need:
 
         - **Client ID** (`CAMUNDA_CONSOLE_CLIENT_ID`)
         - **Client Secret** (`CAMUNDA_CONSOLE_CLIENT_SECRET`)
@@ -46,7 +46,7 @@ Hanzo KMS supports connecting to Camunda APIs using [client credentials](https:/
 
 </Steps>
 
-## Setup Camunda Connection in Hanzo KMS
+## Setup Camunda Connection in KMS
 
 <Steps>
   <Step title="Navigate to App Connections">
@@ -65,11 +65,11 @@ Hanzo KMS supports connecting to Camunda APIs using [client credentials](https:/
     - **Client ID**: Your `CAMUNDA_CONSOLE_CLIENT_ID` value
     - **Client Secret**: Your `CAMUNDA_CONSOLE_CLIENT_SECRET` value
     
-    Hanzo KMS will automatically configure the connection using these credentials to access the Camunda API. Click **Connect to Camunda** to establish the connection. ![Connect to Camunda](/images/app-connections/camunda/camunda-app-connection-form.png)
+    KMS will automatically configure the connection using these credentials to access the Camunda API. Click **Connect to Camunda** to establish the connection. ![Connect to Camunda](/images/app-connections/camunda/camunda-app-connection-form.png)
 
   </Step>
   <Step title="Connection Created">
-    Your **Camunda Connection** is now available for use in your Hanzo KMS
+    Your **Camunda Connection** is now available for use in your KMS
     projects. ![Camunda Connection
     Created](/images/app-connections/camunda/camunda-app-connection-created.png)
   </Step>

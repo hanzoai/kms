@@ -4,24 +4,24 @@ title: "Obtain a Certificate via ACME"
 
 import RequestCertSetup from "/snippets/documentation/platform/pki/guides/request-cert-setup.mdx";
 
-The [ACME enrollment method](/documentation/platform/pki/enrollment-methods/acme) lets any [ACME client](https://letsencrypt.org/docs/client-options/) obtain TLS certificates from Hanzo KMS using the [ACME protocol](https://en.wikipedia.org/wiki/Automatic_Certificate_Management_Environment).
+The [ACME enrollment method](/documentation/platform/pki/enrollment-methods/acme) lets any [ACME client](https://letsencrypt.org/docs/client-options/) obtain TLS certificates from KMS using the [ACME protocol](https://en.wikipedia.org/wiki/Automatic_Certificate_Management_Environment).
 This includes ACME clients like [Certbot](https://certbot.eff.org/), [cert-manager](https://cert-manager.io/) in Kubernetes using the [ACME issuer type](https://cert-manager.io/docs/configuration/acme/), and more.
 
-Hanzo KMS currently supports the [HTTP-01 challenge type](https://letsencrypt.org/docs/challenge-types/#http-01-challenge) for domain validation as part of the ACME enrollment method.
+KMS currently supports the [HTTP-01 challenge type](https://letsencrypt.org/docs/challenge-types/#http-01-challenge) for domain validation as part of the ACME enrollment method.
 
 ## Diagram
 
-The following sequence diagram illustrates the certificate enrollment workflow for requesting a certificate via ACME from Hanzo KMS.
+The following sequence diagram illustrates the certificate enrollment workflow for requesting a certificate via ACME from KMS.
 
 ```mermaid
 sequenceDiagram
   autonumber
   participant ACME as ACME Client
-  participant Infis as Hanzo KMS ACME Server
+  participant Infis as KMS ACME Server
   participant Authz as HTTP-01 Challenge<br/>Validation Endpoint
   participant CA as CA<br/>(Internal or External)
 
-  Note over ACME: ACME Client discovers<br/>Hanzo KMS ACME Directory URL
+  Note over ACME: ACME Client discovers<br/>KMS ACME Directory URL
 
   ACME->>Infis: GET /directory
   Infis-->>ACME: Directory + nonce + endpoints
@@ -69,7 +69,7 @@ sequenceDiagram
 
 ## Guide
 
-In the following steps, we explore an end-to-end workflow for obtaining a certificate via ACME with Hanzo KMS.
+In the following steps, we explore an end-to-end workflow for obtaining a certificate via ACME with KMS.
 
 <Steps>
   <RequestCertSetup />
@@ -88,15 +88,15 @@ In the following steps, we explore an end-to-end workflow for obtaining a certif
     Finally, follow the guide [here](/documentation/platform/pki/enrollment-methods/acme#guide-to-certificate-enrollment-via-acme) to request a certificate against the certificate profile
     using an [ACME client](https://letsencrypt.org/docs/client-options/).
     
-    The ACME client will connect to Hanzo KMS's ACME server at the **ACME Directory URL** and authenticate using the **EAB Key Identifier (KID)** and **EAB Secret** credentials as part of the ACME protocol.
+    The ACME client will connect to KMS's ACME server at the **ACME Directory URL** and authenticate using the **EAB Key Identifier (KID)** and **EAB Secret** credentials as part of the ACME protocol.
 
     The typical ACME workflow looks likes this:
 
-    - The ACME client creates (or reuses) an ACME account with Hanzo KMS using EAB credentials.
+    - The ACME client creates (or reuses) an ACME account with KMS using EAB credentials.
     - The ACME client creates an order for one or more DNS names.
     - For each DNS name, the ACME client receives an `HTTP-01` challenge and provisions the corresponding token response at `/.well-known/acme-challenge/&lt;token&gt;`.
-    - Once all authorizations are valid, the ACME client finalizes the order by sending a CSR to Hanzo KMS.
-    - Hanzo KMS issues the certificate from the issuing CA on the certificate profile and returns it (plus the chain) back to the ACME client.
+    - Once all authorizations are valid, the ACME client finalizes the order by sending a CSR to KMS.
+    - KMS issues the certificate from the issuing CA on the certificate profile and returns it (plus the chain) back to the ACME client.
 
     ACME clients typically handle renewal by tracking certificate expiration and completing the lifecycle once again to request a new certificate.
 

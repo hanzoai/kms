@@ -180,15 +180,15 @@ export const SECRET_SYNC_INITIAL_SYNC_BEHAVIOR_MAP: Record<
 > = {
   [SecretSyncInitialSyncBehavior.OverwriteDestination]: (destinationName: string) => ({
     name: "Overwrite Destination Secrets",
-    description: `Hanzo KMS will overwrite any secrets located in the ${destinationName} destination, removing any secrets that are not present within Hanzo KMS. `
+    description: `KMS will overwrite any secrets located in the ${destinationName} destination, removing any secrets that are not present within KMS. `
   }),
   [SecretSyncInitialSyncBehavior.ImportPrioritizeSource]: (destinationName: string) => ({
-    name: "Import Destination Secrets - Prioritize Hanzo KMS Values",
-    description: `Hanzo KMS will import any secrets present in the ${destinationName} destination prior to syncing, prioritizing values from Hanzo KMS over ${destinationName} when keys conflict.`
+    name: "Import Destination Secrets - Prioritize KMS Values",
+    description: `KMS will import any secrets present in the ${destinationName} destination prior to syncing, prioritizing values from KMS over ${destinationName} when keys conflict.`
   }),
   [SecretSyncInitialSyncBehavior.ImportPrioritizeDestination]: (destinationName: string) => ({
     name: `Import Destination Secrets - Prioritize ${destinationName} Values`,
-    description: `Hanzo KMS will import any secrets present in the ${destinationName} destination prior to syncing, prioritizing values from ${destinationName} over Hanzo KMS when keys conflict.`
+    description: `KMS will import any secrets present in the ${destinationName} destination prior to syncing, prioritizing values from ${destinationName} over KMS when keys conflict.`
   })
 };
 
@@ -197,12 +197,12 @@ export const SECRET_SYNC_IMPORT_BEHAVIOR_MAP: Record<
   (destinationName: string) => { name: string; description: string }
 > = {
   [SecretSyncImportBehavior.PrioritizeSource]: (destinationName: string) => ({
-    name: "Prioritize Hanzo KMS Values",
-    description: `Hanzo KMS will import any secrets present in the ${destinationName} destination, prioritizing values from Hanzo KMS over ${destinationName} when keys conflict.`
+    name: "Prioritize KMS Values",
+    description: `KMS will import any secrets present in the ${destinationName} destination, prioritizing values from KMS over ${destinationName} when keys conflict.`
   }),
   [SecretSyncImportBehavior.PrioritizeDestination]: (destinationName: string) => ({
     name: `Prioritize ${destinationName} Values`,
-    description: `Hanzo KMS will import any secrets present in the ${destinationName} destination, prioritizing values from ${destinationName} over Hanzo KMS when keys conflict.`
+    description: `KMS will import any secrets present in the ${destinationName} destination, prioritizing values from ${destinationName} over KMS when keys conflict.`
   })
 };
 
@@ -213,12 +213,12 @@ export const HUMANITEC_SYNC_SCOPES: Record<
   [HumanitecSyncScope.Application]: {
     name: "Application",
     description:
-      "Hanzo KMS will sync secrets as application level shared values to the specified Humanitec application."
+      "KMS will sync secrets as application level shared values to the specified Humanitec application."
   },
   [HumanitecSyncScope.Environment]: {
     name: "Environment",
     description:
-      "Hanzo KMS will sync secrets as environment level shared values to the specified Humanitec application environment."
+      "KMS will sync secrets as environment level shared values to the specified Humanitec application environment."
   }
 };
 
@@ -236,10 +236,10 @@ export const GCP_SYNC_SCOPES: Record<GcpSyncScope, { name: string; description: 
 export const RENDER_SYNC_SCOPES: Record<RenderSyncScope, { name: string; description: string }> = {
   [RenderSyncScope.Service]: {
     name: "Service",
-    description: "Hanzo KMS will sync secrets to the specified Render service."
+    description: "KMS will sync secrets to the specified Render service."
   },
   [RenderSyncScope.EnvironmentGroup]: {
     name: "EnvironmentGroup",
-    description: "Hanzo KMS will sync secrets to the specified Render environment group."
+    description: "KMS will sync secrets to the specified Render environment group."
   }
 };

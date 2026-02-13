@@ -161,7 +161,7 @@ export const kmsServiceFactory = ({
   };
 
   /*
-   * Simple encryption service function to do all the encryption tasks in Hanzo KMS
+   * Simple encryption service function to do all the encryption tasks in KMS
    * This can be even later exposed directly as api for encryption as function
    * The encrypted binary even has everything into it. The IV, the version etc
    */
@@ -178,7 +178,7 @@ export const kmsServiceFactory = ({
   };
 
   /*
-   * Simple decryption service function to do all the encryption tasks in Hanzo KMS
+   * Simple decryption service function to do all the encryption tasks in KMS
    * This can be even later exposed directly as api for encryption as function
    */
   const decryptWithInputKey = async ({ key }: Omit<TDecryptWithKeyDTO, "cipherTextBlob">) => {
@@ -296,7 +296,7 @@ export const kmsServiceFactory = ({
       }
 
       // The idea is external kms connection info is encrypted by an org default KMS
-      // This could be external kms(in future) but at the end of the day, the end KMS will be a Hanzo KMS internal one
+      // This could be external kms(in future) but at the end of the day, the end KMS will be a KMS internal one
       // we put a limit of depth to avoid too many cycles
       const orgKmsDecryptor = await decryptWithKmsKey({
         kmsId: kmsDoc.orgKms.id,

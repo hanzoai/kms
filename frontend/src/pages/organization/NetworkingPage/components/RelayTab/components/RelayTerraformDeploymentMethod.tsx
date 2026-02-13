@@ -204,13 +204,13 @@ provider "aws" {
   region = "${awsRegion}"
 }
 
-# Security Group for the Hanzo KMS Relay instance
+# Security Group for the KMS Relay instance
 resource "aws_security_group" "kms_relay_sg" {
   name        = "${name}-relay-sg"
-  description = "Allows inbound traffic for Hanzo KMS Relay and SSH"
+  description = "Allows inbound traffic for KMS Relay and SSH"
   vpc_id      = "${vpcId}"
 
-  # Inbound: Allows the Hanzo KMS platform to securely communicate with the Relay server.
+  # Inbound: Allows the KMS platform to securely communicate with the Relay server.
   ingress {
     from_port   = 8443
     to_port     = 8443
@@ -218,7 +218,7 @@ resource "aws_security_group" "kms_relay_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Inbound: Allows Hanzo KMS Gateway to securely communicate via the Relay.
+  # Inbound: Allows KMS Gateway to securely communicate via the Relay.
   ingress {
     from_port   = 2222
     to_port     = 2222
@@ -234,7 +234,7 @@ resource "aws_security_group" "kms_relay_sg" {
     cidr_blocks = ["0.0.0.0/0"] # Restrict this to your IP in production
   }
 
-  # Outbound: Allows the Relay server to make necessary outbound connections to the Hanzo KMS platform.
+  # Outbound: Allows the Relay server to make necessary outbound connections to the KMS platform.
   egress {
     from_port   = 0
     to_port     = 0
@@ -254,7 +254,7 @@ resource "aws_eip" "kms_relay_eip" {
   }
 }
 
-# EC2 instance to run Hanzo KMS Relay
+# EC2 instance to run KMS Relay
 module "kms_relay_instance" {
   source  = "terraform-aws-modules/ec2-instance/aws"
   version = "~> 5.6"
@@ -270,7 +270,7 @@ module "kms_relay_instance" {
   user_data = <<-EOT
     #!/bin/bash
     set -e
-    # Install Hanzo KMS CLI
+    # Install KMS CLI
     curl -1sLf 'https://artifacts-cli.kms.hanzo.ai/setup.deb.sh' | bash
     apt-get update && apt-get install -y hanzo-kms
 

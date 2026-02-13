@@ -219,7 +219,7 @@ export const IdentityKubernetesAuthForm = ({
       });
 
       if (role.bound_service_account_names?.length > 0) {
-        // In Vault, "*" means allow all; in Hanzo KMS, empty field means allow any
+        // In Vault, "*" means allow all; in KMS, empty field means allow any
         const allowedNames = role.bound_service_account_names.includes("*")
           ? ""
           : role.bound_service_account_names.join(", ");
@@ -230,7 +230,7 @@ export const IdentityKubernetesAuthForm = ({
       }
 
       if (role.bound_service_account_namespaces?.length > 0) {
-        // In Vault, "*" means allow all; in Hanzo KMS, empty field means allow any
+        // In Vault, "*" means allow all; in KMS, empty field means allow any
         const allowedNamespaces = role.bound_service_account_namespaces.includes("*")
           ? ""
           : role.bound_service_account_namespaces.join(", ");
@@ -575,7 +575,7 @@ export const IdentityKubernetesAuthForm = ({
                 label="Allowed Namespaces"
                 isError={Boolean(error)}
                 errorText={error?.message}
-                tooltipText="A comma-separated list of trusted namespaces that service accounts must belong to authenticate with Hanzo KMS."
+                tooltipText="A comma-separated list of trusted namespaces that service accounts must belong to authenticate with KMS."
               >
                 <Input
                   {...field}
@@ -594,7 +594,7 @@ export const IdentityKubernetesAuthForm = ({
               <FormControl
                 label="Allowed Service Account Names"
                 isError={Boolean(error)}
-                tooltipText="An optional comma-separated list of trusted service account names that are allowed to authenticate with Hanzo KMS. Leave empty to allow any service account."
+                tooltipText="An optional comma-separated list of trusted service account names that are allowed to authenticate with KMS. Leave empty to allow any service account."
                 errorText={error?.message}
               >
                 <Input
@@ -661,7 +661,7 @@ export const IdentityKubernetesAuthForm = ({
                 label="Allowed Audience"
                 isError={Boolean(error)}
                 errorText={error?.message}
-                tooltipText="An optional audience claim that the service account JWT token must have to authenticate with Hanzo KMS. Leave empty to allow any audience claim."
+                tooltipText="An optional audience claim that the service account JWT token must have to authenticate with KMS. Leave empty to allow any audience claim."
               >
                 <Input {...field} placeholder="" type="text" />
               </FormControl>

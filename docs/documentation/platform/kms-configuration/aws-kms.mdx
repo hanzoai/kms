@@ -3,7 +3,7 @@ title: "AWS Key Management Service"
 description: "Learn how to manage encryption using AWS KMS"
 ---
 
-To enhance the security of your Hanzo KMS projects, you can now encrypt your secrets using an external Key Management Service (KMS).
+To enhance the security of your KMS projects, you can now encrypt your secrets using an external Key Management Service (KMS).
 When external KMS is configured for your project, all encryption and decryption operations will be handled by the chosen KMS.
 This guide will walk you through the steps needed to configure external KMS support with AWS KMS.
 
@@ -22,14 +22,14 @@ Before you begin, you'll first need to choose a method of authentication with AW
         ![IAM Role Creation](/images/integrations/aws/integration-aws-iam-assume-role.png)
 
       2. Select **AWS Account** as the **Trusted Entity Type**.
-      3. Select **Another AWS Account** and provide the appropriate Hanzo KMS AWS Account ID: use **381492033652** for the **US region**, and **345594589636** for the **EU region**. This restricts the role to be assumed only by Hanzo KMS. If you are self-hosting, provide the AWS account number where Hanzo KMS is hosted.
+      3. Select **Another AWS Account** and provide the appropriate KMS AWS Account ID: use **381492033652** for the **US region**, and **345594589636** for the **EU region**. This restricts the role to be assumed only by KMS. If you are self-hosting, provide the AWS account number where KMS is hosted.
       <Note>
-        **For Dedicated Instances**: Your AWS account ID differs from the one provided above. Please reach out to Hanzo KMS support to obtain your AWS account ID.
+        **For Dedicated Instances**: Your AWS account ID differs from the one provided above. Please reach out to KMS support to obtain your AWS account ID.
       </Note>
-      4. Optionally, enable **Require external ID** and enter your Hanzo KMS **project ID** to further enhance security.
+      4. Optionally, enable **Require external ID** and enter your KMS **project ID** to further enhance security.
     </Step>
     <Step title="Add Required Permissions for the IAM Role">
-      Use the following custom policy to grant the minimum permissions required by Hanzo KMS to integrate with AWS KMS
+      Use the following custom policy to grant the minimum permissions required by KMS to integrate with AWS KMS
 
       ```json
       {
@@ -106,7 +106,7 @@ Next, you will need to follow the steps listed below to add AWS KMS for your org
     </ParamField>
 
     <ParamField path="IAM Role ARN For Role Assumption" type="string">
-        ARN of the AWS role to assume for providing Hanzo KMS access to the AWS KMS Key (required if Authentication Mode is "AWS Assume Role")
+        ARN of the AWS role to assume for providing KMS access to the AWS KMS Key (required if Authentication Mode is "AWS Assume Role")
     </ParamField>
 
     <ParamField path="Assume Role External ID" type="string">
@@ -125,7 +125,7 @@ Next, you will need to follow the steps listed below to add AWS KMS for your org
     	AWS region where the AWS KMS Key is located.
     </ParamField>
     <ParamField path="AWS KMS Key ID" type="string">
-    	Key ID of the AWS KMS Key. If left blank, Hanzo KMS will generate and use a new AWS KMS Key in the specified region.
+    	Key ID of the AWS KMS Key. If left blank, KMS will generate and use a new AWS KMS Key in the specified region.
         ![AWS KMS key ID](../../../images/platform/kms/aws/aws-kms-key-id.png)
     </ParamField>
 
@@ -135,7 +135,7 @@ Next, you will need to follow the steps listed below to add AWS KMS for your org
   </Step>
 </Steps>
 
-You now have an AWS KMS Key configured at the organization level. You can assign these AWS KMS keys to existing Hanzo KMS projects by visiting the 'Project Settings' page.
+You now have an AWS KMS Key configured at the organization level. You can assign these AWS KMS keys to existing KMS projects by visiting the 'Project Settings' page.
 
 ## Assign AWS KMS Key to an Existing Project
 

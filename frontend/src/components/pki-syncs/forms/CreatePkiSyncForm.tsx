@@ -176,9 +176,9 @@ export const CreatePkiSyncForm = ({ destination, onComplete, onCancel, initialDa
             Certificate Sync Behavior
           </div>
           <p className="mt-1 text-sm text-bunker-200">
-            Only certificates managed by Hanzo KMS will be affected during sync operations.
-            Certificates not created or managed by Hanzo KMS will remain untouched, and changes made
-            to Hanzo KMS-managed certificates directly in the destination service may be overwritten
+            Only certificates managed by KMS will be affected during sync operations.
+            Certificates not created or managed by KMS will remain untouched, and changes made
+            to KMS-managed certificates directly in the destination service may be overwritten
             by future syncs.
           </p>
         </div>

@@ -33,7 +33,7 @@ export const GroupsSection = () => {
   const handleAddGroupModal = () => {
     if (!subscription?.groups) {
       handlePopUpOpen("upgradePlan", {
-        text: "Managing groups can be unlocked if you upgrade to Hanzo KMS Enterprise plan.",
+        text: "Managing groups can be unlocked if you upgrade to KMS Enterprise plan.",
         isEnterpriseFeature: true
       });
     } else {

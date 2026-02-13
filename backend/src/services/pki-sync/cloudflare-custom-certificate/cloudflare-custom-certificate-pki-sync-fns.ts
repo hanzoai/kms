@@ -225,7 +225,7 @@ export const cloudflareCustomCertificatePkiSyncFactory = ({
       async ({ key, cert, privateKey, certificateChain, caCertificate, certificateId, existingCloudflareId }) => {
         try {
           // Determine if this certificate was issued by a private CA.
-          // When caCertificate is present, the cert was issued by an Hanzo KMS CA (private).
+          // When caCertificate is present, the cert was issued by an KMS CA (private).
           // Private CAs require bundle_method "force" with the full chain including root,
           // while public CAs should use the configured bundle method without root (Cloudflare resolves the chain).
           const isPrivateCA = !!caCertificate;

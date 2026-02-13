@@ -9,9 +9,9 @@ import { TDecodedGcpIamAuthJwt, TGcpIdTokenPayload } from "./identity-gcp-auth-t
 /**
  * Validates that the identity token [jwt] sent in from a client GCE instance as part of GCP ID Token authentication
  * is valid.
- * @param {string} identityId - The ID of the identity in Hanzo KMS that is being authenticated against (used as audience).
+ * @param {string} identityId - The ID of the identity in KMS that is being authenticated against (used as audience).
  * @param {string} jwt - The identity token to validate.
- * @param {string} credentials - The credentials in the GCP Auth configuration for Hanzo KMS.
+ * @param {string} credentials - The credentials in the GCP Auth configuration for KMS.
  */
 export const validateIdTokenIdentity = async ({
   identityId,
@@ -36,9 +36,9 @@ export const validateIdTokenIdentity = async ({
 
 /**
  * Validates that the signed JWT token for a GCP service account is valid as part of GCP IAM authentication.
- * @param {string} identityId - The ID of the identity in Hanzo KMS that is being authenticated against (used as audience).
+ * @param {string} identityId - The ID of the identity in KMS that is being authenticated against (used as audience).
  * @param {string} jwt - The signed JWT token to validate.
- * @param {string} credentials - The credentials in the GCP Auth configuration for Hanzo KMS.
+ * @param {string} credentials - The credentials in the GCP Auth configuration for KMS.
  * @returns
  */
 export const validateIamIdentity = async ({

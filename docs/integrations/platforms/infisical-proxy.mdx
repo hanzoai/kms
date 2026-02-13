@@ -1,23 +1,23 @@
 ---
-title: "Hanzo KMS Proxy"
-description: "Learn how to use the Hanzo KMS Proxy to proxy requests to Hanzo KMS with built-in caching for high availability."
+title: "KMS Proxy"
+description: "Learn how to use the KMS Proxy to proxy requests to KMS with built-in caching for high availability."
 ---
 
 ## Overview
 
-Hanzo KMS Proxy is a client-side daemon that acts as an API proxy for Hanzo KMS, providing caching capabilities for high availability. Applications connect to the proxy instead of directly to Hanzo KMS, and the proxy handles request forwarding, response caching, and automatic cache refresh.
+KMS Proxy is a client-side daemon that acts as an API proxy for KMS, providing caching capabilities for high availability. Applications connect to the proxy instead of directly to KMS, and the proxy handles request forwarding, response caching, and automatic cache refresh.
 
 **Key features:**
 
-- **API Proxy**: Forwards all requests to your Hanzo KMS instance transparently
+- **API Proxy**: Forwards all requests to your KMS instance transparently
 - **Caching**: Caches secret responses in-memory with automatic refresh
-- **High Availability**: Continues serving cached secrets even when Hanzo KMS is unreachable (optimistic eviction strategy)
+- **High Availability**: Continues serving cached secrets even when KMS is unreachable (optimistic eviction strategy)
 - **Automatic Cache Invalidation**: Purges stale cache entries when secrets are mutated through the proxy
 - **Token Validation**: Periodically validates access tokens and evicts entries for revoked tokens
 - **TLS Support**: Supports TLS encryption for secure communication
 
 <Note>
-The Hanzo KMS Proxy is ideal for scenarios where you need to reduce load on your Hanzo KMS instance, improve response times, or ensure secret availability during network disruptions.
+The KMS Proxy is ideal for scenarios where you need to reduce load on your KMS instance, improve response times, or ensure secret availability during network disruptions.
 </Note>
 
 ## How It Works
@@ -25,9 +25,9 @@ The Hanzo KMS Proxy is ideal for scenarios where you need to reduce load on your
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'edgeLabelBackground':'#ffffff', 'lineColor': '#333'}}}%%
 flowchart LR
-    A[Application] -->|Request| B[Hanzo KMS Proxy]
+    A[Application] -->|Request| B[KMS Proxy]
     B -->|Cache Hit| A
-    B -->|Cache Miss| C[Hanzo KMS]
+    B -->|Cache Miss| C[KMS]
     C -->|Response| B
     B -->|Cache & Return| A
     
@@ -36,17 +36,17 @@ flowchart LR
     style C fill:#ECF26D,stroke:#333,color:#000
 ```
 
-The Hanzo KMS Proxy sits between your applications and your Hanzo KMS instance, acting as a transparent intermediary. Applications make requests to the proxy using the same API endpoints they would use with Hanzo KMS directly, simply replace your Hanzo KMS host URL with the proxy's address. The proxy handles authentication headers transparently, forwarding them to Hanzo KMS as needed.
+The KMS Proxy sits between your applications and your KMS instance, acting as a transparent intermediary. Applications make requests to the proxy using the same API endpoints they would use with KMS directly, simply replace your KMS host URL with the proxy's address. The proxy handles authentication headers transparently, forwarding them to KMS as needed.
 
-When a request arrives, the proxy first checks its in-memory cache for a matching response. Cache lookups are based on the request method, path, query parameters, and authentication token, ensuring that different users and query variations are cached separately. If a matching entry exists, the proxy returns the cached response immediately without contacting Hanzo KMS, significantly reducing latency and load on your Hanzo KMS instance.
+When a request arrives, the proxy first checks its in-memory cache for a matching response. Cache lookups are based on the request method, path, query parameters, and authentication token, ensuring that different users and query variations are cached separately. If a matching entry exists, the proxy returns the cached response immediately without contacting KMS, significantly reducing latency and load on your KMS instance.
 
-For requests that aren't in the cache, the proxy forwards them to Hanzo KMS, waits for the response, and then stores the response in its cache before returning it to the application. This means the first request for any unique combination of parameters will have normal latency, but subsequent identical requests will be served from cache.
+For requests that aren't in the cache, the proxy forwards them to KMS, waits for the response, and then stores the response in its cache before returning it to the application. This means the first request for any unique combination of parameters will have normal latency, but subsequent identical requests will be served from cache.
 
-To keep cached data fresh, the proxy runs two background processes. The first periodically validates that cached access tokens are still valid by making test requests to Hanzo KMS. If a token has been revoked, all cache entries associated with that token are immediately evicted. The second process refreshes cached secrets on a configurable interval, re-fetching data from Hanzo KMS and updating the cache with the latest values. Both processes use an optimistic strategy: if Hanzo KMS is unreachable, the proxy continues serving cached data rather than evicting entries, ensuring your applications remain operational during outages.
+To keep cached data fresh, the proxy runs two background processes. The first periodically validates that cached access tokens are still valid by making test requests to KMS. If a token has been revoked, all cache entries associated with that token are immediately evicted. The second process refreshes cached secrets on a configurable interval, re-fetching data from KMS and updating the cache with the latest values. Both processes use an optimistic strategy: if KMS is unreachable, the proxy continues serving cached data rather than evicting entries, ensuring your applications remain operational during outages.
 
-## Install the Hanzo KMS Proxy
+## Install the KMS Proxy
 
-The Hanzo KMS Proxy is available through the KMS CLI. Please refer to the [CLI installation documentation](/cli/overview) for more information on how to install the KMS CLI.
+The KMS Proxy is available through the KMS CLI. Please refer to the [CLI installation documentation](/cli/overview) for more information on how to install the KMS CLI.
 
 ## Quick Start
 
@@ -58,7 +58,7 @@ kms proxy start \
   --tls-enabled=false
 ```
 
-Then configure your application to use `http://localhost:8081` as the Hanzo KMS host instead of `https://kms.hanzo.ai`.
+Then configure your application to use `http://localhost:8081` as the KMS host instead of `https://kms.hanzo.ai`.
 
 <Warning>
   For production deployments, it is strongly recommended to enable TLS by providing `--tls-cert-file` and `--tls-key-file`, and setting `--tls-enabled` to `true`.
@@ -70,7 +70,7 @@ Then configure your application to use `http://localhost:8081` as the Hanzo KMS 
 ### Command Options
 
 <ParamField query="--domain" type="string" required>
-  Domain of your Hanzo KMS instance (e.g., https://kms.hanzo.ai)
+  Domain of your KMS instance (e.g., https://kms.hanzo.ai)
 </ParamField>
 <ParamField query="--listen-address" type="string" required>
   Address and port for the proxy to listen on, e.g. `localhost:8081`
@@ -79,7 +79,7 @@ Then configure your application to use `http://localhost:8081` as the Hanzo KMS 
 <ParamField query="--tls-enabled" type="boolean" default={true}>
   Whether to enable TLS encryption for secure communication for the proxy. Defaults to `true`.
   
-  Note that all communication between the proxy and Hanzo KMS is always encrypted by default. If you are self-hosting your Hanzo KMS instance, ensure that your Hanzo KMS instance is configured to use TLS.
+  Note that all communication between the proxy and KMS is always encrypted by default. If you are self-hosting your KMS instance, ensure that your KMS instance is configured to use TLS.
 </ParamField>
 
 <ParamField query="--tls-cert-file" type="string" optional>
@@ -94,7 +94,7 @@ Then configure your application to use `http://localhost:8081` as the Hanzo KMS 
   The eviction strategy to use for cached secrets. Defaults to `optimistic`, and currently this is the only supported eviction strategy.
   
   The eviction strategy is used to determine when to evict cached secrets from the cache.
-  - `optimistic` - Only evict cached secrets when the proxy is able to reach Hanzo KMS and verify that the underlying cached secret is stale.
+  - `optimistic` - Only evict cached secrets when the proxy is able to reach KMS and verify that the underlying cached secret is stale.
 </ParamField>
 
 <ParamField query="--access-token-check-interval" type="duration" default="5m">
@@ -102,7 +102,7 @@ Then configure your application to use `http://localhost:8081` as the Hanzo KMS 
 </ParamField>
 
 <ParamField query="--static-secrets-refresh-interval" type="duration" default="1h">
-  How often to refresh cached secrets from Hanzo KMS. Defaults to `1h`. Supports duration formats like `60s|5m|1h|1d|1w|1y`.
+  How often to refresh cached secrets from KMS. Defaults to `1h`. Supports duration formats like `60s|5m|1h|1d|1w|1y`.
 </ParamField>
 
 # Caching Behavior
@@ -111,10 +111,10 @@ Then configure your application to use `http://localhost:8081` as the Hanzo KMS 
 
 The proxy selectively caches responses to optimize for the most common secret retrieval patterns.
 Only `GET` requests to secret endpoints are cached. This includes the list and retrieve endpoints across both API versions (`/api/v3/secrets` and `/api/v4/secrets`), as well as their raw variants and any sub-paths.
-These endpoints represent read operations where caching provides the most benefit: reducing latency for frequently accessed secrets and decreasing load on your Hanzo KMS instance.
+These endpoints represent read operations where caching provides the most benefit: reducing latency for frequently accessed secrets and decreasing load on your KMS instance.
 
 All other requests pass through the proxy without caching. This includes mutation operations like creating, updating, or deleting secrets (`POST`, `PATCH`, `DELETE`), as well as requests to non-secret endpoints such as authentication, project management, or user operations.
-These requests are forwarded directly to Hanzo KMS and their responses are returned to the application without being stored. This design ensures that write operations always reach Hanzo KMS immediately and that the cache only contains secret data that benefits from being cached.
+These requests are forwarded directly to KMS and their responses are returned to the application without being stored. This design ensures that write operations always reach KMS immediately and that the cache only contains secret data that benefits from being cached.
 
 ### Request Uniqueness
 
@@ -134,20 +134,20 @@ The proxy automatically refreshes cached secrets and validates cached access tok
 #### Access Token Validation
 
 The proxy periodically validates that cached access tokens are still valid, running every 5 minutes by default.
-For each unique token in the cache, the proxy makes a test request to Hanzo KMS using one of that token's cached requests.
-If Hanzo KMS returns `401 Unauthorized` or `403 Forbidden`, all cache entries associated with that token are immediately evicted.
+For each unique token in the cache, the proxy makes a test request to KMS using one of that token's cached requests.
+If KMS returns `401 Unauthorized` or `403 Forbidden`, all cache entries associated with that token are immediately evicted.
 
 **When the proxy is configured with the optimistic eviction strategy**:
-If Hanzo KMS is unreachable during token validation (network errors or `5xx` responses), the proxy keeps cached entries intact rather than evicting them. This ensures that your applications remain operational even if Hanzo KMS is temporarily unavailable.
+If KMS is unreachable during token validation (network errors or `5xx` responses), the proxy keeps cached entries intact rather than evicting them. This ensures that your applications remain operational even if KMS is temporarily unavailable.
 
 #### Static Secrets Refresh
 
 The proxy automatically refreshes cached secrets to ensure data stays current, running every hour by default.
-During each refresh cycle, the proxy identifies all cache entries that were last updated longer ago than the refresh interval, then re-fetches each one from Hanzo KMS.
+During each refresh cycle, the proxy identifies all cache entries that were last updated longer ago than the refresh interval, then re-fetches each one from KMS.
 Successful responses update the cached data with fresh values. Entries that return `401`, `403`, or `404` during refresh are evicted from the cache, as these indicate the token has lost access or the resource no longer exists.
 
 **When the proxy is configured with the `optimistic` eviction strategy**:
-If Hanzo KMS is unreachable during the refresh cycle (network errors or `5xx` responses), the proxy keeps cached entries intact rather than evicting them. This ensures that your applications remain operational even if Hanzo KMS is temporarily unavailable.
+If KMS is unreachable during the refresh cycle (network errors or `5xx` responses), the proxy keeps cached entries intact rather than evicting them. This ensures that your applications remain operational even if KMS is temporarily unavailable.
 
 
 ### Mutation-Based Cache Invalidation
@@ -156,15 +156,15 @@ When a mutation request is processed through the proxy (`POST`, `PATCH`, or `DEL
 This cross-token purging ensures that all users see consistent data after a secret is modified. The proxy also supports wildcard path matching, so a mutation to `/production/database` will invalidate cache entries for both exact path matches and recursive queries that included that path.
 
 <Tip>
-  For immediate cache invalidation, perform secret mutations through the proxy rather than directly to Hanzo KMS. For optimal performance it's recommended to use the proxy for all API requests.
+  For immediate cache invalidation, perform secret mutations through the proxy rather than directly to KMS. For optimal performance it's recommended to use the proxy for all API requests.
 </Tip>
 
 ### Eviction Strategy
-The eviction strategy is used to determine when to evict cached entries from the cache. Currently the Hanzo KMS Proxy only supports the `optimistic` eviction strategy.
+The eviction strategy is used to determine when to evict cached entries from the cache. Currently the KMS Proxy only supports the `optimistic` eviction strategy.
 
 #### Optimistic Eviction
-* Keeps cached data when Hanzo KMS is unreachable (network errors, or `5xx` responses)
-* Ensures high availability when your Hanzo KMS instance is unreachable
+* Keeps cached data when KMS is unreachable (network errors, or `5xx` responses)
+* Ensures high availability when your KMS instance is unreachable
 * Cache entries are only evicted on:
   * Token invalidation (`401`/`403` response)
   * Resource not found (`404` response)
@@ -172,7 +172,7 @@ The eviction strategy is used to determine when to evict cached entries from the
   * Proxy restart _(when the proxy is restarted, all cached entries are evicted because the cache is stored in memory)_
 
 <Note>
-  The `optimistic` eviction strategy prioritizes availability. Applications will continue receiving cached secrets even if Hanzo KMS is down, at the cost of potentially serving slightly stale data.
+  The `optimistic` eviction strategy prioritizes availability. Applications will continue receiving cached secrets even if KMS is down, at the cost of potentially serving slightly stale data.
 </Note>
 
 ## TLS Configuration
@@ -198,15 +198,15 @@ kms proxy start \
 ## Examples
 
 ### Using the Proxy with SDKs 
-Configure your Hanzo KMS SDK to point to the proxy instead of Hanzo KMS directly:
+Configure your KMS SDK to point to the proxy instead of KMS directly:
 
 
 #### Node.js
 ```javascript
-import { Hanzo KMSSDK } from '@hanzo/kms-sdk'
+import { KMSSDK } from '@hanzo/kms-sdk'
 
-const client = new Hanzo KMSSDK({
-  siteUrl: "http://localhost:8081", // Proxy address instead of Hanzo KMS
+const client = new KMSSDK({
+  siteUrl: "http://localhost:8081", // Proxy address instead of KMS
   // ... other configuration options
 });
 ```
@@ -214,14 +214,14 @@ const client = new Hanzo KMSSDK({
 #### Python SDK
 
 ```python
-from kms_sdk import Hanzo KMSSDKClient
-client = Hanzo KMSSDKClient(host="http://localhost:8081") # Proxy address instead of Hanzo KMS
+from kms_sdk import KMSSDKClient
+client = KMSSDKClient(host="http://localhost:8081") # Proxy address instead of KMS
 ```
 
 ### Direct API Calls
 
 ```bash
-# Instead of calling Hanzo KMS directly:
+# Instead of calling KMS directly:
 # curl https://kms.hanzo.ai/api/v3/secrets/raw?...
 
 # Call the proxy:
@@ -265,10 +265,10 @@ If a token is compromised, only the cache entries associated with that specific 
 
 <AccordionGroup>
   <Accordion title="Stale data after secret updates">
-    If you're updating secrets directly in Hanzo KMS (not through the proxy), the proxy will not automatically invalidate the cache. You will need to manually purge the cache by restarting the proxy, or by waiting for the next `static-secrets-refresh-interval` cycle.
+    If you're updating secrets directly in KMS (not through the proxy), the proxy will not automatically invalidate the cache. You will need to manually purge the cache by restarting the proxy, or by waiting for the next `static-secrets-refresh-interval` cycle.
 
     <Note>
-      The `static-secrets-refresh-interval` is the interval at which the proxy will refresh cached secrets from Hanzo KMS.
+      The `static-secrets-refresh-interval` is the interval at which the proxy will refresh cached secrets from KMS.
     </Note>
 
     For immediate invalidation, perform mutations through the proxy.

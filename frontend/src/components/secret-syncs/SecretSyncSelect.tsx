@@ -69,7 +69,7 @@ export const SecretSyncSelect = ({ onSelect }: Props) => {
                 enterprise && !subscription.enterpriseSecretSyncs
                   ? handlePopUpOpen("upgradePlan", {
                       isEnterpriseFeature: true,
-                      text: "All Secret Syncs can be unlocked if you switch to Hanzo KMS Enterprise plan."
+                      text: "All Secret Syncs can be unlocked if you switch to KMS Enterprise plan."
                     })
                   : onSelect(destination)
               }
@@ -104,7 +104,7 @@ export const SecretSyncSelect = ({ onSelect }: Props) => {
               className="max-w-sm py-4"
               content={
                 <>
-                  <p className="mb-2">Hanzo KMS is constantly adding support for more services.</p>
+                  <p className="mb-2">KMS is constantly adding support for more services.</p>
                   <p>
                     {`If you don't see the third-party
             service you're looking for,`}{" "}

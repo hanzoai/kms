@@ -1,9 +1,9 @@
 ---
 title: "Service Token"
-description: "Hanzo KMS service tokens allow users to programmatically interact with Hanzo KMS."
+description: "KMS service tokens allow users to programmatically interact with KMS."
 ---
 
-Service tokens are authentication credentials that services can use to access designated endpoints in the Hanzo KMS API to manage project resources like secrets.
+Service tokens are authentication credentials that services can use to access designated endpoints in the KMS API to manage project resources like secrets.
 Each service token can be provisioned scoped access to select environment(s) and path(s) within them.
 
 ## Service Tokens
@@ -17,7 +17,7 @@ Service Token (ST) is the current widely-used authentication method for managing
 Here's a few pointers to get you acquainted with it:
 
 - When you create a ST, you get a token prefixed with `st`. The part after the last `.` delimiter is a symmetric key; everything
-  before it is an access token. When authenticating with the Hanzo KMS API, it is important to send in only the access token portion
+  before it is an access token. When authenticating with the KMS API, it is important to send in only the access token portion
   of the token.
 - ST supports expiration; it gets deleted automatically upon expiration.
 - ST supports provisioning `read` and/or `write` permissions broadly applied to all accessible environment(s) and path(s).
@@ -35,7 +35,7 @@ the token access to. Here's some guidance for each field:
 - Name: A friendly name for the token.
 - Scopes: The environment(s) and path(s) the token should have access to.
 - Permissions: You can indicate whether or not the token should have `read/write` access to the paths.
-  Also, note that Hanzo KMS supports [glob patterns](https://www.malikbrowne.com/blog/a-beginners-guide-glob-patterns/) when defining access scopes to path(s).
+  Also, note that KMS supports [glob patterns](https://www.malikbrowne.com/blog/a-beginners-guide-glob-patterns/) when defining access scopes to path(s).
 - Expiration: The time when this token should be rendered inactive.
 
 ![token add](../../images/project-token-old-permissions.png)
@@ -51,7 +51,7 @@ of the `/common` path within the development environment of the project; the tok
 **FAQ**
 
 <AccordionGroup>
-  <Accordion title="Why is the Hanzo KMS API rejecting my service token?">
+  <Accordion title="Why is the KMS API rejecting my service token?">
       There are a few reasons for why this might happen:
 
     - The service token has expired.

@@ -5,13 +5,13 @@ description: "Learn how to dynamically generate Snowflake user credentials."
 
 import DynamicSecretUsernameTemplateParamField from "/snippets/documentation/platform/dynamic-secrets/dynamic-secret-username-template-field.mdx";
 
-Hanzo KMS's Snowflake dynamic secrets allow you to generate Snowflake user credentials on demand.
+KMS's Snowflake dynamic secrets allow you to generate Snowflake user credentials on demand.
 
 ## Snowflake Prerequisites
 
 <Note>
-  Hanzo KMS requires a Snowflake user in your account with the USERADMIN role.
-  This user will act as a service account for Hanzo KMS and facilitate the
+  KMS requires a Snowflake user in your account with the USERADMIN role.
+  This user will act as a service account for KMS and facilitate the
   creation of new users as needed.
 </Note>
 
@@ -20,7 +20,7 @@ Hanzo KMS's Snowflake dynamic secrets allow you to generate Snowflake user crede
     ![Snowflake User
     Dashboard](/images/platform/dynamic-secrets/snowflake/dynamic-secret-snowflake-users-page.png)
   </Step>
-  <Step title="Create a Snowflake user with the USERADMIN role for Hanzo KMS">
+  <Step title="Create a Snowflake user with the USERADMIN role for KMS">
     <Warning>
       Be sure to uncheck "Force user to change password on first time login"
     </Warning>
@@ -67,11 +67,11 @@ Hanzo KMS's Snowflake dynamic secrets allow you to generate Snowflake user crede
         </ParamField>
 
         <ParamField path="User" type="string" required>
-            Username of the Hanzo KMS Service User
+            Username of the KMS Service User
         </ParamField>
 
         <ParamField path="Password" type="string" required>
-            Password of the Hanzo KMS Service User
+            Password of the KMS Service User
         </ParamField>
 
         ![Dynamic Secret Setup Modal](/images/platform/dynamic-secrets/snowflake/dynamic-secret-snowflake-setup-modal.png)

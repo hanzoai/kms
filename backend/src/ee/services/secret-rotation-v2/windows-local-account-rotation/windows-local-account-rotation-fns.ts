@@ -64,7 +64,7 @@ export const windowsLocalAccountRotationFactory: TRotationFactory<
 
     const isSelfRotation = rotationMethod === WindowsLocalAccountRotationMethod.LoginAsTarget;
     if (username === credentials.username)
-      throw new BadRequestError({ message: "Provided username is used in Hanzo KMS app connections." });
+      throw new BadRequestError({ message: "Provided username is used in KMS app connections." });
 
     const smbConfig: SmbRpcConfig = {
       host: credentials.host,

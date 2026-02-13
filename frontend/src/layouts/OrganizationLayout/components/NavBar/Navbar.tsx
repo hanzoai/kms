@@ -87,7 +87,7 @@ const getFormattedSupportEmailLink = (variables: {
 }) => {
   const email = "support@hanzo.ai";
 
-  const body = `Hello Hanzo KMS Support Team,
+  const body = `Hello KMS Support Team,
 
 Issue Details:
 [What you did]
@@ -343,7 +343,7 @@ export const Navbar = () => {
       <div className="mr-auto flex h-full min-w-34 items-center">
         <div className="mt-0.5 shrink-0">
           <Link to="/organizations/$orgId/projects" params={{ orgId: currentOrg.id }}>
-            <img alt="Hanzo KMS logo" src="/images/logotransparent.png" className="h-4" />
+            <img alt="KMS logo" src="/images/logotransparent.png" className="h-4" />
           </Link>
         </div>
         <ChevronRight size={18} className="mx-3 mt-[3px] text-mineshaft-400/70" />

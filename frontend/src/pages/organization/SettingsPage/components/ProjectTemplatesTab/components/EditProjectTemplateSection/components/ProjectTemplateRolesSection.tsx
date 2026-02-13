@@ -26,10 +26,10 @@ import { ProjectTemplateEditRoleForm } from "./ProjectTemplateEditRoleForm";
 
 type Props = {
   projectTemplate: TProjectTemplate;
-  isHanzo KMSTemplate: boolean;
+  isKmsTemplate: boolean;
 };
 
-export const ProjectTemplateRolesSection = ({ projectTemplate, isHanzo KMSTemplate }: Props) => {
+export const ProjectTemplateRolesSection = ({ projectTemplate, isKmsTemplate }: Props) => {
   const { popUp, handlePopUpOpen, handlePopUpToggle, handlePopUpClose } = usePopUp([
     "removeRole",
     "editRole"
@@ -105,12 +105,12 @@ export const ProjectTemplateRolesSection = ({ projectTemplate, isHanzo KMSTempla
             <div>
               <h2 className="text-lg font-medium">Project Roles</h2>
               <p className="text-sm text-mineshaft-400">
-                {isHanzo KMSTemplate
+                {isKmsTemplate
                   ? "Click a role to view the associated permissions"
                   : "Add, edit and remove roles for this project template"}
               </p>
             </div>
-            {!isHanzo KMSTemplate && (
+            {!isKmsTemplate && (
               <OrgPermissionCan
                 I={OrgPermissionActions.Edit}
                 a={OrgPermissionSubjects.ProjectTemplates}

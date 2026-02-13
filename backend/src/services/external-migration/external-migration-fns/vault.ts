@@ -9,7 +9,7 @@ import { GatewayProxyProtocol, withGatewayProxy } from "@app/lib/gateway";
 import { logger } from "@app/lib/logger";
 import { blockLocalAndPrivateIpAddresses } from "@app/lib/validator";
 
-import { Hanzo KMSImportData, KvVersion, VaultMappingType } from "../external-migration-types";
+import { KmsImportData, KvVersion, VaultMappingType } from "../external-migration-types";
 
 type VaultData = {
   namespace: string;
@@ -309,10 +309,10 @@ const vaultFactory = (gatewayService: Pick<TGatewayServiceFactory, "fnGetGateway
   };
 };
 
-export const transformToHanzo KMSFormatNamespaceToProjects = (
+export const transformToKmsFormatNamespaceToProjects = (
   vaultData: VaultData[],
   mappingType: VaultMappingType
-): Hanzo KMSImportData => {
+): KmsImportData => {
   const projects: Array<{ name: string; id: string }> = [];
   const environments: Array<{ name: string; id: string; projectId: string; envParentId?: string }> = [];
   const folders: Array<{ id: string; name: string; environmentId: string; parentFolderId?: string }> = [];
@@ -421,7 +421,7 @@ export const transformToHanzo KMSFormatNamespaceToProjects = (
   };
 };
 
-export const transformToHanzo KMSFormatKeyVaultToProjectsCustomC1 = (vaultData: VaultData[]): Hanzo KMSImportData => {
+export const transformToKmsFormatKeyVaultToProjectsCustomC1 = (vaultData: VaultData[]): KmsImportData => {
   const projects: Array<{ name: string; id: string }> = [];
   const environments: Array<{ name: string; id: string; projectId: string; envParentId?: string }> = [];
   const folders: Array<{ id: string; name: string; environmentId: string; parentFolderId?: string }> = [];
@@ -518,9 +518,9 @@ export const transformToHanzo KMSFormatKeyVaultToProjectsCustomC1 = (vaultData: 
 // when its a custom migration, then it doesn't matter which mapping type is used (as of now).
 export const vaultMigrationTransformMappings: Record<
   string,
-  (vaultData: VaultData[], mappingType: VaultMappingType) => Hanzo KMSImportData
+  (vaultData: VaultData[], mappingType: VaultMappingType) => KmsImportData
 > = {
-  "68c57ab3-cea5-41fc-ae38-e156b10c14d2": transformToHanzo KMSFormatKeyVaultToProjectsCustomC1
+  "68c57ab3-cea5-41fc-ae38-e156b10c14d2": transformToKmsFormatKeyVaultToProjectsCustomC1
 } as const;
 
 export const importVaultDataFn = async (
@@ -549,7 +549,7 @@ export const importVaultDataFn = async (
     });
   }
 
-  let transformFn: (vaultData: VaultData[], mappingType: VaultMappingType) => Hanzo KMSImportData;
+  let transformFn: (vaultData: VaultData[], mappingType: VaultMappingType) => KmsImportData;
 
   if (mappingType === VaultMappingType.Custom) {
     transformFn = vaultMigrationTransformMappings[orgId];
@@ -560,7 +560,7 @@ export const importVaultDataFn = async (
       });
     }
   } else {
-    transformFn = transformToHanzo KMSFormatNamespaceToProjects;
+    transformFn = transformToKmsFormatNamespaceToProjects;
   }
 
   logger.info(

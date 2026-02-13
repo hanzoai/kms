@@ -57,7 +57,7 @@ export const validateSlackWebhookUrl = async (url: string): Promise<void> => {
  * - Summary section (N certificates expiring within alertBefore period)
  * - Certificate list (2 most urgent, ordered by expiry)
  * - "+N more" context if there are additional certificates
- * - Action button linking to Hanzo KMS
+ * - Action button linking to KMS
  */
 export const buildSlackPayload = ({
   alert,
@@ -153,7 +153,7 @@ export const buildSlackPayload = ({
     elements: [
       {
         type: "button",
-        text: { type: "plain_text", text: "View in Hanzo KMS", emoji: true },
+        text: { type: "plain_text", text: "View in KMS", emoji: true },
         url: viewUrl,
         style: "primary"
       }

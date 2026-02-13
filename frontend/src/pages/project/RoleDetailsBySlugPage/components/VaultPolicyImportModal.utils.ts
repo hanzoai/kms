@@ -164,7 +164,7 @@ export const parseVaultPath = (vaultPath: string, mounts: VaultMount[]): ParsedV
 // ============================================================================
 
 /**
- * Maps Vault capabilities to Hanzo KMS secret actions.
+ * Maps Vault capabilities to KMS secret actions.
  *
  * Mapping:
  * - create → Create
@@ -197,7 +197,7 @@ const mapVaultCapabilitiesToSecretActions = (capabilities: string[]): Record<str
 };
 
 /**
- * Maps Vault capabilities to Hanzo KMS folder actions.
+ * Maps Vault capabilities to KMS folder actions.
  *
  * Mapping:
  * - create → Create
@@ -233,7 +233,7 @@ type PermissionCondition = {
 };
 
 /**
- * Converts Vault wildcard patterns to Hanzo KMS glob patterns.
+ * Converts Vault wildcard patterns to KMS glob patterns.
  * - Vault '+' → picomatch '*' (matches single segment)
  * - Vault '*' → picomatch '**' (matches any depth)
  */
@@ -336,7 +336,7 @@ const addPermissionRuleIfUnique = <T extends SecretPermissionRule | FolderPermis
 // ============================================================================
 
 /**
- * Parses Vault HCL policy and converts it to Hanzo KMS permissions.
+ * Parses Vault HCL policy and converts it to KMS permissions.
  *
  * Process:
  * 1. Clean HCL (remove comments, whitespace)
@@ -344,15 +344,15 @@ const addPermissionRuleIfUnique = <T extends SecretPermissionRule | FolderPermis
  * 3. For each path:
  *    - Parse to extract mount, environment, and secret path
  *    - Determine if it's a data path (secrets) or metadata path (folders)
- *    - Map Vault capabilities to Hanzo KMS actions
+ *    - Map Vault capabilities to KMS actions
  *    - Build conditions for environment and path filtering
  *    - Create permission rule and add if unique
  *
  * @param hclPolicy - Raw Vault HCL policy string
  * @param mounts - List of Vault mounts to match paths against
- * @returns Parsed permissions object ready for Hanzo KMS role creation
+ * @returns Parsed permissions object ready for KMS role creation
  */
-export const parseVaultPolicyToHanzo KMS = (
+export const parseVaultPolicyToKms = (
   hclPolicy: string,
   mounts: VaultMount[]
 ): Partial<TFormSchema["permissions"]> => {

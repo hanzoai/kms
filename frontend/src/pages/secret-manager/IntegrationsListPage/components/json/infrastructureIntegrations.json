@@ -30,7 +30,7 @@
         "docsLink": "https://kms.hanzo.ai/docs/integrations/cicd/jenkins"
     },
     {
-        "name": "Hanzo KMS Agent",
+        "name": "KMS Agent",
         "slug": "agent",
         "image": "Agent",
         "docsLink": "https://kms.hanzo.ai/docs/integrations/platforms/kms-agent"

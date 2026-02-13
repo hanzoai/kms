@@ -99,7 +99,7 @@ export const totpServiceFactory = ({ totpConfigDAL, kmsService, userDAL }: TTotp
 
     const secret = decryptWithRoot(totpConfig.encryptedSecret).toString();
     const recoveryCodes = decryptWithRoot(totpConfig.encryptedRecoveryCodes).toString().split(",");
-    const otpUrl = authenticator.keyuri(user.username, "Hanzo KMS", secret);
+    const otpUrl = authenticator.keyuri(user.username, "KMS", secret);
 
     return {
       otpUrl,

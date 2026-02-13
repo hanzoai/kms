@@ -3,7 +3,7 @@ title: "Twilio SendGrid"
 description: "Find out how to rotate Twilio SendGrid API keys."
 ---
 
-Eliminate the use of long lived secrets by rotating Twilio SendGrid API keys with Hanzo KMS.
+Eliminate the use of long lived secrets by rotating Twilio SendGrid API keys with KMS.
 
 ## Prerequisite
 
@@ -13,8 +13,8 @@ Follow the [SendGrid Docs to create an admin api key](https://docs.sendgrid.com/
 
 ## How it works
 
-Using the provided admin API key, Hanzo KMS will attempt to create child API keys with the specified permissions. 
-New keys will ge generated every time a rotation occurs. Behind the scenes, Hanzo KMS uses the [SendGrid API](https://docs.sendgrid.com/api-reference/api-keys/create-api-keys) to generate new API keys.
+Using the provided admin API key, KMS will attempt to create child API keys with the specified permissions. 
+New keys will ge generated every time a rotation occurs. Behind the scenes, KMS uses the [SendGrid API](https://docs.sendgrid.com/api-reference/api-keys/create-api-keys) to generate new API keys.
 
 ## Rotation Configuration
 

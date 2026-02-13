@@ -12,7 +12,7 @@ import {
 } from "../pam-resource-schemas";
 
 // AWS STS session duration limits (in seconds)
-// Role chaining (Hanzo KMS → PAM role → target role) limits max session to 1 hour
+// Role chaining (KMS → PAM role → target role) limits max session to 1 hour
 // @see https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html
 const AWS_STS_MIN_SESSION_DURATION = 900; // 15 minutes
 const AWS_STS_MAX_SESSION_DURATION_ROLE_CHAINING = 3600; // 1 hour

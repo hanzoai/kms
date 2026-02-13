@@ -1,7 +1,7 @@
 ---
 title: "Event Subscriptions"
 sidebarTitle: "Events Subscriptions"
-description: "Subscribe to events in Hanzo KMS for real-time updates"
+description: "Subscribe to events in KMS for real-time updates"
 ---
 
 <Note>
@@ -9,14 +9,14 @@ description: "Subscribe to events in Hanzo KMS for real-time updates"
    Please contact [sales@kms.hanzo.ai](mailto:sales@kms.hanzo.ai).
 </Note>
 
-Event Subscriptions allow you to receive real-time notifications when specific actions occur within your Hanzo KMS projects. You can subscribe to changes such as secret modifications, with support for additional resource types coming soon.
+Event Subscriptions allow you to receive real-time notifications when specific actions occur within your KMS projects. You can subscribe to changes such as secret modifications, with support for additional resource types coming soon.
 
 ## How It Works
 
 Event Subscriptions use [Server-Sent Events (SSE)](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events) to deliver real-time updates to your applications:
 
-1. Your application opens an SSE connection to the Hanzo KMS Events API.
-2. When a subscribed event occurs (e.g., a secret is updated), Hanzo KMS pushes a notification through the connection.
+1. Your application opens an SSE connection to the KMS Events API.
+2. When a subscribed event occurs (e.g., a secret is updated), KMS pushes a notification through the connection.
 3. Your application receives the event instantly and can take appropriate action.
 
 <Note>
@@ -105,7 +105,7 @@ To subscribe to events, make a request to the events endpoint with your project 
 | `register[].conditions.secretPath` | string | Filter by secret path (e.g., `/api/keys`) |
 
 
-The endpoint responds with `Content-Type: text/event-stream` to initiate an SSE connection. In the cURL example below, we use the `-N` flag to keep the connection open to receive incoming events from Hanzo KMS.
+The endpoint responds with `Content-Type: text/event-stream` to initiate an SSE connection. In the cURL example below, we use the `-N` flag to keep the connection open to receive incoming events from KMS.
 
 ```bash
 curl -X POST -N --location \

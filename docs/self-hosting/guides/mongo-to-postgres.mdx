@@ -1,13 +1,13 @@
 ---
 title: "Migrate Mongo to Postgres"
-description: "Learn how to migrate Hanzo KMS from MongoDB to PostgreSQL."
+description: "Learn how to migrate KMS from MongoDB to PostgreSQL."
 ---
 
-This guide will provide step by step instructions on migrating your Hanzo KMS instance running on MongoDB to the newly released PostgreSQL version of Hanzo KMS.
-The newly released Postgres version of Hanzo KMS is the only version of Hanzo KMS that will receive feature updates and patches going forward. 
+This guide will provide step by step instructions on migrating your KMS instance running on MongoDB to the newly released PostgreSQL version of KMS.
+The newly released Postgres version of KMS is the only version of KMS that will receive feature updates and patches going forward. 
 
 <Tip>
-  If you have a small set of secrets, we recommend you to download the secrets and upload them to your new instance of Hanzo KMS instead of running the migration script.
+  If you have a small set of secrets, we recommend you to download the secrets and upload them to your new instance of KMS instead of running the migration script.
 </Tip>
 
 ## Prerequisites
@@ -28,7 +28,7 @@ Before starting the migration, ensure you have the following command line tools 
      While the migration script will not mutate any MongoDB production data, we recommend you to take a backup of your MongoDB instance if possible.
   </Step>
   <Step title="Set Migration Mode">
-    To prevent new data entries during the migration, set your Hanzo KMS instance to migration mode by setting the environment variable `MIGRATION_MODE=true` and redeploying your instance. 
+    To prevent new data entries during the migration, set your KMS instance to migration mode by setting the environment variable `MIGRATION_MODE=true` and redeploying your instance. 
     This mode will block all write operations, only allowing GET requests. It also disables user logins and sets up a migration page to prevent UI interactions.
     ![migration mode](/images/self-hosting/guides/mongo-postgres/mongo-migration.png)
   </Step>
@@ -77,7 +77,7 @@ Before starting the migration, ensure you have the following command line tools 
 </Steps>
 
 ## Dump MongoDB
-To speed up the data transformation process, the first step involves transferring the production data from Hanzo KMS's MongoDB to a local machine. 
+To speed up the data transformation process, the first step involves transferring the production data from KMS's MongoDB to a local machine. 
 This is achieved by creating a dump of the production database and then uploading this dumped data into a local Mongo instance. 
 By having a running local instance of the production database, we will significantly reduce the time it takes to run the migration script.
 
@@ -101,8 +101,8 @@ By having a running local instance of the production database, we will significa
 Once started, the migration script will transform MongoDB data into an equivalent PostgreSQL format.
 
 <Steps>
-  <Step title="Clone Hanzo KMS Repository">
-    Clone the Hanzo KMS MongoDB repository.
+  <Step title="Clone KMS Repository">
+    Clone the KMS MongoDB repository.
     ```
     git clone -b kms/v0.46.11-postgres https://github.com/hanzoai/kms.git
     ```
@@ -130,7 +130,7 @@ Once started, the migration script will transform MongoDB data into an equivalen
       npm run migration
     ```
 
-    When executing the above command, you'll be asked to provide the MongoDB connection string for the database containing your production Hanzo KMS data. Since our production Mongo data is transferred to a local Mongo instance, you should input the connection string for this local instance.
+    When executing the above command, you'll be asked to provide the MongoDB connection string for the database containing your production KMS data. Since our production Mongo data is transferred to a local Mongo instance, you should input the connection string for this local instance.
     
     ```
     mongodb://root:example@localhost:27017/<db-name>?authSource=admin
@@ -152,7 +152,7 @@ Once started, the migration script will transform MongoDB data into an equivalen
   <Step title="Store migration metadata">
     Once the script has completed, you will notice a new folder has been created called `db` in the `pg-migrator` folder. 
     This folder contains meta data for schema mapping and can be helpful when debugging migration related issues. 
-    We highly recommend you to make a copy of this folder in case you need assistance from the Hanzo KMS team during your migration process.  
+    We highly recommend you to make a copy of this folder in case you need assistance from the KMS team during your migration process.  
 
     <Info>
       The `db` folder does not contain any sensitive data
@@ -161,7 +161,7 @@ Once started, the migration script will transform MongoDB data into an equivalen
 </Steps>
 
 ## Finalizing Migration
-At this stage, the data from the Mongo instance of Hanzo KMS should have been successfully converted into its Postgres equivalent. 
+At this stage, the data from the Mongo instance of KMS should have been successfully converted into its Postgres equivalent. 
 The remaining step involves transferring the local Postgres database, which now contains all the migrated data, to your chosen production Postgres environment. 
 Rather than transferring the data row-by-row from your local machine to the production Postgres database, we will first create a dump file from the local Postgres and then upload this file to your production Postgres instance.
 
@@ -187,26 +187,26 @@ Rather than transferring the data row-by-row from your local machine to the prod
 
 ## Post-Migration Steps
 
-Once the data migration to PostgreSQL is complete, you're ready to deploy Hanzo KMS using the deployment method of your choice.
+Once the data migration to PostgreSQL is complete, you're ready to deploy KMS using the deployment method of your choice.
 For guidance on deployment options, please visit the [self-hosting documentation](/self-hosting/overview). 
-Remember to transfer the necessary [environment variables](/self-hosting/configuration/envars) from the MongoDB version of Hanzo KMS to the new Postgres based Hanzo KMS; rest assured, they are fully compatible.
+Remember to transfer the necessary [environment variables](/self-hosting/configuration/envars) from the MongoDB version of KMS to the new Postgres based KMS; rest assured, they are fully compatible.
 
 <Warning>
-The first deployment of Postgres based Hanzo KMS must be deployed with Docker image tag `v0.46.11-postgres`. 
+The first deployment of Postgres based KMS must be deployed with Docker image tag `v0.46.11-postgres`. 
 After deploying this version, you can proceed to update to any subsequent versions.
 </Warning>
 
 ## Important Notes 
 
-Hanzo KMS's [Docker Hub repository](https://hub.docker.com/r/ghcr.io/hanzoai/kms) uses different tagging conventions to indicate which database backend is used:
+KMS's [Docker Hub repository](https://hub.docker.com/r/ghcr.io/hanzoai/kms) uses different tagging conventions to indicate which database backend is used:
 
 - **Before v0.46.11**
-  - Hanzo KMS ran on MongoDB backend
+  - KMS ran on MongoDB backend
 
 - **After v0.46.11** 
   - Version tags started to be suffixed with `-postgres`
-  - Hanzo KMS transitioned to PostgreSQL backend
+  - KMS transitioned to PostgreSQL backend
 
 - **After v0.147.0**
-  - Hanzo KMS remains on PostgreSQL backend
+  - KMS remains on PostgreSQL backend
   - The `-postgres` suffix was removed from tags for brevity

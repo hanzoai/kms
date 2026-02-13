@@ -4,7 +4,7 @@ sidebarTitle: "Webhook Alerts"
 description: "Learn how to set up webhook notifications for PKI certificate alerts"
 ---
 
-Hanzo KMS can send PKI certificate alert notifications to a webhook URL. This guide walks through creating a webhook alert, the payload format, and how to verify webhook signatures.
+KMS can send PKI certificate alert notifications to a webhook URL. This guide walks through creating a webhook alert, the payload format, and how to verify webhook signatures.
 
 ## Guide to Creating a Webhook Alert
 
@@ -69,7 +69,7 @@ Webhook notifications are sent as HTTP POST requests with a [CloudEvents](https:
 
 ## Webhook Signature Verification
 
-If you configure a signing secret for your webhook channel, Hanzo KMS will include an `x-kms-signature` header with each request. This allows you to verify that the webhook payload originated from Hanzo KMS.
+If you configure a signing secret for your webhook channel, KMS will include an `x-kms-signature` header with each request. This allows you to verify that the webhook payload originated from KMS.
 
 The header format is:
 

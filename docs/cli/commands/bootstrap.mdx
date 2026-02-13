@@ -1,6 +1,6 @@
 ---
 title: "kms bootstrap"
-description: "Automate the initial setup of a new Hanzo KMS instance for headless deployment and infrastructure-as-code workflows"
+description: "Automate the initial setup of a new KMS instance for headless deployment and infrastructure-as-code workflows"
 ---
 
 ```bash
@@ -9,26 +9,26 @@ kms bootstrap --domain=<domain> --email=<email> --password=<password> --organiza
 
 ## Description
 
-The `kms bootstrap` command is used when deploying Hanzo KMS in automated environments where manual UI setup is not feasible. It's ideal for:
+The `kms bootstrap` command is used when deploying KMS in automated environments where manual UI setup is not feasible. It's ideal for:
 
 - Containerized deployments in Kubernetes or Docker environments
 - Infrastructure-as-code pipelines with Terraform or similar tools
 - Continuous deployment workflows
 - DevOps automation scenarios
 
-The command initializes a fresh Hanzo KMS instance by creating an admin user, organization, and instance admin machine identity, enabling subsequent programmatic configuration without human intervention.
+The command initializes a fresh KMS instance by creating an admin user, organization, and instance admin machine identity, enabling subsequent programmatic configuration without human intervention.
 
 <Warning>
   This command creates an instance admin machine identity with the highest level
   of privileges. The returned token should be treated with the utmost security,
   similar to a root credential. Unauthorized access to this token could
-  compromise your entire Hanzo KMS instance.
+  compromise your entire KMS instance.
 </Warning>
 
 ## Flags
 
 <Accordion title="--domain" defaultOpen="true">
-  The URL of your Hanzo KMS instance. This can be set using the `KMS_API_URL` environment variable.
+  The URL of your KMS instance. This can be set using the `KMS_API_URL` environment variable.
 
 ```bash
 # Example
@@ -249,7 +249,7 @@ echo "Token has been captured and can be used for authentication"
 
 ## Notes
 
-- The bootstrap process can only be performed once on a fresh Hanzo KMS instance
+- The bootstrap process can only be performed once on a fresh KMS instance
 - All core flags (domain, email, password, organization) are required for the bootstrap process to complete successfully
 - Security controls prevent privilege escalation: instance admin identities cannot be managed by non-instance admin users and identities
 - The generated admin user account can be used to log in via the UI if needed

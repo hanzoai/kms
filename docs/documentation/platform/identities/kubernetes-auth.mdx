@@ -1,18 +1,18 @@
 ---
 title: Kubernetes Auth
-description: "Learn how to authenticate with Hanzo KMS in Kubernetes"
+description: "Learn how to authenticate with KMS in Kubernetes"
 ---
 
-**Kubernetes Auth** is a Kubernetes-native authentication method for applications (e.g. pods) to access Hanzo KMS.
+**Kubernetes Auth** is a Kubernetes-native authentication method for applications (e.g. pods) to access KMS.
 
 ## Diagram
 
-    The following sequence diagram illustrates the Kubernetes Auth workflow for authenticating applications running in pods with Hanzo KMS.
+    The following sequence diagram illustrates the Kubernetes Auth workflow for authenticating applications running in pods with KMS.
 
 ```mermaid
 sequenceDiagram
   participant Pod as Pod
-  participant Infis as Hanzo KMS
+  participant Infis as KMS
   participant KubernetesServer as K8s API Server
 
   Note over Pod: Step 1: Service Account JWT Token Retrieval
@@ -25,43 +25,43 @@ sequenceDiagram
   Note over Infis: Step 3: Identity Property Verification
   Infis->>Pod: Return short-lived access token
 
-  Note over Pod,Infis: Step 4: Access Hanzo KMS API with Token
+  Note over Pod,Infis: Step 4: Access KMS API with Token
   Pod->>Infis: Make authenticated requests using the short-lived access token
 ```
 
 ## Concept
 
-At a high-level, Hanzo KMS authenticates an application in Kubernetes by verifying its identity and checking that it meets specific requirements (e.g. it is bound to an allowed service account) at the `/api/v1/auth/kubernetes-auth/login` endpoint. If successful,
-then Hanzo KMS returns a short-lived access token that can be used to make authenticated requests to the Hanzo KMS API.
+At a high-level, KMS authenticates an application in Kubernetes by verifying its identity and checking that it meets specific requirements (e.g. it is bound to an allowed service account) at the `/api/v1/auth/kubernetes-auth/login` endpoint. If successful,
+then KMS returns a short-lived access token that can be used to make authenticated requests to the KMS API.
 
 To be more specific:
 
 1. The application deployed on Kubernetes retrieves its [service account credential](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/#opt-out-of-api-credential-automounting) that is a JWT token at the `/var/run/secrets/kubernetes.io/serviceaccount/token` pod path.
-2. The application sends the JWT token to Hanzo KMS at the `/api/v1/auth/kubernetes-auth/login` endpoint after which Hanzo KMS forwards the JWT token to the Kubernetes API Server at the TokenReview API for verification and to obtain the service account information associated with the JWT token.
-Hanzo KMS is able to authenticate and interact with the TokenReview API by using either the long lived JWT token set while configuring this authentication method or by using the incoming token itself. The JWT token mentioned in this context is referred as the token reviewer JWT token.
-3. Hanzo KMS checks the service account properties against set criteria such **Allowed Service Account Names** and **Allowed Namespaces**.
-4. If all is well, Hanzo KMS returns a short-lived access token that the application can use to make authenticated requests to the Hanzo KMS API.
+2. The application sends the JWT token to KMS at the `/api/v1/auth/kubernetes-auth/login` endpoint after which KMS forwards the JWT token to the Kubernetes API Server at the TokenReview API for verification and to obtain the service account information associated with the JWT token.
+KMS is able to authenticate and interact with the TokenReview API by using either the long lived JWT token set while configuring this authentication method or by using the incoming token itself. The JWT token mentioned in this context is referred as the token reviewer JWT token.
+3. KMS checks the service account properties against set criteria such **Allowed Service Account Names** and **Allowed Namespaces**.
+4. If all is well, KMS returns a short-lived access token that the application can use to make authenticated requests to the KMS API.
 
 <Note>
-  We recommend using one of Hanzo KMS's clients like SDKs or the KMS Agent
-  to authenticate with Hanzo KMS using Kubernetes Auth as they handle the
+  We recommend using one of KMS's clients like SDKs or the KMS Agent
+  to authenticate with KMS using Kubernetes Auth as they handle the
   authentication process including service account credential retrieval for you.
 </Note>
 
 ## Guide
 
-In the following steps, we explore how to create and use identities for your applications in Kubernetes to access the Hanzo KMS API using the Kubernetes Auth authentication method.
+In the following steps, we explore how to create and use identities for your applications in Kubernetes to access the KMS API using the Kubernetes Auth authentication method.
 
 
 
 <Steps>
-    <Step title="Obtaining the token reviewer JWT for Hanzo KMS">
+    <Step title="Obtaining the token reviewer JWT for KMS">
       <Accordion title="Option 1: Reviewer JWT Token">
 
         <Note>
         **When to use this option**: Choose this approach when you want centralized authentication management. Only one service account needs special permissions, and your application service accounts remain unchanged.
         </Note>
-        1.1. Start by creating a service account in your Kubernetes cluster that will be used by Hanzo KMS to authenticate with the Kubernetes API Server.
+        1.1. Start by creating a service account in your Kubernetes cluster that will be used by KMS to authenticate with the Kubernetes API Server.
 
         ```yaml kms-service-account.yaml
         apiVersion: v1
@@ -75,7 +75,7 @@ In the following steps, we explore how to create and use identities for your app
         kubectl apply -f kms-service-account.yaml
         ```
 
-        1.2. Bind the service account to the `system:auth-delegator` cluster role. As described [here](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#other-component-roles), this role allows delegated authentication and authorization checks, specifically for Hanzo KMS to access the [TokenReview API](https://kubernetes.io/docs/reference/kubernetes-api/authentication-resources/token-review-v1/). You can apply the following configuration file:
+        1.2. Bind the service account to the `system:auth-delegator` cluster role. As described [here](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#other-component-roles), this role allows delegated authentication and authorization checks, specifically for KMS to access the [TokenReview API](https://kubernetes.io/docs/reference/kubernetes-api/authentication-resources/token-review-v1/). You can apply the following configuration file:
 
         ```yaml cluster-role-binding.yaml
         apiVersion: rbac.authorization.k8s.io/v1
@@ -131,12 +131,12 @@ In the following steps, we explore how to create and use identities for your app
 
       <Accordion title="Option 2: Client JWT as Reviewer JWT Token">
         <Note>
-        **When to use this option**: Choose this approach to eliminate long-lived tokens. This option simplifies Hanzo KMS configuration but requires each application service account to have elevated permissions.
+        **When to use this option**: Choose this approach to eliminate long-lived tokens. This option simplifies KMS configuration but requires each application service account to have elevated permissions.
         </Note>
 
         The self-validation method eliminates the need for a separate long-lived reviewer JWT by using the same token for both authentication and validation. Instead of creating a dedicated reviewer service account, you'll grant the necessary permissions to each application service account.
 
-        For each service account that needs to authenticate with Hanzo KMS, add the `system:auth-delegator` role:
+        For each service account that needs to authenticate with KMS, add the `system:auth-delegator` role:
 
         ```yaml client-role-binding.yaml
         apiVersion: rbac.authorization.k8s.io/v1
@@ -157,16 +157,16 @@ In the following steps, we explore how to create and use identities for your app
         kubectl apply -f client-role-binding.yaml
         ```
 
-        When configuring Kubernetes Auth in Hanzo KMS, leave the **Token Reviewer JWT** field empty. Hanzo KMS will use the client's own token for validation.
+        When configuring Kubernetes Auth in KMS, leave the **Token Reviewer JWT** field empty. KMS will use the client's own token for validation.
       </Accordion>
       <Accordion title="Option 3: Use Gateway as Reviewer">
         <Note>
-        **When to use this option**: Choose this approach when you have a gateway deployed in your Kubernetes Cluster and wish to eliminate long-lived tokens. This approach simplifies Hanzo KMS Kubernetes Auth configuration, and only one service account will need to have the elevated `system:auth-delegator` ClusterRole binding.
+        **When to use this option**: Choose this approach when you have a gateway deployed in your Kubernetes Cluster and wish to eliminate long-lived tokens. This approach simplifies KMS Kubernetes Auth configuration, and only one service account will need to have the elevated `system:auth-delegator` ClusterRole binding.
         </Note>
 
         <Info>
-          **Note:** Gateway is a paid feature. - **Hanzo KMS Cloud users:** Gateway is
-          available under the **Enterprise Tier**. - **Self-Hosted Hanzo KMS:** Please
+          **Note:** Gateway is a paid feature. - **KMS Cloud users:** Gateway is
+          available under the **Enterprise Tier**. - **Self-Hosted KMS:** Please
           contact [sales@kms.hanzo.ai](mailto:sales@kms.hanzo.ai) to purchase an
           enterprise license.
         </Info>
@@ -241,11 +241,11 @@ In the following steps, we explore how to create and use identities for your app
     Here's some more guidance on each field:
 
     - Kubernetes Host / Base Kubernetes API URL: The host string, host:port pair, or URL to the base of the Kubernetes API server. This can usually be obtained by running `kubectl cluster-info`.
-    - Token Reviewer JWT: A long-lived service account JWT token for Hanzo KMS to access the [TokenReview API](https://kubernetes.io/docs/reference/kubernetes-api/authentication-resources/token-review-v1/) to validate other service account JWT tokens submitted by applications/pods. This is the JWT token obtained from step 1.5(Reviewer Tab). If omitted, the client's own JWT will be used instead, which requires the client to have the `system:auth-delegator` ClusterRole binding.
+    - Token Reviewer JWT: A long-lived service account JWT token for KMS to access the [TokenReview API](https://kubernetes.io/docs/reference/kubernetes-api/authentication-resources/token-review-v1/) to validate other service account JWT tokens submitted by applications/pods. This is the JWT token obtained from step 1.5(Reviewer Tab). If omitted, the client's own JWT will be used instead, which requires the client to have the `system:auth-delegator` ClusterRole binding.
       This is shown in step 1, option 2.
-    - Allowed Service Account Names: A comma-separated list of trusted service account names that are allowed to authenticate with Hanzo KMS.
-    - Allowed Namespaces: A comma-separated list of trusted namespaces that service accounts must belong to authenticate with Hanzo KMS.
-    - Allowed Audience: An optional audience claim that the service account JWT token must have to authenticate with Hanzo KMS.
+    - Allowed Service Account Names: A comma-separated list of trusted service account names that are allowed to authenticate with KMS.
+    - Allowed Namespaces: A comma-separated list of trusted namespaces that service accounts must belong to authenticate with KMS.
+    - Allowed Audience: An optional audience claim that the service account JWT token must have to authenticate with KMS.
     - CA Certificate: The PEM-encoded CA cert for the Kubernetes API server. This is used by the TLS client for secure communication with the Kubernetes API server.
     - Access Token TTL (default is `2592000` equivalent to 30 days): The lifetime for an acccess token in seconds. This value will be referenced at renewal time.
     - Access Token Max TTL (default is `2592000`  equivalent to 30 days): The maximum lifetime for an acccess token in seconds. This value will be referenced at renewal time.
@@ -265,19 +265,19 @@ In the following steps, we explore how to create and use identities for your app
     ![identities project create](/images/platform/identities/identities-project-create.png)
 
   </Step>
-  <Step title="Accessing the Hanzo KMS API with the identity">
-    To access the Hanzo KMS API as the identity, you should first make sure that the pod running your application is bound to a service account specified in the **Allowed Service Account Names** field of the identity's Kubernetes Auth authentication method configuration in step 2.
+  <Step title="Accessing the KMS API with the identity">
+    To access the KMS API as the identity, you should first make sure that the pod running your application is bound to a service account specified in the **Allowed Service Account Names** field of the identity's Kubernetes Auth authentication method configuration in step 2.
 
-    Once bound, the pod will receive automatically mounted service account credentials that is a JWT token at the `/var/run/secrets/kubernetes.io/serviceaccount/token` path. This token should be used to authenticate with Hanzo KMS at the `/api/v1/auth/kubernetes-auth/login` endpoint.
+    Once bound, the pod will receive automatically mounted service account credentials that is a JWT token at the `/var/run/secrets/kubernetes.io/serviceaccount/token` path. This token should be used to authenticate with KMS at the `/api/v1/auth/kubernetes-auth/login` endpoint.
 
     For information on how to configure sevice accounts for pods, refer to the guide [here](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/).
 
-    We provide a code example below of how you might retrieve the JWT token and use it to authenticate with Hanzo KMS to gain access to the [Hanzo KMS API](/api-reference/overview/introduction).
+    We provide a code example below of how you might retrieve the JWT token and use it to authenticate with KMS to gain access to the [KMS API](/api-reference/overview/introduction).
 
    <Accordion
         title="Sample code for inside an application"
     >
-        The shown example uses Node.js but you can use any other language to retrieve the service account JWT token and use it to authenticate with Hanzo KMS.
+        The shown example uses Node.js but you can use any other language to retrieve the service account JWT token and use it to authenticate with KMS.
 
         ```javascript
         const fs = require("fs");
@@ -285,7 +285,7 @@ In the following steps, we explore how to create and use identities for your app
             const tokenPath = "/var/run/secrets/kubernetes.io/serviceaccount/token";
             const jwtToken = fs.readFileSync(tokenPath, "utf8");
 
-            const kmsUrl = "https://kms.hanzo.ai"; // or your self-hosted Hanzo KMS URL
+            const kmsUrl = "https://kms.hanzo.ai"; // or your self-hosted KMS URL
             const identityId = "<your-identity-id>";
 
             const { data } = await axios.post(
@@ -304,14 +304,14 @@ In the following steps, we explore how to create and use identities for your app
     </Accordion>
 
     <Tip>
-        We recommend using one of Hanzo KMS's clients like SDKs or the KMS Agent to authenticate with Hanzo KMS using Kubernetes Auth as they handle the authentication process including service account credential retrieval for you.
+        We recommend using one of KMS's clients like SDKs or the KMS Agent to authenticate with KMS using Kubernetes Auth as they handle the authentication process including service account credential retrieval for you.
     </Tip>
 
     <Note>
     Each identity access token has a time-to-live (TTL) which you can infer from the response of the login operation;
     the default TTL is `7200` seconds which can be adjusted.
 
-    If an identity access token exceeds its max ttl, it can no longer authenticate with the Hanzo KMS API. In this case,
+    If an identity access token exceeds its max ttl, it can no longer authenticate with the KMS API. In this case,
     a new access token should be obtained by performing another login operation.
     </Note>
 
@@ -321,13 +321,13 @@ In the following steps, we explore how to create and use identities for your app
 **FAQ**
 
 <AccordionGroup>
-<Accordion title="Why is the Hanzo KMS API rejecting my service account JWT token?">
+<Accordion title="Why is the KMS API rejecting my service account JWT token?">
   There are a few reasons for why this might happen:
   - The Kubernetes Auth authentication method configuration is invalid.
   - The service account JWT token has expired is malformed or invalid.
   - The service account associated with the JWT token does not meet the criteria set forth in the Kubernetes Auth authentication method configuration such as **Allowed Service Account Names** and **Allowed Namespaces**.
 </Accordion>
-<Accordion title="Why is the Hanzo KMS API rejecting my access token?">
+<Accordion title="Why is the KMS API rejecting my access token?">
   There are a few reasons for why this might happen:
 
 - The access token has expired.

@@ -1,17 +1,17 @@
 ---
 title: "Installation"
-description: "Learn how to deploy Hanzo KMS using the Linux package"
+description: "Learn how to deploy KMS using the Linux package"
 ---
 
-Hanzo KMS can be deployed on Linux virtual machines without the need for containers using our standalone Linux packages. 
+KMS can be deployed on Linux virtual machines without the need for containers using our standalone Linux packages. 
 These packages are available in both .deb (for Debian-based systems) and .rpm (for RHEL-based systems) formats.
-The installation includes the Hanzo KMS service, along with a CLI tool (kms-ctl) to help you manage configurations, startup, and application logging. 
+The installation includes the KMS service, along with a CLI tool (kms-ctl) to help you manage configurations, startup, and application logging. 
 This approach is ideal for environments where containerization isn't desired, while still providing a lightweight deployment option.
 
 ## Prerequisites
 
-This installation method only provides the Hanzo KMS application. You are responsible for configuring both PostgreSQL and Redis, either by using managed services (e.g., AWS RDS, Azure Database, GCP Cloud SQL/Memorystore) or by deploying them manually in your on-prem environment. 
-Please ensure you have the following before beginning installation of Hanzo KMS:
+This installation method only provides the KMS application. You are responsible for configuring both PostgreSQL and Redis, either by using managed services (e.g., AWS RDS, Azure Database, GCP Cloud SQL/Memorystore) or by deploying them manually in your on-prem environment. 
+Please ensure you have the following before beginning installation of KMS:
 
 - A Linux server running a Debian/Ubuntu or RHEL-based distribution
 - A running PostgreSQL database instance (version 14 and up)
@@ -21,23 +21,23 @@ Please ensure you have the following before beginning installation of Hanzo KMS:
 
 <Steps>
 
-  <Step title="Install the Hanzo KMS Package">
+  <Step title="Install the KMS Package">
   Select your Linux distribution to get started. Only AMD64-based systems are supported at this time, ARM support is coming soon.
 
   <Tabs>
     <Tab title="Debian/Ubuntu">
 
     <Warning>
-      As of October 10, 2025, all future releases for Debian/Ubuntu will be distributed via the official Hanzo KMS repository at https://artifacts-kms-core.kms.hanzo.ai.
+      As of October 10, 2025, all future releases for Debian/Ubuntu will be distributed via the official KMS repository at https://artifacts-kms-core.kms.hanzo.ai.
       No new releases will be published for Debian/Ubuntu on Cloudsmith going forward.
     </Warning>
 
-      Add the Hanzo KMS repository:
+      Add the KMS repository:
       ```bash
       curl -1sLf 'https://artifacts-kms-core.kms.hanzo.ai/setup.deb.sh' | sudo -E bash
       ```
 
-      Install Hanzo KMS:
+      Install KMS:
       ```bash
       sudo apt-get update && sudo apt-get install -y kms-core
       ```
@@ -48,16 +48,16 @@ Please ensure you have the following before beginning installation of Hanzo KMS:
     <Tab title="RedHat/CentOS/Amazon Linux">
 
     <Warning>
-      As of October 10, 2025, all future releases for Red Hat/CentOS/Amazon Linux will be distributed via the official Hanzo KMS repository at https://artifacts-kms-core.kms.hanzo.ai.
+      As of October 10, 2025, all future releases for Red Hat/CentOS/Amazon Linux will be distributed via the official KMS repository at https://artifacts-kms-core.kms.hanzo.ai.
       No new releases will be published for Red Hat/CentOS/Amazon Linux on Cloudsmith going forward.
     </Warning>
 
-      Add the Hanzo KMS repository:
+      Add the KMS repository:
       ```bash
       curl -1sLf 'https://artifacts-kms-core.kms.hanzo.ai/setup.rpm.sh' | sudo -E bash
       ```
 
-      Install Hanzo KMS:
+      Install KMS:
       ```bash
       sudo yum install kms-core
       ```
@@ -89,8 +89,8 @@ Please ensure you have the following before beginning installation of Hanzo KMS:
   See the full list of options in our [configuration documentation](/self-hosting/configuration/envars).
   </Step>
 
-  <Step title="Start Hanzo KMS">
-  1. Start the Hanzo KMS service:
+  <Step title="Start KMS">
+  1. Start the KMS service:
     ```bash
     kms-ctl reconfigure
     ```
@@ -112,10 +112,10 @@ Please ensure you have the following before beginning installation of Hanzo KMS:
 ## Platform Support
 
 ### Microsoft Windows
-Hanzo KMS is built for Linux-based systems. It is not supported on Microsoft Windows, and we do not plan to support it in the near future. For Windows users, consider running Hanzo KMS in a virtual machine or WSL2 environment.
+KMS is built for Linux-based systems. It is not supported on Microsoft Windows, and we do not plan to support it in the near future. For Windows users, consider running KMS in a virtual machine or WSL2 environment.
 
 ### Unsupported Linux Distributions and Unix-like Systems
-Hanzo KMS is not tested or officially supported on the following:
+KMS is not tested or officially supported on the following:
 
 - Arch Linux  
 - Fedora  
@@ -127,7 +127,7 @@ We recommend sticking to officially supported distributions for the best experie
 
 ## Linux vs Containerized Deployments
 
-Hanzo KMS is a stateless application, which means it can be easily scaled and redeployed without maintaining internal state between instances.
+KMS is a stateless application, which means it can be easily scaled and redeployed without maintaining internal state between instances.
 
-If your use case requires rolling updates, self-healing, or auto-scaling, we recommend deploying Hanzo KMS in a containerized environment such as Kubernetes/OpenShift, or using managed container orchestration services like AWS ECS or Google Cloud Run. 
+If your use case requires rolling updates, self-healing, or auto-scaling, we recommend deploying KMS in a containerized environment such as Kubernetes/OpenShift, or using managed container orchestration services like AWS ECS or Google Cloud Run. 
 These platforms offer built-in capabilities for high availability and help simplify operational overhead for your deployment.

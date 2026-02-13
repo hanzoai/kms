@@ -1,6 +1,6 @@
 apiVersion: v2
 name: hanzo-kms-standalone
-description: A helm chart to deploy Hanzo KMS (fork of Hanzo KMS)
+description: A helm chart to deploy KMS (fork of KMS)
 
 type: application
 

@@ -1,12 +1,12 @@
 ---
 title: "Audit Logs"
 sidebarTitle: "Audit Logs"
-description: "Understand how Hanzo KMS logs activity and supports external audit streaming."
+description: "Understand how KMS logs activity and supports external audit streaming."
 ---
 
-Hanzo KMS records a detailed audit trail of actions across the platform — providing deep visibility into access, changes, and usage for security and compliance purposes.
+KMS records a detailed audit trail of actions across the platform — providing deep visibility into access, changes, and usage for security and compliance purposes.
 
-Every interaction with Hanzo KMS resources generates an audit event. These events are immutable and include metadata such as the actor, event type, affected resources, timestamp, IP address, and client source.
+Every interaction with KMS resources generates an audit event. These events are immutable and include metadata such as the actor, event type, affected resources, timestamp, IP address, and client source.
 
 Audit logs enable teams to:
 
@@ -18,7 +18,7 @@ To learn more, refer to the [audit logs documentation](/documentation/platform/a
 
 ## Log Coverage
 
-Hanzo KMS tracks dozens of event types across the platform — including secret access, permission changes, certificate issuance, SSH session activity, and identity management.
+KMS tracks dozens of event types across the platform — including secret access, permission changes, certificate issuance, SSH session activity, and identity management.
 
 Each audit entry includes structured fields that make it easy to search, filter, and correlate across systems. For example:
 
@@ -29,9 +29,9 @@ Each audit entry includes structured fields that make it easy to search, filter,
 
 ## External Log Streaming
 
-For centralized monitoring and long-term retention, Hanzo KMS supports [audit log streaming](/documentation/platform/audit-log-streams/audit-log-streams) to external systems.
+For centralized monitoring and long-term retention, KMS supports [audit log streaming](/documentation/platform/audit-log-streams/audit-log-streams) to external systems.
 
-You can forward logs to SIEM platforms, storage buckets, or observability stacks using JSON-based collectors. Hanzo KMS integrates well with tools like [Fluent Bit](/documentation/platform/audit-log-streams/audit-log-streams-with-fluentbit#deploy-fluent-bit), enabling teams to route logs to destinations such as:
+You can forward logs to SIEM platforms, storage buckets, or observability stacks using JSON-based collectors. KMS integrates well with tools like [Fluent Bit](/documentation/platform/audit-log-streams/audit-log-streams-with-fluentbit#deploy-fluent-bit), enabling teams to route logs to destinations such as:
 
 - AWS S3
 - Elasticsearch

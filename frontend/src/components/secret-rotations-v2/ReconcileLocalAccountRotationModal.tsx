@@ -49,7 +49,7 @@ const Content = ({ secretRotation, onComplete }: ContentProps) => {
   return (
     <div>
       <p className="mb-4 text-sm text-mineshaft-200">
-        Reconciliation ensures the password stored in Hanzo KMS matches the actual password on the
+        Reconciliation ensures the password stored in KMS matches the actual password on the
         server.
       </p>
       <p className="mb-8 text-sm text-mineshaft-200">
@@ -93,7 +93,7 @@ export const ReconcileLocalAccountRotationModal = ({
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent
         title={`Reconcile ${rotationTypeName}`}
-        subTitle={`Sync the ${rotationTypeName} password between Hanzo KMS and the server.`}
+        subTitle={`Sync the ${rotationTypeName} password between KMS and the server.`}
       >
         <Content
           secretRotation={

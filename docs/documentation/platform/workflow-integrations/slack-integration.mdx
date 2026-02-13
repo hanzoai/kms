@@ -3,12 +3,12 @@ title: "Slack Integration"
 description: "Learn how to setup the Slack integration"
 ---
 
-This guide will provide step by step instructions on how to configure Slack integration for your Hanzo KMS projects.
+This guide will provide step by step instructions on how to configure Slack integration for your KMS projects.
 
 ## Setting up Slack integration in your projects
 
 <Tabs>
-  <Tab title="Hanzo KMS Cloud">
+  <Tab title="KMS Cloud">
     ### Create Slack workflow integration
     <Steps>
       <Step title="Navigate to the Workflow Integrations tab in your organization settings">
@@ -23,7 +23,7 @@ This guide will provide step by step instructions on how to configure Slack inte
         Give your Slack integration a descriptive alias. You will use this to select the Slack integration for your project.
         ![org-slack-add-form](/images/platform/workflow-integrations/slack-integration/org-slack-integration-add-form.png)
 
-        Press **Connect Slack**. This opens up the Slack app installation flow. Select the Slack workspace you want to install the custom Slack app to and press **Install Hanzo KMS**.
+        Press **Connect Slack**. This opens up the Slack app installation flow. Select the Slack workspace you want to install the custom Slack app to and press **Install KMS**.
         ![org-slack-authenticate](/images/platform/workflow-integrations/slack-integration/cloud-org-slack-integration-authenticate.png)
 
         This completes the workflow integration creation flow. The projects in your organization can now use this Slack integration to send real-time updates to your Slack workspace.
@@ -49,7 +49,7 @@ This guide will provide step by step instructions on how to configure Slack inte
       <Step title="Configure the Slack notification settings for the project and click Save.">
         ![project-slack-select](/images/platform/workflow-integrations/slack-integration/project-slack-integration-config.png)
         <Info>
-          To enable notifications in private Slack channels, you need to invite the Hanzo KMS Slack bot to join those channels.
+          To enable notifications in private Slack channels, you need to invite the KMS Slack bot to join those channels.
         </Info>
         You now have a working native integration with Slack!
 
@@ -65,7 +65,7 @@ This guide will provide step by step instructions on how to configure Slack inte
     <Steps>
       <Step title="Navigate to the Integrations tab in the Admin settings">
         Before anything else, you need to setup the Slack app to be used by
-        your Hanzo KMS instance. Because you're self-hosting, you will need to
+        your KMS instance. Because you're self-hosting, you will need to
         create this Slack application as demonstrated in the preceding step.
 
         Click the **Create Slack app** button. This will open up a new window with the
@@ -74,7 +74,7 @@ This guide will provide step by step instructions on how to configure Slack inte
         ![admin-settings-slack-overview](/images/platform/workflow-integrations/slack-integration/admin-slack-integration-overview.png)
       </Step>
       <Step title="Create Slack app">
-        Select the Slack workspace you want to integrate with Hanzo KMS.
+        Select the Slack workspace you want to integrate with KMS.
 
         ![admin-slack-app-workspace-select](/images/platform/workflow-integrations/slack-integration/admin-slack-integration-app-workspace-select.png)
 
@@ -85,7 +85,7 @@ This guide will provide step by step instructions on how to configure Slack inte
 
       </Step>
       <Step title="Input app credentials from Slack">
-        Copy the Client ID and Client Secret values from your newly created custom Slack app and add them to Hanzo KMS.
+        Copy the Client ID and Client Secret values from your newly created custom Slack app and add them to KMS.
         ![admin-slack-app-credentials](/images/platform/workflow-integrations/slack-integration/admin-slack-integration-app-credentials.png)
         ![admin-slack-app-credentials-form](/images/platform/workflow-integrations/slack-integration/admin-slack-integration-app-credential-form.png)
         Complete the admin setup by pressing **Save**.
@@ -108,7 +108,7 @@ This guide will provide step by step instructions on how to configure Slack inte
         Give your Slack integration a descriptive alias. You will use this to select the Slack integration for your project.
         ![org-slack-add-form](/images/platform/workflow-integrations/slack-integration/org-slack-integration-add-form.png)
 
-        Press **Connect Slack**. This opens up the Slack app installation flow. Select the Slack workspace you want to install the custom Slack app to and press **Install Hanzo KMS**.
+        Press **Connect Slack**. This opens up the Slack app installation flow. Select the Slack workspace you want to install the custom Slack app to and press **Install KMS**.
         ![org-slack-authenticate](/images/platform/workflow-integrations/slack-integration/org-slack-integration-authenticate.png)
 
         Your Slack bot will then be added to your selected Slack workspace. This completes the workflow integration creation flow. Your projects in the organization can now use this Slack integration to send real-time updates to your Slack workspace.
@@ -148,7 +148,7 @@ This guide will provide step by step instructions on how to configure Slack inte
 ## Using the Slack integration in your private channels
 
 <Steps>
-  <Step title="In the Apps section on Slack, find the Hanzo KMS app and view the app details">
+  <Step title="In the Apps section on Slack, find the KMS app and view the app details">
     ![private slack setup
     menu](/images/platform/workflow-integrations/slack-integration/private-slack-setup-menu.png)
   </Step>
@@ -167,7 +167,7 @@ This guide will provide step by step instructions on how to configure Slack inte
 
 ## Slack Events
 
-The Slack integration supports the following events that can be configured for your projects. Each event is triggered when specific actions occur within your Hanzo KMS instance.
+The Slack integration supports the following events that can be configured for your projects. Each event is triggered when specific actions occur within your KMS instance.
 
 <Tabs>
   <Tab title="Access Request">
@@ -175,7 +175,7 @@ The Slack integration supports the following events that can be configured for y
     This event is triggered when a user creates a new access approval request for a project. The notification includes details about the requester, the requested permissions, the secret path and environment, and whether the access is temporary or permanent.
 
     **When it's triggered:**
-    - A user submits a new access approval request through the Hanzo KMS UI
+    - A user submits a new access approval request through the KMS UI
     - The request requires approval based on configured access approval policies
     - The notification is sent to the configured access request channels
 
@@ -228,7 +228,7 @@ The Slack integration supports the following events that can be configured for y
 
   <Tab title="Secret Sync Error">
     ### Secret Sync Error
-    This event is triggered when a secret sync operation fails. Secret syncs allow you to synchronize secrets between Hanzo KMS and external systems like GitHub, GitLab, AWS Secrets Manager, and others.
+    This event is triggered when a secret sync operation fails. Secret syncs allow you to synchronize secrets between KMS and external systems like GitHub, GitLab, AWS Secrets Manager, and others.
 
     **When it's triggered:**
     - A secret sync fails to push secrets to the destination

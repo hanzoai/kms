@@ -1,22 +1,22 @@
 ---
 title: "Point-in-Time Recovery"
-description: "Learn how to rollback secrets and configurations to any snapshot with Hanzo KMS."
+description: "Learn how to rollback secrets and configurations to any snapshot with KMS."
 ---
 
 <Info>
-  Point-in-Time Recovery is a paid feature. If you're using Hanzo KMS Cloud,
-  then it is available under the **Pro Tier**. If you're self-hosting Hanzo KMS,
+  Point-in-Time Recovery is a paid feature. If you're using KMS Cloud,
+  then it is available under the **Pro Tier**. If you're self-hosting KMS,
   then you should contact sales@kms.hanzo.ai to purchase an enterprise license
   to use it.
 </Info>
 
-Hanzo KMS's point-in-time recovery functionality allows secrets to be rolled back to any point in time for any given [folder](./folder) or [environment](/documentation/platform/project#project-environments).
+KMS's point-in-time recovery functionality allows secrets to be rolled back to any point in time for any given [folder](./folder) or [environment](/documentation/platform/project#project-environments).
 
 <Tabs>
   <Tab title="Commits Interface">
     ## Understanding Commits
 
-    Similar to Git, a commit in Hanzo KMS represents a snapshot of changes made to your project's resources at a specific point in time. Each commit is scoped to an environment and [folder](./folder) within it. Unlike the legacy snapshot system, the new commits interface provides granular tracking of individual changes, allowing you to see exactly what was modified, added, or removed in each commit.
+    Similar to Git, a commit in KMS represents a snapshot of changes made to your project's resources at a specific point in time. Each commit is scoped to an environment and [folder](./folder) within it. Unlike the legacy snapshot system, the new commits interface provides granular tracking of individual changes, allowing you to see exactly what was modified, added, or removed in each commit.
 
     ### Accessing Commits
 
@@ -104,7 +104,7 @@ Hanzo KMS's point-in-time recovery functionality allows secrets to be rolled bac
 
     ## Snapshots
 
-    Similar to Git, a commit (also known as snapshot) in Hanzo KMS is the state of your project's secrets at a specific point in time scoped to
+    Similar to Git, a commit (also known as snapshot) in KMS is the state of your project's secrets at a specific point in time scoped to
     an environment and [folder](./folder) within it.
 
     To view a list of snapshots for the current folder, press the **Commits** button.

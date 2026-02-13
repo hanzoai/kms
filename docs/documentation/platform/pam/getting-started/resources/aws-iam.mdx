@@ -1,43 +1,43 @@
 ---
 title: "AWS IAM"
 sidebarTitle: "AWS IAM"
-description: "Learn how to configure AWS Management Console access through Hanzo KMS PAM for secure, audited, and just-in-time access to AWS."
+description: "Learn how to configure AWS Management Console access through KMS PAM for secure, audited, and just-in-time access to AWS."
 ---
 
-Hanzo KMS PAM supports secure, just-in-time access to the **AWS Management Console** through federated sign-in. This allows your team to access AWS without sharing long-lived credentials, while maintaining a complete audit trail of who accessed what and when.
+KMS PAM supports secure, just-in-time access to the **AWS Management Console** through federated sign-in. This allows your team to access AWS without sharing long-lived credentials, while maintaining a complete audit trail of who accessed what and when.
 
 ## How It Works
 
-Unlike database or SSH resources that require a Gateway for network connectivity, AWS Console access works differently. Hanzo KMS uses AWS STS (Security Token Service) to assume roles on your behalf and generates temporary federated sign-in URLs.
+Unlike database or SSH resources that require a Gateway for network connectivity, AWS Console access works differently. KMS uses AWS STS (Security Token Service) to assume roles on your behalf and generates temporary federated sign-in URLs.
 
 ```mermaid
 sequenceDiagram
     participant User
-    participant Hanzo KMS
+    participant KMS
     participant Resource Role as Resource Role<br/>(Your AWS Account)
     participant Target Role as Target Role<br/>(Your AWS Account)
     participant Console as AWS Console
 
-    User->>Hanzo KMS: Request AWS Console access
-    Hanzo KMS->>Resource Role: AssumeRole (with ExternalId)
-    Resource Role-->>Hanzo KMS: Temporary credentials
-    Hanzo KMS->>Target Role: AssumeRole (role chaining)
-    Target Role-->>Hanzo KMS: Session credentials
-    Hanzo KMS->>Console: Generate federation URL
-    Console-->>Hanzo KMS: Signed console URL
-    Hanzo KMS-->>User: Return console URL
+    User->>KMS: Request AWS Console access
+    KMS->>Resource Role: AssumeRole (with ExternalId)
+    Resource Role-->>KMS: Temporary credentials
+    KMS->>Target Role: AssumeRole (role chaining)
+    Target Role-->>KMS: Session credentials
+    KMS->>Console: Generate federation URL
+    Console-->>KMS: Signed console URL
+    KMS-->>User: Return console URL
     User->>Console: Open AWS Console (federated)
 ```
 
 ### Key Concepts
 
-1. **Resource Role**: An IAM role in your AWS account that trusts Hanzo KMS. This is the "bridge" role that Hanzo KMS assumes first.
+1. **Resource Role**: An IAM role in your AWS account that trusts KMS. This is the "bridge" role that KMS assumes first.
 
 2. **Target Role**: The IAM role that end users will actually use in the AWS Console. The Resource Role assumes this role on behalf of the user.
 
-3. **Role Chaining**: Hanzo KMS uses AWS role chaining - it first assumes the Resource Role, then uses those credentials to assume the Target Role. This provides an additional layer of security and audit capability.
+3. **Role Chaining**: KMS uses AWS role chaining - it first assumes the Resource Role, then uses those credentials to assume the Target Role. This provides an additional layer of security and audit capability.
 
-4. **External ID**: A unique identifier (your Hanzo KMS Project ID) used in the trust policy to prevent [confused deputy attacks](https://docs.aws.amazon.com/IAM/latest/UserGuide/confused-deputy.html).
+4. **External ID**: A unique identifier (your KMS Project ID) used in the trust policy to prevent [confused deputy attacks](https://docs.aws.amazon.com/IAM/latest/UserGuide/confused-deputy.html).
 
 ## Session Behavior
 
@@ -50,7 +50,7 @@ The session duration is set when creating the account and applies to all access 
 
 ### Session Tracking
 
-Hanzo KMS tracks:
+KMS tracks:
 - When the session was created
 - Who accessed which role
 - When the session expires
@@ -67,22 +67,22 @@ All actions performed in the AWS Console are logged in [AWS CloudTrail](https://
 arn:aws:sts::123456789012:assumed-role/pam-readonly/user@example.com
 ```
 
-This allows you to correlate Hanzo KMS PAM sessions with CloudTrail logs for complete audit visibility.
+This allows you to correlate KMS PAM sessions with CloudTrail logs for complete audit visibility.
 
 ## Prerequisites
 
-Before configuring AWS Console access in Hanzo KMS PAM, you need to set up two IAM roles in your AWS account:
+Before configuring AWS Console access in KMS PAM, you need to set up two IAM roles in your AWS account:
 
-1. **Resource Role** - Trusted by Hanzo KMS, can assume target roles
+1. **Resource Role** - Trusted by KMS, can assume target roles
 2. **Target Role(s)** - The actual roles users will use in the console
 
 <Info>
-  **No Gateway Required**: Unlike database or SSH resources, AWS Console access does not require an KMS Gateway. Hanzo KMS communicates directly with AWS APIs.
+  **No Gateway Required**: Unlike database or SSH resources, AWS Console access does not require an KMS Gateway. KMS communicates directly with AWS APIs.
 </Info>
 
 ## Create the PAM Resource
 
-The PAM Resource represents the connection between Hanzo KMS and your AWS account. It contains the Resource Role that Hanzo KMS will assume.
+The PAM Resource represents the connection between KMS and your AWS account. It contains the Resource Role that KMS will assume.
 
 <Steps>
   <Step title="Create the Resource Role Permissions Policy">
@@ -111,7 +111,7 @@ The PAM Resource represents the connection between Hanzo KMS and your AWS accoun
   </Step>
 
   <Step title="Create the Resource Role with Trust Policy">
-    Create an IAM role (e.g., `Hanzo KMSResourceRole`) with:
+    Create an IAM role (e.g., `KMSResourceRole`) with:
     - The permissions policy from the previous step attached
     - The following trust policy:
 
@@ -138,25 +138,25 @@ The PAM Resource represents the connection between Hanzo KMS and your AWS accoun
     ![Create AWS IAM Resource](/images/pam/resources/aws-iam/resource-role-attach-policy.png)
 
     <Warning>
-      **Security Best Practice**: Always use the External ID condition. This prevents confused deputy attacks where another Hanzo KMS customer could potentially trick Hanzo KMS into assuming your role.
+      **Security Best Practice**: Always use the External ID condition. This prevents confused deputy attacks where another KMS customer could potentially trick KMS into assuming your role.
     </Warning>
 
-    **Hanzo KMS AWS Account IDs:**
+    **KMS AWS Account IDs:**
     | Region | Account ID |
     |--------|------------|
     | US | `381492033652` |
     | EU | `345594589636` |
 
     <Note>
-      **For Dedicated Instances**: Your AWS account ID differs from the ones listed above. Please contact Hanzo KMS support to obtain your dedicated AWS account ID.
+      **For Dedicated Instances**: Your AWS account ID differs from the ones listed above. Please contact KMS support to obtain your dedicated AWS account ID.
     </Note>
 
     <Note>
-      **For Self-Hosted Instances**: Use the AWS account ID where your Hanzo KMS instance is deployed. This is the account that hosts your Hanzo KMS infrastructure and will be assuming the Resource Role.
+      **For Self-Hosted Instances**: Use the AWS account ID where your KMS instance is deployed. This is the account that hosts your KMS infrastructure and will be assuming the Resource Role.
     </Note>
   </Step>
 
-  <Step title="Create the Resource in Hanzo KMS">
+  <Step title="Create the Resource in KMS">
     1. Navigate to your PAM project and go to the **Resources** tab
     2. Click **Add Resource** and select **AWS IAM**
     3. Enter a name for the resource (e.g., `production-aws`)
@@ -164,8 +164,8 @@ The PAM Resource represents the connection between Hanzo KMS and your AWS accoun
 
     ![Create AWS IAM Resource](/images/pam/resources/aws-iam/create-resource.png)
 
-    Clicking **Create Resource** will validate that Hanzo KMS can assume the Resource Role. If the connection fails, verify:
-    - The trust policy has the correct Hanzo KMS AWS account ID
+    Clicking **Create Resource** will validate that KMS can assume the Resource Role. If the connection fails, verify:
+    - The trust policy has the correct KMS AWS account ID
     - The External ID matches your project ID
     - The role ARN is correct
   </Step>
@@ -185,7 +185,7 @@ A PAM Account represents a specific Target Role that users can request access to
       "Statement": [{
         "Effect": "Allow",
         "Principal": {
-          "AWS": "arn:aws:iam::<YOUR_ACCOUNT_ID>:role/Hanzo KMSResourceRole"
+          "AWS": "arn:aws:iam::<YOUR_ACCOUNT_ID>:role/KMSResourceRole"
         },
         "Action": "sts:AssumeRole",
         "Condition": {
@@ -200,7 +200,7 @@ A PAM Account represents a specific Target Role that users can request access to
     ![Create AWS IAM Resource](/images/pam/resources/aws-iam/target-role-trust-policy.png)
   </Step>
 
-  <Step title="Create the Account in Hanzo KMS">
+  <Step title="Create the Account in KMS">
     1. Navigate to the **Resources** tab in your PAM project and open the AWS IAM resource you created
     2. Click **Add Account**
     3. Fill in the account details:
@@ -231,7 +231,7 @@ A PAM Account represents a specific Target Role that users can request access to
 
 ## Access the AWS Console
 
-Once your resource and accounts are configured, users can request access through Hanzo KMS:
+Once your resource and accounts are configured, users can request access through KMS:
 
 ![Create AWS IAM Resource](/images/pam/resources/aws-iam/access-account.png)
 
@@ -247,7 +247,7 @@ Once your resource and accounts are configured, users can request access through
   <Step title="Request Access">
     Click the **Access** button for that account.
 
-    Hanzo KMS will:
+    KMS will:
     1. Assume the Resource Role using your project's External ID
     2. Assume the Target Role using role chaining
     3. Generate a federated sign-in URL
