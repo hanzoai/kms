@@ -62,8 +62,8 @@ export const telemetryServiceFactory = ({ keyStore, licenseService }: TTelemetry
   if (appCfg.isProductionMode && !appCfg.TELEMETRY_ENABLED) {
     // eslint-disable-next-line
     console.log(`
-To improve, Infisical collects telemetry data about general usage.
-This helps us understand how the product is doing and guide our product development to create the best possible platform; it also helps us demonstrate growth as we support Infisical as open-source software.
+To improve, Hanzo KMS collects telemetry data about general usage.
+This helps us understand how the product is doing and guide our product development to create the best possible platform; it also helps us demonstrate growth as we support Hanzo KMS as open-source software.
 To opt into telemetry, you can set "TELEMETRY_ENABLED=true" within the environment variables.
 `);
   }

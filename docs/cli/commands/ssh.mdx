@@ -1,21 +1,21 @@
 ---
-title: "infisical ssh"
+title: "kms ssh"
 description: "Generate SSH credentials with the CLI"
 ---
 
 ## Description
 
-[Infisical SSH](/documentation/platform/ssh) lets you issue SSH credentials to clients to provide short-lived, secure SSH access to infrastructure.
+[Hanzo KMS SSH](/documentation/platform/ssh) lets you issue SSH credentials to clients to provide short-lived, secure SSH access to infrastructure.
 
 This command enables you to obtain SSH credentials used to access a remote host. We recommend using the `connect` sub-command which handles the full workflow of issuing credentials and establishing an SSH connection in one step.
 
 ### Sub-commands
 
-<Accordion title="infisical ssh connect">
+<Accordion title="kms ssh connect">
     This command is used to connect to an SSH host using issued credentials. It will automatically issue credentials and either add them to your SSH agent or write them to disk before establishing an SSH connection.
     
     ```bash
-    $ infisical ssh connect
+    $ kms ssh connect
     ```
 
     ### Flags
@@ -39,14 +39,14 @@ This command enables you to obtain SSH credentials used to access a remote host.
 
 </Accordion>
 
-<Accordion title="infisical ssh add-host">
-    This command is used to register a new SSH host with Infisical.
+<Accordion title="kms ssh add-host">
+    This command is used to register a new SSH host with Hanzo KMS.
     
     This command can be used with the `--write-user-ca-to-file`, `--write-host-cert-to-file`, and `--configure-sshd` flags
     to also configure the host's SSH daemon with the necessary certificate authority and host certificate settings.
 
     ```bash
-    $ infisical ssh add-host --projectId=<project-id> --hostname=<hostname>
+    $ kms ssh add-host --projectId=<project-id> --hostname=<hostname>
     ```
 
     ### Flags
@@ -60,14 +60,14 @@ This command enables you to obtain SSH credentials used to access a remote host.
         Alias for the SSH host (optional)
     </Accordion>
     <Accordion title="--write-user-ca-to-file">
-        Write User CA public key to `/etc/ssh/infisical_user_ca.pub`
+        Write User CA public key to `/etc/ssh/kms_user_ca.pub`
 
         Default value: `false`
     </Accordion>
     <Accordion title="--user-ca-out-file-path">
         Custom file path to write the User CA public key
 
-        Default value: `/etc/ssh/infisical_user_ca.pub`
+        Default value: `/etc/ssh/kms_user_ca.pub`
     </Accordion>
     <Accordion title="--write-host-cert-to-file">
         Write SSH host certificate to `/etc/ssh/ssh_host_<type>_key-cert.pub`

@@ -251,7 +251,7 @@ export const secretSyncQueueFactory = ({
     );
   };
 
-  const $getInfisicalSecrets = async (
+  const $getKmsSecrets = async (
     secretSync: TSecretSyncRaw | TSecretSyncWithCredentials,
     includeImports = true
   ) => {
@@ -449,7 +449,7 @@ export const secretSyncQueueFactory = ({
 
     const importedSecretMap: TSecretMap = {};
 
-    const secretMap = await $getInfisicalSecrets(secretSync, false);
+    const secretMap = await $getKmsSecrets(secretSync, false);
 
     const secretsToCreate: Parameters<typeof $createManySecretsRawFn>[0]["secrets"] = [];
     const secretsToUpdate: Parameters<typeof $updateManySecretsRawFn>[0]["secrets"] = [];
@@ -550,7 +550,7 @@ export const secretSyncQueueFactory = ({
         syncOptions: { initialSyncBehavior }
       } = secretSyncWithCredentials;
 
-      const secretMap = await $getInfisicalSecrets(secretSync);
+      const secretMap = await $getKmsSecrets(secretSync);
 
       if (!lastSyncedAt && initialSyncBehavior !== SecretSyncInitialSyncBehavior.OverwriteDestination) {
         const importedSecretMap = await $importSecrets(
@@ -799,7 +799,7 @@ export const secretSyncQueueFactory = ({
         projectId
       });
 
-      const secretMap = await $getInfisicalSecrets(secretSync);
+      const secretMap = await $getKmsSecrets(secretSync);
 
       await SecretSyncFns.removeSecrets(
         {

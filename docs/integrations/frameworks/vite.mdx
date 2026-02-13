@@ -1,30 +1,30 @@
 ---
 title: "Vite"
-description: "How to use Infisical to inject environment variables and secrets into a Vite app."
+description: "How to use Hanzo KMS to inject environment variables and secrets into a Vite app."
 ---
 
 Prerequisites:
 
-- Set up and add envars to [Infisical Cloud](https://app.infisical.com)
+- Set up and add envars to [Hanzo KMS Cloud](https://kms.hanzo.ai)
 - [Install the CLI](/cli/overview)
 
-## Initialize Infisical for your [Vite](https://vitejs.dev) app
+## Initialize Hanzo KMS for your [Vite](https://vitejs.dev) app
 
 ```bash
 # navigate to the root of your of your project 
 cd /path/to/project
 
-# then initialize Infisical
-infisical init
+# then initialize Hanzo KMS
+hanzo-kms init
 ```
 
-## Start your application as usual but with Infisical
+## Start your application as usual but with Hanzo KMS
 
 ```bash
-infisical run -- <your application start command>
+hanzo-kms run -- <your application start command>
 
 # Example
-infisical run -- npm run dev
+hanzo-kms run -- npm run dev
 ```
 
 <Note>

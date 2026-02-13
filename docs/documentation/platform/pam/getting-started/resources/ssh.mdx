@@ -1,27 +1,27 @@
 ---
 title: "SSH"
 sidebarTitle: "SSH"
-description: "Learn how to configure SSH server access through Infisical PAM with support for password, key-based, and certificate-based authentication."
+description: "Learn how to configure SSH server access through Hanzo KMS PAM with support for password, key-based, and certificate-based authentication."
 ---
 
-Infisical PAM supports secure, just-in-time access to SSH servers. This allows your team to access Linux/Unix servers without sharing static credentials, while maintaining a complete audit trail of all sessions.
+Hanzo KMS PAM supports secure, just-in-time access to SSH servers. This allows your team to access Linux/Unix servers without sharing static credentials, while maintaining a complete audit trail of all sessions.
 
 ## How It Works
 
-SSH access in Infisical PAM uses a Gateway deployed in your network to establish secure connections to your servers. The Gateway acts as a bridge between Infisical and your private infrastructure.
+SSH access in Hanzo KMS PAM uses a Gateway deployed in your network to establish secure connections to your servers. The Gateway acts as a bridge between Hanzo KMS and your private infrastructure.
 
 ```mermaid
 sequenceDiagram
-    participant CLI as Infisical CLI
+    participant CLI as KMS CLI
     participant Gateway
-    participant Infisical
+    participant Hanzo KMS
     participant SSH as SSH Server
 
-    CLI->>Infisical: Request session (authenticate)
-    Infisical-->>CLI: Session ID + Gateway connection details
+    CLI->>Hanzo KMS: Request session (authenticate)
+    Hanzo KMS-->>CLI: Session ID + Gateway connection details
     CLI->>Gateway: Connect via secure tunnel
-    Gateway->>Infisical: Fetch credentials for session
-    Infisical-->>Gateway: Return credentials
+    Gateway->>Hanzo KMS: Fetch credentials for session
+    Hanzo KMS-->>Gateway: Return credentials
     Gateway->>SSH: Connect with credentials
     SSH-->>Gateway: Session established
     Gateway-->>CLI: Proxied SSH session
@@ -29,7 +29,7 @@ sequenceDiagram
 
 ## Authentication Methods
 
-Infisical PAM supports three authentication methods for SSH:
+Hanzo KMS PAM supports three authentication methods for SSH:
 
 | Method | Description | Use Case |
 |--------|-------------|----------|
@@ -39,27 +39,27 @@ Infisical PAM supports three authentication methods for SSH:
 
 ### Certificate-Based Authentication
 
-Certificate-based authentication allows for the use of ephemeral credentials. Infisical generates short-lived SSH certificates on-demand for each session.
+Certificate-based authentication allows for the use of ephemeral credentials. Hanzo KMS generates short-lived SSH certificates on-demand for each session.
 
 **Benefits:**
 - **Ephemeral access**: Certificates are generated per-session and expire automatically
-- **Centralized trust**: Servers trust the Infisical CA to authorize connections
-- **Simplified management**: Infisical handles the certificate lifecycle for each connection
+- **Centralized trust**: Servers trust the Hanzo KMS CA to authorize connections
+- **Simplified management**: Hanzo KMS handles the certificate lifecycle for each connection
 - **Audit trail**: Each certificate is tied to a specific user and session
 
 ```mermaid
 sequenceDiagram
-    participant CLI as Infisical CLI
+    participant CLI as KMS CLI
     participant Gateway
-    participant Infisical
+    participant Hanzo KMS
     participant SSH as SSH Server
 
-    CLI->>Infisical: Request session (authenticate)
-    Infisical-->>CLI: Session ID + Gateway connection details
+    CLI->>Hanzo KMS: Request session (authenticate)
+    Hanzo KMS-->>CLI: Session ID + Gateway connection details
     CLI->>Gateway: Connect via secure tunnel
-    Gateway->>Infisical: Fetch credentials for session
-    Infisical->>Infisical: Generate key pair + sign certificate
-    Infisical-->>Gateway: Return private key + certificate
+    Gateway->>Hanzo KMS: Fetch credentials for session
+    Hanzo KMS->>Hanzo KMS: Generate key pair + sign certificate
+    Hanzo KMS-->>Gateway: Return private key + certificate
     Gateway->>SSH: Connect with certificate
     SSH->>SSH: Verify certificate against CA
     SSH-->>Gateway: Session established
@@ -68,9 +68,9 @@ sequenceDiagram
 
 ## Prerequisites
 
-Before configuring SSH access in Infisical PAM, ensure you have:
+Before configuring SSH access in Hanzo KMS PAM, ensure you have:
 
-1. **An Infisical Gateway** deployed with network reachability to your SSH servers
+1. **An KMS Gateway** deployed with network reachability to your SSH servers
 2. **Network connectivity** from the Gateway to your SSH servers on port 22 (or custom SSH port)
 3. **SSH server credentials** (password, private key, or CA setup for certificate auth)
 
@@ -108,7 +108,7 @@ The PAM Resource represents the SSH server you want to protect.
   </Step>
 
   <Step title="Create the Resource">
-    Click **Create Resource**. Infisical will validate that the Gateway can reach the SSH server.
+    Click **Create Resource**. Hanzo KMS will validate that the Gateway can reach the SSH server.
   </Step>
 </Steps>
 
@@ -174,24 +174,24 @@ A PAM Account represents a specific user account on the SSH server. You can crea
 
 ### Certificate Authentication
 
-Certificate authentication requires additional setup on your SSH server to trust the Infisical CA.
+Certificate authentication requires additional setup on your SSH server to trust the Hanzo KMS CA.
 
 <Steps>
   <Step title="Configure the SSH Server">
-    Before creating the account, you need to configure your SSH server to trust certificates signed by Infisical.
+    Before creating the account, you need to configure your SSH server to trust certificates signed by Hanzo KMS.
 
     Run the following command on your SSH server (requires root/sudo):
 
     ```bash
     curl -H "Authorization: Bearer <YOUR_TOKEN>" \
-      "https://app.infisical.com/api/v1/pam/resources/ssh/<RESOURCE_ID>/ssh-ca-setup" \
+      "https://kms.hanzo.ai/api/v1/pam/resources/ssh/<RESOURCE_ID>/ssh-ca-setup" \
       | sudo bash
     ```
 
     This script will:
     1. Download the CA public key for your SSH resource
-    2. Save it to `/etc/ssh/infisical_ca.pub`
-    3. Add `TrustedUserCAKeys /etc/ssh/infisical_ca.pub` to `/etc/ssh/sshd_config`
+    2. Save it to `/etc/ssh/kms_ca.pub`
+    3. Add `TrustedUserCAKeys /etc/ssh/kms_ca.pub` to `/etc/ssh/sshd_config`
     4. Validate and restart the SSH service
 
     <Info>
@@ -203,20 +203,20 @@ Certificate authentication requires additional setup on your SSH server to trust
 
       ```bash
       curl -H "Authorization: Bearer <YOUR_TOKEN>" \
-        "https://app.infisical.com/api/v1/pam/resources/ssh/<RESOURCE_ID>/ssh-ca-public-key" \
-        | sudo tee /etc/ssh/infisical_ca.pub
+        "https://kms.hanzo.ai/api/v1/pam/resources/ssh/<RESOURCE_ID>/ssh-ca-public-key" \
+        | sudo tee /etc/ssh/kms_ca.pub
       ```
       
       Then configure sshd:
       1. Add to `/etc/ssh/sshd_config`:
          ```
-         TrustedUserCAKeys /etc/ssh/infisical_ca.pub
+         TrustedUserCAKeys /etc/ssh/kms_ca.pub
          ```
       2. Restart sshd: `sudo systemctl restart sshd`
     </Warning>
   </Step>
 
-  <Step title="Add Account in Infisical">
+  <Step title="Add Account in Hanzo KMS">
     <ParamField path="Name" type="string" required>
       A friendly name for this account
     </ParamField>
@@ -230,46 +230,46 @@ Certificate authentication requires additional setup on your SSH server to trust
     </ParamField>
 
     <Note>
-      Unlike password or key authentication, you don't need to provide any credentials. Infisical will generate a new key pair and certificate for each session.
+      Unlike password or key authentication, you don't need to provide any credentials. Hanzo KMS will generate a new key pair and certificate for each session.
     </Note>
   </Step>
 </Steps>
 
 ## Access SSH Servers
 
-Once your resource and accounts are configured, users can access SSH servers through the Infisical CLI.
+Once your resource and accounts are configured, users can access SSH servers through the KMS CLI.
 
 <Steps>
   <Step title="Install the CLI">
-    If you haven't already, install the Infisical CLI:
+    If you haven't already, install the KMS CLI:
 
     ```bash
     # macOS
-    brew install infisical/get-cli/infisical
+    brew install kms/get-cli/kms
 
     # Linux
-    curl -1sLf 'https://artifacts-cli.infisical.com/setup.deb.sh' | sudo -E bash
-    sudo apt-get install infisical
+    curl -1sLf 'https://artifacts-cli.kms.hanzo.ai/setup.deb.sh' | sudo -E bash
+    sudo apt-get install kms
     ```
   </Step>
 
-  <Step title="Login to Infisical">
+  <Step title="Login to Hanzo KMS">
     ```bash
-    infisical login
+    hanzo-kms login
     ```
   </Step>
 
   <Step title="Connect to SSH Server">
-    Specify the **resource name** and **account name** as shown in Infisical:
+    Specify the **resource name** and **account name** as shown in Hanzo KMS:
 
     ```bash
-    infisical pam ssh access --resource <resource-name> --account <account-name> --project-id <project-id> --duration <duration>
+    kms pam ssh access --resource <resource-name> --account <account-name> --project-id <project-id> --duration <duration>
     ```
 
     For example, to access the account `ubuntu-admin` on the resource `production-server`:
 
     ```bash
-    infisical pam ssh access --resource production-server --account ubuntu-admin --project-id 00000000-0000-0000-0000-000000000000 --duration 1h
+    kms pam ssh access --resource production-server --account ubuntu-admin --project-id 00000000-0000-0000-0000-000000000000 --duration 1h
     ```
   </Step>
 </Steps>

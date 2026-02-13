@@ -1,10 +1,10 @@
 ---
-title: "Infisical Node.js SDK"
+title: "Hanzo KMS Node.js SDK"
 sidebarTitle: "Node.js"
 icon: "/images/sdks/languages/node.svg"
 ---
 
-If you're working with Node.js, the official Infisical Node.js SDK package is the easiest way to fetch and work with secrets for your application. 
+If you're working with Node.js, the official Hanzo KMS Node.js SDK package is the easiest way to fetch and work with secrets for your application. 
 
 ## Deprecation Notice
 
@@ -14,19 +14,19 @@ Please upgrade to version 4.0.0 or newer in order to receive the latest updates.
 ## Installation
 
 ```bash
-npm install @infisical/sdk
+npm install @hanzo/kms-sdk
 ```
 
 ## Getting Started
 
 ```typescript
-import { InfisicalSDK } from '@infisical/sdk'
+import { Hanzo KMSSDK } from '@hanzo/kms-sdk'
 
-const client = new InfisicalSDK({
-  siteUrl: "your-infisical-instance.com" // Optional, defaults to https://app.infisical.com
+const client = new Hanzo KMSSDK({
+  siteUrl: "your-kms-instance.com" // Optional, defaults to https://kms.hanzo.ai
 });
 
-// Authenticate with Infisical
+// Authenticate with Hanzo KMS
 await client.auth().universalAuth.login({
   clientId: "<machine-identity-client-id>",
   clientSecret: "<machine-identity-client-secret>"
@@ -135,7 +135,7 @@ const allSecrets = await client.secrets().listSecrets({
 - `environment` (string): The environment in which to list secrets (e.g., "dev").
 - `secretPath` (str): The path to the secrets.
 - `expandSecretReferences` (bool, optional): Whether to expand secret references.
-- `viewSecretValue` (bool, optional): Whether or not to reveal the secret value of the secrets. If set to `false`, the `secretValue` is masked with `<hidden-by-infisical>`. Defaults to `true`.
+- `viewSecretValue` (bool, optional): Whether or not to reveal the secret value of the secrets. If set to `false`, the `secretValue` is masked with `<hidden-by-kms>`. Defaults to `true`.
 - `recursive` (bool, optional): Whether to list secrets recursively.
 - `includeImports` (bool, optional): Whether to include imported secrets.
 - `tagFilters` (string[], optional): Tags to filter secrets.
@@ -163,7 +163,7 @@ const allSecrets = await client.secrets().listSecretsWithImports({
 - `environment` (string): The environment in which to list secrets (e.g., "dev").
 - `secretPath` (str): The path to the secrets.
 - `expandSecretReferences` (bool, optional): Whether to expand secret references.
-- `viewSecretValue` (bool, optional): Whether or not to reveal the secret value of the secrets. If set to `false`, the `secretValue` is masked with `<hidden-by-infisical>`. Defaults to `true`.
+- `viewSecretValue` (bool, optional): Whether or not to reveal the secret value of the secrets. If set to `false`, the `secretValue` is masked with `<hidden-by-kms>`. Defaults to `true`.
 - `recursive` (bool, optional): Whether to list secrets recursively.
 - `tagFilters` (string[], optional): Tags to filter secrets.
 
@@ -268,7 +268,7 @@ const updatedSecret = await client.secrets().updateSecret("SECRET_TO_UPDATE", {
 - `secretName` (str): The name of the secret.
 - `secretPath` (str, optional): The path to the secret.
 - `expandSecretReferences` (bool, optional): Whether to expand secret references.
-- `viewSecretValue` (bool, optional): Whether or not to reveal the secret value of the secret. If set to `false`, the `secretValue` is masked with `<hidden-by-infisical>`. Defaults to `true`.
+- `viewSecretValue` (bool, optional): Whether or not to reveal the secret value of the secret. If set to `false`, the `secretValue` is masked with `<hidden-by-kms>`. Defaults to `true`.
 - `includeImports` (bool): Whether to include imported secrets.
 - `version` (str, optional): The version of the secret to retrieve. Fetches the latest by default.
 - `type` (personal | shared, optional): The type of secret to fetch.
@@ -311,14 +311,14 @@ Creating a new dynamic secret can be done by using the `.dynamicSecrets().create
 
 
 The input for creating new dynamic secret varies greatly between secret types.
-For a more in-depth description of each input type for each dynamic secret type, please refer to [our API documentation](https://infisical.com/docs/api-reference/endpoints/dynamic-secrets/create)
+For a more in-depth description of each input type for each dynamic secret type, please refer to [our API documentation](https://kms.hanzo.ai/docs/api-reference/endpoints/dynamic-secrets/create)
 
 
 ##### Example for creating a new Redis dynamic secret
 
 ```typescript
-import { InfisicalSDK, DynamicSecretProviders } from "@infisical/sdk";
-	const client = new InfisicalSDK();
+import { Hanzo KMSSDK, DynamicSecretProviders } from "@hanzo/kms-sdk";
+	const client = new Hanzo KMSSDK();
 
 	await client.auth().universalAuth.login({
 		// For localhost
@@ -467,7 +467,7 @@ const project = await client.projects().create({
 - `projectDescription` (string): An optional description of the project to create.
 - `slug` (string): An optional slug for the project to create. If not provided, one will be generated automatically.
 - `template` (string): Optionally provide a project template name to use for creating this project.
-- `kmsKeyId` (string): The ID of the KMS key to use for the project. Will use the Infisical KMS by default.
+- `kmsKeyId` (string): The ID of the KMS key to use for the project. Will use the Hanzo KMS KMS by default.
 
 **Returns:**
 - `Project`: The project that was created.
@@ -512,7 +512,7 @@ const environment = await client.environments().create({
 - `name` (string): The name of the environment to be created.
 - `projectId` (string): The ID of the project to create the environment within.
 - `slug`: (string): The slug of the environment to be created.
-- `position` (number): An optional position of the environment to be created. The position is used in the Infisical UI to display environments in order. Environments with the lowest position come first.
+- `position` (number): An optional position of the environment to be created. The position is used in the Hanzo KMS UI to display environments in order. Environments with the lowest position come first.
 
 **Returns:**
 - `Environment`: The environment that was created.
@@ -570,8 +570,8 @@ Creating a new KMS key can be done by using the `.kms().keys().create({})` funct
 ##### Example for creating an encryption key
 
 ```typescript
-import { InfisicalSDK, KeyUsage, EncryptionAlgorithm } from "@infisical/sdk";
-const client = new InfisicalSDK();
+import { Hanzo KMSSDK, KeyUsage, EncryptionAlgorithm } from "@hanzo/kms-sdk";
+const client = new Hanzo KMSSDK();
 
 await client.auth().universalAuth.login({
 	clientId: "CLIENT_ID",
@@ -696,7 +696,7 @@ The signing module provides operations for digitally signing data and verifying 
 #### Sign data
 
 ```typescript
-import { SigningAlgorithm } from "@infisical/sdk";
+import { SigningAlgorithm } from "@hanzo/kms-sdk";
 
 const signature = await client.kms().signing().sign({
 	keyId: "<kms-key-id>",

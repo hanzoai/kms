@@ -1,19 +1,19 @@
 ---
 title: GitLab
-description: "Learn how to authenticate GitLab pipelines with Infisical using OpenID Connect (OIDC)."
+description: "Learn how to authenticate GitLab pipelines with Hanzo KMS using OpenID Connect (OIDC)."
 ---
 
 **OIDC Auth** is a platform-agnostic JWT-based authentication method that can be used to authenticate from any platform or environment using an identity provider with OpenID Connect.
 
 ## Diagram
 
-The following sequence diagram illustrates the OIDC Auth workflow for authenticating GitLab pipelines with Infisical.
+The following sequence diagram illustrates the OIDC Auth workflow for authenticating GitLab pipelines with Hanzo KMS.
 
 ```mermaid
 sequenceDiagram
   participant Client as GitLab Pipeline
   participant Idp as GitLab Identity Provider
-  participant Infis as Infisical
+  participant Infis as Hanzo KMS
 
   Client->>Idp: Step 1: Request identity token
   Idp-->>Client: Return JWT with verifiable claims
@@ -28,30 +28,30 @@ sequenceDiagram
   Note over Infis: Step 4: JWT validation
   Infis->>Client: Return short-lived access token
 
-  Note over Client,Infis: Step 5: Access Infisical API with Token
+  Note over Client,Infis: Step 5: Access Hanzo KMS API with Token
   Client->>Infis: Make authenticated requests using the short-lived access token
 ```
 
 ## Concept
 
-At a high-level, Infisical authenticates a client by verifying the JWT and checking that it meets specific requirements (e.g. it is issued by a trusted identity provider) at the `/api/v1/auth/oidc-auth/login` endpoint. If successful,
-then Infisical returns a short-lived access token that can be used to make authenticated requests to the Infisical API.
+At a high-level, Hanzo KMS authenticates a client by verifying the JWT and checking that it meets specific requirements (e.g. it is issued by a trusted identity provider) at the `/api/v1/auth/oidc-auth/login` endpoint. If successful,
+then Hanzo KMS returns a short-lived access token that can be used to make authenticated requests to the Hanzo KMS API.
 
 To be more specific:
 
 1. The GitLab pipeline requests an identity token from GitLab's identity provider.
-2. The fetched identity token is sent to Infisical at the `/api/v1/auth/oidc-auth/login` endpoint.
-3. Infisical fetches the public key that was used to sign the identity token from GitLab's identity provider using OIDC Discovery.
-4. Infisical validates the JWT using the public key provided by the identity provider and checks that the subject, audience, and claims of the token matches with the set criteria.
-5. If all is well, Infisical returns a short-lived access token that the GitLab pipeline can use to make authenticated requests to the Infisical API.
+2. The fetched identity token is sent to Hanzo KMS at the `/api/v1/auth/oidc-auth/login` endpoint.
+3. Hanzo KMS fetches the public key that was used to sign the identity token from GitLab's identity provider using OIDC Discovery.
+4. Hanzo KMS validates the JWT using the public key provided by the identity provider and checks that the subject, audience, and claims of the token matches with the set criteria.
+5. If all is well, Hanzo KMS returns a short-lived access token that the GitLab pipeline can use to make authenticated requests to the Hanzo KMS API.
 
 <Note>
-  Infisical needs network-level access to GitLab's identity provider endpoints.
+  Hanzo KMS needs network-level access to GitLab's identity provider endpoints.
 </Note>
 
 ## Guide
 
-In the following steps, we explore how to create and use identities to access the Infisical API using the OIDC Auth authentication method.
+In the following steps, we explore how to create and use identities to access the Hanzo KMS API using the OIDC Auth authentication method.
 
 <Steps>
     <Step title="Creating an identity">
@@ -106,13 +106,13 @@ In the following steps, we explore how to create and use identities to access th
         ![identities project create](/images/platform/identities/identities-project-create.png)
     </Step>
 
-    <Step title="Accessing the Infisical API with the identity">
-        As demonstration, we will be using the Infisical CLI to fetch Infisical secrets and utilize them within a GitLab pipeline.
+    <Step title="Accessing the Hanzo KMS API with the identity">
+        As demonstration, we will be using the KMS CLI to fetch Hanzo KMS secrets and utilize them within a GitLab pipeline.
 
-        To access Infisical secrets as the identity, you need to use an identity token from GitLab which matches the OIDC configuration defined for the machine identity.
-        This can be done by defining the `id_tokens` property. The resulting token would then be used to login with OIDC like the following: `infisical login --method=oidc-auth --oidc-jwt=$GITLAB_TOKEN`
+        To access Hanzo KMS secrets as the identity, you need to use an identity token from GitLab which matches the OIDC configuration defined for the machine identity.
+        This can be done by defining the `id_tokens` property. The resulting token would then be used to login with OIDC like the following: `hanzo-kms login --method=oidc-auth --oidc-jwt=$GITLAB_TOKEN`
 
-        Below is a complete example of how a GitLab pipeline can be configured to work with secrets from Infisical using the Infisical CLI with OIDC Auth:
+        Below is a complete example of how a GitLab pipeline can be configured to work with secrets from Hanzo KMS using the KMS CLI with OIDC Auth:
 
         ```yaml
         image: ubuntu
@@ -123,21 +123,21 @@ In the following steps, we explore how to create and use identities to access th
         build-job:
         stage: build
         id_tokens:
-            INFISICAL_ID_TOKEN:
-                aud: infisical-aud-test
+            KMS_ID_TOKEN:
+                aud: kms-aud-test
         script:
             - apt update && apt install -y curl
-            - curl -1sLf 'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.deb.sh' | bash
-            - apt-get update && apt-get install -y infisical
-            - export INFISICAL_TOKEN=$(infisical login --method=oidc-auth --machine-identity-id=4e807a78-1b1c-4bd6-9609-ef2b0cf4fd54 --oidc-jwt=$INFISICAL_ID_TOKEN --silent --plain)
-            - infisical run --projectId=1d0443c1-cd43-4b3a-91a3-9d5f81254a89 --env=dev -- npm run build
+            - curl -1sLf 'https://dl.cloudsmith.io/public/ghcr.io/hanzoai/kms-cli/setup.deb.sh' | bash
+            - apt-get update && apt-get install -y kms
+            - export KMS_TOKEN=$(hanzo-kms login --method=oidc-auth --machine-identity-id=4e807a78-1b1c-4bd6-9609-ef2b0cf4fd54 --oidc-jwt=$KMS_ID_TOKEN --silent --plain)
+            - hanzo-kms run --projectId=1d0443c1-cd43-4b3a-91a3-9d5f81254a89 --env=dev -- npm run build
         ```
 
-        The `id_tokens` keyword is used to request an ID token for the job. In this example, an ID token named `INFISICAL_ID_TOKEN` is requested with the audience (`aud`) claim set to "infisical-aud-test". This ID token will be used to authenticate with Infisical.
+        The `id_tokens` keyword is used to request an ID token for the job. In this example, an ID token named `KMS_ID_TOKEN` is requested with the audience (`aud`) claim set to "kms-aud-test". This ID token will be used to authenticate with Hanzo KMS.
         <Note>
         Each identity access token has a time-to-live (TTL) which you can infer from the response of the login operation; the default TTL is `7200` seconds, which can be adjusted.
 
-        If an identity access token expires, it can no longer authenticate with the Infisical API. In this case, a new access token should be obtained by performing another login operation.
+        If an identity access token expires, it can no longer authenticate with the Hanzo KMS API. In this case, a new access token should be obtained by performing another login operation.
         </Note>
 
     </Step>

@@ -1,9 +1,9 @@
 ---
 title: "Supabase Connection"
-description: "Learn how to configure a Supabase Connection for Infisical."
+description: "Learn how to configure a Supabase Connection for Hanzo KMS."
 ---
 
-Infisical supports the use of [Personal Access Tokens](https://supabase.com/dashboard/account/tokens) to connect with Supabase.
+Hanzo KMS supports the use of [Personal Access Tokens](https://supabase.com/dashboard/account/tokens) to connect with Supabase.
 
 ## Create a Supabase Personal Access Token
 
@@ -28,13 +28,13 @@ Infisical supports the use of [Personal Access Tokens](https://supabase.com/dash
   </Step>
 </Steps>
 
-## Create a Supabase Connection in Infisical
+## Create a Supabase Connection in Hanzo KMS
 
 <Tabs>
-  <Tab title="Infisical UI">
+  <Tab title="Hanzo KMS UI">
     <Steps>
       <Step title="Navigate to App Connections">
-        In your Infisical dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
+        In your Hanzo KMS dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
 
         ![App Connections Tab](/images/app-connections/general/add-connection.png)
       </Step>
@@ -53,7 +53,7 @@ Infisical supports the use of [Personal Access Tokens](https://supabase.com/dash
         ![Supabase Connection Modal](/images/app-connections/supabase/app-connection-form.png)
       </Step>
       <Step title="Connection created">
-        After submitting the form, your **Supabase Connection** will be successfully created and ready to use with your Infisical project.
+        After submitting the form, your **Supabase Connection** will be successfully created and ready to use with your Hanzo KMS project.
 
         ![Supabase Connection Created](/images/app-connections/supabase/app-connection-generated.png)
       </Step>
@@ -68,7 +68,7 @@ Infisical supports the use of [Personal Access Tokens](https://supabase.com/dash
 
     ```bash Request
     curl    --request POST \
-            --url https://app.infisical.com/api/v1/app-connections/supabase \
+            --url https://kms.hanzo.ai/api/v1/app-connections/supabase \
             --header 'Content-Type: application/json' \
             --data '{
                 "name": "my-supabase-connection",

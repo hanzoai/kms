@@ -13,12 +13,12 @@ export const MYSQL_TEMPLATE = {
       port: { type: "integer" as const, default: "3306" },
       username1: {
         type: "string",
-        default: "infisical-sql-user1",
+        default: "kms-sql-user1",
         desc: "This user must be created in your database"
       },
       username2: {
         type: "string",
-        default: "infisical-sql-user2",
+        default: "kms-sql-user2",
         desc: "This user must be created in your database"
       },
       ca: { type: "string", desc: "SSL certificate for db auth(string)" }

@@ -63,7 +63,7 @@ SecretApprovalRequestBypassedTemplate.PreviewProps = {
   requesterEmail: "abigail@infisical.com",
   secretPath: "/api/secrets",
   environment: "Production",
-  siteUrl: "https://infisical.com",
+  siteUrl: "https://kms.hanzo.ai",
   projectName: "Example Project",
   bypassReason: "I needed urgent access for a production misconfiguration."
 } as SecretApprovalRequestBypassedTemplateProps;

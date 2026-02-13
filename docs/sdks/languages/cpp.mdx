@@ -1,13 +1,13 @@
 ---
-title: "Infisical C++ SDK"
+title: "Hanzo KMS C++ SDK"
 sidebarTitle: "C++"
 icon: "/images/sdks/languages/cpp.svg"
 ---
 
-If you're working with C++, the official Infisical C++ SDK package is the easiest way to fetch and work with secrets for your application.
+If you're working with C++, the official Hanzo KMS C++ SDK package is the easiest way to fetch and work with secrets for your application.
 
 ## Compatible with C++ 17 and later
-The Infisical C++ SDK is compatible with C++ 17 capable compilers. This implies GCC 8 or newer, and clang 3.8 or newer. Earlier versions of C++ are unsupported.
+The Hanzo KMS C++ SDK is compatible with C++ 17 capable compilers. This implies GCC 8 or newer, and clang 3.8 or newer. Earlier versions of C++ are unsupported.
 
 ## Dependencies
 - `cURL`: Used internally for crafting HTTP requests.
@@ -16,7 +16,7 @@ The Infisical C++ SDK is compatible with C++ 17 capable compilers. This implies 
 
 ```bash
 cmake_minimum_required(VERSION 3.14)
-project(InfisicalTest)
+project(Hanzo KMSTest)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -29,19 +29,19 @@ include(FetchContent)
 
 
 FetchContent_Declare(
-  infisical
-  GIT_REPOSITORY https://github.com/Infisical/infisical-cpp-sdk.git
+  kms
+  GIT_REPOSITORY https://github.com/hanzoai/kms-cpp-sdk.git
   GIT_TAG 1.0.0 # Replace with the desired version
 )
 
-FetchContent_MakeAvailable(infisical)
-FetchContent_GetProperties(infisical)
+FetchContent_MakeAvailable(kms)
+FetchContent_GetProperties(kms)
 
 
 # Example usage. This will differ based on your project structure.
 add_executable(my_app src/main.cpp)
-target_link_libraries(my_app PRIVATE infisical OpenSSL::SSL OpenSSL::Crypto)
-target_include_directories(my_app PRIVATE ${infisical_SOURCE_DIR}/include)
+target_link_libraries(my_app PRIVATE kms OpenSSL::SSL OpenSSL::Crypto)
+target_include_directories(my_app PRIVATE ${kms_SOURCE_DIR}/include)
 ```
 
 ## Manual Installation
@@ -56,27 +56,27 @@ make
 
 ## Quick-Start Example
 
-Below you'll find an example that uses the Infisical SDK to fetch a secret with the key `API_KEY` using [Machine Identity Universal Auth](https://infisical.com/docs/documentation/platform/identities/universal-auth)
+Below you'll find an example that uses the Hanzo KMS SDK to fetch a secret with the key `API_KEY` using [Machine Identity Universal Auth](https://kms.hanzo.ai/docs/documentation/platform/identities/universal-auth)
 
-More examples can be found in the [/examples](https://github.com/Infisical/infisical-cpp-sdk/tree/main/examples) folder.
+More examples can be found in the [/examples](https://github.com/hanzoai/kms-cpp-sdk/tree/main/examples) folder.
 
 ```cpp
 #include <iostream>
-#include <libinfisical/InfisicalClient.h>
+#include <libkms/Hanzo KMSClient.h>
 
 int main() {
 
   try {
-    Infisical::InfisicalClient client(
-        Infisical::ConfigBuilder()
-            .withHostUrl("https://app.infisical.com") // Optionally change this to your custom Infisical instance URL.
+    Hanzo KMS::Hanzo KMSClient client(
+        Hanzo KMS::ConfigBuilder()
+            .withHostUrl("https://kms.hanzo.ai") // Optionally change this to your custom Hanzo KMS instance URL.
             .withAuthentication(
-                Infisical::AuthenticationBuilder()
+                Hanzo KMS::AuthenticationBuilder()
                     .withUniversalAuth("<machine-identity-universal-auth-client-id>", "<machine-identity-universal-auth-client-secret>")
                     .build())
             .build());
 
-    const auto getSecretOptions = Infisical::Input::GetSecretOptionsBuilder()
+    const auto getSecretOptions = Hanzo KMS::Input::GetSecretOptionsBuilder()
                                       .withEnvironment("<env-slug>") // dev, staging, prod, etc
                                       .withProjectId("<your-project-id>")
                                       .withSecretKey("API_KEY")
@@ -85,7 +85,7 @@ int main() {
     const auto apiKeySecret = client.secrets().getSecret(getSecretOptions);
 
     printf("Secret retrieved, [key=%s] [value=%s]\n", apiKeySecret.getSecretKey().c_str(), apiKeySecret.getSecretValue().c_str());
-  } catch (const Infisical::InfisicalError &e) {
+  } catch (const Hanzo KMS::Hanzo KMSError &e) {
     std::cerr << "Error: " << e.what() << std::endl;
     return 1;
   }
@@ -99,19 +99,19 @@ The SDK uses [nlohmann/json](https://github.com/nlohmann/json) internally to ser
 
 
 ## Documentation
-The Infisical C++ SDK follows a builder pattern for all types of input. Below is a detailed documentation of our currently support methods.
+The Hanzo KMS C++ SDK follows a builder pattern for all types of input. Below is a detailed documentation of our currently support methods.
 
-Everything related to the Infisical SDK lives inside the `Infisical` namespace.
+Everything related to the Hanzo KMS SDK lives inside the `Hanzo KMS` namespace.
 
-### InfisicalClient Class
-`InfisicalClient(Config &config)`
+### Hanzo KMSClient Class
+`Hanzo KMSClient(Config &config)`
 
 ```cpp
-  Infisical::InfisicalClient client(
-      Infisical::ConfigBuilder()
-          .withHostUrl("https://app.infisical.com")
+  Hanzo KMS::Hanzo KMSClient client(
+      Hanzo KMS::ConfigBuilder()
+          .withHostUrl("https://kms.hanzo.ai")
           .withAuthentication(
-              Infisical::AuthenticationBuilder()
+              Hanzo KMS::AuthenticationBuilder()
                   .withUniversalAuth(clientId, clientSecret)
                   .build())
           .build());
@@ -121,31 +121,31 @@ Config is created through the `ConfigBuilder` class. See below for more details
 
 ### Config Class
 
-`Config` defines the configuration of the Infisical Client itself, such as authentication.
+`Config` defines the configuration of the Hanzo KMS Client itself, such as authentication.
 
 ```cpp
-Infisical::Config config = Infisical::ConfigBuilder()
-                          .withHostUrl("https://app.infisical.com")
+Hanzo KMS::Config config = Hanzo KMS::ConfigBuilder()
+                          .withHostUrl("https://kms.hanzo.ai")
                           .withAuthentication(
-                            Infisical::AuthenticationBuilder()
+                            Hanzo KMS::AuthenticationBuilder()
                               .withUniversalAuth(clientId, clientSecret)
                               .build())
                           .build();
 
-Infisical::InfisicalClient client(config);
+Hanzo KMS::Hanzo KMSClient client(config);
 ```
 
-- `withHostUrl(string)` _(optional)_: Specify a custom Infisical host URL, pointing to your Infisical instance. Defaults to `https://app.infisical.com`
-- `withAuthentication(Infisical::Authentication)`: Configure the authentication that will be used by the SDK. See [Authentication Class](#authentication-class) for more details.
+- `withHostUrl(string)` _(optional)_: Specify a custom Hanzo KMS host URL, pointing to your Hanzo KMS instance. Defaults to `https://kms.hanzo.ai`
+- `withAuthentication(Hanzo KMS::Authentication)`: Configure the authentication that will be used by the SDK. See [Authentication Class](#authentication-class) for more details.
 - `build()`: Returns the `Config` object with the options you configured.
 
 ### Authentication Class
 ```cpp
-Infisical::Authentication auth = Infisical::AuthenticationBuilder()
+Hanzo KMS::Authentication auth = Hanzo KMS::AuthenticationBuilder()
                                   .withUniversalAuth(clientId, clientSecret)
                                   .build();
 
-Infisical::Config config = Infisical::ConfigBuilder()
+Hanzo KMS::Config config = Hanzo KMS::ConfigBuilder()
                             .withAuthentication(std::move(auth)) // Or use inline declaration
                             .build();
 ```
@@ -175,7 +175,7 @@ The `TSecret` class is the class that's returned by all secret methods (get/list
 
 #### Create Secret
 ```cpp
-const auto createSecretOptions = Infisical::Input::CreateSecretOptionsBuilder()
+const auto createSecretOptions = Hanzo KMS::Input::CreateSecretOptionsBuilder()
                                   .withEnvironment("<env-slug>")
                                   .withProjectId("<project-id>")
                                   .withSecretKey("SECRET_KEY_TO_CREATE")
@@ -204,7 +204,7 @@ const auto secret = client.secrets().createSecret(createSecretOptions);
 #### Update Secret
 
 ```cpp
-  const auto updateSecretOptions = Infisical::Input::UpdateSecretOptionsBuilder()
+  const auto updateSecretOptions = Hanzo KMS::Input::UpdateSecretOptionsBuilder()
                                     .withEnvironment("<env-slug>")
                                     .withProjectId("<project-id>")
                                     .withSecretKey("<secret-key>") 
@@ -238,7 +238,7 @@ const auto updatedSecret = client.secrets().updateSecret(updateSecretOptions);
 
 #### Get Secret
 ```cpp
-const auto getSecretOptions = Infisical::Input::GetSecretOptionsBuilder()
+const auto getSecretOptions = Hanzo KMS::Input::GetSecretOptionsBuilder()
                                 .withEnvironment("<env-slug>")
                                 .withProjectId("<project-id>")
                                 .withSecretKey("<secret-key>") 
@@ -265,7 +265,7 @@ const auto secret = client.secrets().getSecret(getSecretOptions);
 #### Delete Secret
 
 ```cpp
-const auto deleteSecretOptions = Infisical::Input::DeleteSecretOptionsBuilder()
+const auto deleteSecretOptions = Hanzo KMS::Input::DeleteSecretOptionsBuilder()
                                   .withEnvironment("<env-slug>")
                                   .withProjectId("<project-id>")
                                   .withSecretKey("<secret-key>")
@@ -290,7 +290,7 @@ const auto deletedSecret = client.secrets().deleteSecret(deleteSecretOptions);
 
 #### List Secrets
 ```cpp
-const auto listSecretsOptions = Infisical::Input::ListSecretOptionsBuilder()
+const auto listSecretsOptions = Hanzo KMS::Input::ListSecretOptionsBuilder()
                                   .withProjectId(projectId)
                                   .withEnvironment(environment)
                                   .withSecretPath("/")

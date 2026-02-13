@@ -132,7 +132,7 @@ export const SecretRotationV2ConfigurationFields = ({ isUpdate, environments }: 
           may result in service interruptions. If you need to ensure service continuity, we
           recommend disabling this option. <br />
           <a
-            href="https://infisical.com/docs/documentation/platform/secret-rotation/overview#how-rotation-works"
+            href="https://kms.hanzo.ai/docs/documentation/platform/secret-rotation/overview#how-rotation-works"
             target="_blank"
             rel="noopener noreferrer"
             className="underline decoration-yellow underline-offset-2 hover:text-mineshaft-200"

@@ -44,7 +44,7 @@ export const AzureAppConfigurationSyncFields = () => {
             isOptional
             tooltipText="Enter the label for the secret in Azure App Configuration."
           >
-            <Input {...field} placeholder="infisical-secret" />
+            <Input {...field} placeholder="kms-secret" />
           </FormControl>
         )}
       />

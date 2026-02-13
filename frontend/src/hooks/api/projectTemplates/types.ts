@@ -64,6 +64,6 @@ export type TDeleteProjectTemplateDTO = {
   templateId: string;
 };
 
-export enum InfisicalProjectTemplate {
+export enum KmsProjectTemplate {
   Default = "default"
 }

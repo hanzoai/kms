@@ -19,7 +19,7 @@ export const ApprovalsPage = () => {
   return (
     <div className="mx-auto flex flex-col justify-between bg-bunker-800 text-white">
       <Helmet>
-        <link rel="icon" href="/infisical.ico" />
+        <link rel="icon" href="/favicon.ico" />
       </Helmet>
       <div className="mx-auto mb-6 w-full max-w-8xl">
         <PageHeader

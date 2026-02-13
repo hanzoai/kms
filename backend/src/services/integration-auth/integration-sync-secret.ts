@@ -809,7 +809,7 @@ const syncSecretsAWSParameterStore = async ({
     });
     const command = new AssumeRoleCommand({
       RoleArn: awsAssumeRoleArn,
-      RoleSessionName: `infisical-parameter-store-${crypto.nativeCrypto.randomUUID()}`,
+      RoleSessionName: `kms-parameter-store-${crypto.nativeCrypto.randomUUID()}`,
       DurationSeconds: 900, // 15mins
       ExternalId: projectId
     });
@@ -913,7 +913,7 @@ const syncSecretsAWSParameterStore = async ({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if ((error as any).code === "AccessDeniedException") {
         logger.error(
-          `AWS Parameter Store Error [integration=${integration.id}]: double check AWS account permissions (refer to the Infisical docs)`
+          `AWS Parameter Store Error [integration=${integration.id}]: double check AWS account permissions (refer to the Hanzo KMS docs)`
         );
       }
 
@@ -974,7 +974,7 @@ const syncSecretsAWSParameterStore = async ({
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               if ((err as any).code === "AccessDeniedException") {
                 logger.error(
-                  `AWS Parameter Store Error [integration=${integration.id}]: double check AWS account permissions (refer to the Infisical docs)`
+                  `AWS Parameter Store Error [integration=${integration.id}]: double check AWS account permissions (refer to the Hanzo KMS docs)`
                 );
               }
 
@@ -1036,7 +1036,7 @@ const syncSecretsAWSParameterStore = async ({
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             if ((err as any).code === "AccessDeniedException") {
               logger.error(
-                `AWS Parameter Store Error [integration=${integration.id}]: double check AWS account permissions (refer to the Infisical docs)`
+                `AWS Parameter Store Error [integration=${integration.id}]: double check AWS account permissions (refer to the Hanzo KMS docs)`
               );
             }
 
@@ -1129,7 +1129,7 @@ const syncSecretsAWSSecretManager = async ({
     });
     const command = new AssumeRoleCommand({
       RoleArn: awsAssumeRoleArn,
-      RoleSessionName: `infisical-sm-${crypto.nativeCrypto.randomUUID()}`,
+      RoleSessionName: `kms-sm-${crypto.nativeCrypto.randomUUID()}`,
       DurationSeconds: 900, // 15mins
       ExternalId: projectId
     });
@@ -1437,7 +1437,7 @@ const syncSecretsVercel = async ({
   createManySecretsRawFn,
   integration,
   integrationAuth,
-  secrets: infisicalSecrets,
+  secrets: kmsSecrets,
   accessToken
 }: {
   createManySecretsRawFn: (params: TCreateManySecretsRawFn) => Promise<Array<{ id: string }>>;
@@ -1545,7 +1545,7 @@ const syncSecretsVercel = async ({
     metadata.initialSyncBehavior = IntegrationInitialSyncBehavior.OVERWRITE_TARGET;
   }
 
-  const secretsToAddToInfisical: { [key: string]: VercelSecret } = {};
+  const secretsToAddToHanzo KMS: { [key: string]: VercelSecret } = {};
 
   Object.keys(res).forEach((vercelKey) => {
     if (!integration.lastUsed) {
@@ -1554,16 +1554,16 @@ const syncSecretsVercel = async ({
       switch (metadata.initialSyncBehavior) {
         // Override all the secrets in Vercel
         case IntegrationInitialSyncBehavior.OVERWRITE_TARGET: {
-          if (!(vercelKey in infisicalSecrets)) infisicalSecrets[vercelKey] = null;
+          if (!(vercelKey in kmsSecrets)) kmsSecrets[vercelKey] = null;
           break;
         }
         case IntegrationInitialSyncBehavior.PREFER_SOURCE: {
-          // if the vercel secret is not in infisical, we need to add it to infisical
-          if (!(vercelKey in infisicalSecrets)) {
-            infisicalSecrets[vercelKey] = {
+          // if the vercel secret is not in Hanzo KMS, we need to add it to Hanzo KMS
+          if (!(vercelKey in kmsSecrets)) {
+            kmsSecrets[vercelKey] = {
               value: res[vercelKey].value
             };
-            secretsToAddToInfisical[vercelKey] = res[vercelKey];
+            secretsToAddToHanzo KMS[vercelKey] = res[vercelKey];
           }
           break;
         }
@@ -1571,19 +1571,19 @@ const syncSecretsVercel = async ({
           throw new Error(`Invalid initial sync behavior: ${metadata.initialSyncBehavior}`);
         }
       }
-    } else if (!(vercelKey in infisicalSecrets)) {
-      infisicalSecrets[vercelKey] = null;
+    } else if (!(vercelKey in kmsSecrets)) {
+      kmsSecrets[vercelKey] = null;
     }
   });
 
-  if (Object.keys(secretsToAddToInfisical).length) {
+  if (Object.keys(secretsToAddToHanzo KMS).length) {
     await createManySecretsRawFn({
       projectId: integration.projectId,
       environment: integration.environment.slug,
       path: integration.secretPath,
-      secrets: Object.keys(secretsToAddToInfisical).map((key) => ({
+      secrets: Object.keys(secretsToAddToHanzo KMS).map((key) => ({
         secretName: key,
-        secretValue: secretsToAddToInfisical[key].value,
+        secretValue: secretsToAddToHanzo KMS[key].value,
         type: SecretType.Shared,
         secretComment: ""
       }))
@@ -1591,15 +1591,15 @@ const syncSecretsVercel = async ({
   }
 
   // update and create logic
-  for await (const key of Object.keys(infisicalSecrets)) {
-    if (!(key in res) || infisicalSecrets[key]?.value !== res[key].value) {
+  for await (const key of Object.keys(kmsSecrets)) {
+    if (!(key in res) || kmsSecrets[key]?.value !== res[key].value) {
       // if the key is not in the vercel res, we need to create it
       if (!(key in res)) {
         await request.post(
           `${IntegrationUrls.VERCEL_API_URL}/v10/projects/${integration.app}/env`,
           {
             key,
-            value: infisicalSecrets[key]?.value,
+            value: kmsSecrets[key]?.value,
             type: "encrypted",
             ...(isCustomEnvironment
               ? {
@@ -1629,7 +1629,7 @@ const syncSecretsVercel = async ({
           `${IntegrationUrls.VERCEL_API_URL}/v9/projects/${integration.app}/env/${res[key].id}`,
           {
             key,
-            value: infisicalSecrets[key]?.value,
+            value: kmsSecrets[key]?.value,
             type: res[key].type,
 
             ...(!isCustomEnvironment
@@ -1664,7 +1664,7 @@ const syncSecretsVercel = async ({
 
   // delete logic
   for await (const key of Object.keys(res)) {
-    if (infisicalSecrets[key] === null) {
+    if (kmsSecrets[key] === null) {
       // case: delete secret
       await request.delete(`${IntegrationUrls.VERCEL_API_URL}/v9/projects/${integration.app}/env/${res[key].id}`, {
         params,
@@ -1734,7 +1734,7 @@ const syncSecretsNetlify = async ({
   // identify secrets to create and update
   Object.keys(secrets).forEach((key) => {
     if (!(key in res)) {
-      // case: Infisical secret does not exist in Netlify -> create secret
+      // case: Hanzo KMS secret does not exist in Netlify -> create secret
       newSecrets.push({
         key,
         values: [
@@ -1745,7 +1745,7 @@ const syncSecretsNetlify = async ({
         ]
       });
     } else {
-      // case: Infisical secret exists in Netlify
+      // case: Hanzo KMS secret exists in Netlify
       const contexts = res[key].values.reduce(
         (obj, value) => ({
           ...obj,
@@ -1757,7 +1757,7 @@ const syncSecretsNetlify = async ({
       if ((integration.targetEnvironment as string) in contexts) {
         // case: Netlify secret value exists in integration context
         if (secrets[key].value !== contexts[integration.targetEnvironment as string].value) {
-          // case: Infisical and Netlify secret values are different
+          // case: Hanzo KMS and Netlify secret values are different
           // -> update Netlify secret context and value
           updateSecrets.push({
             key,
@@ -1790,7 +1790,7 @@ const syncSecretsNetlify = async ({
   Object.keys(res).forEach((key) => {
     // loop through each key's context
     if (!(key in secrets)) {
-      // case: Netlify secret does not exist in Infisical
+      // case: Netlify secret does not exist in Hanzo KMS
 
       const numberOfValues = res[key].values.length;
 
@@ -2901,7 +2901,7 @@ const syncSecretsGitLab = async ({
     });
 
   if (!integration.lastUsed) {
-    const secretsToAddToInfisical: { [key: string]: GitLabSecret } = {};
+    const secretsToAddToHanzo KMS: { [key: string]: GitLabSecret } = {};
     const secretsToRemoveInGitlab: GitLabSecret[] = [];
 
     if (!metadata.initialSyncBehavior) {
@@ -2920,12 +2920,12 @@ const syncSecretsGitLab = async ({
           break;
         }
         case IntegrationInitialSyncBehavior.PREFER_SOURCE: {
-          // if the secret is not in infisical, we need to add it to infisical
+          // if the secret is not in Hanzo KMS, we need to add it to Hanzo KMS
           if (!(gitlabSecret.key in secrets)) {
             secrets[gitlabSecret.key] = {
               value: gitlabSecret.value
             };
-            // need to remove prefix and suffix from what we're saving to Infisical
+            // need to remove prefix and suffix from what we're saving to Hanzo KMS
             const prefix = metadata?.secretPrefix || "";
             const suffix = metadata?.secretSuffix || "";
             let processedKey = gitlabSecret.key;
@@ -2940,7 +2940,7 @@ const syncSecretsGitLab = async ({
               processedKey = processedKey.slice(0, -suffix.length);
             }
 
-            secretsToAddToInfisical[processedKey] = gitlabSecret;
+            secretsToAddToHanzo KMS[processedKey] = gitlabSecret;
           }
           break;
         }
@@ -2950,14 +2950,14 @@ const syncSecretsGitLab = async ({
       }
     });
 
-    if (Object.keys(secretsToAddToInfisical).length) {
+    if (Object.keys(secretsToAddToHanzo KMS).length) {
       await createManySecretsRawFn({
         projectId: integration.projectId,
         environment: integration.environment.slug,
         path: integration.secretPath,
-        secrets: Object.keys(secretsToAddToInfisical).map((key) => ({
+        secrets: Object.keys(secretsToAddToHanzo KMS).map((key) => ({
           secretName: key,
-          secretValue: secretsToAddToInfisical[key].value,
+          secretValue: secretsToAddToHanzo KMS[key].value,
           type: SecretType.Shared
         }))
       });
@@ -4508,7 +4508,7 @@ const syncSecretsRundeck = async ({
     }
   } catch (err: unknown) {
     throw new Error(
-      `Ensure that the provided Rundeck URL is accessible by Infisical and that the linked API token has sufficient permissions.\n\n${
+      `Ensure that the provided Rundeck URL is accessible by Hanzo KMS and that the linked API token has sufficient permissions.\n\n${
         (err as Error).message
       }`
     );

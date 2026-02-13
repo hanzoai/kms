@@ -52,9 +52,9 @@ export async function cloneRepo(
   });
 }
 
-export function runInfisicalScanOnRepo(repoPath: string, outputPath: string): Promise<void> {
+export function runHanzo KMSScanOnRepo(repoPath: string, outputPath: string): Promise<void> {
   return new Promise((resolve, reject) => {
-    const command = `cd ${repoPath} && infisical scan --exit-code=77 -r "${outputPath}"`;
+    const command = `cd ${repoPath} && hanzo-kms scan --exit-code=77 -r "${outputPath}"`;
     exec(command, (error) => {
       if (error && error.code !== 77) {
         reject(error);
@@ -65,9 +65,9 @@ export function runInfisicalScanOnRepo(repoPath: string, outputPath: string): Pr
   });
 }
 
-export function runInfisicalScan(inputPath: string, outputPath: string, configPath?: string): Promise<void> {
+export function runHanzo KMSScan(inputPath: string, outputPath: string, configPath?: string): Promise<void> {
   return new Promise((resolve, reject) => {
-    const command = `cat "${inputPath}" | infisical scan --exit-code=77 --pipe -r "${outputPath}" ${configPath ? `-c "${configPath}"` : ""}`;
+    const command = `cat "${inputPath}" | hanzo-kms scan --exit-code=77 --pipe -r "${outputPath}" ${configPath ? `-c "${configPath}"` : ""}`;
     exec(command, (error) => {
       if (error && error.code !== 77) {
         reject(error);
@@ -130,7 +130,7 @@ export async function scanFullRepoContentAndGetFindings(
       installation_id: Number(installationId)
     });
     await cloneRepo(token, repositoryFullName, repoPath);
-    await runInfisicalScanOnRepo(repoPath, findingsPath);
+    await runHanzo KMSScanOnRepo(repoPath, findingsPath);
     const findingsData = await readFindingsFile(findingsPath);
     return JSON.parse(findingsData) as SecretMatch[];
   } finally {
@@ -145,7 +145,7 @@ export async function scanContentAndGetFindings(textContent: string, configPath?
 
   try {
     await writeTextToFile(filePath, textContent);
-    await runInfisicalScan(filePath, findingsPath, configPath);
+    await runHanzo KMSScan(filePath, findingsPath, configPath);
     const findingsData = await readFindingsFile(findingsPath);
     return JSON.parse(findingsData) as SecretMatch[];
   } finally {

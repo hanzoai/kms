@@ -5,7 +5,7 @@ interface ImportMetaEnv {
   readonly VITE_POSTHOG_HOST: string;
   readonly VITE_INTERCOM_ID?: string;
   readonly VITE_CAPTCHA_SITE_KEY?: string;
-  readonly VITE_INFISICAL_PLATFORM_VERSION?: string;
+  readonly VITE_KMS_PLATFORM_VERSION?: string;
   // more env variables...
 }
 

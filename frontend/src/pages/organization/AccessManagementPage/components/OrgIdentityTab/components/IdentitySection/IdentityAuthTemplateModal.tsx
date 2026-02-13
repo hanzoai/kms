@@ -233,7 +233,7 @@ export const IdentityAuthTemplateModal = ({ popUp, handlePopUpToggle }: Props) =
                     errorText={error?.message}
                     isRequired
                   >
-                    <Input {...field} placeholder="cn=infisical,ou=Users,dc=example,dc=com" />
+                    <Input {...field} placeholder="cn=kms,ou=Users,dc=example,dc=com" />
                   </FormControl>
                 )}
               />

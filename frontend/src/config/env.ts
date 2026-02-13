@@ -6,15 +6,15 @@ export const envConfig = {
   ENV: import.meta.env.MODE,
   get CAPTCHA_SITE_KEY() {
     return (
-      window?.__INFISICAL_RUNTIME_ENV__?.CAPTCHA_SITE_KEY || import.meta.env.VITE_CAPTCHA_SITE_KEY
+      window?.__KMS_RUNTIME_ENV__?.CAPTCHA_SITE_KEY || import.meta.env.VITE_CAPTCHA_SITE_KEY
     );
   },
   get INTERCOM_ID() {
-    return window?.__INFISICAL_RUNTIME_ENV__?.INTERCOM_ID || import.meta.env.VITE_INTERCOM_ID;
+    return window?.__KMS_RUNTIME_ENV__?.INTERCOM_ID || import.meta.env.VITE_INTERCOM_ID;
   },
   get POSTHOG_API_KEY() {
     return (
-      window?.__INFISICAL_RUNTIME_ENV__?.POSTHOG_API_KEY || import.meta.env.VITE_POSTHOG_API_KEY
+      window?.__KMS_RUNTIME_ENV__?.POSTHOG_API_KEY || import.meta.env.VITE_POSTHOG_API_KEY
     );
   },
   get POSTHOG_HOST() {
@@ -22,12 +22,12 @@ export const envConfig = {
   },
   get TELEMETRY_CAPTURING_ENABLED() {
     return (
-      window?.__INFISICAL_RUNTIME_ENV__?.TELEMETRY_CAPTURING_ENABLED ||
+      window?.__KMS_RUNTIME_ENV__?.TELEMETRY_CAPTURING_ENABLED ||
       import.meta.env.VITE_TELEMETRY_CAPTURING_ENABLED === true
     );
   },
 
   get PLATFORM_VERSION() {
-    return import.meta.env.VITE_INFISICAL_PLATFORM_VERSION;
+    return import.meta.env.VITE_KMS_PLATFORM_VERSION;
   }
 };

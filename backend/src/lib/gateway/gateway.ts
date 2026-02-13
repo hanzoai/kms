@@ -1,7 +1,7 @@
 /* eslint-disable no-await-in-loop */
 import net from "node:net";
 
-import quicDefault, * as quicModule from "@infisical/quic";
+import quicDefault, * as quicModule from "@hanzo/kms-quic";
 import axios from "axios";
 import https from "https";
 
@@ -45,7 +45,7 @@ const createQuicConnection = async (
       ca: tlsOptions.ca,
       cert: tlsOptions.cert,
       key: tlsOptions.key,
-      applicationProtos: ["infisical-gateway"],
+      applicationProtos: ["kms-gateway"],
       verifyPeer: true,
       verifyCallback: async (certs) => {
         if (!certs || certs.length === 0) return quic.native.CryptoError.CertificateRequired;

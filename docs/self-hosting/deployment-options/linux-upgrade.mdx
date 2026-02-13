@@ -1,30 +1,30 @@
 ---
 title: "Upgrading"
-description: "How to upgrade Infisical deployment using linux package"
+description: "How to upgrade Hanzo KMS deployment using linux package"
 ---
 
-This guide explains how to upgrade Infisical Linux package installations to newer versions. 
-The Infisical Linux package includes only the Infisical service component itself, as PostgreSQL and Redis databases are managed separately. 
+This guide explains how to upgrade Hanzo KMS Linux package installations to newer versions. 
+The Hanzo KMS Linux package includes only the Hanzo KMS service component itself, as PostgreSQL and Redis databases are managed separately. 
 Upgrades for PostgreSQL and Redis are not covered in this guide as they depend on your specific database deployment method.
 
 ## Upgrade Options
 
-There are two primary methods to upgrade Infisical:
+There are two primary methods to upgrade Hanzo KMS:
 
-1. **Standard Upgrade (with brief downtime)**: The simplest approach that briefly takes Infisical offline during the upgrade.
+1. **Standard Upgrade (with brief downtime)**: The simplest approach that briefly takes Hanzo KMS offline during the upgrade.
 2. **Minimal-Downtime Upgrade**: For multi-node deployments where high availability is required.
 
 ## Before You Begin
 
 ### Checking Your Current Version
 
-Before upgrading, note your current Infisical version:
+Before upgrading, note your current Hanzo KMS version:
 
 ```bash
-cat /opt/infisical-core/version-manifest.txt
+cat /opt/kms-core/version-manifest.txt
 ```
 
-Look for `infisical` component. This will be the version of Infisical currently installed.
+Look for `kms` component. This will be the version of Hanzo KMS currently installed.
 
 ### Prerequisites
 
@@ -40,12 +40,12 @@ Here is a sample of how you would perform a manual backup:
 
 ```bash
 # Example PostgreSQL backup command (adjust parameters as needed)
-pg_dump -U <username> -h <db-host> -d <db-name> > infisical_backup.sql
+pg_dump -U <username> -h <db-host> -d <db-name> > kms_backup.sql
 ```
 
 ### Database Migrations During Upgrade
 
-By default, Infisical runs database migrations automatically on startup.  
+By default, Hanzo KMS runs database migrations automatically on startup.  
 
 - It uses database locks to ensure only one instance runs migrations at a time
 - Other instances will wait for the lock to be released before continuing startup
@@ -56,23 +56,23 @@ By default, Infisical runs database migrations automatically on startup.
 This method is suitable for single-node deployments or situations where a brief downtime is acceptable.
 
 <Steps>
-  <Step title="Stop the Infisical service">
+  <Step title="Stop the Hanzo KMS service">
    ```bash
-   infisical-ctl stop
+   kms-ctl stop
    ```
   </Step>
-  <Step title="Upgrade the Infisical package">
+  <Step title="Upgrade the Hanzo KMS package">
 To upgrade to the latest version:
 
 <Tabs>
   <Tab title="Debian/Ubuntu">
    ```bash
-   sudo apt-get update && sudo apt-get install -y infisical-core
+   sudo apt-get update && sudo apt-get install -y kms-core
    ```
   </Tab>
   <Tab title="RHEL/CentOS/Amazon Linux">
    ```bash
-   sudo yum update infisical-core
+   sudo yum update kms-core
    ```
   </Tab>
 </Tabs>
@@ -82,12 +82,12 @@ To upgrade to a specific version:
 <Tabs>
   <Tab title="Debian/Ubuntu">
    ```bash
-   sudo apt-get install -y infisical-core=<version>
+   sudo apt-get install -y kms-core=<version>
    ```
   </Tab>
   <Tab title="RHEL/CentOS/Amazon Linux">
    ```bash
-   sudo yum install infisical-core-<version>
+   sudo yum install kms-core-<version>
    ```
   </Tab>
 </Tabs>
@@ -95,31 +95,31 @@ To upgrade to a specific version:
   </Step>
   <Step title="Apply configuration changes">
    ```bash
-   infisical-ctl reconfigure
+   kms-ctl reconfigure
    ```
   </Step>
 
-  <Step title="Start Infisical">
+  <Step title="Start Hanzo KMS">
    ```bash
-   infisical-ctl start
+   kms-ctl start
    ```
   </Step>
 
   <Step title="Verify the upgrade">
    ```bash
-   infisical-ctl status
+   kms-ctl status
    ```
 
    Check the logs for any issues:
    ```bash
-   infisical-ctl tail
+   kms-ctl tail
    ```
   </Step>
 </Steps>
 
 ## Minimal-Downtime Upgrade
 
-For multi-node setups where you need to maintain availability during upgrades, follow this procedure. This approach requires at least two Infisical nodes behind a load balancer.
+For multi-node setups where you need to maintain availability during upgrades, follow this procedure. This approach requires at least two Hanzo KMS nodes behind a load balancer.
 
 ### Understanding Traffic Draining
 
@@ -135,7 +135,7 @@ This approach ensures users/machines do not experience sudden connection errors 
 
 1. **Designate a deploy node**: Choose any single node that will run migrations. This node will be upgraded first.
 
-2. **Configure your load balancer**: Ensure your load balancer can perform health checks against Infisical's `api/status` endpoint.
+2. **Configure your load balancer**: Ensure your load balancer can perform health checks against Hanzo KMS's `api/status` endpoint.
 
 ### Upgrade Process
 
@@ -162,7 +162,7 @@ Approaches for some common load balancers are provided below:
       If using HAProxy, you can put the server in maintenance mode:
       ```bash
       # Using the HAProxy socket command
-      echo "disable server infisical_backend/infisical-node1" | socat stdio /var/lib/haproxy/stats
+      echo "disable server kms_backend/kms-node1" | socat stdio /var/lib/haproxy/stats
       ```
    </Tab>
    <Tab title="AWS ALB/ELB">
@@ -178,25 +178,25 @@ Approaches for some common load balancers are provided below:
 Verify no new traffic is arriving before proceeding with the upgrade.
 </Step>
 
-<Step title="Stop Infisical on this node">
+<Step title="Stop Hanzo KMS on this node">
 ```bash
-infisical-ctl stop
+kms-ctl stop
 ```
 </Step>
 
-<Step title="Upgrade the Infisical package">
+<Step title="Upgrade the Hanzo KMS package">
    
 To upgrade to the latest version:
 
 <Tabs>
   <Tab title="Debian/Ubuntu">
    ```bash
-   sudo apt-get update && sudo apt-get install -y infisical-core
+   sudo apt-get update && sudo apt-get install -y kms-core
    ```
   </Tab>
   <Tab title="RHEL/CentOS/Amazon Linux">
    ```bash
-   sudo yum update infisical-core
+   sudo yum update kms-core
    ```
   </Tab>
 </Tabs>
@@ -206,12 +206,12 @@ To upgrade to a specific version:
 <Tabs>
   <Tab title="Debian/Ubuntu">
    ```bash
-   sudo apt-get install -y infisical-core=<version>
+   sudo apt-get install -y kms-core=<version>
    ```
   </Tab>
   <Tab title="RHEL/CentOS/Amazon Linux">
    ```bash
-   sudo yum install infisical-core-<version>
+   sudo yum install kms-core-<version>
    ```
   </Tab>
 </Tabs>
@@ -219,13 +219,13 @@ To upgrade to a specific version:
 
 <Step title="Apply configuration and start the service">
 ```bash
-infisical-ctl reconfigure
+kms-ctl reconfigure
 ```
 </Step>
 
 <Step title="Verify the upgrade and migration success">
 ```bash
-infisical-ctl tail
+kms-ctl tail
 ```
 Look for successful migration messages in the logs.
 </Step>
@@ -246,24 +246,24 @@ Follow the same draining procedure as described for the deploy node:
 - Verify the node is no longer receiving traffic
 </Step>
 
-<Step title="Stop Infisical on this node">
+<Step title="Stop Hanzo KMS on this node">
 ```bash
-infisical-ctl stop
+kms-ctl stop
 ```
 </Step>
 
-<Step title="Upgrade the Infisical package">
+<Step title="Upgrade the Hanzo KMS package">
 To upgrade to the latest version:
 
 <Tabs>
   <Tab title="Debian/Ubuntu">
    ```bash
-   sudo apt-get update && sudo apt-get install -y infisical-core
+   sudo apt-get update && sudo apt-get install -y kms-core
    ```
   </Tab>
   <Tab title="RHEL/CentOS/Amazon Linux">
    ```bash
-   sudo yum update infisical-core
+   sudo yum update kms-core
    ```
   </Tab>
 </Tabs>
@@ -273,12 +273,12 @@ To upgrade to a specific version:
 <Tabs>
   <Tab title="Debian/Ubuntu">
    ```bash
-   sudo apt-get install -y infisical-core=<version>
+   sudo apt-get install -y kms-core=<version>
    ```
   </Tab>
   <Tab title="RHEL/CentOS/Amazon Linux">
    ```bash
-   sudo yum install infisical-core-<version>
+   sudo yum install kms-core-<version>
    ```
   </Tab>
 </Tabs>
@@ -286,14 +286,14 @@ To upgrade to a specific version:
 
 <Step title="Apply configuration and start the service">
 ```bash
-infisical-ctl reconfigure
+kms-ctl reconfigure
 ```
 </Step>
 
 <Step title="Verify the upgrade success">
 ```bash
-infisical-ctl status
-infisical-ctl tail
+kms-ctl status
+kms-ctl tail
 ```
 </Step>
 
@@ -323,24 +323,24 @@ After all nodes are upgraded, verify that the application is functioning correct
 
 ## Rolling Back
 
-If you need to roll back to a previous version of Infisical, follow steps below.
+If you need to roll back to a previous version of Hanzo KMS, follow steps below.
 
 <Steps>
-<Step title="Stop the Infisical service">
+<Step title="Stop the Hanzo KMS service">
 ```bash
-infisical-ctl stop
+kms-ctl stop
 ```
 </Step>
 
 <Step title="Install the previous version">
 For Debian/Ubuntu:
 ```bash
-sudo apt-get install -y infisical-core=<previous-version>
+sudo apt-get install -y kms-core=<previous-version>
 ```
 
 For RHEL/CentOS/Amazon Linux:
 ```bash
-sudo yum downgrade infisical-core-<previous-version>
+sudo yum downgrade kms-core-<previous-version>
 ```
 </Step>
 
@@ -350,13 +350,13 @@ Restore your Postgres/Redis database from backup.
 
 <Step title="Start the service">
 ```bash
-infisical-ctl reconfigure
+kms-ctl reconfigure
 ```
 </Step>
 
 <Step title="Verify the rollback">
 ```bash
-infisical-ctl status
+kms-ctl status
 ```
 </Step>
 </Steps>
@@ -369,7 +369,7 @@ If you encounter database migration issues:
 
 1. Check the logs:
    ```bash
-   infisical-ctl tail
+   kms-ctl tail
    ```
 
 2. Ensure the database user has sufficient privileges to create/modify tables.
@@ -381,10 +381,10 @@ If you encounter database migration issues:
 <Accordion title="Service Won't Start After Upgrade">
 1. Check for configuration errors:
    ```bash
-   infisical-ctl tail
-   infisical-ctl status
+   kms-ctl tail
+   kms-ctl status
    ```
 
-2. Verify all required environment variables are set in your `/etc/infisical/infisical.rb` file.
+2. Verify all required environment variables are set in your `/etc/ghcr.io/hanzoai/kms.rb` file.
 </Accordion>
 </AccordionGroup>

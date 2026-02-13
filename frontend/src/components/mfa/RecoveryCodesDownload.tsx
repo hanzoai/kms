@@ -27,7 +27,7 @@ export const RecoveryCodesDownload = ({
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `infisical-recovery-codes-${new Date().toISOString().split("T")[0]}.txt`;
+    a.download = `kms-recovery-codes-${new Date().toISOString().split("T")[0]}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

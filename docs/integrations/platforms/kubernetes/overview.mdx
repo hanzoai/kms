@@ -1,23 +1,23 @@
 ---
 title: "Kubernetes Operator"
 sidebarTitle: "Overview"
-description: "How to use Infisical to inject, push, and manage secrets within Kubernetes clusters"
+description: "How to use Hanzo KMS to inject, push, and manage secrets within Kubernetes clusters"
 ---
 
-The Infisical Operator is a collection of Kubernetes controllers that streamline how secrets are managed between Infisical and your Kubernetes cluster. 
+The KMS Operator is a collection of Kubernetes controllers that streamline how secrets are managed between Hanzo KMS and your Kubernetes cluster. 
 It provides multiple Custom Resource Definitions (CRDs) which enable you to:
 
-- **Sync** secrets from Infisical into Kubernetes (`InfisicalSecret`).
-- **Push** new secrets from Kubernetes to Infisical (`InfisicalPushSecret`).
-- **Manage** dynamic secrets and automatically create time-bound leases (`InfisicalDynamicSecret`).
+- **Sync** secrets from Hanzo KMS into Kubernetes (`KmsSecret`).
+- **Push** new secrets from Kubernetes to Hanzo KMS (`KmsPushSecret`).
+- **Manage** dynamic secrets and automatically create time-bound leases (`KmsDynamicSecret`).
 
-When these CRDs are configured, the Infisical Operator will continuously monitors for changes and performs necessary updates to keep your Kubernetes secrets up to date. 
+When these CRDs are configured, the KMS Operator will continuously monitors for changes and performs necessary updates to keep your Kubernetes secrets up to date. 
 It can also automatically reload dependent Deployments resources whenever relevant secrets are updated.
 
 <Note>
   If you are already using the External Secrets operator, you can view the
   integration documentation for it
-  [here](https://external-secrets.io/latest/provider/infisical/).
+  [here](https://external-secrets.io/latest/provider/kms/).
 </Note>
 
 <Tabs>
@@ -31,7 +31,7 @@ It can also automatically reload dependent Deployments resources whenever releva
     - 1.29
   </Tab>
   <Tab title="Supported Kubernetes distributions">
-    The Infisical Kubernetes Operator has been tested successfully in the following hosted Kubernetes environments:
+    The KMS Operator has been tested successfully in the following hosted Kubernetes environments:
 
     - Amazon Elastic Kubernetes Service (EKS)
     - Google Kubernetes Engine (GKE)
@@ -39,7 +39,7 @@ It can also automatically reload dependent Deployments resources whenever releva
     - Oracle Container Engine for Kubernetes (OKE)
     - Red Hat OpenShift
 
-    It may work in other Kubernetes distributions, but those are not officially supported. Please report any issues [here](https://github.com/Infisical/infisical/issues).
+    It may work in other Kubernetes distributions, but those are not officially supported. Please report any issues [here](https://github.com/hanzoai/kms/issues).
   </Tab>
 </Tabs>
 
@@ -49,7 +49,7 @@ The operator can be installed via [Helm](https://helm.sh). Helm is a package man
 
 **Install the latest Helm repository**
 ```bash
-helm repo add infisical-helm-charts 'https://dl.cloudsmith.io/public/infisical/helm-charts/helm/charts/' 
+helm repo add kms-helm-charts 'https://dl.cloudsmith.io/public/hanzoai/kms-helm-charts/helm/charts/' 
 ```
 
 ```bash  
@@ -69,7 +69,7 @@ If you require stronger isolation and stricter access controls, a namespace-scop
     - **Quick Setup**: Works out of the box with no additional RBAC configuration required
 
     ```bash
-    helm install --generate-name infisical-helm-charts/secrets-operator
+    helm install --generate-name kms-helm-charts/secrets-operator
     ```
   </Tab>
   <Tab title="Namespace Scoped Installation">
@@ -87,7 +87,7 @@ If you require stronger isolation and stricter access controls, a namespace-scop
     ### Single Namespace
     ```bash
     # First namespace installation (with CRDs)
-    helm install operator-namespaced infisical-helm-charts/secrets-operator \
+    helm install operator-namespaced kms-helm-charts/secrets-operator \
       --namespace single-namespace \
       --set scopedNamespaces=single-namespace \
       --set scopedRBAC=true
@@ -104,13 +104,13 @@ If you require stronger isolation and stricter access controls, a namespace-scop
 
     ### Multiple Namespaces
     ```bash
-     helm install operator-1 infisical-helm-charts/secrets-operator \
+     helm install operator-1 kms-helm-charts/secrets-operator \
       --namespace ns1 \
       --set scopedNamespaces=ns1 \
       --set scopedRBAC=true \
       --set installCRDs=true # Only install CRDs once in the cluster (default is true)
 
-    helm install operator-namespace2 infisical-helm-charts/secrets-operator \
+    helm install operator-namespace2 kms-helm-charts/secrets-operator \
       --namespace ns2 \
       --set scopedNamespaces=ns2 \
       --set scopedRBAC=true \
@@ -134,7 +134,7 @@ If you require stronger isolation and stricter access controls, a namespace-scop
 
     ### Multiple namespaces with one operator installation
     ```bash
-      helm install operator infisical-helm-charts/secrets-operator \
+      helm install operator kms-helm-charts/secrets-operator \
       --namespace operator-namespace \
       --set "scopedNamespaces={ns1,ns2,ns3}" \
       --set scopedRBAC=true
@@ -179,9 +179,9 @@ controllerManager:
 
 Currently the operator supports the following CRD's. We are constantly expanding the functionality of the operator, and this list will be updated as new CRD's are added.
 
-1. [InfisicalSecret](/integrations/platforms/kubernetes/infisical-secret-crd): Sync secrets from Infisical to a Kubernetes secret.
-2. [InfisicalPushSecret](/integrations/platforms/kubernetes/infisical-push-secret-crd): Push secrets from a Kubernetes secret to Infisical.
-3. [InfisicalDynamicSecret](/integrations/platforms/kubernetes/infisical-dynamic-secret-crd): Sync dynamic secrets and create leases automatically in Kubernetes.
+1. [KmsSecret](/integrations/platforms/kubernetes/kms-secret-crd): Sync secrets from Hanzo KMS to a Kubernetes secret.
+2. [KmsPushSecret](/integrations/platforms/kubernetes/kms-push-secret-crd): Push secrets from a Kubernetes secret to Hanzo KMS.
+3. [KmsDynamicSecret](/integrations/platforms/kubernetes/kms-dynamic-secret-crd): Sync dynamic secrets and create leases automatically in Kubernetes.
 
 ## Metrics and Prometheus
 
@@ -256,7 +256,7 @@ The operator exposes standard controller-runtime metrics. For a complete list of
 - `controller_runtime_reconcile_errors_total` - Error count  
 - `controller_runtime_reconcile_time_seconds` - Reconciliation duration
 
-**Controllers:** `InfisicalSecret`, `InfisicalPushSecret`, `InfisicalDynamicSecret`
+**Controllers:** `KmsSecret`, `KmsPushSecret`, `KmsDynamicSecret`
 
 ### Example Prometheus Setup
 
@@ -274,9 +274,9 @@ The operator exposes standard controller-runtime metrics. For a complete list of
 
   <Step title="Install Operator with Metrics Enabled">
     ```bash
-    helm repo add infisical-helm-charts 'https://dl.cloudsmith.io/public/infisical/helm-charts/helm/charts/'
+    helm repo add kms-helm-charts 'https://dl.cloudsmith.io/public/hanzoai/kms-helm-charts/helm/charts/'
     
-    helm install infisical-secrets-operator infisical-helm-charts/secrets-operator \
+    helm install kms-secrets-operator kms-helm-charts/secrets-operator \
       --set telemetry.serviceMonitor.enabled=true
     ```
   </Step>
@@ -313,13 +313,13 @@ process_resident_memory_bytes / 1024 / 1024
 
 ## General Configuration
 ### Private/self-signed certificate
-To connect to Infisical instances behind a private/self-signed certificate, you can configure the TLS settings in the CRD
+To connect to Hanzo KMS instances behind a private/self-signed certificate, you can configure the TLS settings in the CRD
 to point to a CA certificate stored in a Kubernetes secret resource.
 
 ```yaml
 ---
 spec:
-  hostAPI: https://app.infisical.com/api
+  hostAPI: https://kms.hanzo.ai/api
   tls:
     caRef:
       secretName: custom-ca-certificate
@@ -331,17 +331,17 @@ spec:
 
 ## Advanced Templating
 
-With the Infisical Secrets Operator, you can use templating to dynamically generate secrets in Kubernetes. The templating is built on top of [Go templates](https://pkg.go.dev/text/template), which is a powerful and flexible template engine built into Go.
+With the Hanzo KMS Secrets Operator, you can use templating to dynamically generate secrets in Kubernetes. The templating is built on top of [Go templates](https://pkg.go.dev/text/template), which is a powerful and flexible template engine built into Go.
 
 Please be aware that trying to reference non-existing keys will result in an error. Additionally, each template field is processed individually, which means one template field cannot reference another template field.
 
 <Note>
-  Please note that templating is currently only supported for the `InfisicalPushSecret` and `InfisicalSecret` CRDs.
+  Please note that templating is currently only supported for the `KmsPushSecret` and `KmsSecret` CRDs.
 </Note>
 
 ### Available helper functions
 
-The Infisical Secrets Operator exposes a wide range of helper functions to make it easier to work with secrets in Kubernetes.
+The Hanzo KMS Secrets Operator exposes a wide range of helper functions to make it easier to work with secrets in Kubernetes.
 
 | Function | Description | Signature |
 | -------- | ----------- | --------- |
@@ -364,7 +364,7 @@ The Infisical Secrets Operator exposes a wide range of helper functions to make 
 
 ### Sprig functions
 
-The Infisical Secrets Operator integrates with the [Sprig library](https://github.com/Masterminds/sprig) to provide additional helper functions.
+The Hanzo KMS Secrets Operator integrates with the [Sprig library](https://github.com/Masterminds/sprig) to provide additional helper functions.
 
 <Note>
   We've removed `expandEnv` and `env` from the supported functions for security reasons.
@@ -373,34 +373,34 @@ The Infisical Secrets Operator integrates with the [Sprig library](https://githu
 
 ## Global configuration
 
-To configure global settings that will apply to all CRD instances (`InfisicalSecret`, `InfisicalPushSecret`, and `InfisicalDynamicSecret`), you can define these configurations in a Kubernetes ConfigMap.
+To configure global settings that will apply to all CRD instances (`KmsSecret`, `KmsPushSecret`, and `KmsDynamicSecret`), you can define these configurations in a Kubernetes ConfigMap.
 For example, you can configure all CRD instances to fetch secrets from a single backend API without specifying the `hostAPI` parameter for each instance.
 
 ### Available global properties
 
 | Property | Description                                                                       | Default value                 |
 | -------- | --------------------------------------------------------------------------------- | ----------------------------- |
-| hostAPI  | If `hostAPI` in a CRD instance is left empty, this value will be used | https://app.infisical.com/api |
+| hostAPI  | If `hostAPI` in a CRD instance is left empty, this value will be used | https://kms.hanzo.ai/api |
 | tls.caRef.secretName | If `tls.caRef.secretName` in a CRD instance is left empty, this value will be used | - |
 | tls.caRef.secretNamespace | If `tls.caRef.secretNamespace` in a CRD instance is left empty, this value will be used | - |
 | tls.caRef.key | If `tls.caRef.key` in a CRD instance is left empty, this value will be used | - |
 
 ### Applying global configurations
 
-All global configurations must reside in a Kubernetes ConfigMap named `infisical-config` in the namespace `infisical-operator-system`.
-To apply global configuration to the operator, copy the following yaml into `infisical-config.yaml` file.
+All global configurations must reside in a Kubernetes ConfigMap named `kms-config` in the namespace `kms-operator-system`.
+To apply global configuration to the operator, copy the following yaml into `kms-config.yaml` file.
 
-```yaml infisical-config.yaml
+```yaml kms-config.yaml
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: infisical-operator-system
+  name: kms-operator-system
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: infisical-config
-  namespace: infisical-operator-system
+  name: kms-config
+  namespace: kms-operator-system
 data:
   hostAPI: https://example.com/api # <-- global hostAPI
   tls.caRef.secretName: custom-ca-certificate # <-- global TLS CA secret name
@@ -411,36 +411,36 @@ data:
 Then apply this change via kubectl by running the following
 
 ```bash
-kubectl apply -f infisical-config.yaml
+kubectl apply -f kms-config.yaml
 ```
 
 ## Troubleshoot operator
 
 If the operator is unable to fetch secrets from the API, it will not affect the managed Kubernetes secret.
 It will continue attempting to reconnect to the API indefinitely.
-The InfisicalSecret resource uses the `status.conditions` field to report its current state and any errors encountered.
+The KmsSecret resource uses the `status.conditions` field to report its current state and any errors encountered.
 
 ```yaml
-$ kubectl get infisicalSecrets
+$ kubectl get kmsSecrets
 NAME                     AGE
-infisicalsecret-sample   12s
+kmssecret-sample   12s
 
-$ kubectl describe infisicalSecret infisicalsecret-sample
+$ kubectl describe kmsSecret kmssecret-sample
 ...
 Spec:
 ...
 Status:
   Conditions:
     Last Transition Time:  2022-12-18T04:29:09Z
-    Message:               Infisical controller has located the Infisical token in provided Kubernetes secret
+    Message:               Hanzo KMS controller has located the Hanzo KMS token in provided Kubernetes secret
     Reason:                OK
     Status:                True
-    Type:                  secrets.infisical.com/LoadedInfisicalToken
+    Type:                  secrets.hanzo.ai/LoadedHanzo KMSToken
     Last Transition Time:  2022-12-18T04:29:10Z
     Message:               Failed to update secret because: 400 Bad Request
     Reason:                Error
     Status:                False
-    Type:                  secrets.infisical.com/ReadyToSyncSecrets
+    Type:                  secrets.hanzo.ai/ReadyToSyncSecrets
 Events:                    <none>
 ```
 
@@ -450,7 +450,7 @@ The managed secret created by the operator will not be deleted when the operator
 
 <Tabs>
 	 <Tab title="Helm">
-		Uninstall Infisical Helm repository 
+		Uninstall Hanzo KMS Helm repository 
     ```bash
     helm uninstall <release name>
     ```

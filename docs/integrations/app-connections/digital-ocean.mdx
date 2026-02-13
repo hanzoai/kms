@@ -1,9 +1,9 @@
 ---
 title: "DigitalOcean Connection"
-description: "Learn how to configure a DigitalOcean Connection for Infisical."
+description: "Learn how to configure a DigitalOcean Connection for Hanzo KMS."
 ---
 
-Infisical supports the use of [API Tokens](https://cloud.digitalocean.com/account/api/tokens) to connect with DigitalOcean.
+Hanzo KMS supports the use of [API Tokens](https://cloud.digitalocean.com/account/api/tokens) to connect with DigitalOcean.
 
 ## Create a DigitalOcean API Token
 
@@ -39,13 +39,13 @@ Infisical supports the use of [API Tokens](https://cloud.digitalocean.com/accoun
   </Step>
 </Steps>
 
-## Create a DigitalOcean Connection in Infisical
+## Create a DigitalOcean Connection in Hanzo KMS
 
 <Tabs>
-  <Tab title="Infisical UI">
+  <Tab title="Hanzo KMS UI">
     <Steps>
       <Step title="Navigate to App Connections">
-        In your Infisical dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
+        In your Hanzo KMS dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
 
         ![App Connections Tab](/images/app-connections/general/add-connection.png)
       </Step>
@@ -63,7 +63,7 @@ Infisical supports the use of [API Tokens](https://cloud.digitalocean.com/accoun
         ![DigitalOcean Connection Modal](/images/app-connections/digital-ocean/app-connection-form.png)
       </Step>
       <Step title="Connection created">
-        After submitting the form, your **DigitalOcean Connection** will be successfully created and ready to use with your Infisical project.
+        After submitting the form, your **DigitalOcean Connection** will be successfully created and ready to use with your Hanzo KMS project.
 
         ![DigitalOcean Connection Created](/images/app-connections/digital-ocean/app-connection-generated.png)
       </Step>
@@ -77,7 +77,7 @@ Infisical supports the use of [API Tokens](https://cloud.digitalocean.com/accoun
 
     ```bash Request
     curl    --request POST \
-            --url https://app.infisical.com/api/v1/app-connections/digital-ocean \
+            --url https://kms.hanzo.ai/api/v1/app-connections/digital-ocean \
             --header 'Content-Type: application/json' \
             --data '{
                 "name": "my-digitalocean-connection",

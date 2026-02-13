@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   push:
     tags:
-      - "infisical/v*.*.*-postgres"
+      - "kms/v*.*.*-postgres"
 
 jobs:
   generate_changelog:

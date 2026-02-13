@@ -6,7 +6,7 @@ import { twMerge } from "tailwind-merge";
 
 import { createNotification } from "@app/components/notifications";
 import { ProjectPermissionCan } from "@app/components/permissions";
-import { InfisicalSecretInput } from "@app/components/v2/InfisicalSecretInput";
+import { KmsSecretInput } from "@app/components/v2/KmsSecretInput";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -181,7 +181,7 @@ export const SecretOverrideRow = ({
           control={control}
           name="value"
           render={({ field }) => (
-            <InfisicalSecretInput
+            <KmsSecretInput
               {...field}
               isReadOnly={isFetchingOverrideValue}
               value={isFetchingOverrideValue ? HIDDEN_SECRET_VALUE : (field.value as string)}

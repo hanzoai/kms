@@ -191,7 +191,7 @@ export const AwsIamAccountForm = ({ account, resourceId, resourceType, onSubmit 
               >
                 <Input
                   {...field}
-                  placeholder="arn:aws:iam::123456789012:role/infisical-pam-MyTargetRole"
+                  placeholder="arn:aws:iam::123456789012:role/kms-pam-MyTargetRole"
                   autoComplete="off"
                 />
               </FormControl>

@@ -3,90 +3,90 @@
         "name": "React",
         "slug": "react",
         "image": "React",
-        "docsLink": "https://infisical.com/docs/integrations/frameworks/react"
+        "docsLink": "https://kms.hanzo.ai/docs/integrations/frameworks/react"
     },
     {
         "name": "Vue",
         "slug": "vue",
         "image": "Vue",
-        "docsLink": "https://infisical.com/docs/integrations/frameworks/vue"
+        "docsLink": "https://kms.hanzo.ai/docs/integrations/frameworks/vue"
     },
     {
         "name": "Express",
         "slug": "express",
         "image": "Express",
-        "docsLink": "https://infisical.com/docs/integrations/frameworks/express"
+        "docsLink": "https://kms.hanzo.ai/docs/integrations/frameworks/express"
     },
     {
         "name": "Next.js",
         "slug": "nextjs",
         "image": "Next.js",
-        "docsLink": "https://infisical.com/docs/integrations/frameworks/nextjs"
+        "docsLink": "https://kms.hanzo.ai/docs/integrations/frameworks/nextjs"
     },
     {
         "name": "SvelteKit",
         "slug": "sveltekit",
         "image": "SvelteKit",
-        "docsLink": "https://infisical.com/docs/integrations/frameworks/sveltekit"
+        "docsLink": "https://kms.hanzo.ai/docs/integrations/frameworks/sveltekit"
     },
     {
         "name": "Django",
         "slug": "django",
         "image": "Django",
-        "docsLink": "https://infisical.com/docs/integrations/frameworks/django"
+        "docsLink": "https://kms.hanzo.ai/docs/integrations/frameworks/django"
     },
     {
         "name": "NestJS",
         "slug": "nestjs",
         "image": "NestJS",
-        "docsLink": "https://infisical.com/docs/integrations/frameworks/nestjs"
+        "docsLink": "https://kms.hanzo.ai/docs/integrations/frameworks/nestjs"
     },
     {
         "name": "Nuxt",
         "slug": "nuxt",
         "image": "Nuxt",
-        "docsLink": "https://infisical.com/docs/integrations/frameworks/nuxt"
+        "docsLink": "https://kms.hanzo.ai/docs/integrations/frameworks/nuxt"
     },
     {
         "name": "Gatsby",
         "slug": "gatsby",
         "image": "Gatsby",
-        "docsLink": "https://infisical.com/docs/integrations/frameworks/gatsby"
+        "docsLink": "https://kms.hanzo.ai/docs/integrations/frameworks/gatsby"
     },
     {
         "name": "Remix",
         "slug": "remix",
         "image": "Remix",
-        "docsLink": "https://infisical.com/docs/integrations/frameworks/remix"
+        "docsLink": "https://kms.hanzo.ai/docs/integrations/frameworks/remix"
     },
     {
         "name": "Vite",
         "slug": "vite",
         "image": "Vite",
-        "docsLink": "https://infisical.com/docs/integrations/frameworks/vite"
+        "docsLink": "https://kms.hanzo.ai/docs/integrations/frameworks/vite"
     },
     {
         "name": "Fiber",
         "slug": "fiber",
         "image": "Fiber",
-        "docsLink": "https://infisical.com/docs/integrations/frameworks/fiber"
+        "docsLink": "https://kms.hanzo.ai/docs/integrations/frameworks/fiber"
     },
     {
         "name": "Flask",
         "slug": "flask",
         "image": "Flask",
-        "docsLink": "https://infisical.com/docs/integrations/frameworks/flask"
+        "docsLink": "https://kms.hanzo.ai/docs/integrations/frameworks/flask"
     },
     {
         "name": "Laravel",
         "slug": "laravel",
         "image": "Laravel",
-        "docsLink": "https://infisical.com/docs/integrations/frameworks/laravel"
+        "docsLink": "https://kms.hanzo.ai/docs/integrations/frameworks/laravel"
     },
     {
         "name": "Rails",
         "slug": "rails",
         "image": "Rails",
-        "docsLink": "https://infisical.com/docs/integrations/frameworks/rails"
+        "docsLink": "https://kms.hanzo.ai/docs/integrations/frameworks/rails"
     }
 ]

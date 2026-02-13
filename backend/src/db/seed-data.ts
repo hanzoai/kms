@@ -13,10 +13,10 @@ export const seedData1 = {
   id: "3dafd81d-4388-432b-a4c5-f735616868c1",
   username: process.env.TEST_USER_USERNAME || "test@localhost.local",
   email: process.env.TEST_USER_EMAIL || "test@localhost.local",
-  password: process.env.TEST_USER_PASSWORD || "testInfisical@1",
+  password: process.env.TEST_USER_PASSWORD || "testHanzo KMS@1",
   organization: {
     id: "180870b7-f464-4740-8ffe-9d11c9245ea7",
-    name: "infisical"
+    name: "kms"
   },
   project: {
     id: "77fa7aed-9288-401e-a4c9-3a9430be62a0",

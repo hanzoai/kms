@@ -5,7 +5,7 @@ import path from "path";
 import { crypto } from "@app/lib/crypto/cryptography";
 import { logger } from "@app/lib/logger";
 
-const baseDir = path.join(os.tmpdir(), "infisical");
+const baseDir = path.join(os.tmpdir(), "kms");
 const randomPath = () => `${crypto.randomBytes(32).toString("hex")}`;
 
 export const createTemporaryDirectory = async (name: string) => {

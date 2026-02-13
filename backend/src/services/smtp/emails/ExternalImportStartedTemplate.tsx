@@ -27,5 +27,5 @@ export default ExternalImportStartedTemplate;
 
 ExternalImportStartedTemplate.PreviewProps = {
   provider: "EnvKey",
-  siteUrl: "https://infisical.com"
+  siteUrl: "https://kms.hanzo.ai"
 } as ExternalImportStartedTemplateProps;

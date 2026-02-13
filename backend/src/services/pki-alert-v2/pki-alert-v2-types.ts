@@ -64,8 +64,8 @@ export enum PkiAlertRunStatus {
 }
 
 export enum PkiWebhookEventType {
-  CERTIFICATE_EXPIRATION = "com.infisical.pki.certificate.expiration",
-  CERTIFICATE_TEST = "com.infisical.pki.certificate.test"
+  CERTIFICATE_EXPIRATION = "ai.hanzo.kms.pki.certificate.expiration",
+  CERTIFICATE_TEST = "ai.hanzo.kms.pki.certificate.test"
 }
 
 // Alert info used across event types

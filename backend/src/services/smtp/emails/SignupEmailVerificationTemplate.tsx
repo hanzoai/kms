@@ -30,7 +30,7 @@ export const SignupEmailVerificationTemplate = ({ code, siteUrl, isCloud }: Sign
           <strong>Questions about setting up Infisical?</strong>{" "}
           {isCloud ? (
             <>
-              Email us at <BaseLink href="mailto:support@infisical.com">support@infisical.com</BaseLink>
+              Email us at <BaseLink href="mailto:support@hanzo.ai">support@hanzo.ai</BaseLink>
             </>
           ) : (
             "Contact your administrator"
@@ -47,5 +47,5 @@ export default SignupEmailVerificationTemplate;
 SignupEmailVerificationTemplate.PreviewProps = {
   code: "124356",
   isCloud: true,
-  siteUrl: "https://infisical.com"
+  siteUrl: "https://kms.hanzo.ai"
 } as SignupEmailVerificationTemplateProps;

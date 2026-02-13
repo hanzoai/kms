@@ -56,11 +56,11 @@ export default SecretRotationFailedTemplate;
 
 SecretRotationFailedTemplate.PreviewProps = {
   rotationType: "Auth0 Client Secret",
-  rotationUrl: "https://infisical.com",
+  rotationUrl: "https://kms.hanzo.ai",
   content: "See Rotation status for details",
   projectName: "Example Project",
   secretPath: "/api/secrets",
   environment: "Production",
   rotationName: "my-auth0-rotation",
-  siteUrl: "https://infisical.com"
+  siteUrl: "https://kms.hanzo.ai"
 } as SecretRotationFailedTemplateProps;

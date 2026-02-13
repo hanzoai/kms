@@ -1,11 +1,11 @@
 ---
 title: "Vercel Connection"
-description: "Learn how to configure a Vercel Connection for Infisical."
+description: "Learn how to configure a Vercel Connection for Hanzo KMS."
 ---
 
-Infisical supports connecting to Vercel using API Tokens.
+Hanzo KMS supports connecting to Vercel using API Tokens.
 
-## Setup Vercel Connection in Infisical
+## Setup Vercel Connection in Hanzo KMS
 
 <Steps>
     <Step title="Move to API Tokens on Vercel">
@@ -17,7 +17,7 @@ Infisical supports connecting to Vercel using API Tokens.
         ![Vercel API Tokens Tab](/images/app-connections/vercel/vercel-settings-page.png)
     </Step>
     <Step title="Create the API Token">
-        Click the **Create** button and provide a name for your token (e.g., "Infisical Integration"). 
+        Click the **Create** button and provide a name for your token (e.g., "Hanzo KMS Integration"). 
         Choose appropriate scope permissions based on your requirements.
         <Note>
             If you configure an expiry date for your API token, you will need to manually rotate to a new token prior to expiration to avoid integration downtime. Consider setting a calendar reminder for this task.
@@ -32,12 +32,12 @@ Infisical supports connecting to Vercel using API Tokens.
         You should now see your newly created token in the list of API tokens on the Vercel dashboard.
         ![Vercel Connection Created](/images/app-connections/vercel/vercel-token-created.png)
     </Step>
-    <Step title="Setup Vercel Connection in Infisical">
+    <Step title="Setup Vercel Connection in Hanzo KMS">
         <Tabs>
-            <Tab title="Infisical UI">
+            <Tab title="Hanzo KMS UI">
                 1. Navigate to App Connections
 
-                    In your Infisical dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
+                    In your Hanzo KMS dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
                     ![App Connections Tab](/images/app-connections/general/add-connection.png)
                 2. Add Connection
 
@@ -52,7 +52,7 @@ Infisical supports connecting to Vercel using API Tokens.
                     ![Vercel Connection Modal](/images/app-connections/vercel/vercel-app-connection-modal.png)
                 4. Connection Created
 
-                    After clicking Create, your **Vercel Connection** is established and ready to use with your Infisical project.
+                    After clicking Create, your **Vercel Connection** is established and ready to use with your Hanzo KMS project.
                     ![Vercel Connection Created](/images/app-connections/vercel/vercel-app-connection-created.png)
             </Tab>
             <Tab title="API">
@@ -63,7 +63,7 @@ Infisical supports connecting to Vercel using API Tokens.
 
                 ```bash Request
                 curl    --request POST \
-                        --url https://app.infisical.com/api/v1/app-connections/vercel \
+                        --url https://kms.hanzo.ai/api/v1/app-connections/vercel \
                         --header 'Content-Type: application/json' \
                         --data '{
                             "name": "my-vercel-connection",

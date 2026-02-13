@@ -13,7 +13,7 @@ export enum VaultMappingType {
   Custom = "custom"
 }
 
-export type InfisicalImportData = {
+export type Hanzo KMSImportData = {
   projects: Array<{ name: string; id: string }>;
   environments: Array<{ name: string; id: string; projectId: string; envParentId?: string }>;
   folders: Array<{ id: string; name: string; environmentId: string; parentFolderId?: string }>;
@@ -23,7 +23,7 @@ export type InfisicalImportData = {
     environmentId: string;
     value: string;
     folderId?: string;
-    appBlockOrderIndex?: number; // Not used for infisical import, only used for building the import structure to determine which block(s) take precedence.
+    appBlockOrderIndex?: number; // Not used for KMS import, only used for building the import structure to determine which block(s) take precedence.
   }>;
 };
 
@@ -44,8 +44,8 @@ export type TImportVaultDataDTO = {
   gatewayId?: string;
 } & Omit<TOrgPermission, "orgId">;
 
-export type TImportInfisicalDataCreate = {
-  data: InfisicalImportData;
+export type TImportHanzo KMSDataCreate = {
+  data: Hanzo KMSImportData;
   actor: ActorType;
   actorId: string;
   actorOrgId: string;

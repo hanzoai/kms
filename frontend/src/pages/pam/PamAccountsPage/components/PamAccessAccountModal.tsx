@@ -79,13 +79,13 @@ export const PamAccessAccountModal = ({
     switch (account.resource.resourceType) {
       case PamResourceType.Postgres:
       case PamResourceType.MySQL:
-        return `infisical pam db access --resource ${account.resource.name} --account ${account.name} --project-id ${projectId} --duration ${cliDuration} --domain ${siteURL}`;
+        return `hanzo-kms pam db access --resource ${account.resource.name} --account ${account.name} --project-id ${projectId} --duration ${cliDuration} --domain ${siteURL}`;
       case PamResourceType.Redis:
-        return `infisical pam redis access --resource ${account.resource.name} --account ${account.name} --project-id ${projectId} --duration ${cliDuration} --domain ${siteURL}`;
+        return `hanzo-kms pam redis access --resource ${account.resource.name} --account ${account.name} --project-id ${projectId} --duration ${cliDuration} --domain ${siteURL}`;
       case PamResourceType.SSH:
-        return `infisical pam ssh access --resource ${account.resource.name} --account ${account.name} --project-id ${projectId} --duration ${cliDuration} --domain ${siteURL}`;
+        return `hanzo-kms pam ssh access --resource ${account.resource.name} --account ${account.name} --project-id ${projectId} --duration ${cliDuration} --domain ${siteURL}`;
       case PamResourceType.Kubernetes:
-        return `infisical pam kubernetes access --resource ${account.resource.name} --account ${account.name} --project-id ${projectId} --duration ${cliDuration} --domain ${siteURL}`;
+        return `hanzo-kms pam kubernetes access --resource ${account.resource.name} --account ${account.name} --project-id ${projectId} --duration ${cliDuration} --domain ${siteURL}`;
       default:
         return "";
     }
@@ -105,7 +105,7 @@ export const PamAccessAccountModal = ({
         title="Access Account"
         subTitle={`Connect to ${account.name}`}
       >
-        <p className="mb-2 text-sm text-mineshaft-300">Connect using the Infisical CLI</p>
+        <p className="mb-2 text-sm text-mineshaft-300">Connect using the KMS CLI</p>
         <FormLabel
           label="Duration"
           tooltipText="The maximum duration of your session. Ex: 1h, 3w, 30d"

@@ -54,8 +54,8 @@ IntegrationSyncFailedTemplate.PreviewProps = {
   projectName: "Example Project",
   secretPath: "/api/secrets",
   environment: "Production",
-  siteUrl: "https://infisical.com",
-  integrationUrl: "https://infisical.com",
+  siteUrl: "https://kms.hanzo.ai",
+  integrationUrl: "https://kms.hanzo.ai",
   count: 2,
   syncMessage: "Secret key cannot contain a colon (:)"
 } as IntegrationSyncFailedTemplateProps;

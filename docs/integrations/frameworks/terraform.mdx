@@ -1,33 +1,33 @@
 ---
 title: "Terraform"
-description: "Learn how to fetch secrets from Infisical with Terraform using both traditional data sources and ephemeral resources"
-url: "https://registry.terraform.io/providers/Infisical/infisical/latest/docs"
+description: "Learn how to fetch secrets from Hanzo KMS with Terraform using both traditional data sources and ephemeral resources"
+url: "https://registry.terraform.io/providers/Hanzo KMS/kms/latest/docs"
 ---
 {/* 
-This guide demonstrates how to use Infisical to manage secrets in your Terraform infrastructure code, supporting both traditional data sources and ephemeral resources for enhanced security. It uses:
+This guide demonstrates how to use Hanzo KMS to manage secrets in your Terraform infrastructure code, supporting both traditional data sources and ephemeral resources for enhanced security. It uses:
 
-- Infisical (you can use [Infisical Cloud](https://app.infisical.com) or a [self-hosted instance of Infisical](https://infisical.com/docs/self-hosting/overview)) to store your secrets
-- The [Terraform Provider](https://registry.terraform.io/providers/Infisical/infisical/latest/docs) to fetch secrets for your infrastructure
+- Hanzo KMS (you can use [Hanzo KMS Cloud](https://kms.hanzo.ai) or a [self-hosted instance of Hanzo KMS](https://kms.hanzo.ai/docs/self-hosting/overview)) to store your secrets
+- The [Terraform Provider](https://registry.terraform.io/providers/Hanzo KMS/kms/latest/docs) to fetch secrets for your infrastructure
 
 ## Prerequisites
 
 Before you begin, make sure you have:
 
 - [Terraform](https://www.terraform.io/downloads.html) installed (v1.10.0+ for ephemeral resources)
-- An Infisical account with access to a project
+- An Hanzo KMS account with access to a project
 - Basic understanding of Terraform and infrastructure as code
 
 ## Project Setup
 
 ### Configure Provider
 
-First, specify the Infisical provider in your Terraform configuration:
+First, specify the Hanzo KMS provider in your Terraform configuration:
 
 ```hcl
 terraform {
   required_providers {
-    infisical = {
-      source = "infisical/infisical"
+    kms = {
+      source = "ghcr.io/hanzoai/kms"
     }
   }
 }
@@ -39,15 +39,15 @@ Configure the provider using one of these authentication methods:
 
 #### Machine Identity (Recommended)
 
-Using a Machine Identity, you can authenticate your Terraform provider using either [OIDC Auth](https://infisical.com/docs/documentation/platform/identities/oidc-auth/general) or [Universal Auth](https://infisical.com/docs/documentation/platform/identities/universal-auth) methods.
+Using a Machine Identity, you can authenticate your Terraform provider using either [OIDC Auth](https://kms.hanzo.ai/docs/documentation/platform/identities/oidc-auth/general) or [Universal Auth](https://kms.hanzo.ai/docs/documentation/platform/identities/universal-auth) methods.
 
 ```hcl
-provider "infisical" {
-  host          = "https://app.infisical.com" # Optional for cloud, required for self-hosted
+provider "kms" {
+  host          = "https://kms.hanzo.ai" # Optional for cloud, required for self-hosted
   auth {
     universal { # or use oidc authentication method by providing an identity_id
-      client_id     = var.infisical_client_id
-      client_secret = var.infisical_client_secret
+      client_id     = var.kms_client_id
+      client_secret = var.kms_client_secret
     }
   }
 }
@@ -61,15 +61,15 @@ Machine Identity authentication is strongly recommended as the secure and modern
 </Warning>
 
 ```hcl
-provider "infisical" {
-  host          = "https://app.infisical.com"
-  service_token = var.infisical_service_token
+provider "kms" {
+  host          = "https://kms.hanzo.ai"
+  service_token = var.kms_service_token
 }
 ```
 
 ## Using Secrets in Terraform
 
-Infisical provides two methods to fetch and use secrets in your Terraform configurations:
+Hanzo KMS provides two methods to fetch and use secrets in your Terraform configurations:
 
 ### Method 1: Ephemeral Resources (Recommended)
 
@@ -77,10 +77,10 @@ Ephemeral resources, introduced in Terraform v1.10, provide enhanced security by
 
 ```hcl
 # Fetch database credentials ephemerally
-ephemeral "infisical_secret" "db_creds" {
+ephemeral "kms_secret" "db_creds" {
   name         = "DB_CREDENTIALS"
   env_slug     = "prod"
-  workspace_id = var.infisical_workspace_id
+  workspace_id = var.kms_workspace_id
   folder_path  = "/database"
 }
 
@@ -88,8 +88,8 @@ ephemeral "infisical_secret" "db_creds" {
 provider "postgresql" {
   host     = data.aws_db_instance.example.address
   port     = data.aws_db_instance.example.port
-  username = jsondecode(ephemeral.infisical_secret.db_creds.value)["username"]
-  password = jsondecode(ephemeral.infisical_secret.db_creds.value)["password"]
+  username = jsondecode(ephemeral.kms_secret.db_creds.value)["username"]
+  password = jsondecode(ephemeral.kms_secret.db_creds.value)["password"]
 }
 ```
 
@@ -105,16 +105,16 @@ For backwards compatibility or when working with older Terraform versions, you c
 
 ```hcl
 # Fetch all secrets in a folder
-data "infisical_secrets" "my_secrets" {
+data "kms_secrets" "my_secrets" {
   env_slug     = "dev"
-  workspace_id = var.infisical_workspace_id
+  workspace_id = var.kms_workspace_id
   folder_path  = "/api"
 }
 
 # Use individual secrets
 resource "aws_db_instance" "example" {
-  username = data.infisical_secrets.my_secrets.secrets["DB_USER"]
-  password = data.infisical_secrets.my_secrets.secrets["DB_PASS"]
+  username = data.kms_secrets.my_secrets.secrets["DB_USER"]
+  password = data.kms_secrets.my_secrets.secrets["DB_PASS"]
 }
 ```
 
@@ -130,10 +130,10 @@ Manage database credentials securely without exposing sensitive information in y
 
 ```hcl
 # Fetch database credentials securely
-ephemeral "infisical_secret" "db_creds" {
+ephemeral "kms_secret" "db_creds" {
   name         = "DB_CREDENTIALS"
   env_slug     = "prod"
-  workspace_id = var.infisical_workspace_id
+  workspace_id = var.kms_workspace_id
   folder_path  = "/database"
 }
 
@@ -145,39 +145,39 @@ resource "aws_db_instance" "example" {
   engine_version    = "14.0"
   instance_class    = "db.t3.micro"
   
-  # Securely inject credentials from Infisical
-  username = jsondecode(ephemeral.infisical_secret.db_creds.value)["username"]
-  password = jsondecode(ephemeral.infisical_secret.db_creds.value)["password"]
+  # Securely inject credentials from Hanzo KMS
+  username = jsondecode(ephemeral.kms_secret.db_creds.value)["username"]
+  password = jsondecode(ephemeral.kms_secret.db_creds.value)["password"]
 }
 ```
 
 ### GitOps Workflow with OIDC
 
-To eliminate the need for static credentials, you can authenticate your workflow using [OpenID Connect (OIDC)](https://infisical.com/docs/documentation/platform/identities/oidc-auth/general) through providers like the [Infisical Secrets GitHub Action](https://github.com/Infisical/secrets-action).
-Once authenticated, you can securely access secrets through the Infisical provider:
+To eliminate the need for static credentials, you can authenticate your workflow using [OpenID Connect (OIDC)](https://kms.hanzo.ai/docs/documentation/platform/identities/oidc-auth/general) through providers like the [Hanzo KMS Secrets GitHub Action](https://github.com/Hanzo KMS/secrets-action).
+Once authenticated, you can securely access secrets through the Hanzo KMS provider:
 
 ```hcl
-provider "infisical" {
+provider "kms" {
   # Auth credentials automatically injected from the environment
 }
 
 # Fetch deployment credentials
-ephemeral "infisical_secret" "deploy_token" {
+ephemeral "kms_secret" "deploy_token" {
   name         = "DEPLOY_TOKEN"
   env_slug     = "prod"
-  workspace_id = var.infisical_workspace_id
+  workspace_id = var.kms_workspace_id
   folder_path  = "/deployment"
 }
 ```
-For detailed instructions on setting up OIDC authentication with GitHub Actions, refer to our [GitHub Actions OIDC guide](https://infisical.com/docs/documentation/platform/identities/oidc-auth/github).
+For detailed instructions on setting up OIDC authentication with GitHub Actions, refer to our [GitHub Actions OIDC guide](https://kms.hanzo.ai/docs/documentation/platform/identities/oidc-auth/github).
 
 ## Best Practices
 
 1. **Use Ephemeral Resources**: Whenever possible, use ephemeral resources instead of data sources for improved security.
 
-2. **Organize Secrets**: Structure your secrets in Infisical using folders to maintain clean separation:
+2. **Organize Secrets**: Structure your secrets in Hanzo KMS using folders to maintain clean separation:
    ```hcl
-   ephemeral "infisical_secret" "db_secret" {
+   ephemeral "kms_secret" "db_secret" {
      folder_path = "/databases/postgresql"  # Organized by service
      # ...
    }
@@ -190,7 +190,7 @@ For detailed instructions on setting up OIDC authentication with GitHub Actions,
      type        = string
    }
 
-   ephemeral "infisical_secret" "secret" {
+   ephemeral "kms_secret" "secret" {
      env_slug = var.environment
      # ...
    }
@@ -198,7 +198,7 @@ For detailed instructions on setting up OIDC authentication with GitHub Actions,
 
 4. **Error Handling**: Add lifecycle blocks for critical secrets:
    ```hcl
-   ephemeral "infisical_secret" "critical_secret" {
+   ephemeral "kms_secret" "critical_secret" {
      # ...
      lifecycle {
        postcondition {
@@ -234,5 +234,5 @@ For detailed instructions on setting up OIDC authentication with GitHub Actions,
 
 See also:
 - [Machine Identity setup guide](/documentation/platform/identities/machine-identities)
-- [Terraform Provider Registry](https://registry.terraform.io/providers/Infisical/infisical/latest/docs)
-- [GitOps Best Practices](https://www.infisical.com/blog/gitops-best-practices) */}
+- [Terraform Provider Registry](https://registry.terraform.io/providers/Hanzo KMS/kms/latest/docs)
+- [GitOps Best Practices](https://www.kms.hanzo.ai/blog/gitops-best-practices) */}

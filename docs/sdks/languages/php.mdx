@@ -1,15 +1,15 @@
 ---
-title: "Infisical PHP SDK"
+title: "Hanzo KMS PHP SDK"
 sidebarTitle: "PHP"
 icon: "/images/sdks/languages/php.svg"
 ---
 
-If you're working with PHP, the official Infisical PHP SDK package is the easiest way to fetch and work with secrets for your application.
+If you're working with PHP, the official Hanzo KMS PHP SDK package is the easiest way to fetch and work with secrets for your application.
 
 ## Installation
 
 ```bash
-composer require infisical/php-sdk
+composer require kms/php-sdk
 ```
 
 ## Getting Started
@@ -17,18 +17,18 @@ composer require infisical/php-sdk
 ```php
 <?php
 
-use Infisical\SDK\InfisicalSDK;
+use Hanzo KMS\SDK\Hanzo KMSSDK;
 
-$sdk = new InfisicalSDK('https://app.infisical.com');
+$sdk = new Hanzo KMSSDK('https://kms.hanzo.ai');
 
-// Authenticate with Infisical
+// Authenticate with Hanzo KMS
 $response = $sdk->auth()->universalAuth()->login(
     "your-machine-identity-client-id",
     "your-machine-identity-client-secret"
 );
 
 // List secrets
-$params = new \Infisical\SDK\Models\ListSecretsParameters(
+$params = new \Hanzo KMS\SDK\Models\ListSecretsParameters(
     environment: "dev",
     secretPath: "/",
     projectId: "your-project-id"
@@ -74,7 +74,7 @@ This sub-class handles operations related to secrets:
 #### List Secrets
 
 ```php
-use Infisical\SDK\Models\ListSecretsParameters;
+use Hanzo KMS\SDK\Models\ListSecretsParameters;
 
 $params = new ListSecretsParameters(
     environment: "dev",
@@ -106,7 +106,7 @@ $secrets = $sdk->secrets()->list($params);
 #### Create Secret
 
 ```php
-use Infisical\SDK\Models\CreateSecretParameters;
+use Hanzo KMS\SDK\Models\CreateSecretParameters;
 
 $params = new CreateSecretParameters(
     secretKey: "SECRET_NAME",
@@ -132,7 +132,7 @@ $createdSecret = $sdk->secrets()->create($params);
 #### Get Secret
 
 ```php
-use Infisical\SDK\Models\GetSecretParameters;
+use Hanzo KMS\SDK\Models\GetSecretParameters;
 
 $params = new GetSecretParameters(
     secretKey: "SECRET_NAME",
@@ -156,7 +156,7 @@ $secret = $sdk->secrets()->get($params);
 #### Update Secret
 
 ```php
-use Infisical\SDK\Models\UpdateSecretParameters;
+use Hanzo KMS\SDK\Models\UpdateSecretParameters;
 
 $params = new UpdateSecretParameters(
     secretKey: "SECRET_NAME",
@@ -182,7 +182,7 @@ $updatedSecret = $sdk->secrets()->update($params);
 #### Delete Secret
 
 ```php
-use Infisical\SDK\Models\DeleteSecretParameters;
+use Hanzo KMS\SDK\Models\DeleteSecretParameters;
 
 $params = new DeleteSecretParameters(
     secretKey: "SECRET_NAME",

@@ -45,7 +45,7 @@ export const triggerWebhookRequest = async (
       .createHmac("sha256", secretKey)
       .update(JSON.stringify(payload))
       .digest("hex");
-    headers["x-infisical-signature"] = `t=${payload.timestamp};${webhookSign}`;
+    headers["x-kms-signature"] = `t=${payload.timestamp};${webhookSign}`;
   }
 
   const req = await request.post(url, payload, {

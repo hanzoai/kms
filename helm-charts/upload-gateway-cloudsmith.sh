@@ -1,8 +1,8 @@
-cd infisical-gateway
+cd kms-gateway
 helm dependency update
 helm package .
 for i in *.tgz; do
     [ -f "$i" ] || break
-    cloudsmith push helm --republish infisical/helm-charts "$i"
+    cloudsmith push helm --republish hanzoai/kms-helm-charts "$i"
 done
 cd ..

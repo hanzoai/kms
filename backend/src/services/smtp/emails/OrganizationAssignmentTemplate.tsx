@@ -64,6 +64,6 @@ OrganizationAssignmentTemplate.PreviewProps = {
   organizationName: "Example Organization",
   inviterFirstName: "Jane",
   inviterUsername: "jane@infisical.com",
-  siteUrl: "https://infisical.com",
-  callback_url: "https://app.infisical.com"
+  siteUrl: "https://kms.hanzo.ai",
+  callback_url: "https://kms.hanzo.ai"
 } as OrganizationAssignmentTemplateProps;

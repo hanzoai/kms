@@ -258,7 +258,7 @@ export const secretRotationQueueFactory = ({
         }
       }
 
-      /* Rotation function of HTTP infisical template
+      /* Rotation function of HTTP KMS template
        * This is a generic http based template system for rotation
        * we use this for sendgrid and for custom secret rotation
        * This will ensure user provided rotation is easier to make

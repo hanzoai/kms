@@ -3039,12 +3039,12 @@
   "logo": {
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg",
-    "href": "https://infisical.com"
+    "href": "https://kms.hanzo.ai"
   },
   "api": {
-    "openapi": "https://app.infisical.com/api/docs/json",
+    "openapi": "https://kms.hanzo.ai/api/docs/json",
     "mdx": {
-      "server": ["https://app.infisical.com"]
+      "server": ["https://kms.hanzo.ai"]
     }
   },
   "appearance": {
@@ -3061,21 +3061,21 @@
     "links": [
       {
         "label": "Log In",
-        "href": "https://app.infisical.com/login"
+        "href": "https://kms.hanzo.ai/login"
       }
     ],
     "primary": {
       "type": "button",
       "label": "Start for Free",
-      "href": "https://app.infisical.com/signup"
+      "href": "https://kms.hanzo.ai/signup"
     }
   },
   "footer": {
     "socials": {
       "x": "https://www.twitter.com/infisical/",
       "linkedin": "https://www.linkedin.com/company/infisical/",
-      "github": "https://github.com/Infisical/infisical-cli",
-      "slack": "https://infisical.com/slack"
+      "github": "https://github.com/hanzoai/kms-cli",
+      "slack": "https://hanzo.ai/slack"
     },
     "links": [
       {
@@ -3083,31 +3083,31 @@
         "items": [
           {
             "label": "Secret Management",
-            "href": "https://infisical.com/"
+            "href": "https://kms.hanzo.ai/"
           },
           {
             "label": "Secret Scanning",
-            "href": "https://infisical.com/radar"
+            "href": "https://kms.hanzo.ai/radar"
           },
           {
             "label": "Share Secrets",
-            "href": "https://app.infisical.com/share-secret"
+            "href": "https://kms.hanzo.ai/share-secret"
           },
           {
             "label": "Pricing",
-            "href": "https://infisical.com/pricing"
+            "href": "https://kms.hanzo.ai/pricing"
           },
           {
             "label": "Security",
-            "href": "https://infisical.com/docs/internals/security"
+            "href": "https://kms.hanzo.ai/docs/internals/security"
           },
           {
             "label": "Blog",
-            "href": "https://infisical.com/blog"
+            "href": "https://kms.hanzo.ai/blog"
           },
           {
             "label": "Infisical vs Vault",
-            "href": "https://infisical.com/infisical-vs-hashicorp-vault"
+            "href": "https://kms.hanzo.ai/infisical-vs-hashicorp-vault"
           },
           {
             "label": "Forum",
@@ -3120,19 +3120,19 @@
         "items": [
           {
             "label": "Infisical Agent",
-            "href": "https://infisical.com/docs/documentation/getting-started/introduction"
+            "href": "https://kms.hanzo.ai/docs/documentation/getting-started/introduction"
           },
           {
             "label": "Infisical Proxy",
-            "href": "https://infisical.com/docs/integrations/platforms/infisical-proxy"
+            "href": "https://kms.hanzo.ai/docs/integrations/platforms/infisical-proxy"
           },
           {
             "label": "Kubernetes",
-            "href": "https://infisical.com/docs/integrations/platforms/kubernetes"
+            "href": "https://kms.hanzo.ai/docs/integrations/platforms/kubernetes"
           },
           {
             "label": "Dynamic Secrets",
-            "href": "https://infisical.com/docs/documentation/platform/dynamic-secrets/overview"
+            "href": "https://kms.hanzo.ai/docs/documentation/platform/dynamic-secrets/overview"
           },
           {
             "label": "Terraform",
@@ -3140,31 +3140,31 @@
           },
           {
             "label": "Ansible",
-            "href": "https://infisical.com/docs/integrations/platforms/ansible"
+            "href": "https://kms.hanzo.ai/docs/integrations/platforms/ansible"
           },
           {
             "label": "Jenkins",
-            "href": "https://infisical.com/docs/integrations/cicd/jenkins"
+            "href": "https://kms.hanzo.ai/docs/integrations/cicd/jenkins"
           },
           {
             "label": "Docker",
-            "href": "https://infisical.com/docs/integrations/platforms/docker-intro"
+            "href": "https://kms.hanzo.ai/docs/integrations/platforms/docker-intro"
           },
           {
             "label": "AWS ECS",
-            "href": "https://infisical.com/docs/integrations/platforms/ecs-with-agent"
+            "href": "https://kms.hanzo.ai/docs/integrations/platforms/ecs-with-agent"
           },
           {
             "label": "GitLab",
-            "href": "https://infisical.com/docs/integrations/cicd/gitlab"
+            "href": "https://kms.hanzo.ai/docs/integrations/cicd/gitlab"
           },
           {
             "label": "GitHub",
-            "href": "https://infisical.com/docs/integrations/cicd/githubactions"
+            "href": "https://kms.hanzo.ai/docs/integrations/cicd/githubactions"
           },
           {
             "label": "SDK",
-            "href": "https://infisical.com/docs/sdks/overview"
+            "href": "https://kms.hanzo.ai/docs/sdks/overview"
           }
         ]
       },
@@ -3181,7 +3181,7 @@
           },
           {
             "label": "Feedback & Requests",
-            "href": "https://github.com/Infisical/infisical/issues"
+            "href": "https://github.com/hanzoai/kms/issues"
           },
           {
             "label": "Trust of Center",
@@ -3189,7 +3189,7 @@
           },
           {
             "label": "Open Source Friends",
-            "href": "https://infisical.com/infisical-friends"
+            "href": "https://kms.hanzo.ai/infisical-friends"
           },
           {
             "label": "How to contribute",
@@ -3202,31 +3202,31 @@
         "items": [
           {
             "label": "Customers",
-            "href": "https://infisical.com/customers/traba"
+            "href": "https://kms.hanzo.ai/customers/traba"
           },
           {
             "label": "Company Handbook",
-            "href": "https://infisical.com/wiki/handbook/overview"
+            "href": "https://kms.hanzo.ai/wiki/handbook/overview"
           },
           {
             "label": "Careers",
-            "href": "https://infisical.com/careers"
+            "href": "https://kms.hanzo.ai/careers"
           },
           {
             "label": "Terms of Service",
-            "href": "https://infisical.com/terms"
+            "href": "https://kms.hanzo.ai/terms"
           },
           {
             "label": "Privacy Policy",
-            "href": "https://infisical.com/privacy"
+            "href": "https://kms.hanzo.ai/privacy"
           },
           {
             "label": "Subprocessors",
-            "href": "https://infisical.com/subprocessors"
+            "href": "https://kms.hanzo.ai/subprocessors"
           },
           {
             "label": "SLA",
-            "href": "https://infisical.com/sla"
+            "href": "https://kms.hanzo.ai/sla"
           },
           {
             "label": "Team Email",
@@ -3238,7 +3238,7 @@
           },
           {
             "label": "Support",
-            "href": "https://infisical.com/slack"
+            "href": "https://hanzo.ai/slack"
           }
         ]
       }

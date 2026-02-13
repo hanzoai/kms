@@ -1,20 +1,20 @@
 ---
 title: "MongoDB Connection"
-description: "Learn how to configure a MongoDB Connection for Infisical."
+description: "Learn how to configure a MongoDB Connection for Hanzo KMS."
 ---
 
-Infisical supports the use of Username & Password authentication to connect with MongoDB databases.
+Hanzo KMS supports the use of Username & Password authentication to connect with MongoDB databases.
 
-## Configure a MongoDB user for Infisical
+## Configure a MongoDB user for Hanzo KMS
 
 <Steps>
     <Step title="Create a MongoDB user">
-        Infisical recommends creating a designated user in your MongoDB database for your connection.
+        Hanzo KMS recommends creating a designated user in your MongoDB database for your connection.
 
         ```bash
         use [TARGET-DATABASE]
         db.createUser({
-          user: "infisical_manager",
+          user: "kms_manager",
           pwd: "[ENTER-YOUR-USER-PASSWORD]",
           roles: []
         })
@@ -30,11 +30,11 @@ Infisical supports the use of Username & Password authentication to connect with
 
         <Tabs>
             <Tab title="Secret Rotation">
-                For Secret Rotations, your Infisical user will require the ability to create, update, and delete users in the target database:
+                For Secret Rotations, your Hanzo KMS user will require the ability to create, update, and delete users in the target database:
 
                 ```bash
                 use [TARGET-DATABASE]
-                db.grantRolesToUser("infisical_manager", [
+                db.grantRolesToUser("kms_manager", [
                   { role: "userAdmin", db: "[TARGET-DATABASE]" }
                 ])
                 ```
@@ -48,13 +48,13 @@ Infisical supports the use of Username & Password authentication to connect with
 
 </Steps>
 
-## Create MongoDB Connection in Infisical
+## Create MongoDB Connection in Hanzo KMS
 
 <Tabs>
-    <Tab title="Infisical UI">
+    <Tab title="Hanzo KMS UI">
         <Steps>
             <Step title="Navigate to App Connections">
-                In your Infisical dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
+                In your Hanzo KMS dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
 
                 ![App Connections Tab](/images/app-connections/general/add-connection.png)
             </Step>
@@ -78,7 +78,7 @@ Infisical supports the use of Username & Password authentication to connect with
                 ![MongoDB Connection Modal](/images/app-connections/mongodb/mongodb-app-connection-form.png)
             </Step>
             <Step title="Connection Created">
-                After clicking Create, your **MongoDB Connection** is established and ready to use with your Infisical project.
+                After clicking Create, your **MongoDB Connection** is established and ready to use with your Hanzo KMS project.
 
                 ![MongoDB Connection Created](/images/app-connections/mongodb/mongodb-app-connection-generated.png)
             </Step>
@@ -91,7 +91,7 @@ Infisical supports the use of Username & Password authentication to connect with
 
         ```bash Request
         curl    --request POST \
-                --url https://app.infisical.com/api/v1/app-connections/mongodb \
+                --url https://kms.hanzo.ai/api/v1/app-connections/mongodb \
                 --header 'Content-Type: application/json' \
                 --data '{
                     "name": "my-mongodb-connection",

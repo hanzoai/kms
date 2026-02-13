@@ -20,7 +20,7 @@ export enum KmsGcpKeyFetchAuthType {
 }
 
 const AwsConnectionAssumeRoleCredentialsSchema = z.object({
-  assumeRoleArn: z.string().trim().min(1).describe("AWS user role to be assumed by infisical"),
+  assumeRoleArn: z.string().trim().min(1).describe("AWS user role to be assumed by Hanzo KMS"),
   externalId: z
     .string()
     .trim()

@@ -34,12 +34,12 @@ const isProduction = process.env.NODE_ENV === "production";
 const migrationConfig = {
   directory: path.join(__dirname, "./db/migrations"),
   loadExtensions: [".mjs", ".ts"],
-  tableName: "infisical_migrations"
+  tableName: "kms_migrations"
 };
 
 const migrationStatusCheckErrorHandler = (err: Error) => {
   // happens for first time  in which the migration table itself is not created yet
-  //    error: select * from "infisical_migrations" - relation "infisical_migrations" does not exist
+  //    error: select * from "kms_migrations" - relation "kms_migrations" does not exist
   if (err?.message?.includes("does not exist")) {
     return true;
   }

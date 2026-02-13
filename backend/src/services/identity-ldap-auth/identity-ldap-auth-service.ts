@@ -257,12 +257,12 @@ export const identityLdapAuthServiceFactory = ({
 
       if (appCfg.OTEL_TELEMETRY_COLLECTION_ENABLED) {
         authAttemptCounter.add(1, {
-          "infisical.identity.id": identityLdapAuth.identityId,
-          "infisical.identity.name": identity.name,
-          "infisical.organization.id": org.id,
-          "infisical.organization.name": org.name,
-          "infisical.identity.auth_method": AuthAttemptAuthMethod.LDAP_AUTH,
-          "infisical.identity.auth_result": AuthAttemptAuthResult.SUCCESS,
+          "kms.identity.id": identityLdapAuth.identityId,
+          "kms.identity.name": identity.name,
+          "kms.organization.id": org.id,
+          "kms.organization.name": org.name,
+          "kms.identity.auth_method": AuthAttemptAuthMethod.LDAP_AUTH,
+          "kms.identity.auth_result": AuthAttemptAuthResult.SUCCESS,
           "client.address": requestContext.get("ip"),
           "user_agent.original": requestContext.get("userAgent")
         });
@@ -272,12 +272,12 @@ export const identityLdapAuthServiceFactory = ({
     } catch (error) {
       if (appCfg.OTEL_TELEMETRY_COLLECTION_ENABLED) {
         authAttemptCounter.add(1, {
-          "infisical.identity.id": identityLdapAuth.identityId,
-          "infisical.identity.name": identity.name,
-          "infisical.organization.id": org.id,
-          "infisical.organization.name": org.name,
-          "infisical.identity.auth_method": AuthAttemptAuthMethod.LDAP_AUTH,
-          "infisical.identity.auth_result": AuthAttemptAuthResult.FAILURE,
+          "kms.identity.id": identityLdapAuth.identityId,
+          "kms.identity.name": identity.name,
+          "kms.organization.id": org.id,
+          "kms.organization.name": org.name,
+          "kms.identity.auth_method": AuthAttemptAuthMethod.LDAP_AUTH,
+          "kms.identity.auth_result": AuthAttemptAuthResult.FAILURE,
           "client.address": requestContext.get("ip"),
           "user_agent.original": requestContext.get("userAgent")
         });

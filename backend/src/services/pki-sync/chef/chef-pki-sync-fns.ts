@@ -30,7 +30,7 @@ const CHEF_RATE_LIMIT_CONFIG: RateLimitConfig = {
 const chefConnectionQueue = createConnectionQueue(CHEF_RATE_LIMIT_CONFIG);
 const { withRateLimitRetry } = chefConnectionQueue;
 
-const isInfisicalManagedCertificate = (certificateName: string, pkiSync: TPkiSyncWithCredentials): boolean => {
+const isHanzo KMSManagedCertificate = (certificateName: string, pkiSync: TPkiSyncWithCredentials): boolean => {
   const syncOptions = pkiSync.syncOptions as { certificateNameSchema?: string } | undefined;
   const certificateNameSchema = syncOptions?.certificateNameSchema;
 
@@ -39,7 +39,7 @@ const isInfisicalManagedCertificate = (certificateName: string, pkiSync: TPkiSyn
     return matchesCertificateNameSchema(certificateName, environment, certificateNameSchema);
   }
 
-  return certificateName.startsWith(CHEF_PKI_SYNC_DEFAULTS.INFISICAL_PREFIX);
+  return certificateName.startsWith(CHEF_PKI_SYNC_DEFAULTS.KMS_PREFIX);
 };
 
 const parseErrorMessage = (error: unknown): string => {
@@ -346,7 +346,7 @@ export const chefPkiSyncFactory = ({ certificateDAL, certificateSyncDAL }: TChef
       const itemsToRemove: string[] = [];
 
       Object.keys(chefDataBagItems).forEach((itemName) => {
-        if (!activeExternalIdentifiers.has(itemName) && isInfisicalManagedCertificate(itemName, pkiSync)) {
+        if (!activeExternalIdentifiers.has(itemName) && isHanzo KMSManagedCertificate(itemName, pkiSync)) {
           itemsToRemove.push(itemName);
         }
       });

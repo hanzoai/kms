@@ -63,8 +63,8 @@ export default ScimTokenExpiryNoticeTemplate;
 
 ScimTokenExpiryNoticeTemplate.PreviewProps = {
   orgName: "Example Organization",
-  siteUrl: "https://infisical.com",
-  url: "https://infisical.com",
+  siteUrl: "https://kms.hanzo.ai",
+  url: "https://kms.hanzo.ai",
   tokenDescription: "Example SCIM Token",
   createdOn: new Date("2025-11-27T00:00:00Z"),
   expiringOn: new Date("2025-12-27T00:00:00Z")

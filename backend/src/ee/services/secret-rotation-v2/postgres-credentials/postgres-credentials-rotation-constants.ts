@@ -8,13 +8,13 @@ export const POSTGRES_CREDENTIALS_ROTATION_LIST_OPTION: TSecretRotationV2ListIte
   connection: AppConnection.Postgres,
   template: {
     createUserStatement: `-- create user role
-CREATE USER infisical_user WITH ENCRYPTED PASSWORD 'temporary_password';
+CREATE USER kms_user WITH ENCRYPTED PASSWORD 'temporary_password';
    
 -- grant database connection permissions
-GRANT CONNECT ON DATABASE my_database TO infisical_user;
+GRANT CONNECT ON DATABASE my_database TO kms_user;
    
 -- grant relevant table permissions
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO infisical_user;`,
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO kms_user;`,
     rotationStatement: `ALTER USER "{{username}}" WITH PASSWORD '{{password}}'`,
     secretsMapping: {
       username: "POSTGRES_DB_USERNAME",

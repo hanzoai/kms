@@ -72,7 +72,7 @@ export const accountRecoveryServiceFactory = ({
         await smtpService.sendMail({
           template: SmtpTemplates.ResetPassword,
           recipients: [email],
-          subjectLine: "Infisical account recovery",
+          subjectLine: "Hanzo KMS account recovery",
           substitutions
         });
       }
@@ -91,7 +91,7 @@ export const accountRecoveryServiceFactory = ({
     // akhilmhdh: case sensitive email resolution
     const user = users?.length > 1 ? users.find((el) => el.username === email) : users?.[0];
     if (!user) throw new BadRequestError({ message: "Failed to find user data" });
-    // ignore as user is not found to avoid an outside entity to identify infisical registered accounts
+    // ignore as user is not found to avoid an outside entity to identify KMS registered accounts
     if (!user || (user && !user.isAccepted)) {
       throw new Error("Failed email verification for pass reset");
     }

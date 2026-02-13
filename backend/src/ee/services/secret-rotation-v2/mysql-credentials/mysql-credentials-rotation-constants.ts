@@ -8,10 +8,10 @@ export const MYSQL_CREDENTIALS_ROTATION_LIST_OPTION: TSecretRotationV2ListItem =
   connection: AppConnection.MySql,
   template: {
     createUserStatement: `-- create user
-CREATE USER 'infisical_user'@'%' IDENTIFIED BY 'temporary_password';
+CREATE USER 'kms_user'@'%' IDENTIFIED BY 'temporary_password';
 
 -- grant all privileges
-GRANT ALL PRIVILEGES ON my_database.* TO 'infisical_user'@'%';
+GRANT ALL PRIVILEGES ON my_database.* TO 'kms_user'@'%';
 
 -- apply the privilege changes
 FLUSH PRIVILEGES;`,

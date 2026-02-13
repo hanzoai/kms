@@ -57,7 +57,7 @@ SecretScanningScanFailedTemplate.PreviewProps = {
   resourceName: "my-resource",
   projectName: "my-project",
   timestamp: "May 3rd 2025, 5:42 pm",
-  url: "https://infisical.com",
+  url: "https://kms.hanzo.ai",
   errorMessage: "401 Unauthorized",
-  siteUrl: "https://infisical.com"
+  siteUrl: "https://kms.hanzo.ai"
 } as SecretScanningScanFailedTemplateProps;

@@ -1450,7 +1450,7 @@ export const internalCertificateAuthorityServiceFactory = ({
 
   /**
    * Return new leaf certificate issued by CA with id [caId] and private key.
-   * Note: private key and CSR are generated within Infisical.
+   * Note: private key and CSR are generated within Hanzo KMS.
    */
   const issueCertFromCa = async ({
     caId,
@@ -1858,7 +1858,7 @@ export const internalCertificateAuthorityServiceFactory = ({
 
   /**
    * Return new leaf certificate issued by CA with id [caId].
-   * Note: CSR is generated externally and submitted to Infisical.
+   * Note: CSR is generated externally and submitted to Hanzo KMS.
    */
   const signCertFromCa = async (dto: TSignCertFromCaDTO) => {
     const appCfg = getConfig();

@@ -8,10 +8,10 @@ description: "Learn how to configure secret scanning for GitHub."
 
 - Create a [GitHub Radar Connection](/integrations/app-connections/github-radar)
 
-## Create a GitHub Data Source in Infisical
+## Create a GitHub Data Source in Hanzo KMS
 
 <Tabs>
-    <Tab title="Infisical UI">
+    <Tab title="Hanzo KMS UI">
         1. Navigate to your Secret Scanning Project's Dashboard and click the **Add Data Source** button.
         ![Secret Scanning Dashboard](/images/platform/secret-scanning/github/github-data-source-step-1.png)
 
@@ -23,9 +23,9 @@ description: "Learn how to configure secret scanning for GitHub."
 
             - **GitHub Radar Connection** - the connection that has access to the repositories you want to scan.
             - **Scan Repositories** - select which repositories you would like to scan.
-                - **All Repositories** - Infisical will scan all repositories associated with your connection.
-                - **Select Repositories** - Infisical will scan the selected repositories.
-            - **Auto-Scan Enabled** - whether Infisical should automatically perform a scan when a push is made to configured repositories.
+                - **All Repositories** - Hanzo KMS will scan all repositories associated with your connection.
+                - **Select Repositories** - Hanzo KMS will scan the selected repositories.
+            - **Auto-Scan Enabled** - whether Hanzo KMS should automatically perform a scan when a push is made to configured repositories.
 
         4. Give your data source a name and description (optional). Then click **Next**.
         ![Data Source Details](/images/platform/secret-scanning/github/github-data-source-step-4.png)
@@ -52,7 +52,7 @@ description: "Learn how to configure secret scanning for GitHub."
 
         ```bash Request
         curl --request POST \
-        --url https://us.infisical.com/api/v2/secret-scanning/data-sources/github \
+        --url https://us.kms.hanzo.ai/api/v2/secret-scanning/data-sources/github \
         --header 'Content-Type: application/json' \
         --data '{
             "name": "my-github-source",

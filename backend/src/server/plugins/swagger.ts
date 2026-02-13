@@ -9,17 +9,17 @@ export const fastifySwagger = fp(async (fastify) => {
     transform: jsonSchemaTransform,
     openapi: {
       info: {
-        title: "Infisical API",
+        title: "Hanzo KMS API",
         description: "List of all available APIs that can be consumed",
         version: "0.0.1"
       },
       servers: [
         {
-          url: "https://us.infisical.com",
+          url: "https://us.kms.hanzo.ai",
           description: "Production server (US)"
         },
         {
-          url: "https://eu.infisical.com",
+          url: "https://eu.kms.hanzo.ai",
           description: "Production server (EU)"
         },
         {
@@ -33,7 +33,7 @@ export const fastifySwagger = fp(async (fastify) => {
             type: "http",
             scheme: "bearer",
             bearerFormat: "JWT",
-            description: "An access token in Infisical"
+            description: "An access token in Hanzo KMS"
           }
         }
       }

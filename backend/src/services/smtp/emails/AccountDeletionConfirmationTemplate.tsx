@@ -32,5 +32,5 @@ export default AccountDeletionConfirmationTemplate;
 
 AccountDeletionConfirmationTemplate.PreviewProps = {
   email: "test@infisical.com",
-  siteUrl: "https://infisical.com"
+  siteUrl: "https://kms.hanzo.ai"
 } as AccountDeletionConfirmationTemplateProps;

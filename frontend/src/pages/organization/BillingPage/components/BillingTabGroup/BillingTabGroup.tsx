@@ -9,8 +9,8 @@ import { BillingReceiptsTab } from "../BillingReceiptsTab";
 import { BillingSelfHostedTab } from "../BillingSelfHostedTab";
 
 const tabs = [
-  { name: "Hanzo KMS Cloud", key: "tab-infisical-cloud" },
-  { name: "Hanzo KMS Self-Hosted", key: "tab-infisical-self-hosted" },
+  { name: "Hanzo KMS Cloud", key: "tab-kms-cloud" },
+  { name: "Hanzo KMS Self-Hosted", key: "tab-kms-self-hosted" },
   { name: "Receipts", key: "tab-receipts" },
   { name: "Billing details", key: "tab-billing-details" }
 ];

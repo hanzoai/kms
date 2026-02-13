@@ -1,15 +1,15 @@
 ---
-title: "Infisical .NET SDK"
+title: "Hanzo KMS .NET SDK"
 sidebarTitle: ".NET"
 icon: "/images/sdks/languages/dotnet.svg"
 ---
 
-If you're working with .NET, the official Infisical .NET SDK package is the easiest way to fetch and work with secrets for your application. 
+If you're working with .NET, the official Hanzo KMS .NET SDK package is the easiest way to fetch and work with secrets for your application. 
 
 ## Installation
 
 ```bash
-dotnet add package Infisical.Sdk
+dotnet add package Hanzo KMS.Sdk
 ```
 
 ## Getting Started (.NET)
@@ -17,19 +17,19 @@ dotnet add package Infisical.Sdk
 ```csharp
 namespace Example;
 
-using Infisical.Sdk;
-using Infisical.Sdk.Model;
+using Hanzo KMS.Sdk;
+using Hanzo KMS.Sdk.Model;
 
 public class Program {
   public static void Main(string[] args) {
 
-    var settings = new InfisicalSdkSettingsBuilder()
-        .WithHostUri("http://localhost:8080") // Optional. Will default to https://app.infisical.com
+    var settings = new Hanzo KMSSdkSettingsBuilder()
+        .WithHostUri("http://localhost:8080") // Optional. Will default to https://kms.hanzo.ai
         .Build();
 
-    var infisicalClient = new InfisicalClient(settings);
+    var kmsClient = new Hanzo KMSClient(settings);
 
-    var _ = infisicalClient.Auth().UniversalAuth().LoginAsync("<machine-identity-universal-auth-client-id>", "<machine-identity-universal-auth-client-secret>").Result;
+    var _ = kmsClient.Auth().UniversalAuth().LoginAsync("<machine-identity-universal-auth-client-id>", "<machine-identity-universal-auth-client-secret>").Result;
 
     var options = new ListSecretsOptions
     {
@@ -39,7 +39,7 @@ public class Program {
       ProjectId = "<your-project-id>",
     };
 
-    var secrets = infisicalClient.Secrets().ListAsync(options).Result;
+    var secrets = kmsClient.Secrets().ListAsync(options).Result;
 
     if (secrets == null)
     {
@@ -56,18 +56,18 @@ public class Program {
 
 ## Getting Started (Visual Basic)
 ```vb
-Imports Infisical.Sdk
-Imports Infisical.Sdk.Model
+Imports Hanzo KMS.Sdk
+Imports Hanzo KMS.Sdk.Model
 
 Module Program
     Sub Main(args As String())
-        Dim settings = New InfisicalSdkSettingsBuilder() _
-            .WithHostUri("https://app.infisical.com") _
+        Dim settings = New Hanzo KMSSdkSettingsBuilder() _
+            .WithHostUri("https://kms.hanzo.ai") _
             .Build()
         
-        Dim infisicalClient As New InfisicalClient(settings)
+        Dim kmsClient As New Hanzo KMSClient(settings)
 
-        Dim authResult = infisicalClient.Auth().UniversalAuth() _
+        Dim authResult = kmsClient.Auth().UniversalAuth() _
           .LoginAsync("<machine-identity-universal-auth-client-id>", "machine-identity-universal-auth-client-secret").Result
 
         Dim options As New ListSecretsOptions With {
@@ -77,7 +77,7 @@ Module Program
           .ProjectId = "<your-project-id>"
         }
 
-        Dim secrets = infisicalClient.Secrets().ListAsync(options).Result
+        Dim secrets = kmsClient.Secrets().ListAsync(options).Result
 
         For Each secret In secrets
             Console.WriteLine(secret.SecretKey)
@@ -96,7 +96,7 @@ The SDK methods are organized into the following high-level categories:
 
 1. `Auth()`: Handles authentication methods.
 2. `Secrets()`: Manages CRUD operations for secrets.
-3. `Pki()`: Programmatically interact with the Infisical PKI.
+3. `Pki()`: Programmatically interact with the Hanzo KMS PKI.
     * `Subscribers()`: Manage PKI Subscribers.
 
 ### `Auth()`
@@ -136,14 +136,14 @@ var _ = await sdk.Auth().LdapAuth().LoginAsync(
 
 ### `Secrets()`
 
-The `Secrets()` sub-class handles operations related to the Infisical secrets management product.
+The `Secrets()` sub-class handles operations related to the Hanzo KMS secrets management product.
 
 #### List Secrets
 
 ```cs
 Task<Secret[]> ListAsync(ListSecretsOptions options);
 
-throws InfisicalException
+throws Hanzo KMSException
 ```
 
 ```csharp
@@ -177,7 +177,7 @@ Secret[] secrets = await sdk.Secrets().ListAsync(options);
 ```cs
 public Task<Secret> CreateAsync(CreateSecretOptions options);
 
-throws InfisicalException
+throws Hanzo KMSException
 ```
 
 ```cs
@@ -220,7 +220,7 @@ Task<Secret> newSecret = await sdk.Secrets().CreateAsync(options);
 ```cs
 public Task<Secret> UpdateAsync(UpdateSecretOptions options); 
 
-throws InfisicalException
+throws Hanzo KMSException
 ```
 
 
@@ -257,7 +257,7 @@ Task<Secret> updatedSecret = await sdk.Secrets().UpdateAsync(updateSecretOptions
 ```cs
 public Task<Secret> GetAsync(GetSecretOptions options);
 
-throws InfisicalException
+throws Hanzo KMSException
 ```
 
 ```cs
@@ -290,7 +290,7 @@ Secret secret = await sdk.Secrets().GetAsync(getSecretOptions);
 ```cs
 public Secret DeleteAsync(DeleteSecretOptions options);
 
-throws InfisicalException
+throws Hanzo KMSException
 ```
 
 ```cs
@@ -319,7 +319,7 @@ Secret deletedSecret = await sdk.Secrets().DeleteAsync(options);
 
 ### `Pki().Subscribers()`
 
-The `Pki().Subscribers()` sub-class is used to programmatically interact with the Infisical PKI product line. Currently only issuing new certificates and retrieving the latest certificate bundle from a subscriber is supported. More widespread support for the PKI product is coming to the .NET SDK in the near future.
+The `Pki().Subscribers()` sub-class is used to programmatically interact with the Hanzo KMS PKI product line. Currently only issuing new certificates and retrieving the latest certificate bundle from a subscriber is supported. More widespread support for the PKI product is coming to the .NET SDK in the near future.
 
 
 #### Issue a new certificate
@@ -327,7 +327,7 @@ The `Pki().Subscribers()` sub-class is used to programmatically interact with th
 ```cs
 public async Task<SubscriberIssuedCertificate> IssueCertificateAsync(IssueCertificateOptions options);
 
-throws InfisicalException
+throws Hanzo KMSException
 ```
 
 ```cs
@@ -353,7 +353,7 @@ SubscriberIssuedCertificate newCertificate = await sdk.Pki().Subscribers().Issue
 ```cs
 public async Task<CertificateBundle> RetrieveLatestCertificateBundleAsync(RetrieveLatestCertificateBundleOptions options)
 
-throws InfisicalException
+throws Hanzo KMSException
 ```
 
 ```cs

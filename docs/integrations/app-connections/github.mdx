@@ -1,16 +1,16 @@
 ---
 title: "GitHub Connection"
-description: "Learn how to configure a GitHub Connection for Infisical."
+description: "Learn how to configure a GitHub Connection for Hanzo KMS."
 ---
 
-Infisical supports three methods for connecting to GitHub.
+Hanzo KMS supports three methods for connecting to GitHub.
 
 <Tabs>
     <Tab title="GitHub App (Recommended)">
-        Infisical will use a GitHub App with finely grained permissions to connect to GitHub.
+        Hanzo KMS will use a GitHub App with finely grained permissions to connect to GitHub.
 
         <Accordion title="Self-Hosted Instance">
-            Using the GitHub integration with app authentication on a self-hosted instance of Infisical requires configuring an application on GitHub
+            Using the GitHub integration with app authentication on a self-hosted instance of Hanzo KMS requires configuring an application on GitHub
             and registering your instance with it.
 
             <Steps>
@@ -43,7 +43,7 @@ Infisical supports three methods for connecting to GitHub.
                         in your organization Settings > Developer settings > GitHub Apps > New GitHub App.
                     </Note>
                 </Step>
-                <Step title="Add your application credentials to Infisical">
+                <Step title="Add your application credentials to Hanzo KMS">
                     Generate a new **Client Secret** for your GitHub application.
                     ![integrations github app create secret](/images/integrations/github/app/self-hosted-github-app-secret.png)
 
@@ -53,7 +53,7 @@ Infisical supports three methods for connecting to GitHub.
                     Obtain the necessary Github application credentials. This would be the application slug, client ID, app ID, client secret, and private key.
                     ![integrations github app credentials](/images/integrations/github/app/self-hosted-github-app-credentials.png)
 
-                    Back in your Infisical instance, you can configure the GitHub App credentials in one of two ways:
+                    Back in your Hanzo KMS instance, you can configure the GitHub App credentials in one of two ways:
 
                     **Option 1: Server Admin Panel (Recommended)**
 
@@ -76,12 +76,12 @@ Infisical supports three methods for connecting to GitHub.
                     - `INF_APP_CONNECTION_GITHUB_APP_ID`: The **App ID** of your GitHub application.
                     - `INF_APP_CONNECTION_GITHUB_APP_PRIVATE_KEY`: The **Private Key** of your GitHub application.
 
-                    Once configured, you can use the GitHub integration via app authentication. If you configured the credentials using environment variables, restart your Infisical instance for the changes to take effect. If you configured them through the server admin panel, allow approximately 5 minutes for the changes to propagate.
+                    Once configured, you can use the GitHub integration via app authentication. If you configured the credentials using environment variables, restart your Hanzo KMS instance for the changes to take effect. If you configured them through the server admin panel, allow approximately 5 minutes for the changes to propagate.
                 </Step>
             </Steps>
         </Accordion>
 
-        ## Setup GitHub Connection in Infisical
+        ## Setup GitHub Connection in Hanzo KMS
 
         <Steps>
             <Step title="Navigate to App Connections">
@@ -104,7 +104,7 @@ Infisical supports three methods for connecting to GitHub.
             <Step title="Install GitHub App">
                 You will then be redirected to the GitHub app installation page.
 
-                Install and authorize the GitHub application. This will redirect you back to Infisical's App Connections page.
+                Install and authorize the GitHub application. This will redirect you back to Hanzo KMS's App Connections page.
                 ![Install GitHub App](/images/app-connections/github/install-github-app.png)
             </Step>
             <Step title="Connection Created">
@@ -114,10 +114,10 @@ Infisical supports three methods for connecting to GitHub.
         </Steps>
     </Tab>
     <Tab title="OAuth">
-        Infisical will use an OAuth App to connect to GitHub.
+        Hanzo KMS will use an OAuth App to connect to GitHub.
 
         <Accordion title="Self-Hosted Instance">
-            Using the GitHub integration on a self-hosted instance of Infisical requires configuring an OAuth application in GitHub
+            Using the GitHub integration on a self-hosted instance of Hanzo KMS requires configuring an OAuth application in GitHub
             and registering your instance with it.
             <Steps>
                 <Step title="Create an OAuth application in GitHub">
@@ -137,22 +137,22 @@ Infisical supports three methods for connecting to GitHub.
                         in your organization Settings > Developer settings > OAuth Apps > New Org OAuth App.
                     </Note>
                 </Step>
-                <Step title="Add your OAuth application credentials to Infisical">
+                <Step title="Add your OAuth application credentials to Hanzo KMS">
                     Obtain the **Client ID** and generate a new **Client Secret** for your GitHub OAuth application.
 
                     ![integrations github config](../../images/integrations/github/integrations-github-config-credentials.png)
 
-                    Back in your Infisical instance, add two new environment variables for the credentials of your GitHub OAuth application:
+                    Back in your Hanzo KMS instance, add two new environment variables for the credentials of your GitHub OAuth application:
 
                     - `INF_APP_CONNECTION_GITHUB_OAUTH_CLIENT_ID`: The **Client ID** of your GitHub OAuth application.
                     - `INF_APP_CONNECTION_GITHUB_OAUTH_CLIENT_SECRET`: The **Client Secret** of your GitHub OAuth application.
 
-                    Once added, restart your Infisical instance and use the GitHub integration.
+                    Once added, restart your Hanzo KMS instance and use the GitHub integration.
                 </Step>
             </Steps>
         </Accordion>
 
-        ## Setup GitHub Connection in Infisical
+        ## Setup GitHub Connection in Hanzo KMS
 
         <Steps>
             <Step title="Navigate to App Connections">
@@ -168,8 +168,8 @@ Infisical supports three methods for connecting to GitHub.
                 ![Connect via GitHub App](/images/app-connections/github/create-oauth-method.png)
             </Step>
             <Step title="Grant Access">
-                You will then be redirected to the GitHub to grant Infisical access to your GitHub account (organization and repo privileges).
-                Once granted, you will redirect you back to Infisical's App Connections page.
+                You will then be redirected to the GitHub to grant Hanzo KMS access to your GitHub account (organization and repo privileges).
+                Once granted, you will redirect you back to Hanzo KMS's App Connections page.
                 ![GitHub Authorization](/images/integrations/github/integrations-github-auth.png)
             </Step>
             <Step title="Connection Created">
@@ -179,7 +179,7 @@ Infisical supports three methods for connecting to GitHub.
         </Steps>
     </Tab>
     <Tab title="Personal Access Token">
-        Infisical will use a Personal Access Token to connect to GitHub.
+        Hanzo KMS will use a Personal Access Token to connect to GitHub.
 
         ## Create a Personal Access Token
             <Steps>
@@ -194,7 +194,7 @@ Infisical supports three methods for connecting to GitHub.
                 </Step>
                 <Step title="Fill in the Personal Access Token details">
                     Fill in the Personal Access Token details:
-                    - **Token name:** A descriptive name for the token (e.g., "infisical-connection-token")
+                    - **Token name:** A descriptive name for the token (e.g., "kms-connection-token")
                     - **Repository access:** Select the repositories you want to grant access to
                         - Select `All repositories` or `Only selected repositories` to be able to manage the secrets in the selected repositories.
                     - **Select scopes:** Add the following scopes:
@@ -217,7 +217,7 @@ Infisical supports three methods for connecting to GitHub.
                 </Step>
             </Steps>
 
-        ## Setup GitHub Connection in Infisical
+        ## Setup GitHub Connection in Hanzo KMS
 
         <Steps>
             <Step title="Navigate to App Connections">

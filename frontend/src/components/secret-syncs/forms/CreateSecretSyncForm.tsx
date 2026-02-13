@@ -150,8 +150,8 @@ export const CreateSecretSyncForm = ({
           </div>
           <p className="mt-1 text-sm text-bunker-200">
             Secret Syncs are the source of truth for connected third-party services. Any secret,
-            including associated data, not present or imported in Infisical before syncing will be
-            overwritten, and changes made directly in the connected service outside of infisical may
+            including associated data, not present or imported in Hanzo KMS before syncing will be
+            overwritten, and changes made directly in the connected service outside of Hanzo KMS may
             also be overwritten by future syncs.
           </p>
         </div>

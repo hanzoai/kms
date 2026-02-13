@@ -5,7 +5,7 @@ for d in */ ; do
     helm package .
     for i in *.tgz; do
         [ -f "$i" ] || break
-        cloudsmith push helm --republish infisical/helm-charts "$i"
+        cloudsmith push helm --republish hanzoai/kms-helm-charts "$i"
     done
     cd ..
 done
@@ -13,5 +13,5 @@ done
 # ## Upload each packaged helm chart 
 # for i in *.tgz; do
 #     [ -f "$i" ] || break
-#     cloudsmith push helm --republish infisical/helm-charts $i
+#     cloudsmith push helm --republish hanzoai/kms-helm-charts $i
 # done

@@ -24,10 +24,10 @@ ${baseUrl}/admin/signup
   } else {
     console.info(`Welcome back!
 
-To access Infisical Administrator Panel open
+To access Hanzo KMS Administrator Panel open
 ${baseUrl}/admin
 
-To access Infisical server
+To access Hanzo KMS server
 ${baseUrl}
 `);
   }

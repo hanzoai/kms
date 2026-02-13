@@ -1,12 +1,12 @@
 ---
 title: "Bitbucket Connection"
-description: "Learn how to configure a Bitbucket Connection for Infisical."
+description: "Learn how to configure a Bitbucket Connection for Hanzo KMS."
 ---
 
-Infisical supports the use of [API Tokens](https://support.atlassian.com/bitbucket-cloud/docs/api-tokens/) to connect with Bitbucket.
+Hanzo KMS supports the use of [API Tokens](https://support.atlassian.com/bitbucket-cloud/docs/api-tokens/) to connect with Bitbucket.
 
 <Tip>
-    Infisical recommends creating a dedicated Bitbucket account with access restricted to only the resources your use case requires.
+    Hanzo KMS recommends creating a dedicated Bitbucket account with access restricted to only the resources your use case requires.
 </Tip>
 
 ## Create Bitbucket Access Token
@@ -72,13 +72,13 @@ Infisical supports the use of [API Tokens](https://support.atlassian.com/bitbuck
     </Step>
 </Steps>
 
-## Create Bitbucket Connection in Infisical
+## Create Bitbucket Connection in Hanzo KMS
 
 <Tabs>
-    <Tab title="Infisical UI">
+    <Tab title="Hanzo KMS UI">
         <Steps>
             <Step title="Navigate to App Connections">
-                In your Infisical dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
+                In your Hanzo KMS dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
 
                 ![App Connections Tab](/images/app-connections/general/add-connection.png)
             </Step>
@@ -95,7 +95,7 @@ Infisical supports the use of [API Tokens](https://support.atlassian.com/bitbuck
                 ![Bitbucket Connection Modal](/images/app-connections/bitbucket/step-6.png)
             </Step>
             <Step title="Connection Created">
-                After clicking Create, your **Bitbucket Connection** is established and ready to use with your Infisical project.
+                After clicking Create, your **Bitbucket Connection** is established and ready to use with your Hanzo KMS project.
 
                 ![Bitbucket Connection Created](/images/app-connections/bitbucket/step-7.png)
             </Step>
@@ -108,7 +108,7 @@ Infisical supports the use of [API Tokens](https://support.atlassian.com/bitbuck
 
         ```bash Request
         curl    --request POST \
-                --url https://app.infisical.com/api/v1/app-connections/bitbucket \
+                --url https://kms.hanzo.ai/api/v1/app-connections/bitbucket \
                 --header 'Content-Type: application/json' \
                 --data '{
                     "name": "my-bitbucket-connection",

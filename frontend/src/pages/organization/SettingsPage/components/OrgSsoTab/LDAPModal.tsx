@@ -195,7 +195,7 @@ export const LDAPModal = ({ popUp, handlePopUpClose, handlePopUpToggle, hideDele
               name="bindDN"
               render={({ field, fieldState: { error } }) => (
                 <FormControl label="Bind DN" errorText={error?.message} isError={Boolean(error)}>
-                  <Input {...field} placeholder="cn=infisical,ou=Users,dc=example,dc=com" />
+                  <Input {...field} placeholder="cn=kms,ou=Users,dc=example,dc=com" />
                 </FormControl>
               )}
             />

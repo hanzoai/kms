@@ -9,8 +9,8 @@ from datetime import datetime
 import uuid
 
 # Constants
-REPO_OWNER = "infisical"
-REPO_NAME = "infisical"
+REPO_OWNER = "hanzoai"
+REPO_NAME = "hanzoai"
 TOKEN = os.environ["GITHUB_TOKEN"]
 SLACK_WEBHOOK_URL = os.environ["SLACK_WEBHOOK_URL"]
 OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
@@ -36,7 +36,7 @@ def post_changelog_to_slack(changelog, tag):
         "attachments": [
             {
                 "color": SLACK_MSG_COLOR,
-                "title": f"🗓️Infisical Changelog - {tag}",
+                "title": f"🗓️Hanzo KMS Changelog - {tag}",
                 "text": changelog,
             }
         ],
@@ -49,7 +49,7 @@ def post_changelog_to_slack(changelog, tag):
 
 def find_previous_release_tag(release_tag:str):
     previous_tag = subprocess.check_output(["git", "describe", "--tags", "--abbrev=0", f"{release_tag}^"]).decode("utf-8").strip()
-    while not(previous_tag.startswith("infisical/")):
+    while not(previous_tag.startswith("kms/")):
         previous_tag = subprocess.check_output(["git", "describe", "--tags", "--abbrev=0", f"{previous_tag}^"]).decode("utf-8").strip()
     return previous_tag
 
@@ -130,7 +130,7 @@ def generate_changelog_with_openai(commit_details):
 
     commit_list = "\n".join(commit_messages)
     prompt = """
-Generate a changelog for Infisical, opensource secretops
+Generate a changelog for Hanzo KMS, opensource secretops
 The changelog should:
 1. Be Informative: Using the provided list of GitHub commits, break them down into categories such as Features, Fixes & Improvements, and Technical Updates. Summarize each commit concisely, ensuring the key points are highlighted.
 2. Have a Professional yet Friendly tone: The tone should be balanced, not too corporate or too informal.

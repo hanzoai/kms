@@ -76,7 +76,7 @@ export const RegionSelect = () => {
   const location = useLocation();
 
   const handleRegionSelect = (value: Region) => {
-    window.location.assign(`https://${value}.infisical.com/${location.pathname}`);
+    window.location.assign(`https://${value}.hanzo.ai/${location.pathname}`);
   };
 
   const shouldDisplay =
@@ -113,8 +113,8 @@ export const RegionSelect = () => {
           </button>
         </ModalTrigger>
         <ModalContent
-          title="Infisical Cloud data regions"
-          subTitle="Select the closest region to you and your team. Contact Infisical if you need to migrate regions."
+          title="Hanzo KMS Cloud data regions"
+          subTitle="Select the closest region to you and your team. Contact Hanzo KMS if you need to migrate regions."
         >
           {regions.map(({ value, label, location: regionLocation, flag }) => (
             <div className="mb-6" key={value}>

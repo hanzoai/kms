@@ -45,8 +45,8 @@ export const SqlCredentialsRotationParametersFields = () => {
                 onChange={onChange}
                 placeholder={
                   rotationOption.connection === AppConnection.OracleDB
-                    ? "INFISICAL_USER_1"
-                    : "infisical_user_1"
+                    ? "KMS_USER_1"
+                    : "kms_user_1"
                 }
               />
             </FormControl>
@@ -66,8 +66,8 @@ export const SqlCredentialsRotationParametersFields = () => {
                 onChange={onChange}
                 placeholder={
                   rotationOption.connection === AppConnection.OracleDB
-                    ? "INFISICAL_USER_2"
-                    : "infisical_user_2"
+                    ? "KMS_USER_2"
+                    : "kms_user_2"
                 }
               />
             </FormControl>
@@ -77,10 +77,10 @@ export const SqlCredentialsRotationParametersFields = () => {
         />
         <NoticeBannerV2 title="Example Create User Statement">
           <p className="mb-3 text-sm text-mineshaft-300">
-            Infisical requires two database users to be created for rotation.
+            Hanzo KMS requires two database users to be created for rotation.
           </p>
           <p className="mb-3 text-sm text-mineshaft-300">
-            These users are intended to be solely managed by Infisical. Altering their login after
+            These users are intended to be solely managed by Hanzo KMS. Altering their login after
             rotation may cause unexpected failure.
           </p>
           <p className="mb-3 text-sm text-mineshaft-300">

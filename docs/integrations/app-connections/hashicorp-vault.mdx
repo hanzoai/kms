@@ -1,13 +1,13 @@
 ---
 title: "Hashicorp Vault Connection"
-description: "Learn how to configure a Hashicorp Vault Connection for Infisical."
+description: "Learn how to configure a Hashicorp Vault Connection for Hanzo KMS."
 ---
 
 <Note>
-    Infisical is compatible with Vault Self-hosted, HCP Vault Dedicated, and HCP Vault Enterprise deployments. Please note that HCP Generic Secrets are currently not supported.
+    Hanzo KMS is compatible with Vault Self-hosted, HCP Vault Dedicated, and HCP Vault Enterprise deployments. Please note that HCP Generic Secrets are currently not supported.
 </Note>
 
-Infisical supports two methods for connecting to Hashicorp Vault.
+Hanzo KMS supports two methods for connecting to Hashicorp Vault.
 
 <Tabs>
     <Tab title="App Role (Recommended)">
@@ -57,7 +57,7 @@ Infisical supports two methods for connecting to Hashicorp Vault.
                         - **data/\***: The path within the secrets engine used for storing secrets. The wildcard (*) grants access to all secrets within this mount point.
 
                         <Note>
-                            Make sure to replace the policy path with the specific path where you intend to sync your secrets. For better security and control, it's recommended to use a more granular path instead of a wildcard (*). You can also specify a path that doesn’t yet exist—Infisical will automatically create it for you during the sync process.
+                            Make sure to replace the policy path with the specific path where you intend to sync your secrets. For better security and control, it's recommended to use a more granular path instead of a wildcard (*). You can also specify a path that doesn’t yet exist—Hanzo KMS will automatically create it for you during the sync process.
                         </Note>
                     </Tab>
                 </Tabs>
@@ -73,22 +73,22 @@ Infisical supports two methods for connecting to Hashicorp Vault.
                     If you used custom approle or policy names in previous steps, you'll need to customize the following commands.
                 </Note>
 
-                **Create Infisical Role**
+                **Create Hanzo KMS Role**
 
                 ```hcl
-                vault write auth/approle/role/infisical token_policies="infisical-policy" token_ttl=30s token_max_ttl=2m
+                vault write auth/approle/role/kms token_policies="kms-policy" token_ttl=30s token_max_ttl=2m
                 ```
 
                 **Read RoleID**
 
                 ```hcl
-                vault read auth/approle/role/infisical/role-id
+                vault read auth/approle/role/kms/role-id
                 ```
 
                 **Generate New SecretID**
 
                 ```hcl
-                vault write -force auth/approle/role/infisical/secret-id
+                vault write -force auth/approle/role/kms/secret-id
                 ```
 
                 Your shell output should look similar to the image below. Save the RoleID and SecretID values for later steps.
@@ -125,25 +125,25 @@ Infisical supports two methods for connecting to Hashicorp Vault.
     </Tab>
 </Tabs>
 
-## Setup Vault Connection in Infisical
+## Setup Vault Connection in Hanzo KMS
 
 <Tabs>
-    <Tab title="Infisical UI">
+    <Tab title="Hanzo KMS UI">
         <Steps>
             <Step title="Navigate to App Connections">
-                In your Infisical dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
+                In your Hanzo KMS dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
 
                 ![App Connections Tab](/images/app-connections/general/add-connection.png)
             </Step>
             <Step title="Add Connection">
                 Click the **+ Add Connection** button and select the **Hashicorp Vault Connection** option.
 
-                ![Select Vault Connection](/images/app-connections/hashicorp-vault/vault-infisical-connect-page.png)
+                ![Select Vault Connection](/images/app-connections/hashicorp-vault/vault-kms-connect-page.png)
             </Step>
             <Step title="Configure Connection">
                 Configure your Vault Connection using the Instance URL and credentials from the steps above. **Depending on if you chose to authenticate with an Access Token or AppRole, you may need to input different information.**
 
-                ![Vault Configure Connection](/images/app-connections/hashicorp-vault/vault-infisical-connect-modal.png)
+                ![Vault Configure Connection](/images/app-connections/hashicorp-vault/vault-kms-connect-modal.png)
 
                 <Tabs>
                     <Tab title="App Role">
@@ -167,7 +167,7 @@ Infisical supports two methods for connecting to Hashicorp Vault.
             </Step>
             <Step title="Connection Created">
                 Your Vault Connection is now available for use.
-                ![Vault Connection Created](/images/app-connections/hashicorp-vault/vault-infisical-connect-success.png)
+                ![Vault Connection Created](/images/app-connections/hashicorp-vault/vault-kms-connect-success.png)
             </Step>
         </Steps>
     </Tab>
@@ -179,7 +179,7 @@ Infisical supports two methods for connecting to Hashicorp Vault.
 
         ```bash Request
         curl    --request POST \
-                --url https://app.infisical.com/api/v1/app-connections/hashicorp-vault \
+                --url https://kms.hanzo.ai/api/v1/app-connections/hashicorp-vault \
                 --header 'Content-Type: application/json' \
                 --data '{
                     "name": "my-vault-connection",

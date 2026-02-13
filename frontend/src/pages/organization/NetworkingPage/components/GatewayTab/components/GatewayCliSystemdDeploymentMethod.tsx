@@ -184,10 +184,10 @@ export const GatewayCliSystemdDeploymentMethod = () => {
 
   const installCommand = useMemo(() => {
     const relayPart = relay?.id !== "_auto" ? ` --target-relay-name=${relay?.name || ""}` : "";
-    return `sudo infisical gateway systemd install --name=${name}${relayPart} --domain=${siteURL} --token=${identityToken}`;
+    return `sudo hanzo-kms gateway systemd install --name=${name}${relayPart} --domain=${siteURL} --token=${identityToken}`;
   }, [name, relay, identityToken, siteURL]);
 
-  const startServiceCommand = "sudo systemctl start infisical-gateway";
+  const startServiceCommand = "sudo systemctl start kms-gateway";
 
   if (step === "command") {
     return (

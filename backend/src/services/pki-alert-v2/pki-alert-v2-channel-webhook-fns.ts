@@ -125,7 +125,7 @@ export const buildWebhookPayload = ({
   alert,
   certificates,
   eventType,
-  appUrl = "https://app.infisical.com"
+  appUrl = "https://kms.hanzo.ai"
 }: TBuildWebhookPayloadParams): TPkiWebhookPayload => {
   const base = buildBasePayload({
     eventType,
@@ -169,7 +169,7 @@ const triggerPkiWebhook = async (params: {
   if (signingSecret) {
     const signaturePayload = `${timestamp}.${payloadString}`;
     const signature = generateHmacSignature(signaturePayload, signingSecret);
-    headers["x-infisical-signature"] = `t=${timestamp},v1=${signature}`;
+    headers["x-kms-signature"] = `t=${timestamp},v1=${signature}`;
   }
 
   await request.post(url, payload, {

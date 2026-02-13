@@ -10,11 +10,11 @@ export const EmailServiceSetupModal = ({ isOpen, onOpenChange }: Props): JSX.Ele
   <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
     <ModalContent title="Email service not configured">
       <p className="mb-4 text-bunker-300">
-        The administrators of this Infisical instance have not yet set up an email service provider
+        The administrators of this Hanzo KMS instance have not yet set up an email service provider
         required to perform this action
       </p>
 
-      <a href="https://infisical.com/docs/self-hosting/configuration/email">
+      <a href="https://kms.hanzo.ai/docs/self-hosting/configuration/email">
         <Button className="mr-4">Learn more</Button>
       </a>
     </ModalContent>

@@ -301,12 +301,12 @@ export const identityJwtAuthServiceFactory = ({
 
       if (appCfg.OTEL_TELEMETRY_COLLECTION_ENABLED) {
         authAttemptCounter.add(1, {
-          "infisical.identity.id": identityJwtAuth.identityId,
-          "infisical.identity.name": identity.name,
-          "infisical.organization.id": org.id,
-          "infisical.organization.name": org.name,
-          "infisical.identity.auth_method": AuthAttemptAuthMethod.JWT_AUTH,
-          "infisical.identity.auth_result": AuthAttemptAuthResult.SUCCESS,
+          "kms.identity.id": identityJwtAuth.identityId,
+          "kms.identity.name": identity.name,
+          "kms.organization.id": org.id,
+          "kms.organization.name": org.name,
+          "kms.identity.auth_method": AuthAttemptAuthMethod.JWT_AUTH,
+          "kms.identity.auth_result": AuthAttemptAuthResult.SUCCESS,
           "client.address": requestContext.get("ip"),
           "user_agent.original": requestContext.get("userAgent")
         });
@@ -316,12 +316,12 @@ export const identityJwtAuthServiceFactory = ({
     } catch (error) {
       if (appCfg.OTEL_TELEMETRY_COLLECTION_ENABLED) {
         authAttemptCounter.add(1, {
-          "infisical.identity.id": identityJwtAuth.identityId,
-          "infisical.identity.name": identity.name,
-          "infisical.organization.id": org.id,
-          "infisical.organization.name": org.name,
-          "infisical.identity.auth_method": AuthAttemptAuthMethod.JWT_AUTH,
-          "infisical.identity.auth_result": AuthAttemptAuthResult.FAILURE,
+          "kms.identity.id": identityJwtAuth.identityId,
+          "kms.identity.name": identity.name,
+          "kms.organization.id": org.id,
+          "kms.organization.name": org.name,
+          "kms.identity.auth_method": AuthAttemptAuthMethod.JWT_AUTH,
+          "kms.identity.auth_result": AuthAttemptAuthResult.FAILURE,
           "client.address": requestContext.get("ip"),
           "user_agent.original": requestContext.get("userAgent")
         });

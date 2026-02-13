@@ -1,59 +1,59 @@
 ---
 title: TLS Certificate Auth
-description: "Learn how to authenticate with Infisical using TLS Certificate."
+description: "Learn how to authenticate with Hanzo KMS using TLS Certificate."
 ---
 
-**TLS Certificate Auth** is an authentication method that verifies a user's TLS Client certificate using the provided CA Certificate, allowing secure access to Infisical resources.
+**TLS Certificate Auth** is an authentication method that verifies a user's TLS Client certificate using the provided CA Certificate, allowing secure access to Hanzo KMS resources.
 
 ## Diagram
 
-The following sequence diagram illustrates the TLS Certificate Auth workflow for authenticating users with Infisical.
+The following sequence diagram illustrates the TLS Certificate Auth workflow for authenticating users with Hanzo KMS.
 
 ```mermaid
 sequenceDiagram
   participant Client
-  participant Infisical
+  participant Hanzo KMS
 
   Note over Client,Client: Step 1: Setup your TLS request with the client certificate
 
-  Note over Client,Infisical: Step 2: Login Operation
-  Client->>Infisical: Send request to /api/v1/auth/tls-cert-auth/login
+  Note over Client,Hanzo KMS: Step 2: Login Operation
+  Client->>Hanzo KMS: Send request to /api/v1/auth/tls-cert-auth/login
 
-  Note over Infisical: Step 3: Request verification using CA Certificate
+  Note over Hanzo KMS: Step 3: Request verification using CA Certificate
 
-  Infisical->>Client: Return short-lived access token
+  Hanzo KMS->>Client: Return short-lived access token
 
-  Note over Client,Infisical: Step 5: Access Infisical API with token
-  Client->>Infisical: Make authenticated requests using the short-lived access token
+  Note over Client,Hanzo KMS: Step 5: Access Hanzo KMS API with token
+  Client->>Hanzo KMS: Make authenticated requests using the short-lived access token
 ```
 
 ## Concept
 
-At a high level, Infisical authenticates the client's TLS Certificate by verifying its identity and checking that it meets specific requirements (e.g., it is bound to the allowed common names) at the `/api/v1/auth/tls-cert-auth/login` endpoint. If successful, Infisical returns a short-lived access token that can be used to make authenticated requests to the Infisical API.
+At a high level, Hanzo KMS authenticates the client's TLS Certificate by verifying its identity and checking that it meets specific requirements (e.g., it is bound to the allowed common names) at the `/api/v1/auth/tls-cert-auth/login` endpoint. If successful, Hanzo KMS returns a short-lived access token that can be used to make authenticated requests to the Hanzo KMS API.
 
 To be more specific:
 
-1. The client sends a TLS request with the client certificate to Infisical at the `/api/v1/auth/tls-cert-auth/login` endpoint.
-2. Infisical verifies the incoming request using the provided CA certificate.
-3. Infisical checks the user's properties against set criteria such as Allowed Common Names.
-4. If all checks pass, Infisical returns a short-lived access token that the client can use to make authenticated requests to the Infisical API.
+1. The client sends a TLS request with the client certificate to Hanzo KMS at the `/api/v1/auth/tls-cert-auth/login` endpoint.
+2. Hanzo KMS verifies the incoming request using the provided CA certificate.
+3. Hanzo KMS checks the user's properties against set criteria such as Allowed Common Names.
+4. If all checks pass, Hanzo KMS returns a short-lived access token that the client can use to make authenticated requests to the Hanzo KMS API.
 
 <Accordion title="TLS with Load Balancer/Proxy">
-  Most of the time, the Infisical server will be behind a load balancer or
+  Most of the time, the Hanzo KMS server will be behind a load balancer or
   proxy. To propagate the TLS certificate from the load balancer to the
   instance, you can configure the TLS to send the client certificate as a header
   that is set as an [environment variable](/self-hosting/configuration/envars#param-identity-tls-cert-auth-client-certificate-header-key).
 </Accordion>
 
 <Note>
-  Infisical US/EU and dedicated instances are deployed with AWS ALB. TLS Certificate Auth must flow through our ALB mTLS pass-through in order to authenticate.
-  When you are authenticating with TLS Certificate Auth, you must use the port `8443` instead of the default `443`. Example: `https://app.infisical.com:8443/api/v1/auth/tls-cert-auth/login`
+  Hanzo KMS US/EU and dedicated instances are deployed with AWS ALB. TLS Certificate Auth must flow through our ALB mTLS pass-through in order to authenticate.
+  When you are authenticating with TLS Certificate Auth, you must use the port `8443` instead of the default `443`. Example: `https://kms.hanzo.ai:8443/api/v1/auth/tls-cert-auth/login`
 </Note>
 
 ## Guide
 
 In the following steps, we explore how to create and use identities for your workloads and applications on TLS Certificate to
-access the Infisical API using request signing.
+access the Hanzo KMS API using request signing.
 
 <Warning>
   **Self-Hosted Users:** Before using TLS Certificate Auth, please review the
@@ -64,24 +64,24 @@ access the Infisical API using request signing.
 
 ### Creating an identity
 
-To create an identity, head to your Organization Settings > Access Control > [Identities](https://app.infisical.com/organization/access-management?selectedTab=identities) and press **Create identity**.
+To create an identity, head to your Organization Settings > Access Control > [Identities](https://kms.hanzo.ai/organization/access-management?selectedTab=identities) and press **Create identity**.
 
 ![identities organization](/images/platform/identities/identities-org.png)
 
-When creating an identity, you specify an organization-level [role](/documentation/platform/access-controls/role-based-access-controls) for it to assume; you can configure roles in Organization Settings > Access Control > [Organization Roles](https://app.infisical.com/organization/access-management?selectedTab=roles).
+When creating an identity, you specify an organization-level [role](/documentation/platform/access-controls/role-based-access-controls) for it to assume; you can configure roles in Organization Settings > Access Control > [Organization Roles](https://kms.hanzo.ai/organization/access-management?selectedTab=roles).
 
 ![identities organization create](/images/platform/identities/identities-org-create.png)
 
 Input some details for your new identity:
 
 - **Name (required):** A friendly name for the identity.
-- **Role (required):** A role from the [**Organization Roles**](https://app.infisical.com/organization/access-management?selectedTab=roles) tab for the identity to assume. The organization role assigned will determine what organization-level resources this identity can have access to.
+- **Role (required):** A role from the [**Organization Roles**](https://kms.hanzo.ai/organization/access-management?selectedTab=roles) tab for the identity to assume. The organization role assigned will determine what organization-level resources this identity can have access to.
 
 Once you've created an identity, you'll be redirected to a page where you can manage the identity.
 
 ![identities page](/images/platform/identities/identities-page.png)
 
-Since the identity has been configured with [Universal Auth](https://infisical.com/docs/documentation/platform/identities/universal-auth) by default, you should reconfigure it to use TLS Certificate Auth instead. To do this, click the cog next to **Universal Auth** and then select **Delete** in the options dropdown.
+Since the identity has been configured with [Universal Auth](https://kms.hanzo.ai/docs/documentation/platform/identities/universal-auth) by default, you should reconfigure it to use TLS Certificate Auth instead. To do this, click the cog next to **Universal Auth** and then select **Delete** in the options dropdown.
 
 ![identities press cog](/images/platform/identities/identities-press-cog.png)
 
@@ -112,11 +112,11 @@ Select the identity you want to add to the project and the project-level role yo
 
 ![identities project create](/images/platform/identities/identities-project-create.png)
 
-### Accessing the Infisical API with the identity
+### Accessing the Hanzo KMS API with the identity
 
-To access the Infisical API as the identity, you need to send a TLS request to `/api/v1/auth/tls-cert-auth/login` endpoint.
+To access the Hanzo KMS API as the identity, you need to send a TLS request to `/api/v1/auth/tls-cert-auth/login` endpoint.
 
-Below is an example of how you can authenticate with Infisical using NodeJS.
+Below is an example of how you can authenticate with Hanzo KMS using NodeJS.
 
 ```javascript
 const fs = require("fs");
@@ -127,7 +127,7 @@ try {
   const clientCertificate = fs.readFileSync("client-cert.pem", "utf8");
   const clientKeyCertificate = fs.readFileSync("client-key.pem", "utf8");
 
-  const infisicalUrl = "https://app.infisical.com:8443"; // or your self-hosted Infisical URL
+  const kmsUrl = "https://kms.hanzo.ai:8443"; // or your self-hosted Hanzo KMS URL
   const identityId = "<your-identity-id>";
 
   // Create HTTPS agent with client certificate and key
@@ -137,7 +137,7 @@ try {
   });
 
   const { data } = await axios.post(
-    `${infisicalUrl}/api/v1/auth/tls-cert-auth/login`,
+    `${kmsUrl}/api/v1/auth/tls-cert-auth/login`,
     {
       identityId,
     },
@@ -155,7 +155,7 @@ try {
 <Note>
     Each identity access token has a time-to-live (TTL) which you can infer from the response of the login operation; the default TTL is `7200` seconds, which can be adjusted.
 
-    If an identity access token expires, it can no longer access the Infisical API. A new access token should be obtained by performing another login operation.
+    If an identity access token expires, it can no longer access the Hanzo KMS API. A new access token should be obtained by performing another login operation.
 
 </Note>
 
@@ -165,7 +165,7 @@ ALL TLS cert [login](/api-reference/endpoints/tls-cert-auth/login) requests **MU
 
 - **REQUIRED:** Configure your load balancer/proxy to **require a proper TLS handshake with client certificate presentation**
 - **REQUIRED:** Ensure the load balancer **verifies the client possesses the private key** corresponding to the certificate (standard TLS behavior)
-- **NEVER** allow direct connections to Infisical for TLS cert auth - this enables header injection attacks
+- **NEVER** allow direct connections to Hanzo KMS for TLS cert auth - this enables header injection attacks
 - **NEVER** forward certificate headers without requiring proper TLS certificate presentation
 
 ### Load Balancer Configuration Examples
@@ -174,7 +174,7 @@ ALL TLS cert [login](/api-reference/endpoints/tls-cert-auth/login) requests **MU
 - **NGINX/HAProxy:** Configure SSL client certificate requirement with proper TLS handshake verification
 
 <Note>
-  Infisical will handle the actual certificate validation against the configured
+  Hanzo KMS will handle the actual certificate validation against the configured
   CA certificate and determine authentication permissions. The load balancer's
   role is to ensure certificate ownership, not certificate trust validation.
 </Note>

@@ -40,7 +40,7 @@ export const WishForm = () => {
     });
 
     createNotification({
-      text: "Your wish has been sent to the Infisical team!",
+      text: "Your wish has been sent to the Hanzo KMS team!",
       type: "success"
     });
 

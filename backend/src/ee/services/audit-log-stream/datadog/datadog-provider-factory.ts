@@ -16,9 +16,9 @@ function createPayload(event: Record<string, unknown>) {
 
   return {
     ...event,
-    hostname: new URL(appCfg.SITE_URL || "http://infisical").hostname,
-    ddsource: "infisical",
-    service: "infisical",
+    hostname: new URL(appCfg.SITE_URL || "http://kms").hostname,
+    ddsource: "kms",
+    service: "kms",
     ddtags
   };
 }

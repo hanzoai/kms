@@ -1,9 +1,9 @@
 ---
 title: "Okta Connection"
-description: "Learn how to configure an Okta Connection for Infisical."
+description: "Learn how to configure an Okta Connection for Hanzo KMS."
 ---
 
-Infisical supports the use of [API Tokens](https://developer.okta.com/docs/guides/create-an-api-token/main/) to connect with Okta.
+Hanzo KMS supports the use of [API Tokens](https://developer.okta.com/docs/guides/create-an-api-token/main/) to connect with Okta.
 
 ## Create Okta API Token
 
@@ -25,13 +25,13 @@ Infisical supports the use of [API Tokens](https://developer.okta.com/docs/guide
     </Step>
 </Steps>
 
-## Create Okta Connection in Infisical
+## Create Okta Connection in Hanzo KMS
 
 <Tabs>
-    <Tab title="Infisical UI">
+    <Tab title="Hanzo KMS UI">
         <Steps>
             <Step title="Navigate to App Connections">
-                In your Infisical dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
+                In your Hanzo KMS dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
 
                 ![App Connections Tab](/images/app-connections/general/add-connection.png)
             </Step>
@@ -48,7 +48,7 @@ Infisical supports the use of [API Tokens](https://developer.okta.com/docs/guide
                 ![Connection Modal](/images/app-connections/okta/step-4.png)
             </Step>
             <Step title="Connection Created">
-                After clicking Create, your **Okta Connection** is established and ready to use with your Infisical project.
+                After clicking Create, your **Okta Connection** is established and ready to use with your Hanzo KMS project.
 
                 ![Connection Created](/images/app-connections/okta/step-5.png)
             </Step>
@@ -61,7 +61,7 @@ Infisical supports the use of [API Tokens](https://developer.okta.com/docs/guide
 
         ```bash Request
         curl    --request POST \
-                --url https://app.infisical.com/api/v1/app-connections/okta \
+                --url https://kms.hanzo.ai/api/v1/app-connections/okta \
                 --header 'Content-Type: application/json' \
                 --data '{
                     "name": "my-okta-connection",

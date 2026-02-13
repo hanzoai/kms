@@ -85,7 +85,7 @@ SecretScanningSecretsDetectedTemplate.PreviewProps = {
   authorEmail: "jim@infisical.com",
   resourceName: "my-resource",
   numberOfSecrets: 3,
-  url: "https://infisical.com",
+  url: "https://kms.hanzo.ai",
   isDiffScan: true,
-  siteUrl: "https://infisical.com"
+  siteUrl: "https://kms.hanzo.ai"
 } as SecretScanningSecretsDetectedTemplateProps;

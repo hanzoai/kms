@@ -27,7 +27,7 @@ const envSchema = z
     HSM_KEY_LABEL: zpStr(z.string().optional()),
     HSM_SLOT: z.coerce.number().optional().default(0),
 
-    LICENSE_SERVER_URL: zpStr(z.string().optional().default("https://portal.infisical.com")),
+    LICENSE_SERVER_URL: zpStr(z.string().optional().default("https://portal.kms.hanzo.ai")),
     LICENSE_SERVER_KEY: zpStr(z.string().optional()),
     LICENSE_KEY: zpStr(z.string().optional()),
     LICENSE_KEY_OFFLINE: zpStr(z.string().optional()),
@@ -73,7 +73,7 @@ export const getMigrationEnvConfig = async (
     console.error("Invalid environment variables. Check the error below");
     // eslint-disable-next-line no-console
     console.error(
-      "Infisical now automatically runs database migrations during boot up, so you no longer need to run them separately."
+      "Hanzo KMS now automatically runs database migrations during boot up, so you no longer need to run them separately."
     );
     // eslint-disable-next-line no-console
     console.error(parsedEnv.error.issues);

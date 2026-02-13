@@ -1,9 +1,9 @@
 ---
 title: "Checkly Connection"
-description: "Learn how to configure a Checkly Connection for Infisical."
+description: "Learn how to configure a Checkly Connection for Hanzo KMS."
 ---
 
-Infisical supports the use of [API Keys](https://app.checklyhq.com/settings/user/api-keys) to connect with Checkly.
+Hanzo KMS supports the use of [API Keys](https://app.checklyhq.com/settings/user/api-keys) to connect with Checkly.
 <Note>
   Checkly requires the account user to have Read/Write or Admin permissions
 </Note>
@@ -31,13 +31,13 @@ Infisical supports the use of [API Keys](https://app.checklyhq.com/settings/user
   </Step>
 </Steps>
 
-## Create a Checkly Connection in Infisical
+## Create a Checkly Connection in Hanzo KMS
 
 <Tabs>
-  <Tab title="Infisical UI">
+  <Tab title="Hanzo KMS UI">
     <Steps>
       <Step title="Navigate to App Connections">
-        In your Infisical dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
+        In your Hanzo KMS dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
 
         ![App Connections Tab](/images/app-connections/general/add-connection.png)
       </Step>
@@ -55,7 +55,7 @@ Infisical supports the use of [API Keys](https://app.checklyhq.com/settings/user
         ![Checkly Connection Modal](/images/app-connections/checkly/checkly-app-connection-form.png)
       </Step>
       <Step title="Connection created">
-        After submitting the form, your **Checkly Connection** will be successfully created and ready to use with your Infisical project.
+        After submitting the form, your **Checkly Connection** will be successfully created and ready to use with your Hanzo KMS project.
 
         ![Checkly Connection Created](/images/app-connections/checkly/checkly-app-connection-generated.png)
       </Step>
@@ -70,7 +70,7 @@ Infisical supports the use of [API Keys](https://app.checklyhq.com/settings/user
 
     ```bash Request
     curl    --request POST \
-            --url https://app.infisical.com/api/v1/app-connections/checkly \
+            --url https://kms.hanzo.ai/api/v1/app-connections/checkly \
             --header 'Content-Type: application/json' \
             --data '{
                 "name": "my-checkly-connection",

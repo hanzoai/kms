@@ -68,5 +68,5 @@ SecretLeakIncidentTemplate.PreviewProps = {
   pusher_name: "Jim",
   pusher_email: "jim@infisical.com",
   numberOfSecrets: 3,
-  siteUrl: "https://infisical.com"
+  siteUrl: "https://kms.hanzo.ai"
 } as SecretLeakIncidentTemplateProps;

@@ -76,10 +76,10 @@ export default PasswordResetTemplate;
 
 PasswordResetTemplate.PreviewProps = {
   email: "kevin@infisical.com",
-  callback_url: "https://app.infisical.com",
+  callback_url: "https://kms.hanzo.ai",
   isCloud: true,
   token: "preview-token",
-  siteUrl: "https://infisical.com",
+  siteUrl: "https://kms.hanzo.ai",
   lastLoginMethod: "",
   hasEmailAuth: true
 } as PasswordResetTemplateProps;

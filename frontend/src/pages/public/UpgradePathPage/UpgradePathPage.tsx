@@ -231,8 +231,8 @@ export const UpgradePathPage = () => {
                       const possibleKeys = [
                         step.version,
                         step.version.replace(/^v/, ""),
-                        step.version.replace(/^infisical\/v?/, ""),
-                        step.version.replace(/^infisical\/v?/, "").replace(/-[a-zA-Z]+$/, "")
+                        step.version.replace(/^kms\/v?/, ""),
+                        step.version.replace(/^kms\/v?/, "").replace(/-[a-zA-Z]+$/, "")
                       ];
 
                       const dbSchemaChanges = possibleKeys
@@ -339,7 +339,7 @@ export const UpgradePathPage = () => {
                           (bc) =>
                             !upgradeResult.path.some((step) => {
                               const normalizeVersion = (v: string) =>
-                                v.replace(/^(infisical\/)?v?/, "").replace(/-[a-zA-Z]+$/, "");
+                                v.replace(/^(kms\/)?v?/, "").replace(/-[a-zA-Z]+$/, "");
                               return (
                                 normalizeVersion(step.version) === normalizeVersion(bc.version)
                               );
@@ -358,7 +358,7 @@ export const UpgradePathPage = () => {
                       allSteps.sort((a, b) => {
                         const normalizeForSort = (v: string) => {
                           const cleaned = v
-                            .replace(/^(infisical\/)?v?/, "")
+                            .replace(/^(kms\/)?v?/, "")
                             .replace(/-[a-zA-Z]+$/, "");
                           const parts = cleaned.split(".").map(Number);
                           return parts[0] * 1000000 + (parts[1] || 0) * 1000 + (parts[2] || 0);
@@ -375,7 +375,7 @@ export const UpgradePathPage = () => {
                         if (bc.version === step.version) return true;
 
                         const normalizeVersion = (v: string) => {
-                          return v.replace(/^(infisical\/)?v?/, "").replace(/-[a-zA-Z]+$/, "");
+                          return v.replace(/^(kms\/)?v?/, "").replace(/-[a-zA-Z]+$/, "");
                         };
 
                         const normalizedStep = normalizeVersion(step.version);
@@ -389,8 +389,8 @@ export const UpgradePathPage = () => {
                       const possibleKeys = [
                         step.version,
                         step.version.replace(/^v/, ""),
-                        step.version.replace(/^infisical\/v?/, ""),
-                        step.version.replace(/^infisical\/v?/, "").replace(/-[a-zA-Z]+$/, "")
+                        step.version.replace(/^kms\/v?/, ""),
+                        step.version.replace(/^kms\/v?/, "").replace(/-[a-zA-Z]+$/, "")
                       ];
 
                       const dbMigrationDescription = possibleKeys

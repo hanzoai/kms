@@ -1,20 +1,20 @@
 ---
 title: "Monitoring and Telemetry Setup"
-description: "Learn how to set up monitoring and telemetry for your self-hosted Infisical instance using Grafana, Prometheus, and OpenTelemetry."
+description: "Learn how to set up monitoring and telemetry for your self-hosted Hanzo KMS instance using Grafana, Prometheus, and OpenTelemetry."
 ---
 
-Infisical provides comprehensive monitoring and telemetry capabilities to help you monitor the health, performance, and usage of your self-hosted instance. This guide covers setting up monitoring using Grafana with two different telemetry collection approaches.
+Hanzo KMS provides comprehensive monitoring and telemetry capabilities to help you monitor the health, performance, and usage of your self-hosted instance. This guide covers setting up monitoring using Grafana with two different telemetry collection approaches.
 
 ## Overview
 
-Infisical exports metrics in **OpenTelemetry (OTEL) format**, which provides maximum flexibility for your monitoring infrastructure. While this guide focuses on Grafana, the OTEL format means you can easily integrate with:
+Hanzo KMS exports metrics in **OpenTelemetry (OTEL) format**, which provides maximum flexibility for your monitoring infrastructure. While this guide focuses on Grafana, the OTEL format means you can easily integrate with:
 
 - **Cloud-native monitoring**: AWS CloudWatch, Google Cloud Monitoring, Azure Monitor
 - **Observability platforms**: Datadog, New Relic, Splunk, Dynatrace
 - **Custom backends**: Any system that supports OTEL ingestion
 - **Traditional monitoring**: Prometheus, Grafana (as covered in this guide)
 
-Infisical supports two telemetry collection methods:
+Hanzo KMS supports two telemetry collection methods:
 
 1. **Pull-based (Prometheus)**: Exposes metrics on a dedicated endpoint for Prometheus to scrape
 2. **Push-based (OTLP)**: Sends metrics to an OpenTelemetry Collector via OTLP protocol
@@ -23,7 +23,7 @@ Both approaches provide the same metrics data in OTEL format, so you can choose 
 
 ## Prerequisites
 
-- Self-hosted Infisical instance running
+- Self-hosted Hanzo KMS instance running
 - Access to deploy monitoring services (Prometheus, Grafana, etc.)
 - Basic understanding of Prometheus and Grafana
 
@@ -31,7 +31,7 @@ Both approaches provide the same metrics data in OTEL format, so you can choose 
 
 ### Environment Variables
 
-Configure the following environment variables in your Infisical backend:
+Configure the following environment variables in your Hanzo KMS backend:
 
 ```bash
 # Enable telemetry collection
@@ -48,7 +48,7 @@ OTEL_EXPORT_TYPE=prometheus
     ### Configuration
 
 <Steps>
-  <Step title="Enable Prometheus export in Infisical">
+  <Step title="Enable Prometheus export in Hanzo KMS">
 ```bash
 OTEL_TELEMETRY_COLLECTION_ENABLED=true
 OTEL_EXPORT_TYPE=prometheus
@@ -56,7 +56,7 @@ OTEL_EXPORT_TYPE=prometheus
   </Step>
 
   <Step title="Expose the metrics port">
-    Expose the metrics port in your Infisical backend:
+    Expose the metrics port in your Hanzo KMS backend:
 
     - **Docker**: Expose port 9464
     - **Kubernetes**: Create a service exposing port 9464
@@ -72,27 +72,27 @@ global:
   evaluation_interval: 30s
 
 scrape_configs:
-  - job_name: "infisical"
+  - job_name: "kms"
     scrape_interval: 30s
     static_configs:
-      - targets: ["infisical-backend:9464"] # Adjust hostname/port based on your deployment
+      - targets: ["kms-backend:9464"] # Adjust hostname/port based on your deployment
     metrics_path: "/metrics"
 ```
 
 <Note>
-Replace `infisical-backend:9464` with the actual hostname and port where your Infisical backend is running. This could be:
+Replace `kms-backend:9464` with the actual hostname and port where your Hanzo KMS backend is running. This could be:
 
-- **Docker Compose**: `infisical-backend:9464` (service name)
-- **Kubernetes**: `infisical-backend.default.svc.cluster.local:9464` (service name)
+- **Docker Compose**: `kms-backend:9464` (service name)
+- **Kubernetes**: `kms-backend.default.svc.cluster.local:9464` (service name)
 - **Bare Metal**: `192.168.1.100:9464` (actual IP address)
-- **Cloud**: `your-infisical.example.com:9464` (domain name)
+- **Cloud**: `your-kms.example.com:9464` (domain name)
 </Note>
   </Step>
 </Steps>
 
     ### Deployment Options
 
-    Once you've configured Infisical to expose metrics, you'll need to deploy Prometheus to scrape and store them. Below are examples for different deployment environments. Choose the option that matches your infrastructure.
+    Once you've configured Hanzo KMS to expose metrics, you'll need to deploy Prometheus to scrape and store them. Below are examples for different deployment environments. Choose the option that matches your infrastructure.
 
     <Tabs>
       <Tab title="Docker Compose">
@@ -166,8 +166,8 @@ Replace `infisical-backend:9464` with the actual hostname and port where your In
         helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
         helm install prometheus prometheus-community/prometheus \
           --set server.config.global.scrape_interval=30s \
-          --set server.config.scrape_configs[0].job_name=infisical \
-          --set server.config.scrape_configs[0].static_configs[0].targets[0]=infisical-backend:9464
+          --set server.config.scrape_configs[0].job_name=kms \
+          --set server.config.scrape_configs[0].static_configs[0].targets[0]=kms-backend:9464
         ```
       </Tab>
     </Tabs>
@@ -179,13 +179,13 @@ Replace `infisical-backend:9464` with the actual hostname and port where your In
     ### Configuration
 
 <Steps>
-  <Step title="Enable OTLP export in Infisical">
+  <Step title="Enable OTLP export in Hanzo KMS">
 ```bash
 OTEL_TELEMETRY_COLLECTION_ENABLED=true
 OTEL_EXPORT_TYPE=otlp
 OTEL_EXPORT_OTLP_ENDPOINT=http://otel-collector:4318/v1/metrics
-OTEL_COLLECTOR_BASIC_AUTH_USERNAME=infisical
-OTEL_COLLECTOR_BASIC_AUTH_PASSWORD=infisical
+OTEL_COLLECTOR_BASIC_AUTH_USERNAME=kms
+OTEL_COLLECTOR_BASIC_AUTH_PASSWORD=kms
 OTEL_OTLP_PUSH_INTERVAL=30000
 ```
   </Step>
@@ -217,7 +217,7 @@ receivers:
         - job_name: otel-collector
           scrape_interval: 30s
           static_configs:
-            - targets: [infisical-backend:9464]
+            - targets: [kms-backend:9464]
           metric_relabel_configs:
             - action: labeldrop
               regex: "service_instance_id|service_name"
@@ -243,7 +243,7 @@ service:
 ```
 
 <Warning>
-Replace `your_username:your_password` with your chosen credentials. These must match the values you set in Infisical's `OTEL_COLLECTOR_BASIC_AUTH_USERNAME` and `OTEL_COLLECTOR_BASIC_AUTH_PASSWORD` environment variables.
+Replace `your_username:your_password` with your chosen credentials. These must match the values you set in Hanzo KMS's `OTEL_COLLECTOR_BASIC_AUTH_USERNAME` and `OTEL_COLLECTOR_BASIC_AUTH_PASSWORD` environment variables.
 </Warning>
   </Step>
 
@@ -276,7 +276,7 @@ Replace `otel-collector:8889` with the actual hostname and port where your OpenT
 
     ### Deployment Options
 
-    After configuring Infisical and the OpenTelemetry Collector, you'll need to deploy the collector to receive metrics from Infisical. Below are examples for different deployment environments. Choose the option that matches your infrastructure.
+    After configuring Hanzo KMS and the OpenTelemetry Collector, you'll need to deploy the collector to receive metrics from Hanzo KMS. Below are examples for different deployment environments. Choose the option that matches your infrastructure.
 
     <Tabs>
       <Tab title="Docker Compose">
@@ -340,41 +340,41 @@ Replace `otel-collector:8889` with the actual hostname and port where your OpenT
 
 ## Available Metrics
 
-Infisical exposes the following key metrics in OpenTelemetry format:
+Hanzo KMS exposes the following key metrics in OpenTelemetry format:
 
 ### Core API Metrics
 
-These metrics track all HTTP API requests to Infisical, including request counts, latency, and errors. Use these to monitor overall API health, identify performance bottlenecks, and track usage patterns across users and machine identities.
+These metrics track all HTTP API requests to Hanzo KMS, including request counts, latency, and errors. Use these to monitor overall API health, identify performance bottlenecks, and track usage patterns across users and machine identities.
 
 <AccordionGroup>
   <Accordion title="Total API Requests">
-    **Metric Name**: `infisical.http.server.request.count`
+    **Metric Name**: `kms.http.server.request.count`
 
     **Type**: Counter
 
     **Unit**: `{request}`
 
-    **Description**: Total number of API requests to Infisical (covers both human users and machine identities)
+    **Description**: Total number of API requests to Hanzo KMS (covers both human users and machine identities)
 
     **Attributes**:
-      - `infisical.organization.id` (string): Organization ID
-      - `infisical.organization.name` (string): Organization name (e.g., "Platform Engineering Team")
-      - `infisical.user.id` (string, optional): User ID if human user
-      - `infisical.user.email` (string, optional): User email (e.g., "jane.doe@cisco.com")
-      - `infisical.identity.id` (string, optional): Machine identity ID
-      - `infisical.identity.name` (string, optional): Machine identity name (e.g., "prod-k8s-operator")
-      - `infisical.auth.method` (string, optional): Auth method used
+      - `kms.organization.id` (string): Organization ID
+      - `kms.organization.name` (string): Organization name (e.g., "Platform Engineering Team")
+      - `kms.user.id` (string, optional): User ID if human user
+      - `kms.user.email` (string, optional): User email (e.g., "jane.doe@cisco.com")
+      - `kms.identity.id` (string, optional): Machine identity ID
+      - `kms.identity.name` (string, optional): Machine identity name (e.g., "prod-k8s-operator")
+      - `kms.auth.method` (string, optional): Auth method used
       - `http.request.method` (string): HTTP method (GET, POST, PUT, DELETE)
       - `http.route` (string): API endpoint route pattern
       - `http.response.status_code` (int): HTTP status code
-      - `infisical.project.id` (string, optional): Project ID
-      - `infisical.project.name` (string, optional): Project name
+      - `kms.project.id` (string, optional): Project ID
+      - `kms.project.name` (string, optional): Project name
       - `user_agent.original` (string, optional): User agent string
       - `client.address` (string, optional): IP address
   </Accordion>
 
   <Accordion title="Request Duration">
-    **Metric Name**: `infisical.http.server.request.duration`
+    **Metric Name**: `kms.http.server.request.duration`
 
     **Type**: Histogram
 
@@ -385,21 +385,21 @@ These metrics track all HTTP API requests to Infisical, including request counts
     **Buckets**: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10]
 
     **Attributes**:
-      - `infisical.organization.id` (string): Organization ID
-      - `infisical.organization.name` (string): Organization name
-      - `infisical.user.id` (string, optional): User ID if human user
-      - `infisical.user.email` (string, optional): User email
-      - `infisical.identity.id` (string, optional): Machine identity ID
-      - `infisical.identity.name` (string, optional): Machine identity name
+      - `kms.organization.id` (string): Organization ID
+      - `kms.organization.name` (string): Organization name
+      - `kms.user.id` (string, optional): User ID if human user
+      - `kms.user.email` (string, optional): User email
+      - `kms.identity.id` (string, optional): Machine identity ID
+      - `kms.identity.name` (string, optional): Machine identity name
       - `http.request.method` (string): HTTP method
       - `http.route` (string): API endpoint route pattern
       - `http.response.status_code` (int): HTTP status code
-      - `infisical.project.id` (string, optional): Project ID
-      - `infisical.project.name` (string, optional): Project name
+      - `kms.project.id` (string, optional): Project ID
+      - `kms.project.name` (string, optional): Project name
   </Accordion>
 
   <Accordion title="API Errors by Actor">
-    **Metric Name**: `infisical.http.server.error.count`
+    **Metric Name**: `kms.http.server.error.count`
     
     **Type**: Counter
     
@@ -408,17 +408,17 @@ These metrics track all HTTP API requests to Infisical, including request counts
     **Description**: API errors grouped by actor (for identifying misconfigured services)
     
     **Attributes**:
-      - `infisical.organization.id` (string): Organization ID
-      - `infisical.organization.name` (string): Organization name
-      - `infisical.user.id` (string, optional): User ID if human
-      - `infisical.user.email` (string, optional): User email
-      - `infisical.identity.id` (string, optional): Identity ID if machine
-      - `infisical.identity.name` (string, optional): Identity name
+      - `kms.organization.id` (string): Organization ID
+      - `kms.organization.name` (string): Organization name
+      - `kms.user.id` (string, optional): User ID if human
+      - `kms.user.email` (string, optional): User email
+      - `kms.identity.id` (string, optional): Identity ID if machine
+      - `kms.identity.name` (string, optional): Identity name
       - `http.route` (string): API endpoint where error occurred
       - `http.request.method` (string): HTTP method
       - `error.type` (string): Error category/type (client_error, server_error, auth_error, rate_limit_error, etc.)
-      - `infisical.project.id` (string, optional): Project ID
-      - `infisical.project.name` (string, optional): Project name
+      - `kms.project.id` (string, optional): Project ID
+      - `kms.project.name` (string, optional): Project name
       - `client.address` (string, optional): IP address
       - `user_agent.original` (string, optional): User agent information
   </Accordion>
@@ -430,7 +430,7 @@ These metrics provide visibility into secret access patterns, helping you unders
 
 <AccordionGroup>
   <Accordion title="Secret Read Operations">
-    **Metric Name**: `infisical.secret.read.count`
+    **Metric Name**: `kms.secret.read.count`
     
     **Type**: Counter
     
@@ -439,17 +439,17 @@ These metrics provide visibility into secret access patterns, helping you unders
     **Description**: Number of secret read operations
     
     **Attributes**:
-      - `infisical.organization.id` (string): Organization ID
-      - `infisical.organization.name` (string): Organization name
-      - `infisical.project.id` (string): Project ID
-      - `infisical.project.name` (string): Project name (e.g., "payment-service-secrets")
-      - `infisical.environment` (string): Environment (dev, staging, prod)
-      - `infisical.secret.path` (string): Path to secrets (e.g., "/microservice-a/database")
-      - `infisical.secret.name` (string, optional): Name of secret
-      - `infisical.user.id` (string, optional): User ID if human
-      - `infisical.user.email` (string, optional): User email
-      - `infisical.identity.id` (string, optional): Machine identity ID
-      - `infisical.identity.name` (string, optional): Machine identity name
+      - `kms.organization.id` (string): Organization ID
+      - `kms.organization.name` (string): Organization name
+      - `kms.project.id` (string): Project ID
+      - `kms.project.name` (string): Project name (e.g., "payment-service-secrets")
+      - `kms.environment` (string): Environment (dev, staging, prod)
+      - `kms.secret.path` (string): Path to secrets (e.g., "/microservice-a/database")
+      - `kms.secret.name` (string, optional): Name of secret
+      - `kms.user.id` (string, optional): User ID if human
+      - `kms.user.email` (string, optional): User email
+      - `kms.identity.id` (string, optional): Machine identity ID
+      - `kms.identity.name` (string, optional): Machine identity name
       - `user_agent.original` (string, optional): User agent/SDK information
       - `client.address` (string, optional): IP address
   </Accordion>
@@ -461,7 +461,7 @@ These metrics track authentication attempts and outcomes, enabling you to monito
 
 <AccordionGroup>
   <Accordion title="Login Attempts">
-    **Metric Name**: `infisical.auth.attempt.count`
+    **Metric Name**: `kms.auth.attempt.count`
     
     **Type**: Counter
     
@@ -470,18 +470,18 @@ These metrics track authentication attempts and outcomes, enabling you to monito
     **Description**: Authentication attempts (both successful and failed)
     
     **Attributes**:
-      - `infisical.organization.id` (string): Organization ID
-      - `infisical.organization.name` (string): Organization name
-      - `infisical.user.id` (string, optional): User ID if human (if identifiable)
-      - `infisical.user.email` (string, optional): User email (if identifiable)
-      - `infisical.identity.id` (string, optional): Identity ID if machine (if identifiable)
-      - `infisical.identity.name` (string, optional): Identity name (if identifiable)
-      - `infisical.auth.method` (string): Authentication method attempted
-      - `infisical.auth.result` (string): success or failure
+      - `kms.organization.id` (string): Organization ID
+      - `kms.organization.name` (string): Organization name
+      - `kms.user.id` (string, optional): User ID if human (if identifiable)
+      - `kms.user.email` (string, optional): User email (if identifiable)
+      - `kms.identity.id` (string, optional): Identity ID if machine (if identifiable)
+      - `kms.identity.name` (string, optional): Identity name (if identifiable)
+      - `kms.auth.method` (string): Authentication method attempted
+      - `kms.auth.result` (string): success or failure
       - `error.type` (string, optional): Reason for failure if failed (invalid_credentials, expired_token, invalid_token, etc.)
       - `client.address` (string): IP address
       - `user_agent.original` (string, optional): User agent/client information
-      - `infisical.auth.attempt.username` (string, optional): Attempted username/email (if available)
+      - `kms.auth.attempt.username` (string, optional): Attempted username/email (if available)
   </Accordion>
 </AccordionGroup>
 
@@ -491,7 +491,7 @@ These metrics track Key Management Interoperability Protocol (KMIP) operations, 
 
 <AccordionGroup>
   <Accordion title="KMIP Operations">
-    **Metric Name**: `infisical.kmip.operation.count`
+    **Metric Name**: `kms.kmip.operation.count`
     
     **Type**: Counter
     
@@ -500,14 +500,14 @@ These metrics track Key Management Interoperability Protocol (KMIP) operations, 
     **Description**: Number of KMIP operations performed
     
     **Attributes**:
-      - `infisical.kmip.operation.type` (string): Operation type (`create`, `get`, `get_attributes`, `activate`, `revoke`, `destroy`, `locate`, `register`)
-      - `infisical.organization.id` (string): Organization ID
-      - `infisical.project.id` (string): Project ID
-      - `infisical.kmip.client.id` (string): KMIP client ID performing the operation
-      - `infisical.kmip.object.id` (string, optional): Managed object/key ID
-      - `infisical.kmip.object.name` (string, optional): Managed object/key name
-      - `infisical.identity.id` (string, optional): Machine identity ID
-      - `infisical.identity.name` (string, optional): Machine identity name
+      - `kms.kmip.operation.type` (string): Operation type (`create`, `get`, `get_attributes`, `activate`, `revoke`, `destroy`, `locate`, `register`)
+      - `kms.organization.id` (string): Organization ID
+      - `kms.project.id` (string): Project ID
+      - `kms.kmip.client.id` (string): KMIP client ID performing the operation
+      - `kms.kmip.object.id` (string, optional): Managed object/key ID
+      - `kms.kmip.object.name` (string, optional): Managed object/key name
+      - `kms.identity.id` (string, optional): Machine identity ID
+      - `kms.identity.name` (string, optional): Machine identity name
       - `user_agent.original` (string, optional): User agent string
       - `client.address` (string, optional): Client IP address
   </Accordion>
@@ -515,7 +515,7 @@ These metrics track Key Management Interoperability Protocol (KMIP) operations, 
 
 ### Integration & Secret Sync Metrics
 
-These metrics monitor secret synchronization operations between Infisical and external systems, helping you track sync health, identify integration failures, and troubleshoot connectivity issues.
+These metrics monitor secret synchronization operations between Hanzo KMS and external systems, helping you track sync health, identify integration failures, and troubleshoot connectivity issues.
 
 <AccordionGroup>
   <Accordion title="integration_secret_sync_errors">
@@ -566,18 +566,18 @@ These low-level HTTP metrics are automatically collected by OpenTelemetry's inst
 <Accordion title="Metrics not appearing">
   If your metrics are not showing up in Prometheus or your monitoring system, check the following:
 
-  - Verify `OTEL_TELEMETRY_COLLECTION_ENABLED=true` is set in your Infisical environment variables
+  - Verify `OTEL_TELEMETRY_COLLECTION_ENABLED=true` is set in your Hanzo KMS environment variables
   - Ensure the correct `OTEL_EXPORT_TYPE` is set (`prometheus` or `otlp`)
-  - Check network connectivity between Infisical and your monitoring services (Prometheus or OTLP collector)
+  - Check network connectivity between Hanzo KMS and your monitoring services (Prometheus or OTLP collector)
   - For pull-based monitoring: Verify port 9464 is exposed and accessible
   - For push-based monitoring: Verify the OTLP endpoint URL is correct and reachable
-  - Check Infisical backend logs for any errors related to metrics export
+  - Check Hanzo KMS backend logs for any errors related to metrics export
 </Accordion>
 
 <Accordion title="Authentication errors">
   If you're experiencing authentication errors with the OpenTelemetry Collector:
 
-  - Verify basic auth credentials in your OTLP configuration match between Infisical and the collector
+  - Verify basic auth credentials in your OTLP configuration match between Hanzo KMS and the collector
   - Check that `OTEL_COLLECTOR_BASIC_AUTH_USERNAME` and `OTEL_COLLECTOR_BASIC_AUTH_PASSWORD` match the credentials in your `otel-collector-config.yaml`
   - Ensure the htpasswd format in the collector configuration is correct
   - Test the collector endpoint manually using curl with the same credentials to verify they work

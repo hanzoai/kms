@@ -8,10 +8,10 @@ export const ORACLEDB_CREDENTIALS_ROTATION_LIST_OPTION: TSecretRotationV2ListIte
   connection: AppConnection.OracleDB,
   template: {
     createUserStatement: `-- create user
-CREATE USER INFISICAL_USER IDENTIFIED BY "temporary_password";
+CREATE USER KMS_USER IDENTIFIED BY "temporary_password";
 
 -- grant all privileges
-GRANT ALL PRIVILEGES TO INFISICAL_USER;`,
+GRANT ALL PRIVILEGES TO KMS_USER;`,
     rotationStatement: `ALTER USER "{{username}}" IDENTIFIED BY "{{password}}"`,
     secretsMapping: {
       username: "ORACLEDB_USERNAME",

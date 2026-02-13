@@ -1,9 +1,9 @@
 ---
 title: "Kubernetes via Helm Chart"
-description: "Learn how to deploy Infisical on Kubernetes using our official Helm chart."
+description: "Learn how to deploy Hanzo KMS on Kubernetes using our official Helm chart."
 ---
 
-Learn how to deploy **Infisical** on Kubernetes using the official Helm chart. This method is ideal for production environments that require scalability, high availability, and integration with existing Kubernetes infrastructure.
+Learn how to deploy **Hanzo KMS** on Kubernetes using the official Helm chart. This method is ideal for production environments that require scalability, high availability, and integration with existing Kubernetes infrastructure.
 
 ## Prerequisites
 
@@ -18,7 +18,7 @@ Learn how to deploy **Infisical** on Kubernetes using the official Helm chart. T
 
 ## System Requirements
 
-The following are minimum requirements for running Infisical on Kubernetes:
+The following are minimum requirements for running Hanzo KMS on Kubernetes:
 
 | Component | Minimum | Recommended (Production) |
 |-----------|---------|--------------------------|
@@ -31,7 +31,7 @@ The following are minimum requirements for running Infisical on Kubernetes:
 
 | Pod | CPU Request | Memory Limit |
 |-----|-------------|--------------|
-| Infisical | 350m | 1000Mi |
+| Hanzo KMS | 350m | 1000Mi |
 | PostgreSQL | 250m | 512Mi |
 | Redis | 100m | 256Mi |
 
@@ -41,34 +41,34 @@ For production deployments with many users or secrets, increase these values acc
 
 <Steps>
   <Step title="Create a namespace">
-    Create a dedicated namespace for Infisical to isolate resources:
+    Create a dedicated namespace for Hanzo KMS to isolate resources:
 
     ```bash
-    kubectl create namespace infisical
+    kubectl create namespace kms
     ```
 
-    All subsequent commands will use this namespace. You can also add `-n infisical` to each kubectl command if you prefer not to set a default context.
+    All subsequent commands will use this namespace. You can also add `-n kms` to each kubectl command if you prefer not to set a default context.
   </Step>
 
   <Step title="Add the Helm repository">
-    Add the Infisical Helm charts repository and update your local cache:
+    Add the Hanzo KMS Helm charts repository and update your local cache:
 
     ```bash
-    helm repo add infisical-helm-charts 'https://dl.cloudsmith.io/public/infisical/helm-charts/helm/charts/'
+    helm repo add kms-helm-charts 'https://dl.cloudsmith.io/public/hanzoai/kms-helm-charts/helm/charts/'
     helm repo update
     ```
   </Step>
 
   <Step title="Create the secrets">
-    Infisical requires a Kubernetes secret named `infisical-secrets` containing essential configuration. Create this secret in the same namespace where you'll deploy the chart.
+    Hanzo KMS requires a Kubernetes secret named `kms-secrets` containing essential configuration. Create this secret in the same namespace where you'll deploy the chart.
 
     <Tabs>
       <Tab title="Proof of concept">
         For testing or proof-of-concept deployments, the Helm chart automatically provisions in-cluster PostgreSQL and Redis instances. You only need to provide the core secrets:
 
         ```bash
-        kubectl create secret generic infisical-secrets \
-          --namespace infisical \
+        kubectl create secret generic kms-secrets \
+          --namespace kms \
           --from-literal=AUTH_SECRET="$(openssl rand -base64 32)" \
           --from-literal=ENCRYPTION_KEY="$(openssl rand -hex 16)" \
           --from-literal=SITE_URL="http://localhost"
@@ -82,13 +82,13 @@ For production deployments with many users or secrets, increase these values acc
         For production environments, use external managed services for PostgreSQL and Redis to ensure high availability:
 
         ```bash
-        kubectl create secret generic infisical-secrets \
-          --namespace infisical \
+        kubectl create secret generic kms-secrets \
+          --namespace kms \
           --from-literal=AUTH_SECRET="$(openssl rand -base64 32)" \
           --from-literal=ENCRYPTION_KEY="$(openssl rand -hex 16)" \
-          --from-literal=DB_CONNECTION_URI="postgresql://user:password@your-postgres-host:5432/infisical" \
+          --from-literal=DB_CONNECTION_URI="postgresql://user:password@your-postgres-host:5432/kms" \
           --from-literal=REDIS_URL="redis://:password@your-redis-host:6379" \
-          --from-literal=SITE_URL="https://infisical.example.com"
+          --from-literal=SITE_URL="https://kms.example.com"
         ```
 
         <Warning>
@@ -106,16 +106,16 @@ For production deployments with many users or secrets, increase these values acc
     Create a `values.yaml` file to configure your deployment. Start with a minimal configuration:
 
     ```yaml values.yaml
-    infisical:
+    kms:
       image:
-        repository: infisical/infisical
-        tag: "v0.151.0"  # Check https://hub.docker.com/r/infisical/infisical/tags for latest
+        repository: ghcr.io/hanzoai/kms
+        tag: "v0.151.0"  # Check https://hub.docker.com/r/ghcr.io/hanzoai/kms/tags for latest
         pullPolicy: IfNotPresent
       replicaCount: 2
 
     ingress:
       enabled: true
-      hostName: "infisical.example.com"  # Replace with your domain
+      hostName: "kms.example.com"  # Replace with your domain
       ingressClassName: nginx
       nginx:
         enabled: true
@@ -125,34 +125,34 @@ For production deployments with many users or secrets, increase these values acc
       Do not use the `latest` tag in production. Always pin to a specific version to avoid unexpected changes during upgrades.
     </Warning>
 
-    For all available configuration options, see the [full values.yaml reference](https://raw.githubusercontent.com/Infisical/infisical/main/helm-charts/infisical-standalone-postgres/values.yaml).
+    For all available configuration options, see the [full values.yaml reference](https://raw.githubusercontent.com/Hanzo KMS/kms/main/helm-charts/kms-standalone/values.yaml).
   </Step>
 
   <Step title="Install the Helm chart">
-    Deploy Infisical using Helm:
+    Deploy Hanzo KMS using Helm:
 
     ```bash
-    helm upgrade --install infisical infisical-helm-charts/infisical-standalone \
-      --namespace infisical \
+    helm upgrade --install kms kms-helm-charts/kms-standalone \
+      --namespace kms \
       --values values.yaml
     ```
 
-    This command installs Infisical if it doesn't exist, or upgrades it if it does.
+    This command installs Hanzo KMS if it doesn't exist, or upgrades it if it does.
   </Step>
 
   <Step title="Verify the deployment">
     Check that all pods are running:
 
     ```bash
-    kubectl get pods -n infisical
+    kubectl get pods -n kms
     ```
 
     You should see output similar to:
 
     ```
     NAME                         READY   STATUS    RESTARTS   AGE
-    infisical-5d4f8b7c9-abc12    1/1     Running   0          2m
-    infisical-5d4f8b7c9-def34    1/1     Running   0          2m
+    kms-5d4f8b7c9-abc12    1/1     Running   0          2m
+    kms-5d4f8b7c9-def34    1/1     Running   0          2m
     postgresql-0                 1/1     Running   0          2m
     redis-master-0               1/1     Running   0          2m
     ```
@@ -160,18 +160,18 @@ For production deployments with many users or secrets, increase these values acc
     Verify the ingress is configured:
 
     ```bash
-    kubectl get ingress -n infisical
+    kubectl get ingress -n kms
     ```
 
     Test the health endpoint (port-forward if ingress isn't ready):
 
     ```bash
-    kubectl port-forward -n infisical svc/infisical 8080:8080 &
+    kubectl port-forward -n kms svc/kms 8080:8080 &
     curl http://localhost:8080/api/status
     ```
 
     <Tip>
-      The first user to sign up becomes the instance administrator. Complete this step before exposing Infisical to others.
+      The first user to sign up becomes the instance administrator. Complete this step before exposing Hanzo KMS to others.
     </Tip>
   </Step>
 </Steps>
@@ -182,89 +182,89 @@ For production deployments with many users or secrets, increase these values acc
 
 ### Viewing Pod Logs
 
-To view logs from Infisical pods:
+To view logs from Hanzo KMS pods:
 
 ```bash
-# View logs from all Infisical pods
-kubectl logs -n infisical -l component=infisical -f
+# View logs from all Hanzo KMS pods
+kubectl logs -n kms -l component=kms -f
 
 # View logs from a specific pod
-kubectl logs -n infisical <pod-name> -f
+kubectl logs -n kms <pod-name> -f
 
 # View last 100 lines
-kubectl logs -n infisical <pod-name> --tail=100
+kubectl logs -n kms <pod-name> --tail=100
 
 # View logs from the previous container instance (useful after crashes)
-kubectl logs -n infisical <pod-name> --previous
+kubectl logs -n kms <pod-name> --previous
 ```
 
 To view logs from PostgreSQL or Redis:
 
 ```bash
-kubectl logs -n infisical -l app.kubernetes.io/name=postgresql -f
-kubectl logs -n infisical -l app.kubernetes.io/name=redis -f
+kubectl logs -n kms -l app.kubernetes.io/name=postgresql -f
+kubectl logs -n kms -l app.kubernetes.io/name=redis -f
 ```
 
 ### Scaling the Deployment
 
-Infisical's application layer is stateless, so you can scale horizontally:
+Hanzo KMS's application layer is stateless, so you can scale horizontally:
 
 ```bash
 # Scale to 4 replicas
-kubectl scale deployment -n infisical infisical --replicas=4
+kubectl scale deployment -n kms kms --replicas=4
 ```
 
 Or update your `values.yaml` and re-apply:
 
 ```yaml values.yaml
-infisical:
+kms:
   replicaCount: 4
 ```
 
 ```bash
-helm upgrade infisical infisical-helm-charts/infisical-standalone \
-  --namespace infisical \
+helm upgrade kms kms-helm-charts/kms-standalone \
+  --namespace kms \
   --values values.yaml
 ```
 
-### Upgrading Infisical
+### Upgrading Hanzo KMS
 
 To upgrade to a new version:
 
 1. **Back up your database** before upgrading:
    ```bash
-   kubectl exec -n infisical postgresql-0 -- pg_dump -U infisical infisicalDB > backup_$(date +%Y%m%d).sql
+   kubectl exec -n kms postgresql-0 -- pg_dump -U kms kmsDB > backup_$(date +%Y%m%d).sql
    ```
 
 2. **Update the image tag** in your `values.yaml`:
    ```yaml
-   infisical:
+   kms:
      image:
        tag: "v0.152.0"  # New version
    ```
 
 3. **Apply the upgrade**:
    ```bash
-   helm upgrade infisical infisical-helm-charts/infisical-standalone \
-     --namespace infisical \
+   helm upgrade kms kms-helm-charts/kms-standalone \
+     --namespace kms \
      --values values.yaml
    ```
 
 4. **Monitor the rollout**:
    ```bash
-   kubectl rollout status deployment/infisical -n infisical
+   kubectl rollout status deployment/kms -n kms
    ```
 
-### Uninstalling Infisical
+### Uninstalling Hanzo KMS
 
-To completely remove Infisical from your cluster:
+To completely remove Hanzo KMS from your cluster:
 
 ```bash
 # Uninstall the Helm release
-helm uninstall infisical -n infisical
+helm uninstall kms -n kms
 
 # Delete the namespace (removes all resources including secrets and PVCs)
-kubectl delete namespace infisical
+kubectl delete namespace kms
 ```
 
 <Warning>
@@ -275,10 +275,10 @@ To uninstall but preserve data:
 
 ```bash
 # Uninstall only the Helm release (keeps PVCs and secrets)
-helm uninstall infisical -n infisical
+helm uninstall kms -n kms
 
 # Verify PVCs are retained
-kubectl get pvc -n infisical
+kubectl get pvc -n kms
 ```
 
 ---
@@ -297,7 +297,7 @@ The Helm chart creates Persistent Volume Claims (PVCs) for PostgreSQL and Redis 
 ### Viewing PVCs
 
 ```bash
-kubectl get pvc -n infisical
+kubectl get pvc -n kms
 ```
 
 ### Customizing Storage
@@ -328,20 +328,20 @@ redis:
 
 <AccordionGroup>
   <Accordion title="SMTP/Email Configuration">
-    Infisical uses email for user invitations, password resets, and notifications. Add SMTP configuration to your secrets:
+    Hanzo KMS uses email for user invitations, password resets, and notifications. Add SMTP configuration to your secrets:
 
     ```bash
-    kubectl create secret generic infisical-secrets \
-      --namespace infisical \
+    kubectl create secret generic kms-secrets \
+      --namespace kms \
       --from-literal=AUTH_SECRET="your-auth-secret" \
       --from-literal=ENCRYPTION_KEY="your-encryption-key" \
-      --from-literal=SITE_URL="https://infisical.example.com" \
+      --from-literal=SITE_URL="https://kms.example.com" \
       --from-literal=SMTP_HOST="smtp.example.com" \
       --from-literal=SMTP_PORT="587" \
       --from-literal=SMTP_USERNAME="your-smtp-username" \
       --from-literal=SMTP_PASSWORD="your-smtp-password" \
-      --from-literal=SMTP_FROM_ADDRESS="infisical@example.com" \
-      --from-literal=SMTP_FROM_NAME="Infisical" \
+      --from-literal=SMTP_FROM_ADDRESS="kms@example.com" \
+      --from-literal=SMTP_FROM_NAME="Hanzo KMS" \
       --dry-run=client -o yaml | kubectl apply -f -
     ```
 
@@ -353,10 +353,10 @@ redis:
     | SendGrid | smtp.sendgrid.net | 587 |
     | Gmail | smtp.gmail.com | 587 |
 
-    After updating secrets, restart the Infisical pods:
+    After updating secrets, restart the Hanzo KMS pods:
 
     ```bash
-    kubectl rollout restart deployment/infisical -n infisical
+    kubectl rollout restart deployment/kms -n kms
     ```
   </Accordion>
 
@@ -399,14 +399,14 @@ redis:
     ```yaml values.yaml
     ingress:
       enabled: true
-      hostName: "infisical.example.com"
+      hostName: "kms.example.com"
       ingressClassName: nginx
       annotations:
         cert-manager.io/cluster-issuer: "letsencrypt-prod"
       tls:
-        - secretName: infisical-tls
+        - secretName: kms-tls
           hosts:
-            - infisical.example.com
+            - kms.example.com
     ```
 
     **2. Using existing TLS certificate:**
@@ -414,8 +414,8 @@ redis:
     Create a TLS secret with your certificate:
 
     ```bash
-    kubectl create secret tls infisical-tls \
-      --namespace infisical \
+    kubectl create secret tls kms-tls \
+      --namespace kms \
       --cert=path/to/tls.crt \
       --key=path/to/tls.key
     ```
@@ -425,19 +425,19 @@ redis:
     ```yaml values.yaml
     ingress:
       enabled: true
-      hostName: "infisical.example.com"
+      hostName: "kms.example.com"
       ingressClassName: nginx
       tls:
-        - secretName: infisical-tls
+        - secretName: kms-tls
           hosts:
-            - infisical.example.com
+            - kms.example.com
     ```
 
     Apply the changes:
 
     ```bash
-    helm upgrade infisical infisical-helm-charts/infisical-standalone \
-      --namespace infisical \
+    helm upgrade kms kms-helm-charts/kms-standalone \
+      --namespace kms \
       --values values.yaml
     ```
   </Accordion>
@@ -449,12 +449,12 @@ redis:
     apiVersion: networking.k8s.io/v1
     kind: NetworkPolicy
     metadata:
-      name: infisical-network-policy
-      namespace: infisical
+      name: kms-network-policy
+      namespace: kms
     spec:
       podSelector:
         matchLabels:
-          component: infisical
+          component: kms
       policyTypes:
         - Ingress
         - Egress
@@ -524,13 +524,13 @@ redis:
     **Add connection strings to your secrets:**
 
     ```bash
-    kubectl create secret generic infisical-secrets \
-      --namespace infisical \
+    kubectl create secret generic kms-secrets \
+      --namespace kms \
       --from-literal=AUTH_SECRET="your-auth-secret" \
       --from-literal=ENCRYPTION_KEY="your-encryption-key" \
-      --from-literal=DB_CONNECTION_URI="postgresql://user:password@your-rds-endpoint:5432/infisical?sslmode=require" \
+      --from-literal=DB_CONNECTION_URI="postgresql://user:password@your-rds-endpoint:5432/kms?sslmode=require" \
       --from-literal=REDIS_URL="rediss://:password@your-elasticache-endpoint:6379" \
-      --from-literal=SITE_URL="https://infisical.example.com" \
+      --from-literal=SITE_URL="https://kms.example.com" \
       --dry-run=client -o yaml | kubectl apply -f -
     ```
 
@@ -544,11 +544,11 @@ redis:
   </Accordion>
 
   <Accordion title="Prometheus Monitoring">
-    Infisical exposes Prometheus metrics when enabled.
+    Hanzo KMS exposes Prometheus metrics when enabled.
 
     **1. Add telemetry configuration to your secrets:**
 
-    Include these in your `infisical-secrets`:
+    Include these in your `kms-secrets`:
 
     ```bash
     --from-literal=OTEL_TELEMETRY_COLLECTION_ENABLED="true" \
@@ -561,12 +561,12 @@ redis:
     apiVersion: monitoring.coreos.com/v1
     kind: ServiceMonitor
     metadata:
-      name: infisical
-      namespace: infisical
+      name: kms
+      namespace: kms
     spec:
       selector:
         matchLabels:
-          component: infisical
+          component: kms
       endpoints:
         - port: metrics
           interval: 30s
@@ -582,10 +582,10 @@ redis:
   <Accordion title="High Availability Configuration">
     For production high availability:
 
-    **1. Multiple Infisical replicas:**
+    **1. Multiple Hanzo KMS replicas:**
 
     ```yaml values.yaml
-    infisical:
+    kms:
       replicaCount: 3
       topologySpreadConstraints:
         - maxSkew: 1
@@ -593,7 +593,7 @@ redis:
           whenUnsatisfiable: ScheduleAnyway
           labelSelector:
             matchLabels:
-              component: infisical
+              component: kms
     ```
 
     **2. Pod Disruption Budget:**
@@ -602,13 +602,13 @@ redis:
     apiVersion: policy/v1
     kind: PodDisruptionBudget
     metadata:
-      name: infisical-pdb
-      namespace: infisical
+      name: kms-pdb
+      namespace: kms
     spec:
       minAvailable: 1
       selector:
         matchLabels:
-          component: infisical
+          component: kms
     ```
 
     ```bash
@@ -633,12 +633,12 @@ redis:
   <Accordion title="Pods stuck in Pending state">
     **Check pod events:**
     ```bash
-    kubectl describe pod -n infisical <pod-name>
+    kubectl describe pod -n kms <pod-name>
     ```
 
     **Common causes:**
     - Insufficient cluster resources: Check node capacity with `kubectl describe nodes`
-    - PVC not bound: Check PVC status with `kubectl get pvc -n infisical`
+    - PVC not bound: Check PVC status with `kubectl get pvc -n kms`
     - Image pull errors: Verify image name and check for ImagePullBackOff errors
 
     **Solutions:**
@@ -650,25 +650,25 @@ redis:
   <Accordion title="Pods in CrashLoopBackOff">
     **View pod logs:**
     ```bash
-    kubectl logs -n infisical <pod-name> --previous
+    kubectl logs -n kms <pod-name> --previous
     ```
 
     **Common causes:**
-    - Missing or invalid secrets: Verify `infisical-secrets` exists and contains required keys
+    - Missing or invalid secrets: Verify `kms-secrets` exists and contains required keys
     - Database connection failed: Check `DB_CONNECTION_URI` is correct and accessible
     - Invalid configuration: Check for typos in environment variables
 
     **Verify secrets:**
     ```bash
-    kubectl get secret infisical-secrets -n infisical -o yaml
+    kubectl get secret kms-secrets -n kms -o yaml
     ```
   </Accordion>
 
-  <Accordion title="Cannot access Infisical via Ingress">
+  <Accordion title="Cannot access Hanzo KMS via Ingress">
     **Check ingress status:**
     ```bash
-    kubectl get ingress -n infisical
-    kubectl describe ingress -n infisical infisical
+    kubectl get ingress -n kms
+    kubectl describe ingress -n kms kms
     ```
 
     **Check ingress controller logs:**
@@ -678,7 +678,7 @@ redis:
 
     **Verify service is accessible:**
     ```bash
-    kubectl port-forward -n infisical svc/infisical 8080:8080
+    kubectl port-forward -n kms svc/kms 8080:8080
     curl http://localhost:8080/api/status
     ```
 
@@ -691,17 +691,17 @@ redis:
   <Accordion title="Database connection errors">
     **Check PostgreSQL pod:**
     ```bash
-    kubectl get pods -n infisical -l app.kubernetes.io/name=postgresql
-    kubectl logs -n infisical postgresql-0
+    kubectl get pods -n kms -l app.kubernetes.io/name=postgresql
+    kubectl logs -n kms postgresql-0
     ```
 
     **Test database connectivity:**
     ```bash
-    kubectl exec -it -n infisical postgresql-0 -- psql -U infisical -d infisicalDB -c "SELECT 1"
+    kubectl exec -it -n kms postgresql-0 -- psql -U kms -d kmsDB -c "SELECT 1"
     ```
 
     **For external databases:**
-    - Verify the connection string in `infisical-secrets`
+    - Verify the connection string in `kms-secrets`
     - Check network policies and security groups allow traffic
     - Ensure SSL certificates are configured if required
   </Accordion>
@@ -709,36 +709,36 @@ redis:
   <Accordion title="Redis connection errors">
     **Check Redis pod:**
     ```bash
-    kubectl get pods -n infisical -l app.kubernetes.io/name=redis
-    kubectl logs -n infisical redis-master-0
+    kubectl get pods -n kms -l app.kubernetes.io/name=redis
+    kubectl logs -n kms redis-master-0
     ```
 
     **Test Redis connectivity:**
     ```bash
-    kubectl exec -it -n infisical redis-master-0 -- redis-cli ping
+    kubectl exec -it -n kms redis-master-0 -- redis-cli ping
     ```
 
     **For external Redis:**
-    - Verify the `REDIS_URL` in `infisical-secrets`
+    - Verify the `REDIS_URL` in `kms-secrets`
     - Check if TLS is required (use `rediss://` instead of `redis://`)
   </Accordion>
 
   <Accordion title="Helm upgrade fails">
     **Check Helm release status:**
     ```bash
-    helm status infisical -n infisical
-    helm history infisical -n infisical
+    helm status kms -n kms
+    helm history kms -n kms
     ```
 
     **Rollback to previous version:**
     ```bash
-    helm rollback infisical -n infisical
+    helm rollback kms -n kms
     ```
 
     **Force upgrade (use with caution):**
     ```bash
-    helm upgrade infisical infisical-helm-charts/infisical-standalone \
-      --namespace infisical \
+    helm upgrade kms kms-helm-charts/kms-standalone \
+      --namespace kms \
       --values values.yaml \
       --force
     ```
@@ -747,13 +747,13 @@ redis:
   <Accordion title="Performance issues">
     **Check resource usage:**
     ```bash
-    kubectl top pods -n infisical
+    kubectl top pods -n kms
     kubectl top nodes
     ```
 
     **Check for resource throttling:**
     ```bash
-    kubectl describe pod -n infisical <pod-name> | grep -A5 "Limits\|Requests"
+    kubectl describe pod -n kms <pod-name> | grep -A5 "Limits\|Requests"
     ```
 
     **Solutions:**
@@ -776,18 +776,18 @@ redis:
       # -- Overrides the full name of the release, affecting resource names
       fullnameOverride: ""
 
-      infisical:
-        # -- Enable Infisical chart deployment
+      kms:
+        # -- Enable Hanzo KMS chart deployment
         enabled: true
         # -- Sets the name of the deployment within this chart
-        name: infisical
+        name: kms
 
         autoBootstrap:
-          # -- Enable auto-bootstrap of the Infisical instance
+          # -- Enable auto-bootstrap of the Hanzo KMS instance
           enabled: false
 
           image:
-            # -- Infisical Infisical CLI image tag version
+            # -- Hanzo KMS KMS CLI image tag version
             tag: "0.41.86"
 
           # -- Template for the data/stringData section of the Kubernetes secret. Available functions: encodeBase64
@@ -795,17 +795,17 @@ redis:
 
           secretDestination:
             # -- Name of the bootstrap secret to create in the Kubernetes cluster which will store the formatted root identity credentials
-            name: "infisical-bootstrap-secret"
+            name: "kms-bootstrap-secret"
 
             # -- Namespace to create the bootstrap secret in. If not provided, the secret will be created in the same namespace as the release.
             namespace: "default"
 
-          # -- Infisical organization to create in the Infisical instance during auto-bootstrap
+          # -- Hanzo KMS organization to create in the Hanzo KMS instance during auto-bootstrap
           organization: "default-org"
 
           credentialSecret:
             # -- Name of the Kubernetes secret containing the credentials for the auto-bootstrap workflow
-            name: "infisical-bootstrap-credentials"
+            name: "kms-bootstrap-credentials"
 
         databaseSchemaMigrationJob:
           image:
@@ -824,19 +824,19 @@ redis:
           # -- Optional custom service account name, if existing service account is used
           name: null
 
-        # -- Override for the full name of Infisical resources in this deployment
+        # -- Override for the full name of Hanzo KMS resources in this deployment
         fullnameOverride: ""
-        # -- Custom annotations for Infisical pods
+        # -- Custom annotations for Hanzo KMS pods
         podAnnotations: {}
-        # -- Custom annotations for Infisical deployment
+        # -- Custom annotations for Hanzo KMS deployment
         deploymentAnnotations: {}
         # -- Number of pod replicas for high availability
         replicaCount: 2
 
         image:
-          # -- Image repository for the Infisical service
-          repository: infisical/infisical
-          # -- Specific version tag of the Infisical image. View the latest version here https://hub.docker.com/r/infisical/infisical
+          # -- Image repository for the Hanzo KMS service
+          repository: ghcr.io/hanzoai/kms
+          # -- Specific version tag of the Hanzo KMS image. View the latest version here https://hub.docker.com/r/ghcr.io/hanzoai/kms
           tag: "v0.151.0"
           # -- Pulls image only if not already present on the node
           pullPolicy: IfNotPresent
@@ -853,11 +853,11 @@ redis:
         # -- Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
         topologySpreadConstraints: []
 
-        # -- Kubernetes Secret reference containing Infisical root credentials
-        kubeSecretRef: "infisical-secrets"
+        # -- Kubernetes Secret reference containing Hanzo KMS root credentials
+        kubeSecretRef: "kms-secrets"
 
         service:
-          # -- Custom annotations for Infisical service
+          # -- Custom annotations for Hanzo KMS service
           annotations: {}
           # -- Service type, can be changed based on exposure needs (e.g., LoadBalancer)
           type: ClusterIP
@@ -866,10 +866,10 @@ redis:
 
         resources:
           limits:
-            # -- Memory limit for Infisical container
+            # -- Memory limit for Hanzo KMS container
             memory: 1000Mi
           requests:
-            # -- CPU request for Infisical container
+            # -- CPU request for Hanzo KMS container
             cpu: 350m
 
       ingress:
@@ -910,11 +910,11 @@ redis:
 
         auth:
           # -- Database username for PostgreSQL
-          username: infisical
+          username: kms
           # -- Password for PostgreSQL database access
           password: root
-          # -- Database name for Infisical
-          database: infisicalDB
+          # -- Database name for Hanzo KMS
+          database: kmsDB
 
         useExistingPostgresSecret:
           # -- Set to true if using an existing Kubernetes secret that contains PostgreSQL connection string
@@ -958,6 +958,6 @@ redis:
 
 ---
 
-Your Infisical instance should now be running on Kubernetes. Access it via the ingress hostname you configured, or use `kubectl port-forward` for local testing.
+Your Hanzo KMS instance should now be running on Kubernetes. Access it via the ingress hostname you configured, or use `kubectl port-forward` for local testing.
 
 ![self-hosted sign up](/images/self-hosting/applicable-to-all/selfhost-signup.png)

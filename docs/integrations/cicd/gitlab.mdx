@@ -1,11 +1,11 @@
 ---
 title: "GitLab"
-description: "How to sync secrets from Infisical to GitLab"
+description: "How to sync secrets from Hanzo KMS to GitLab"
 ---
 
 
     Prerequisites:
-    - Set up and add envars to [Infisical Cloud](https://app.infisical.com).
+    - Set up and add envars to [Hanzo KMS Cloud](https://kms.hanzo.ai).
 
     <AccordionGroup>
       <Accordion title="Standard">
@@ -13,13 +13,13 @@ description: "How to sync secrets from Infisical to GitLab"
       </Accordion>
       <Accordion title="Pipeline">
         <Steps>
-          <Step title="Authorize Infisical for GitLab">
-            Generate an [Infisical Token](/documentation/platform/token) for the specific project and environment in Infisical.
+          <Step title="Authorize Hanzo KMS for GitLab">
+            Generate an [Hanzo KMS Token](/documentation/platform/token) for the specific project and environment in Hanzo KMS.
 
-            Next, create a new variable called `INFISICAL_TOKEN` with the value set to the token from the previous step in Settings > CI/CD > Variables of your GitLab repository.
+            Next, create a new variable called `KMS_TOKEN` with the value set to the token from the previous step in Settings > CI/CD > Variables of your GitLab repository.
           </Step>
-          <Step title="Configure Infisical in your pipeline">
-            Edit your `.gitlab-ci.yml` to include the Infisical CLI installation. This will allow you to use the CLI for fetching and injecting secrets into any script or command within your Gitlab CI/CD process.
+          <Step title="Configure Hanzo KMS in your pipeline">
+            Edit your `.gitlab-ci.yml` to include the KMS CLI installation. This will allow you to use the CLI for fetching and injecting secrets into any script or command within your Gitlab CI/CD process.
 
             #### Example
 
@@ -35,9 +35,9 @@ description: "How to sync secrets from Infisical to GitLab"
               stage: build
               script:
                 - apt update && apt install -y curl
-                - curl -1sLf 'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.deb.sh' | bash
-                - apt-get update && apt-get install -y infisical
-                - infisical run -- npm run build
+                - curl -1sLf 'https://dl.cloudsmith.io/public/ghcr.io/hanzoai/kms-cli/setup.deb.sh' | bash
+                - apt-get update && apt-get install -y kms
+                - hanzo-kms run -- npm run build
             ```
           </Step>
         </Steps>

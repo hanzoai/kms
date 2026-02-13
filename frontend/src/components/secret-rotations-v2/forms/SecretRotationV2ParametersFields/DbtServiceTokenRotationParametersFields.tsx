@@ -77,7 +77,7 @@ export const DbtServiceTokenRotationParametersFields = () => {
             errorText={error?.message}
             label="Service Token Name"
           >
-            <Input {...field} placeholder="infisical-service-token" />
+            <Input {...field} placeholder="kms-service-token" />
           </FormControl>
         )}
       />

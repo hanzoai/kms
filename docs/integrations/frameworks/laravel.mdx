@@ -1,28 +1,28 @@
 ---
 title: "Laravel"
-description: "How to use Infisical to inject environment variables and secrets into a Laravel app."
+description: "How to use Hanzo KMS to inject environment variables and secrets into a Laravel app."
 ---
 
 Prerequisites:
 
-- Set up and add envars to [Infisical Cloud](https://app.infisical.com)
+- Set up and add envars to [Hanzo KMS Cloud](https://kms.hanzo.ai)
 - [Install the CLI](/cli/overview)
 
-## Initialize Infisical for your [Laravel](https://laravel.com/) app
+## Initialize Hanzo KMS for your [Laravel](https://laravel.com/) app
 
 ```bash
 # navigate to the root of your of your project 
 cd /path/to/project
 
-# then initialize Infisical
-infisical init
+# then initialize Hanzo KMS
+hanzo-kms init
 ```
 
-## Start your application as usual but with Infisical
+## Start your application as usual but with Hanzo KMS
 
 ```bash
-infisical run -- <your application start command>
+hanzo-kms run -- <your application start command>
 
 # Example 
-infisical run -- php artisan serve
+hanzo-kms run -- php artisan serve
 ```

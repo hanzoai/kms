@@ -530,7 +530,7 @@ export const Mfa = ({ successCallback, closeMfa, hideLogo, email, method }: Prop
                       <div className="mb-2 text-gray-300">
                         Contact support with valid proof of account ownership to initiate recovery
                       </div>
-                      <div className="mt-1">support@infisical.com</div>
+                      <div className="mt-1">support@hanzo.ai</div>
                     </>
                   ) : (
                     <>

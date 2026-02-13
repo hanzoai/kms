@@ -27,10 +27,10 @@ cd backend && npm run migration:latest
 ```
 
 ### Production
-```bash
-# Start production stack
-docker compose -f docker-compose.prod.yml up
-```
+Production runs on **hanzo-k8s** DOKS cluster (`24.199.76.156`) at `kms.hanzo.ai`.
+- Image: `infisical/infisical:latest` (upstream)
+- DB: `postgres://hanzo:...@postgres.hanzo.svc:5432/kms`
+- Redis: `redis-master:6379`
 
 ### Testing
 ```bash

@@ -1,35 +1,35 @@
 ---
 title: "Programmatic Provisioning"
-description: "Learn how to provision and configure Infisical instances programmatically without UI interaction"
+description: "Learn how to provision and configure Hanzo KMS instances programmatically without UI interaction"
 ---
 
-Infisical's Automated Bootstrapping feature enables you to provision and configure an Infisical instance without using the UI, allowing for complete automation through static configuration files, API calls, or CLI commands. This is especially valuable for enterprise environments where automated deployment and infrastructure-as-code practices are essential.
+Hanzo KMS's Automated Bootstrapping feature enables you to provision and configure an Hanzo KMS instance without using the UI, allowing for complete automation through static configuration files, API calls, or CLI commands. This is especially valuable for enterprise environments where automated deployment and infrastructure-as-code practices are essential.
 
 The bootstrapping workflow automates creating an admin user account, initializing an organization for the entire instance, establishing an **instance admin machine identity** with full administrative permissions, and returning the machine identity credentials for further automation.
 
 ## Prerequisites
 
-- An Infisical instance launched with all required configuration variables
-- Access to the Infisical CLI or the ability to make API calls to the instance
-- Network connectivity to the Infisical instance
+- An Hanzo KMS instance launched with all required configuration variables
+- Access to the KMS CLI or the ability to make API calls to the instance
+- Network connectivity to the Hanzo KMS instance
 
 ## Key Concepts
 
-- **Instance Initialization**: Infisical requires [configuration variables](/self-hosting/configuration/envars) to be set during launch, after which the bootstrap process can be triggered.
-- **Instance Admin Machine Identity**: The bootstrapping process creates a machine identity with instance-level admin privileges, which can be used to programmatically manage all aspects of the Infisical instance.
+- **Instance Initialization**: Hanzo KMS requires [configuration variables](/self-hosting/configuration/envars) to be set during launch, after which the bootstrap process can be triggered.
+- **Instance Admin Machine Identity**: The bootstrapping process creates a machine identity with instance-level admin privileges, which can be used to programmatically manage all aspects of the Hanzo KMS instance.
   ![Instance Admin Identity](/images/self-hosting/guides/automated-bootstrapping/identity-instance-admin.png)
-- **Token Auth**: The instance admin machine identity uses [Token Auth](/documentation/platform/identities/token-auth), providing a JWT token that can be used directly to make authenticated requests to the Infisical API.
+- **Token Auth**: The instance admin machine identity uses [Token Auth](/documentation/platform/identities/token-auth), providing a JWT token that can be used directly to make authenticated requests to the Hanzo KMS API.
 
 ## Bootstrap Methods
 
-You can bootstrap an Infisical instance using the API, CLI, or Helm chart.
+You can bootstrap an Hanzo KMS instance using the API, CLI, or Helm chart.
 
 <Tabs>
   <Tab title="Using the API">
     Make a POST request to the bootstrap endpoint:
 
     ```
-    POST: http://your-infisical-instance.com/api/v1/admin/bootstrap
+    POST: http://your-kms-instance.com/api/v1/admin/bootstrap
     {
         "email": "admin@example.com",
         "password": "your-secure-password",
@@ -43,7 +43,7 @@ You can bootstrap an Infisical instance using the API, CLI, or Helm chart.
     curl -X POST \
       -H "Content-Type: application/json" \
       -d '{"email":"admin@example.com","password":"your-secure-password","organization":"your-org-name"}' \
-      http://your-infisical-instance.com/api/v1/admin/bootstrap
+      http://your-kms-instance.com/api/v1/admin/bootstrap
     ```
 
     ### API Response Structure
@@ -78,10 +78,10 @@ You can bootstrap an Infisical instance using the API, CLI, or Helm chart.
 
   </Tab>
   <Tab title="Using the CLI">
-    Use the [Infisical CLI](/cli/commands/bootstrap) to bootstrap the instance and extract the token for immediate use in automation:
+    Use the [KMS CLI](/cli/commands/bootstrap) to bootstrap the instance and extract the token for immediate use in automation:
 
     ```bash
-    infisical bootstrap --domain="http://localhost:8080" --email="admin@example.com" --password="your-secure-password" --organization="your-org-name" | jq ".identity.credentials.token"
+    kms bootstrap --domain="http://localhost:8080" --email="admin@example.com" --password="your-secure-password" --organization="your-org-name" | jq ".identity.credentials.token"
     ```
 
     This example command pipes the output through `jq` to extract only the machine identity token, making it easy to capture and use directly in automation scripts or export as an environment variable for tools like Terraform.
@@ -117,7 +117,7 @@ You can bootstrap an Infisical instance using the API, CLI, or Helm chart.
     ```
   </Tab>
   <Tab title="Helm Chart">
-    When deploying Infisical using the official [Helm chart](/self-hosting/deployment-options/kubernetes-helm#kubernetes-via-helm-chart), you can enable automatic bootstrapping that runs as part of the deployment process. This eliminates the need to manually bootstrap the instance after deployment.
+    When deploying Hanzo KMS using the official [Helm chart](/self-hosting/deployment-options/kubernetes-helm#kubernetes-via-helm-chart), you can enable automatic bootstrapping that runs as part of the deployment process. This eliminates the need to manually bootstrap the instance after deployment.
 
     The bootstrapping process automatically generates a Kubernetes secret containing the instance admin token, which can then be referenced by Crossplane providers, Terraform operators, or other automation systems for further infrastructure provisioning and configuration.
 
@@ -132,19 +132,19 @@ You can bootstrap an Infisical instance using the API, CLI, or Helm chart.
       secretTemplate: '{"data":{"token":"{{.Identity.Credentials.Token}}"}}'
 
       secretDestination:
-        name: "infisical-bootstrap-secret"
+        name: "kms-bootstrap-secret"
         namespace: "default" # defaults to release namespace if not specified
 
       credentialSecret:
-        name: "infisical-bootstrap-credentials"
+        name: "kms-bootstrap-credentials"
     ```
 
-    You'll also need to create a secret containing the bootstrap credentials before deployment. The secret must contain `INFISICAL_ADMIN_EMAIL` and `INFISICAL_ADMIN_PASSWORD` keys:
+    You'll also need to create a secret containing the bootstrap credentials before deployment. The secret must contain `KMS_ADMIN_EMAIL` and `KMS_ADMIN_PASSWORD` keys:
 
     ```bash
-    kubectl create secret generic infisical-bootstrap-credentials \
-      --from-literal=INFISICAL_ADMIN_EMAIL="admin@example.com" \
-      --from-literal=INFISICAL_ADMIN_PASSWORD="your-secure-password" \
+    kubectl create secret generic kms-bootstrap-credentials \
+      --from-literal=KMS_ADMIN_EMAIL="admin@example.com" \
+      --from-literal=KMS_ADMIN_PASSWORD="your-secure-password" \
       --namespace=release-namespace
     ```
 
@@ -152,9 +152,9 @@ You can bootstrap an Infisical instance using the API, CLI, or Helm chart.
 
     The Helm chart auto bootstrap feature:
 
-    1. **Post-Install Hook**: Runs automatically after the main Infisical deployment is complete
-    2. **Readiness Check**: Uses an init container with curl to wait for Infisical to be ready by polling the `/api/status` endpoint
-    3. **Bootstrap Execution**: Uses the Infisical CLI to bootstrap the instance
+    1. **Post-Install Hook**: Runs automatically after the main Hanzo KMS deployment is complete
+    2. **Readiness Check**: Uses an init container with curl to wait for Hanzo KMS to be ready by polling the `/api/status` endpoint
+    3. **Bootstrap Execution**: Uses the KMS CLI to bootstrap the instance
     4. **Kubernetes Secret Creation**: Creates a Kubernetes secret directly via the Kubernetes API using the rendered template
     5. **RBAC**: Automatically configures the necessary permissions (`get`, `create`, `update` on secrets) for the bootstrap job
 
@@ -181,7 +181,7 @@ You can bootstrap an Infisical instance using the API, CLI, or Helm chart.
     secretTemplate: |
       {
         "data": {
-          "infisical_token": "{{ .Identity.Credentials.Token }}",
+          "kms_token": "{{ .Identity.Credentials.Token }}",
           "admin_email": "{{ .User.Email }}",
           "organization": "{{ .Organization.Name }}"
         }
@@ -190,7 +190,7 @@ You can bootstrap an Infisical instance using the API, CLI, or Helm chart.
 
     ### Benefits
 
-    - **Zero-Touch Deployment**: Complete Infisical setup without manual intervention
+    - **Zero-Touch Deployment**: Complete Hanzo KMS setup without manual intervention
     - **Infrastructure as Code**: Bootstrap configuration is versioned with your Helm values
     - **Secure Token Storage**: Admin identity credentials are immediately stored in Kubernetes secrets
     - **Integration Ready**: The created secret can be referenced by other applications or automation tools
@@ -209,7 +209,7 @@ You can bootstrap an Infisical instance using the API, CLI, or Helm chart.
 
 The bootstrap process automatically creates a machine identity with Token Auth configured. The returned token has instance-level admin privileges (the highest level of access) and should be treated with the same security considerations as a root credential.
 
-The token enables full programmatic control of your Infisical instance and can be used in the following ways:
+The token enables full programmatic control of your Hanzo KMS instance and can be used in the following ways:
 
 ### 1. Infrastructure Automation
 
@@ -221,7 +221,7 @@ Store the token securely for use with infrastructure automation tools. Due to th
 apiVersion: v1
 kind: Secret
 metadata:
-  name: infisical-admin-credentials
+  name: kms-admin-credentials
 type: Opaque
 data:
   token: <base64-encoded-token>
@@ -230,17 +230,17 @@ data:
 #### Environment Variable for Terraform
 
 ```bash
-export INFISICAL_TOKEN=your-access-token
+export KMS_TOKEN=your-access-token
 terraform apply
 ```
 
 ### 2. Programmatic Resource Management
 
-Use the token to authenticate API calls for creating and managing Infisical resources. The token works exactly like any other Token Auth access token in the Infisical API:
+Use the token to authenticate API calls for creating and managing Hanzo KMS resources. The token works exactly like any other Token Auth access token in the Hanzo KMS API:
 
 ```bash
 curl -X POST \
-  -H "Authorization: Bearer ${INFISICAL_TOKEN}" \
+  -H "Authorization: Bearer ${KMS_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "projectName": "New Project",
@@ -249,14 +249,14 @@ curl -X POST \
     "template": "default",
     "type": "secret-manager"
   }' \
-  https://your-infisical-instance.com/api/v1/projects
+  https://your-kms-instance.com/api/v1/projects
 ```
 
 ## Important Notes
 
-- **Security Warning**: The instance admin machine identity has the highest level of privileges in your Infisical deployment. The token should be treated with the utmost security and handled like a root credential. Unauthorized access to this token could compromise your entire Infisical instance.
+- **Security Warning**: The instance admin machine identity has the highest level of privileges in your Hanzo KMS deployment. The token should be treated with the utmost security and handled like a root credential. Unauthorized access to this token could compromise your entire Hanzo KMS instance.
 - Security controls prevent privilege escalation: instance admin identities cannot be managed by non-instance admin users and identities
 - The instance admin permission of the generated identity can be revoked later in the server admin panel if needed
 - The generated admin user account can still be used for UI access if needed, or can be removed if you prefer to manage everything through the machine identity
 - This process is designed to work with future Crossplane providers and the existing Terraform provider for full infrastructure-as-code capabilities
-- All necessary configuration variables should be set during the initial launch of the Infisical instance
+- All necessary configuration variables should be set during the initial launch of the Hanzo KMS instance

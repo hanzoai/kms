@@ -4,18 +4,18 @@ nameOverride: ""
 # -- Overrides the full name of the release, affecting resource names
 fullnameOverride: ""
 
-infisical:
-  # -- Enable Infisical chart deployment
+kms:
+  # -- Enable Hanzo KMS chart deployment
   enabled: true
   # -- Sets the name of the deployment within this chart
-  name: infisical
+  name: kms
 
   autoBootstrap:
-    # -- Enable auto-bootstrap of the Infisical instance
+    # -- Enable auto-bootstrap of the Hanzo KMS instance
     enabled: false
 
     image:
-      # -- Infisical Infisical CLI image tag version
+      # -- Hanzo KMS Hanzo KMS CLI image tag version
       tag: "0.41.86"
 
     # -- Template for the data/stringData section of the Kubernetes secret. Available functions: encodeBase64
@@ -23,17 +23,17 @@ infisical:
 
     secretDestination:
       # -- Name of the bootstrap secret to create in the Kubernetes cluster which will store the formatted root identity credentials
-      name: "infisical-bootstrap-secret"
+      name: "kms-bootstrap-secret"
 
       # -- Namespace to create the bootstrap secret in. If not provided, the secret will be created in the same namespace as the release.
       namespace: "default"
 
-    # -- Infisical organization to create in the Infisical instance during auto-bootstrap
+    # -- Hanzo KMS organization to create in the Hanzo KMS instance during auto-bootstrap
     organization: "default-org"
 
     credentialSecret:
       # -- Name of the Kubernetes secret containing the credentials for the auto-bootstrap workflow
-      name: "infisical-bootstrap-credentials"
+      name: "kms-bootstrap-credentials"
 
   databaseSchemaMigrationJob:
     image:
@@ -52,19 +52,19 @@ infisical:
     # -- Optional custom service account name, if existing service account is used
     name: null
 
-  # -- Override for the full name of Infisical resources in this deployment
+  # -- Override for the full name of Hanzo KMS resources in this deployment
   fullnameOverride: ""
-  # -- Custom annotations for Infisical pods
+  # -- Custom annotations for Hanzo KMS pods
   podAnnotations: {}
-  # -- Custom annotations for Infisical deployment
+  # -- Custom annotations for Hanzo KMS deployment
   deploymentAnnotations: {}
   # -- Number of pod replicas for high availability
   replicaCount: 2
 
   image:
-    # -- Image repository for the Infisical service
-    repository: infisical/infisical
-    # -- Specific version tag of the Infisical image. View the latest version here https://hub.docker.com/r/infisical/infisical
+    # -- Image repository for the Hanzo KMS service
+    repository: ghcr.io/hanzoai/kms
+    # -- Specific version tag of the Hanzo KMS image. View the latest version here https://hub.docker.com/r/ghcr.io/hanzoai/kms
     tag: "v0.151.0"
     # -- Pulls image only if not already present on the node
     pullPolicy: IfNotPresent
@@ -81,11 +81,11 @@ infisical:
   # -- Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
   topologySpreadConstraints: []
 
-  # -- Kubernetes Secret reference containing Infisical root credentials
-  kubeSecretRef: "infisical-secrets"
+  # -- Kubernetes Secret reference containing Hanzo KMS root credentials
+  kubeSecretRef: "kms-secrets"
 
   service:
-    # -- Custom annotations for Infisical service
+    # -- Custom annotations for Hanzo KMS service
     annotations: {}
     # -- Service type, can be changed based on exposure needs (e.g., LoadBalancer)
     type: ClusterIP
@@ -94,10 +94,10 @@ infisical:
 
   resources:
     limits:
-      # -- Memory limit for Infisical container
+      # -- Memory limit for Hanzo KMS container
       memory: 1000Mi
     requests:
-      # -- CPU request for Infisical container
+      # -- CPU request for Hanzo KMS container
       cpu: 350m
 
 ingress:
@@ -138,11 +138,11 @@ postgresql:
 
   auth:
     # -- Database username for PostgreSQL
-    username: infisical
+    username: kms
     # -- Password for PostgreSQL database access
     password: root
-    # -- Database name for Infisical
-    database: infisicalDB
+    # -- Database name for Hanzo KMS
+    database: kmsDB
 
   useExistingPostgresSecret:
     # -- Set to true if using an existing Kubernetes secret that contains PostgreSQL connection string

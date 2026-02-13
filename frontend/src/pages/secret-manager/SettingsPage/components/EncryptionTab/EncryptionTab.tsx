@@ -66,7 +66,7 @@ const BackupConfirmationModal = ({
       const file = secretManager;
 
       const blob = new Blob([file], { type: "text/plain;charset=utf-8" });
-      FileSaver.saveAs(blob, `kms-backup-${org.slug}-${project.slug}-${kmsFunction}.infisical.txt`);
+      FileSaver.saveAs(blob, `kms-backup-${org.slug}-${project.slug}-${kmsFunction}.kms.txt`);
 
       onOpenChange(false);
     } catch (err) {

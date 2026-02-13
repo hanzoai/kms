@@ -9,6 +9,7 @@ FROM node:20.20.0-trixie-slim AS base
 RUN npm install -g npm@10.9.0
 
 FROM base AS frontend-dependencies
+
 WORKDIR /app
 
 COPY frontend/package.json frontend/package-lock.json  ./
@@ -32,11 +33,11 @@ ARG POSTHOG_API_KEY
 ENV VITE_POSTHOG_API_KEY $POSTHOG_API_KEY
 ARG INTERCOM_ID
 ENV VITE_INTERCOM_ID $INTERCOM_ID
-ARG INFISICAL_PLATFORM_VERSION
-ENV VITE_INFISICAL_PLATFORM_VERSION $INFISICAL_PLATFORM_VERSION
+ARG KMS_PLATFORM_VERSION
+ENV KMS_PLATFORM_VERSION $KMS_PLATFORM_VERSION
+ENV VITE_KMS_PLATFORM_VERSION $KMS_PLATFORM_VERSION
 ARG CAPTCHA_SITE_KEY
 ENV VITE_CAPTCHA_SITE_KEY $CAPTCHA_SITE_KEY
-
 ENV NODE_OPTIONS="--max-old-space-size=8192"
 
 # Build
@@ -46,7 +47,8 @@ RUN npm run build
 FROM base AS frontend-runner
 WORKDIR /app
 
-RUN groupadd -r -g 1001 nodejs && useradd -r -u 1001 -g nodejs non-root-user
+RUN groupadd --system --gid 1001 nodejs
+RUN useradd --system --uid 1001 --gid nodejs non-root-user
 
 COPY --from=frontend-builder --chown=non-root-user:nodejs /app/dist ./
 
@@ -59,24 +61,22 @@ FROM base AS backend-build
 
 ENV ChrystokiConfigurationPath=/usr/safenet/lunaclient/
 
-RUN groupadd -r -g 1001 nodejs && useradd -r -u 1001 -g nodejs non-root-user
-
 WORKDIR /app
 
-# Required for pkcs11js and ODBC
+# Install all required dependencies for build
 RUN apt-get update && apt-get install -y \
     python3 \
     make \
     g++ \
     unixodbc \
-    unixodbc-dev \
-    freetds-dev \
     freetds-bin \
-    tdsodbc \
+    unixodbc-dev \
+    libc-dev \
+    freetds-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Configure ODBC
-RUN printf "[FreeTDS]\nDescription = FreeTDS Driver\nDriver = /usr/lib/x86_64-linux-gnu/odbc/libtdsodbc.so\nSetup = /usr/lib/x86_64-linux-gnu/odbc/libtdsS.so\nFileUsage = 1\n" > /etc/odbcinst.ini
+RUN groupadd --system --gid 1001 nodejs
+RUN useradd --system --uid 1001 --gid nodejs non-root-user
 
 COPY backend/package*.json ./
 RUN npm ci
@@ -84,6 +84,7 @@ RUN npm ci
 COPY /backend .
 COPY --chown=non-root-user:nodejs standalone-entrypoint.sh standalone-entrypoint.sh
 RUN npm i -g tsconfig-paths
+ENV NODE_OPTIONS="--max-old-space-size=8192"
 RUN npm run build
 
 # Production stage
@@ -93,16 +94,16 @@ ENV ChrystokiConfigurationPath=/usr/safenet/lunaclient/
 
 WORKDIR /app
 
-# Required for pkcs11js and ODBC
+# Install all required dependencies for runtime
 RUN apt-get update && apt-get install -y \
     python3 \
     make \
     g++ \
     unixodbc \
-    unixodbc-dev \
-    freetds-dev \
     freetds-bin \
-    tdsodbc \
+    unixodbc-dev \
+    libc-dev \
+    freetds-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Configure ODBC
@@ -117,25 +118,25 @@ RUN mkdir frontend-build
 # Production stage
 FROM base AS production
 
-# Install necessary packages including ODBC
 RUN apt-get update && apt-get install -y \
     build-essential \
     autoconf \
     automake \
     libtool \
-    wget \
     libssl-dev \
     ca-certificates \
+    bash \
     curl \
     git \
     python3 \
     make \
     g++ \
     unixodbc \
-    unixodbc-dev \
-    freetds-dev \
     freetds-bin \
-    tdsodbc \
+    unixodbc-dev \
+    libc-dev \
+    freetds-dev \
+    wget \
     openssh-client \
     && rm -rf /var/lib/apt/lists/*
 
@@ -166,31 +167,23 @@ RUN ARCH=$(dpkg --print-architecture) && \
     ldconfig && \
     rm -rf /var/lib/apt/lists/*
 
-# Configure ODBC in production
-RUN printf "[FreeTDS]\nDescription = FreeTDS Driver\nDriver = /usr/lib/x86_64-linux-gnu/odbc/libtdsodbc.so\nSetup = /usr/lib/x86_64-linux-gnu/odbc/libtdsS.so\nFileUsage = 1\n" > /etc/odbcinst.ini
-
-
-WORKDIR /openssl-build
-RUN wget https://www.openssl.org/source/openssl-3.1.2.tar.gz \
-    && tar -xf openssl-3.1.2.tar.gz \
-    && cd openssl-3.1.2 \
-    && ./Configure enable-fips \
-    && make \
-    && make install_fips \
-    && cd / \
-    && rm -rf /openssl-build \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
 # Install smbclient for Windows SMB operations
 RUN apt-get update && apt-get install -y smbclient && rm -rf /var/lib/apt/lists/*
 
-# Install Infisical CLI
+# Install CLI (using Infisical CLI as Hanzo KMS CLI is not yet available)
+# TODO: Replace with Hanzo KMS CLI when available
 RUN curl -1sLf 'https://artifacts-cli.infisical.com/setup.deb.sh' | bash \
     && apt-get update && apt-get install -y infisical=0.43.47 \
     && rm -rf /var/lib/apt/lists/*
 
-RUN groupadd -r -g 1001 nodejs && useradd -r -u 1001 -g nodejs non-root-user
+WORKDIR /
+
+# Configure ODBC in production
+RUN printf "[FreeTDS]\nDescription = FreeTDS Driver\nDriver = /usr/lib/x86_64-linux-gnu/odbc/libtdsodbc.so\nSetup = /usr/lib/x86_64-linux-gnu/odbc/libtdsS.so\nFileUsage = 1\n" > /etc/odbcinst.ini
+
+# Setup user permissions
+RUN groupadd --system --gid 1001 nodejs \
+  && useradd --system --uid 1001 --gid nodejs non-root-user
 
 # Give non-root-user permission to update SSL certs
 RUN chown -R non-root-user /etc/ssl/certs
@@ -208,17 +201,20 @@ ENV INTERCOM_ID=$INTERCOM_ID
 ARG CAPTCHA_SITE_KEY
 ENV CAPTCHA_SITE_KEY=$CAPTCHA_SITE_KEY
 
-WORKDIR /
-
 COPY --from=backend-runner /app /backend
-
 COPY --from=frontend-runner /app ./backend/frontend-build
 
 # Make export-assets script executable for CDN asset extraction
 RUN chmod +x /backend/scripts/export-assets.sh
 
-ARG INFISICAL_PLATFORM_VERSION
-ENV INFISICAL_PLATFORM_VERSION $INFISICAL_PLATFORM_VERSION
+ARG KMS_PLATFORM_VERSION
+ENV KMS_PLATFORM_VERSION $KMS_PLATFORM_VERSION
+
+ARG DD_GIT_REPOSITORY_URL
+ENV DD_GIT_REPOSITORY_URL $DD_GIT_REPOSITORY_URL
+
+ARG DD_GIT_COMMIT_SHA
+ENV DD_GIT_COMMIT_SHA $DD_GIT_COMMIT_SHA
 
 ENV PORT 8080
 ENV HOST=0.0.0.0
@@ -226,14 +222,8 @@ ENV HTTPS_ENABLED false
 ENV NODE_ENV production
 ENV STANDALONE_BUILD true
 ENV STANDALONE_MODE true
+ENV NODE_OPTIONS="--max-old-space-size=1024"
 ENV ChrystokiConfigurationPath=/usr/safenet/lunaclient/
-ENV NODE_OPTIONS="--max-old-space-size=8192 --force-fips"
-
-# FIPS mode of operation:
-ENV OPENSSL_CONF=/backend/nodejs.fips.cnf
-ENV OPENSSL_MODULES=/usr/local/lib/ossl-modules
-ENV FIPS_ENABLED=true
-  
 
 WORKDIR /backend
 
@@ -241,15 +231,6 @@ ENV TELEMETRY_ENABLED true
 
 EXPOSE 8080
 EXPOSE 443
-
-# Remove telemetry. dd-trace uses BullMQ with MD5 hashing, which breaks when FIPS mode is enabled.
-RUN grep -v 'import "./lib/telemetry/instrumentation.mjs";' dist/main.mjs > dist/main.mjs.tmp && \
-    mv dist/main.mjs.tmp dist/main.mjs
-
-# The OpenSSL library is installed in different locations in different architectures (x86_64 and arm64).
-# This is a workaround to avoid errors when the library is not found.
-RUN ln -sf /usr/local/lib64/ossl-modules /usr/local/lib/ossl-modules || \
-    ln -sf /usr/local/lib/ossl-modules /usr/local/lib64/ossl-modules
 
 USER non-root-user
 

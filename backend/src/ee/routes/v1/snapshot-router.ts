@@ -86,7 +86,7 @@ export const registerSnapshotRouter = async (server: FastifyZodProvider) => {
     onRequest: verifyAuth([AuthMode.JWT, AuthMode.API_KEY, AuthMode.IDENTITY_ACCESS_TOKEN]),
     handler: async (req) => {
       throw new Error(
-        "This endpoint is deprecated. Please use the new PIT recovery system. More information is available at: https://infisical.com/docs/documentation/platform/pit-recovery."
+        "This endpoint is deprecated. Please use the new PIT recovery system. More information is available at: https://kms.hanzo.ai/docs/documentation/platform/pit-recovery."
       );
 
       const secretSnapshot = await server.services.snapshot.rollbackSnapshot({

@@ -83,7 +83,7 @@ export const verifyHostInputValidity = async ({
   const isAppUsedIps = inputHostIps.some((el) => exclusiveIps.includes(el));
   if (isAppUsedIps)
     throw new BadRequestError({
-      message: `The host ${host} belongs to a service that is in-use by Infisical, such as the Infisical database or Redis instance. You cannot use hosts that are in-use by Infisical.`
+      message: `The host ${host} belongs to a service that is in-use by Hanzo KMS, such as the Hanzo KMS database or Redis instance. You cannot use hosts that are in-use by Hanzo KMS.`
     });
   return inputHostIps;
 };

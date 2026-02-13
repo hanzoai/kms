@@ -50,7 +50,7 @@ export const SignupExistingAccountTemplate = ({
           <strong>Need help?</strong>{" "}
           {isCloud ? (
             <>
-              Contact us at <BaseLink href="mailto:support@infisical.com">support@infisical.com</BaseLink>
+              Contact us at <BaseLink href="mailto:support@hanzo.ai">support@hanzo.ai</BaseLink>
             </>
           ) : (
             "Contact your administrator"
@@ -66,8 +66,8 @@ export default SignupExistingAccountTemplate;
 
 SignupExistingAccountTemplate.PreviewProps = {
   email: "user@example.com",
-  loginUrl: "https://app.infisical.com/login",
-  resetPasswordUrl: "https://app.infisical.com/forgot-password",
+  loginUrl: "https://kms.hanzo.ai/login",
+  resetPasswordUrl: "https://kms.hanzo.ai/forgot-password",
   isCloud: true,
-  siteUrl: "https://infisical.com"
+  siteUrl: "https://kms.hanzo.ai"
 } as SignupExistingAccountTemplateProps;

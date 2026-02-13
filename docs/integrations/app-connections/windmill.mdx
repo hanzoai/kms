@@ -1,9 +1,9 @@
 ---
 title: "Windmill Connection"
-description: "Learn how to configure a Windmill Connection for Infisical."
+description: "Learn how to configure a Windmill Connection for Hanzo KMS."
 ---
 
-Infisical supports connecting to Windmill using Access Tokens.
+Hanzo KMS supports connecting to Windmill using Access Tokens.
 
 ## Get a Windmill Access Token
 
@@ -40,14 +40,14 @@ Ensure the user generating the access token has the required role and permission
 </Steps>
 
 
-## Setup Windmill Connection in Infisical
+## Setup Windmill Connection in Hanzo KMS
 
 
 <Tabs>
-    <Tab title="Infisical UI">
+    <Tab title="Hanzo KMS UI">
         <Steps>
             <Step title="Navigate to App Connections">
-                In your Infisical dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
+                In your Hanzo KMS dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
 
                 ![App Connections Tab](/images/app-connections/general/add-connection.png)
             </Step>
@@ -78,7 +78,7 @@ Ensure the user generating the access token has the required role and permission
 
         ```bash Request
         curl    --request POST \
-                --url https://app.infisical.com/api/v1/app-connections/windmill \
+                --url https://kms.hanzo.ai/api/v1/app-connections/windmill \
                 --header 'Content-Type: application/json' \
                 --data '{
                     "name": "my-windmill-connection",

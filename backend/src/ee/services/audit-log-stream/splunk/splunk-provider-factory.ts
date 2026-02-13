@@ -15,7 +15,7 @@ function createPayload(event: Record<string, unknown>) {
   return {
     time: Math.floor(Date.now() / 1000),
     ...(appCfg.SITE_URL && { host: new URL(appCfg.SITE_URL).host }),
-    source: "infisical",
+    source: "kms",
     sourcetype: "_json",
     event
   };

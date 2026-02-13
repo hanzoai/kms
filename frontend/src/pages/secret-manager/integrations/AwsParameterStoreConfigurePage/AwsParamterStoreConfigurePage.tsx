@@ -304,7 +304,7 @@ export const AWSParameterStoreConfigurePage = () => {
                   </FormControl>
                   <FormControl label="Tag Value">
                     <Input
-                      placeholder="infisical"
+                      placeholder="kms"
                       value={tagValue}
                       onChange={(e) => setTagValue(e.target.value)}
                     />
@@ -372,7 +372,7 @@ export const AWSParameterStoreConfigurePage = () => {
           src="/images/loading/loading.gif"
           height={70}
           width={120}
-          alt="infisical loading indicator"
+          alt="loading indicator"
         />
       ) : (
         <div className="flex h-max max-w-md flex-col rounded-md border border-mineshaft-600 bg-mineshaft-800 p-6 text-center text-mineshaft-200">

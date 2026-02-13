@@ -81,7 +81,7 @@ AccessApprovalRequestTemplate.PreviewProps = {
   isTemporary: true,
   secretPath: "/api/secrets",
   environment: "Production",
-  siteUrl: "https://infisical.com",
+  siteUrl: "https://kms.hanzo.ai",
   projectName: "Example Project",
   expiresIn: "1 day",
   permissions: ["Read Secret", "Delete Project", "Create Dynamic Secret"],

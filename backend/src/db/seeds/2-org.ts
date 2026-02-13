@@ -18,8 +18,8 @@ export async function seed(knex: Knex): Promise<void> {
         // eslint-disable-next-line
         // @ts-ignore
         id: seedData1.organization.id,
-        name: "infisical",
-        slug: "infisical",
+        name: "kms",
+        slug: "kms",
         customerId: null
       }
     ])

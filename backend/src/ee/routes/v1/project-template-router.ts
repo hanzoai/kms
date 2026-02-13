@@ -3,7 +3,7 @@ import { z } from "zod";
 import { ProjectMembershipRole, ProjectTemplatesSchema, ProjectType } from "@app/db/schemas";
 import { EventType } from "@app/ee/services/audit-log/audit-log-types";
 import { ProjectPermissionV2Schema } from "@app/ee/services/permission/project-permission";
-import { isInfisicalProjectTemplate } from "@app/ee/services/project-template/project-template-fns";
+import { isKmsProjectTemplate } from "@app/ee/services/project-template/project-template-fns";
 import { ApiDocsTags, ProjectTemplates } from "@app/lib/api-docs";
 import { readLimit, writeLimit } from "@app/server/config/rateLimiter";
 import { slugSchema } from "@app/server/lib/schemas";
@@ -229,7 +229,7 @@ export const registerProjectTemplateRouter = async (server: FastifyZodProvider) 
         req.query.type
       );
 
-      const auditTemplates = projectTemplates.filter((template) => !isInfisicalProjectTemplate(template.name));
+      const auditTemplates = projectTemplates.filter((template) => !isKmsProjectTemplate(template.name));
 
       await server.services.auditLog.createAuditLog({
         ...req.auditLogInfo,
@@ -301,7 +301,7 @@ export const registerProjectTemplateRouter = async (server: FastifyZodProvider) 
       body: z
         .object({
           name: slugSchema({ field: "name" })
-            .refine((val) => !isInfisicalProjectTemplate(val), {
+            .refine((val) => !isKmsProjectTemplate(val), {
               message: `The requested project template name is reserved.`
             })
             .describe(ProjectTemplates.CREATE.name),
@@ -356,7 +356,7 @@ export const registerProjectTemplateRouter = async (server: FastifyZodProvider) 
       body: z
         .object({
           name: slugSchema({ field: "name" })
-            .refine((val) => !isInfisicalProjectTemplate(val), {
+            .refine((val) => !isKmsProjectTemplate(val), {
               message: `The requested project template name is reserved.`
             })
             .optional()

@@ -1,29 +1,29 @@
 ---
 title: "Packer"
-description: "Learn how to fetch secrets from Infisical with Packer using a data source"
+description: "Learn how to fetch secrets from Hanzo KMS with Packer using a data source"
 ---
 
-This guide demonstrates how to use the Infisical Packer plugin to fetch secret data using a data source. The Packer plugin supports both [Infisical Cloud](https://app.infisical.com) and [self-hosted instances of Infisical](https://infisical.com/docs/self-hosting/overview).
+This guide demonstrates how to use the Hanzo KMS Packer plugin to fetch secret data using a data source. The Packer plugin supports both [Hanzo KMS Cloud](https://kms.hanzo.ai) and [self-hosted instances of Hanzo KMS](https://kms.hanzo.ai/docs/self-hosting/overview).
 
 ## Prerequisites
 
 Before you begin, make sure you have:
 
 - [Packer](https://developer.hashicorp.com/packer/install) installed
-- An Infisical account with access to a project
+- An Hanzo KMS account with access to a project
 - Basic understanding of Packer
 
 ## Project Setup
 
 ### Configure Provider
 
-First, specify the Infisical provider in your Packer configuration:
+First, specify the Hanzo KMS provider in your Packer configuration:
 
 ```hcl
 packer {
   required_plugins {
-    infisical = {
-      source  = "github.com/infisical/infisical"
+    kms = {
+      source  = "github.com/ghcr.io/hanzoai/kms"
       version = ">=0.0.1"
     }
   }
@@ -32,18 +32,18 @@ packer {
 
 ### Authentication
 
-Using a Machine Identity, you can authenticate with [Universal Auth](https://infisical.com/docs/documentation/platform/identities/universal-auth).
+Using a Machine Identity, you can authenticate with [Universal Auth](https://kms.hanzo.ai/docs/documentation/platform/identities/universal-auth).
 
 ```hcl
-data "infisical-secrets" "dev-secrets" {
+data "kms-secrets" "dev-secrets" {
   folder_path = "/"
   env_slug    = "dev" # The environment to list secrets from (e.g. dev, staging, prod)
   project_id  = "00000000-0000-0000-0000-000000000000"
-  host        = "https://app.infisical.com" # Optional for cloud, required for self-hosted
+  host        = "https://kms.hanzo.ai" # Optional for cloud, required for self-hosted
 
   universal_auth {
     client_id = "00000000-0000-0000-0000-000000000000"
-    client_secret = "..." # Optional if using INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET env variable
+    client_secret = "..." # Optional if using KMS_UNIVERSAL_AUTH_CLIENT_SECRET env variable
   }
 }
 ```
@@ -52,11 +52,11 @@ Learn more about [machine identities](/documentation/platform/identities/machine
 
 ## Using Secrets in Packer
 
-You're able to fetch secrets from Infisical using the `infisical-secrets` Data Source:
+You're able to fetch secrets from Hanzo KMS using the `kms-secrets` Data Source:
 
 ```hcl
 # Fetch all secrets from a folder
-data "infisical-secrets" "dev-secrets" {
+data "kms-secrets" "dev-secrets" {
   folder_path = "/"
   env_slug    = "dev"
   project_id  = "00000000-0000-0000-0000-000000000000"
@@ -67,7 +67,7 @@ data "infisical-secrets" "dev-secrets" {
 }
 
 locals {
-  secrets = data.infisical-secrets.dev-secrets.secrets
+  secrets = data.kms-secrets.dev-secrets.secrets
 }
 
 source "null" "basic-example" {
@@ -87,9 +87,9 @@ build {
 }
 ```
 
-The `local.secrets` object maps secret keys to [secret objects](https://github.com/Infisical/packer-plugin-infisical/blob/main/docs/datasources/secrets.md#secret-object).
+The `local.secrets` object maps secret keys to [secret objects](https://github.com/Hanzo KMS/packer-plugin-kms/blob/main/docs/datasources/secrets.md#secret-object).
 
 See also:
-- [Packer Plugin Repository Example](https://github.com/Infisical/packer-plugin-infisical/blob/main/example/build.pkr.hcl)
-- [Packer Plugin Repository Docs](https://github.com/Infisical/packer-plugin-infisical/tree/main/docs)
+- [Packer Plugin Repository Example](https://github.com/Hanzo KMS/packer-plugin-kms/blob/main/example/build.pkr.hcl)
+- [Packer Plugin Repository Docs](https://github.com/Hanzo KMS/packer-plugin-kms/tree/main/docs)
 - [Machine Identity setup guide](/documentation/platform/identities/machine-identities)

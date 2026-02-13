@@ -18,7 +18,7 @@ export const BaseEmailWrapper = ({ title, preview, children, siteUrl }: BaseEmai
           <Container className="bg-white rounded-xl my-[40px] mx-auto pb-[0px] max-w-[500px]">
             <Section className="mb-[24px] px-[24px] mt-[24px]">
               <Img
-                src="https://infisical.com/_next/image?url=%2Fimages%2Flogo-black.png&w=64&q=75"
+                src="https://kms.hanzo.ai/_next/image?url=%2Fimages%2Flogo-black.png&w=64&q=75"
                 width="36"
                 alt="Infisical Logo"
                 className="mx-auto"

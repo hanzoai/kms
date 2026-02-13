@@ -97,8 +97,8 @@ export const upgradePathServiceFactory = ({ keyStore }: TUpgradePathServiceFacto
       return versionMatch[1];
     }
 
-    if (version.startsWith("infisical/")) {
-      return version.replace(new RE2(/^infisical\/v?/), "").replace(new RE2(/-[a-zA-Z]+$/), "");
+    if (version.startsWith("kms/")) {
+      return version.replace(new RE2(/^kms\/v?/), "").replace(new RE2(/-[a-zA-Z]+$/), "");
     }
     return version.replace(new RE2(/^v/), "").replace(new RE2(/-[a-zA-Z]+$/), "");
   };
@@ -206,8 +206,8 @@ export const upgradePathServiceFactory = ({ keyStore }: TUpgradePathServiceFacto
           version.normalizedTagName,
           versionNumber,
           `v${versionNumber}`,
-          version.tagName.replace(new RE2(/^infisical\//), ""),
-          version.tagName.replace(new RE2(/^infisical\/v?/), "").replace(new RE2(/-[a-zA-Z]+$/), "")
+          version.tagName.replace(new RE2(/^kms\//), ""),
+          version.tagName.replace(new RE2(/^kms\/v?/), "").replace(new RE2(/-[a-zA-Z]+$/), "")
         ];
 
         for (const key of possibleKeys) {

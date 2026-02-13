@@ -33,7 +33,7 @@ import {
   TAwsCertificateManagerPkiSyncConfig
 } from "./aws-certificate-manager-pki-sync-types";
 
-const INFISICAL_CERTIFICATE_TAG = "InfisicalCertificate";
+const KMS_CERTIFICATE_TAG = "Hanzo KMSCertificate";
 const AWS_CERTIFICATE_ARN_PATTERN = new RE2("^arn:aws:acm:[a-z0-9-]+:\\d{12}:certificate/[a-f0-9-]{36}$");
 
 type TAwsAssumeRoleCredentials = z.infer<typeof AwsConnectionAssumeRoleCredentialsSchema>;
@@ -115,8 +115,8 @@ const generateCertificateName = (certificateName: string, pkiSync: TPkiSyncWithC
 
     let certificateId: string;
 
-    if (sanitizedCertificateName.startsWith("Infisical-")) {
-      certificateId = sanitizedCertificateName.substring("Infisical-".length);
+    if (sanitizedCertificateName.startsWith("Hanzo KMS-")) {
+      certificateId = sanitizedCertificateName.substring("Hanzo KMS-".length);
     } else {
       certificateId = sanitizedCertificateName;
     }
@@ -549,9 +549,9 @@ export const awsCertificateManagerPkiSyncFactory = ({
 
       Object.values(acmCertificates).forEach((acmCert) => {
         if (acmCert.arn && acmCert.Tags) {
-          const hasInfisicalTag = acmCert.Tags.some((tag) => tag.Key === INFISICAL_CERTIFICATE_TAG && tag.Value);
+          const hasHanzo KMSTag = acmCert.Tags.some((tag) => tag.Key === KMS_CERTIFICATE_TAG && tag.Value);
 
-          if (hasInfisicalTag) {
+          if (hasHanzo KMSTag) {
             const isTrackedInSyncRecords = existingSyncRecords.some(
               (record) => record.externalIdentifier === acmCert.arn
             );
@@ -576,7 +576,7 @@ export const awsCertificateManagerPkiSyncFactory = ({
           if (!existingArn) {
             importParams.Tags = [
               {
-                Key: INFISICAL_CERTIFICATE_TAG,
+                Key: KMS_CERTIFICATE_TAG,
                 Value: key
               }
             ];
@@ -608,7 +608,7 @@ export const awsCertificateManagerPkiSyncFactory = ({
                       CertificateArn: response.CertificateArn!,
                       Tags: [
                         {
-                          Key: INFISICAL_CERTIFICATE_TAG,
+                          Key: KMS_CERTIFICATE_TAG,
                           Value: key
                         }
                       ]

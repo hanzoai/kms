@@ -1,15 +1,15 @@
 ---
 title: "Windmill Sync"
-description: "Learn how to configure a Windmill Sync for Infisical."
+description: "Learn how to configure a Windmill Sync for Hanzo KMS."
 ---
 
 **Prerequisites:**
 
-        - Set up and add secrets to [Infisical Cloud](https://app.infisical.com)
+        - Set up and add secrets to [Hanzo KMS Cloud](https://kms.hanzo.ai)
         - Create a [Windmill Connection](/integrations/app-connections/windmill) with the required **Secret Sync** permissions
 
 <Tabs>
-    <Tab title="Infisical UI">
+    <Tab title="Hanzo KMS UI">
         1. Navigate to **Project** > **Integrations** and select the **Secret Syncs** tab. Click on the **Add Sync** button.
         ![Secret Syncs Tab](/images/secret-syncs/general/secret-sync-tab.png)
 
@@ -40,16 +40,16 @@ description: "Learn how to configure a Windmill Sync for Infisical."
         5. Configure the **Sync Options** to specify how secrets should be synced, then click **Next**.
         ![Configure Options](/images/secret-syncs/windmill/windmill-sync-options.png)
 
-            - **Initial Sync Behavior**: Determines how Infisical should resolve the initial sync.
-                - **Overwrite Destination Secrets**: Removes any secrets at the destination endpoint not present in Infisical.
-                - **Import Secrets (Prioritize Infisical)**: Imports secrets from the destination endpoint before syncing, prioritizing values from Infisical over Windmill when keys conflict.
-                - **Import Secrets (Prioritize Windmill)**: Imports secrets from the destination endpoint before syncing, prioritizing values from Windmill over Infisical when keys conflict.
+            - **Initial Sync Behavior**: Determines how Hanzo KMS should resolve the initial sync.
+                - **Overwrite Destination Secrets**: Removes any secrets at the destination endpoint not present in Hanzo KMS.
+                - **Import Secrets (Prioritize Hanzo KMS)**: Imports secrets from the destination endpoint before syncing, prioritizing values from Hanzo KMS over Windmill when keys conflict.
+                - **Import Secrets (Prioritize Windmill)**: Imports secrets from the destination endpoint before syncing, prioritizing values from Windmill over Hanzo KMS when keys conflict.
             - **Key Schema**: Template that determines how secret names are transformed when syncing, using `{{secretKey}}` as a placeholder for the original secret name and `{{environment}}` for the environment.
             <Note>
-                We highly recommend using a Key Schema to ensure that Infisical only manages the specific keys you intend, keeping everything else untouched.
+                We highly recommend using a Key Schema to ensure that Hanzo KMS only manages the specific keys you intend, keeping everything else untouched.
             </Note>
             - **Auto-Sync Enabled**: If enabled, secrets will automatically be synced from the source location when changes occur. Disable to enforce manual syncing only.
-            - **Disable Secret Deletion**: If enabled, Infisical will not remove secrets from the sync destination. Enable this option if you intend to manage some secrets manually outside of Infisical.
+            - **Disable Secret Deletion**: If enabled, Hanzo KMS will not remove secrets from the sync destination. Enable this option if you intend to manage some secrets manually outside of Hanzo KMS.
 
         6. Configure the **Details** of your Windmill Sync, then click **Next**.
         ![Configure Details](/images/secret-syncs/windmill/windmill-sync-details.png)
@@ -71,7 +71,7 @@ description: "Learn how to configure a Windmill Sync for Infisical."
 
         ```bash Request
         curl    --request POST \
-        --url https://app.infisical.com/api/v1/secret-syncs/windmill \
+        --url https://kms.hanzo.ai/api/v1/secret-syncs/windmill \
         --header 'Content-Type: application/json' \
         --data '{
             "name": "my-windmill-sync",

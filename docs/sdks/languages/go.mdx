@@ -1,13 +1,13 @@
 ---
-title: "Infisical Go SDK"
+title: "Hanzo KMS Go SDK"
 sidebarTitle: "Go"
 icon: "/images/sdks/languages/go.svg"
 ---
 
-If you're working with Go, the official Infisical Go SDK package is the easiest way to fetch and work with secrets for your application.
+If you're working with Go, the official Hanzo KMS Go SDK package is the easiest way to fetch and work with secrets for your application.
 
-- [Package](https://pkg.go.dev/github.com/infisical/go-sdk)
-- [Github Repository](https://github.com/infisical/go-sdk)
+- [Package](https://pkg.go.dev/github.com/kms/go-sdk)
+- [Github Repository](https://github.com/kms/go-sdk)
 
 # Basic Usage
 
@@ -18,13 +18,13 @@ import (
   "fmt"
   "os"
   "context"
-  infisical "github.com/infisical/go-sdk"
+  kms "github.com/kms/go-sdk"
 )
 
 func main() {
 
-	client := infisical.NewInfisicalClient(context.Background(), infisical.Config{
-		SiteUrl: "https://app.infisical.com", // Optional, default is https://app.infisical.com
+	client := kms.NewHanzo KMSClient(context.Background(), kms.Config{
+		SiteUrl: "https://kms.hanzo.ai", // Optional, default is https://kms.hanzo.ai
     AutoTokenRefresh: true, // Wether or not to let the SDK handle the access token lifecycle. Defaults to true if not specified.
 	})
 
@@ -35,7 +35,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	apiKeySecret, err := client.Secrets().Retrieve(infisical.RetrieveSecretOptions{
+	apiKeySecret, err := client.Secrets().Retrieve(kms.RetrieveSecretOptions{
 		SecretKey:   "API_KEY",
 		Environment: "dev",
 		ProjectID:   "YOUR_PROJECT_ID",
@@ -52,7 +52,7 @@ func main() {
 }
 ```
 
-This example demonstrates how to use the Infisical Go SDK in a simple Go application. The application retrieves a secret named `API_KEY` from the `dev` environment of the `YOUR_PROJECT_ID` project.
+This example demonstrates how to use the Hanzo KMS Go SDK in a simple Go application. The application retrieves a secret named `API_KEY` from the `dev` environment of the `YOUR_PROJECT_ID` project.
 
 <Warning>
   We do not recommend hardcoding your [Machine Identity
@@ -63,7 +63,7 @@ This example demonstrates how to use the Infisical Go SDK in a simple Go applica
 # Installation
 
 ```console
-$ go get github.com/infisical/go-sdk
+$ go get github.com/kms/go-sdk
 ```
 
 # Configuration
@@ -71,8 +71,8 @@ $ go get github.com/infisical/go-sdk
 Import the SDK and create a client instance.
 
 ```go
-client := infisical.NewInfisicalClient(context.Background(), infisical.Config{
-		SiteUrl: "https://app.infisical.com", // Optional, default is https://api.infisical.com
+client := kms.NewHanzo KMSClient(context.Background(), kms.Config{
+		SiteUrl: "https://kms.hanzo.ai", // Optional, default is https://api.kms.hanzo.ai
 	})
 ```
 
@@ -80,8 +80,8 @@ client := infisical.NewInfisicalClient(context.Background(), infisical.Config{
 
 <ParamField query="options" type="object">
     <Expandable title="properties">
-        <ParamField query="SiteUrl" type="string" optional default="https://app.infisical.com">
-            The URL of the Infisical API..
+        <ParamField query="SiteUrl" type="string" optional default="https://kms.hanzo.ai">
+            The URL of the Hanzo KMS API..
         </ParamField>
 
         <ParamField query="UserAgent" type="string">
@@ -109,11 +109,11 @@ client := infisical.NewInfisicalClient(context.Background(), infisical.Config{
 
 # Automatic token refreshing
 
-The Infisical Go SDK supports automatic token refreshing. After using one of the auth methods such as Universal Auth, the SDK will automatically renew and re-authenticate when needed.
+The Hanzo KMS Go SDK supports automatic token refreshing. After using one of the auth methods such as Universal Auth, the SDK will automatically renew and re-authenticate when needed.
 This behavior is enabled by default, but you can opt-out by setting `AutoTokenRefresh` to `false` in the client settings.
 
 ```go
-  client := infisical.NewInfisicalClient(context.Background(), infisical.Config{
+  client := kms.NewHanzo KMSClient(context.Background(), kms.Config{
     AutoTokenRefresh: false, // <- Disable automatic token refreshing
   })
 ```
@@ -124,7 +124,7 @@ When using automatic token refreshing it's important to understand how your appl
   ctx, cancel := context.WithCancel(context.Background())
   defer cancel() // Cancel the context when the client is no longer needed
 
-  client := infisical.NewInfisicalClient(ctx, infisical.Config{
+  client := kms.NewHanzo KMSClient(ctx, kms.Config{
     AutoTokenRefresh: true,
   })
 
@@ -144,8 +144,8 @@ The SDK supports a variety of authentication methods. The most common authentica
 
 Call `.Auth().UniversalAuthLogin()` with empty arguments to use the following environment variables:
 
-- `INFISICAL_UNIVERSAL_AUTH_CLIENT_ID` - Your machine identity client ID.
-- `INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET` - Your machine identity client secret.
+- `KMS_UNIVERSAL_AUTH_CLIENT_ID` - Your machine identity client ID.
+- `KMS_UNIVERSAL_AUTH_CLIENT_SECRET` - Your machine identity client secret.
 
 **Using the SDK directly**
 
@@ -171,7 +171,7 @@ if err != nil {
 
 Call `.Auth().GcpIdTokenAuthLogin()` with empty arguments to use the following environment variables:
 
-- `INFISICAL_GCP_AUTH_IDENTITY_ID` - Your Infisical Machine Identity ID.
+- `KMS_GCP_AUTH_IDENTITY_ID` - Your Hanzo KMS Machine Identity ID.
 
 **Using the SDK directly**
 
@@ -190,8 +190,8 @@ if err != nil {
 
 Call `.Auth().GcpIamAuthLogin()` with empty arguments to use the following environment variables:
 
-- `INFISICAL_GCP_IAM_AUTH_IDENTITY_ID` - Your Infisical Machine Identity ID.
-- `INFISICAL_GCP_IAM_SERVICE_ACCOUNT_KEY_FILE_PATH` - The path to your GCP service account key file.
+- `KMS_GCP_IAM_AUTH_IDENTITY_ID` - Your Hanzo KMS Machine Identity ID.
+- `KMS_GCP_IAM_SERVICE_ACCOUNT_KEY_FILE_PATH` - The path to your GCP service account key file.
 
 **Using the SDK directly**
 
@@ -217,7 +217,7 @@ if err != nil {
 
 Call `.Auth().AwsIamAuthLogin()` with empty arguments to use the following environment variables:
 
-- `INFISICAL_AWS_IAM_AUTH_IDENTITY_ID` - Your Infisical Machine Identity ID.
+- `KMS_AWS_IAM_AUTH_IDENTITY_ID` - Your Hanzo KMS Machine Identity ID.
 
 **Using the SDK directly**
 
@@ -243,7 +243,7 @@ if err != nil {
 
 Call `.Auth().AzureAuthLogin()` with empty arguments to use the following environment variables:
 
-- `INFISICAL_AZURE_AUTH_IDENTITY_ID` - Your Infisical Machine Identity ID.
+- `KMS_AZURE_AUTH_IDENTITY_ID` - Your Hanzo KMS Machine Identity ID.
 
 **Using the SDK directly**
 
@@ -269,8 +269,8 @@ if err != nil {
 
 Call `.Auth().KubernetesAuthLogin()` with empty arguments to use the following environment variables:
 
-- `INFISICAL_KUBERNETES_IDENTITY_ID` - Your Infisical Machine Identity ID.
-- `INFISICAL_KUBERNETES_SERVICE_ACCOUNT_TOKEN_PATH_ENV_NAME` - The environment variable name that contains the path to the service account token. This is optional and will default to `/var/run/secrets/kubernetes.io/serviceaccount/token`.
+- `KMS_KUBERNETES_IDENTITY_ID` - Your Hanzo KMS Machine Identity ID.
+- `KMS_KUBERNETES_SERVICE_ACCOUNT_TOKEN_PATH_ENV_NAME` - The environment variable name that contains the path to the service account token. This is optional and will default to `/var/run/secrets/kubernetes.io/serviceaccount/token`.
 
 **Using the SDK directly**
 
@@ -314,7 +314,7 @@ if err != nil {
 
 **Using environment variables**
 
-You can set the `INFISICAL_LDAP_AUTH_IDENTITY_ID` environment variable and pass empty string for the identity ID:
+You can set the `KMS_LDAP_AUTH_IDENTITY_ID` environment variable and pass empty string for the identity ID:
 
 ```go
 credential, err := client.Auth().LdapAuthLogin("", "LDAP_USERNAME", "LDAP_PASSWORD")
@@ -347,10 +347,10 @@ if err != nil {
 
 **Using environment variables**
 
-You can set the `INFISICAL_OCI_AUTH_IDENTITY_ID` environment variable and omit the `IdentityID` field:
+You can set the `KMS_OCI_AUTH_IDENTITY_ID` environment variable and omit the `IdentityID` field:
 
 ```go
-credential, err := client.Auth().OciAuthLogin(infisical.OciAuthLoginOptions{
+credential, err := client.Auth().OciAuthLogin(kms.OciAuthLoginOptions{
   UserID:      "USER_OCID",
   TenancyID:   "TENANCY_OCID",
   Fingerprint: "FINGERPRINT",
@@ -367,7 +367,7 @@ if err != nil {
 **Using the SDK directly**
 
 ```go
-credential, err := client.Auth().OciAuthLogin(infisical.OciAuthLoginOptions{
+credential, err := client.Auth().OciAuthLogin(kms.OciAuthLoginOptions{
   IdentityID:  "MACHINE_IDENTITY_ID",
   UserID:      "USER_OCID",
   TenancyID:   "TENANCY_OCID",
@@ -385,7 +385,7 @@ if err != nil {
 
 **OciAuthLoginOptions fields:**
 
-- `IdentityID` (string) - Your Infisical Machine Identity ID. Can be set via `INFISICAL_OCI_AUTH_IDENTITY_ID` environment variable.
+- `IdentityID` (string) - Your Hanzo KMS Machine Identity ID. Can be set via `KMS_OCI_AUTH_IDENTITY_ID` environment variable.
 - `UserID` (string) - Your OCI user OCID.
 - `TenancyID` (string) - Your OCI tenancy OCID.
 - `Fingerprint` (string) - Your OCI API key fingerprint.
@@ -419,10 +419,10 @@ if err != nil {
 
 `client.Secrets().List(options)`
 
-Retrieve all secrets within the Infisical project and environment that client is connected to.
+Retrieve all secrets within the Hanzo KMS project and environment that client is connected to.
 
 ```go
-secrets, err := client.Secrets().List(infisical.ListSecretsOptions{
+secrets, err := client.Secrets().List(kms.ListSecretsOptions{
   ProjectID:          "PROJECT_ID",
   Environment:        "dev",
   SecretPath:         "/foo/bar",
@@ -471,10 +471,10 @@ secrets, err := client.Secrets().List(infisical.ListSecretsOptions{
 
 `client.Secrets().Retrieve(options)`
 
-Retrieve a secret from Infisical. By default `Secrets().Retrieve()` fetches and returns a shared secret.
+Retrieve a secret from Hanzo KMS. By default `Secrets().Retrieve()` fetches and returns a shared secret.
 
 ```go
-secret, err := client.Secrets().Retrieve(infisical.RetrieveSecretOptions{
+secret, err := client.Secrets().Retrieve(kms.RetrieveSecretOptions{
   SecretKey:   "API_KEY",
   ProjectID:   "PROJECT_ID",
   Environment: "dev",
@@ -514,10 +514,10 @@ secret, err := client.Secrets().Retrieve(infisical.RetrieveSecretOptions{
 
 `client.Secrets().Create(options)`
 
-Create a new secret in Infisical.
+Create a new secret in Hanzo KMS.
 
 ```go
-secret, err := client.Secrets().Create(infisical.CreateSecretOptions{
+secret, err := client.Secrets().Create(kms.CreateSecretOptions{
   ProjectID:   "PROJECT_ID",
   Environment: "dev",
 
@@ -563,10 +563,10 @@ secret, err := client.Secrets().Create(infisical.CreateSecretOptions{
 
 `client.Secrets().Update(options)`
 
-Update an existing secret in Infisical.
+Update an existing secret in Hanzo KMS.
 
 ```go
-secret, err := client.Secrets().Update(infisical.UpdateSecretOptions{
+secret, err := client.Secrets().Update(kms.UpdateSecretOptions{
   ProjectID:                "PROJECT_ID",
   Environment:              "dev",
   SecretKey:                "NEW_SECRET_KEY",
@@ -616,10 +616,10 @@ secret, err := client.Secrets().Update(infisical.UpdateSecretOptions{
 
 `client.Secrets().Delete(options)`
 
-Delete a secret in Infisical.
+Delete a secret in Hanzo KMS.
 
 ```go
-secret, err := client.Secrets().Delete(infisical.DeleteSecretOptions{
+secret, err := client.Secrets().Delete(kms.DeleteSecretOptions{
   ProjectID:   "PROJECT_ID",
   Environment: "dev",
   SecretKey:   "SECRET_KEY",
@@ -654,14 +654,14 @@ secret, err := client.Secrets().Delete(infisical.DeleteSecretOptions{
 
 `client.Secrets().Batch().Create(options)`
 
-Create multiple secrets in Infisical.
+Create multiple secrets in Hanzo KMS.
 
 ```go
-	createdSecrets, err := client.Secrets().Batch().Create(infisical.BatchCreateSecretsOptions{
+	createdSecrets, err := client.Secrets().Batch().Create(kms.BatchCreateSecretsOptions{
 		Environment: "<environment-slug>",
 		SecretPath:  "<secret-path>",
 		ProjectID:   "<project-id>",
-		Secrets: []infisical.BatchCreateSecret{
+		Secrets: []kms.BatchCreateSecret{
 			{
 				SecretKey:   "SECRET-1",
 				SecretValue: "test-value-1",
@@ -729,10 +729,10 @@ Create multiple secrets in Infisical.
 
 `client.Folders().List(options)`
 
-Retrieve all within the Infisical project and environment that client is connected to.
+Retrieve all within the Hanzo KMS project and environment that client is connected to.
 
 ```go
-folders, err := client.Folders().List(infisical.ListFoldersOptions{
+folders, err := client.Folders().List(kms.ListFoldersOptions{
   ProjectID:   "PROJECT_ID",
   Environment: "dev",
   Path:        "/",
@@ -764,10 +764,10 @@ folders, err := client.Folders().List(infisical.ListFoldersOptions{
 
 `client.Folders().Create(options)`
 
-Create a new folder in Infisical.
+Create a new folder in Hanzo KMS.
 
 ```go
-folder, err := client.Folders().Create(infisical.CreateFolderOptions{
+folder, err := client.Folders().Create(kms.CreateFolderOptions{
   ProjectID:   "PROJECT_ID",
   Name:        "new=folder-name",
   Environment: "dev",
@@ -801,10 +801,10 @@ folder, err := client.Folders().Create(infisical.CreateFolderOptions{
 
 `client.Folders().Update(options)`
 
-Update an existing folder in Infisical.
+Update an existing folder in Hanzo KMS.
 
 ```go
-folder, err := client.Folders().Update(infisical.UpdateFolderOptions{
+folder, err := client.Folders().Update(kms.UpdateFolderOptions{
   ProjectID:   "PROJECT_ID",
   Environment: "dev",
   Path:        "/",
@@ -842,10 +842,10 @@ folder, err := client.Folders().Update(infisical.UpdateFolderOptions{
 
 `client.Folders().Delete(options)`
 
-Delete a folder in Infisical.
+Delete a folder in Hanzo KMS.
 
 ```go
-deletedFolder, err := client.Folders().Delete(infisical.DeleteFolderOptions{
+deletedFolder, err := client.Folders().Delete(kms.DeleteFolderOptions{
   // Either folder ID or folder name is required.
   FolderName:  "name-of-folder-to-delete",
   FolderID:    "folder-id-to-delete",
@@ -885,10 +885,10 @@ deletedFolder, err := client.Folders().Delete(infisical.DeleteFolderOptions{
 
 `client.Kms().Keys().Create(options)`
 
-Create a new key in Infisical.
+Create a new key in Hanzo KMS.
 
 ```go
-	newKey, err := client.Kms().Keys().Create(infisical.KmsCreateKeyOptions{
+	newKey, err := client.Kms().Keys().Create(kms.KmsCreateKeyOptions{
 		KeyUsage:            "<sign-verify>|<encrypt-decrypt>",
 		Description:         "<key-description>",
 		Name:                "<key-name>",
@@ -967,10 +967,10 @@ Create a new key in Infisical.
 
 `client.Kms().Keys().Delete(options)`
 
-Delete a key in Infisical.
+Delete a key in Hanzo KMS.
 
 ```go
-deletedKey, err = client.Kms().Keys().Delete(infisical.KmsDeleteKeyOptions{
+deletedKey, err = client.Kms().Keys().Delete(kms.KmsDeleteKeyOptions{
 		KeyId: "<key-id>",
 	})
 ```
@@ -1022,10 +1022,10 @@ deletedKey, err = client.Kms().Keys().Delete(infisical.KmsDeleteKeyOptions{
 ### Signing Data
 
 `client.Kms().Signing().Sign(options)`
-Sign data in Infisical.
+Sign data in Hanzo KMS.
 
 ```go
-res, err := client.Kms().Signing().SignData(infisical.KmsSignDataOptions{
+res, err := client.Kms().Signing().SignData(kms.KmsSignDataOptions{
   KeyId:            "<key-id>",
   Data:             "<data-to-sign>", // Must be a base64 encoded string.
   SigningAlgorithm: "<signing-algorithm>", // The signing algorithm that will be used to sign the data.
@@ -1078,10 +1078,10 @@ res, err := client.Kms().Signing().SignData(infisical.KmsSignDataOptions{
 ### Verifying Data
 
 `client.Kms().Signing().Verify(options)`
-Verify data in Infisical.
+Verify data in Hanzo KMS.
 
 ```go
-res, err := client.Kms().Signing().Verify(infisical.KmsVerifyDataOptions{
+res, err := client.Kms().Signing().Verify(kms.KmsVerifyDataOptions{
   KeyId:            "<key-id>",
   Data:             "<data-to-verify>", // Must be a base64 encoded string.
   SigningAlgorithm: "<signing-algorithm>", // The signing algorithm that was used to sign the data.
@@ -1126,10 +1126,10 @@ res, err := client.Kms().Signing().Verify(infisical.KmsVerifyDataOptions{
 ### List Signing Algorithms
 
 `client.Kms().Signing().ListSigningAlgorithms(options)`
-List signing algorithms in Infisical.
+List signing algorithms in Hanzo KMS.
 
 ```go
-res, err := client.Kms().Signing().ListSigningAlgorithms(infisical.KmsListSigningAlgorithmsOptions{
+res, err := client.Kms().Signing().ListSigningAlgorithms(kms.KmsListSigningAlgorithmsOptions{
   KeyId: "<key-id>",
 })
 ```
@@ -1159,10 +1159,10 @@ res, err := client.Kms().Signing().ListSigningAlgorithms(infisical.KmsListSignin
 </Note>
 
 `client.Kms().Signing().GetPublicKey(options)`
-Get the public key in Infisical.
+Get the public key in Hanzo KMS.
 
 ```go
-publicKey, err := client.Kms().Signing().GetPublicKey(infisical.KmsGetPublicKeyOptions{
+publicKey, err := client.Kms().Signing().GetPublicKey(kms.KmsGetPublicKeyOptions{
   KeyId: "<key-id>",
 })
 ```
@@ -1186,10 +1186,10 @@ publicKey, err := client.Kms().Signing().GetPublicKey(infisical.KmsGetPublicKeyO
 ### Encrypt Data
 
 `client.Kms().Encryption().Encrypt(options)`
-Encrypt data with a key in Infisical KMS.
+Encrypt data with a key in Hanzo KMS KMS.
 
 ```go
-res, err := client.Kms().EncryptData(infisical.KmsEncryptDataOptions{
+res, err := client.Kms().EncryptData(kms.KmsEncryptDataOptions{
   KeyId: "<key-id>",
   Plaintext: "<data-to-encrypt>",
 })
@@ -1214,10 +1214,10 @@ res, err := client.Kms().EncryptData(infisical.KmsEncryptDataOptions{
 ### Decrypt Data
 
 `client.Kms().DecryptData(options)`
-Decrypt data with a key in Infisical KMS.
+Decrypt data with a key in Hanzo KMS KMS.
 
 ```go
-res, err := client.Kms().DecryptData(infisical.KmsDecryptDataOptions{
+res, err := client.Kms().DecryptData(kms.KmsDecryptDataOptions{
   KeyId: "<key-id>",
   Ciphertext: "<encrypted-data>",
 })

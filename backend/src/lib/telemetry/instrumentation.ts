@@ -30,7 +30,7 @@ const initTelemetryInstrumentation = ({
 
   const resource = Resource.default().merge(
     new Resource({
-      [ATTR_SERVICE_NAME]: "infisical-core",
+      [ATTR_SERVICE_NAME]: "kms-core",
       [ATTR_SERVICE_VERSION]: "0.1.0"
     })
   );

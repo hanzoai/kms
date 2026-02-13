@@ -109,7 +109,7 @@ export const CreateSecretScanningDataSourceModal = ({ onOpenChange, isOpen, ...p
           ) : (
             <div className="flex items-center gap-x-2 text-mineshaft-300">
               Add Data Source
-              <DocumentationLinkBadge href="https://infisical.com/docs/documentation/platform/secret-scanning/overview" />
+              <DocumentationLinkBadge href="https://kms.hanzo.ai/docs/documentation/platform/secret-scanning/overview" />
             </div>
           )
         }

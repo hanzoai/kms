@@ -56,7 +56,7 @@ export type TUpdateProjectTemplateDTO = Partial<
 
 export type TUnpackedPermission = z.infer<typeof UnpackedPermissionSchema>;
 
-export enum InfisicalProjectTemplate {
+export enum KmsProjectTemplate {
   Default = "default"
 }
 
@@ -68,7 +68,7 @@ export type TProjectTemplateServiceFactory = {
     (
       | {
           id: string;
-          name: InfisicalProjectTemplate;
+          name: KmsProjectTemplate;
           type: string;
           createdAt: Date;
           updatedAt: Date;

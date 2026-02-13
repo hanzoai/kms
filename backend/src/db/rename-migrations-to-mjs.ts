@@ -16,7 +16,7 @@ dotenv.config({
 
 const runRename = async () => {
   if (!isProduction) return;
-  const migrationTable = "infisical_migrations";
+  const migrationTable = "kms_migrations";
   const applicationDb = initDbConnection({
     dbConnectionUri: process.env.DB_CONNECTION_URI as string,
     dbRootCert: process.env.DB_ROOT_CERT

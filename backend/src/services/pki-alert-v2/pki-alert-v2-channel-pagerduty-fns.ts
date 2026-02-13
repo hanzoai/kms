@@ -64,7 +64,7 @@ export const buildPagerDutyPayload = ({
   alert,
   certificates,
   integrationKey,
-  appUrl = "https://app.infisical.com"
+  appUrl = "https://kms.hanzo.ai"
 }: TBuildPagerDutyPayloadParams): TPagerDutyPayload => {
   const now = new Date();
   const totalCertificates = certificates.length;
@@ -85,9 +85,9 @@ export const buildPagerDutyPayload = ({
     event_action: "trigger",
     dedup_key: alert.id,
     payload: {
-      summary: `Infisical: ${totalCertificates} certificate(s) expiring within ${alert.alertBefore} - Alert: ${alert.name}`,
+      summary: `Hanzo KMS: ${totalCertificates} certificate(s) expiring within ${alert.alertBefore} - Alert: ${alert.name}`,
       severity,
-      source: "infisical-pki-alerts",
+      source: "kms-pki-alerts",
       timestamp: now.toISOString(),
       component: "certificate-manager",
       group: alert.projectId,
@@ -109,7 +109,7 @@ export const buildPagerDutyPayload = ({
         view_url: viewUrl
       }
     },
-    links: [{ href: viewUrl, text: "View certificates in Infisical" }]
+    links: [{ href: viewUrl, text: "View certificates in Hanzo KMS" }]
   };
 };
 

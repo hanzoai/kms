@@ -125,7 +125,7 @@ export const offlineUsageReportServiceFactory = ({
     return {
       csvContent,
       signature,
-      filename: `infisical-usage-report-${customerId}-${new Date().toISOString().split("T")[0]}.csv`
+      filename: `kms-usage-report-${customerId}-${new Date().toISOString().split("T")[0]}.csv`
     };
   };
 

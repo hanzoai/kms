@@ -1,9 +1,9 @@
 ---
 title: "GitHub Radar Connection"
-description: "Learn how to configure a GitHub Radar Connection for Infisical."
+description: "Learn how to configure a GitHub Radar Connection for Hanzo KMS."
 ---
 
-Infisical supports GitHub App installation for creating a GitHub Radar Connection.
+Hanzo KMS supports GitHub App installation for creating a GitHub Radar Connection.
 
 <Note>
     GitHub Radar Connections are specifically configured for [Secret Scanning](/documentation/platform/secret-scanning/overview) and require specific permissions and webhook configuration.
@@ -12,7 +12,7 @@ Infisical supports GitHub App installation for creating a GitHub Radar Connectio
 </Note>
 
 <Accordion title="Self-Hosted Instance">
-    Using a GitHub Radar Connection with app authentication on a self-hosted instance of Infisical requires configuring an application on GitHub
+    Using a GitHub Radar Connection with app authentication on a self-hosted instance of Hanzo KMS requires configuring an application on GitHub
     and registering your instance with it.
 
     <Steps>
@@ -58,7 +58,7 @@ Infisical supports GitHub App installation for creating a GitHub Radar Connectio
             Create the Github application.
             ![github radar app complete](/images/app-connections/github-radar/self-hosted-github-radar-step-7.png)
         </Step>
-        <Step title="Add your application credentials to Infisical">
+        <Step title="Add your application credentials to Hanzo KMS">
             Generate a new **Client Secret** for your GitHub application.
             ![github radar app client secret](/images/app-connections/github-radar/self-hosted-github-radar-step-8.png)
 
@@ -79,7 +79,7 @@ Infisical supports GitHub App installation for creating a GitHub Radar Connectio
 
             ![github radar app credentials](/images/app-connections/github-radar/self-hosted-github-radar-step-10.png)
 
-            Back in your Infisical instance, add the six new environment variables for the credentials of your GitHub Radar application:
+            Back in your Hanzo KMS instance, add the six new environment variables for the credentials of your GitHub Radar application:
 
             - `INF_APP_CONNECTION_GITHUB_RADAR_APP_CLIENT_ID`: The **Client ID** of your GitHub application.
             - `INF_APP_CONNECTION_GITHUB_RADAR_APP_CLIENT_SECRET`: The **Client Secret** of your GitHub application.
@@ -88,12 +88,12 @@ Infisical supports GitHub App installation for creating a GitHub Radar Connectio
             - `INF_APP_CONNECTION_GITHUB_RADAR_APP_PRIVATE_KEY`: The **Private Key** of your GitHub application.
             - `INF_APP_CONNECTION_GITHUB_RADAR_APP_WEBHOOK_SECRET`: The **Webhook Secret** of your GitHub application.
 
-            Once added, restart your Infisical instance and use the GitHub integration via app authentication.
+            Once added, restart your Hanzo KMS instance and use the GitHub integration via app authentication.
         </Step>
     </Steps>
 </Accordion>
 
-## Setup GitHub Radar Connection in Infisical
+## Setup GitHub Radar Connection in Hanzo KMS
 
 <Steps>
     <Step title="Navigate to App Connections">
@@ -111,7 +111,7 @@ Infisical supports GitHub App installation for creating a GitHub Radar Connectio
     <Step title="Install GitHub App">
         You will then be redirected to the GitHub App installation page.
 
-        Install and authorize the GitHub application. This will redirect you back to Infisical's App Connections page.
+        Install and authorize the GitHub application. This will redirect you back to Hanzo KMS's App Connections page.
         ![Install GitHub App](/images/app-connections/github-radar/github-radar-authorize.png)
     </Step>
     <Step title="Connection Created">

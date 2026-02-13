@@ -2,7 +2,7 @@ import { BadRequestError } from "@app/lib/errors";
 
 /**
  * Extracts the K8s service account name and namespace
- * from the username in this format: system:serviceaccount:default:infisical-auth
+ * from the username in this format: system:serviceaccount:default:kms-auth
  */
 export const extractK8sUsername = (username: string) => {
   const parts = username.split(":");

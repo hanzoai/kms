@@ -8,14 +8,14 @@ const latencyHistogram = apiMeter.createHistogram("API_latency", {
   unit: "ms"
 });
 
-const infisicalMeter = opentelemetry.metrics.getMeter("Infisical");
+const kmsMeter = opentelemetry.metrics.getMeter("Hanzo KMS");
 
-const requestCounter = infisicalMeter.createCounter("infisical.http.server.request.count", {
-  description: "Total number of API requests to Infisical (covers both human users and machine identities)",
+const requestCounter = kmsMeter.createCounter("kms.http.server.request.count", {
+  description: "Total number of API requests to Hanzo KMS (covers both human users and machine identities)",
   unit: "{request}"
 });
 
-const requestDurationHistogram = infisicalMeter.createHistogram("infisical.http.server.request.duration", {
+const requestDurationHistogram = kmsMeter.createHistogram("kms.http.server.request.duration", {
   description: "API request latency",
   unit: "s"
 });
@@ -47,39 +47,39 @@ export const apiMetrics = fp(async (fastify) => {
     };
 
     if (orgId) {
-      attributes["infisical.organization.id"] = orgId;
+      attributes["kms.organization.id"] = orgId;
     }
     if (orgName) {
-      attributes["infisical.organization.name"] = orgName;
+      attributes["kms.organization.name"] = orgName;
     }
 
     if (userAuthInfo) {
       if (userAuthInfo.userId) {
-        attributes["infisical.user.id"] = userAuthInfo.userId;
+        attributes["kms.user.id"] = userAuthInfo.userId;
       }
       if (userAuthInfo.email) {
-        attributes["infisical.user.email"] = userAuthInfo.email;
+        attributes["kms.user.email"] = userAuthInfo.email;
       }
     }
 
     if (identityAuthInfo) {
       if (identityAuthInfo.identityId) {
-        attributes["infisical.identity.id"] = identityAuthInfo.identityId;
+        attributes["kms.identity.id"] = identityAuthInfo.identityId;
       }
       if (identityAuthInfo.identityName) {
-        attributes["infisical.identity.name"] = identityAuthInfo.identityName;
+        attributes["kms.identity.name"] = identityAuthInfo.identityName;
       }
       if (identityAuthInfo.authMethod) {
-        attributes["infisical.auth.method"] = identityAuthInfo.authMethod;
+        attributes["kms.auth.method"] = identityAuthInfo.authMethod;
       }
     }
 
     if (projectDetails) {
       if (projectDetails.id) {
-        attributes["infisical.project.id"] = projectDetails.id;
+        attributes["kms.project.id"] = projectDetails.id;
       }
       if (projectDetails.name) {
-        attributes["infisical.project.name"] = projectDetails.name;
+        attributes["kms.project.name"] = projectDetails.name;
       }
     }
 

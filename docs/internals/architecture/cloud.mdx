@@ -1,23 +1,23 @@
 ---
-title: "Infisical Cloud"
-description: "Architecture overview of Infisical's US and EU cloud deployments"
+title: "Hanzo KMS Cloud"
+description: "Architecture overview of Hanzo KMS's US and EU cloud deployments"
 ---
 
-This document provides an overview of Infisical's cloud architecture for our US and EU deployments, detailing the core components and how they interact to provide security and infrastructure services.
+This document provides an overview of Hanzo KMS's cloud architecture for our US and EU deployments, detailing the core components and how they interact to provide security and infrastructure services.
 
 ## Overview
 
-Infisical Cloud operates on AWS infrastructure using containerized services deployed via Amazon ECS (Elastic Container Service). Our US and EU deployments use identical architectural patterns to ensure consistency and reliability across regions.
+Hanzo KMS Cloud operates on AWS infrastructure using containerized services deployed via Amazon ECS (Elastic Container Service). Our US and EU deployments use identical architectural patterns to ensure consistency and reliability across regions.
 
-![Infisical Cloud Architecture](/images/self-hosting/reference-architectures/Infisical-AWS-ECS-architecture.jpeg)
+![Hanzo KMS Cloud Architecture](/images/self-hosting/reference-architectures/Hanzo KMS-AWS-ECS-architecture.jpeg)
 
 ## Components
 
-A typical Infisical Cloud deployment consists of the following components:
+A typical Hanzo KMS Cloud deployment consists of the following components:
 
 ### Application Services
 
-- **Infisical Core**: Main application server running the Infisical backend API
+- **Hanzo KMS Core**: Main application server running the Hanzo KMS backend API
 - **License API**: Dedicated API service for license management with separate RDS instance (shared between US/EU)
 - **Application Load Balancer**: Routes incoming traffic to application containers with SSL termination and host-based routing
 
@@ -43,7 +43,7 @@ A typical Infisical Cloud deployment consists of the following components:
 
 ### Service Architecture
 
-The Infisical application runs as multiple containerized services on ECS:
+The Hanzo KMS application runs as multiple containerized services on ECS:
 
 - **Main Server**: Auto-scaling containerized application services
 - **License API**: Dedicated service with separate infrastructure (shared globally)
@@ -57,7 +57,7 @@ Services are deployed in private subnets with the following connectivity:
 
 - External traffic → Application Load Balancer → ECS Services
 - Main server exposes port 8080
-- License API exposes port 4000 (portal.infisical.com, license.infisical.com)
+- License API exposes port 4000 (portal.kms.hanzo.ai, license.kms.hanzo.ai)
 - Service-to-service communication via AWS Service Connect
 
 ### Data Flow
@@ -65,7 +65,7 @@ Services are deployed in private subnets with the following connectivity:
 1. **DNS resolution** via Cloudflare routes traffic to AWS Global Accelerator
 2. **Global Accelerator** optimizes routing to the nearest AWS region
 3. **Client requests** are routed through the Application Load Balancer to ECS containers
-4. **Application logic** processes requests in the Infisical Core service
+4. **Application logic** processes requests in the Hanzo KMS Core service
 5. **Data persistence** occurs via encrypted connections to RDS
 6. **Caching** utilizes ElastiCache for performance optimization
 7. **Configuration** is retrieved from AWS SSM Parameter Store
@@ -74,13 +74,13 @@ Services are deployed in private subnets with the following connectivity:
 
 Each region operates in a separate AWS account, providing strong isolation boundaries for security, compliance, and operational independence.
 
-### US Cloud (us.infisical.com or app.infisical.com)
+### US Cloud (us.kms.hanzo.ai or app.kms.hanzo.ai)
 
 - **AWS Account**: Dedicated US AWS account
 - **Infrastructure**: ECS-based containerized deployment
 - **Monitoring**: Integrated with Datadog for observability and security monitoring
 
-### EU Cloud (eu.infisical.com)
+### EU Cloud (eu.kms.hanzo.ai)
 
 - **AWS Account**: Dedicated EU AWS account
 - **Infrastructure**: ECS-based containerized deployment
@@ -104,7 +104,7 @@ Application configuration and secrets are managed through AWS SSM Parameter Stor
 
 ## Container Management
 
-- **Images**: `infisical/staging_infisical` and `infisical/license-api` from Docker Hub
+- **Images**: `kms/staging_kms` and `kms/license-api` from Docker Hub
 - **Deployment**: Automated via GitHub Actions updating SSM parameter for image tags
 - **Registry Access**: Docker Hub credentials stored in AWS Secrets Manager
 - **Platform**: ECS Fargate serverless container platform

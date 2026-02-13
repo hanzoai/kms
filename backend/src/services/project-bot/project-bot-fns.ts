@@ -39,13 +39,13 @@ export const getBotKeyFnFactory = (
       const projectV1Keys = await projectBotDAL.findProjectUserWorkspaceKey(projectId);
       if (!projectV1Keys) {
         throw new NotFoundError({
-          message: `Project bot not found for project with ID '${projectId}'. Please ask an administrator to log-in to the Infisical Console.`
+          message: `Project bot not found for project with ID '${projectId}'. Please ask an administrator to log-in to the Hanzo KMS Console.`
         });
       }
 
       if (!projectV1Keys.senderPublicKey) {
         throw new NotFoundError({
-          message: `Project bot not found for project with ID '${projectId}'. Please ask an administrator to log-in to the Infisical Console and upgrade the project.`
+          message: `Project bot not found for project with ID '${projectId}'. Please ask an administrator to log-in to the Hanzo KMS Console and upgrade the project.`
         });
       }
 
@@ -85,7 +85,7 @@ export const getBotKeyFnFactory = (
       let botId;
       if (!bot) {
         const newBot = await projectBotDAL.create({
-          name: "Infisical Bot (Ghost)",
+          name: "Hanzo KMS Bot (Ghost)",
           projectId,
           isActive: true,
           tag,

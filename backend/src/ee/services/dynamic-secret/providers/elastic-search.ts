@@ -98,7 +98,7 @@ export const ElasticSearchProvider = (): TDynamicProviderFns => {
       await connection.security.putUser({
         username,
         password,
-        full_name: "Managed by Infisical.com",
+        full_name: "Managed by Hanzo KMS.com",
         roles: providerInputs.roles
       });
 

@@ -3,14 +3,14 @@ title: "Machine identities"
 description: "Understanding machine identities and their best practices"
 ---
 ​
-Many clients use machine identities (MIs) to authenticate and read/write secrets from/to Infisical; they can be created in your organization settings.
+Many clients use machine identities (MIs) to authenticate and read/write secrets from/to Hanzo KMS; they can be created in your organization settings.
 
 On this page, we discuss MIs, the new and improved authentication method.
 
 ## Anatomy
 
-A MI in Infisical comes with a JWT-based refresh token authentication credential. The refresh token can be exchanged for an access token
-with a time-to-live (TTL) to access the Infisical API.
+A MI in Hanzo KMS comes with a JWT-based refresh token authentication credential. The refresh token can be exchanged for an access token
+with a time-to-live (TTL) to access the Hanzo KMS API.
 
 ### Database model
 
@@ -52,6 +52,6 @@ Since MIs grant access to your secrets, we recommend storing the refresh token c
 
 ### Rotation
 
-We recommend periodically rotating the MI refresh token, even in the absence of compromise. If using the Infisical Agent, we recommend enabling the **Refresh Token Rotation** option
+We recommend periodically rotating the MI refresh token, even in the absence of compromise. If using the KMS Agent, we recommend enabling the **Refresh Token Rotation** option
 on your MI; this will issue a new refresh token and invalidate the old one upon a refresh token exchange operation — In doing so, the refresh token is kept as a moving target
 and secret zero risk is mitigated.

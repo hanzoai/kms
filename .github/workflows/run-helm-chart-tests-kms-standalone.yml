@@ -1,9 +1,9 @@
-name: Run Helm Chart Tests for Infisical Standalone Postgres
+name: Run Helm Chart Tests for Hanzo KMS Standalone Postgres
 on:
   pull_request:
     paths:
-      - "helm-charts/infisical-standalone-postgres/**"
-      - ".github/workflows/run-helm-chart-tests-infisical-standalone-postgres.yml"
+      - "helm-charts/kms-standalone/**"
+      - ".github/workflows/run-helm-chart-tests-kms-standalone.yml"
 
 jobs:
   test-helm:
@@ -37,34 +37,34 @@ jobs:
           yamale_version: "6.0.0"
 
       - name: Run chart-testing (lint)
-        run: ct lint --config ct.yaml --charts helm-charts/infisical-standalone-postgres
+        run: ct lint --config ct.yaml --charts helm-charts/kms-standalone
 
       - name: Create kind cluster
         uses: helm/kind-action@v1.12.0
 
       - name: Create namespace
-        run: kubectl create namespace infisical-standalone-postgres
+        run: kubectl create namespace kms-standalone
 
-      - name: Create Infisical secrets
+      - name: Create Hanzo KMS secrets
         run: |
-          kubectl create secret generic infisical-secrets \
-            --namespace infisical-standalone-postgres \
+          kubectl create secret generic kms-secrets \
+            --namespace kms-standalone \
             --from-literal=AUTH_SECRET=6c1fe4e407b8911c104518103505b218 \
             --from-literal=ENCRYPTION_KEY=6c1fe4e407b8911c104518103505b218 \
             --from-literal=SITE_URL=http://localhost:8080
 
       - name: Create bootstrap secret
         run: |
-          kubectl create secret generic infisical-bootstrap-credentials \
-            --namespace infisical-standalone-postgres \
-            --from-literal=INFISICAL_ADMIN_EMAIL=admin@example.com \
-            --from-literal=INFISICAL_ADMIN_PASSWORD=admin-password
+          kubectl create secret generic kms-bootstrap-credentials \
+            --namespace kms-standalone \
+            --from-literal=KMS_ADMIN_EMAIL=admin@example.com \
+            --from-literal=KMS_ADMIN_PASSWORD=admin-password
 
       - name: Run chart-testing (install)
         run: |
           ct install \
             --config ct.yaml \
-            --charts helm-charts/infisical-standalone-postgres \
+            --charts helm-charts/kms-standalone \
             --helm-extra-args="--timeout=300s" \
-            --helm-extra-set-args="--set ingress.nginx.enabled=false --set infisical.replicaCount=1 --set infisical.image.tag=v0.151.0 --set infisical.autoBootstrap.enabled=true" \
-            --namespace infisical-standalone-postgres
+            --helm-extra-set-args="--set ingress.nginx.enabled=false --set kms.replicaCount=1 --set kms.image.tag=v0.151.0 --set kms.autoBootstrap.enabled=true" \
+            --namespace kms-standalone

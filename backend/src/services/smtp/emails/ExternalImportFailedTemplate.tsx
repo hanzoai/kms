@@ -22,7 +22,7 @@ export const ExternalImportFailedTemplate = ({ error, siteUrl, provider }: Exter
         </Text>
         <Text className="text-black text-[14px] leading-[24px]">
           If your issue persists, you can contact the Infisical team at{" "}
-          <BaseLink href="mailto:support@infisical.com">support@infisical.com</BaseLink>.
+          <BaseLink href="mailto:support@hanzo.ai">support@hanzo.ai</BaseLink>.
         </Text>
         <Text className="text-[14px] text-red-600 leading-[24px]">
           <strong>Error:</strong> "{error}"
@@ -37,5 +37,5 @@ export default ExternalImportFailedTemplate;
 ExternalImportFailedTemplate.PreviewProps = {
   provider: "EnvKey",
   error: "Something went wrong. Please try again.",
-  siteUrl: "https://infisical.com"
+  siteUrl: "https://kms.hanzo.ai"
 } as ExternalImportFailedTemplateProps;

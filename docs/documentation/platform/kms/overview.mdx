@@ -1,14 +1,14 @@
 ---
 title: "Key Management Service (KMS)"
 sidebarTitle: "Overview"
-description: "Learn how to manage and use cryptographic keys with Infisical."
+description: "Learn how to manage and use cryptographic keys with Hanzo KMS."
 ---
 
 ## Concept
 
-Infisical can be used as a Key Management System (KMS), referred to as Infisical KMS, to centralize management of keys to be used for cryptographic operations like encryption/decryption.
+Hanzo KMS can be used as a Key Management System (KMS), referred to as Hanzo KMS KMS, to centralize management of keys to be used for cryptographic operations like encryption/decryption.
 
-By default your Infisical data such as projects and the data within them are encrypted at rest using Infisical's own KMS. This ensures that your data is secure and protected from unauthorized access.
+By default your Hanzo KMS data such as projects and the data within them are encrypted at rest using Hanzo KMS's own KMS. This ensures that your data is secure and protected from unauthorized access.
 
 If you are on-premise, your KMS root key will be created at random with the `ROOT_ENCRYPTION_KEY` environment variable. You can also use a Hardware Security Module (HSM), to create the root key. Read more about [HSM](/documentation/platform/kms/hsm-integration). 
 
@@ -19,14 +19,14 @@ If you are on-premise, your KMS root key will be created at random with the `ROO
 
 ## Workflow
 
-The typical workflow for using Infisical KMS consists of the following steps:
+The typical workflow for using Hanzo KMS KMS consists of the following steps:
 
 1. Creating a KMS key. As part of this step, you specify a name for the key and the encryption algorithm meant to be used for it (e.g. `AES-GCM-128`, `AES-GCM-256`).
-2. Encryption: To encrypt data, you would make a request to the Infisical KMS API endpoint, specifying the base64-encoded plaintext and the intended key to use for encryption; the API would return the base64-encoded ciphertext.
-3. Decryption: To decrypt data, you would make a request to the Infisical KMS API endpoint, specifying the base64-encoded ciphertext and the intended key to use for decryption; the API would return the base64-encoded plaintext.
+2. Encryption: To encrypt data, you would make a request to the Hanzo KMS KMS API endpoint, specifying the base64-encoded plaintext and the intended key to use for encryption; the API would return the base64-encoded ciphertext.
+3. Decryption: To decrypt data, you would make a request to the Hanzo KMS KMS API endpoint, specifying the base64-encoded ciphertext and the intended key to use for decryption; the API would return the base64-encoded plaintext.
 
 <Note>
-  Note that this workflow can be executed via the Infisical UI or manually such
+  Note that this workflow can be executed via the Hanzo KMS UI or manually such
   as via API.
 </Note>
 
@@ -37,11 +37,11 @@ The typical workflow for using Infisical KMS consists of the following steps:
 In the following steps, we explore how to generate a key and use it to encrypt data.
 
 <Tabs>
-    <Tab title="Infisical UI">
+    <Tab title="Hanzo KMS UI">
         <Steps>
             <Step title="Creating a KMS key">
                 Navigate to Project > Key Management and tap on the **Add Key** button.
-                ![kms add key button](/images/platform/kms/infisical-kms/kms-add-key.png)
+                ![kms add key button](/images/platform/kms/kms-kms/kms-add-key.png)
 
                 Specify your key details. Here's some guidance on each field:
 
@@ -50,14 +50,14 @@ In the following steps, we explore how to generate a key and use it to encrypt d
                 - Algorithm: The encryption algorithm associated with the key (e.g. `AES-GCM-256`).
                 - Description: An optional description of what the intended usage is for the key.
 
-                ![kms add key modal](/images/platform/kms/infisical-kms/kms-add-key-modal.png)
+                ![kms add key modal](/images/platform/kms/kms-kms/kms-add-key-modal.png)
             </Step>
             <Step title="Encrypting data with the KMS key">
                 Once your key is generated, open the options menu for the newly created key and select encrypt data.
-                ![kms key options](/images/platform/kms/infisical-kms/kms-key-options.png)
+                ![kms key options](/images/platform/kms/kms-kms/kms-key-options.png)
 
                 Populate the text area with your data and tap on the Encrypt button.
-                ![kms encrypt data](/images/platform/kms/infisical-kms/kms-encrypt-data.png)
+                ![kms encrypt data](/images/platform/kms/kms-kms/kms-encrypt-data.png)
 
                 <Note>
                     If your data is already Base64 encoded make sure to toggle the respective switch on to avoid
@@ -65,7 +65,7 @@ In the following steps, we explore how to generate a key and use it to encrypt d
                 </Note>
 
                 Copy and store the encrypted data.
-                ![kms encrypted data](/images/platform/kms/infisical-kms/kms-encrypted-data.png)
+                ![kms encrypted data](/images/platform/kms/kms-kms/kms-encrypted-data.png)
             </Step>
         </Steps>
     </Tab>
@@ -79,7 +79,7 @@ In the following steps, we explore how to generate a key and use it to encrypt d
 
                 ```bash Request
                 curl --request POST \
-                --url https://app.infisical.com/api/v1/kms/keys \
+                --url https://kms.hanzo.ai/api/v1/kms/keys \
                 --header 'Content-Type: application/json' \
                 --data '{
                     "projectId": "<project-id>",
@@ -120,7 +120,7 @@ In the following steps, we explore how to generate a key and use it to encrypt d
 
                 ```bash Request
                 curl --request POST \
-                --url https://app.infisical.com/api/v1/kms/keys/<key-id>/encrypt \
+                --url https://kms.hanzo.ai/api/v1/kms/keys/<key-id>/encrypt \
                 --header 'Content-Type: application/json' \
                 --data '{
                     "plaintext": "lUFHM5Ggwo6TOfpuN1S==" // base64 encoded plaintext
@@ -142,24 +142,24 @@ In the following steps, we explore how to generate a key and use it to encrypt d
 
 ### Guide to Decrypting Data
 
-In the following steps, we explore how to use decrypt data using an existing key in Infisical KMS.
+In the following steps, we explore how to use decrypt data using an existing key in Hanzo KMS KMS.
 
 <Tabs>
-    <Tab title="Infisical UI">
+    <Tab title="Hanzo KMS UI">
         <Steps>
             <Step title="Accessing your key">
                 Navigate to Project > Key Management and open the options menu for the key used to encrypt the data
                 you want to decrypt.
-                ![kms key options](/images/platform/kms/infisical-kms/kms-decrypt-options.png)
+                ![kms key options](/images/platform/kms/kms-kms/kms-decrypt-options.png)
 
             </Step>
             <Step title="Decrypting your data">
                 Paste your encrypted data into the text area and tap on the Decrypt button. Optionally, if your data was
                 originally plain text, enable the decode Base64 switch.
-                ![kms decrypt data](/images/platform/kms/infisical-kms/kms-decrypt-data.png)
+                ![kms decrypt data](/images/platform/kms/kms-kms/kms-decrypt-data.png)
 
                 Your decrypted data will be displayed and can be copied for use.
-                ![kms decrypted data](/images/platform/kms/infisical-kms/kms-decrypted-data.png)
+                ![kms decrypted data](/images/platform/kms/kms-kms/kms-decrypted-data.png)
 
             </Step>
         </Steps>
@@ -175,7 +175,7 @@ In the following steps, we explore how to use decrypt data using an existing key
 
                 ```bash Request
                 curl --request POST \
-                --url https://app.infisical.com/api/v1/kms/keys/<key-id>/decrypt \
+                --url https://kms.hanzo.ai/api/v1/kms/keys/<key-id>/decrypt \
                 --header 'Content-Type: application/json' \
                 --data '{
                     "ciphertext": "HwFHwSFHwlMF6TOfp==" // base64 encoded ciphertext
@@ -203,11 +203,11 @@ In the following steps, we explore how to use decrypt data using an existing key
 In the following steps, we explore how to generate a key and use it to sign data.
 
 <Tabs>
-    <Tab title="Infisical UI">
+    <Tab title="Hanzo KMS UI">
         <Steps>
             <Step title="Creating a KMS key">
                 Navigate to Project > Key Management and tap on the **Add Key** button.
-                ![kms add key button](/images/platform/kms/infisical-kms/kms-add-key.png)
+                ![kms add key button](/images/platform/kms/kms-kms/kms-add-key.png)
 
                 Specify your key details. Here's some guidance on each field:
 
@@ -216,15 +216,15 @@ In the following steps, we explore how to generate a key and use it to sign data
                 - Algorithm: The signing algorithm associated with the key (e.g. `RSA_4096`).
                 - Description: An optional description of what the intended usage is for the key.
 
-                ![kms add key modal](/images/platform/kms/infisical-kms/signing/add-new-rsa-key.png)
+                ![kms add key modal](/images/platform/kms/kms-kms/signing/add-new-rsa-key.png)
             </Step>
 
             <Step title="Signing data with the KMS key">
               Once your key is generated, open the options menu for the newly created key and select sign data.
-              ![kms key options](/images/platform/kms/infisical-kms/signing/sign-options.png)
+              ![kms key options](/images/platform/kms/kms-kms/signing/sign-options.png)
 
               Populate the text area with your data and tap on the Sign button.
-              ![kms sign data](/images/platform/kms/infisical-kms/signing/sign-data-modal.png)
+              ![kms sign data](/images/platform/kms/kms-kms/signing/sign-data-modal.png)
 
               Make sure to select the appropriate signing algorithm that will be used to sign the data.
               Supported signing algorithms are:
@@ -250,7 +250,7 @@ In the following steps, we explore how to generate a key and use it to sign data
               </Note>
 
                Copy and store the signature of your data.
-               ![kms signed data](/images/platform/kms/infisical-kms/signing/copy-signature.png)
+               ![kms signed data](/images/platform/kms/kms-kms/signing/copy-signature.png)
             </Step>
         </Steps>
     </Tab>
@@ -265,7 +265,7 @@ In the following steps, we explore how to generate a key and use it to sign data
 
                 ```bash Request
                 curl --request POST \
-                --url https://app.infisical.com/api/v1/kms/keys/<key-id>/sign \
+                --url https://kms.hanzo.ai/api/v1/kms/keys/<key-id>/sign \
                 --header 'Content-Type: application/json' \
                 --data '{
                     "data": "SGVsbG8sIFdvcmxkIQ==", // base64 encoded data
@@ -294,23 +294,23 @@ In the following steps, we explore how to generate a key and use it to sign data
 
 ### Guide to Verifying Data
 
-In the following steps, we explore how to verify data using an existing key in Infisical KMS.
+In the following steps, we explore how to verify data using an existing key in Hanzo KMS KMS.
 
 <Tabs>
-    <Tab title="Infisical UI">
+    <Tab title="Hanzo KMS UI">
         <Steps>
             <Step title="Accessing your key">
                 Navigate to Project > Key Management and open the options menu for the key used to sign the data
                 you want to verify.
-                ![kms key options](/images/platform/kms/infisical-kms/signing/sign-options.png)
+                ![kms key options](/images/platform/kms/kms-kms/signing/sign-options.png)
             </Step>
 
             <Step title="Verifying data with the KMS key">
                 Paste your signature and data into the text areas and tap on the Verify button.
-                ![kms verify data](/images/platform/kms/infisical-kms/signing/verify-data-modal.png)
+                ![kms verify data](/images/platform/kms/kms-kms/signing/verify-data-modal.png)
 
                 Your verification result will be displayed and can be copied for use.
-                ![kms verified data](/images/platform/kms/infisical-kms/signing/signature-verified.png)
+                ![kms verified data](/images/platform/kms/kms-kms/signing/signature-verified.png)
 
                 If the signature is invalid, you'll see an error message indicating that the signature is invalid, and the "Signature Status" field will be `Invalid`.
             </Step>
@@ -327,7 +327,7 @@ In the following steps, we explore how to verify data using an existing key in I
 
                 ```bash Request
                 curl --request POST \
-                --url https://app.infisical.com/api/v1/kms/keys/<key-id>/verify \
+                --url https://kms.hanzo.ai/api/v1/kms/keys/<key-id>/verify \
                 --header 'Content-Type: application/json' \
                 --data '{
                     "data": "SGVsbG8sIFdvcmxkIQ==", // base64 encoded data
@@ -357,16 +357,16 @@ In the following steps, we explore how to verify data using an existing key in I
 ## FAQ
 
 <AccordionGroup>
-  <Accordion title="Is my data stored in Infisical KMS?">
-    No. Infisical's KMS only provides cryptographic services and does not store
+  <Accordion title="Is my data stored in Hanzo KMS KMS?">
+    No. Hanzo KMS's KMS only provides cryptographic services and does not store
     any encrypted or decrypted data.
   </Accordion>
-  <Accordion title="Can key material be accessed outside of Infisical KMS?">
-    No. Infisical's KMS will never expose your keys, encrypted or decrypted, to
+  <Accordion title="Can key material be accessed outside of Hanzo KMS KMS?">
+    No. Hanzo KMS's KMS will never expose your keys, encrypted or decrypted, to
     external sources.
   </Accordion>
-  <Accordion title="What algorithms does Infisical KMS support?">
-    Currently Infisical supports 4 different key algorithms with different purposes:
+  <Accordion title="What algorithms does Hanzo KMS KMS support?">
+    Currently Hanzo KMS supports 4 different key algorithms with different purposes:
 
     - `RSA_4096`: For signing and verifying data.
     - `ECC_NIST_P256`: For signing and verifying data.
@@ -376,8 +376,8 @@ In the following steps, we explore how to verify data using an existing key in I
 
     We anticipate to further expand our supported algorithms and support cryptographic operations in the future.
   </Accordion>
-  <Accordion title="How do I sign and verify a digest using the Infisical KMS?">
-    To sign and verify a digest using the Infisical KMS, you can use the `Sign` and `Verify` endpoints respectively.
+  <Accordion title="How do I sign and verify a digest using the Hanzo KMS KMS?">
+    To sign and verify a digest using the Hanzo KMS KMS, you can use the `Sign` and `Verify` endpoints respectively.
     You will need to pass `"isDigest": true` in the request body to indicate that you are signing or verifying a digest.
     The data you are signing or verifying will need to be a base64 encoded digest of the data you wish to sign or verify.
     It's important that the digest is created using the same hashing algorithm as the signing algorithm. As an example, you would create the digest with `SHA512` if you are using the `RSASSA_PKCS1_V1_5_SHA_512` signing algorithm.
@@ -391,7 +391,7 @@ In the following steps, we explore how to verify data using an existing key in I
 
     ```bash Request
     curl --request POST \
-    --url https://app.infisical.com/api/v1/kms/keys/<key-id>/sign \
+    --url https://kms.hanzo.ai/api/v1/kms/keys/<key-id>/sign \
     --header 'Content-Type: application/json' \
     --data '{
     "data": <digest-output-of-openssl-command>,
@@ -414,7 +414,7 @@ In the following steps, we explore how to verify data using an existing key in I
 
     ```bash Request
     curl --request POST \
-    --url https://app.infisical.com/api/v1/kms/keys/<key-id>/verify \
+    --url https://kms.hanzo.ai/api/v1/kms/keys/<key-id>/verify \
     --header 'Content-Type: application/json' \
     --data '{
     "data": <digest-output-of-openssl-command>,

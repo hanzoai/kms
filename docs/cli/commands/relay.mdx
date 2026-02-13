@@ -1,37 +1,37 @@
 ---
-title: "infisical relay"
-description: "Relay-related commands for Infisical"
+title: "kms relay"
+description: "Relay-related commands for Hanzo KMS"
 ---
 
 <Tabs>
   <Tab title="Start relay">
     ```bash
-    infisical relay start --host=<host> --name=<name> --auth-method=<auth-method>
+    kms relay start --host=<host> --name=<name> --auth-method=<auth-method>
     ```
   </Tab>
   <Tab title="Start relay as background daemon (Linux only)">
     ```bash
     # Install systemd service
-    sudo infisical relay systemd install --host=<host> --name=<name> --token=<token>
+    sudo kms relay systemd install --host=<host> --name=<name> --token=<token>
 
     # Uninstall systemd service
-    sudo infisical relay systemd uninstall
+    sudo kms relay systemd uninstall
     ```
   </Tab>
 </Tabs>
 
 ## Description
 
-Relay-related commands for Infisical that provide identity-aware relay infrastructure for routing encrypted traffic. Relays are organization-deployed servers that route encrypted traffic between Infisical and your gateways.
+Relay-related commands for Hanzo KMS that provide identity-aware relay infrastructure for routing encrypted traffic. Relays are organization-deployed servers that route encrypted traffic between Hanzo KMS and your gateways.
 
 ## Subcommands & flags
 
 <AccordionGroup>
-<Accordion title="infisical relay start" defaultOpen="true">
-  Run the Infisical relay component. The relay handles network traffic routing between Infisical and your gateways.
+<Accordion title="kms relay start" defaultOpen="true">
+  Run the Hanzo KMS relay component. The relay handles network traffic routing between Hanzo KMS and your gateways.
 
 ```bash
-infisical relay start --host=<host> --name=<name> --auth-method=<auth-method>
+kms relay start --host=<host> --name=<name> --auth-method=<auth-method>
 ```
 
 ### Flags
@@ -42,10 +42,10 @@ infisical relay start --host=<host> --name=<name> --auth-method=<auth-method>
 
     ```bash
     # Example with IP address
-    infisical relay start --host=203.0.113.100 --name=my-relay
+    kms relay start --host=203.0.113.100 --name=my-relay
 
     # Example with hostname
-    infisical relay start --host=relay.example.com --name=my-relay
+    kms relay start --host=relay.example.com --name=my-relay
     ```
 
   </Accordion>
@@ -55,7 +55,7 @@ infisical relay start --host=<host> --name=<name> --auth-method=<auth-method>
 
     ```bash
     # Example
-    infisical relay start --name=my-relay --host=192.168.1.100
+    kms relay start --name=my-relay --host=192.168.1.100
     ```
 
   </Accordion>
@@ -63,20 +63,20 @@ infisical relay start --host=<host> --name=<name> --auth-method=<auth-method>
 
 ### Authentication
 
-Relays support all standard Infisical authentication methods. Choose the authentication method that best fits your environment and set the corresponding flags when starting the relay.
+Relays support all standard Hanzo KMS authentication methods. Choose the authentication method that best fits your environment and set the corresponding flags when starting the relay.
 
 ```bash
 # Example with Universal Auth
-infisical relay start --host=192.168.1.100 --name=my-relay --auth-method=universal-auth --client-id=<client-id> --client-secret=<client-secret>
+kms relay start --host=192.168.1.100 --name=my-relay --auth-method=universal-auth --client-id=<client-id> --client-secret=<client-secret>
 ```
 
 ### Available Authentication Methods
 
-The Infisical CLI supports multiple authentication methods for relays. Below are the available authentication methods, with their respective flags.
+The KMS CLI supports multiple authentication methods for relays. Below are the available authentication methods, with their respective flags.
 
 <AccordionGroup>
   <Accordion title="Universal Auth">
-    The Universal Auth method is a simple and secure way to authenticate with Infisical. It requires a client ID and a client secret to authenticate with Infisical.
+    The Universal Auth method is a simple and secure way to authenticate with Hanzo KMS. It requires a client ID and a client secret to authenticate with Hanzo KMS.
 
       <ParamField query="Flags">
       <Expandable title="properties">
@@ -93,12 +93,12 @@ The Infisical CLI supports multiple authentication methods for relays. Below are
     </ParamField>
 
     ```bash
-      infisical relay start --auth-method=universal-auth --client-id=<client-id> --client-secret=<client-secret> --host=<host> --name=<name>
+      kms relay start --auth-method=universal-auth --client-id=<client-id> --client-secret=<client-secret> --host=<host> --name=<name>
     ```
 
   </Accordion>
   <Accordion title="Native Kubernetes">
-    The Native Kubernetes method is used to authenticate with Infisical when running in a Kubernetes environment. It requires a service account token to authenticate with Infisical.
+    The Native Kubernetes method is used to authenticate with Hanzo KMS when running in a Kubernetes environment. It requires a service account token to authenticate with Hanzo KMS.
 
       <ParamField query="Flags">
       <Expandable title="properties">
@@ -117,12 +117,12 @@ The Infisical CLI supports multiple authentication methods for relays. Below are
 
 
     ```bash
-      infisical relay start --auth-method=kubernetes --machine-identity-id=<machine-identity-id> --host=<host> --name=<name>
+      kms relay start --auth-method=kubernetes --machine-identity-id=<machine-identity-id> --host=<host> --name=<name>
     ```
 
   </Accordion>
   <Accordion title="Native Azure">
-    The Native Azure method is used to authenticate with Infisical when running in an Azure environment.
+    The Native Azure method is used to authenticate with Hanzo KMS when running in an Azure environment.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -138,12 +138,12 @@ The Infisical CLI supports multiple authentication methods for relays. Below are
 
 
     ```bash
-      infisical relay start --auth-method=azure --machine-identity-id=<machine-identity-id> --host=<host> --name=<name>
+      kms relay start --auth-method=azure --machine-identity-id=<machine-identity-id> --host=<host> --name=<name>
     ```
 
   </Accordion>
   <Accordion title="Native GCP ID Token">
-    The Native GCP ID Token method is used to authenticate with Infisical when running in a GCP environment.
+    The Native GCP ID Token method is used to authenticate with Hanzo KMS when running in a GCP environment.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -159,12 +159,12 @@ The Infisical CLI supports multiple authentication methods for relays. Below are
 
 
     ```bash
-      infisical relay start --auth-method=gcp-id-token --machine-identity-id=<machine-identity-id> --host=<host> --name=<name>
+      kms relay start --auth-method=gcp-id-token --machine-identity-id=<machine-identity-id> --host=<host> --name=<name>
     ```
 
   </Accordion>
   <Accordion title="GCP IAM">
-    The GCP IAM method is used to authenticate with Infisical with a GCP service account key.
+    The GCP IAM method is used to authenticate with Hanzo KMS with a GCP service account key.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -181,12 +181,12 @@ The Infisical CLI supports multiple authentication methods for relays. Below are
     </ParamField>
 
     ```bash
-      infisical relay start --auth-method=gcp-iam --machine-identity-id=<machine-identity-id> --service-account-key-file-path=<service-account-key-file-path> --host=<host> --name=<name>
+      kms relay start --auth-method=gcp-iam --machine-identity-id=<machine-identity-id> --service-account-key-file-path=<service-account-key-file-path> --host=<host> --name=<name>
     ```
 
   </Accordion>
   <Accordion title="Native AWS IAM">
-    The AWS IAM method is used to authenticate with Infisical with an AWS IAM role while running in an AWS environment like EC2, Lambda, etc.
+    The AWS IAM method is used to authenticate with Hanzo KMS with an AWS IAM role while running in an AWS environment like EC2, Lambda, etc.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -200,12 +200,12 @@ The Infisical CLI supports multiple authentication methods for relays. Below are
     </ParamField>
 
       ```bash
-        infisical relay start --auth-method=aws-iam --machine-identity-id=<machine-identity-id> --host=<host> --name=<name>
+        kms relay start --auth-method=aws-iam --machine-identity-id=<machine-identity-id> --host=<host> --name=<name>
       ```
 
   </Accordion>
   <Accordion title="OIDC Auth">
-    The OIDC Auth method is used to authenticate with Infisical via identity tokens with OIDC.
+    The OIDC Auth method is used to authenticate with Hanzo KMS via identity tokens with OIDC.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -222,13 +222,13 @@ The Infisical CLI supports multiple authentication methods for relays. Below are
     </ParamField>
 
     ```bash
-      infisical relay start --auth-method=oidc-auth --machine-identity-id=<machine-identity-id> --jwt=<oidc-jwt> --host=<host> --name=<name>
+      kms relay start --auth-method=oidc-auth --machine-identity-id=<machine-identity-id> --jwt=<oidc-jwt> --host=<host> --name=<name>
     ```
 
   </Accordion>
 
   <Accordion title="JWT Auth">
-    The JWT Auth method is used to authenticate with Infisical via a JWT token.
+    The JWT Auth method is used to authenticate with Hanzo KMS via a JWT token.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -246,12 +246,12 @@ The Infisical CLI supports multiple authentication methods for relays. Below are
 
 
     ```bash
-      infisical relay start --auth-method=jwt-auth --jwt=<jwt> --machine-identity-id=<machine-identity-id> --host=<host> --name=<name>
+      kms relay start --auth-method=jwt-auth --jwt=<jwt> --machine-identity-id=<machine-identity-id> --host=<host> --name=<name>
     ```
 
   </Accordion>
   <Accordion title="Token Auth">
-    You can use the `INFISICAL_TOKEN` environment variable to authenticate with Infisical with a raw machine identity access token.
+    You can use the `KMS_TOKEN` environment variable to authenticate with Hanzo KMS with a raw machine identity access token.
 
     <ParamField query="Flags">
       <Expandable title="properties">
@@ -262,7 +262,7 @@ The Infisical CLI supports multiple authentication methods for relays. Below are
     </ParamField>
 
     ```bash
-      infisical relay start --token=<token> --host=<host> --name=<name>
+      kms relay start --token=<token> --host=<host> --name=<name>
     ```
 
   </Accordion>
@@ -270,15 +270,15 @@ The Infisical CLI supports multiple authentication methods for relays. Below are
 
 </Accordion>
 
-<Accordion title="infisical relay systemd" defaultOpen="false">
-  Manage systemd service for Infisical relay. This allows you to install and run the relay as a systemd service on Linux systems.
+<Accordion title="kms relay systemd" defaultOpen="false">
+  Manage systemd service for Hanzo KMS relay. This allows you to install and run the relay as a systemd service on Linux systems.
   ### Requirements
   - **Operating System**: Linux only (systemd is not supported on other operating systems)
   - **Privileges**: Root/sudo privileges required for both install and uninstall operations
   - **Systemd**: The system must be running systemd as the init system
 
 ```bash
-infisical relay systemd <subcommand>
+kms relay systemd <subcommand>
 ```
 
 ### Subcommands
@@ -288,7 +288,7 @@ infisical relay systemd <subcommand>
   Install and enable systemd service for the relay. Must be run with sudo on Linux systems.
 
 ```bash
-sudo infisical relay systemd install --host=<host> --name=<name> --token=<token> [flags]
+sudo kms relay systemd install --host=<host> --name=<name> --token=<token> [flags]
 ```
 
 #### Flags
@@ -299,10 +299,10 @@ sudo infisical relay systemd install --host=<host> --name=<name> --token=<token>
 
 ```bash
 # Example with IP address
-sudo infisical relay systemd install --host=203.0.113.100 --name=my-relay --token=<token>
+sudo kms relay systemd install --host=203.0.113.100 --name=my-relay --token=<token>
 
 # Example with hostname
-sudo infisical relay systemd install --host=relay.example.com --name=my-relay --token=<token>
+sudo kms relay systemd install --host=relay.example.com --name=my-relay --token=<token>
 ```
 
 </Accordion>
@@ -312,27 +312,27 @@ sudo infisical relay systemd install --host=relay.example.com --name=my-relay --
 
 ```bash
 # Example
-sudo infisical relay systemd install --name=my-relay --host=192.168.1.100 --token=<token>
+sudo kms relay systemd install --name=my-relay --host=192.168.1.100 --token=<token>
 ```
 
 </Accordion>
 
 <Accordion title="--token">
-  Connect with Infisical using machine identity access token.
+  Connect with Hanzo KMS using machine identity access token.
 
 ```bash
 # Example
-sudo infisical relay systemd install --token=<machine-identity-token> --host=<host> --name=<name>
+sudo kms relay systemd install --token=<machine-identity-token> --host=<host> --name=<name>
 ```
 
 </Accordion>
 
 <Accordion title="--domain">
-  Domain of your self-hosted Infisical instance. Optional flag for specifying a custom domain.
+  Domain of your self-hosted Hanzo KMS instance. Optional flag for specifying a custom domain.
 
 ```bash
 # Example
-sudo infisical relay systemd install --domain=http://localhost:8080 --token=<token> --host=<host> --name=<name>
+sudo kms relay systemd install --domain=http://localhost:8080 --token=<token> --host=<host> --name=<name>
 ```
 
 </Accordion>
@@ -342,10 +342,10 @@ sudo infisical relay systemd install --domain=http://localhost:8080 --token=<tok
 
 ```bash
 # Install relay with token authentication
-sudo infisical relay systemd install --host=192.168.1.100 --name=my-relay --token=<machine-identity-token>
+sudo kms relay systemd install --host=192.168.1.100 --name=my-relay --token=<machine-identity-token>
 
 # Install with custom domain
-sudo infisical relay systemd install --domain=http://localhost:8080 --token=<token> --host=<host> --name=<name>
+sudo kms relay systemd install --domain=http://localhost:8080 --token=<token> --host=<host> --name=<name>
 ```
 
 #### Post-installation
@@ -353,19 +353,19 @@ sudo infisical relay systemd install --domain=http://localhost:8080 --token=<tok
 After successful installation, the service will be enabled but not started. To start the service:
 
 ```bash
-sudo systemctl start infisical-relay
+sudo systemctl start kms-relay
 ```
 
 To check the service status:
 
 ```bash
-sudo systemctl status infisical-relay
+sudo systemctl status kms-relay
 ```
 
 To view service logs:
 
 ```bash
-sudo journalctl -u infisical-relay -f
+sudo journalctl -u kms-relay -f
 ```
 
 </Accordion>
@@ -374,19 +374,19 @@ sudo journalctl -u infisical-relay -f
   Uninstall and remove systemd service for the relay. Must be run with sudo on Linux systems.
 
 ```bash
-sudo infisical relay systemd uninstall
+sudo kms relay systemd uninstall
 ```
 
 #### Examples
 
 ```bash
 # Uninstall the relay systemd service
-sudo infisical relay systemd uninstall
+sudo kms relay systemd uninstall
 ```
 
 #### What it does
 
-- Stops the `infisical-relay` systemd service if it's running
+- Stops the `kms-relay` systemd service if it's running
 - Disables the service from starting on boot
 - Removes the systemd service file
 - Cleans up the service configuration

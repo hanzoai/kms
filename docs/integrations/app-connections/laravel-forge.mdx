@@ -1,9 +1,9 @@
 ---
 title: "Laravel Forge Connection"
-description: "Learn how to configure a Laravel Forge Connection for Infisical."
+description: "Learn how to configure a Laravel Forge Connection for Hanzo KMS."
 ---
 
-Infisical supports the use of [API Tokens](https://forge.laravel.com/docs/api#create-a-new-api-token) to connect with Laravel Forge.
+Hanzo KMS supports the use of [API Tokens](https://forge.laravel.com/docs/api#create-a-new-api-token) to connect with Laravel Forge.
 
 ## Create Laravel Forge API Token
 
@@ -34,13 +34,13 @@ Infisical supports the use of [API Tokens](https://forge.laravel.com/docs/api#cr
   </Step>
 </Steps>
 
-## Create a Laravel Forge Connection in Infisical
+## Create a Laravel Forge Connection in Hanzo KMS
 
 <Tabs>
-  <Tab title="Infisical UI">
+  <Tab title="Hanzo KMS UI">
     <Steps>
       <Step title="Navigate to App Connections">
-        In your Infisical dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
+        In your Hanzo KMS dashboard, navigate to the **Integrations** tab in the desired project, then select **App Connections**.
         ![App Connections Tab](/images/app-connections/general/add-connection.png)
       </Step>
       <Step title="Select Laravel Forge Connection">
@@ -55,7 +55,7 @@ Infisical supports the use of [API Tokens](https://forge.laravel.com/docs/api#cr
         ![Laravel Forge Connection Modal](/images/app-connections/laravel-forge/app-connection-form.png)
       </Step>
       <Step title="Connection created">
-        After submitting the form, your **Laravel Forge Connection** will be successfully created and ready to use with your Infisical project.
+        After submitting the form, your **Laravel Forge Connection** will be successfully created and ready to use with your Hanzo KMS project.
         ![Laravel Forge Connection Created](/images/app-connections/laravel-forge/app-connection-generated.png)
       </Step>
     </Steps>
@@ -69,7 +69,7 @@ Infisical supports the use of [API Tokens](https://forge.laravel.com/docs/api#cr
 
     ```bash Request
     curl    --request POST \
-            --url https://app.infisical.com/api/v1/app-connections/laravel-forge \
+            --url https://kms.hanzo.ai/api/v1/app-connections/laravel-forge \
             --header 'Content-Type: application/json' \
             --data '{
                 "name": "my-laravel-forge-connection",

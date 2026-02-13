@@ -33,7 +33,7 @@ const getDefaultConfig = (): GitHubClientConfig => ({
 const getHeaders = (token?: string): Record<string, string> => {
   const headers: Record<string, string> = {
     Accept: "application/vnd.github.v3+json",
-    "User-Agent": "Infisical-Upgrade-Path-Tool/1.0",
+    "User-Agent": "Hanzo KMS-Upgrade-Path-Tool/1.0",
     "X-GitHub-Api-Version": "2022-11-28"
   };
 
@@ -50,11 +50,11 @@ const delay = (ms: number): Promise<void> => {
   });
 };
 
-const isMainInfisicalRelease = (tagName: string): boolean => {
+const isMainHanzo KMSRelease = (tagName: string): boolean => {
   if (
-    tagName.startsWith("infisical-cli/") ||
-    tagName.startsWith("infisical-k8-operator/") ||
-    tagName.startsWith("infisical-k8s-operator/")
+    tagName.startsWith("kms-cli/") ||
+    tagName.startsWith("kms-k8-operator/") ||
+    tagName.startsWith("kms-k8s-operator/")
   ) {
     return false;
   }
@@ -62,8 +62,8 @@ const isMainInfisicalRelease = (tagName: string): boolean => {
   const patterns = [
     new RE2(/^v\d+\.\d+\.\d+/),
     new RE2(/^\d+\.\d+\.\d+/),
-    new RE2(/^infisical\/v?\d+\.\d+\.\d+/),
-    new RE2(/^infisical\/v?\d+\.\d+\.\d+[-\w]*/)
+    new RE2(/^kms\/v?\d+\.\d+\.\d+/),
+    new RE2(/^kms\/v?\d+\.\d+\.\d+[-\w]*/)
   ];
 
   return patterns.some((pattern) => pattern.test(tagName));
@@ -75,8 +75,8 @@ const normalizeVersion = (tagName: string): string => {
     return `v${versionMatch[1]}`;
   }
 
-  if (tagName.startsWith("infisical/")) {
-    const withoutPrefix = tagName.replace(new RE2(/^infisical\//), "");
+  if (tagName.startsWith("kms/")) {
+    const withoutPrefix = tagName.replace(new RE2(/^kms\//), "");
     return withoutPrefix.replace(new RE2(/-[a-zA-Z]+$/), "");
   }
   return tagName.replace(new RE2(/-[a-zA-Z]+$/), "");
@@ -88,8 +88,8 @@ const compareVersions = (v1: string, v2: string): number => {
     if (versionMatch) {
       return versionMatch[1];
     }
-    if (v.startsWith("infisical/")) {
-      return v.replace(new RE2(/^infisical\/v?/), "").replace(new RE2(/-[a-zA-Z]+$/), "");
+    if (v.startsWith("kms/")) {
+      return v.replace(new RE2(/^kms\/v?/), "").replace(new RE2(/-[a-zA-Z]+$/), "");
     }
     return v.replace(new RE2(/^v/), "").replace(new RE2(/-[a-zA-Z]+$/), "");
   };
@@ -193,7 +193,7 @@ export const fetchReleases = async (includePrerelease = false): Promise<Formatte
     const requests: Promise<{ data: GitHubRelease[]; rateLimit: RateLimitInfo }>[] = [];
 
     for (let i = 0; i < maxConcurrentRequests && page <= config.maxPagesPerRequest; i += 1, page += 1) {
-      const url = `https://api.github.com/repos/Infisical/infisical/releases?page=${page}&per_page=${config.perPage}`;
+      const url = `https://api.github.com/repos/hanzoai/kms/releases?page=${page}&per_page=${config.perPage}`;
       requests.push(makeRequest<GitHubRelease[]>(url, config));
     }
 
@@ -205,7 +205,7 @@ export const fetchReleases = async (includePrerelease = false): Promise<Formatte
         const { data } = result.value;
         if (data.length > 0) {
           for (const release of data) {
-            if (!release.draft && isMainInfisicalRelease(release.tag_name)) {
+            if (!release.draft && isMainHanzo KMSRelease(release.tag_name)) {
               if (isVersionAtLeastMinimum(release.tag_name)) {
                 allReleases.push(release);
               } else {
