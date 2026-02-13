@@ -95,7 +95,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {_children}
         {isPending && (
           <Lottie
-            icon={variant === "default" ? "hanzo_loading_bw" : "hanzo_loading_white"}
+            icon={variant === "neutral" ? "hanzo_loading_bw" : "hanzo_loading_white"}
             isAutoPlay
             className="absolute w-8 rounded-xl"
           />

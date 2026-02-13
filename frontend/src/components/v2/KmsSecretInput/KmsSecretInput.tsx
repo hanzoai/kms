@@ -70,7 +70,7 @@ type ReferenceItem = {
   slug: string;
 };
 
-export const HanzoSecretInput = forwardRef<HTMLTextAreaElement, Props>(
+export const KmsSecretInput = forwardRef<HTMLTextAreaElement, Props>(
   (
     {
       value = "",
@@ -547,4 +547,4 @@ export const HanzoSecretInput = forwardRef<HTMLTextAreaElement, Props>(
   }
 );
 
-HanzoSecretInput.displayName = "HanzoSecretInput";
+KmsSecretInput.displayName = "KmsSecretInput";
