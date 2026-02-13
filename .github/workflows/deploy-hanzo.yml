@@ -191,9 +191,16 @@ jobs:
       - name: Wait for rollout
         run: |
           kubectl rollout status deployment/kms -n hanzo --timeout=600s || {
-            echo "Rollout timed out. Checking pod status..."
+            echo "=== Rollout timed out ==="
+            echo "--- Pod status ---"
             kubectl get pods -l app=kms -n hanzo
-            kubectl describe pods -l app=kms -n hanzo | tail -50
+            echo "--- Pod events ---"
+            kubectl describe pods -l app=kms -n hanzo | tail -60
+            echo "--- Container logs (new pod) ---"
+            NEW_POD=$(kubectl get pods -l app=kms -n hanzo --sort-by=.metadata.creationTimestamp -o jsonpath='{.items[-1].metadata.name}')
+            kubectl logs "$NEW_POD" -n hanzo --tail=100 2>&1 || true
+            echo "--- Previous container logs ---"
+            kubectl logs "$NEW_POD" -n hanzo --previous --tail=100 2>&1 || true
             exit 1
           }
 
