@@ -178,8 +178,18 @@ jobs:
             echo "tag=latest" >> $GITHUB_OUTPUT
           fi
 
+      - name: Configure registry credentials
+        run: |
+          # Ensure DO registry credentials exist for image pulls
+          doctl registry kubernetes-manifest | kubectl apply -f -
+          kubectl patch serviceaccount default -n hanzo \
+            -p '{"imagePullSecrets": [{"name": "registry-hanzoai"}]}' 2>/dev/null || true
+
       - name: Update Kubernetes deployment
         run: |
+          # Patch deployment to use DO registry image pull secret
+          kubectl patch deployment kms -n hanzo \
+            -p '{"spec":{"template":{"spec":{"imagePullSecrets":[{"name":"registry-hanzoai"}]}}}}' 2>/dev/null || true
           kubectl set image deployment/kms \
             kms=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.image.outputs.tag }} \
             -n hanzo
