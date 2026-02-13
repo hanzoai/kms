@@ -30,7 +30,7 @@ export async function up(knex: Knex): Promise<void> {
       t.uuid("id").primary().defaultTo(knex.fn.uuid());
       t.uuid("orgId").notNullable();
       t.foreign("orgId").references("id").inTable(TableName.Organization).onDelete("CASCADE");
-      t.uuid("projectId");
+      t.string("projectId");
       t.foreign("projectId").references("id").inTable(TableName.Project).onDelete("SET NULL");
       t.string("name").notNullable();
       t.string("walletId").notNullable(); // MPC wallet identifier
