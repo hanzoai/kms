@@ -14,7 +14,7 @@ import { EditSecretRotationV2Modal } from "@app/components/secret-rotations-v2/E
 import { ReconcileLocalAccountRotationModal } from "@app/components/secret-rotations-v2/ReconcileLocalAccountRotationModal";
 import { RotateSecretRotationV2Modal } from "@app/components/secret-rotations-v2/RotateSecretRotationV2Modal";
 import { ViewSecretRotationV2GeneratedCredentialsModal } from "@app/components/secret-rotations-v2/ViewSecretRotationV2GeneratedCredentials";
-import { Lottie, Modal, ModalContent, PageHeader } from "@app/components/v2";
+import { HanzoLogoLoader, Modal, ModalContent, PageHeader } from "@app/components/v2";
 import {
   Button,
   Checkbox,
@@ -894,7 +894,7 @@ export const OverviewPage = () => {
   if (isProjectV3 && visibleEnvs.length > 0 && isOverviewLoading) {
     return (
       <div className="container mx-auto flex h-screen w-full items-center justify-center px-8 text-mineshaft-50 dark:scheme-dark">
-        <Lottie isAutoPlay icon="hanzo_loading" className="h-32 w-32" />
+        <HanzoLogoLoader size="lg" />
       </div>
     );
   }

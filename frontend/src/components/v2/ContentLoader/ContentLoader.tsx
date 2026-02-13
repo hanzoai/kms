@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { twMerge } from "tailwind-merge";
 
-import { Lottie } from "../Lottie";
+import { HanzoLogoLoader } from "../HanzoLogoLoader";
 
 type Props = {
   text?: string | string[];
@@ -14,7 +14,7 @@ type Props = {
   lottieClassName?: string;
 };
 
-export const ContentLoader = ({ text, frequency = 2000, className, lottieClassName }: Props) => {
+export const ContentLoader = ({ text, frequency = 2000, className }: Props) => {
   const [pos, setPos] = useState(0);
   const isTextArray = Array.isArray(text);
   useEffect(() => {
@@ -34,11 +34,7 @@ export const ContentLoader = ({ text, frequency = 2000, className, lottieClassNa
         className
       )}
     >
-      <Lottie
-        isAutoPlay
-        icon="hanzo_loading"
-        className={twMerge("h-32 w-32", lottieClassName)}
-      />
+      <HanzoLogoLoader size="lg" />
       {text && isTextArray && (
         <AnimatePresence mode="wait">
           <motion.div

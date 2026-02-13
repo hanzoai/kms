@@ -8,7 +8,7 @@ import { addSeconds, formatISO } from "date-fns";
 import { twMerge } from "tailwind-merge";
 
 import { createNotification } from "@app/components/notifications";
-import { Lottie } from "@app/components/v2";
+import { HanzoLogoLoader } from "@app/components/v2";
 import { SessionStorageKeys } from "@app/const";
 import { ROUTE_PATHS } from "@app/const/routes";
 import { TBrandingConfig, useGetSecretRequestById } from "@app/hooks/api/secretSharing";
@@ -160,7 +160,7 @@ export const ViewSecretRequestByIDPage = () => {
   if (isPending) {
     return (
       <div className="flex h-screen w-screen items-center justify-center bg-bunker-800">
-        <Lottie isAutoPlay icon="hanzo_loading" className="h-32 w-32" />
+        <HanzoLogoLoader size="lg" />
       </div>
     );
   }
