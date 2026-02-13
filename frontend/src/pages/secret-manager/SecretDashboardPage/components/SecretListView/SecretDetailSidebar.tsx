@@ -42,7 +42,7 @@ import {
   TextArea,
   Tooltip
 } from "@app/components/v2";
-import { HanzoSecretInput } from "@app/components/v2/HanzoSecretInput";
+import { KmsSecretInput } from "@app/components/v2/KmsSecretInput";
 import {
   ProjectPermissionActions,
   ProjectPermissionSub,
@@ -425,7 +425,7 @@ export const SecretDetailSidebar = ({
                       label="Value"
                     >
                       <div className="flex items-start gap-x-2">
-                        <HanzoSecretInput
+                        <KmsSecretInput
                           isReadOnly={
                             isReadOnly ||
                             !isAllowed ||

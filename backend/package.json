@@ -60,7 +60,6 @@
     "validate-upgrade-path": "tsx ./scripts/validate-upgrade-path-file.ts"
   },
   "keywords": [],
-  "author": "",
   "license": "ISC",
   "overrides": {
     "cipher-base": "1.0.5",
