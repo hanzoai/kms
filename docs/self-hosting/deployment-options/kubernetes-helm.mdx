@@ -803,6 +803,15 @@ redis:
           # -- KMS organization to create in the KMS instance during auto-bootstrap
           organization: "default-org"
 
+          # -- Additional organizations to ensure exist in KMS after bootstrap
+          additionalOrganizations: []
+
+          # -- Organization admin emails for additionalOrganizations. If empty, defaults to KMS_ADMIN_EMAIL from credentialSecret.
+          additionalOrganizationAdminEmails: []
+
+          # -- Secret key in secretDestination that contains the bootstrap machine identity token used for additionalOrganizations.
+          additionalOrganizationsTokenSecretKey: "token"
+
           credentialSecret:
             # -- Name of the Kubernetes secret containing the credentials for the auto-bootstrap workflow
             name: "kms-bootstrap-credentials"

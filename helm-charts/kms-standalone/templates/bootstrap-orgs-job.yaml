@@ -1,0 +1,170 @@
+{{- $kmsValues := .Values.kms }}
+{{- $additionalOrgs := $kmsValues.autoBootstrap.additionalOrganizations | default (list) }}
+{{- $adminEmails := $kmsValues.autoBootstrap.additionalOrganizationAdminEmails | default (list) }}
+{{- if and $kmsValues.autoBootstrap.enabled (gt (len $additionalOrgs) 0) }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Release.Name }}-bootstrap-orgs-{{ .Release.Revision }}"
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "11"
+    "helm.sh/hook-delete-policy": before-hook-creation
+  labels:
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  backoffLimit: 3
+  template:
+    metadata:
+      name: "{{ .Release.Name }}-bootstrap-orgs"
+      labels:
+        app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+        app.kubernetes.io/instance: {{ .Release.Name | quote }}
+        helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    spec:
+      serviceAccountName: {{ include "kms.serviceAccountName" . }}
+    {{- if $kmsValues.image.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml $kmsValues.image.imagePullSecrets | nindent 6 }}
+    {{- end }}
+      restartPolicy: OnFailure
+      initContainers:
+      - name: wait-for-kms
+        image: curlimages/curl:8.14.1
+        command: ['sh', '-c']
+        args:
+        - |
+          echo "Waiting for KMS to be ready..."
+          until curl -f http://{{ include "kms.fullname" . }}:8080/api/status; do
+            echo "KMS not ready yet, retrying in 10 seconds..."
+            sleep 10
+          done
+          echo "KMS is ready! Proceeding with additional org bootstrap..."
+      containers:
+      - name: kms-bootstrap-orgs
+        image: curlimages/curl:8.14.1
+        imagePullPolicy: IfNotPresent
+        command: ["sh", "-ec"]
+        args:
+        - |
+          set -eu
+
+          SECRET_NAME="{{ $kmsValues.autoBootstrap.secretDestination.name }}"
+          SECRET_NAMESPACE="{{ $kmsValues.autoBootstrap.secretDestination.namespace | default .Release.Namespace }}"
+          TOKEN_KEY="${BOOTSTRAP_TOKEN_KEY:-token}"
+          KMS_BASE_URL="http://{{ include "kms.fullname" . }}:8080"
+          ADDITIONAL_ORGS="${ADDITIONAL_ORGS:-}"
+          ADMIN_EMAILS="${ADDITIONAL_ORG_ADMIN_EMAILS:-}"
+
+          if [ -z "$ADDITIONAL_ORGS" ]; then
+            echo "No additional organizations configured. Exiting."
+            exit 0
+          fi
+
+          if [ -z "$ADMIN_EMAILS" ] && [ -n "${KMS_ADMIN_EMAIL:-}" ]; then
+            ADMIN_EMAILS="$KMS_ADMIN_EMAIL"
+          fi
+
+          if [ -z "$ADMIN_EMAILS" ]; then
+            echo "No admin emails configured for additional organizations."
+            exit 1
+          fi
+
+          K8S_API="https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS}"
+          SA_TOKEN="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
+          SA_CA="/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+
+          KMS_TOKEN=""
+          attempt=1
+          while [ "$attempt" -le 30 ]; do
+            SECRET_JSON="$(curl -fsS --cacert "$SA_CA" -H "Authorization: Bearer ${SA_TOKEN}" "${K8S_API}/api/v1/namespaces/${SECRET_NAMESPACE}/secrets/${SECRET_NAME}" || true)"
+            TOKEN_B64="$(printf '%s' "$SECRET_JSON" | tr -d '\n' | sed -n "s/.*\"${TOKEN_KEY}\":\"\\([^\"]*\\)\".*/\\1/p")"
+
+            if [ -n "$TOKEN_B64" ]; then
+              KMS_TOKEN="$(printf '%s' "$TOKEN_B64" | base64 --decode 2>/dev/null || printf '%s' "$TOKEN_B64" | base64 -d 2>/dev/null || true)"
+            fi
+
+            if [ -n "$KMS_TOKEN" ]; then
+              break
+            fi
+
+            echo "Bootstrap token not available yet in secret ${SECRET_NAMESPACE}/${SECRET_NAME}; retrying (${attempt}/30)..."
+            attempt=$((attempt + 1))
+            sleep 5
+          done
+
+          if [ -z "$KMS_TOKEN" ]; then
+            echo "Failed to read bootstrap token from secret ${SECRET_NAMESPACE}/${SECRET_NAME}."
+            exit 1
+          fi
+
+          EXISTING="$(curl -fsS -H "Authorization: Bearer ${KMS_TOKEN}" "${KMS_BASE_URL}/api/v1/admin/organization-management/organizations?offset=0&limit=200")"
+
+          OLD_IFS="$IFS"
+          IFS=','
+          for ORG in $ADDITIONAL_ORGS; do
+            ORG_TRIM="$(echo "$ORG" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')"
+            if [ -z "$ORG_TRIM" ]; then
+              continue
+            fi
+
+            if printf '%s' "$EXISTING" | tr -d '\n' | grep -Fq "\"name\":\"${ORG_TRIM}\""; then
+              echo "Organization ${ORG_TRIM} already exists."
+              continue
+            fi
+
+            INVITE_JSON=""
+            for EMAIL in $ADMIN_EMAILS; do
+              EMAIL_TRIM="$(echo "$EMAIL" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')"
+              if [ -z "$EMAIL_TRIM" ]; then
+                continue
+              fi
+              if [ -n "$INVITE_JSON" ]; then
+                INVITE_JSON="${INVITE_JSON},"
+              fi
+              INVITE_JSON="${INVITE_JSON}\"${EMAIL_TRIM}\""
+            done
+
+            if [ -z "$INVITE_JSON" ]; then
+              echo "No valid admin emails were provided for organization ${ORG_TRIM}."
+              exit 1
+            fi
+
+            PAYLOAD="$(printf '{"name":"%s","inviteAdminEmails":[%s]}' "$ORG_TRIM" "$INVITE_JSON")"
+            RESPONSE="$(curl -sS -w '\n%{http_code}' \
+              -X POST \
+              -H "Authorization: Bearer ${KMS_TOKEN}" \
+              -H "Content-Type: application/json" \
+              -d "$PAYLOAD" \
+              "${KMS_BASE_URL}/api/v1/admin/organization-management/organizations")"
+            BODY="$(printf '%s' "$RESPONSE" | sed '$d')"
+            CODE="$(printf '%s' "$RESPONSE" | tail -n1)"
+
+            if [ "$CODE" -ge 200 ] && [ "$CODE" -lt 300 ]; then
+              echo "Created organization ${ORG_TRIM}."
+              EXISTING="${EXISTING}\"name\":\"${ORG_TRIM}\""
+              continue
+            fi
+
+            if printf '%s' "$BODY" | grep -Eiq "already|exists|duplicate"; then
+              echo "Organization ${ORG_TRIM} already exists (API reported duplicate)."
+              EXISTING="${EXISTING}\"name\":\"${ORG_TRIM}\""
+              continue
+            fi
+
+            echo "Failed to create organization ${ORG_TRIM}. HTTP ${CODE}."
+            echo "$BODY"
+            exit 1
+          done
+          IFS="$OLD_IFS"
+        env:
+        - name: ADDITIONAL_ORGS
+          value: {{ join "," $additionalOrgs | quote }}
+        - name: ADDITIONAL_ORG_ADMIN_EMAILS
+          value: {{ join "," $adminEmails | quote }}
+        - name: BOOTSTRAP_TOKEN_KEY
+          value: {{ $kmsValues.autoBootstrap.additionalOrganizationsTokenSecretKey | default "token" | quote }}
+        envFrom:
+        - secretRef:
+            name: {{ $kmsValues.autoBootstrap.credentialSecret.name }}
+{{- end }}

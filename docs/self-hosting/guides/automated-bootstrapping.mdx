@@ -129,6 +129,16 @@ You can bootstrap an KMS instance using the API, CLI, or Helm chart.
     autoBootstrap:
       enabled: true
       organization: "My Organization"
+      additionalOrganizations:
+        - "Hanzo"
+        - "Lux"
+        - "Zoo"
+        - "Pars"
+      # optional; defaults to KMS_ADMIN_EMAIL from credentialSecret when omitted
+      additionalOrganizationAdminEmails:
+        - "z@hanzo.ai"
+      # optional; defaults to "token" and must match the token key in secretTemplate
+      additionalOrganizationsTokenSecretKey: "token"
       secretTemplate: '{"data":{"token":"{{.Identity.Credentials.Token}}"}}'
 
       secretDestination:
@@ -157,6 +167,7 @@ You can bootstrap an KMS instance using the API, CLI, or Helm chart.
     3. **Bootstrap Execution**: Uses the KMS CLI to bootstrap the instance
     4. **Kubernetes Secret Creation**: Creates a Kubernetes secret directly via the Kubernetes API using the rendered template
     5. **RBAC**: Automatically configures the necessary permissions (`get`, `create`, `update` on secrets) for the bootstrap job
+    6. **Additional Organization Reconciliation**: Optionally creates any missing organizations listed in `additionalOrganizations` and assigns org-admin access using `additionalOrganizationAdminEmails` (or `KMS_ADMIN_EMAIL` by default)
 
     ### Template System
 
