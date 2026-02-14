@@ -203,7 +203,7 @@ export const InitialStep = ({
               leftIcon={<FontAwesomeIcon icon={faLock} className="mr-2" />}
               className="mx-0 h-10 w-full"
             >
-              Continue with OIDC
+              Continue with Hanzo ID
             </Button>
           </div>
         )}
@@ -217,7 +217,7 @@ export const InitialStep = ({
       className="mx-auto flex w-full flex-col items-center justify-center"
     >
       <h1 className="mb-8 bg-linear-to-b from-white to-bunker-200 bg-clip-text text-center text-xl font-medium text-transparent">
-        Login to KMS
+        Login to Hanzo KMS
       </h1>
       <RegionSelect />
       {shouldDisplayLoginMethod(LoginMethod.SAML) && (
@@ -242,7 +242,7 @@ export const InitialStep = ({
             leftIcon={<FontAwesomeIcon icon={faLock} className="mr-2" />}
             className="mx-0 h-10 w-full"
           >
-            Continue with OIDC
+            Continue with Hanzo ID
           </Button>
         </div>
       )}

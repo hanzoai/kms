@@ -62,7 +62,7 @@ export const SSOStep = ({ setStep, type }: Props) => {
             isFullWidth
             className="h-14"
           >
-            Continue with {type}
+            Continue with {type === "OIDC" ? "Hanzo ID" : type}
           </Button>
         </div>
       </form>
