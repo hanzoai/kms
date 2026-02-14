@@ -72,7 +72,7 @@ const DYNAMIC_SECRET_LIST = [
   {
     icon: <DiRedis size="2rem" />,
     provider: DynamicSecretProviders.Redis,
-    title: "Redis"
+    title: "Hanzo KV"
   },
   {
     icon: <FontAwesomeIcon icon={faAws} size="lg" />,

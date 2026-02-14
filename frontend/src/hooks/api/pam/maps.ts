@@ -13,7 +13,7 @@ export const PAM_RESOURCE_TYPE_MAP: Record<
   [PamResourceType.SQLite]: { name: "SQLite", image: "SQLite.png" },
   [PamResourceType.MsSQL]: { name: "Microsoft SQL Server", image: "MsSql.png" },
   [PamResourceType.MCP]: { name: "MCP", image: "MCP.png" },
-  [PamResourceType.Redis]: { name: "Redis", image: "Redis.png" },
+  [PamResourceType.Redis]: { name: "Hanzo KV", image: "Redis.png" },
   [PamResourceType.MongoDB]: { name: "MongoDB", image: "MongoDB.png" },
   [PamResourceType.WebApp]: { name: "Web Application", image: "Web.png" },
   [PamResourceType.Cassandra]: { name: "Cassandra", image: "Cassandra.png", size: 55 },

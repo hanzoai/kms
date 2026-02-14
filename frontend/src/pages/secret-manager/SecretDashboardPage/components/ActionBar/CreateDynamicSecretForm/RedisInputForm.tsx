@@ -229,7 +229,7 @@ export const RedisInputForm = ({
                   name="provider.password"
                   render={({ field, fieldState: { error } }) => (
                     <FormControl
-                      tooltipText="Required if your Redis instance is password protected."
+                      tooltipText="Required if your Hanzo KV instance is password protected."
                       label="Password"
                       className="w-full"
                       isError={Boolean(error?.message)}
@@ -260,7 +260,7 @@ export const RedisInputForm = ({
                 />
                 <Accordion type="single" collapsible className="mb-2 w-full bg-mineshaft-700">
                   <AccordionItem value="advance-statements">
-                    <AccordionTrigger>Modify Redis Statements</AccordionTrigger>
+                    <AccordionTrigger>Modify Hanzo KV Statements</AccordionTrigger>
                     <AccordionContent>
                       <Controller
                         control={control}

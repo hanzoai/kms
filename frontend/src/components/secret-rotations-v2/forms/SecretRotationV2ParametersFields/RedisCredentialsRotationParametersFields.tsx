@@ -26,8 +26,8 @@ export const RedisCredentialsRotationParametersFields = () => {
               tooltipText={
                 <div className="flex flex-col gap-4">
                   <p>
-                    This is the access control permissions that will be set for the issued Redis
-                    users. The format must be a valid Redis ACL pattern.
+                    This is the access control permissions that will be set for the issued Hanzo KV
+                    users. The format must be a valid Hanzo KV ACL pattern.
                   </p>
                   <p>
                     The default value is{" "}
@@ -44,7 +44,7 @@ export const RedisCredentialsRotationParametersFields = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      Redis ACL documentation
+                      Hanzo KV ACL documentation
                     </a>
                     .
                   </p>

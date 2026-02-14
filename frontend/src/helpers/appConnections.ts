@@ -135,7 +135,7 @@ export const APP_CONNECTION_MAP: Record<
   },
   [AppConnection.Northflank]: { name: "Northflank", image: "Northflank.png" },
   [AppConnection.Okta]: { name: "Okta", image: "Okta.png" },
-  [AppConnection.Redis]: { name: "Redis", image: "Redis.png" },
+  [AppConnection.Redis]: { name: "Hanzo KV", image: "Redis.png" },
   [AppConnection.MongoDB]: { name: "MongoDB", image: "MongoDB.png" },
   [AppConnection.LaravelForge]: {
     name: "Laravel Forge",

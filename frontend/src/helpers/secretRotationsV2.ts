@@ -51,7 +51,7 @@ export const SECRET_ROTATION_MAP: Record<
     size: 50
   },
   [SecretRotation.RedisCredentials]: {
-    name: "Redis Credentials",
+    name: "Hanzo KV Credentials",
     image: "Redis.png",
     size: 50
   },

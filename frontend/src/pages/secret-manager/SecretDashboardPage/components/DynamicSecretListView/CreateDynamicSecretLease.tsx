@@ -183,9 +183,9 @@ const renderOutputForm = (
 
     return (
       <div>
-        <OutputDisplay label="Redis Username" value={DB_USERNAME} />
+        <OutputDisplay label="Hanzo KV Username" value={DB_USERNAME} />
         <OutputDisplay
-          label="Redis Password"
+          label="Hanzo KV Password"
           value={DB_PASSWORD}
           helperText="Important: Copy these credentials now. You will not be able to see them again after you close the modal."
         />
