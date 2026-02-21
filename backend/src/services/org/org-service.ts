@@ -164,6 +164,16 @@ export const orgServiceFactory = ({
     rootOrgId: string;
     actorOrgId: string;
   }) => {
+    // Ensure the requested orgId matches the actor's token-scoped org to prevent
+    // IDOR where a user requests one org ID but gets back data for a different org
+    // from their auth token. The permission check below validates membership, but
+    // we must also ensure the returned data corresponds to the requested resource.
+    if (orgId !== actorOrgId && orgId !== rootOrgId) {
+      throw new ForbiddenRequestError({
+        message: `Cannot access organization with ID '${orgId}' using a token scoped to a different organization.`
+      });
+    }
+
     await permissionService.getOrgPermission({
       actor: ActorType.USER,
       actorId: userId,

@@ -923,6 +923,22 @@ export const superAdminServiceFactory = ({
   };
 
   const deleteOrganization = async (organizationId: string) => {
+    // Prevent deleting the organization that contains the instance admin identity.
+    // Doing so would orphan the bootstrap machine identity and could lock out the instance.
+    const serverCfg = await getServerCfg();
+    if (serverCfg.adminIdentityIds?.length) {
+      for (const adminIdentityId of serverCfg.adminIdentityIds) {
+        // eslint-disable-next-line no-await-in-loop
+        const adminIdentity = await identityDAL.findById(adminIdentityId);
+        if (adminIdentity && adminIdentity.orgId === organizationId) {
+          throw new BadRequestError({
+            message:
+              "Cannot delete this organization because it contains an instance admin identity. Remove the admin identity first or move it to another organization."
+          });
+        }
+      }
+    }
+
     const organization = await orgDAL.deleteById(organizationId);
     return organization;
   };

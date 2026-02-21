@@ -1424,6 +1424,19 @@ export const secretV2BridgeServiceFactory = ({
       });
     }
 
+    // Verify org ownership before exposing any secret metadata.
+    // getProjectPermission checks actorOrgId matches project.orgId, but we
+    // perform an early check here so that even error messages do not leak
+    // cross-org information (e.g. folder-not-found for a secret that belongs
+    // to a different org).
+    const secretProject = await projectDAL.findById(secret.projectId);
+    if (!secretProject || secretProject.orgId !== actorOrgId) {
+      throw new NotFoundError({
+        message: `Secret with ID '${secretId}' not found`,
+        name: "GetSecretById"
+      });
+    }
+
     const [folderWithPath] = await folderDAL.findSecretPathByFolderIds(secret.projectId, [secret.folderId]);
 
     if (!folderWithPath) {
