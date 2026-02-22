@@ -51,7 +51,7 @@ import { TReminderServiceFactory } from "../reminder/reminder-types";
 import { TResourceMetadataDALFactory } from "../resource-metadata/resource-metadata-dal";
 import { ResourceMetadataWithEncryptionDTO } from "../resource-metadata/resource-metadata-schema";
 import { TSecretQueueFactory } from "../secret/secret-queue";
-import { TGetASecretByIdDTO } from "../secret/secret-types";
+import { PersonalOverridesBehavior, TGetASecretByIdDTO, TRedactSecretVersionValueDTO } from "../secret/secret-types";
 import { TSecretFolderDALFactory } from "../secret-folder/secret-folder-dal";
 import { TSecretImportDALFactory } from "../secret-import/secret-import-dal";
 import { fnSecretsV2FromImports } from "../secret-import/secret-import-fns";
@@ -1109,6 +1109,8 @@ export const secretV2BridgeServiceFactory = ({
       includeImports,
       recursive,
       expandSecretReferences: shouldExpandSecretReferences,
+      expandPersonalOverrides,
+      personalOverridesBehavior,
       throwOnMissingReadValuePermission = true,
       ...params
     } = dto;
@@ -1196,12 +1198,41 @@ export const secretV2BridgeServiceFactory = ({
 
     const groupedPaths = groupBy(paths, (p) => p.folderId);
 
-    const secrets = await secretDAL.findByFolderIds({
+    const unfilteredSecrets = await secretDAL.findByFolderIds({
       folderIds: paths.map((p) => p.folderId),
       userId: actorId,
       tx: undefined,
       filters: params
     });
+
+    let secrets: typeof unfilteredSecrets = [];
+
+    if (personalOverridesBehavior === PersonalOverridesBehavior.IncludeAll) {
+      secrets = unfilteredSecrets;
+    } else if (personalOverridesBehavior === PersonalOverridesBehavior.NeverInclude) {
+      secrets = unfilteredSecrets.filter((el) => el.type === SecretType.Shared);
+    } else if (personalOverridesBehavior === PersonalOverridesBehavior.Priority) {
+      // if include personaloverrides is enabled, personal overrides should take PRIORITY over shared secrets.
+      // this means if the secrets array already contains a shared secret of the same secret, and the current element is a personal secret, we should replace the existing shared secret with the personal secret.
+      // the TLDR is that we should always ensure that there is only ever 1 secret with the same key (in the same folder). and if personal secrets are included, they should take priorty.
+      const secretMap = new Map<string, (typeof unfilteredSecrets)[number]>();
+
+      unfilteredSecrets.forEach((el) => {
+        const key = `${el.key}-${el.folderId}`;
+        const existing = secretMap.get(key);
+
+        if (!existing) {
+          // no duplicate, add it (might be shared, might be personal)
+          secretMap.set(key, el);
+        } else if (el.type === SecretType.Personal) {
+          // duplicate found and current is personal, replace (personal takes priority)
+          secretMap.set(key, el);
+        }
+        // if duplicate found but current is shared, keep existing (which might be personal)
+      });
+
+      secrets = Array.from(secretMap.values());
+    }
 
     // scott: if any of this changes it also needs to be mirrored in secret rotation for getting dashboard secrets
     const decryptedSecrets = secrets
@@ -1301,7 +1332,13 @@ export const secretV2BridgeServiceFactory = ({
           secretPath: expandSecretPath,
           secretName: expandSecretKey,
           secretTags: expandSecretTags
-        })
+        }),
+      userId:
+        (personalOverridesBehavior === PersonalOverridesBehavior.Priority ||
+          personalOverridesBehavior === PersonalOverridesBehavior.IncludeAll) &&
+        expandPersonalOverrides
+          ? actorId
+          : undefined
     });
 
     if (shouldExpandSecretReferences) {
@@ -1515,7 +1552,8 @@ export const secretV2BridgeServiceFactory = ({
     version,
     viewSecretValue,
     includeImports,
-    expandSecretReferences: shouldExpandSecretReferences
+    expandSecretReferences: shouldExpandSecretReferences,
+    expandPersonalOverrides
   }: TGetASecretDTO) => {
     const { permission } = await permissionService.getProjectPermission({
       actor,
@@ -1604,7 +1642,8 @@ export const secretV2BridgeServiceFactory = ({
           secretName: expandSecretKey,
           secretTags: expandSecretTags
         });
-      }
+      },
+      userId: secretType === SecretType.Personal && expandPersonalOverrides ? actorId : undefined
     });
 
     // now if secret is not found
@@ -2620,6 +2659,7 @@ export const secretV2BridgeServiceFactory = ({
         sort: [["createdAt", "desc"]]
       }
     });
+
     return secretVersions.map((el) => {
       const secretValueHidden = !hasSecretReadValueOrDescribePermission(
         permission,
@@ -2634,17 +2674,31 @@ export const secretV2BridgeServiceFactory = ({
         }
       );
 
-      return reshapeBridgeSecret(
-        folder.projectId,
-        folder.environment.envSlug,
-        folderWithPath.path,
-        {
-          ...el,
-          value: el.encryptedValue ? secretManagerDecryptor({ cipherTextBlob: el.encryptedValue }).toString() : "",
-          comment: el.encryptedComment ? secretManagerDecryptor({ cipherTextBlob: el.encryptedComment }).toString() : ""
-        },
-        secretValueHidden
-      );
+      return {
+        ...reshapeBridgeSecret(
+          folder.projectId,
+          folder.environment.envSlug,
+          folderWithPath.path,
+          {
+            ...el,
+            value: el.encryptedValue ? secretManagerDecryptor({ cipherTextBlob: el.encryptedValue }).toString() : "",
+            comment: el.encryptedComment
+              ? secretManagerDecryptor({ cipherTextBlob: el.encryptedComment }).toString()
+              : ""
+          },
+          secretValueHidden
+        ),
+        redactedByActor: el.isRedacted
+          ? {
+              username: el.redactedByUserName,
+              email: el.redactedByUserEmail,
+              projectMembershipId: el.redactedByMembershipId
+            }
+          : null,
+        isRedacted: el.isRedacted,
+        redactedAt: el.redactedAt || null,
+        redactedByUserId: el.redactedByUserId || null
+      };
     });
   };
 
@@ -3629,30 +3683,173 @@ export const secretV2BridgeServiceFactory = ({
         }
       );
 
-      return reshapeBridgeSecret(
-        projectId,
-        environment.slug,
-        secretPath,
-        {
-          ...el,
-          secretMetadata: (el.metadata as { key: string; value?: string; encryptedValue: string }[])?.map((meta) => ({
-            isEncrypted: Boolean(meta.encryptedValue),
-            key: meta.key,
-            value: meta.encryptedValue
-              ? secretManagerDecryptor({ cipherTextBlob: Buffer.from(meta.encryptedValue, "base64") }).toString()
-              : meta.value || ""
-          })),
-          value: el.encryptedValue ? secretManagerDecryptor({ cipherTextBlob: el.encryptedValue }).toString() : "",
-          comment: el.encryptedComment ? secretManagerDecryptor({ cipherTextBlob: el.encryptedComment }).toString() : ""
-        },
-        secretValueHidden
-      );
+      return {
+        ...reshapeBridgeSecret(
+          projectId,
+          environment.slug,
+          secretPath,
+          {
+            ...el,
+            secretMetadata: (el.metadata as { key: string; value?: string; encryptedValue: string }[])?.map((meta) => ({
+              isEncrypted: Boolean(meta.encryptedValue),
+              key: meta.key,
+              value: meta.encryptedValue
+                ? secretManagerDecryptor({ cipherTextBlob: Buffer.from(meta.encryptedValue, "base64") }).toString()
+                : meta.value || ""
+            })),
+            value: el.encryptedValue ? secretManagerDecryptor({ cipherTextBlob: el.encryptedValue }).toString() : "",
+            comment: el.encryptedComment
+              ? secretManagerDecryptor({ cipherTextBlob: el.encryptedComment }).toString()
+              : ""
+          },
+          secretValueHidden
+        ),
+        isRedacted: el.isRedacted,
+        redactedAt: el.redactedAt || null,
+        redactedByUserId: el.redactedByUserId || null
+      };
     });
   };
 
   const findSecretIdsByFolderIdAndKeys = async ({ folderId, keys }: { folderId: string; keys: string[] }) => {
     const secrets = await secretDAL.find({ folderId, $in: { [`${TableName.SecretV2}.key` as "key"]: keys } });
     return secrets.map((el) => ({ id: el.id, key: el.key }));
+  };
+
+  const redactSecretVersionValue = async ({
+    versionId,
+    actor,
+    actorId,
+    actorOrgId,
+    actorAuthMethod
+  }: TRedactSecretVersionValueDTO) => {
+    const secretVersion = await secretVersionDAL.findOne({ id: versionId });
+
+    if (!secretVersion) {
+      throw new NotFoundError({ message: `Secret version with ID '${versionId}' not found` });
+    }
+    const secret = await secretDAL.findOne({ id: secretVersion.secretId });
+
+    if (!secret) {
+      throw new NotFoundError({ message: `Secret with ID '${secretVersion.secretId}' not found` });
+    }
+
+    const [folderWithPath] = await folderDAL.findSecretPathByFolderIds(secretVersion.projectId, [
+      secretVersion.folderId
+    ]);
+
+    if (!folderWithPath) {
+      throw new NotFoundError({ message: `Folder path for folder with ID '${secretVersion.folderId}' not found` });
+    }
+
+    const { permission } = await permissionService.getProjectPermission({
+      actor,
+      actorId,
+      projectId: secretVersion.projectId,
+      actorAuthMethod,
+      actorOrgId,
+      actionProjectType: ActionProjectType.SecretManager
+    });
+
+    ForbiddenError.from(permission).throwUnlessCan(
+      ProjectPermissionSecretActions.Edit,
+      subject(ProjectPermissionSub.Secrets, {
+        environment: folderWithPath.environmentSlug,
+        secretPath: folderWithPath.path,
+        secretName: secret.key,
+        secretTags: secret.tags.map((i) => i.slug)
+      })
+    );
+
+    if (secretVersion.isRedacted) {
+      throw new BadRequestError({ message: `Secret version with ID '${versionId}' is already redacted` });
+    }
+
+    // check if its the latest version
+    const latestVersions = await secretVersionDAL.findByIdsWithLatestVersion(secretVersion.folderId, [
+      secretVersion.secretId
+    ]);
+
+    const latestVersion = latestVersions[secretVersion.secretId];
+
+    if (!latestVersion) {
+      throw new BadRequestError({ message: "Failed to find latest version" });
+    }
+
+    if (latestVersion.version === secretVersion.version) {
+      throw new BadRequestError({ message: "Cannot redact the latest version" });
+    }
+
+    const { encryptor: secretManagerEncryptor } = await kmsService.createCipherPairWithDataKey({
+      type: KmsDataKey.SecretManager,
+      projectId: secretVersion.projectId
+    });
+    // we need to encrypt it, even though its an empty string, or there'll be decryption errors when we try to decrypt the value of the secret version
+    const encryptedValue = secretManagerEncryptor({ plainText: Buffer.from("") }).cipherTextBlob;
+
+    const updatedSecretVersion = await secretVersionDAL.updateById(versionId, {
+      encryptedValue,
+      isRedacted: true,
+      redactedAt: new Date(),
+      redactedByUserId: actorId
+    });
+
+    // Cascade redaction to child versions (replicated secret versions)
+    const MAX_REDACTION_DEPTH = 100;
+    const visitedVersionIds = new Set<string>();
+
+    const redactChildVersions = async (parentVersionIds: string[], depth = 0): Promise<void> => {
+      if (!parentVersionIds.length) return;
+      if (depth >= MAX_REDACTION_DEPTH) {
+        logger.warn(
+          { versionId, depth, maxDepth: MAX_REDACTION_DEPTH },
+          "Max redaction depth reached, stopping cascade"
+        );
+        return;
+      }
+
+      const childVersions = await secretVersionDAL.findByParentVersionIds(parentVersionIds);
+      if (!childVersions.length) return;
+
+      // filter out already visited versions to prevent infinite loops
+      const unvisitedChildren = childVersions.filter((cv) => !visitedVersionIds.has(cv.id));
+      if (!unvisitedChildren.length) return;
+
+      // mark versions as visited
+      unvisitedChildren.forEach((cv) => visitedVersionIds.add(cv.id));
+
+      // redact all child versions that aren't already redacted
+      const childVersionIdsToRedact = unvisitedChildren.filter((cv) => !cv.isRedacted).map((cv) => cv.id);
+
+      if (childVersionIdsToRedact.length) {
+        await secretVersionDAL.update(
+          { $in: { id: childVersionIdsToRedact } },
+          {
+            encryptedValue,
+            isRedacted: true,
+            redactedAt: new Date(),
+            redactedByUserId: actorId
+          }
+        );
+      }
+
+      // recursively redact grandchildren
+      await redactChildVersions(
+        unvisitedChildren.map((cv) => cv.id),
+        depth + 1
+      );
+    };
+
+    await redactChildVersions([versionId]);
+
+    return {
+      secretVersion: updatedSecretVersion,
+      projectId: secretVersion.projectId,
+      environment: folderWithPath.environmentSlug,
+      secretPath: folderWithPath.path,
+      secretKey: secret.key,
+      secretId: secret.id
+    };
   };
 
   return {
@@ -3677,6 +3874,7 @@ export const secretV2BridgeServiceFactory = ({
     getAccessibleSecrets,
     getSecretVersionsByIds,
     findSecretIdsByFolderIdAndKeys,
-    $validateSecretReferences
+    $validateSecretReferences,
+    redactSecretVersionValue
   };
 };

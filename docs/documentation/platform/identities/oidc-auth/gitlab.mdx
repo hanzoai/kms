@@ -127,10 +127,10 @@ In the following steps, we explore how to create and use identities to access th
                 aud: kms-aud-test
         script:
             - apt update && apt install -y curl
-            - curl -1sLf 'https://dl.cloudsmith.io/public/ghcr.io/hanzoai/kms-cli/setup.deb.sh' | bash
-            - apt-get update && apt-get install -y kms
-            - export KMS_TOKEN=$(hanzo-kms login --method=oidc-auth --machine-identity-id=4e807a78-1b1c-4bd6-9609-ef2b0cf4fd54 --oidc-jwt=$KMS_ID_TOKEN --silent --plain)
-            - hanzo-kms run --projectId=1d0443c1-cd43-4b3a-91a3-9d5f81254a89 --env=dev -- npm run build
+            - curl -1sLf 'https://artifacts-cli.infisical.com/setup.deb.sh' | bash
+            - apt-get update && apt-get install -y infisical
+            - export INFISICAL_TOKEN=$(infisical login --method=oidc-auth --machine-identity-id=4e807a78-1b1c-4bd6-9609-ef2b0cf4fd54 --oidc-jwt=$INFISICAL_ID_TOKEN --silent --plain)
+            - infisical run --projectId=1d0443c1-cd43-4b3a-91a3-9d5f81254a89 --env=dev -- npm run build
         ```
 
         The `id_tokens` keyword is used to request an ID token for the job. In this example, an ID token named `KMS_ID_TOKEN` is requested with the audience (`aud`) claim set to "kms-aud-test". This ID token will be used to authenticate with Hanzo KMS.

@@ -94,7 +94,8 @@ export enum QueueName {
   CertificateV3AutoRenewal = "certificate-v3-auto-renewal",
   PamAccountRotation = "pam-account-rotation",
   PamSessionExpiration = "pam-session-expiration",
-  PkiAcmeChallengeValidation = "pki-acme-challenge-validation"
+  PkiAcmeChallengeValidation = "pki-acme-challenge-validation",
+  PkiDiscoveryScan = "pki-discovery-scan"
 }
 
 export enum QueueJobs {
@@ -155,7 +156,9 @@ export enum QueueJobs {
   CertificateV3DailyAutoRenewal = "certificate-v3-daily-auto-renewal",
   PamAccountRotation = "pam-account-rotation",
   PamSessionExpiration = "pam-session-expiration",
-  PkiAcmeChallengeValidation = "pki-acme-challenge-validation"
+  PkiAcmeChallengeValidation = "pki-acme-challenge-validation",
+  PkiDiscoveryRunScan = "pki-discovery-run-scan",
+  PkiDiscoveryScheduledScan = "pki-discovery-scheduled-scan"
 }
 
 export type TQueueOptions = {
@@ -416,12 +419,21 @@ export type TQueueJobTypes = {
       profileId: string;
       caId: string;
       commonName?: string;
-      altNames?: string[];
+      altNames?: Array<{ type: string; value: string }>;
       ttl: string;
       signatureAlgorithm: string;
       keyAlgorithm: string;
       keyUsages?: string[];
       extendedKeyUsages?: string[];
+      isRenewal?: boolean;
+      originalCertificateId?: string;
+      certificateRequestId?: string;
+      csr?: string;
+      organization?: string;
+      organizationalUnit?: string;
+      country?: string;
+      state?: string;
+      locality?: string;
     };
   };
   [QueueName.DailyReminders]: {
@@ -468,6 +480,15 @@ export type TQueueJobTypes = {
     name: QueueJobs.FrequentResourceCleanUp;
     payload: undefined;
   };
+  [QueueName.PkiDiscoveryScan]:
+    | {
+        name: QueueJobs.PkiDiscoveryRunScan;
+        payload: { discoveryId: string };
+      }
+    | {
+        name: QueueJobs.PkiDiscoveryScheduledScan;
+        payload: undefined;
+      };
 };
 
 const SECRET_SCANNING_QUEUES = [

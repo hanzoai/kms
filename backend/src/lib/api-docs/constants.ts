@@ -68,6 +68,8 @@ export enum ApiDocsTags {
   PkiCertificateProfiles = "PKI Certificate Profiles",
   PkiCertificateCollections = "PKI Certificate Collections",
   PkiAlerting = "PKI Alerting",
+  PkiDiscovery = "PKI Discovery",
+  PkiInstallations = "PKI Installations",
   PkiSubscribers = "PKI Subscribers",
   PkiAcme = "PKI ACME",
   SshCertificates = "SSH Certificates",
@@ -79,6 +81,7 @@ export enum ApiDocsTags {
   KmsEncryption = "KMS Encryption",
   KmsSigning = "KMS Signing",
   SecretScanning = "Secret Scanning",
+  SecretSharing = "Secret Sharing",
   OidcSso = "OIDC SSO",
   SamlSso = "SAML SSO",
   LdapSso = "LDAP SSO",
@@ -1170,7 +1173,9 @@ export const RAW_SECRETS = {
     includeImports: "Weather to include imported secrets or not.",
     tagSlugs: "The comma separated tag slugs to filter secrets.",
     metadataFilter:
-      "Unencrypted secret metadata key–value pairs used to filter secrets. Only metadata with unencrypted values is supported. When querying for multiple metadata pairs, the query is treated as an AND operation. Secret metadata format is key=value1,value=value2|key=value3,value=value4."
+      "Unencrypted secret metadata key-value pairs used to filter secrets. Only metadata with unencrypted values is supported. When querying for multiple metadata pairs, the query is treated as an AND operation. Secret metadata format is key=value1,value=value2|key=value3,value=value4.",
+    includePersonalOverrides:
+      "Whether or not to include personal secrets in the response. When enabled, personal secrets will be included in the response. Shared secrets will still be included, but personal secrets will take priority, and the corresponding shared secrets will be replaced with the personal secrets."
   },
   CREATE: {
     secretName: "The name of the secret to create.",
@@ -2423,6 +2428,11 @@ export const CertificateAuthorities = {
       eabKid: `The External Account Binding (EAB) Key ID for the ACME Certificate Authority. Required if the ACME provider uses EAB.`,
       eabHmacKey: `The External Account Binding (EAB) HMAC key for the ACME Certificate Authority. Required if the ACME provider uses EAB.`
     },
+    AWS_PCA: {
+      appConnectionId: `The ID of the AWS App Connection to use for authenticating with AWS Private Certificate Authority (PCA). This connection must have permissions to issue, get, and revoke certificates from the specified PCA.`,
+      certificateAuthorityArn: `The ARN of the AWS Private Certificate Authority to use for issuing certificates.`,
+      region: `The AWS region where the Private Certificate Authority is located.`
+    },
     INTERNAL: {
       type: "The type of CA to create.",
       friendlyName: "A friendly name for the CA.",
@@ -2997,7 +3007,8 @@ export const SecretRotations = {
       rotationMethod:
         'Whether the rotation should be performed using "login-as-target" (the target user\'s own credentials) or "login-as-root" (the SSH connection\'s admin credentials). Defaults to "login-as-target".',
       password:
-        'The current password of the target user. Required if "parameters.rotationMethod" is set to "login-as-target".'
+        'The current password of the target user. Required if "parameters.rotationMethod" is set to "login-as-target".',
+      useSudo: "If true, uses sudo when executing the password rotation command. Defaults to false."
     },
     WINDOWS_LOCAL_ACCOUNT: {
       username: "The username of the Windows user account to rotate the password for.",
@@ -3334,3 +3345,35 @@ export const EventSubscriptions = {
     register: "List of events you want to subscribe to"
   }
 };
+
+export const SECRET_SHARING = {
+  LIST: {
+    offset: "The offset to start listing shared secrets from. Used for pagination.",
+    limit: "The maximum number of shared secrets to return. Max is 100."
+  },
+  GET_BY_ID: {
+    id: "The ID of the shared secret to retrieve."
+  },
+  ACCESS: {
+    id: "The ID of the shared secret to access.",
+    password:
+      "The password for accessing a password-protected shared secret. Only required if the secret is password protected."
+  },
+  CREATE: {
+    name: "An optional name for the shared secret for easier identification.",
+    secretValue: "The secret value to share.",
+    expiresIn:
+      "The duration after which the shared secret will expire. Accepts formats like '30d', '24h', '1w'. Maximum is 30 days, minimum is 5 minutes.",
+    password:
+      "An optional password to protect the shared secret. Recipients will need to provide this password to access the secret.",
+    maxViews:
+      "The maximum number of times the shared secret can be viewed before it expires. If not provided, unlimited views are allowed.",
+    accessType:
+      "Determines who can access the shared secret. 'organization' restricts access to users within your organization. 'anyone' allows access to anyone with the link. Defaults to 'organization'.",
+    authorizedEmails:
+      "An optional array of email addresses that are authorized to view this secret. Only users with these email addresses will be able to access the secret. Maximum 100 emails."
+  },
+  DELETE: {
+    id: "The ID of the shared secret to delete."
+  }
+} as const;

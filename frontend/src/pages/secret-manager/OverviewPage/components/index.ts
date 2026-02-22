@@ -1,4 +1,5 @@
 export * from "./AddResourceButtons";
+export * from "./DownloadEnvButton";
 export * from "./DynamicSecretTableRow";
 export * from "./EmptyResourceDisplay";
 export * from "./EnvironmentSelect";
@@ -7,5 +8,6 @@ export * from "./FolderTableRow";
 export * from "./ResourceCount";
 export * from "./ResourceFilter";
 export * from "./ResourceSearchInput";
+export * from "./SecretDropzone";
 export * from "./SecretRotationTableRow";
 export * from "./SecretTableRow";

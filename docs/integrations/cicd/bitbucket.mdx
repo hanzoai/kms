@@ -38,10 +38,10 @@ Prerequisites:
                 name: Build application with secrets from KMS
                 script:
                   - apt update && apt install -y curl
-                  - curl -1sLf 'https://dl.cloudsmith.io/public/ghcr.io/hanzoai/kms-cli/setup.deb.sh' | bash
-                  - apt-get update && apt-get install -y kms
-                  - export KMS_TOKEN=$(hanzo-kms login --method=universal-auth --client-id=$KMS_CLIENT_ID --client-secret=$KMS_CLIENT_SECRET --silent --plain)
-                  - hanzo-kms run --projectId=1d0443c1-cd43-4b3a-91a3-9d5f81254a89 --env=dev -- npm run build
+                  - curl -1sLf 'https://artifacts-cli.infisical.com/setup.deb.sh' | bash
+                  - apt-get update && apt-get install -y infisical
+                  - export INFISICAL_TOKEN=$(infisical login --method=universal-auth --client-id=$INFISICAL_CLIENT_ID --client-secret=$INFISICAL_CLIENT_SECRET --silent --plain)
+                  - infisical run --projectId=1d0443c1-cd43-4b3a-91a3-9d5f81254a89 --env=dev -- npm run build
         ```
 
       <Tip>

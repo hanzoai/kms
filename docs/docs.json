@@ -43,13 +43,7 @@
           {
             "group": "Platform Reference",
             "pages": [
-              {
-                "group": "Organization",
-                "pages": [
-                  "documentation/platform/organization",
-                  "documentation/platform/sub-organizations"
-                ]
-              },
+              "documentation/platform/organization",
               {
                 "group": "Projects",
                 "pages": [
@@ -119,6 +113,7 @@
                       "integrations/app-connections/azure-adcs",
                       "integrations/app-connections/azure-client-secrets",
                       "integrations/app-connections/azure-devops",
+                      "integrations/app-connections/azure-dns",
                       "integrations/app-connections/azure-key-vault",
                       "integrations/app-connections/bitbucket",
                       "integrations/app-connections/camunda",
@@ -340,6 +335,7 @@
               "self-hosting/guides/replication",
               "self-hosting/guides/upgrading-infisical",
               "self-hosting/configuration/envars",
+              "self-hosting/guides/releases",
               "self-hosting/configuration/requirements",
               {
                 "group": "Guides",
@@ -733,6 +729,13 @@
                     ]
                   },
                   {
+                    "group": "Discovery",
+                    "pages": [
+                      "documentation/platform/pki/discovery/overview",
+                      "documentation/platform/pki/discovery/network"
+                    ]
+                  },
+                  {
                     "group": "Alerting",
                     "pages": [
                       "documentation/platform/pki/alerting/overview",
@@ -775,7 +778,8 @@
                   "documentation/platform/pki/ca/acme-ca",
                   "documentation/platform/pki/ca/lets-encrypt",
                   "documentation/platform/pki/ca/digicert",
-                  "documentation/platform/pki/ca/azure-adcs"
+                  "documentation/platform/pki/ca/azure-adcs",
+                  "documentation/platform/pki/ca/aws-pca"
                 ]
               }
             ]
@@ -809,6 +813,7 @@
                         "group": "Resources",
                         "pages": [
                           "documentation/platform/pam/getting-started/resources",
+                          "documentation/platform/pam/getting-started/resources/active-directory",
                           "documentation/platform/pam/getting-started/resources/aws-iam",
                           "documentation/platform/pam/getting-started/resources/kubernetes",
                           "documentation/platform/pam/getting-started/resources/redis",
@@ -828,7 +833,14 @@
                   "documentation/platform/pam/product-reference/access-policies",
                   "documentation/platform/pam/product-reference/auditing",
                   "documentation/platform/pam/product-reference/session-recording",
-                  "documentation/platform/pam/product-reference/credential-rotation"
+                  "documentation/platform/pam/product-reference/credential-rotation",
+                  {
+                    "group": "Web Access",
+                    "pages": [
+                      "documentation/platform/pam/product-reference/web-access/overview",
+                      "documentation/platform/pam/product-reference/web-access/postgresql"
+                    ]
+                  }
                 ]
               }
             ]
@@ -2736,6 +2748,16 @@
                     ]
                   },
                   {
+                    "group": "AWS PCA",
+                    "pages": [
+                      "api-reference/endpoints/certificate-authorities/aws-pca/list",
+                      "api-reference/endpoints/certificate-authorities/aws-pca/create",
+                      "api-reference/endpoints/certificate-authorities/aws-pca/read",
+                      "api-reference/endpoints/certificate-authorities/aws-pca/update",
+                      "api-reference/endpoints/certificate-authorities/aws-pca/delete"
+                    ]
+                  },
+                  {
                     "group": "Internal",
                     "pages": [
                       "api-reference/endpoints/certificate-authorities/internal/list",
@@ -2767,7 +2789,8 @@
                   "api-reference/endpoints/certificates/delete",
                   "api-reference/endpoints/certificates/cert-body",
                   "api-reference/endpoints/certificates/bundle",
-                  "api-reference/endpoints/certificates/private-key"
+                  "api-reference/endpoints/certificates/private-key",
+                  "api-reference/endpoints/certificates/import-certificate"
                 ]
               },
               {
@@ -2800,6 +2823,28 @@
                   "api-reference/endpoints/pki-alerts/read",
                   "api-reference/endpoints/pki-alerts/update",
                   "api-reference/endpoints/pki-alerts/delete"
+                ]
+              },
+              {
+                "group": "Certificate Discovery",
+                "pages": [
+                  "api-reference/endpoints/pki-discovery/create",
+                  "api-reference/endpoints/pki-discovery/list",
+                  "api-reference/endpoints/pki-discovery/read",
+                  "api-reference/endpoints/pki-discovery/update",
+                  "api-reference/endpoints/pki-discovery/delete",
+                  "api-reference/endpoints/pki-discovery/trigger-scan",
+                  "api-reference/endpoints/pki-discovery/latest-scan",
+                  "api-reference/endpoints/pki-discovery/scan-history"
+                ]
+              },
+              {
+                "group": "Certificate Installations",
+                "pages": [
+                  "api-reference/endpoints/pki-installations/list",
+                  "api-reference/endpoints/pki-installations/read",
+                  "api-reference/endpoints/pki-installations/update",
+                  "api-reference/endpoints/pki-installations/delete"
                 ]
               },
               {
@@ -2959,6 +3004,21 @@
             ]
           },
           {
+            "group": "Secret Sharing",
+            "pages": [
+              {
+                "group": "Shared Secrets",
+                "pages": [
+                  "api-reference/endpoints/shared-secrets/list",
+                  "api-reference/endpoints/shared-secrets/get-by-id",
+                  "api-reference/endpoints/shared-secrets/create",
+                  "api-reference/endpoints/shared-secrets/delete",
+                  "api-reference/endpoints/shared-secrets/access"
+                ]
+              }
+            ]
+          },
+          {
             "group": "Infisical KMS",
             "pages": [
               {
@@ -3022,15 +3082,6 @@
               "sdks/languages/php",
               "sdks/languages/ruby"
             ]
-          }
-        ]
-      },
-      {
-        "tab": "Changelog",
-        "groups": [
-          {
-            "group": "Overview",
-            "pages": ["changelog/overview"]
           }
         ]
       }
@@ -3173,7 +3224,7 @@
         "items": [
           {
             "label": "Changelog",
-            "href": "https://www.infisical.com/docs/changelog"
+            "href": "https://github.com/Infisical/infisical/releases"
           },
           {
             "label": "Status",
@@ -3464,6 +3515,11 @@
     {
       "source": "/integrations/cloud/teamcity",
       "destination": "/integrations/secret-syncs/teamcity"
+    },
+    {
+      "source": "/changelog/:slug*",
+      "destination": "/documentation/getting-started/overview",
+      "permanent": true
     }
   ]
 }

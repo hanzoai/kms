@@ -35,9 +35,9 @@ description: "How to sync secrets from Hanzo KMS to GitLab"
               stage: build
               script:
                 - apt update && apt install -y curl
-                - curl -1sLf 'https://dl.cloudsmith.io/public/ghcr.io/hanzoai/kms-cli/setup.deb.sh' | bash
-                - apt-get update && apt-get install -y kms
-                - hanzo-kms run -- npm run build
+                - curl -1sLf 'https://artifacts-cli.infisical.com/setup.deb.sh' | bash
+                - apt-get update && apt-get install -y infisical
+                - infisical run -- npm run build
             ```
           </Step>
         </Steps>
