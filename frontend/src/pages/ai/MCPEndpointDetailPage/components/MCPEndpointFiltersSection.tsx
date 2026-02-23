@@ -56,7 +56,7 @@ export const MCPEndpointFiltersSection = ({ endpoint }: Props) => {
           <GenericFieldLabel label="Requests">
             <div className="flex items-center gap-2">
               <div
-                className={`h-2 w-2 rounded-full ${endpoint.piiRequestFiltering ? "bg-emerald-500" : "bg-red-500"}`}
+                className={`h-2 w-2 rounded-full ${endpoint.piiRequestFiltering ? "bg-neutral-500" : "bg-red-500"}`}
               />
               {endpoint.piiRequestFiltering ? "Enabled" : "Disabled"}
             </div>
@@ -64,7 +64,7 @@ export const MCPEndpointFiltersSection = ({ endpoint }: Props) => {
           <GenericFieldLabel label="Responses">
             <div className="flex items-center gap-2">
               <div
-                className={`h-2 w-2 rounded-full ${endpoint.piiResponseFiltering ? "bg-emerald-500" : "bg-red-500"}`}
+                className={`h-2 w-2 rounded-full ${endpoint.piiResponseFiltering ? "bg-neutral-500" : "bg-red-500"}`}
               />
               {endpoint.piiResponseFiltering ? "Enabled" : "Disabled"}
             </div>

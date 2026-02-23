@@ -48,7 +48,7 @@ export const renderIcon = (mode: TDiffModes) => {
   if (mode === TDiffModes.Deleted)
     return <FontAwesomeIcon icon={faMinusSquare} className="text-red-700" size="lg" />;
   if (mode === TDiffModes.Modified)
-    return <FontAwesomeIcon icon={faPencilSquare} className="text-orange-700" size="lg" />;
+    return <FontAwesomeIcon icon={faPencilSquare} className="text-neutral-500" size="lg" />;
 
   return <FontAwesomeIcon icon={faPlusSquare} className="text-green-700" size="lg" />;
 };
@@ -83,7 +83,7 @@ export const SecretItem = ({ mode, preSecret, postSecret }: Props) => {
                 v{preSecret?.version}
               </div>
               <div>
-                <FontAwesomeIcon icon={faChevronRight} size="sm" className="text-orange-700" />
+                <FontAwesomeIcon icon={faChevronRight} size="sm" className="text-neutral-500" />
               </div>
               <div className="rounded-lg bg-primary px-1 py-0.5 text-xs font-bold text-black">
                 v{postSecret?.version}

@@ -76,56 +76,56 @@ export const secretTagsColors = [
   {
     id: 2,
     hex: "#95a2b3",
-    rgba: "rgb(0,0,255, 0.8)",
+    rgba: "rgb(128,128,128, 0.8)",
     name: "blue",
     selected: false
   },
   {
     id: 3,
-    hex: "#5e6ad2",
-    rgba: "rgb(128,0,128, 0.8)",
+    hex: "#8a8a8a",
+    rgba: "rgb(138,138,138, 0.8)",
     name: "Purple",
     selected: false
   },
   {
     id: 4,
-    hex: "#26b5ce",
-    rgba: "rgb(0,128,128, 0.8)",
+    hex: "#737373",
+    rgba: "rgb(115,115,115, 0.8)",
     name: "Teal",
     selected: false
   },
   {
     id: 5,
-    hex: "#4cb782",
-    rgba: "rgb(0,128,0, 0.8)",
+    hex: "#a3a3a3",
+    rgba: "rgb(163,163,163, 0.8)",
     name: "Green",
     selected: false
   },
   {
     id: 6,
-    hex: "#f2c94c",
-    rgba: "rgb(255,255,0, 0.8)",
+    hex: "#d4d4d4",
+    rgba: "rgb(212,212,212, 0.8)",
     name: "Yellow",
     selected: false
   },
   {
     id: 7,
-    hex: "#f2994a",
-    rgba: "rgb(128,128,0, 0.8)",
+    hex: "#b3b3b3",
+    rgba: "rgb(179,179,179, 0.8)",
     name: "Orange",
     selected: false
   },
   {
     id: 8,
-    hex: "#f7c8c1",
-    rgba: "rgb(128,0,0, 0.8)",
+    hex: "#e5e5e5",
+    rgba: "rgb(229,229,229, 0.8)",
     name: "Pink",
     selected: false
   },
   {
     id: 9,
-    hex: "#eb5757",
-    rgba: "rgb(255,0,0, 0.8)",
+    hex: "#525252",
+    rgba: "rgb(82,82,82, 0.8)",
     name: "Red",
     selected: false
   }

@@ -248,7 +248,7 @@ export const SnapshotView = ({
                         <FontAwesomeIcon
                           icon={faChevronRight}
                           size="sm"
-                          className="text-orange-700"
+                          className="text-neutral-500"
                         />
                       </div>
                       <div>{post?.name}</div>

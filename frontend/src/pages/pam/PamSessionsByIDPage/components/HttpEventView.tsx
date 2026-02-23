@@ -207,7 +207,7 @@ export const HttpEventView = ({ events }: Props) => {
                     </span>
                     {kubectlCommand && (
                       <span
-                        className="rounded bg-purple-500/20 px-2 py-0.5 text-purple-400"
+                        className="rounded bg-neutral-500/20 px-2 py-0.5 text-neutral-400"
                         title="Kubectl Command"
                       >
                         kubectl: {kubectlCommand}

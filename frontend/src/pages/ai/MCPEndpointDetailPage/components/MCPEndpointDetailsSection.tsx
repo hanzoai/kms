@@ -39,7 +39,7 @@ const getStatusLabel = (status: string | null) => {
 
 const getStatusColor = (status: string | null) => {
   const colors: Record<string, string> = {
-    active: "bg-emerald-500",
+    active: "bg-neutral-500",
     inactive: "bg-red-500"
   };
   return colors[status || "inactive"] || "bg-red-500";
