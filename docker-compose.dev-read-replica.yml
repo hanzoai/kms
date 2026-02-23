@@ -130,7 +130,7 @@ services:
     env_file: .env
     environment:
       - NEXT_PUBLIC_ENV=development
-      - INFISICAL_TELEMETRY_ENABLED=false
+      - KMS_TELEMETRY_ENABLED=false
 
   pgadmin:
     image: dpage/pgadmin4

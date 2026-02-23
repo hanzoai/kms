@@ -93,7 +93,7 @@ RUN wget https://www.openssl.org/source/openssl-3.1.2.tar.gz \
 # Install smbclient for Windows SMB operations
 RUN apt-get update && apt-get install -y smbclient
 
-# Install Infisical CLI
+# Install KMS CLI
 RUN curl -1sLf 'https://artifacts-cli.infisical.com/setup.deb.sh' | bash && \
     apt-get update && \
     apt-get install -y infisical=0.43.14
@@ -113,7 +113,7 @@ COPY . .
 ENV HOST=0.0.0.0
 ENV OPENSSL_CONF=/app/nodejs.fips.cnf
 ENV OPENSSL_MODULES=/usr/local/lib/ossl-modules
-# ENV NODE_OPTIONS=--force-fips # Note(Daniel): We can't set this on the node options because it may break for existing folks using the infisical/infisical-fips image. Instead we call crypto.setFips(true) at runtime.
+# ENV NODE_OPTIONS=--force-fips # Note: We can't set this on the node options because it may break for existing deployments using the kms-fips image. Instead we call crypto.setFips(true) at runtime.
 ENV FIPS_ENABLED=true
 
 ENTRYPOINT ["/app/dev-entrypoint.sh"]

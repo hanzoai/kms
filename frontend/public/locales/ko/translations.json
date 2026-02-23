@@ -95,7 +95,7 @@
     "click-to-start": "Click on an integration to begin syncing secrets to it.",
     "click-to-setup": "Click on a framework to get the setup instructions.",
     "grant-access-to-secrets": "Grant KMS access to your secrets",
-    "why-infisical-needs-access": "Most cloud integrations require KMS to be able to decrypt your secrets so they can be forwarded over.",
+    "why-kms-needs-access": "Most cloud integrations require KMS to be able to decrypt your secrets so they can be forwarded over.",
     "grant-access-button": "Grant access"
   },
   "login": {

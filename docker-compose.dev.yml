@@ -36,7 +36,7 @@ services:
 
   clickhouse:
     image: clickhouse/clickhouse-server:25.12.5
-    container_name: infisical-dev-clickhouse
+    container_name: kms-dev-clickhouse
     restart: unless-stopped
     ports:
       - "8123:8123"
@@ -45,9 +45,9 @@ services:
       - clickhouse_data:/var/lib/clickhouse
       - clickhouse_logs:/var/log/clickhouse-server
     environment:
-      - CLICKHOUSE_DB=infisical
-      - CLICKHOUSE_USER=infisical
-      - CLICKHOUSE_PASSWORD=infisical
+      - CLICKHOUSE_DB=kms
+      - CLICKHOUSE_USER=kms
+      - CLICKHOUSE_PASSWORD=kms
       - CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=1
     ulimits:
       nofile:

@@ -22,16 +22,16 @@ const exportDb = () => {
     prompt("Enter your Postgres Port to migrate from [Default = 5432]: ") ?? "5432"
   );
   const exportUser = sanitizeInputParam(
-    prompt("Enter your Postgres User to migrate from: [Default = infisical]: ") ?? "infisical"
+    prompt("Enter your Postgres User to migrate from: [Default = kms]: ") ?? "kms"
   );
   const exportPassword = sanitizeInputParam(prompt("Enter your Postgres Password to migrate from: "));
   const exportDatabase = sanitizeInputParam(
-    prompt("Enter your Postgres Database to migrate from [Default = infisical]: ") ?? "infisical"
+    prompt("Enter your Postgres Database to migrate from [Default = kms]: ") ?? "kms"
   );
 
   // we do not include the audit_log and secret_sharing entries
   execSync(
-    `PGDATABASE=${exportDatabase} PGPASSWORD=${exportPassword} PGHOST=${exportHost} PGPORT=${exportPort} PGUSER=${exportUser} pg_dump -Fc infisical --exclude-table-data="secret_sharing" --exclude-table-data="audit_log*" > ${path.join(
+    `PGDATABASE=${exportDatabase} PGPASSWORD=${exportPassword} PGHOST=${exportHost} PGPORT=${exportPort} PGUSER=${exportUser} pg_dump -Fc kms --exclude-table-data="secret_sharing" --exclude-table-data="audit_log*" > ${path.join(
       __dirname,
       "../src/db/backup.dump"
     )}`,
@@ -43,11 +43,11 @@ const importDbForOrg = () => {
   const importHost = sanitizeInputParam(prompt("Enter your Postgres Host to migrate to: "));
   const importPort = sanitizeInputParam(prompt("Enter your Postgres Port to migrate to [Default = 5432]: ") ?? "5432");
   const importUser = sanitizeInputParam(
-    prompt("Enter your Postgres User to migrate to: [Default = infisical]: ") ?? "infisical"
+    prompt("Enter your Postgres User to migrate to: [Default = kms]: ") ?? "kms"
   );
   const importPassword = sanitizeInputParam(prompt("Enter your Postgres Password to migrate to: "));
   const importDatabase = sanitizeInputParam(
-    prompt("Enter your Postgres Database to migrate to [Default = infisical]: ") ?? "infisical"
+    prompt("Enter your Postgres Database to migrate to [Default = kms]: ") ?? "kms"
   );
   const orgId = sanitizeInputParam(prompt("Enter the organization ID to migrate: "));
 

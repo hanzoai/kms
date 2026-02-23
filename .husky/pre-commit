@@ -3,9 +3,9 @@
 
 echo "🔥 Pre-commit hook is running!"
 
-# Check if infisical is installed
+# Check if kms CLI is installed
 if ! command -v infisical >/dev/null 2>&1; then
-    echo "\nError: Infisical CLI is not installed. Please install the Infisical CLI before committing.\n You can refer to the documentation at https://infisical.com/docs/cli/overview\n\n"
+    echo "\nError: KMS CLI (infisical) is not installed. Please install the KMS CLI before committing.\n You can refer to the documentation at https://kms.hanzo.ai/docs/cli/overview\n\n"
     exit 1
 fi
 

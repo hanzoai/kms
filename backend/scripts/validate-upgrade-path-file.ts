@@ -82,8 +82,8 @@ async function validateUpgradePathConfig(): Promise<void> {
       const commonPatterns = [
         /^v?\d+\.\d+\.\d+$/,
         /^v?\d+\.\d+\.\d+\.\d+$/,
-        /^infisical\/v?\d+\.\d+\.\d+$/,
-        /^infisical\/v?\d+\.\d+\.\d+-\w+$/
+        /^kms\/v?\d+\.\d+\.\d+$/,
+        /^kms\/v?\d+\.\d+\.\d+-\w+$/
       ];
 
       for (const versionKey of Object.keys(versions)) {

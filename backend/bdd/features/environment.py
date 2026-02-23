@@ -16,21 +16,21 @@ from features.steps.utils import clean_all_nock, restore_nock
 load_dotenv()
 logger = logging.getLogger(__name__)
 
-BASE_URL = os.environ.get("INFISICAL_API_URL", "http://localhost:8080")
+BASE_URL = os.environ.get("KMS_API_URL", "http://localhost:8080")
 PEBBLE_URL = os.environ.get("PEBBLE_URL", "https://pebble:14000/dir")
 PROJECT_ID = os.environ.get("PROJECT_ID")
 CERT_CA_ID = os.environ.get("CERT_CA_ID")
 CERT_POLICY_ID = os.environ.get("CERT_POLICY_ID")
-AUTH_TOKEN = os.environ.get("INFISICAL_TOKEN")
-BOOTSTRAP_INFISICAL = int(os.environ.get("BOOTSTRAP_INFISICAL", 0))
+AUTH_TOKEN = os.environ.get("KMS_TOKEN")
+BOOTSTRAP_KMS = int(os.environ.get("BOOTSTRAP_KMS", 0))
 TECHNITIUM_URL = os.environ.get("TECHNITIUM_URL", "http://localhost:5380")
 TECHNITIUM_USER = os.environ.get("TECHNITIUM_USER", "admin")
-TECHNITIUM_PASSWORD = os.environ.get("TECHNITIUM_PASSWORD", "infisical")
+TECHNITIUM_PASSWORD = os.environ.get("TECHNITIUM_PASSWORD", "kms")
 
 
-# Called mostly from a CI to setup the new Infisical instance to get it ready for BDD tests
-def bootstrap_infisical(context: Context):
-    bootstrap_result_file = pathlib.Path.cwd() / ".bdd-infisical-bootstrap-result.json"
+# Called mostly from a CI to setup the new KMS instance to get it ready for BDD tests
+def bootstrap_kms(context: Context):
+    bootstrap_result_file = pathlib.Path.cwd() / ".bdd-kms-bootstrap-result.json"
     if bootstrap_result_file.exists():
         logger.info(
             "Bootstrap result file exists at %s, loading it now", bootstrap_result_file
@@ -42,7 +42,7 @@ def bootstrap_infisical(context: Context):
         resp = client.post(
             "/api/v1/admin/signup",
             json={
-                "email": f"{faker.user_name()}@infisical.com",
+                "email": f"{faker.user_name()}@hanzo.ai",
                 "password": faker.password(),
                 "firstName": faker.first_name(),
                 "lastName": faker.last_name(),
@@ -99,7 +99,7 @@ def bootstrap_infisical(context: Context):
                 "status": "active",
                 "configuration": {
                     "type": "root",
-                    "organization": "Infisican Inc",
+                    "organization": "Hanzo AI",
                     "ou": "",
                     "country": "",
                     "province": "",
@@ -195,8 +195,8 @@ def before_all(context: Context):
         "TECHNITIUM_USER": TECHNITIUM_USER,
         "TECHNITIUM_PASSWORD": TECHNITIUM_PASSWORD,
     }
-    if BOOTSTRAP_INFISICAL:
-        details = bootstrap_infisical(context)
+    if BOOTSTRAP_KMS:
+        details = bootstrap_kms(context)
         vars = base_vars | {
             "PROJECT_ID": details["project"]["id"],
             "CERT_CA_ID": details["ca"]["id"],

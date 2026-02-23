@@ -119,7 +119,7 @@
     "click-to-start": "Haz click en una integración para empezar a sincronizar las claves.",
     "click-to-setup": "Haz click en un framework para ver las instrucciones de uso.",
     "grant-access-to-secrets": "Autorizar KMS el acceso a tus claves",
-    "why-infisical-needs-access": "La mayoría de las integraciones en la nube requieren a KMS tener permiso para descifrar tus claves, para que puedan ser enviadas.",
+    "why-kms-needs-access": "La mayoría de las integraciones en la nube requieren a KMS tener permiso para descifrar tus claves, para que puedan ser enviadas.",
     "grant-access-button": "Autorizar acceso"
   },
   "login": {

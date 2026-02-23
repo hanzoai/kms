@@ -119,7 +119,7 @@
     "click-to-start": "Cliquez sur une intégration pour commencer à synchroniser les secrets avec elle.",
     "click-to-setup": "Cliquez sur un framework pour obtenir les instructions de configuration.",
     "grant-access-to-secrets": "Accordez un accès KMS à vos secrets",
-    "why-infisical-needs-access": "La plupart des intégrations cloud nécessitent que KMS puisse déchiffrer vos secrets afin qu'ils puissent être transmis.",
+    "why-kms-needs-access": "La plupart des intégrations cloud nécessitent que KMS puisse déchiffrer vos secrets afin qu'ils puissent être transmis.",
     "grant-access-button": "Autoriser l'accès"
   },
   "login": {
