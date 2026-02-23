@@ -51,7 +51,7 @@ export const MCPServerRow = ({ server, onEditServer, onDeleteServer }: Props) =>
   const getStatusBadge = (status: AiMcpServerStatus) => {
     const statusConfig = {
       [AiMcpServerStatus.ACTIVE]: {
-        color: "bg-emerald-500",
+        color: "bg-neutral-500",
         label: "Active"
       },
       [AiMcpServerStatus.INACTIVE]: {

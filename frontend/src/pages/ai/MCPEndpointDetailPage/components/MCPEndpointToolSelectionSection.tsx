@@ -109,7 +109,7 @@ const ServerToolsSection = ({
           <span className="text-sm text-mineshaft-200">{serverName}</span>
           <div
             className={`h-2 w-2 rounded-full ${
-              serverStatus === "active" ? "bg-emerald-500" : "bg-red-500"
+              serverStatus === "active" ? "bg-neutral-500" : "bg-red-500"
             }`}
           />
         </div>

@@ -23,7 +23,7 @@ const getStatusLabel = (status: AiMcpServerStatus) => {
 
 const getStatusColor = (status: AiMcpServerStatus) => {
   const colors: Record<AiMcpServerStatus, string> = {
-    [AiMcpServerStatus.ACTIVE]: "bg-emerald-500",
+    [AiMcpServerStatus.ACTIVE]: "bg-neutral-500",
     [AiMcpServerStatus.INACTIVE]: "bg-red-500",
     [AiMcpServerStatus.UNINITIALIZED]: "bg-yellow-500"
   };

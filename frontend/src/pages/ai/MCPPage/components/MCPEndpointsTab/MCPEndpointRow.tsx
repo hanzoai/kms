@@ -27,7 +27,7 @@ interface Props {
 const getStatusBadge = (status: string | null) => {
   const statusConfig: Record<string, { color: string; label: string }> = {
     active: {
-      color: "bg-emerald-500",
+      color: "bg-neutral-500",
       label: "Active"
     },
     inactive: {

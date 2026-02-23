@@ -31,7 +31,7 @@ const StatCard = ({ icon, label, value, subtitle, trend }: StatCardProps) => {
         <div className="text-2xl font-semibold text-mineshaft-100">{value}</div>
         {subtitle && <div className="text-xs text-bunker-300">{subtitle}</div>}
         {trend && (
-          <div className={`text-xs ${trend.value >= 0 ? "text-emerald-500" : "text-red-500"}`}>
+          <div className={`text-xs ${trend.value >= 0 ? "text-neutral-500" : "text-red-500"}`}>
             {trend.value >= 0 ? "+" : ""}
             {trend.value} {trend.label}
           </div>

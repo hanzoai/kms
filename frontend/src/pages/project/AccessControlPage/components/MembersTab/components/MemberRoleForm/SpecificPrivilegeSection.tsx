@@ -606,7 +606,7 @@ export const SpecificPrivilegeSecretForm = ({
                       type="submit"
                     >
                       {privilegeForm.formState.isSubmitting ? (
-                        <Spinner size="xs" className="m-0 h-3 w-3 text-slate-500" />
+                        <Spinner size="xs" className="m-0 h-3 w-3 text-neutral-500" />
                       ) : (
                         <FontAwesomeIcon icon={faCheck} className="px-0.5" />
                       )}

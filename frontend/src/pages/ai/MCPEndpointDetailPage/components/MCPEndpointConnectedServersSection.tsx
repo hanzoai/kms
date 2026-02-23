@@ -159,7 +159,7 @@ export const MCPEndpointConnectedServersSection = ({ endpointId, projectId, serv
                   </label>
                   <div
                     className={`mt-1 h-2 w-2 rounded-full ${
-                      server.status === "active" ? "bg-emerald-500" : "bg-red-500"
+                      server.status === "active" ? "bg-neutral-500" : "bg-red-500"
                     }`}
                   />
                 </div>
@@ -191,7 +191,7 @@ export const MCPEndpointConnectedServersSection = ({ endpointId, projectId, serv
               </div>
               <div
                 className={`h-2 w-2 rounded-full ${
-                  server.status === "active" ? "bg-emerald-500" : "bg-red-500"
+                  server.status === "active" ? "bg-neutral-500" : "bg-red-500"
                 }`}
               />
             </div>
