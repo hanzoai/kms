@@ -26,7 +26,7 @@ export const HealthAlertTemplate = ({ siteUrl, names, type }: HealthAlertTemplat
         <Text className="text-black text-[14px] leading-[24px]">
           {type === "instance-relay" && (
             <>
-              If the issue persists, you can contact the Infisical team at{" "}
+              If the issue persists, you can contact the Hanzo KMS team at{" "}
               <BaseLink href="mailto:support@hanzo.ai">support@hanzo.ai</BaseLink>.
             </>
           )}

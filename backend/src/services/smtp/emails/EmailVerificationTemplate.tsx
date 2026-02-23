@@ -13,7 +13,7 @@ export const EmailVerificationTemplate = ({ code, siteUrl, isCloud }: EmailVerif
   return (
     <BaseEmailWrapper
       title="Confirm Your Email Address"
-      preview="Verify your email address to continue with Infisical."
+      preview="Verify your email address to continue with Hanzo KMS."
       siteUrl={siteUrl}
     >
       <Heading className="text-black text-[18px] leading-[28px] text-center font-normal p-0 mx-0">
@@ -27,7 +27,7 @@ export const EmailVerificationTemplate = ({ code, siteUrl, isCloud }: EmailVerif
       </Section>
       <Section className="mt-[24px] bg-gray-50 pt-[2px] pb-[16px] border border-solid border-gray-200 px-[24px] rounded-md text-gray-800">
         <Text className="mb-[0px]">
-          <strong>Questions about Infisical?</strong>{" "}
+          <strong>Questions about Hanzo KMS?</strong>{" "}
           {isCloud ? (
             <>
               Email us at <BaseLink href="mailto:support@hanzo.ai">support@hanzo.ai</BaseLink>

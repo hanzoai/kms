@@ -182,7 +182,7 @@ const createPostgresAppConnection = async (credentials: TGenericSqlCredentials) 
   return json.appConnection.id as string;
 };
 
-const createOracleInfisicalUsers = async (
+const createOracleKmsUsers = async (
   credentials: TGenericSqlCredentials,
   userCredentials: TDatabaseUserCredentials[]
 ) => {
@@ -215,7 +215,7 @@ const createOracleInfisicalUsers = async (
   await client.destroy();
 };
 
-const createMySQLInfisicalUsers = async (
+const createMySQLKmsUsers = async (
   credentials: TGenericSqlCredentials,
   userCredentials: TDatabaseUserCredentials[]
 ) => {
@@ -255,7 +255,7 @@ const createMySQLInfisicalUsers = async (
   await client.destroy();
 };
 
-const createPostgresInfisicalUsers = async (
+const createPostgresKmsUsers = async (
   credentials: TGenericSqlCredentials,
   userCredentials: TDatabaseUserCredentials[]
 ) => {
@@ -294,7 +294,7 @@ const createOracleDBSecretRotation = async (
   const now = new Date();
   const rotationTime = new Date(now.getTime() - 2 * 60 * 1000); // 2 minutes ago
 
-  await createOracleInfisicalUsers(credentials, userCredentials);
+  await createOracleKmsUsers(credentials, userCredentials);
 
   const createOracleDBSecretRotationReqBody = {
     parameters: {
@@ -358,7 +358,7 @@ const createMySQLSecretRotation = async (
   const now = new Date();
   const rotationTime = new Date(now.getTime() - 2 * 60 * 1000); // 2 minutes ago
 
-  await createMySQLInfisicalUsers(credentials, userCredentials);
+  await createMySQLKmsUsers(credentials, userCredentials);
 
   const createMySQLSecretRotationReqBody = {
     parameters: userCredentials.reduce(
@@ -410,7 +410,7 @@ const createPostgresSecretRotation = async (
   const now = new Date();
   const rotationTime = new Date(now.getTime() - 2 * 60 * 1000); // 2 minutes ago
 
-  await createPostgresInfisicalUsers(credentials, userCredentials);
+  await createPostgresKmsUsers(credentials, userCredentials);
 
   const createPostgresSecretRotationReqBody = {
     parameters: userCredentials.reduce(
@@ -540,10 +540,10 @@ describe("Secret Rotations", async () => {
       },
       userCredentials: [
         {
-          username: formatSqlUsername("INFISICAL_USER_1")
+          username: formatSqlUsername("KMS_USER_1")
         },
         {
-          username: formatSqlUsername("INFISICAL_USER_2")
+          username: formatSqlUsername("KMS_USER_2")
         }
       ]
     },
@@ -564,10 +564,10 @@ describe("Secret Rotations", async () => {
       },
       userCredentials: [
         {
-          username: formatSqlUsername("INFISICAL_USER_1")
+          username: formatSqlUsername("KMS_USER_1")
         },
         {
-          username: formatSqlUsername("INFISICAL_USER_2")
+          username: formatSqlUsername("KMS_USER_2")
         }
       ]
     },
@@ -587,10 +587,10 @@ describe("Secret Rotations", async () => {
       },
       userCredentials: [
         {
-          username: formatSqlUsername("INFISICAL_USER_1")
+          username: formatSqlUsername("KMS_USER_1")
         },
         {
-          username: formatSqlUsername("INFISICAL_USER_2")
+          username: formatSqlUsername("KMS_USER_2")
         }
       ]
     },
@@ -610,10 +610,10 @@ describe("Secret Rotations", async () => {
       },
       userCredentials: [
         {
-          username: formatSqlUsername("INFISICAL_USER_1")
+          username: formatSqlUsername("KMS_USER_1")
         },
         {
-          username: formatSqlUsername("INFISICAL_USER_2")
+          username: formatSqlUsername("KMS_USER_2")
         }
       ]
     },
@@ -633,10 +633,10 @@ describe("Secret Rotations", async () => {
       },
       userCredentials: [
         {
-          username: formatSqlUsername("INFISICAL_USER_1")
+          username: formatSqlUsername("KMS_USER_1")
         },
         {
-          username: formatSqlUsername("INFISICAL_USER_2")
+          username: formatSqlUsername("KMS_USER_2")
         }
       ]
     }

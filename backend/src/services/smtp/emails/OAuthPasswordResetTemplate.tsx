@@ -50,7 +50,7 @@ export const OAuthPasswordResetTemplate = ({
           <strong>Password reset is not available for this account.</strong>
         </Text>
         <Text className="text-[14px]">
-          A password reset was requested for your Infisical account ({email}), but password login has not been enabled
+          A password reset was requested for your Hanzo KMS account ({email}), but password login has not been enabled
           for your account.
         </Text>
         <Text className="text-[14px]">{getAuthMethodMessage()}</Text>

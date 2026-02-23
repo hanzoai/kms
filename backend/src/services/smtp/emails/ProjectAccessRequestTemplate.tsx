@@ -26,7 +26,7 @@ export const ProjectAccessRequestTemplate = ({
   return (
     <BaseEmailWrapper
       title="Project Access Request"
-      preview="A user has requested access to an Infisical project."
+      preview="A user has requested access to a Hanzo KMS project."
       siteUrl={siteUrl}
     >
       <Heading className="text-black text-[18px] leading-[28px] text-center font-normal p-0 mx-0">
@@ -52,7 +52,7 @@ export default ProjectAccessRequestTemplate;
 
 ProjectAccessRequestTemplate.PreviewProps = {
   requesterName: "Abigail Williams",
-  requesterEmail: "abigail@infisical.com",
+  requesterEmail: "abigail@hanzo.ai",
   orgName: "Example Org",
   siteUrl: "https://kms.hanzo.ai",
   projectName: "Example Project",

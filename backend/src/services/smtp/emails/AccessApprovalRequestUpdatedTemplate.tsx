@@ -81,7 +81,7 @@ export default AccessApprovalRequestUpdatedTemplate;
 
 AccessApprovalRequestUpdatedTemplate.PreviewProps = {
   requesterFullName: "Abigail Williams",
-  requesterEmail: "abigail@infisical.com",
+  requesterEmail: "abigail@hanzo.ai",
   isTemporary: true,
   secretPath: "/api/secrets",
   environment: "Production",
@@ -90,6 +90,6 @@ AccessApprovalRequestUpdatedTemplate.PreviewProps = {
   expiresIn: "1 day",
   permissions: ["Read Secret", "Delete Project", "Create Dynamic Secret"],
   editNote: "Too permissive, they only need 3 days",
-  editorEmail: "john@infisical.com",
+  editorEmail: "john@hanzo.ai",
   editorFullName: "John Smith"
 } as AccessApprovalRequestUpdatedTemplateProps;

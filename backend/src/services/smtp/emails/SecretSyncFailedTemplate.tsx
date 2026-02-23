@@ -56,7 +56,7 @@ export const SecretSyncFailedTemplate = ({
         )}
       </Section>
       <Section className="text-center">
-        <BaseButton href={syncUrl}>View in Infisical</BaseButton>
+        <BaseButton href={syncUrl}>View in Hanzo KMS</BaseButton>
       </Section>
     </BaseEmailWrapper>
   );
