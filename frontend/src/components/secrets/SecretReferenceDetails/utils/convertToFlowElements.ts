@@ -56,7 +56,7 @@ export const convertDependencyTreeToFlow = (tree: TSecretDependencyTreeNode) => 
         type: "secretEdge",
         markerEnd: {
           type: MarkerType.Arrow,
-          color: isCircular ? "#ef4444" : "#707174",
+          color: isCircular ? "#8a8a8a" : "#707174",
           width: 20,
           height: 20
         },

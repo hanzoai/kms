@@ -29,9 +29,9 @@ export const CurrentPlanSection = () => {
     if (value === null) return "-";
 
     if (typeof value === "boolean") {
-      if (value) return <FontAwesomeIcon icon={faCircleCheck} color="#2ecc71" />;
+      if (value) return <FontAwesomeIcon icon={faCircleCheck} color="#a3a3a3" />;
 
-      return <FontAwesomeIcon icon={faCircleXmark} color="#e74c3c" />;
+      return <FontAwesomeIcon icon={faCircleXmark} color="#737373" />;
     }
 
     return value;

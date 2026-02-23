@@ -27,7 +27,7 @@ export const SecretReferenceEdge = ({
       style={{
         strokeDasharray: "5",
         strokeWidth: 1,
-        stroke: isCircular ? "#ef4444" : "#707174"
+        stroke: isCircular ? "#8a8a8a" : "#707174"
       }}
       path={edgePath}
     />
