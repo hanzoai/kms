@@ -379,7 +379,7 @@ export const CertificatesTable = ({ handlePopUpOpen, externalFilter }: Props) =>
               <Th>Serial Number</Th>
               <Th className="w-24">
                 Source
-                <Tooltip content="How this certificate was added. Managed: issued and lifecycle-managed by Infisical. Discovered: found via network scan (discovery jobs). Imported: manually uploaded by a user.">
+                <Tooltip content="How this certificate was added. Managed: issued and lifecycle-managed by Hanzo KMS. Discovered: found via network scan (discovery jobs). Imported: manually uploaded by a user.">
                   <FontAwesomeIcon icon={faQuestionCircle} size="sm" className="ml-1" />
                 </Tooltip>
               </Th>

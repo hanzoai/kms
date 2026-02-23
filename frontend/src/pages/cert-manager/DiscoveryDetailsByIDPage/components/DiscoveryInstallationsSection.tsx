@@ -60,7 +60,7 @@ export const DiscoveryInstallationsSection = ({ discoveryId, projectId }: Props)
       <UnstableCardContent className="p-0">
         {isPending && (
           <div className="flex h-40 w-full items-center justify-center">
-            <Lottie icon="infisical_loading_white" isAutoPlay className="w-16" />
+            <Lottie icon="kms_loading_white" isAutoPlay className="w-16" />
           </div>
         )}
         {!isPending && installations.length === 0 && (

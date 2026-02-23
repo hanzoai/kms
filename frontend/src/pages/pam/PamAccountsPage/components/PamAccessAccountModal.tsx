@@ -98,7 +98,7 @@ export const PamAccessAccountModal = ({ isOpen, onOpenChange, account, projectId
       >
         <div className="py-1">
           <p className="text-sm font-medium text-mineshaft-400">Terminal</p>
-          <p className="mb-2 text-xs text-mineshaft-400">Connect using the Infisical CLI</p>
+          <p className="mb-2 text-xs text-mineshaft-400">Connect using the KMS CLI</p>
           <FormLabel
             label="Duration"
             tooltipText="The maximum duration of your session. Ex: 1h, 3w, 30d"
@@ -132,12 +132,12 @@ export const PamAccessAccountModal = ({ isOpen, onOpenChange, account, projectId
             </IconButton>
           </div>
           <a
-            href="https://infisical.com/docs/cli/overview"
+            href="https://kms.hanzo.ai/docs/cli"
             target="_blank"
             className="mt-2 flex h-4 w-fit items-center gap-2 border-b border-mineshaft-400 text-sm text-mineshaft-400 transition-colors duration-100 hover:border-yellow-400 hover:text-yellow-400"
             rel="noreferrer"
           >
-            <span>Install the Infisical CLI</span>
+            <span>Install the KMS CLI</span>
             <FontAwesomeIcon icon={faUpRightFromSquare} className="size-3" />
           </a>
         </div>

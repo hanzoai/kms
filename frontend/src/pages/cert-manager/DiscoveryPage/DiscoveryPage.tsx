@@ -32,7 +32,7 @@ export const DiscoveryPage = () => {
             <span className="inline-flex items-center gap-x-2">
               Certificate Discovery
               <span className="mt-0.5">
-                <DocumentationLinkBadge href="https://infisical.com/docs/documentation/platform/pki/discovery" />
+                <DocumentationLinkBadge href="https://kms.hanzo.ai/docs/pki/discovery" />
               </span>
             </span>
           }
