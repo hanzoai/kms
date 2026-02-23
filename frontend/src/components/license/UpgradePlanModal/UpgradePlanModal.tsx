@@ -1,4 +1,4 @@
-import { INFISICAL_SCHEDULE_DEMO_LINK } from "@app/const/links";
+import { KMS_SCHEDULE_DEMO_LINK } from "@app/const/links";
 import { useOrganization, useSubscription } from "@app/context";
 import { useGetOrgTrialUrl } from "@app/hooks/api";
 
@@ -25,7 +25,7 @@ export const UpgradePlanModal = ({
   const getLink = () => {
     // self-hosting
     if (!subscription || subscription.slug === null) {
-      return INFISICAL_SCHEDULE_DEMO_LINK;
+      return KMS_SCHEDULE_DEMO_LINK;
     }
 
     // KMS cloud

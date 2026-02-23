@@ -23,7 +23,7 @@ import { EditSecretRotationV2Modal } from "@app/components/secret-rotations-v2/E
 import { ReconcileLocalAccountRotationModal } from "@app/components/secret-rotations-v2/ReconcileLocalAccountRotationModal";
 import { RotateSecretRotationV2Modal } from "@app/components/secret-rotations-v2/RotateSecretRotationV2Modal";
 import { ViewSecretRotationV2GeneratedCredentialsModal } from "@app/components/secret-rotations-v2/ViewSecretRotationV2GeneratedCredentials";
-import { DeleteActionModal, Modal, ModalContent, PageHeader } from "@app/components/v2";
+import { DeleteActionModal, HanzoLogoLoader, Modal, ModalContent, PageHeader } from "@app/components/v2";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -495,7 +495,7 @@ export const OverviewPage = () => {
   const handleViewCommitHistory = async (envSlug: string, preloadedFolderId?: string) => {
     if (!subscription?.pitRecovery) {
       handlePopUpOpen("upgradePlan", {
-        text: "You can use point-in-time recovery if you upgrade your Infisical plan."
+        text: "You can use point-in-time recovery if you upgrade your Hanzo KMS plan."
       });
       return;
     }

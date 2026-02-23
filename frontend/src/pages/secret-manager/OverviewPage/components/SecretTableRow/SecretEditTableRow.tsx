@@ -28,7 +28,7 @@ import { createNotification } from "@app/components/notifications";
 import { ProjectPermissionCan } from "@app/components/permissions";
 import { SecretReferenceTree } from "@app/components/secrets/SecretReferenceDetails";
 import { DeleteActionModal, Input, Modal, ModalContent } from "@app/components/v2";
-import { InfisicalSecretInput } from "@app/components/v2/InfisicalSecretInput";
+import { KmsSecretInput } from "@app/components/v2/KmsSecretInput";
 import {
   Badge,
   Popover,
