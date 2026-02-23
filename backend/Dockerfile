@@ -83,7 +83,7 @@ RUN rm -rf ./bdd ./e2e-test
 # Install smbclient for Windows SMB operations
 RUN apt-get update && apt-get install -y smbclient
 
-# Install Infisical CLI
+# Install KMS CLI
 RUN apt-get update && apt-get install -y curl bash && \
     curl -1sLf 'https://artifacts-cli.infisical.com/setup.deb.sh' | bash && \
     apt-get update && apt-get install -y infisical=0.43.14 git

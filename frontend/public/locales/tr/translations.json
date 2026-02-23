@@ -119,7 +119,7 @@
     "click-to-start": "Sırlarınızı senkronize etmeye başlamak için bir entegrasyona tıklayın.",
     "click-to-setup": "Kurulum talimatlarını almak için bir frameworke tıklayın.",
     "grant-access-to-secrets": "KMS'ye sırlarınıza erişim izni verin",
-    "why-infisical-needs-access": "Çoğu cloud entegrasyonu, KMS'nin sırlarınızı aktarabilmek için sırlarınızı deşifre etmesini gerektirir.",
+    "why-kms-needs-access": "Çoğu cloud entegrasyonu, KMS'nin sırlarınızı aktarabilmek için sırlarınızı deşifre etmesini gerektirir.",
     "grant-access-button": "Erişim izni ver"
   },
   "login": {

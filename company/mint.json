@@ -1,9 +1,9 @@
 {
-  "name": "Infisical",
+  "name": "Hanzo KMS",
   "logo": {
     "dark": "/logo/dark.svg",
     "light": "/logo/light.svg",
-    "href": "https://infisical.com"
+    "href": "https://kms.hanzo.ai"
   },
   "favicon": "/favicon.ico",
   "colors": {
@@ -31,17 +31,17 @@
     "thumbsRating": true
   },
   "api": {
-    "baseUrl": ["https://app.infisical.com", "http://localhost:8080"]
+    "baseUrl": ["https://kms.hanzo.ai", "http://localhost:8080"]
   },
   "topbarLinks": [
     {
       "name": "Log In",
-      "url": "https://app.infisical.com/login"
+      "url": "https://kms.hanzo.ai/login"
     }
   ],
   "topbarCtaButton": {
     "name": "Start for Free",
-    "url": "https://app.infisical.com/signup"
+    "url": "https://kms.hanzo.ai/signup"
   },
   "primaryTab": {
     "name": "About"

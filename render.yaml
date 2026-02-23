@@ -1,11 +1,11 @@
 services:
   - type: web
-    name: infisical
+    name: kms
     env: docker
-    dockerfilePath: ./Dockerfile.standalone-infisical
+    dockerfilePath: ./Dockerfile.standalone-kms
     autoDeploy: false
     # healthCheckPath: /api/status
-    repo: https://github.com/Infisical/infisical.git
+    repo: https://github.com/hanzoai/kms.git
     envVars:
       - key: ENCRYPTION_KEY
         generateValue: true

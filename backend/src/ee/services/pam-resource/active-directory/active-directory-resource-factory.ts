@@ -169,7 +169,7 @@ export const activeDirectoryResourceFactory: TPamResourceFactory<
     updatedAccountCredentials: TActiveDirectoryAccountCredentials,
     currentCredentials: TActiveDirectoryAccountCredentials
   ) => {
-    if (updatedAccountCredentials.password === "__INFISICAL_UNCHANGED__") {
+    if (updatedAccountCredentials.password === "__KMS_UNCHANGED__") {
       return {
         ...updatedAccountCredentials,
         password: currentCredentials.password

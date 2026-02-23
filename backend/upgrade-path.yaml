@@ -1,11 +1,11 @@
 # Upgrade Path Configuration File
 #
-# This file defines breaking changes and database migration information for Infisical versions.
+# This file defines breaking changes and database migration information for KMS versions.
 # Used by the upgrade path tool to help users understand what changes are required between versions.
 #
 # Expected format:
 # versions:
-#   "version_key":  # Can be "v1.2.3", "1.2.3", or "infisical/v1.2.3-postgres"
+#   "version_key":  # Can be "v1.2.3", "1.2.3", or "kms/v1.2.3-postgres"
 #     breaking_changes:  # Optional: list of breaking changes for this version
 #       - title: "Short descriptive title"
 #         description: "Detailed description of what changed"
