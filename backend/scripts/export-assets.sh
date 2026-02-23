@@ -14,7 +14,7 @@ show_help() {
 Export frontend static assets for CDN deployment.
 
 USAGE:
-    docker run --rm infisical/infisical npm run --silent assets:export [-- OPTIONS] [PATH]
+    docker run --rm hanzoai/kms npm run --silent assets:export [-- OPTIONS] [PATH]
 
 OPTIONS:
     --help, -h    Show this help message
@@ -28,10 +28,10 @@ NOTE:
 
 EXAMPLES:
     # Export as tar to local file
-    docker run --rm infisical/infisical npm run --silent assets:export > assets.tar
+    docker run --rm hanzoai/kms npm run --silent assets:export > assets.tar
 
     # Extract to local directory
-    docker run --rm -v $(pwd)/cdn-assets:/output infisical/infisical npm run --silent assets:export /output
+    docker run --rm -v $(pwd)/cdn-assets:/output hanzoai/kms npm run --silent assets:export /output
 
 EOF
     exit 0

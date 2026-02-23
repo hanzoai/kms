@@ -45,7 +45,7 @@ export const SecretRotationFailedTemplate = ({
       </Section>
       <Section className="text-center">
         <BaseButton href={`${rotationUrl}?search=${rotationName}&secretPath=${secretPath}`}>
-          View in Infisical
+          View in Hanzo KMS
         </BaseButton>
       </Section>
     </BaseEmailWrapper>

@@ -12,12 +12,12 @@ interface UnlockAccountTemplateProps extends Omit<BaseEmailWrapperProps, "title"
 export const UnlockAccountTemplate = ({ token, siteUrl, callback_url }: UnlockAccountTemplateProps) => {
   return (
     <BaseEmailWrapper
-      title="Your Infisical Account Has Been Locked"
-      preview="Unlock your Infisical account to continue."
+      title="Your Hanzo KMS Account Has Been Locked"
+      preview="Unlock your Hanzo KMS account to continue."
       siteUrl={siteUrl}
     >
       <Heading className="text-black text-[18px] leading-[28px] text-center font-normal p-0 mx-0">
-        <strong>Unlock your Infisical account</strong>
+        <strong>Unlock your Hanzo KMS account</strong>
       </Heading>
       <Section className="px-[24px] mb-[28px] mt-[36px] pt-[12px] pb-[8px] border border-solid border-gray-200 rounded-md bg-gray-50">
         <Text className="text-[14px]">

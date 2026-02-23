@@ -22,7 +22,7 @@ export const SignupExistingAccountTemplate = ({
   return (
     <BaseEmailWrapper
       title="Sign-up Request Received"
-      preview="You already have an Infisical account."
+      preview="You already have a Hanzo KMS account."
       siteUrl={siteUrl}
     >
       <Heading className="text-black text-[18px] leading-[28px] text-center font-normal p-0 mx-0">
@@ -30,7 +30,7 @@ export const SignupExistingAccountTemplate = ({
       </Heading>
       <Section className="px-[24px] mb-[28px] mt-[36px] pt-[12px] pb-[8px] border border-solid border-gray-200 rounded-md bg-gray-50">
         <Text className="text-[14px]">
-          We received a sign-up request for your Infisical account (<strong>{email}</strong>).
+          We received a sign-up request for your Hanzo KMS account (<strong>{email}</strong>).
         </Text>
         <Text className="text-[14px]">
           Since you already have an account, you can sign in or reset your password using the options below:
