@@ -79,7 +79,7 @@ export const IPAllowlistTable = ({ popUp, handlePopUpOpen, handlePopUpToggle }: 
                                         <div className="flex items-center">
                                             <FontAwesomeIcon
                                                 icon={faCircle}
-                                                color="#2ecc71"
+                                                color="#a3a3a3"
                                             />
                                             <p className="ml-4">Active</p>
                                         </div>
