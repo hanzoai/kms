@@ -33,7 +33,7 @@ import {
   UnstableTableHeader,
   UnstableTableRow
 } from "@app/components/v3";
-import { INFISICAL_SCHEDULE_DEMO_LINK } from "@app/const/links";
+import { KMS_SCHEDULE_DEMO_LINK } from "@app/const/links";
 import { OrgPermissionSubjects, useOrganization, useSubscription } from "@app/context";
 import { OrgPermissionMachineIdentityAuthTemplateActions } from "@app/context/OrgPermissionContext/types";
 import {
@@ -133,7 +133,7 @@ export const IdentityAuthTemplatesTable = ({ handlePopUpOpen }: Props) => {
           </UnstableEmptyHeader>
           <UnstableEmptyContent>
             <Button size="sm" variant={isSubOrganization ? "sub-org" : "org"} asChild>
-              <a href={INFISICAL_SCHEDULE_DEMO_LINK} target="_blank" rel="noopener noreferrer">
+              <a href={KMS_SCHEDULE_DEMO_LINK} target="_blank" rel="noopener noreferrer">
                 Talk to Us
               </a>
             </Button>

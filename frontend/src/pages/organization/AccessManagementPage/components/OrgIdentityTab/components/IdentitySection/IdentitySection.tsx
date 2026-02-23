@@ -113,7 +113,7 @@ export const IdentitySection = withPermission(
             <UnstableCardHeader>
               <UnstableCardTitle>
                 {isSubOrganization ? "Sub-" : ""}Organization Machine Identities
-                <DocumentationLinkBadge href="https://infisical.com/docs/documentation/platform/identities/machine-identities" />
+                <DocumentationLinkBadge href="https://kms.hanzo.ai/docs/identities/machines" />
               </UnstableCardTitle>
               <UnstableCardDescription>
                 Create and manage {isSubOrganization ? "sub-" : ""}organization machine identities
@@ -130,7 +130,7 @@ export const IdentitySection = withPermission(
                         if (!isMoreIdentitiesAllowed && !isEnterprise) {
                           handlePopUpOpen("upgradePlan", {
                             description:
-                              "You can add more machine identities if you upgrade your Infisical Pro plan."
+                              "You can add more machine identities if you upgrade your Hanzo KMS Pro plan."
                           });
                           return;
                         }
@@ -160,7 +160,7 @@ export const IdentitySection = withPermission(
             <UnstableCardHeader>
               <UnstableCardTitle>
                 Machine Identity Auth Templates
-                <DocumentationLinkBadge href="https://infisical.com/docs/documentation/platform/identities/auth-templates" />
+                <DocumentationLinkBadge href="https://kms.hanzo.ai/docs/identities/auth-templates" />
               </UnstableCardTitle>
               <UnstableCardDescription>
                 Create and manage machine identity authentication templates
@@ -177,7 +177,7 @@ export const IdentitySection = withPermission(
                         if (subscription && !subscription.machineIdentityAuthTemplates) {
                           handlePopUpOpen("upgradePlan", {
                             isEnterpriseFeature: true,
-                            text: "Your current plan does not include access to creating Machine Identity Auth Templates. To unlock this feature, please upgrade to Infisical Enterprise plan."
+                            text: "Your current plan does not include access to creating Machine Identity Auth Templates. To unlock this feature, please upgrade to Hanzo KMS Enterprise plan."
                           });
                           return;
                         }

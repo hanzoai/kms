@@ -1,3 +1,3 @@
-const INFISICAL_SCHEDULE_DEMO_LINK = "https://infisical.com/schedule-demo";
+const KMS_SCHEDULE_DEMO_LINK = "https://cal.com/hanzo/30min";
 
-export { INFISICAL_SCHEDULE_DEMO_LINK };
+export { KMS_SCHEDULE_DEMO_LINK };
