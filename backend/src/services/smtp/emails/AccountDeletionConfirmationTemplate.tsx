@@ -11,7 +11,7 @@ interface AccountDeletionConfirmationTemplateProps
 export const AccountDeletionConfirmationTemplate = ({ email, siteUrl }: AccountDeletionConfirmationTemplateProps) => {
   return (
     <BaseEmailWrapper
-      title="Your Infisical Account Has Been Deleted"
+      title="Your Hanzo KMS Account Has Been Deleted"
       preview="Confirmation that your account and associated data have been deleted."
       siteUrl={siteUrl}
     >
@@ -20,7 +20,7 @@ export const AccountDeletionConfirmationTemplate = ({ email, siteUrl }: AccountD
       </Heading>
       <Section className="px-[24px] mt-[20px] pt-[12px] pb-[8px] border border-solid border-gray-200 rounded-md bg-gray-50">
         <Text className="text-[14px]">
-          This email confirms that your Infisical account <strong>{email}</strong> has been deleted, including all
+          This email confirms that your Hanzo KMS account <strong>{email}</strong> has been deleted, including all
           associated data.
         </Text>
       </Section>
@@ -31,6 +31,6 @@ export const AccountDeletionConfirmationTemplate = ({ email, siteUrl }: AccountD
 export default AccountDeletionConfirmationTemplate;
 
 AccountDeletionConfirmationTemplate.PreviewProps = {
-  email: "test@infisical.com",
+  email: "test@hanzo.ai",
   siteUrl: "https://kms.hanzo.ai"
 } as AccountDeletionConfirmationTemplateProps;

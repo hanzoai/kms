@@ -23,7 +23,7 @@ export const NewDeviceLoginTemplate = ({
   return (
     <BaseEmailWrapper
       title="Successful Login from New Device"
-      preview="New device login from Infisical."
+      preview="New device login from Hanzo KMS."
       siteUrl={siteUrl}
     >
       <Heading className="text-black text-[18px] leading-[28px] text-center font-normal p-0 mx-0">
@@ -57,7 +57,7 @@ export const NewDeviceLoginTemplate = ({
 export default NewDeviceLoginTemplate;
 
 NewDeviceLoginTemplate.PreviewProps = {
-  email: "john@infisical.com",
+  email: "john@hanzo.ai",
   ip: "127.0.0.1",
   userAgent:
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15",

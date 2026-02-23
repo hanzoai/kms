@@ -19,7 +19,7 @@ export const CA_KEY_ALGORITHM_TO_SIGNING_ALGORITHM_MAP: Record<string, SigningAl
 };
 
 /**
- * Maps Infisical CRL reasons to AWS PCA revocation reasons.
+ * Maps KMS CRL reasons to AWS PCA revocation reasons.
  */
 export const CRL_REASON_TO_REVOCATION_REASON_MAP: Record<CrlReason, RevocationReason> = {
   [CrlReason.UNSPECIFIED]: RevocationReason.UNSPECIFIED,

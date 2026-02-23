@@ -17,7 +17,7 @@ export const OrgAdminProjectGrantAccessTemplate = ({
   return (
     <BaseEmailWrapper
       title="Project Access Granted to Organization Admin"
-      preview="An organization admin has self-issued direct access to a project in Infisical."
+      preview="An organization admin has self-issued direct access to a project in Hanzo KMS."
       siteUrl={siteUrl}
     >
       <Heading className="text-black text-[18px] leading-[28px] text-center font-normal p-0 mx-0">
@@ -36,7 +36,7 @@ export const OrgAdminProjectGrantAccessTemplate = ({
 export default OrgAdminProjectGrantAccessTemplate;
 
 OrgAdminProjectGrantAccessTemplate.PreviewProps = {
-  email: "kevin@infisical.com",
+  email: "kevin@hanzo.ai",
   projectName: "Example Project",
   siteUrl: "https://kms.hanzo.ai"
 } as OrgAdminProjectGrantAccessTemplateProps;

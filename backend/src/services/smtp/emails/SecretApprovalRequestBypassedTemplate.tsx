@@ -60,7 +60,7 @@ export default SecretApprovalRequestBypassedTemplate;
 
 SecretApprovalRequestBypassedTemplate.PreviewProps = {
   requesterFullName: "Abigail Williams",
-  requesterEmail: "abigail@infisical.com",
+  requesterEmail: "abigail@hanzo.ai",
   secretPath: "/api/secrets",
   environment: "Production",
   siteUrl: "https://kms.hanzo.ai",

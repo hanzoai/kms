@@ -77,7 +77,7 @@ export default AccessApprovalRequestTemplate;
 
 AccessApprovalRequestTemplate.PreviewProps = {
   requesterFullName: "Abigail Williams",
-  requesterEmail: "abigail@infisical.com",
+  requesterEmail: "abigail@hanzo.ai",
   isTemporary: true,
   secretPath: "/api/secrets",
   environment: "Production",

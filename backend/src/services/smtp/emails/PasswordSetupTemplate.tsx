@@ -14,14 +14,14 @@ interface PasswordSetupTemplateProps extends Omit<BaseEmailWrapperProps, "title"
 
 export const PasswordSetupTemplate = ({ email, isCloud, siteUrl, callback_url, token }: PasswordSetupTemplateProps) => {
   return (
-    <BaseEmailWrapper title="Password Setup" preview="Setup your password for Infisical." siteUrl={siteUrl}>
+    <BaseEmailWrapper title="Password Setup" preview="Setup your password for Hanzo KMS." siteUrl={siteUrl}>
       <Heading className="text-black text-[18px] leading-[28px] text-center font-normal p-0 mx-0">
         <strong>Password Setup</strong>
       </Heading>
       <Section className="px-[24px] mb-[28px] mt-[36px] pt-[12px] pb-[8px] border border-solid border-gray-200 rounded-md bg-gray-50">
-        <Text className="text-[14px]">Someone requested to set up a password for your Infisical account.</Text>
+        <Text className="text-[14px]">Someone requested to set up a password for your Hanzo KMS account.</Text>
         <Text className="text-[14px] text-red-600">
-          Make sure you are already logged in to Infisical in the current browser before clicking the link below.
+          Make sure you are already logged in to Hanzo KMS in the current browser before clicking the link below.
         </Text>
         <Text className="text-[14px]">
           If you did not initiate this request, please contact{" "}
@@ -50,7 +50,7 @@ export const PasswordSetupTemplate = ({ email, isCloud, siteUrl, callback_url, t
 export default PasswordSetupTemplate;
 
 PasswordSetupTemplate.PreviewProps = {
-  email: "casey@infisical.com",
+  email: "casey@hanzo.ai",
   callback_url: "https://kms.hanzo.ai",
   isCloud: true,
   siteUrl: "https://kms.hanzo.ai",
