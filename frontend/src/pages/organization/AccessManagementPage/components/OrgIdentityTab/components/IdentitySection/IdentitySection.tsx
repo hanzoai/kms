@@ -130,7 +130,7 @@ export const IdentitySection = withPermission(
                         if (!isMoreIdentitiesAllowed && !isEnterprise) {
                           handlePopUpOpen("upgradePlan", {
                             description:
-                              "You can add more machine identities if you upgrade your Hanzo KMS Pro plan."
+                              "You can add more machine identities if you upgrade your Hanzo Hanzo KMS plan."
                           });
                           return;
                         }

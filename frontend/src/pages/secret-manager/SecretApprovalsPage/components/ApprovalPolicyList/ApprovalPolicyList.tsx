@@ -491,7 +491,7 @@ export const ApprovalPolicyList = ({ projectId }: IProps) => {
       <UpgradePlanModal
         isOpen={popUp.upgradePlan.isOpen}
         onOpenChange={(isOpen) => handlePopUpToggle("upgradePlan", isOpen)}
-        text="Adding secret approval policies can be unlocked if you upgrade to KMS Pro plan."
+        text="Adding secret approval policies can be unlocked if you upgrade to Hanzo KMS plan."
       />
     </>
   );

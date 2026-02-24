@@ -1252,7 +1252,7 @@ export const OverviewPage = () => {
                         return;
                       }
                       handlePopUpOpen("upgradePlan", {
-                        text: "Adding secret rotations can be unlocked if you upgrade to KMS Pro plan."
+                        text: "Adding secret rotations can be unlocked if you upgrade to Hanzo KMS plan."
                       });
                     }}
                     isDyanmicSecretAvailable={userAvailableDynamicSecretEnvs.length > 0}

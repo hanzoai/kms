@@ -1109,7 +1109,7 @@ export const SecretEditTableRow = ({
               <UpgradePlanModal
                 isOpen={popUp.accessInsightsUpgrade.isOpen}
                 onOpenChange={(isOpen) => handlePopUpToggle("accessInsightsUpgrade", isOpen)}
-                text="Secret access insights can be unlocked if you upgrade to KMS Pro plan."
+                text="Secret access insights can be unlocked if you upgrade to Hanzo KMS plan."
               />
             </div>
           )}
