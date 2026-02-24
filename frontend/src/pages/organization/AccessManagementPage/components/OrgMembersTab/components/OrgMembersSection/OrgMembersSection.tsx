@@ -102,7 +102,7 @@ export const OrgMembersSection = () => {
 
     if (!isMoreIdentitiesAllowed && !isEnterprise) {
       handlePopUpOpen("upgradePlan", {
-        text: "You have reached the maximum number of members allowed on your current plan. Upgrade to KMS Pro plan to add more members."
+        text: "You have reached the maximum number of members allowed on your current plan. Upgrade to Hanzo KMS plan to add more members."
       });
       return;
     }

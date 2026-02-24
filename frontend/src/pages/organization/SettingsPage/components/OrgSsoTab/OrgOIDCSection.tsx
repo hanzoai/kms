@@ -199,7 +199,7 @@ export const OrgOIDCSection = (): JSX.Element => {
       <UpgradePlanModal
         isOpen={popUp.upgradePlan.isOpen}
         onOpenChange={(isOpen) => handlePopUpToggle("upgradePlan", isOpen)}
-        text="Your current plan does not include access to OIDC SSO. To unlock this feature, please upgrade to KMS Pro plan."
+        text="Your current plan does not include access to OIDC SSO. To unlock this feature, please upgrade to Hanzo KMS plan."
       />
     </div>
   );

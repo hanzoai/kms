@@ -37,7 +37,7 @@ export const OrgSSOSection = (): JSX.Element => {
 
     if (!subscription?.samlSSO) {
       handlePopUpOpen("upgradePlan", {
-        text: "Your current plan does not include access to SAML SSO. To unlock this feature, please upgrade to KMS Pro plan."
+        text: "Your current plan does not include access to SAML SSO. To unlock this feature, please upgrade to Hanzo KMS plan."
       });
       return;
     }
@@ -94,7 +94,7 @@ export const OrgSSOSection = (): JSX.Element => {
         handlePopUpOpen("addSSO");
       } else {
         handlePopUpOpen("upgradePlan", {
-          text: "Your current plan does not include access to SAML SSO. To unlock this feature, please upgrade to KMS Pro plan."
+          text: "Your current plan does not include access to SAML SSO. To unlock this feature, please upgrade to Hanzo KMS plan."
         });
       }
     } catch (err) {

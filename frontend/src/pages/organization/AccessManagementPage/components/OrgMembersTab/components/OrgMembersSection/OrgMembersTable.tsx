@@ -134,7 +134,7 @@ export const OrgMembersTable = ({
 
     if (isCustomRole && subscription && !subscription?.rbac) {
       handlePopUpOpen("upgradePlan", {
-        text: "Your current plan does not include access to assigning custom roles to members. To unlock this feature, please upgrade to KMS Pro plan."
+        text: "Your current plan does not include access to assigning custom roles to members. To unlock this feature, please upgrade to Hanzo KMS plan."
       });
       return;
     }

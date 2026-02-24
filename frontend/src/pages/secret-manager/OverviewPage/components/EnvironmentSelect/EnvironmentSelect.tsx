@@ -102,7 +102,7 @@ export function EnvironmentSelect({ selectedEnvs, setSelectedEnvs }: Props) {
       <UpgradePlanModal
         isOpen={popUp.upgradePlan.isOpen}
         onOpenChange={(open) => handlePopUpToggle("upgradePlan", open)}
-        text="Your current plan does not include access to adding custom environments. To unlock this feature, please upgrade to Hanzo KMS Pro plan."
+        text="Your current plan does not include access to adding custom environments. To unlock this feature, please upgrade to Hanzo KMS plan."
       />
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>

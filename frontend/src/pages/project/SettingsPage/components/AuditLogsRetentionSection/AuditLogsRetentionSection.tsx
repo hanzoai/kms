@@ -41,7 +41,7 @@ export const AuditLogsRetentionSection = () => {
   const handleAuditLogsRetentionSubmit = async ({ auditLogsRetentionDays }: TForm) => {
     if (!subscription?.auditLogs) {
       handlePopUpOpen("upgradePlan", {
-        text: "Configuring audit logs retention can be unlocked if you upgrade to KMS Pro plan."
+        text: "Configuring audit logs retention can be unlocked if you upgrade to Hanzo KMS plan."
       });
 
       return;
@@ -49,7 +49,7 @@ export const AuditLogsRetentionSection = () => {
 
     if (subscription && auditLogsRetentionDays > subscription?.auditLogsRetentionDays) {
       handlePopUpOpen("upgradePlan", {
-        text: "Updating audit logs retention period to a higher value can be unlocked if you upgrade to KMS Pro plan."
+        text: "Updating audit logs retention period to a higher value can be unlocked if you upgrade to Hanzo KMS plan."
       });
 
       return;
