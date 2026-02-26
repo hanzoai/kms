@@ -1,12 +1,12 @@
-# AI Assistant Knowledge Base - KMS
+# AI Assistant Knowledge Base - Hanzo KMS
 
-**Last Updated**: 2026-01-26
-**Project**: KMS
+**Last Updated**: 2026-02-26
+**Project**: Hanzo KMS
 **Organization**: Hanzo AI
 
 ## Project Overview
 
-KMS is an open-source Key Management Service for managing secrets, API keys, certificates, and encryption keys across infrastructure. It is a fork of [Infisical](https://github.com/Infisical/infisical).
+Hanzo KMS is an open-source Key Management Service for managing secrets, API keys, certificates, and encryption keys across infrastructure.
 
 ## Essential Commands
 
@@ -28,7 +28,7 @@ cd backend && npm run migration:latest
 
 ### Production
 Production runs on **hanzo-k8s** DOKS cluster (`24.199.76.156`) at `kms.hanzo.ai`.
-- Image: `infisical/infisical:latest` (upstream)
+- Image: `hanzoai/kms:latest`
 - DB: `postgres://hanzo:...@postgres.hanzo.svc:5432/kms`
 - Redis: `redis-master:6379`
 
@@ -62,7 +62,6 @@ cd backend && npm run test:bdd
 
 ## Branding
 
-This fork has been rebranded from Infisical:
 - Package name: `@hanzo/kms`
 - Docker image: `hanzoai/kms:latest`
 - Database defaults: `hanzokms` (user, password, database)
@@ -94,8 +93,8 @@ All files reference the same knowledge base. Updates here propagate to all AI sy
 1. **ALWAYS** update LLM.md with significant discoveries
 2. **NEVER** commit symlinked files (.AGENTS.md, CLAUDE.md, etc.) - they're in .gitignore
 3. **NEVER** create random summary files - update THIS file
-4. Preserve fork attribution to Infisical in relevant contexts
-5. Use `hanzokms` credentials in development, not `infisical`
+4. Use `hanzokms` credentials in development
+5. Repository: github.com/hanzoai/kms
 
 ---
 

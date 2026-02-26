@@ -8,7 +8,7 @@ COPY . .
 
 # Install a local version of our OpenAPI spec
 RUN apk add --no-cache wget jq && \
-    wget -O spec.json https://app.infisical.com/api/docs/json && \
+    wget -O spec.json https://kms.hanzo.ai/api/docs/json && \
     jq '.api.openapi = "./spec.json"' docs.json > temp.json && \
     mv temp.json docs.json
 

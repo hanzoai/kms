@@ -64,7 +64,7 @@ Prerequisites:
     # Select your base image (based on your Linux distribution, e.g., Alpine, Debian, Ubuntu, etc.)
     FROM alpine
 
-    # Add the Infisical CLI to your Dockerfile (choose the appropriate block based on your base image)
+    # Add the KMS CLI to your Dockerfile (choose the appropriate block based on your base image)
     RUN apk add --no-cache bash sudo wget && wget -qO- \
         'https://artifacts-cli.infisical.com/setup.apk.sh' | sh \
         && apk add infisical
@@ -126,7 +126,7 @@ Prerequisites:
     # Select your base image (based on your Linux distribution, e.g., Alpine, Debian, Ubuntu, etc.)
     FROM alpine
 
-    # Add the Infisical CLI to your Dockerfile (choose the appropriate block based on your base image)
+    # Add the KMS CLI to your Dockerfile (choose the appropriate block based on your base image)
     RUN apk add --no-cache bash sudo wget && wget -qO- \
         'https://artifacts-cli.infisical.com/setup.apk.sh' | sh \
         && apk add infisical

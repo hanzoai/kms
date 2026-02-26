@@ -4,7 +4,7 @@ sidebarTitle: "Overview"
 description: "Access PAM-managed resources directly from your browser with an interactive terminal."
 ---
 
-Infisical PAM Web Access provides a browser-based portal for interacting with your infrastructure directly from your browser via the Infisical dashboard — no client tools or CLI required.
+KMS PAM Web Access provides a browser-based portal for interacting with your infrastructure directly from your browser via the KMS dashboard — no client tools or CLI required.
 
 <Info>
   Web Access currently supports **PostgreSQL** databases.
@@ -12,22 +12,22 @@ Infisical PAM Web Access provides a browser-based portal for interacting with yo
 
 ## How It Works
 
-When you open a web access session, Infisical establishes a secure WebSocket connection that tunnels through an Infisical Gateway to your target resource. All commands are executed server-side and streamed back to your browser in real time.
+When you open a web access session, KMS establishes a secure WebSocket connection that tunnels through an KMS Gateway to your target resource. All commands are executed server-side and streamed back to your browser in real time.
 
 ```mermaid
 sequenceDiagram
     participant Browser
-    participant Infisical
-    participant Gateway as Infisical Gateway
+    participant KMS
+    participant Gateway as KMS Gateway
     participant Resource as Target Resource
 
-    Browser->>Infisical: Request session ticket
-    Infisical-->>Browser: One-time ticket
-    Browser->>Infisical: Open WebSocket with ticket
-    Infisical->>Gateway: Establish secure tunnel
+    Browser->>KMS: Request session ticket
+    KMS-->>Browser: One-time ticket
+    Browser->>KMS: Open WebSocket with ticket
+    KMS->>Gateway: Establish secure tunnel
     Gateway->>Resource: Connect with account credentials
-    Browser->>Infisical: User input
-    Infisical->>Gateway: Forward input
+    Browser->>KMS: User input
+    KMS->>Gateway: Forward input
     Gateway->>Resource: Execute
     Resource-->>Browser: Streamed output
 ```
