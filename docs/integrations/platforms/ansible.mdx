@@ -34,7 +34,7 @@ You can either call modules by their Fully Qualified Collection Name (FQCN), suc
 
 ## Authentication
 
-The Infisical Ansible Collection supports [Universal Auth](/documentation/platform/identities/universal-auth), [OIDC Auth](/documentation/platform/identities/oidc-auth/general), [LDAP Auth](/documentation/platform/identities/ldap-auth/general), and [Token Auth](/documentation/platform/identities/token-auth) for authenticating against Infisical.
+The KMS Ansible Collection supports [Universal Auth](/documentation/platform/identities/universal-auth), [OIDC Auth](/documentation/platform/identities/oidc-auth/general), [LDAP Auth](/documentation/platform/identities/ldap-auth/general), and [Token Auth](/documentation/platform/identities/token-auth) for authenticating against KMS.
 
 ### Login Module (Recommended)
 
@@ -116,7 +116,7 @@ The recommended approach is to use the `login` module to authenticate once and r
   </Accordion>
 
   <Accordion title="LDAP Auth">
-    LDAP Auth allows you to authenticate with Infisical using a machine identity configured with an LDAP directory. You need to provide the identity ID and your LDAP username and password.
+    LDAP Auth allows you to authenticate with KMS using a machine identity configured with an LDAP directory. You need to provide the identity ID and your LDAP username and password.
 
     <Note>
       Please note that in order to use LDAP Auth, you must have `1.0.16` or newer of the `infisicalsdk` package installed.
@@ -125,7 +125,7 @@ The recommended approach is to use the `login` module to authenticate once and r
     ```yaml
     - name: Login with LDAP Auth
       infisical.vault.login:
-        url: "https://app.infisical.com"
+        url: "https://kms.hanzo.ai"
         auth_method: ldap_auth
         identity_id: "<identity-id>"
         username: "<ldap-username>"

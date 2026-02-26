@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Infisical",
+  "name": "Hanzo KMS",
   "colors": {
     "primary": "#26272b",
     "light": "#97b31d",
@@ -310,7 +310,7 @@
             ]
           },
           {
-            "group": "Self-host Infisical",
+            "group": "Self-host KMS",
             "pages": [
               "self-hosting/overview",
               {
@@ -785,10 +785,10 @@
             ]
           },
           {
-            "item": "Infisical KMS",
+            "item": "KMS",
             "groups": [
               {
-                "group": "Infisical KMS",
+                "group": "KMS",
                 "pages": [
                   "documentation/platform/kms/overview",
                   "documentation/platform/kms/hsm-integration",
@@ -799,10 +799,10 @@
             ]
           },
           {
-            "item": "Infisical PAM",
+            "item": "PAM",
             "groups": [
               {
-                "group": "Infisical PAM",
+                "group": "PAM",
                 "pages": [
                   "documentation/platform/pam/overview",
                   {
@@ -899,7 +899,7 @@
                   "cli/commands/user",
                   "cli/commands/reset",
                   {
-                    "group": "infisical scan",
+                    "group": "kms scan",
                     "pages": [
                       "cli/commands/scan",
                       "cli/commands/scan-git-changes",
@@ -3019,7 +3019,7 @@
             ]
           },
           {
-            "group": "Infisical KMS",
+            "group": "KMS",
             "pages": [
               {
                 "group": "Keys",
@@ -3123,9 +3123,9 @@
   },
   "footer": {
     "socials": {
-      "x": "https://www.twitter.com/infisical/",
-      "linkedin": "https://www.linkedin.com/company/infisical/",
-      "github": "https://github.com/hanzoai/kms-cli",
+      "x": "https://www.twitter.com/hanaboratory/",
+      "linkedin": "https://www.linkedin.com/company/hanaboratory/",
+      "github": "https://github.com/hanzoai/kms",
       "slack": "https://hanzo.ai/slack"
     },
     "links": [
@@ -3157,12 +3157,12 @@
             "href": "https://kms.hanzo.ai/blog"
           },
           {
-            "label": "Infisical vs Vault",
-            "href": "https://kms.hanzo.ai/infisical-vs-hashicorp-vault"
+            "label": "KMS vs Vault",
+            "href": "https://kms.hanzo.ai/kms-vs-hashicorp-vault"
           },
           {
             "label": "Forum",
-            "href": "https://questions.infisical.com/"
+            "href": "https://github.com/hanzoai/kms/discussions"
           }
         ]
       },
@@ -3170,11 +3170,11 @@
         "header": "USE CASES",
         "items": [
           {
-            "label": "Infisical Agent",
+            "label": "KMS Agent",
             "href": "https://kms.hanzo.ai/docs/documentation/getting-started/introduction"
           },
           {
-            "label": "Infisical Proxy",
+            "label": "KMS Proxy",
             "href": "https://kms.hanzo.ai/docs/integrations/platforms/infisical-proxy"
           },
           {
@@ -3187,7 +3187,7 @@
           },
           {
             "label": "Terraform",
-            "href": "https://registry.terraform.io/providers/Infisical/infisical/latest/docs"
+            "href": "https://registry.terraform.io/providers/hanzokms/kms/latest/docs"
           },
           {
             "label": "Ansible",
@@ -3224,27 +3224,27 @@
         "items": [
           {
             "label": "Changelog",
-            "href": "https://github.com/Infisical/infisical/releases"
+            "href": "https://github.com/hanzoai/kms/releases"
           },
           {
             "label": "Status",
-            "href": "https://status.infisical.com/"
+            "href": "https://status.hanzo.ai/"
           },
           {
             "label": "Feedback & Requests",
             "href": "https://github.com/hanzoai/kms/issues"
           },
           {
-            "label": "Trust of Center",
-            "href": "https://app.vanta.com/infisical.com/trust/hoop8cr78cuarxo9sztvs"
+            "label": "Trust Center",
+            "href": "https://hanzo.ai/trust"
           },
           {
-            "label": "Open Source Friends",
-            "href": "https://kms.hanzo.ai/infisical-friends"
+            "label": "Open Source",
+            "href": "https://github.com/hanzoai/kms"
           },
           {
             "label": "How to contribute",
-            "href": "https://www.infisical.com/infisical-heroes"
+            "href": "https://github.com/hanzoai/kms/blob/main/CONTRIBUTING.md"
           }
         ]
       },
@@ -3281,11 +3281,11 @@
           },
           {
             "label": "Team Email",
-            "href": "mailto:team@infisical.com"
+            "href": "mailto:team@hanzo.ai"
           },
           {
             "label": "Sales",
-            "href": "mailto:sales@infisical.com"
+            "href": "mailto:sales@hanzo.ai"
           },
           {
             "label": "Support",

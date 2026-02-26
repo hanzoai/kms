@@ -1,15 +1,15 @@
 ---
 title: "Active Directory"
 sidebarTitle: "Active Directory"
-description: "Learn how to configure Active Directory access through Infisical PAM for secure, audited management of your AD domain controllers and domain-joined resources."
+description: "Learn how to configure Active Directory access through KMS PAM for secure, audited management of your AD domain controllers and domain-joined resources."
 ---
 
-Infisical PAM supports secure management of Active Directory (AD) domain controllers.
+KMS PAM supports secure management of Active Directory (AD) domain controllers.
 An AD Server resource represents a domain controller and serves as the central point for managing domain-joined Windows servers, enabling you to organize your infrastructure by domain.
 
 ## How It Works
 
-An Active Directory resource in Infisical PAM represents a domain controller and acts as the organizational hub for domain-joined machines. Windows Server resources can be linked to an AD resource to indicate they belong to that domain. When a user needs to access domain resources, they navigate to an AD account and select from the list of related Windows servers that are joined to the domain.
+An Active Directory resource in KMS PAM represents a domain controller and acts as the organizational hub for domain-joined machines. Windows Server resources can be linked to an AD resource to indicate they belong to that domain. When a user needs to access domain resources, they navigate to an AD account and select from the list of related Windows servers that are joined to the domain.
 
 ```mermaid
 flowchart LR
@@ -40,14 +40,14 @@ flowchart LR
 
 ## Prerequisites
 
-Before configuring Active Directory access in Infisical PAM, you need:
+Before configuring Active Directory access in KMS PAM, you need:
 
-1. **Infisical Gateway** - A Gateway deployed in your network with access to the AD domain controller
+1. **KMS Gateway** - A Gateway deployed in your network with access to the AD domain controller
 2. **LDAP Access** - The domain controller must be reachable on the LDAP port (default: 389)
 3. **Domain Credentials** - A username and password for an Active Directory account
 
 <Warning>
-  **Gateway Required**: Active Directory access requires an Infisical Gateway to be deployed and registered with your Infisical instance. The Gateway must have network connectivity to your domain controller on the LDAP port (default: 389).
+  **Gateway Required**: Active Directory access requires an KMS Gateway to be deployed and registered with your KMS instance. The Gateway must have network connectivity to your domain controller on the LDAP port (default: 389).
 </Warning>
 
 ## Create the PAM Resource
@@ -56,10 +56,10 @@ The PAM Resource represents the Active Directory domain controller you want to m
 
 <Steps>
   <Step title="Ensure Gateway is Running">
-    Before creating the resource, ensure you have an Infisical Gateway running and registered with your Infisical instance. The Gateway must have network access to your AD domain controller.
+    Before creating the resource, ensure you have an KMS Gateway running and registered with your KMS instance. The Gateway must have network access to your AD domain controller.
   </Step>
 
-  <Step title="Create the Resource in Infisical">
+  <Step title="Create the Resource in KMS">
     1. Navigate to your PAM project and go to the **Resources** tab
     2. Click **Add Resource** and select **Active Directory**
     3. Fill in the connection details:
@@ -84,7 +84,7 @@ The PAM Resource represents the Active Directory domain controller you want to m
       The LDAP port (default: `389`)
     </ParamField>
 
-    Clicking **Create Resource** will trigger a connection test from the selected Gateway to your domain controller. Infisical verifies that the server is reachable and responds to LDAP requests.
+    Clicking **Create Resource** will trigger a connection test from the selected Gateway to your domain controller. KMS verifies that the server is reachable and responds to LDAP requests.
   </Step>
 </Steps>
 

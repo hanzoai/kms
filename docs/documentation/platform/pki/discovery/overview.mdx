@@ -1,6 +1,6 @@
 ---
 sidebarTitle: "Overview"
-description: "Learn how to discover certificates across your infrastructure with Infisical"
+description: "Learn how to discover certificates across your infrastructure with KMS"
 ---
 
 Certificate Discovery enables automated scanning of your infrastructure to find certificates. By configuring discovery jobs, you can continuously monitor for certificates deployed across your environment, giving you full visibility into your organization's certificate landscape.
@@ -11,7 +11,7 @@ Discovery jobs scan your infrastructure for certificates and organize the result
 
 ## Discovery Types
 
-Infisical supports multiple discovery types, each targeting a different source of certificates:
+KMS supports multiple discovery types, each targeting a different source of certificates:
 
 - **[Network](/documentation/platform/pki/discovery/network)**: Scans network endpoints over TLS to discover certificates served by hosts across IP ranges and domains.
 
@@ -33,7 +33,7 @@ Installations can be viewed from the **Installations** tab on the Discovery page
 
 <AccordionGroup>
   <Accordion title="How are discovered certificates matched to existing certificates?">
-    Discovered certificates are matched by their fingerprint. If a discovered certificate matches an existing certificate in your Infisical project, the installation will be linked to that certificate.
+    Discovered certificates are matched by their fingerprint. If a discovered certificate matches an existing certificate in your KMS project, the installation will be linked to that certificate.
   </Accordion>
   <Accordion title="What happens when a certificate changes at an endpoint?">
     When a subsequent scan detects a different certificate at a location, the installation is updated to reflect the new certificate. The previous certificate association is preserved in the scan history.
