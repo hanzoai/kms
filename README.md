@@ -25,11 +25,9 @@
   </a>
 </h4>
 
-> **Note**: KMS is a fork of [Infisical](https://github.com/Infisical/infisical), the excellent open-source secret management platform. We extend our gratitude to the Infisical team for their foundational work.
-
 ## Introduction
 
-**KMS** is the open-source key management service that teams use to centralize their application configuration, secrets (API keys, database credentials), and manage their internal PKI.
+**Hanzo KMS** is the open-source key management service that teams use to centralize their application configuration, secrets (API keys, database credentials), and manage their internal PKI.
 
 Built by [Hanzo AI](https://hanzo.ai), we're focused on making security tooling accessible to everyone, with a redesigned developer experience from the ground up.
 
@@ -123,6 +121,3 @@ Whether it's big or small, we love contributions. Check out our guide to see how
 
 Not sure where to get started? Join our [Discord](https://hanzo.ai/discord) and ask us any questions there.
 
-## Acknowledgments
-
-KMS is built on top of [Infisical](https://github.com/Infisical/infisical). We thank the Infisical team and community for creating an excellent foundation for secret management.

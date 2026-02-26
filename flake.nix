@@ -1,5 +1,5 @@
 {
-  description = "Flake for github:Infisical/infisical repository.";
+  description = "Flake for Hanzo KMS development environment.";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
@@ -17,7 +17,6 @@
           python312Full
           nodejs_20
           nodePackages.prettier
-          infisical
         ];
       };
   };

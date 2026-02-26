@@ -3,10 +3,10 @@ title: "Network"
 description: "Learn how to configure a Network discovery job to find certificates across your infrastructure."
 ---
 
-Network discovery scans network endpoints over TLS to discover certificates served by hosts across IP ranges and domains. Optionally, you can use an [Infisical Gateway](/documentation/platform/gateways/overview) to reach endpoints in private networks that are not accessible from the internet.
+Network discovery scans network endpoints over TLS to discover certificates served by hosts across IP ranges and domains. Optionally, you can use an [KMS Gateway](/documentation/platform/gateways/overview) to reach endpoints in private networks that are not accessible from the internet.
 
 <Tabs>
-  <Tab title="Infisical UI">
+  <Tab title="KMS UI">
     1. Navigate to your Certificate Management Project > **Discovery** and press **Add Job**.
     ![Discovery Page](/images/platform/pki/discovery/network-tls/create-discovery-job.png)
 
@@ -17,7 +17,7 @@ Network discovery scans network endpoints over TLS to discover certificates serv
         - **Description**: An optional description for the discovery job.
         - **Targets**: A list of domains, IP addresses, or CIDR ranges to scan (e.g., `example.com`, `192.168.1.1`, `10.0.0.0/24`).
         - **Ports**: The ports to scan for TLS certificates. Defaults to common TLS ports if not specified.
-        - **Gateway** (optional): The Infisical Gateway to use for running the scan. Only required to reach endpoints in private networks.
+        - **Gateway** (optional): The KMS Gateway to use for running the scan. Only required to reach endpoints in private networks.
         - **Auto Scan**: Toggle to enable automatic periodic scanning. When enabled, select a scan interval (e.g., daily, weekly).
 
         <Note>
@@ -41,7 +41,7 @@ Network discovery scans network endpoints over TLS to discover certificates serv
 
     ```bash Request
     curl --request POST \
-      --url https://app.infisical.com/api/v1/pki/discovery \
+      --url https://kms.hanzo.ai/api/v1/pki/discovery \
       --header 'Authorization: Bearer <access-token>' \
       --header 'Content-Type: application/json' \
       --data '{
@@ -64,7 +64,7 @@ Network discovery scans network endpoints over TLS to discover certificates serv
 
     ```bash Request
     curl --request POST \
-      --url https://app.infisical.com/api/v1/pki/discovery/<discoveryId>/scan \
+      --url https://kms.hanzo.ai/api/v1/pki/discovery/<discoveryId>/scan \
       --header 'Authorization: Bearer <access-token>'
     ```
   </Tab>

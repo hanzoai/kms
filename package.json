@@ -1,6 +1,6 @@
 {
   "name": "@hanzo/kms",
-  "description": "Hanzo Key Management Service - Open source secrets management platform (fork of Infisical)",
+  "description": "Hanzo KMS - Open-source key management service for secrets, certificates, and encryption keys",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/hanzoai/kms.git"
