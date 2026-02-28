@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconButton, SecretInput } from "@app/components/v2";
 import { SessionStorageKeys } from "@app/const";
 import { useTimedReset } from "@app/hooks";
+import { getBrand } from "@app/lib/branding";
 
 const getTerminalCliToken = () => {
   const cliTerminalTokenInfo = sessionStorage.getItem(SessionStorageKeys.CLI_TERMINAL_TOKEN);
@@ -43,7 +44,7 @@ export const CliRedirectPage = () => {
       <div className="flex h-screen w-screen flex-col items-center justify-center space-y-4 text-gray-200">
         <div className="mb-4 flex justify-center">
           <img
-            src="/images/gradientLogo.svg"
+            src={getBrand().logo}
             style={{
               height: "90px",
               width: "120px"

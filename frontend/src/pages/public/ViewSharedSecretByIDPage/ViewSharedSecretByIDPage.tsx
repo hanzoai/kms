@@ -21,8 +21,9 @@ import {
   SecretContainer,
   SecretErrorContainer
 } from "@app/pages/public/ViewSharedSecretByIDPage/components";
+import { getBrand } from "@app/lib/branding";
 
-export const DEFAULT_LOGO_URL = "/images/gradientLogo.svg";
+export const DEFAULT_LOGO_URL = getBrand().logo;
 export const DEFAULT_FAVICON_URL = "/hanzo.ico";
 
 // Returns true if the color is considered "light"

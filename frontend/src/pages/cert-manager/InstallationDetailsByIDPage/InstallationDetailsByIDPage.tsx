@@ -23,6 +23,7 @@ import { ProjectType } from "@app/hooks/api/projects/types";
 import { usePopUp } from "@app/hooks/usePopUp";
 
 import { InstallationCertificatesSection, InstallationDetailsSection } from "./components";
+import { getBrand } from "@app/lib/branding";
 
 const Page = () => {
   const { currentProject } = useProject();
@@ -139,7 +140,7 @@ export const InstallationDetailsByIDPage = () => {
     <>
       <Helmet>
         <title>Installation Details</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href={getBrand().favicon} />
       </Helmet>
       <Page />
     </>

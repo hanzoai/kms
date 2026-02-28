@@ -12,6 +12,7 @@ import {
   useCalculateUpgradePath,
   useGetUpgradePathVersions
 } from "../../../hooks/api/upgradePath/queries";
+import { getBrand } from "@app/lib/branding";
 
 type VersionOption = {
   label: string;
@@ -151,7 +152,7 @@ export const UpgradePathPage = () => {
               <div className="mb-4 flex justify-center pt-8">
                 <a target="_blank" rel="noopener noreferrer" href="https://hanzo.ai">
                   <img
-                    src="/images/gradientLogo.svg"
+                    src={getBrand().logo}
                     height={90}
                     width={120}
                     alt="KMS logo"
