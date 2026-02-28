@@ -25,6 +25,7 @@ import {
   useVerifyAuthentication,
   useVerifyRegistration
 } from "@app/hooks/api/webauthn";
+import { getBrand } from "@app/lib/branding";
 
 // The style for the verification code input
 const codeInputProps = {
@@ -380,7 +381,7 @@ export const Mfa = ({ successCallback, closeMfa, hideLogo, email, method }: Prop
       {!hideLogo && (
         <Link to="/">
           <div className="mb-4 flex justify-center">
-            <img src="/images/gradientLogo.svg" height={90} width={120} alt="KMS logo" />
+            <img src={getBrand().logo} height={90} width={120} alt="KMS logo" />
           </div>
         </Link>
       )}

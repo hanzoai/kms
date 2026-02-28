@@ -14,6 +14,7 @@ import {
   useLogoutUser,
   useRemoveMyDuplicateAccounts
 } from "@app/hooks/api";
+import { getBrand } from "@app/lib/branding";
 
 type Props = {
   onRemoveDuplicateLater: () => void;
@@ -49,7 +50,7 @@ export const EmailDuplicationConfirmation = ({ onRemoveDuplicateLater }: Props) 
         <Link to="/">
           <div className="mb-4 flex justify-center">
             <img
-              src="/images/gradientLogo.svg"
+              src={getBrand().logo}
               style={{
                 height: "90px",
                 width: "120px"

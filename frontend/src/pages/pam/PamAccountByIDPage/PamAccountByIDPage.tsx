@@ -34,6 +34,7 @@ import {
   PamAccountDetailsSection,
   PamAccountResourcesSection
 } from "./components";
+import { getBrand } from "@app/lib/branding";
 
 const PageContent = () => {
   const navigate = useNavigate();
@@ -259,7 +260,7 @@ export const PamAccountByIDPage = () => {
     <>
       <Helmet>
         <title>PAM Account | KMS</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href={getBrand().favicon} />
       </Helmet>
       <PageContent />
     </>

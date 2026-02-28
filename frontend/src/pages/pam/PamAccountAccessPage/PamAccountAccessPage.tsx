@@ -5,6 +5,7 @@ import { useParams } from "@tanstack/react-router";
 import { useGetPamAccountById } from "@app/hooks/api/pam";
 
 import { useWebAccessSession } from "./useWebAccessSession";
+import { getBrand } from "@app/lib/branding";
 
 const PageContent = () => {
   const params = useParams({
@@ -115,7 +116,7 @@ export const PamAccountAccessPage = () => {
     <>
       <Helmet>
         <title>Web Access | Hanzo KMS</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href={getBrand().favicon} />
       </Helmet>
       <PageContent />
     </>

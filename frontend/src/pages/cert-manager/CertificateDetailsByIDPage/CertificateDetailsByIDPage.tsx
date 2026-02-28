@@ -51,6 +51,7 @@ import {
   CertificateInstallationsSection,
   CertificateOverviewSection
 } from "./components";
+import { getBrand } from "@app/lib/branding";
 
 const Page = () => {
   const { currentProject } = useProject();
@@ -475,7 +476,7 @@ export const CertificateDetailsByIDPage = () => {
     <>
       <Helmet>
         <title>Certificate Details</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href={getBrand().favicon} />
       </Helmet>
       <Page />
     </>
