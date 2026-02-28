@@ -27,9 +27,26 @@
 
 ## Introduction
 
-**Hanzo KMS** is the open-source key management service that teams use to centralize their application configuration, secrets (API keys, database credentials), and manage their internal PKI.
+**Hanzo KMS** is the open-source key management service built for the AI era — centralize secrets, API keys, and certificates across your infrastructure with first-class AI access controls.
 
-Built by [Hanzo AI](https://hanzo.ai), we're focused on making security tooling accessible to everyone, with a redesigned developer experience from the ground up.
+Built by [Hanzo AI](https://hanzo.ai), we believe you should always control what AI can access. Every secret has a policy: some auto-approve for development velocity, others require explicit human sign-off before any AI agent can read them.
+
+## AI Access Control
+
+**Your secrets, your rules.** AI agents are first-class citizens in Hanzo KMS — and so is your ability to block them.
+
+- **Per-secret AI policies**: Mark any secret as _human-approval required_ for AI access. Claude, GPT, or any agent requesting that secret triggers a real-time approval request.
+- **Auto-approve mode**: Building fast? Set policies to auto-approve for your team's agents — flip to manual approval before shipping.
+- **Device & agent tracking**: See exactly which AI model, tool, or agent accessed which secret and when.
+- **Full audit trail**: Every secret read by an AI is logged with the agent identity, timestamp, and reason.
+- **One-tap approval**: Approve or deny AI secret requests from Slack, email, or the KMS dashboard.
+
+```
+Secret: STRIPE_LIVE_KEY
+  AI Access Policy: requires-human-approval
+  Last accessed by: claude-sonnet-4-6 via hanzo-mcp
+  Status: waiting for your approval → [Approve] [Deny]
+```
 
 ## Features
 
@@ -60,6 +77,15 @@ Built by [Hanzo AI](https://hanzo.ai), we're focused on making security tooling 
 ### SSH Management
 
 - **Signed SSH Certificates**: Issue ephemeral SSH credentials for secure, short-lived, and centralized access to infrastructure.
+
+### AI Access Control (New)
+
+- **AI Identity Tracking**: Identify which AI model or agent is requesting secrets — Claude, GPT, Gemini, or any MCP-compatible tool.
+- **Per-secret AI policies**: Set `auto-approve`, `requires-approval`, or `blocked` per secret per AI identity.
+- **Real-time approval requests**: Pending AI secret reads appear in your dashboard, Slack, or email — one tap to approve or deny.
+- **Auto-approve mode**: Teams move fast by default; escalate specific secrets to manual approval as you go to production.
+- **Device registry**: Register and manage AI agent devices; revoke access instantly.
+- **AI audit log**: Separate audit trail for all AI-originated secret reads, with model ID, tool name, and request context.
 
 ### General Platform
 
