@@ -7,6 +7,7 @@ import { createNotification } from "@app/components/notifications";
 import { Button, Input } from "@app/components/v2";
 import { useServerConfig } from "@app/context";
 import { loginLDAPRedirect } from "@app/hooks/api/auth/queries";
+import { getBrand } from "@app/lib/branding";
 
 export const LoginLdapPage = () => {
   const { t } = useTranslation();
@@ -73,7 +74,7 @@ export const LoginLdapPage = () => {
       <Link to="/">
         <div className="mt-20 mb-4 flex justify-center">
           <img
-            src="/images/gradientLogo.svg"
+            src={getBrand().logo}
             style={{
               height: "90px",
               width: "120px"

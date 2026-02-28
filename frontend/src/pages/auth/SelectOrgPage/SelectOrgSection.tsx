@@ -28,6 +28,7 @@ import { Organization } from "@app/hooks/api/types";
 import { AuthMethod } from "@app/hooks/api/users/types";
 
 import { navigateUserToOrg } from "../LoginPage/Login.utils";
+import { getBrand } from "@app/lib/branding";
 
 export const SelectOrganizationSection = () => {
   const navigate = useNavigate();
@@ -286,7 +287,7 @@ export const SelectOrganizationSection = () => {
           <Link to="/">
             <div className="mb-4 flex justify-center">
               <img
-                src="/images/gradientLogo.svg"
+                src={getBrand().logo}
                 style={{
                   height: "90px",
                   width: "120px"

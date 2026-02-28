@@ -22,6 +22,7 @@ import { useGetOAuthStatus } from "@app/hooks/api/aiMcpServers/queries";
 import { AiMcpServerAuthMethod } from "@app/hooks/api/aiMcpServers/types";
 
 import { BearerTokenModal } from "./components/BearerTokenModal";
+import { getBrand } from "@app/lib/branding";
 
 const OAUTH_POPUP_WIDTH = 600;
 const OAUTH_POPUP_HEIGHT = 700;
@@ -377,7 +378,7 @@ export const McpEndpointFinalizePage = () => {
 
       <div className="w-full max-w-md rounded-lg border border-mineshaft-600 bg-mineshaft-800 p-8 shadow-lg">
         <Link to="/" className="mb-6 block">
-          <img src="/images/gradientLogo.svg" className="mx-auto h-16" alt="KMS logo" />
+          <img src={getBrand().logo} className="mx-auto h-16" alt="KMS logo" />
         </Link>
 
         <div className="mb-6 text-center">

@@ -23,6 +23,7 @@ import {
   CertificateDetailsSection,
   RequestActionsSection
 } from "./components";
+import { getBrand } from "@app/lib/branding";
 
 const PageContent = () => {
   const { approvalRequestId } = useParams({
@@ -187,7 +188,7 @@ export const ApprovalRequestDetailPage = () => {
     <>
       <Helmet>
         <title>Certificate Approval Request | KMS</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href={getBrand().favicon} />
       </Helmet>
       <PageContent />
     </>

@@ -13,6 +13,7 @@ import {
   useVerifyMfaSession
 } from "@app/hooks/api/mfaSession";
 import { useGenerateAuthenticationOptions, useVerifyAuthentication } from "@app/hooks/api/webauthn";
+import { getBrand } from "@app/lib/branding";
 
 const codeInputProps = {
   inputStyle: {
@@ -183,7 +184,7 @@ export const MfaSessionPage = () => {
       <div className="flex min-h-screen flex-col items-center justify-center bg-bunker-800 bg-linear-to-tr from-mineshaft-600 via-mineshaft-800 to-bunker-700">
         <div className="mx-auto w-max pt-6 pb-6 md:mb-16 md:px-8">
           <div className="mb-4 flex justify-center">
-            <img src="/images/gradientLogo.svg" height={90} width={120} alt="KMS logo" />
+            <img src={getBrand().logo} height={90} width={120} alt="KMS logo" />
           </div>
           <div className="mb-6 text-center">
             <h2 className="mb-3 text-xl font-medium text-red-400">Session Expired</h2>
@@ -211,7 +212,7 @@ export const MfaSessionPage = () => {
       <div className="flex min-h-screen flex-col items-center justify-center bg-bunker-800 bg-linear-to-tr from-mineshaft-600 via-mineshaft-800 to-bunker-700">
         <div className="mx-auto w-max pt-6 pb-6 md:mb-16 md:px-8">
           <div className="mb-4 flex justify-center">
-            <img src="/images/gradientLogo.svg" height={90} width={120} alt="KMS logo" />
+            <img src={getBrand().logo} height={90} width={120} alt="KMS logo" />
           </div>
           <div className="mb-6 text-center">
             <h2 className="mb-3 text-xl font-medium text-bunker-50">Verification Complete</h2>
@@ -226,7 +227,7 @@ export const MfaSessionPage = () => {
     <div className="flex min-h-screen flex-col items-center justify-center bg-bunker-800 bg-linear-to-tr from-mineshaft-600 via-mineshaft-800 to-bunker-700">
       <div className="mx-auto w-max pt-6 pb-6 md:mb-16 md:px-8">
         <div className="mb-4 flex justify-center">
-          <img src="/images/gradientLogo.svg" height={90} width={120} alt="KMS logo" />
+          <img src={getBrand().logo} height={90} width={120} alt="KMS logo" />
         </div>
 
         <div className="mb-8 text-center">

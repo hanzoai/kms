@@ -19,6 +19,7 @@ import {
 import { MfaMethod } from "@app/hooks/api/auth/types";
 import { fetchOrganizations } from "@app/hooks/api/organization/queries";
 import { isLoggedIn } from "@app/hooks/api/reactQuery";
+import { getBrand } from "@app/lib/branding";
 
 type Errors = {
   tooShort?: string;
@@ -280,7 +281,7 @@ export const SignupInvitePage = () => {
         <>
           <Link to="/">
             <div className="mt-20 mb-4 flex justify-center">
-              <img src="/images/gradientLogo.svg" height={90} width={120} alt="KMS Logo" />
+              <img src={getBrand().logo} height={90} width={120} alt="KMS Logo" />
             </div>
           </Link>
           {step === 1 && stepConfirmEmail}

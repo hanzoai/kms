@@ -3,6 +3,7 @@ import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { ShareSecretForm } from "./components";
+import { getBrand } from "@app/lib/branding";
 
 export const ShareSecretPage = () => {
   return (
@@ -22,7 +23,7 @@ export const ShareSecretPage = () => {
               <div className="mb-4 flex justify-center pt-8">
                 <a target="_blank" rel="noopener noreferrer" href="https://hanzo.ai">
                   <img
-                    src="/images/gradientLogo.svg"
+                    src={getBrand().logo}
                     height={90}
                     width={120}
                     alt="KMS logo"
