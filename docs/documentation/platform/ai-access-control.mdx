@@ -1,0 +1,179 @@
+---
+title: "AI Access Control"
+description: "Control which AI agents can access your secrets — with human approval, auto-approve, and full audit trails."
+---
+
+## Overview
+
+Hanzo KMS treats AI agents as first-class machine identities with their own access policies. You decide — per secret, per agent — whether an AI reads it automatically or only after you approve.
+
+This is the foundation of **human-in-the-loop secrets**: your most sensitive credentials stay locked until a human says yes, even when your codebase is full of AI tools.
+
+## How It Works
+
+### AI Identity
+
+When an AI agent (Claude, GPT, Gemini, a custom MCP server, etc.) authenticates with KMS, it presents a **machine identity** with an `agent_type` label:
+
+```
+identity.agent_type = "claude-sonnet-4-6"
+identity.tool       = "hanzo-mcp"
+identity.device_id  = "dev-macbook-z"
+```
+
+KMS logs every secret read against this identity.
+
+### Secret AI Policies
+
+Each secret (or secret path) can have an AI access policy:
+
+| Policy | Behavior |
+|--------|----------|
+| `auto-approve` | AI reads immediately, access is logged |
+| `requires-approval` | AI request is queued; human approves/denies in real time |
+| `blocked` | AI access denied unconditionally |
+
+Default for new secrets: `auto-approve`. Flip high-value secrets to `requires-approval` before production.
+
+### Setting a Policy
+
+**Dashboard**: Secret → Settings → AI Access Policy → select policy
+
+**CLI**:
+```bash
+hanzo-kms secrets set-ai-policy \
+  --secret STRIPE_LIVE_KEY \
+  --policy requires-approval \
+  --approvers z@hanzo.ai
+```
+
+**API**:
+```bash
+curl -X PATCH https://kms.hanzo.ai/api/v1/secrets/STRIPE_LIVE_KEY/ai-policy \
+  -H "Authorization: Bearer $KMS_TOKEN" \
+  -d '{"policy": "requires-approval", "approvers": ["z@hanzo.ai"]}'
+```
+
+## Approval Flow
+
+When an AI requests a secret with `requires-approval`:
+
+1. The request is **queued** — the AI receives a `pending` response and retries with backoff
+2. You get notified via **Slack / email / KMS dashboard**
+3. You **approve or deny** with one click (or tap on mobile)
+4. The AI receives the secret (approved) or a `denied` error
+
+```
+[KMS Notification]
+Claude (claude-sonnet-4-6) is requesting:
+  Secret: STRIPE_LIVE_KEY
+  Tool:   hanzo-mcp / Claude Code
+  Reason: "building checkout flow"
+
+  [✅ Approve]  [❌ Deny]  [🔒 Block agent]
+```
+
+Approval timeout defaults to 5 minutes; configurable per policy.
+
+## Auto-Approve Mode
+
+For development velocity, enable **auto-approve** on a project or environment:
+
+```bash
+# Auto-approve all AI reads in dev environment
+hanzo-kms policy set-env-ai-mode --env dev --mode auto-approve
+
+# Require approval for all AI reads in prod
+hanzo-kms policy set-env-ai-mode --env prod --mode requires-approval
+```
+
+This lets teams move fast in dev and enforce control in production without per-secret configuration.
+
+## Device Registry
+
+Register AI agent devices to track access by machine, not just by model:
+
+```bash
+hanzo-kms devices register \
+  --name "z-macbook-claude" \
+  --agent-type claude \
+  --owner z@hanzo.ai
+```
+
+Revoke a device instantly:
+```bash
+hanzo-kms devices revoke --device-id dev-macbook-z
+```
+
+All secrets accessed by a revoked device are immediately inaccessible.
+
+## AI Audit Log
+
+Every AI secret read is logged separately from human access:
+
+```
+Timestamp         | Secret           | Agent                 | Tool        | Device          | Action
+2026-02-28 22:13  | STRIPE_LIVE_KEY  | claude-sonnet-4-6     | hanzo-mcp   | z-macbook-dev   | approved by z@hanzo.ai
+2026-02-28 22:01  | OPENAI_API_KEY   | gpt-4o                | cursor      | z-macbook-dev   | auto-approved
+2026-02-27 18:44  | DB_PASSWORD      | claude-sonnet-4-6     | hanzo-mcp   | ci-runner-01    | denied (policy: blocked)
+```
+
+Filter and export AI audit logs:
+
+```bash
+hanzo-kms audit --filter agent-type=claude --since 7d --format json
+```
+
+## Integrations
+
+### MCP (Model Context Protocol)
+
+The `@hanzo/mcp` server sends agent identity headers automatically. Install once:
+
+```bash
+npm install -g @hanzo/mcp
+hanzo-mcp login  # links to your KMS identity
+```
+
+All Claude Code / Claude Desktop sessions using `hanzo-mcp` are automatically tracked.
+
+### Claude Code Hooks
+
+Add to your `~/.claude/settings.json` to auto-attach agent identity:
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [{
+      "matcher": ".*",
+      "hooks": [{"type": "command", "command": "hanzo-mcp attach-identity"}]
+    }]
+  }
+}
+```
+
+### SDK
+
+```typescript
+import { KMSClient } from "@hanzo/kms";
+
+const kms = new KMSClient({
+  token: process.env.KMS_TOKEN,
+  agentIdentity: {
+    type: "claude-sonnet-4-6",
+    tool: "my-app",
+    deviceId: process.env.DEVICE_ID,
+  }
+});
+
+// Automatically triggers approval flow if secret policy requires it
+const secret = await kms.getSecret("STRIPE_LIVE_KEY");
+```
+
+## Best Practices
+
+- **Default to `auto-approve` in dev**, `requires-approval` in prod for payment/auth secrets
+- **Register devices** so you can revoke individual machines without rotating secrets
+- **Set short approval timeouts** (2-5 min) to prevent AI agents from hanging indefinitely
+- **Use `blocked`** for secrets that should never be touched by AI (e.g., signing keys, HSM credentials)
+- **Review the AI audit log weekly** — it's the fastest way to see what your AI tools are actually touching
