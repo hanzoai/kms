@@ -36,6 +36,7 @@ import {
   DiscoveryScanLogsSection,
   DiscoveryTargetSection
 } from "./components";
+import { getBrand } from "@app/lib/branding";
 
 const Page = () => {
   const { currentProject } = useProject();
@@ -192,7 +193,7 @@ export const DiscoveryDetailsByIDPage = () => {
     <>
       <Helmet>
         <title>Discovery Job Details</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href={getBrand().favicon} />
       </Helmet>
       <Page />
     </>

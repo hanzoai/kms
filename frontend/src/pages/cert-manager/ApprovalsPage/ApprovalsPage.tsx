@@ -6,6 +6,7 @@ import { useProject } from "@app/context";
 
 import { PolicyTab } from "./components/PolicyTab";
 import { RequestsTab } from "./components/RequestsTab";
+import { getBrand } from "@app/lib/branding";
 
 enum ApprovalTabs {
   Policies = "policies",
@@ -19,7 +20,7 @@ export const ApprovalsPage = () => {
   return (
     <div className="mx-auto flex flex-col justify-between bg-bunker-800 text-white">
       <Helmet>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href={getBrand().favicon} />
       </Helmet>
       <div className="mx-auto mb-6 w-full max-w-8xl">
         <PageHeader

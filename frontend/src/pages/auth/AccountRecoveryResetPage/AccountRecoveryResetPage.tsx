@@ -12,6 +12,7 @@ import { ConfirmEmailStep } from "./components/ConfirmEmailStep";
 import { EnterPasswordStep } from "./components/EnterPasswordStep";
 import { InputBackupKeyStep } from "./components/InputBackupKeyStep";
 import { RecoveryMethod, SelectRecoveryMethodStep } from "./components/SelectRecoveryMethodStep";
+import { getBrand } from "@app/lib/branding";
 
 enum Steps {
   ConfirmEmail = 1,
@@ -64,7 +65,7 @@ export const AccountRecoveryResetPage = () => {
     <div className="flex min-h-screen flex-col justify-center bg-gradient-to-tr from-mineshaft-600 via-mineshaft-800 to-bunker-700 px-6 pb-28">
       <Link to="/">
         <div className="mt-20 mb-4 flex justify-center">
-          <img src="/images/gradientLogo.svg" className="h-[90px] w-[120px]" alt="KMS Logo" />
+          <img src={getBrand().logo} className="h-[90px] w-[120px]" alt="KMS Logo" />
         </div>
       </Link>
       {step === Steps.ConfirmEmail && (

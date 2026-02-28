@@ -13,6 +13,7 @@ import SecurityClient from "@app/components/utilities/SecurityClient";
 import { useServerConfig } from "@app/context";
 import { useVerifySignupEmailVerificationCode } from "@app/hooks/api";
 import { useFetchServerStatus } from "@app/hooks/api/serverDetails";
+import { getBrand } from "@app/lib/branding";
 
 export const SignUpPage = () => {
   const [email, setEmail] = useState("");
@@ -134,7 +135,7 @@ export const SignUpPage = () => {
         <meta name="og:description" content={t("signup.og-description") as string} />
       </Helmet>
       <div className="mt-20 mb-4 flex justify-center">
-        <img src="/images/gradientLogo.svg" height={90} width={120} alt="KMS Logo" />
+        <img src={getBrand().logo} height={90} width={120} alt="KMS Logo" />
       </div>
       <form onSubmit={(e) => e.preventDefault()}>{renderView(step)}</form>
     </div>

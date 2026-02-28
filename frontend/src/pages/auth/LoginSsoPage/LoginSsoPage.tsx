@@ -7,6 +7,7 @@ import { jwtDecode } from "jwt-decode";
 import { ROUTE_PATHS } from "@app/const/routes";
 
 import { PasswordStep } from "../LoginPage/components";
+import { getBrand } from "@app/lib/branding";
 
 export const LoginSsoPage = () => {
   const { t } = useTranslation();
@@ -54,7 +55,7 @@ export const LoginSsoPage = () => {
       <Link to="/">
         <div className="mt-20 mb-4 flex justify-center">
           <img
-            src="/images/gradientLogo.svg"
+            src={getBrand().logo}
             style={{ height: "90px", width: "120px" }}
             alt="KMS logo"
           />
