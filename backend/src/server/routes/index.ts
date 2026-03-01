@@ -25,6 +25,11 @@ import { accessApprovalRequestReviewerDALFactory } from "@app/ee/services/access
 import { accessApprovalRequestServiceFactory } from "@app/ee/services/access-approval-request/access-approval-request-service";
 import { aiMcpActivityLogDALFactory } from "@app/ee/services/ai-mcp-activity-log/ai-mcp-activity-log-dal";
 import { aiMcpActivityLogServiceFactory } from "@app/ee/services/ai-mcp-activity-log/ai-mcp-activity-log-service";
+import {
+  aiSecretReadRequestDALFactory,
+  secretAiPolicyDALFactory
+} from "@app/ee/services/secret-ai-policy/secret-ai-policy-dal";
+import { secretAiPolicyServiceFactory } from "@app/ee/services/secret-ai-policy/secret-ai-policy-service";
 import { aiMcpEndpointDALFactory } from "@app/ee/services/ai-mcp-endpoint/ai-mcp-endpoint-dal";
 import { aiMcpEndpointServerDALFactory } from "@app/ee/services/ai-mcp-endpoint/ai-mcp-endpoint-server-dal";
 import { aiMcpEndpointServerToolDALFactory } from "@app/ee/services/ai-mcp-endpoint/ai-mcp-endpoint-server-tool-dal";
@@ -2604,6 +2609,8 @@ export const registerRoutes = async (
   const aiMcpServerToolDAL = aiMcpServerToolDALFactory(db);
   const aiMcpServerUserCredentialDAL = aiMcpServerUserCredentialDALFactory(db);
   const aiMcpActivityLogDAL = aiMcpActivityLogDALFactory(db);
+  const secretAiPolicyDAL = secretAiPolicyDALFactory(db);
+  const aiSecretReadRequestDAL = aiSecretReadRequestDALFactory(db);
   const aiMcpEndpointDAL = aiMcpEndpointDALFactory(db);
   const aiMcpEndpointServerDAL = aiMcpEndpointServerDALFactory(db);
   const aiMcpEndpointServerToolDAL = aiMcpEndpointServerToolDALFactory(db);
@@ -2696,6 +2703,12 @@ export const registerRoutes = async (
   const aiMcpActivityLogService = aiMcpActivityLogServiceFactory({
     aiMcpActivityLogDAL,
     permissionService
+  });
+
+  const secretAiPolicyService = secretAiPolicyServiceFactory({
+    secretAiPolicyDAL,
+    aiSecretReadRequestDAL,
+    projectEnvDAL
   });
 
   const aiMcpEndpointService = aiMcpEndpointServiceFactory({
@@ -2918,6 +2931,7 @@ export const registerRoutes = async (
     aiMcpServer: aiMcpServerService,
     aiMcpEndpoint: aiMcpEndpointService,
     aiMcpActivityLog: aiMcpActivityLogService,
+    secretAiPolicy: secretAiPolicyService,
     approvalPolicy: approvalPolicyService
   });
 
