@@ -1,8 +1,19 @@
 import { Knex } from "knex";
-import { QueueJobs, QueueName } from "@app/queue";
 import { TableName } from "../schemas";
 import { createOnUpdateTrigger, dropOnUpdateTrigger } from "../utils";
+
 /* eslint-disable no-console */
+
+// Inlined from @app/queue to keep this migration self-contained (no path alias resolution in knex context)
+const QueueName = {
+  PamSessionExpiration: "pam-session-expiration",
+  DynamicSecretRevocation: "dynamic-secret-revocation"
+} as const;
+
+const QueueJobs = {
+  PamSessionExpiration: "pam-session-expiration",
+  DynamicSecretRevocation: "dynamic-secret-revocation"
+} as const;
 
 
 
