@@ -28,8 +28,8 @@ import { aiMcpActivityLogServiceFactory } from "@app/ee/services/ai-mcp-activity
 import {
   aiSecretReadRequestDALFactory,
   secretAiPolicyDALFactory
-} from "@app/ee/services/secret-ai-policy/secret-ai-policy-dal";
-import { secretAiPolicyServiceFactory } from "@app/ee/services/secret-ai-policy/secret-ai-policy-service";
+} from "@app/services/secret-ai-policy/secret-ai-policy-dal";
+import { secretAiPolicyServiceFactory } from "@app/services/secret-ai-policy/secret-ai-policy-service";
 import { aiMcpEndpointDALFactory } from "@app/ee/services/ai-mcp-endpoint/ai-mcp-endpoint-dal";
 import { aiMcpEndpointServerDALFactory } from "@app/ee/services/ai-mcp-endpoint/ai-mcp-endpoint-server-dal";
 import { aiMcpEndpointServerToolDALFactory } from "@app/ee/services/ai-mcp-endpoint/ai-mcp-endpoint-server-tool-dal";
