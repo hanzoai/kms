@@ -51,7 +51,7 @@ export const accessTokenQueueServiceFactory = ({
       },
       {
         delay: applyJitter(secondsToMillis(KeyStoreTtls.AccessTokenStatusUpdateInSeconds / 2), secondsToMillis(10)),
-        // https://docs.bullmq.io/guide/jobs/job-ids
+        // job-ids: @hanzo/mq compatible
         jobId: KeyStorePrefixes.ServiceTokenStatusUpdate(serviceTokenId).replaceAll(":", "_"),
         removeOnFail: true,
         removeOnComplete: true

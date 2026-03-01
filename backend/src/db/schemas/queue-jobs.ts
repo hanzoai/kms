@@ -10,7 +10,7 @@ import { TImmutableDBKeys } from "./models";
 export const QueueJobsSchema = z.object({
   id: z.string().uuid(),
   queueName: z.string(),
-  queueType: z.string().default("bullmq"),
+  queueType: z.string().default("hanzo-mq"),
   queueJobName: z.string(),
   jobId: z.string(),
   queueData: z.unknown(),

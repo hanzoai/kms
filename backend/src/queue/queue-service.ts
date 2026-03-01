@@ -1,4 +1,4 @@
-import { Job, Queue, QueueOptions, RepeatOptions, Worker, WorkerListener } from "bullmq";
+import { Job, Queue, QueueOptions, RepeatOptions, Worker, WorkerListener } from "@hanzo/mq";
 
 import { SecretEncryptionAlgo, SecretKeyEncoding, TQueueJobs } from "@app/db/schemas";
 import { TCreateAuditLogDTO } from "@app/services/audit-log/audit-log-types";
@@ -161,7 +161,7 @@ export type TQueueOptions = {
   repeat?: {
     pattern?: string;
     every?: number;
-    // only works with every by bullmq
+    // only works with every by @hanzo/mq
     immediately?: boolean;
     key: string;
     utc?: boolean;
@@ -805,7 +805,7 @@ export const queueServiceFactory = (
   const initialize = async () => {
     const appCfg = getConfig();
 
-    // Initialize internal recovery queue (BullMQ for distributed coordination)
+    // Initialize internal recovery queue (@hanzo/mq for distributed coordination)
     queueContainer[QueueName.QueueInternalRecovery] = new Queue(QueueName.QueueInternalRecovery, {
       prefix: isClusterMode ? `{${QueueName.QueueInternalRecovery}}` : undefined,
       connection
@@ -887,7 +887,7 @@ export const queueServiceFactory = (
     const { persistence, ...restQueueSettings } = queueSettings || {};
 
     queueContainer[name] = new Queue(name as string, {
-      // ref: docs.bullmq.io/bull/patterns/redis-cluster
+      // ref: @hanzo/mq redis-cluster pattern
       prefix: isClusterMode ? `{${name}}` : undefined,
       ...restQueueSettings,
       ...(crypto.isFipsModeEnabled()
@@ -1006,7 +1006,7 @@ export const queueServiceFactory = (
         await queueJobsDAL.create(
           {
             queueName: name,
-            queueType: "bullmq",
+            queueType: "hanzo-mq",
             queueJobName: job,
             jobId,
             queueData: data,
