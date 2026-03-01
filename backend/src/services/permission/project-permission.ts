@@ -146,11 +146,14 @@ export enum ProjectPermissionAppConnectionActions {
 
 export enum ProjectPermissionApprovalRequestActions {
   Read = "read",
+  Create = "create",
   Review = "review"
 }
 
 export enum ProjectPermissionApprovalRequestGrantActions {
-  Create = "create"
+  Read = "read",
+  Create = "create",
+  Revoke = "revoke"
 }
 
 // Subject (resource type) enum for project permissions
@@ -200,7 +203,10 @@ export enum ProjectPermissionSub {
   // Secret sync
   SecretSync = "secret-sync",
   // App connections
-  AppConnections = "app-connections"
+  AppConnections = "app-connections",
+  // Approval requests
+  ApprovalRequests = "approval-requests",
+  ApprovalRequestGrants = "approval-request-grants"
 }
 
 // Full set of [action, subject] tuples for CASL MongoAbility
@@ -242,11 +248,11 @@ export type ProjectPermissionSet =
   | [ProjectPermissionActions, ProjectPermissionSub.SshHostGroups]
   | [ProjectPermissionCommitsActions, ProjectPermissionSub.Commits]
   | [ProjectPermissionSecretSyncActions, ProjectPermissionSub.SecretSync]
-  | [ProjectPermissionAppConnectionActions, ProjectPermissionSub.AppConnections];
+  | [ProjectPermissionAppConnectionActions, ProjectPermissionSub.AppConnections]
+  | [ProjectPermissionApprovalRequestActions, ProjectPermissionSub.ApprovalRequests]
+  | [ProjectPermissionApprovalRequestGrantActions, ProjectPermissionSub.ApprovalRequestGrants];
 
-// ---------------------------------------------------------------------------
 // Helpers
-// ---------------------------------------------------------------------------
 
 const RESERVED_PROJECT_ROLE_SLUGS = [
   "admin",
