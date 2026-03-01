@@ -1,12 +1,12 @@
-/* eslint-disable no-await-in-loop */
 import { AxiosError } from "axios";
-
 import { BadRequestError } from "@app/lib/errors";
 import { AppConnection } from "@app/services/app-connection/app-connection-enums";
-
 import { SupabaseConnectionMethod } from "./supabase-connection-constants";
 import { SupabasePublicAPI } from "./supabase-connection-public-client";
 import { TSupabaseConnection, TSupabaseConnectionConfig } from "./supabase-connection-types";
+/* eslint-disable no-await-in-loop */
+
+
 
 export const getSupabaseConnectionListItem = () => {
   return {

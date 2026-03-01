@@ -1,13 +1,13 @@
-/* eslint-disable no-await-in-loop */
-import { EventType, TAuditLogServiceFactory } from "@app/ee/services/audit-log/audit-log-types";
+import { EventType, TAuditLogServiceFactory } from "@app/services/audit-log/audit-log-types";
 import { getConfig } from "@app/lib/config/env";
 import { logger } from "@app/lib/logger";
 import { QueueJobs, QueueName, TQueueServiceFactory } from "@app/queue";
-
 import { ActorType } from "../auth/auth-type";
 import { TCertificateDALFactory } from "../certificate/certificate-dal";
 import { CERTIFICATE_RENEWAL_CONFIG } from "../certificate-common/certificate-constants";
 import { TCertificateV3ServiceFactory } from "./certificate-v3-service";
+/* eslint-disable no-await-in-loop */
+
 
 type TCertificateV3QueueServiceFactoryDep = {
   queueService: TQueueServiceFactory;

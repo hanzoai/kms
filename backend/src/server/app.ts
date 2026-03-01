@@ -1,6 +1,4 @@
-/* eslint-disable import/extensions */
 import path from "node:path";
-
 import type { ClickHouseClient } from "@clickhouse/client";
 import type { FastifyCookieOptions } from "@fastify/cookie";
 import cookie from "@fastify/cookie";
@@ -16,8 +14,6 @@ import websocket from "@fastify/websocket";
 import fastify, { FastifyInstance, FastifyRequest } from "fastify";
 import { Cluster, Redis } from "ioredis";
 import { Knex } from "knex";
-
-import { THsmServiceFactory } from "@app/ee/services/hsm/hsm-service";
 import { TKeyStoreFactory } from "@app/keystore/keystore";
 import { getConfig, IS_PACKAGED, TEnvConfig } from "@app/lib/config/env";
 import { CustomLogger } from "@app/lib/logger/logger";
@@ -26,7 +22,6 @@ import { TQueueServiceFactory } from "@app/queue";
 import { TKmsRootConfigDALFactory } from "@app/services/kms/kms-root-config-dal";
 import { TSmtpService } from "@app/services/smtp/smtp-service";
 import { TSuperAdminDALFactory } from "@app/services/super-admin/super-admin-dal";
-
 import { globalRateLimiterCfg } from "./config/rateLimiter";
 import { apiMetrics } from "./plugins/api-metrics";
 import { fastifyErrHandler } from "./plugins/error-handler";
@@ -37,6 +32,11 @@ import { registerResponseSchemaHooks } from "./plugins/response-schema-hooks";
 import { registerServeUI } from "./plugins/serve-ui";
 import { fastifySwagger } from "./plugins/swagger";
 import { registerRoutes } from "./routes";
+import { THsmServiceFactory } from "@app/services/hsm/hsm-service";
+/* eslint-disable import/extensions */
+
+
+
 
 type TMain = {
   auditLogDb?: Knex;

@@ -1,5 +1,10 @@
 import { seedData1 } from "@app/db/seed-data";
-import { ApproverType } from "@app/ee/services/access-approval-policy/access-approval-policy-types";
+
+// CE stub: ApproverType enum (mirrors EE definition for test compatibility)
+enum ApproverType {
+  User = "user",
+  Group = "group"
+}
 
 const createPolicy = async (dto: {
   name: string;

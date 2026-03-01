@@ -1,14 +1,14 @@
-/* eslint-disable no-await-in-loop */
-/* eslint-disable class-methods-use-this */
 import { AxiosInstance, AxiosRequestConfig, AxiosResponse, HttpStatusCode } from "axios";
-
 import { createRequestClient } from "@app/lib/config/request";
 import { delay } from "@app/lib/delay";
 import { removeTrailingSlash } from "@app/lib/fn";
 import { blockLocalAndPrivateIpAddresses } from "@app/lib/validator";
-
 import { SupabaseConnectionMethod } from "./supabase-connection-constants";
 import { TSupabaseConnectionConfig, TSupabaseProject, TSupabaseSecret } from "./supabase-connection-types";
+/* eslint-disable no-await-in-loop */
+/* eslint-disable class-methods-use-this */
+
+
 
 export const getSupabaseInstanceUrl = async (config: TSupabaseConnectionConfig) => {
   const instanceUrl = config.credentials.instanceUrl

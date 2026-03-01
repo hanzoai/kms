@@ -1,5 +1,3 @@
-import { TGatewayServiceFactory } from "@app/ee/services/gateway/gateway-service";
-import { TGatewayV2ServiceFactory } from "@app/ee/services/gateway-v2/gateway-v2-service";
 import { BadRequestError } from "@app/lib/errors";
 import { GatewayProxyProtocol } from "@app/lib/gateway";
 import { withGatewayV2Proxy } from "@app/lib/gateway-v2/gateway-v2";
@@ -20,7 +18,7 @@ export const getSmbConnectionListItem = () => {
 
 export const executeSmbWithPotentialGateway = async <T>(
   config: TSmbConnectionConfig,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">,
+  gatewayV2Service?: unknown,
   operation: (targetHost: string, targetPort: number) => Promise<T>
 ): Promise<T> => {
   const { gatewayId, credentials } = config;
@@ -58,8 +56,8 @@ export const executeSmbWithPotentialGateway = async <T>(
 
 export const validateSmbConnectionCredentials = async (
   config: TSmbConnectionConfig,
-  _gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">
+  _gatewayService: unknown,
+  gatewayV2Service?: unknown
 ) => {
   try {
     await executeSmbWithPotentialGateway(config, gatewayV2Service, async (targetHost, targetPort) => {

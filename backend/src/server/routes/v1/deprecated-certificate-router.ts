@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/no-floating-promises */
 import RE2 from "re2";
 import { z } from "zod";
-
 import { CertificatesSchema } from "@app/db/schemas";
-import { EventType } from "@app/ee/services/audit-log/audit-log-types";
+import { EventType } from "@app/services/audit-log/audit-log-types";
 import { ApiDocsTags, CERTIFICATE_AUTHORITIES, CERTIFICATES } from "@app/lib/api-docs";
 import { ms } from "@app/lib/ms";
 import { readLimit, writeLimit } from "@app/server/config/rateLimiter";
@@ -17,6 +15,8 @@ import {
   validateCaDateField
 } from "@app/services/certificate-authority/certificate-authority-validators";
 import { PostHogEventTypes } from "@app/services/telemetry/telemetry-types";
+/* eslint-disable @typescript-eslint/no-floating-promises */
+
 
 export const registerDeprecatedCertRouter = async (server: FastifyZodProvider) => {
   server.route({

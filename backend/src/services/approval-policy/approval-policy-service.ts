@@ -1,13 +1,12 @@
 import { ForbiddenError } from "@casl/ability";
 
 import { ActionProjectType, ProjectMembershipRole, TApprovalPolicies, TApprovalRequests } from "@app/db/schemas";
-import { TUserGroupMembershipDALFactory } from "@app/ee/services/group/user-group-membership-dal";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
 import {
   ProjectPermissionApprovalRequestActions,
   ProjectPermissionApprovalRequestGrantActions,
   ProjectPermissionSub
-} from "@app/ee/services/permission/project-permission";
+} from "@app/services/permission/project-permission";
 import { BadRequestError, ForbiddenRequestError, NotFoundError } from "@app/lib/errors";
 import { ms } from "@app/lib/ms";
 import { OrgServiceActor } from "@app/lib/types";
@@ -58,7 +57,7 @@ type TApprovalPolicyServiceFactoryDep = {
   approvalRequestStepsDAL: TApprovalRequestStepsDALFactory;
   approvalRequestStepEligibleApproversDAL: TApprovalRequestStepEligibleApproversDALFactory;
   approvalRequestGrantsDAL: TApprovalRequestGrantsDALFactory;
-  userGroupMembershipDAL: TUserGroupMembershipDALFactory;
+  userGroupMembershipDAL?: unknown;
   notificationService: TNotificationServiceFactory;
   permissionService: Pick<TPermissionServiceFactory, "getProjectPermission" | "getOrgPermission">;
   projectMembershipDAL: Pick<TProjectMembershipDALFactory, "findProjectMembershipsByUserIds">;

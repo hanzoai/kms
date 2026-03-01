@@ -1,14 +1,11 @@
-/* eslint-disable no-await-in-loop */
 import opentelemetry from "@opentelemetry/api";
 import * as x509 from "@peculiar/x509";
 import { AxiosError } from "axios";
 import { Job } from "bullmq";
 import { randomUUID } from "crypto";
 import handlebars from "handlebars";
-
 import { TCertificates } from "@app/db/schemas";
-import { EventType, TAuditLogServiceFactory } from "@app/ee/services/audit-log/audit-log-types";
-import { TLicenseServiceFactory } from "@app/ee/services/license/license-service";
+import { EventType, TAuditLogServiceFactory } from "@app/services/audit-log/audit-log-types";
 import { KeyStorePrefixes, TKeyStoreFactory } from "@app/keystore/keystore";
 import { getConfig } from "@app/lib/config/env";
 import { logger } from "@app/lib/logger";
@@ -18,7 +15,6 @@ import { ActorType } from "@app/services/auth/auth-type";
 import { TKmsServiceFactory } from "@app/services/kms/kms-service";
 import { TProjectDALFactory } from "@app/services/project/project-dal";
 import { getProjectKmsCertificateKeyId } from "@app/services/project/project-fns";
-
 import { TAppConnectionDALFactory } from "../app-connection/app-connection-dal";
 import { TCertificateBodyDALFactory } from "../certificate/certificate-body-dal";
 import { TCertificateDALFactory } from "../certificate/certificate-dal";
@@ -45,6 +41,10 @@ import {
   TQueuePkiSyncRemoveCertificatesByIdDTO,
   TQueuePkiSyncSyncCertificatesByIdDTO
 } from "./pki-sync-types";
+import { TLicenseServiceFactory } from "@app/services/license/license-service";
+/* eslint-disable no-await-in-loop */
+
+
 
 export type TPkiSyncQueueFactory = ReturnType<typeof pkiSyncQueueFactory>;
 

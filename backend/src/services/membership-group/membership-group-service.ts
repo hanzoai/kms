@@ -5,12 +5,7 @@ import {
   TemporaryPermissionMode,
   TMembershipRolesInsert
 } from "@app/db/schemas";
-import { TAccessApprovalPolicyApproverDALFactory } from "@app/ee/services/access-approval-policy/access-approval-policy-approver-dal";
-import { TAccessApprovalPolicyDALFactory } from "@app/ee/services/access-approval-policy/access-approval-policy-dal";
-import { TGroupDALFactory } from "@app/ee/services/group/group-dal";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
-import { TSecretApprovalPolicyApproverDALFactory } from "@app/ee/services/secret-approval-policy/secret-approval-policy-approver-dal";
-import { TSecretApprovalPolicyDALFactory } from "@app/ee/services/secret-approval-policy/secret-approval-policy-dal";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
 import { BadRequestError, NotFoundError } from "@app/lib/errors";
 import { groupBy } from "@app/lib/fn";
 import { ms } from "@app/lib/ms";
@@ -33,14 +28,14 @@ import { newProjectMembershipGroupFactory } from "./project/project-membership-g
 type TMembershipGroupServiceFactoryDep = {
   membershipGroupDAL: TMembershipGroupDALFactory;
   membershipRoleDAL: Pick<TMembershipRoleDALFactory, "insertMany" | "delete">;
-  accessApprovalPolicyDAL: Pick<TAccessApprovalPolicyDALFactory, "find">;
-  accessApprovalPolicyApproverDAL: Pick<TAccessApprovalPolicyApproverDALFactory, "find">;
-  secretApprovalPolicyDAL: Pick<TSecretApprovalPolicyDALFactory, "find">;
-  secretApprovalPolicyApproverDAL: Pick<TSecretApprovalPolicyApproverDALFactory, "find">;
+  accessApprovalPolicyDAL?: Pick<TAccessApprovalPolicyDALFactory, "find">;
+  accessApprovalPolicyApproverDAL?: Pick<TAccessApprovalPolicyApproverDALFactory, "find">;
+  secretApprovalPolicyDAL?: Pick<TSecretApprovalPolicyDALFactory, "find">;
+  secretApprovalPolicyApproverDAL?: Pick<TSecretApprovalPolicyApproverDALFactory, "find">;
   roleDAL: Pick<TRoleDALFactory, "find">;
   permissionService: TPermissionServiceFactory;
   orgDAL: TOrgDALFactory;
-  groupDAL: Pick<TGroupDALFactory, "findById">;
+  groupDAL?: Pick<TGroupDALFactory, "findById">;
 };
 
 export type TMembershipGroupServiceFactory = ReturnType<typeof membershipGroupServiceFactory>;
@@ -302,14 +297,14 @@ export const membershipGroupServiceFactory = ({
         message: "You can't delete your own membership"
       });
 
-    const accessApprovalPolicyApprovers = await accessApprovalPolicyApproverDAL.find({
+    const accessApprovalPolicyApprovers = await accessApprovalPolicyApproverDAL!.find({
       approverGroupId: dto.selector.groupId
     });
 
     // check if group is assigned to any access approval policy
     const accessApprovalPolicyApproverGroupIds = accessApprovalPolicyApprovers.map(({ policyId }) => policyId);
     if (accessApprovalPolicyApprovers.length > 0) {
-      const accessApprovalPolicies = await accessApprovalPolicyDAL.find({
+      const accessApprovalPolicies = await accessApprovalPolicyDAL!.find({
         $in: {
           [`${TableName.AccessApprovalPolicy}.id` as "id"]: [...new Set(accessApprovalPolicyApproverGroupIds)]
         },
@@ -325,12 +320,12 @@ export const membershipGroupServiceFactory = ({
     }
 
     // check if group is assigned to any secret approval policy
-    const secretApprovalPolicyApprovers = await secretApprovalPolicyApproverDAL.find({
+    const secretApprovalPolicyApprovers = await secretApprovalPolicyApproverDAL!.find({
       approverGroupId: dto.selector.groupId
     });
     const secretApprovalPolicyApproverGroupIds = secretApprovalPolicyApprovers.map(({ policyId }) => policyId);
     if (secretApprovalPolicyApprovers.length > 0) {
-      const secretApprovalPolicies = await secretApprovalPolicyDAL.find({
+      const secretApprovalPolicies = await secretApprovalPolicyDAL!.find({
         $in: {
           [`${TableName.SecretApprovalPolicy}.id` as "id"]: [...new Set(secretApprovalPolicyApproverGroupIds)]
         },

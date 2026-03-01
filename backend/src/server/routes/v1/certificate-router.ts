@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/no-floating-promises */
 import RE2 from "re2";
 import { z } from "zod";
-
 import { CertificatesSchema } from "@app/db/schemas";
-import { EventType } from "@app/ee/services/audit-log/audit-log-types";
+import { EventType } from "@app/services/audit-log/audit-log-types";
 import { ApiDocsTags, CERTIFICATES } from "@app/lib/api-docs";
 import { NotFoundError } from "@app/lib/errors";
 import { ms } from "@app/lib/ms";
@@ -26,8 +24,10 @@ import { CertificateRequestStatus } from "@app/services/certificate-request/cert
 import { validateTemplateRegexField } from "@app/services/certificate-template/certificate-template-validators";
 import { TCertificateIssuanceResponse } from "@app/services/certificate-v3/certificate-v3-types";
 import { ProjectFilterType } from "@app/services/project/project-types";
-
 import { booleanSchema } from "../sanitizedSchemas";
+/* eslint-disable @typescript-eslint/no-floating-promises */
+
+
 
 type CertificateServiceResponse = TCertificateIssuanceResponse | Omit<TCertificateIssuanceResponse, "privateKey">;
 

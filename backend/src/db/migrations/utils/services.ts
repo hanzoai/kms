@@ -1,11 +1,7 @@
 import { Knex } from "knex";
 
-import { initializeHsmModule, isHsmActiveAndEnabled } from "@app/ee/services/hsm/hsm-fns";
-import { hsmServiceFactory } from "@app/ee/services/hsm/hsm-service";
-import { licenseDALFactory } from "@app/ee/services/license/license-dal";
-import { licenseServiceFactory } from "@app/ee/services/license/license-service";
-import { permissionDALFactory } from "@app/ee/services/permission/permission-dal";
-import { permissionServiceFactory } from "@app/ee/services/permission/permission-service";
+import { permissionDALFactory } from "@app/services/permission/permission-dal";
+import { permissionServiceFactory } from "@app/services/permission/permission-service";
 import { TKeyStoreFactory } from "@app/keystore/keystore";
 import { BadRequestError } from "@app/lib/errors";
 import { identityDALFactory } from "@app/services/identity/identity-dal";
@@ -21,6 +17,10 @@ import { serviceTokenDALFactory } from "@app/services/service-token/service-toke
 import { userDALFactory } from "@app/services/user/user-dal";
 
 import { TMigrationEnvConfig } from "./env-config";
+import { hsmServiceFactory } from "@app/services/hsm/hsm-service";
+import { licenseServiceFactory } from "@app/services/license/license-service";
+import { isHsmActiveAndEnabled } from "@app/services/hsm/hsm-fns";
+import { initializeHsmModule } from "@app/services/hsm/hsm-fns";
 
 type TDependencies = {
   envConfig: TMigrationEnvConfig;

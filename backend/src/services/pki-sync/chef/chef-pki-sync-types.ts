@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-import { TChefConnection } from "@app/ee/services/app-connections/chef/chef-connection-types";
 
 import {
   ChefFieldMappingsSchema,

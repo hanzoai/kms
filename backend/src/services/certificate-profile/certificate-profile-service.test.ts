@@ -1,13 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { ForbiddenError } from "@casl/ability";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-
-import type { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
+import type { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
 import { ForbiddenRequestError, NotFoundError } from "@app/lib/errors";
-
 import { ActorType, AuthMethod } from "../auth/auth-type";
 import type { TCertificateBodyDALFactory } from "../certificate/certificate-body-dal";
 import type { TCertificateSecretDALFactory } from "../certificate/certificate-secret-dal";
@@ -27,6 +21,12 @@ import {
   TCertificateProfile,
   TCertificateProfileWithConfigs
 } from "./certificate-profile-types";
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+
+
 
 vi.mock("@app/lib/crypto/cryptography", () => ({
   crypto: {

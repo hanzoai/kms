@@ -1,12 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/return-await */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Knex } from "knex";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-
 import { TSecretFolderVersions, TSecretVersionsV2 } from "@app/db/schemas";
 import { BadRequestError, NotFoundError } from "@app/lib/errors";
-
 import { ActorType } from "../auth/auth-type";
 import {
   ChangeType,
@@ -15,6 +10,11 @@ import {
   ResourceChange,
   TFolderCommitServiceFactory
 } from "./folder-commit-service";
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/return-await */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+
+
 
 // Mock config
 vi.mock("@app/lib/config/env", () => ({

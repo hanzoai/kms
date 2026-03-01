@@ -2,14 +2,13 @@ import { ForbiddenError, subject } from "@casl/ability";
 import { requestContext } from "@fastify/request-context";
 
 import { AccessScope, ActionProjectType, IdentityAuthMethod, OrganizationActionScope } from "@app/db/schemas";
-import { TLicenseServiceFactory } from "@app/ee/services/license/license-service";
-import { OrgPermissionIdentityActions, OrgPermissionSubjects } from "@app/ee/services/permission/org-permission";
+import { OrgPermissionIdentityActions, OrgPermissionSubjects } from "@app/services/permission/org-permission";
 import {
   constructPermissionErrorMessage,
   validatePrivilegeChangeOperation
-} from "@app/ee/services/permission/permission-fns";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
-import { ProjectPermissionIdentityActions, ProjectPermissionSub } from "@app/ee/services/permission/project-permission";
+} from "@app/services/permission/permission-fns";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
+import { ProjectPermissionIdentityActions, ProjectPermissionSub } from "@app/services/permission/project-permission";
 import { getConfig } from "@app/lib/config/env";
 import { crypto } from "@app/lib/crypto";
 import {
@@ -39,6 +38,7 @@ import {
   TRevokeGcpAuthDTO,
   TUpdateGcpAuthDTO
 } from "./identity-gcp-auth-types";
+import { TLicenseServiceFactory } from "@app/services/license/license-service";
 
 type TIdentityGcpAuthServiceFactoryDep = {
   identityDAL: Pick<TIdentityDALFactory, "findById">;

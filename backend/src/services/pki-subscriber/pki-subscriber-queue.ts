@@ -1,4 +1,4 @@
-import { EventType, TAuditLogServiceFactory } from "@app/ee/services/audit-log/audit-log-types";
+import { EventType, TAuditLogServiceFactory } from "@app/services/audit-log/audit-log-types";
 import { logger } from "@app/lib/logger";
 import { QueueJobs, QueueName, TQueueServiceFactory } from "@app/queue";
 

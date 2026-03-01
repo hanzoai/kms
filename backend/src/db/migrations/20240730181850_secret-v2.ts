@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Knex } from "knex";
-
 import { SecretType, TableName } from "../schemas";
 import { createJunctionTable, createOnUpdateTrigger, dropOnUpdateTrigger } from "../utils";
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+
 
 export async function up(knex: Knex): Promise<void> {
   const doesSecretV2TableExist = await knex.schema.hasTable(TableName.SecretV2);

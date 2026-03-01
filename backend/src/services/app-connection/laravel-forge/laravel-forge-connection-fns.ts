@@ -1,10 +1,7 @@
-/* eslint-disable no-await-in-loop */
 import { AxiosError } from "axios";
-
 import { request } from "@app/lib/config/request";
 import { BadRequestError, InternalServerError } from "@app/lib/errors";
 import { IntegrationUrls } from "@app/services/integration-auth/integration-list";
-
 import { AppConnection } from "../app-connection-enums";
 import { LaravelForgeConnectionMethod } from "./laravel-forge-connection-enums";
 import {
@@ -17,6 +14,9 @@ import {
   TRawLaravelForgeServer,
   TRawLaravelForgeSite
 } from "./laravel-forge-connection-types";
+/* eslint-disable no-await-in-loop */
+
+
 
 export const getLaravelForgeConnectionListItem = () => {
   return {

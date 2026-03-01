@@ -1,10 +1,10 @@
 import { OrgMembershipRole, TRoles } from "@app/db/schemas";
-import { TLicenseServiceFactory } from "@app/ee/services/license/license-service";
 import { BadRequestError, NotFoundError } from "@app/lib/errors";
 import { isCustomOrgRole } from "@app/services/org/org-role-fns";
 
 import { TRoleDALFactory } from "../role/role-dal";
 import { TExternalGroupOrgMembershipRoleMappingDTO } from "./external-group-org-role-mapping-types";
+import { TLicenseServiceFactory } from "@app/services/license/license-service";
 
 export const constructGroupOrgMembershipRoleMappings = async ({
   mappingsDTO,

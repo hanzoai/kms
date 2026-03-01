@@ -1,11 +1,10 @@
-import { TPamSessionDALFactory } from "@app/ee/services/pam-session/pam-session-dal";
 import { getConfig } from "@app/lib/config/env";
 import { logger } from "@app/lib/logger";
 import { QueueJobs, QueueName, TQueueServiceFactory } from "@app/queue";
 
 type TPamSessionExpirationServiceFactoryDep = {
   queueService: TQueueServiceFactory;
-  pamSessionDAL: Pick<TPamSessionDALFactory, "expireSessionById">;
+  pamSessionDAL?: { expireSessionById: (sessionId: string) => Promise<number> };
 };
 
 export type TPamSessionExpirationServiceFactory = ReturnType<typeof pamSessionExpirationServiceFactory>;
@@ -21,13 +20,17 @@ export const pamSessionExpirationServiceFactory = ({
       return;
     }
 
+    if (!pamSessionDAL) {
+      return;
+    }
+
     queueService.start(
       QueueName.PamSessionExpiration,
       async (job) => {
         const { sessionId } = job.data;
         try {
           logger.info({ sessionId }, `${QueueName.PamSessionExpiration}: expiring session`);
-          const updated = await pamSessionDAL.expireSessionById(sessionId);
+          const updated = await pamSessionDAL!.expireSessionById(sessionId);
           if (updated > 0) {
             logger.info({ sessionId }, `${QueueName.PamSessionExpiration}: session expired successfully`);
           } else {

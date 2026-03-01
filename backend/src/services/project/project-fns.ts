@@ -1,7 +1,4 @@
 import { ProjectVersion, TProjects } from "@app/db/schemas";
-import { createSshCaHelper } from "@app/ee/services/ssh/ssh-certificate-authority-fns";
-import { SshCaKeySource } from "@app/ee/services/ssh/ssh-certificate-authority-types";
-import { SshCertKeyAlgorithm } from "@app/ee/services/ssh-certificate/ssh-certificate-types";
 import { crypto } from "@app/lib/crypto/cryptography";
 import { NotFoundError } from "@app/lib/errors";
 import { TKmsServiceFactory } from "@app/services/kms/kms-service";

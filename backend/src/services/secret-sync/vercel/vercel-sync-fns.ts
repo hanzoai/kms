@@ -1,12 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { request } from "@app/lib/config/request";
 import { IntegrationUrls } from "@app/services/integration-auth/integration-list";
 import { SecretSyncError } from "@app/services/secret-sync/secret-sync-errors";
 import { matchesSchema } from "@app/services/secret-sync/secret-sync-fns";
 import { TSecretMap } from "@app/services/secret-sync/secret-sync-types";
-
 import { VercelEnvironmentType } from "./vercel-sync-enums";
 import { DefaultVercelEnvType, TVercelSyncWithCredentials, VercelApiSecret } from "./vercel-sync-types";
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 
 function isVercelDefaultEnvType(value: string): value is DefaultVercelEnvType {
   return Object.values(VercelEnvironmentType).map(String).includes(value);

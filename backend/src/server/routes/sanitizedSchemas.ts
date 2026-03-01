@@ -14,7 +14,7 @@ import {
   SecretTagsSchema,
   UsersSchema
 } from "@app/db/schemas";
-import { ProjectPermissionActions, ProjectPermissionSub } from "@app/ee/services/permission/project-permission";
+import { ProjectPermissionActions, ProjectPermissionSub } from "@app/services/permission/project-permission";
 import { ResourceMetadataNonEncryptionSchema } from "@app/services/resource-metadata/resource-metadata-schema";
 
 import { UnpackedPermissionSchema } from "./sanitizedSchema/permission";

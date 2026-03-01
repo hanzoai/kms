@@ -1,16 +1,16 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { BadRequestError, NotFoundError } from "@app/lib/errors";
+import { CertificateRequestStatus } from "@app/services/certificate-request/certificate-request-types";
+import { EnrollmentType } from "../certificate-profile/certificate-profile-types";
+import { certificateEstV3ServiceFactory, TCertificateEstV3ServiceFactory } from "./certificate-est-v3-service";
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { BadRequestError, NotFoundError } from "@app/lib/errors";
-import { CertificateRequestStatus } from "@app/services/certificate-request/certificate-request-types";
 
-import { EnrollmentType } from "../certificate-profile/certificate-profile-types";
-import { certificateEstV3ServiceFactory, TCertificateEstV3ServiceFactory } from "./certificate-est-v3-service";
 
 // Mock the x509 module
 vi.mock("@peculiar/x509", () => ({

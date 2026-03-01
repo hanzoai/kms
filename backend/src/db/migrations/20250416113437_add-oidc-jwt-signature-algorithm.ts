@@ -1,6 +1,5 @@
 import { Knex } from "knex";
 
-import { OIDCJWTSignatureAlgorithm } from "@app/ee/services/oidc/oidc-config-types";
 
 import { TableName } from "../schemas";
 

@@ -1,20 +1,7 @@
 import { Job, Queue, QueueOptions, RepeatOptions, Worker, WorkerListener } from "bullmq";
 
 import { SecretEncryptionAlgo, SecretKeyEncoding, TQueueJobs } from "@app/db/schemas";
-import { TCreateAuditLogDTO } from "@app/ee/services/audit-log/audit-log-types";
-import {
-  TSecretRotationRotateSecretsJobPayload,
-  TSecretRotationSendNotificationJobPayload
-} from "@app/ee/services/secret-rotation-v2/secret-rotation-v2-types";
-import {
-  TScanFullRepoEventPayload,
-  TScanPushEventPayload
-} from "@app/ee/services/secret-scanning/secret-scanning-queue/secret-scanning-queue-types";
-import {
-  TQueueSecretScanningDataSourceFullScan,
-  TQueueSecretScanningResourceDiffScan,
-  TQueueSecretScanningSendNotification
-} from "@app/ee/services/secret-scanning-v2/secret-scanning-v2-types";
+import { TCreateAuditLogDTO } from "@app/services/audit-log/audit-log-types";
 import { getConfig } from "@app/lib/config/env";
 import { buildRedisFromConfig, TRedisConfigKeys } from "@app/lib/config/redis";
 import { crypto } from "@app/lib/crypto";

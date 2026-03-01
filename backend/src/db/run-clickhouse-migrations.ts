@@ -1,3 +1,8 @@
+import path from "node:path";
+import dotenv from "dotenv";
+import { initLogger } from "@app/lib/logger";
+import { buildClickHouseFromConfig } from "../lib/config/clickhouse";
+import { ensureClickHouseSchema } from "./clickhouse-migration-runner";
 /**
  * CLI entry point for ensuring ClickHouse schema exists.
  *
@@ -12,14 +17,9 @@
  *   CLICKHOUSE_AUDIT_LOG_TABLE_NAME - Table name for audit logs
  *     Default: audit_logs
  */
-import path from "node:path";
 
-import dotenv from "dotenv";
 
-import { initLogger } from "@app/lib/logger";
 
-import { buildClickHouseFromConfig } from "../lib/config/clickhouse";
-import { ensureClickHouseSchema } from "./clickhouse-migration-runner";
 
 dotenv.config({
   path: path.join(__dirname, "../../../.env.migration")

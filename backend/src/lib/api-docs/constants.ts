@@ -1,14 +1,3 @@
-import { SecretRotation } from "@app/ee/services/secret-rotation-v2/secret-rotation-v2-enums";
-import {
-  SECRET_ROTATION_CONNECTION_MAP,
-  SECRET_ROTATION_NAME_MAP
-} from "@app/ee/services/secret-rotation-v2/secret-rotation-v2-maps";
-import { SecretScanningDataSource } from "@app/ee/services/secret-scanning-v2/secret-scanning-v2-enums";
-import {
-  AUTO_SYNC_DESCRIPTION_HELPER,
-  SECRET_SCANNING_DATA_SOURCE_CONNECTION_MAP,
-  SECRET_SCANNING_DATA_SOURCE_NAME_MAP
-} from "@app/ee/services/secret-scanning-v2/secret-scanning-v2-maps";
 import { AppConnection } from "@app/services/app-connection/app-connection-enums";
 import { APP_CONNECTION_NAME_MAP } from "@app/services/app-connection/app-connection-maps";
 import { CaType } from "@app/services/certificate-authority/certificate-authority-enums";

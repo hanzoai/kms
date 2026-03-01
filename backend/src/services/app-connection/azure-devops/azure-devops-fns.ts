@@ -1,6 +1,4 @@
-/* eslint-disable no-case-declarations */
 import { AxiosError, AxiosResponse } from "axios";
-
 import { getConfig } from "@app/lib/config/env";
 import { request } from "@app/lib/config/request";
 import { BadRequestError, InternalServerError, NotFoundError } from "@app/lib/errors";
@@ -12,7 +10,6 @@ import {
 } from "@app/services/app-connection/app-connection-fns";
 import { IntegrationUrls } from "@app/services/integration-auth/integration-list";
 import { TKmsServiceFactory } from "@app/services/kms/kms-service";
-
 import { TAppConnectionDALFactory } from "../app-connection-dal";
 import { AppConnection } from "../app-connection-enums";
 import { AzureDevOpsConnectionMethod } from "./azure-devops-enums";
@@ -22,6 +19,9 @@ import {
   TAzureDevOpsConnectionConfig,
   TAzureDevOpsConnectionCredentials
 } from "./azure-devops-types";
+/* eslint-disable no-case-declarations */
+
+
 
 export const getAzureDevopsConnectionListItem = () => {
   const { INF_APP_CONNECTION_AZURE_DEVOPS_CLIENT_ID } = getConfig();

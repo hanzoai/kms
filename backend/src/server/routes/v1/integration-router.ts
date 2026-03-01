@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { IntegrationsSchema } from "@app/db/schemas";
-import { EventType } from "@app/ee/services/audit-log/audit-log-types";
+import { EventType } from "@app/services/audit-log/audit-log-types";
 import { ApiDocsTags, INTEGRATION } from "@app/lib/api-docs";
 import { removeTrailingSlash, shake } from "@app/lib/fn";
 import { readLimit, writeLimit } from "@app/server/config/rateLimiter";

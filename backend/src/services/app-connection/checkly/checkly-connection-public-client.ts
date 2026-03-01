@@ -1,13 +1,13 @@
-/* eslint-disable no-await-in-loop */
-/* eslint-disable class-methods-use-this */
 import { AxiosInstance, AxiosRequestConfig, AxiosResponse, HttpStatusCode, isAxiosError } from "axios";
-
 import { createRequestClient } from "@app/lib/config/request";
 import { IntegrationUrls } from "@app/services/integration-auth/integration-list";
 import { SecretSyncError } from "@app/services/secret-sync/secret-sync-errors";
-
 import { ChecklyConnectionMethod } from "./checkly-connection-constants";
 import { TChecklyAccount, TChecklyConnectionConfig, TChecklyVariable } from "./checkly-connection-types";
+/* eslint-disable no-await-in-loop */
+/* eslint-disable class-methods-use-this */
+
+
 
 export function getChecklyAuthHeaders(
   connection: TChecklyConnectionConfig,

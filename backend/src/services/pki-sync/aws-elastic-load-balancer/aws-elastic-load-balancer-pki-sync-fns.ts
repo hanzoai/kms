@@ -1,7 +1,5 @@
-/* eslint-disable no-await-in-loop */
 import AWS from "aws-sdk";
 import { z } from "zod";
-
 import { TCertificateSyncs } from "@app/db/schemas";
 import { delay } from "@app/lib/delay";
 import { BadRequestError, NotFoundError } from "@app/lib/errors";
@@ -22,13 +20,15 @@ import { createConnectionQueue, RateLimitConfig } from "@app/services/connection
 import { TKmsServiceFactory } from "@app/services/kms/kms-service";
 import { awsCertificateManagerPkiSyncFactory } from "@app/services/pki-sync/aws-certificate-manager/aws-certificate-manager-pki-sync-fns";
 import { TCertificateMap } from "@app/services/pki-sync/pki-sync-types";
-
 import { TPkiSyncWithCredentials } from "../pki-sync-types";
 import {
   RemoveCertificatesResult,
   SyncCertificatesResult,
   TAwsElasticLoadBalancerPkiSyncConfig
 } from "./aws-elastic-load-balancer-pki-sync-types";
+/* eslint-disable no-await-in-loop */
+
+
 
 type TAwsAssumeRoleCredentials = z.infer<typeof AwsConnectionAssumeRoleCredentialsSchema>;
 type TAwsAccessKeyCredentials = z.infer<typeof AwsConnectionAccessTokenCredentialsSchema>;

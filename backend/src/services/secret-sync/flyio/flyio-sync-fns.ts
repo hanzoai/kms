@@ -1,4 +1,3 @@
-/* eslint-disable no-await-in-loop */
 import { request } from "@app/lib/config/request";
 import { IntegrationUrls } from "@app/services/integration-auth/integration-list";
 import {
@@ -12,8 +11,9 @@ import {
 import { SecretSyncError } from "@app/services/secret-sync/secret-sync-errors";
 import { matchesSchema } from "@app/services/secret-sync/secret-sync-fns";
 import { TSecretMap } from "@app/services/secret-sync/secret-sync-types";
-
 import { SECRET_SYNC_NAME_MAP } from "../secret-sync-maps";
+/* eslint-disable no-await-in-loop */
+
 
 const getAppNameByAppId = async ({ accessToken, appId }: TFlyioListVariables) => {
   const { data } = await request.post<{ data: { app: { name: string } } }>(

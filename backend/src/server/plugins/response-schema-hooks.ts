@@ -1,9 +1,9 @@
-/* eslint-disable no-param-reassign */
 import fp from "fastify-plugin";
-
 import { getConfig } from "@app/lib/config/env";
-
 import { DefaultResponseErrorsSchema } from "../routes/sanitizedSchemas";
+/* eslint-disable no-param-reassign */
+
+
 
 const isScimRoutes = (pathname: string) =>
   pathname.startsWith("/api/v1/scim/Users") || pathname.startsWith("/api/v1/scim/Groups");

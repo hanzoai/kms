@@ -1,11 +1,11 @@
 import { z } from "zod";
 
-import { THsmServiceFactory } from "@app/ee/services/hsm/hsm-service";
 import { crypto } from "@app/lib/crypto/cryptography";
 import { removeTrailingSlash } from "@app/lib/fn";
 import { zpStr } from "@app/lib/zod";
 import { TKmsRootConfigDALFactory } from "@app/services/kms/kms-root-config-dal";
 import { TSuperAdminDALFactory } from "@app/services/super-admin/super-admin-dal";
+import { THsmServiceFactory } from "@app/services/hsm/hsm-service";
 
 const envSchema = z
   .object({

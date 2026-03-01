@@ -1,9 +1,7 @@
-/* eslint-disable no-await-in-loop */
 import opentelemetry from "@opentelemetry/api";
 import { AxiosError } from "axios";
 import { randomUUID } from "crypto";
 import { Knex } from "knex";
-
 import {
   AccessScope,
   ProjectMembershipRole,
@@ -13,14 +11,7 @@ import {
   TSecretSnapshotSecretsV2,
   TSecretVersionsV2
 } from "@app/db/schemas";
-import { Actor, EventType, TAuditLogServiceFactory } from "@app/ee/services/audit-log/audit-log-types";
-import { TLicenseServiceFactory } from "@app/ee/services/license/license-service";
-import { TProjectEventsService } from "@app/ee/services/project-events/project-events-service";
-import { ProjectEvents, TProjectEventPayload } from "@app/ee/services/project-events/project-events-types";
-import { TSecretApprovalRequestDALFactory } from "@app/ee/services/secret-approval-request/secret-approval-request-dal";
-import { TSecretRotationDALFactory } from "@app/ee/services/secret-rotation/secret-rotation-dal";
-import { TSnapshotDALFactory } from "@app/ee/services/secret-snapshot/snapshot-dal";
-import { TSnapshotSecretV2DALFactory } from "@app/ee/services/secret-snapshot/snapshot-secret-v2-dal";
+import { Actor, EventType, TAuditLogServiceFactory } from "@app/services/audit-log/audit-log-types";
 import { KeyStorePrefixes, KeyStoreTtls, TKeyStoreFactory } from "@app/keystore/keystore";
 import { getConfig } from "@app/lib/config/env";
 import { crypto, SymmetricKeySize } from "@app/lib/crypto/cryptography";
@@ -35,7 +26,6 @@ import { TSecretVersionTagDALFactory } from "@app/services/secret/secret-version
 import { TSecretBlindIndexDALFactory } from "@app/services/secret-blind-index/secret-blind-index-dal";
 import { TSecretSyncQueueFactory } from "@app/services/secret-sync/secret-sync-queue";
 import { TSecretTagDALFactory } from "@app/services/secret-tag/secret-tag-dal";
-
 import { ActorType } from "../auth/auth-type";
 import { TFolderCommitServiceFactory } from "../folder-commit/folder-commit-service";
 import { TIntegrationDALFactory } from "../integration/integration-dal";
@@ -80,6 +70,10 @@ import {
   TRemoveSecretReminderDTO,
   TSyncSecretsDTO
 } from "./secret-types";
+import { TLicenseServiceFactory } from "@app/services/license/license-service";
+/* eslint-disable no-await-in-loop */
+
+
 
 export type TSecretQueueFactory = ReturnType<typeof secretQueueFactory>;
 type TSecretQueueFactoryDep = {
@@ -109,10 +103,10 @@ type TSecretQueueFactoryDep = {
   secretV2BridgeDAL: TSecretV2BridgeDALFactory;
   secretVersionV2BridgeDAL: Pick<TSecretVersionV2DALFactory, "batchInsert" | "insertMany" | "findLatestVersionMany">;
   secretVersionTagV2BridgeDAL: Pick<TSecretVersionV2TagDALFactory, "insertMany" | "batchInsert">;
-  secretRotationDAL: Pick<TSecretRotationDALFactory, "secretOutputV2InsertMany" | "find">;
-  secretApprovalRequestDAL: Pick<TSecretApprovalRequestDALFactory, "deleteByProjectId">;
-  snapshotDAL: Pick<TSnapshotDALFactory, "findNSecretV1SnapshotByFolderId" | "deleteSnapshotsAboveLimit">;
-  snapshotSecretV2BridgeDAL: Pick<TSnapshotSecretV2DALFactory, "insertMany" | "batchInsert">;
+  secretRotationDAL?: { secretOutputV2InsertMany: (...args: any[]) => any; find: (...args: any[]) => any };
+  secretApprovalRequestDAL?: { deleteByProjectId: (...args: any[]) => any };
+  snapshotDAL?: { findNSecretV1SnapshotByFolderId: (...args: any[]) => any; deleteSnapshotsAboveLimit: (...args: any[]) => any };
+  snapshotSecretV2BridgeDAL?: { insertMany: (...args: any[]) => any; batchInsert: (...args: any[]) => any };
   keyStore: Pick<TKeyStoreFactory, "acquireLock" | "setItemWithExpiry" | "getItem">;
   auditLogService: Pick<TAuditLogServiceFactory, "createAuditLog">;
   orgService: Pick<TOrgServiceFactory, "addGhostUser">;
@@ -120,7 +114,7 @@ type TSecretQueueFactoryDep = {
   folderCommitService: Pick<TFolderCommitServiceFactory, "createCommit">;
   secretSyncQueue: Pick<TSecretSyncQueueFactory, "queueSecretSyncsSyncSecretsByPath">;
   reminderService: Pick<TReminderServiceFactory, "createReminderInternal" | "deleteReminderBySecretId">;
-  projectEventsService: TProjectEventsService;
+  projectEventsService?: unknown;
   licenseService: Pick<TLicenseServiceFactory, "getPlan">;
   telemetryService: Pick<TTelemetryServiceFactory, "sendPostHogEvents">;
 };
@@ -1283,7 +1277,7 @@ export const secretQueueFactory = ({
         }
 
         const SNAPSHOT_BATCH_SIZE = 10;
-        const snapshots = await snapshotDAL.findNSecretV1SnapshotByFolderId(folderId, SNAPSHOT_BATCH_SIZE, tx);
+        const snapshots = await snapshotDAL!.findNSecretV1SnapshotByFolderId(folderId, SNAPSHOT_BATCH_SIZE, tx);
         const projectV3SecretVersionsGroupById: Record<string, TSecretVersionsV2> = {};
         const projectV3SecretVersionTags: { secret_versions_v2Id: string; secret_tagsId: string }[] = [];
         const projectV3SnapshotSecrets: Omit<TSecretSnapshotSecretsV2, "id">[] = [];
@@ -1421,9 +1415,9 @@ export const secretQueueFactory = ({
         }
 
         if (projectV3SnapshotSecrets.length) {
-          await snapshotSecretV2BridgeDAL.batchInsert(projectV3SnapshotSecrets, tx);
+          await snapshotSecretV2BridgeDAL!.batchInsert(projectV3SnapshotSecrets, tx);
         }
-        await snapshotDAL.deleteSnapshotsAboveLimit(folderId, SNAPSHOT_BATCH_SIZE, tx);
+        await snapshotDAL!.deleteSnapshotsAboveLimit(folderId, SNAPSHOT_BATCH_SIZE, tx);
       }
       /*
        * Secret Tag Migration
@@ -1517,8 +1511,8 @@ export const secretQueueFactory = ({
        * Secret Rotation Secret Migration
        * Saving the new encrypted colum
        * */
-      const projectV1SecretRotations = await secretRotationDAL.find({ projectId }, tx);
-      await secretRotationDAL.secretOutputV2InsertMany(
+      const projectV1SecretRotations = await secretRotationDAL!.find({ projectId }, tx);
+      await secretRotationDAL!.secretOutputV2InsertMany(
         projectV1SecretRotations.flatMap((el) =>
           el.outputs.map((output) => ({ rotationId: el.id, key: output.key, secretId: output.secret.id }))
         ),
@@ -1529,7 +1523,7 @@ export const secretQueueFactory = ({
        * approvals: we will delete all approvals this is because some secret versions may not be added yet
        * Thus doesn't make sense for rest to be there
        * */
-      await secretApprovalRequestDAL.deleteByProjectId(projectId, tx);
+      await secretApprovalRequestDAL!.deleteByProjectId(projectId, tx);
       await projectDAL.updateById(projectId, { upgradeStatus: null, version: ProjectVersion.V3 }, tx);
     });
   });

@@ -1,7 +1,5 @@
 import sodium from "libsodium-wrappers";
 
-import { TGatewayServiceFactory } from "@app/ee/services/gateway/gateway-service";
-import { TGatewayV2ServiceFactory } from "@app/ee/services/gateway-v2/gateway-v2-service";
 import {
   getGitHubAppAuthToken,
   getGitHubGatewayConnectionDetails,
@@ -22,8 +20,8 @@ import { TGitHubPublicKey, TGitHubSecret, TGitHubSecretPayload, TGitHubSyncWithC
 
 const getEncryptedSecrets = async (
   secretSync: TGitHubSyncWithCredentials,
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown
 ) => {
   const { destinationConfig, connection } = secretSync;
 
@@ -55,8 +53,8 @@ const getEncryptedSecrets = async (
 
 const getPublicKey = async (
   secretSync: TGitHubSyncWithCredentials,
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">,
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown,
   token: string
 ) => {
   const { destinationConfig, connection } = secretSync;
@@ -104,8 +102,8 @@ const getPublicKey = async (
 
 const deleteSecret = async (
   secretSync: TGitHubSyncWithCredentials,
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">,
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown,
   token: string,
   encryptedSecret: TGitHubSecret
 ) => {
@@ -152,8 +150,8 @@ const deleteSecret = async (
 
 const putSecret = async (
   secretSync: TGitHubSyncWithCredentials,
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">,
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown,
   token: string,
   payload: TGitHubSecretPayload
 ) => {
@@ -213,8 +211,8 @@ export const GithubSyncFns = {
   syncSecrets: async (
     secretSync: TGitHubSyncWithCredentials,
     ogSecretMap: TSecretMap,
-    gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-    gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">
+    gatewayService?: unknown,
+    gatewayV2Service?: unknown
   ) => {
     const secretMap = Object.fromEntries(Object.entries(ogSecretMap).map(([i, v]) => [i.toUpperCase(), v]));
 
@@ -305,8 +303,8 @@ export const GithubSyncFns = {
   removeSecrets: async (
     secretSync: TGitHubSyncWithCredentials,
     ogSecretMap: TSecretMap,
-    gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-    gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">
+    gatewayService?: unknown,
+    gatewayV2Service?: unknown
   ) => {
     const secretMap = Object.fromEntries(Object.entries(ogSecretMap).map(([i, v]) => [i.toUpperCase(), v]));
 

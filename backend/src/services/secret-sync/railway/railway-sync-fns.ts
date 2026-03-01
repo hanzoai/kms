@@ -1,12 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
 import { RailwayPublicAPI } from "@app/services/app-connection/railway/railway-connection-public-client";
 import { matchesSchema } from "@app/services/secret-sync/secret-sync-fns";
-
 import { SecretSyncError } from "../secret-sync-errors";
 import { TSecretMap } from "../secret-sync-types";
 import { TRailwaySyncWithCredentials } from "./railway-sync-types";
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
+
 
 export const RailwaySyncFns = {
   async getSecrets(secretSync: TRailwaySyncWithCredentials): Promise<TSecretMap> {

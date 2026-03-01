@@ -1,6 +1,6 @@
 import { Job } from "bullmq";
 
-import { AuditLogInfo } from "@app/ee/services/audit-log/audit-log-types";
+import { AuditLogInfo } from "@app/services/audit-log/audit-log-types";
 import { QueueJobs } from "@app/queue";
 import { CertificateSyncStatus } from "@app/services/certificate-sync/certificate-sync-enums";
 import { TSyncMetadata } from "@app/services/certificate-sync/certificate-sync-schemas";

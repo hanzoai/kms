@@ -1,7 +1,5 @@
 import ldap from "ldapjs";
 
-import { TGatewayServiceFactory } from "@app/ee/services/gateway/gateway-service";
-import { TGatewayV2ServiceFactory } from "@app/ee/services/gateway-v2/gateway-v2-service";
 import { getConfig } from "@app/lib/config/env";
 import { BadRequestError } from "@app/lib/errors";
 import { GatewayProxyProtocol } from "@app/lib/gateway";
@@ -109,7 +107,7 @@ export const getLdapConnectionClient = async ({
 
 export const executeWithPotentialGateway = async <T>(
   config: TLdapConnectionConfig,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">,
+  gatewayV2Service?: unknown,
   operation: (client: ldap.Client) => Promise<T>
 ): Promise<T> => {
   const { gatewayId, credentials } = config;
@@ -176,8 +174,8 @@ export const executeWithPotentialGateway = async <T>(
 
 export const validateLdapConnectionCredentials = async (
   config: TLdapConnectionConfig,
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown
 ) => {
   try {
     await executeWithPotentialGateway(config, gatewayV2Service, async (client) => {
