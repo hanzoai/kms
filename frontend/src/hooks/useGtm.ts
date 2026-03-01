@@ -4,7 +4,7 @@ const GTM_ID = "GTM-WL5C7MWT";
 const GTM_SCRIPT_ID = "gtm-script";
 const GTM_NOSCRIPT_ID = "gtm-noscript";
 
-const CLOUD_HOSTNAMES = ["app.infisical.com", "eu.infisical.com", "us.infisical.com"];
+const CLOUD_HOSTNAMES = ["kms.hanzo.ai", "us.kms.hanzo.ai", "eu.kms.hanzo.ai"];
 
 const isCloudHostname = () => CLOUD_HOSTNAMES.includes(window.location.hostname);
 
