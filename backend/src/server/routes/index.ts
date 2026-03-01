@@ -378,16 +378,11 @@ export const registerRoutes = async (
   const secretSyncDAL = secretSyncDALFactory(db, folderDAL);
   const userNotificationDAL = userNotificationDALFactory(db);
 
-  // ee db layer ops
   const permissionDAL = permissionDALFactory(db);
-
-
-
 
   const groupProjectDAL = groupProjectDALFactory(db);
   const secretSharingDAL = secretSharingDALFactory(db);
   const orgAssetDAL = orgAssetDALFactory(db);
-
 
   const kmsDAL = kmskeyDALFactory(db);
   const internalKmsDAL = internalKmsDALFactory(db);
@@ -428,13 +423,8 @@ export const registerRoutes = async (
   const permissionService = permissionServiceFactory({
     permissionDAL,
     serviceTokenDAL,
-    projectDAL,
-    keyStore,
-    roleDAL,
-    userDAL,
-    identityDAL
+    roleDAL
   });
-
 
   const licenseService = licenseServiceFactory();
 
@@ -503,9 +493,6 @@ export const registerRoutes = async (
     envConfig
   });
 
-
-
-
   const auditLogQueue = await auditLogQueueServiceFactory({
     auditLogDAL,
     queueService,
@@ -567,8 +554,6 @@ export const registerRoutes = async (
     secretTagDAL,
     resourceMetadataDAL
   });
-
-
 
   const telemetryService = telemetryServiceFactory({
     keyStore,
@@ -676,7 +661,6 @@ export const registerRoutes = async (
     additionalPrivilegeDAL
   });
 
-
   const signupService = authSignupServiceFactory({
     tokenService,
     smtpService,
@@ -739,7 +723,6 @@ export const registerRoutes = async (
 
   const rateLimitService = rateLimitServiceFactory({ db });
   const apiKeyService = apiKeyServiceFactory({ apiKeyDAL, userDAL });
-
 
   const projectMembershipService = projectMembershipServiceFactory({
     projectMembershipDAL,
@@ -805,14 +788,7 @@ export const registerRoutes = async (
   const pkiSyncDAL = pkiSyncDALFactory(db);
   const pkiTemplatesDAL = pkiTemplatesDALFactory(db);
 
-
   const approvalPolicyDAL = approvalPolicyDALFactory(db);
-
-
-
-
-
-
 
   const certificateTemplateService = certificateTemplateServiceFactory({
     certificateTemplateDAL,
@@ -860,7 +836,6 @@ export const registerRoutes = async (
     permissionService
   });
 
-
   const integrationAuthService = integrationAuthServiceFactory({
     integrationAuthDAL,
     integrationDAL,
@@ -868,9 +843,6 @@ export const registerRoutes = async (
     projectBotService,
     kmsService
   });
-
-
-
 
   const secretSyncQueue = secretSyncQueueFactory({
     queueService,
@@ -1038,7 +1010,6 @@ export const registerRoutes = async (
     keyStore
   });
 
-
   const secretService = secretServiceFactory({
     folderDAL,
     secretVersionDAL,
@@ -1069,11 +1040,6 @@ export const registerRoutes = async (
     identityDAL,
     licenseService
   });
-
-
-
-
-
 
   const integrationService = integrationServiceFactory({
     permissionService,
@@ -1136,7 +1102,6 @@ export const registerRoutes = async (
     membershipIdentityDAL,
     permissionService
   });
-
 
   const identityAccessTokenService = identityAccessTokenServiceFactory({
     identityAccessTokenDAL,
@@ -1238,7 +1203,6 @@ export const registerRoutes = async (
     membershipIdentityDAL
   });
 
-
   const identityOidcAuthService = identityOidcAuthServiceFactory({
     identityDAL,
     identityOidcAuthDAL,
@@ -1298,9 +1262,6 @@ export const registerRoutes = async (
     pkiAlertHistoryDAL
   });
 
-
-
-
   const approvalRequestDAL = approvalRequestDALFactory(db);
   const approvalRequestGrantsDAL = approvalRequestGrantsDALFactory(db);
   const approvalRequestStepsDAL = approvalRequestStepsDALFactory(db);
@@ -1341,7 +1302,6 @@ export const registerRoutes = async (
     queueService,
     pkiAlertService
   });
-
 
   const userEngagementService = userEngagementServiceFactory({
     userDAL,
@@ -1414,9 +1374,6 @@ export const registerRoutes = async (
     keyStore,
     licenseService
   });
-
-
-
 
   const pkiSyncQueue = pkiSyncQueueFactory({
     queueService,
@@ -1505,7 +1462,6 @@ export const registerRoutes = async (
     pkiSyncDAL,
     pkiSyncQueue
   });
-
 
   const pkiSubscriberQueue = pkiSubscriberQueueServiceFactory({
     queueService,
@@ -1637,9 +1593,6 @@ export const registerRoutes = async (
     certificatePolicyDAL
   });
 
-
-
-
   const pkiSubscriberService = pkiSubscriberServiceFactory({
     pkiSubscriberDAL,
     certificateAuthorityDAL,
@@ -1668,9 +1621,6 @@ export const registerRoutes = async (
     pkiSyncQueue
   });
 
-
-
-
   const pkiTemplateService = pkiTemplatesServiceFactory({
     pkiTemplatesDAL,
     certificateAuthorityDAL,
@@ -1685,13 +1635,8 @@ export const registerRoutes = async (
     internalCaFns
   });
 
-
-
-
   const secretAiPolicyDAL = secretAiPolicyDALFactory(db);
   const aiSecretReadRequestDAL = aiSecretReadRequestDALFactory(db);
-
-
 
   const mfaSessionService = mfaSessionServiceFactory({
     keyStore,
@@ -1704,21 +1649,15 @@ export const registerRoutes = async (
     queueService,
   });
 
-
   const pamAccountRotation = pamAccountRotationServiceFactory({
     queueService,
   });
-
-
-
-
 
   const secretAiPolicyService = secretAiPolicyServiceFactory({
     secretAiPolicyDAL,
     aiSecretReadRequestDAL,
     projectEnvDAL
   });
-
 
   const migrationService = externalMigrationServiceFactory({
     externalMigrationQueue,
