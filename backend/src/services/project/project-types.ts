@@ -1,8 +1,6 @@
 import { Knex } from "knex";
 
 import { ProjectType, SortDirection, TProjectKeys } from "@app/db/schemas";
-import { TSshCertificateAuthorityDALFactory } from "@app/ee/services/ssh/ssh-certificate-authority-dal";
-import { TSshCertificateAuthoritySecretDALFactory } from "@app/ee/services/ssh/ssh-certificate-authority-secret-dal";
 import { OrgServiceActor, TProjectPermission } from "@app/lib/types";
 import { TKmsServiceFactory } from "@app/services/kms/kms-service";
 import { TProjectSshConfigDALFactory } from "@app/services/project/project-ssh-config-dal";
@@ -215,8 +213,8 @@ export type TDeleteProjectWorkflowIntegration = {
 
 export type TBootstrapSshProjectDTO = {
   projectId: string;
-  sshCertificateAuthorityDAL: Pick<TSshCertificateAuthorityDALFactory, "transaction" | "create">;
-  sshCertificateAuthoritySecretDAL: Pick<TSshCertificateAuthoritySecretDALFactory, "create">;
+  sshCertificateAuthorityDAL?: Pick<TSshCertificateAuthorityDALFactory, "transaction" | "create">;
+  sshCertificateAuthoritySecretDAL?: Pick<TSshCertificateAuthoritySecretDALFactory, "create">;
   projectSshConfigDAL: Pick<TProjectSshConfigDALFactory, "create">;
   kmsService: Pick<TKmsServiceFactory, "createCipherPairWithDataKey">;
   tx?: Knex;

@@ -4,13 +4,13 @@ import { AccessScope, ActionProjectType } from "@app/db/schemas";
 import {
   constructPermissionErrorMessage,
   validatePrivilegeChangeOperation
-} from "@app/ee/services/permission/permission-fns";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
+} from "@app/services/permission/permission-fns";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
 import {
   ProjectPermissionIdentityActions,
   ProjectPermissionMemberActions,
   ProjectPermissionSub
-} from "@app/ee/services/permission/project-permission";
+} from "@app/services/permission/project-permission";
 import { BadRequestError, PermissionBoundaryError } from "@app/lib/errors";
 import { OrgServiceActor } from "@app/lib/types";
 import { ActorType } from "@app/services/auth/auth-type";

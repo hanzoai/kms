@@ -9,7 +9,7 @@ import {
   SortDirection
 } from "@app/db/schemas";
 import { ProjectMicrosoftTeamsConfigsSchema } from "@app/db/schemas/project-microsoft-teams-configs";
-import { EventType } from "@app/ee/services/audit-log/audit-log-types";
+import { EventType } from "@app/services/audit-log/audit-log-types";
 import { ApiDocsTags, PROJECTS } from "@app/lib/api-docs";
 import { CharacterType, characterValidator } from "@app/lib/validator/validate-string";
 import { re2Validator } from "@app/lib/zod";

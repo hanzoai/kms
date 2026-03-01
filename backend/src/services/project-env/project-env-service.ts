@@ -1,11 +1,8 @@
 import { ForbiddenError } from "@casl/ability";
 
 import { ActionProjectType } from "@app/db/schemas";
-import { TAccessApprovalPolicyEnvironmentDALFactory } from "@app/ee/services/access-approval-policy/access-approval-policy-environment-dal";
-import { TLicenseServiceFactory } from "@app/ee/services/license/license-service";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
-import { ProjectPermissionActions, ProjectPermissionSub } from "@app/ee/services/permission/project-permission";
-import { TSecretApprovalPolicyEnvironmentDALFactory } from "@app/ee/services/secret-approval-policy/secret-approval-policy-environment-dal";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
+import { ProjectPermissionActions, ProjectPermissionSub } from "@app/services/permission/project-permission";
 import { KeyStorePrefixes, TKeyStoreFactory } from "@app/keystore/keystore";
 import { BadRequestError, NotFoundError } from "@app/lib/errors";
 import { logger } from "@app/lib/logger";
@@ -14,6 +11,7 @@ import { TProjectDALFactory } from "../project/project-dal";
 import { TSecretFolderDALFactory } from "../secret-folder/secret-folder-dal";
 import { TProjectEnvDALFactory } from "./project-env-dal";
 import { TCreateEnvDTO, TDeleteEnvDTO, TGetEnvDTO, TUpdateEnvDTO } from "./project-env-types";
+import { TLicenseServiceFactory } from "@app/services/license/license-service";
 
 type TProjectEnvServiceFactoryDep = {
   projectEnvDAL: TProjectEnvDALFactory;
@@ -22,8 +20,8 @@ type TProjectEnvServiceFactoryDep = {
   permissionService: Pick<TPermissionServiceFactory, "getProjectPermission">;
   licenseService: Pick<TLicenseServiceFactory, "getPlan">;
   keyStore: Pick<TKeyStoreFactory, "acquireLock" | "setItemWithExpiry" | "getItem" | "waitTillReady">;
-  accessApprovalPolicyEnvironmentDAL: Pick<TAccessApprovalPolicyEnvironmentDALFactory, "findAvailablePoliciesByEnvId">;
-  secretApprovalPolicyEnvironmentDAL: Pick<TSecretApprovalPolicyEnvironmentDALFactory, "findAvailablePoliciesByEnvId">;
+  accessApprovalPolicyEnvironmentDAL?: Pick<TAccessApprovalPolicyEnvironmentDALFactory, "findAvailablePoliciesByEnvId">;
+  secretApprovalPolicyEnvironmentDAL?: Pick<TSecretApprovalPolicyEnvironmentDALFactory, "findAvailablePoliciesByEnvId">;
 };
 
 export type TProjectEnvServiceFactory = ReturnType<typeof projectEnvServiceFactory>;
@@ -238,14 +236,14 @@ export const projectEnvServiceFactory = ({
       }
 
       const env = await projectEnvDAL.transaction(async (tx) => {
-        const secretApprovalPolicies = await secretApprovalPolicyEnvironmentDAL.findAvailablePoliciesByEnvId(id, tx);
+        const secretApprovalPolicies = await secretApprovalPolicyEnvironmentDAL!.findAvailablePoliciesByEnvId(id, tx);
         if (secretApprovalPolicies.length > 0) {
           throw new BadRequestError({
             message: "Environment is in use by a secret approval policy",
             name: "DeleteEnvironment"
           });
         }
-        const accessApprovalPolicies = await accessApprovalPolicyEnvironmentDAL.findAvailablePoliciesByEnvId(id, tx);
+        const accessApprovalPolicies = await accessApprovalPolicyEnvironmentDAL!.findAvailablePoliciesByEnvId(id, tx);
         if (accessApprovalPolicies.length > 0) {
           throw new BadRequestError({
             message: "Environment is in use by an access approval policy",

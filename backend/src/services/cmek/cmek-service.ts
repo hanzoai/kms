@@ -1,8 +1,8 @@
 import { ForbiddenError } from "@casl/ability";
 
 import { ActionProjectType } from "@app/db/schemas";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
-import { ProjectPermissionCmekActions, ProjectPermissionSub } from "@app/ee/services/permission/project-permission";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
+import { ProjectPermissionCmekActions, ProjectPermissionSub } from "@app/services/permission/project-permission";
 import { SigningAlgorithm } from "@app/lib/crypto/sign";
 import { DatabaseErrorCode } from "@app/lib/error-codes";
 import { BadRequestError, DatabaseError, NotFoundError } from "@app/lib/errors";

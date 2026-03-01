@@ -11,22 +11,17 @@ import {
   OrganizationActionScope,
   TIdentityKubernetesAuthsUpdate
 } from "@app/db/schemas";
-import { TGatewayDALFactory } from "@app/ee/services/gateway/gateway-dal";
-import { TGatewayServiceFactory } from "@app/ee/services/gateway/gateway-service";
-import { TGatewayV2DALFactory } from "@app/ee/services/gateway-v2/gateway-v2-dal";
-import { TGatewayV2ServiceFactory } from "@app/ee/services/gateway-v2/gateway-v2-service";
-import { TLicenseServiceFactory } from "@app/ee/services/license/license-service";
 import {
   OrgPermissionGatewayActions,
   OrgPermissionIdentityActions,
   OrgPermissionSubjects
-} from "@app/ee/services/permission/org-permission";
+} from "@app/services/permission/org-permission";
 import {
   constructPermissionErrorMessage,
   validatePrivilegeChangeOperation
-} from "@app/ee/services/permission/permission-fns";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
-import { ProjectPermissionIdentityActions, ProjectPermissionSub } from "@app/ee/services/permission/project-permission";
+} from "@app/services/permission/permission-fns";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
+import { ProjectPermissionIdentityActions, ProjectPermissionSub } from "@app/services/permission/project-permission";
 import { getConfig } from "@app/lib/config/env";
 import { request } from "@app/lib/config/request";
 import { crypto } from "@app/lib/crypto";
@@ -69,6 +64,7 @@ import {
   validateKubernetesHostConnectivity,
   validateTokenReviewerPermissions
 } from "./identity-kubernetes-auth-validators";
+import { TLicenseServiceFactory } from "@app/services/license/license-service";
 
 type TIdentityKubernetesAuthServiceFactoryDep = {
   identityDAL: Pick<TIdentityDALFactory, "findById">;
@@ -81,10 +77,10 @@ type TIdentityKubernetesAuthServiceFactoryDep = {
   permissionService: Pick<TPermissionServiceFactory, "getOrgPermission" | "getProjectPermission">;
   licenseService: Pick<TLicenseServiceFactory, "getPlan">;
   kmsService: Pick<TKmsServiceFactory, "createCipherPairWithDataKey">;
-  gatewayService: TGatewayServiceFactory;
-  gatewayV2Service: TGatewayV2ServiceFactory;
-  gatewayDAL: Pick<TGatewayDALFactory, "find">;
-  gatewayV2DAL: Pick<TGatewayV2DALFactory, "find">;
+  gatewayService?: unknown;
+  gatewayV2Service?: unknown;
+  gatewayDAL?: Pick<TGatewayDALFactory, "find">;
+  gatewayV2DAL?: Pick<TGatewayV2DALFactory, "find">;
   orgDAL: Pick<TOrgDALFactory, "findById" | "findOne" | "findEffectiveOrgMembership">;
 };
 
@@ -757,8 +753,8 @@ export const identityKubernetesAuthServiceFactory = ({
         });
       }
 
-      const [gateway] = await gatewayDAL.find({ id: gatewayId, orgId: identityMembershipOrg.scopeOrgId });
-      const [gatewayV2] = await gatewayV2DAL.find({ id: gatewayId, orgId: identityMembershipOrg.scopeOrgId });
+      const [gateway] = await gatewayDAL!.find({ id: gatewayId, orgId: identityMembershipOrg.scopeOrgId });
+      const [gatewayV2] = await gatewayV2DAL!.find({ id: gatewayId, orgId: identityMembershipOrg.scopeOrgId });
       if (!gateway && !gatewayV2) {
         throw new NotFoundError({
           message: `Gateway with ID ${gatewayId} not found`
@@ -948,8 +944,8 @@ export const identityKubernetesAuthServiceFactory = ({
         });
       }
 
-      const [gateway] = await gatewayDAL.find({ id: gatewayId, orgId: identityMembershipOrg.scopeOrgId });
-      const [gatewayV2] = await gatewayV2DAL.find({ id: gatewayId, orgId: identityMembershipOrg.scopeOrgId });
+      const [gateway] = await gatewayDAL!.find({ id: gatewayId, orgId: identityMembershipOrg.scopeOrgId });
+      const [gatewayV2] = await gatewayV2DAL!.find({ id: gatewayId, orgId: identityMembershipOrg.scopeOrgId });
 
       if (!gateway && !gatewayV2) {
         throw new NotFoundError({

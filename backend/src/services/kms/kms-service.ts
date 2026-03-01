@@ -3,16 +3,6 @@ import { Knex } from "knex";
 import { z } from "zod";
 
 import { KmsKeysSchema, TKmsRootConfig } from "@app/db/schemas";
-import { AwsKmsProviderFactory } from "@app/ee/services/external-kms/providers/aws-kms";
-import { GcpKmsProviderFactory } from "@app/ee/services/external-kms/providers/gcp-kms";
-import {
-  ExternalKmsAwsSchema,
-  ExternalKmsGcpSchema,
-  KmsProviders,
-  TExternalKmsProviderFns
-} from "@app/ee/services/external-kms/providers/model";
-import { THsmServiceFactory } from "@app/ee/services/hsm/hsm-service";
-import { THsmStatus } from "@app/ee/services/hsm/hsm-types";
 import { KeyStorePrefixes, PgSqlLock, TKeyStoreFactory } from "@app/keystore/keystore";
 import { TEnvConfig } from "@app/lib/config/env";
 import { symmetricCipherService, SymmetricKeyAlgorithm } from "@app/lib/crypto/cipher";
@@ -26,6 +16,8 @@ import {
   KMS_ROOT_CONFIG_UUID,
   verifyKeyTypeAndAlgorithm
 } from "@app/services/kms/kms-fns";
+
+import { THsmServiceFactory } from "@app/services/hsm/hsm-service";
 
 import { TOrgDALFactory } from "../org/org-dal";
 import { TProjectDALFactory } from "../project/project-dal";
@@ -1076,7 +1068,7 @@ export const kmsServiceFactory = ({
     return { id, name, orgId, isExternal };
   };
 
-  const startService = async (hsmStatus: THsmStatus) => {
+  const startService = async (hsmStatus: { isHsmConfigured: boolean; isHsmActive?: boolean; rootKmsConfigEncryptionStrategy?: string | null }) => {
     const kmsRootConfig = await kmsRootConfigDAL.transaction(async (tx) => {
       await tx.raw("SELECT pg_advisory_xact_lock(?)", [PgSqlLock.KmsRootKeyInit]);
       // check if KMS root key was already generated and saved in DB

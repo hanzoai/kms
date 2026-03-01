@@ -1,17 +1,16 @@
 import { ForbiddenError } from "@casl/ability";
 
 import { AccessScope, OrganizationActionScope, OrgMembershipRole } from "@app/db/schemas";
-import { TGroupDALFactory } from "@app/ee/services/group/group-dal";
 import {
   OrgPermissionGroupActions,
   OrgPermissionSubjects,
   OrgPermissionSubOrgActions
-} from "@app/ee/services/permission/org-permission";
+} from "@app/services/permission/org-permission";
 import {
   constructPermissionErrorMessage,
   validatePrivilegeChangeOperation
-} from "@app/ee/services/permission/permission-fns";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
+} from "@app/services/permission/permission-fns";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
 import { BadRequestError, InternalServerError, PermissionBoundaryError } from "@app/lib/errors";
 import { TOrgDALFactory } from "@app/services/org/org-dal";
 import { isCustomOrgRole } from "@app/services/org/org-role-fns";
@@ -21,7 +20,7 @@ import { TMembershipGroupScopeFactory } from "../membership-group-types";
 type TOrgMembershipGroupScopeFactoryDep = {
   permissionService: Pick<TPermissionServiceFactory, "getOrgPermission" | "getOrgPermissionByRoles">;
   orgDAL: Pick<TOrgDALFactory, "findById">;
-  groupDAL: Pick<TGroupDALFactory, "findById">;
+  groupDAL?: Pick<TGroupDALFactory, "findById">;
 };
 
 export const newOrgMembershipGroupFactory = ({
@@ -75,7 +74,7 @@ export const newOrgMembershipGroupFactory = ({
     });
     ForbiddenError.from(permission).throwUnlessCan(OrgPermissionGroupActions.Create, OrgPermissionSubjects.Groups);
 
-    const group = await groupDAL.findById(dto.data.groupId);
+    const group = await groupDAL!.findById(dto.data.groupId);
     if (!group || group.orgId !== dto.permission.rootOrgId) {
       throw new BadRequestError({
         message: "Only groups from parent organization can be linked to this sub-organization"
@@ -150,7 +149,7 @@ export const newOrgMembershipGroupFactory = ({
   };
 
   const onDeleteMembershipGroupGuard: TMembershipGroupScopeFactory["onDeleteMembershipGroupGuard"] = async (dto) => {
-    const group = await groupDAL.findById(dto.selector.groupId);
+    const group = await groupDAL!.findById(dto.selector.groupId);
     if (!group) {
       throw new BadRequestError({ message: "Group not found" });
     }

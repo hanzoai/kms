@@ -1,14 +1,12 @@
 import { ForbiddenError } from "@casl/ability";
 
 import { AccessScope, OrganizationActionScope, OrgMembershipRole, TableName, TRoles } from "@app/db/schemas";
-import { TLicenseDALFactory } from "@app/ee/services/license/license-dal";
-import { TLicenseServiceFactory } from "@app/ee/services/license/license-service";
-import { OrgPermissionIdentityActions, OrgPermissionSubjects } from "@app/ee/services/permission/org-permission";
+import { OrgPermissionIdentityActions, OrgPermissionSubjects } from "@app/services/permission/org-permission";
 import {
   constructPermissionErrorMessage,
   validatePrivilegeChangeOperation
-} from "@app/ee/services/permission/permission-fns";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
+} from "@app/services/permission/permission-fns";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
 import { PgSqlLock, TKeyStoreFactory } from "@app/keystore/keystore";
 import { BadRequestError, NotFoundError, PermissionBoundaryError } from "@app/lib/errors";
 import { TIdentityProjectDALFactory } from "@app/services/identity-project/identity-project-dal";
@@ -32,6 +30,7 @@ import {
   TSearchOrgIdentitiesByOrgIdDTO,
   TUpdateIdentityDTO
 } from "./identity-types";
+import { TLicenseServiceFactory } from "@app/services/license/license-service";
 
 type TIdentityServiceFactoryDep = {
   identityDAL: TIdentityDALFactory;
@@ -42,7 +41,7 @@ type TIdentityServiceFactoryDep = {
   identityProjectDAL: Pick<TIdentityProjectDALFactory, "findByIdentityId">;
   permissionService: Pick<TPermissionServiceFactory, "getOrgPermission" | "getOrgPermissionByRoles">;
   licenseService: Pick<TLicenseServiceFactory, "getPlan" | "updateSubscriptionOrgMemberCount">;
-  licenseDAL: Pick<TLicenseDALFactory, "countOrgUsersAndIdentities">;
+  licenseDAL?: Pick<TLicenseDALFactory, "countOrgUsersAndIdentities">;
   keyStore: Pick<TKeyStoreFactory, "getKeysByPattern" | "getItem">;
   orgDAL: Pick<TOrgDALFactory, "findById" | "findEffectiveOrgMembership">;
   additionalPrivilegeDAL: Pick<TAdditionalPrivilegeDALFactory, "delete">;
@@ -118,7 +117,7 @@ export const identityServiceFactory = ({
       // We count directly from the database to get the accurate count, not the cached plan value
       const plan = await licenseService.getPlan(orgId);
       if (plan?.slug !== "enterprise" && plan?.identityLimit) {
-        const currentIdentityCount = await licenseDAL.countOrgUsersAndIdentities(orgId, tx);
+        const currentIdentityCount = await licenseDAL!.countOrgUsersAndIdentities(orgId, tx);
         if (currentIdentityCount >= plan.identityLimit) {
           throw new BadRequestError({
             message: "Failed to create identity due to identity limit reached. Upgrade plan to create more identities."

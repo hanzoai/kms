@@ -1,9 +1,7 @@
-/* eslint-disable no-case-declarations */
 import { AxiosError, AxiosResponse } from "axios";
 import type { KeyObject } from "crypto";
 import RE2 from "re2";
 import { v4 as uuidv4 } from "uuid";
-
 import { getConfig } from "@app/lib/config/env";
 import { request } from "@app/lib/config/request";
 import { crypto } from "@app/lib/crypto";
@@ -16,7 +14,6 @@ import {
 } from "@app/services/app-connection/app-connection-fns";
 import { IntegrationUrls } from "@app/services/integration-auth/integration-list";
 import { TKmsServiceFactory } from "@app/services/kms/kms-service";
-
 import { TAppConnectionDALFactory } from "../app-connection-dal";
 import { AppConnection } from "../app-connection-enums";
 import { AzureClientSecretsConnectionMethod } from "./azure-client-secrets-connection-enums";
@@ -27,6 +24,9 @@ import {
   TAzureClientSecretsConnectionConfig,
   TAzureClientSecretsConnectionCredentials
 } from "./azure-client-secrets-connection-types";
+/* eslint-disable no-case-declarations */
+
+
 
 const generateClientAssertion = (
   clientId: string,

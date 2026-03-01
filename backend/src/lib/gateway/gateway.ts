@@ -1,12 +1,8 @@
-/* eslint-disable no-await-in-loop */
 import net from "node:net";
-
 import quicDefault, * as quicModule from "@infisical/quic";
 import axios from "axios";
 import https from "https";
-
 import { crypto } from "@app/lib/crypto/cryptography";
-
 import { BadRequestError } from "../errors";
 import { logger } from "../logger";
 import {
@@ -16,6 +12,10 @@ import {
   TGatewayTlsOptions,
   TPingGatewayAndVerifyDTO
 } from "./types";
+/* eslint-disable no-await-in-loop */
+
+
+
 
 const DEFAULT_MAX_RETRIES = 3;
 const DEFAULT_RETRY_DELAY = 1000; // 1 second

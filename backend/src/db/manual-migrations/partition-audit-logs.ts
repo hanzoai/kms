@@ -1,7 +1,7 @@
-/* eslint-disable no-console */
 import kx, { Knex } from "knex";
-
 import { TableName } from "../schemas";
+/* eslint-disable no-console */
+
 
 const INTERMEDIATE_AUDIT_LOG_TABLE = "intermediate_audit_logs";
 

@@ -1,21 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-// All the any rules are disabled because passport typesense with fastify is really poor
-
 import { Authenticator } from "@fastify/passport";
 import fastifySession from "@fastify/session";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { IncomingMessage } from "http";
 import LdapStrategy from "passport-ldapauth";
 import { z } from "zod";
-
 import { IdentityLdapAuthsSchema } from "@app/db/schemas/identity-ldap-auths";
-import { EventType } from "@app/ee/services/audit-log/audit-log-types";
-import { isValidLdapFilter } from "@app/ee/services/ldap-config/ldap-fns";
+import { EventType } from "@app/services/audit-log/audit-log-types";
 import { ApiDocsTags, LDAP_AUTH } from "@app/lib/api-docs";
 import { getConfig } from "@app/lib/config/env";
 import { UnauthorizedError } from "@app/lib/errors";
@@ -27,6 +17,15 @@ import { AuthMode } from "@app/services/auth/auth-type";
 import { TIdentityTrustedIp } from "@app/services/identity/identity-types";
 import { AllowedFieldsSchema } from "@app/services/identity-ldap-auth/identity-ldap-auth-types";
 import { isSuperAdmin } from "@app/services/super-admin/super-admin-fns";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+// All the any rules are disabled because passport typesense with fastify is really poor
+
+
 
 export const registerIdentityLdapAuthRouter = async (server: FastifyZodProvider) => {
   const appCfg = getConfig();

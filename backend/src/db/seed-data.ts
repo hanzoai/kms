@@ -1,10 +1,10 @@
-/* eslint-disable import/no-mutable-exports */
 import argon2, { argon2id } from "argon2";
 import jsrp from "jsrp";
-
 import { crypto, SymmetricKeySize } from "@app/lib/crypto/cryptography";
-
 import { TSecrets, TUserEncryptionKeys } from "./schemas";
+/* eslint-disable import/no-mutable-exports */
+
+
 
 export let userPrivateKey: string | undefined;
 export let userPublicKey: string | undefined;

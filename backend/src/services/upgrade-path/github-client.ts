@@ -1,9 +1,9 @@
-/* eslint-disable no-await-in-loop */
 import RE2 from "re2";
-
 import { getConfig } from "@app/lib/config/env";
-
 import { FormattedRelease, GitHubApiError, GitHubRelease } from "./types";
+/* eslint-disable no-await-in-loop */
+
+
 
 interface GitHubClientConfig {
   token?: string;

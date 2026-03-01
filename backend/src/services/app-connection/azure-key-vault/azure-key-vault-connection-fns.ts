@@ -1,6 +1,4 @@
-/* eslint-disable no-case-declarations */
 import { AxiosError, AxiosResponse } from "axios";
-
 import { getConfig } from "@app/lib/config/env";
 import { request } from "@app/lib/config/request";
 import { BadRequestError, InternalServerError, NotFoundError } from "@app/lib/errors";
@@ -11,7 +9,6 @@ import {
 } from "@app/services/app-connection/app-connection-fns";
 import { IntegrationUrls } from "@app/services/integration-auth/integration-list";
 import { TKmsServiceFactory } from "@app/services/kms/kms-service";
-
 import { TAppConnectionDALFactory } from "../app-connection-dal";
 import { AppConnection } from "../app-connection-enums";
 import { AzureKeyVaultConnectionMethod } from "./azure-key-vault-connection-enums";
@@ -21,6 +18,9 @@ import {
   TAzureKeyVaultConnectionConfig,
   TAzureKeyVaultConnectionCredentials
 } from "./azure-key-vault-connection-types";
+/* eslint-disable no-case-declarations */
+
+
 
 export const getAzureConnectionAccessToken = async (
   connectionId: string,

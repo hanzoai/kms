@@ -4,10 +4,7 @@ import { Job } from "bullmq";
 import { randomUUID } from "crypto";
 
 import { ProjectMembershipRole, SecretType } from "@app/db/schemas";
-import { EventType, TAuditLogServiceFactory } from "@app/ee/services/audit-log/audit-log-types";
-import { TGatewayServiceFactory } from "@app/ee/services/gateway/gateway-service";
-import { TGatewayV2ServiceFactory } from "@app/ee/services/gateway-v2/gateway-v2-service";
-import { TLicenseServiceFactory } from "@app/ee/services/license/license-service";
+import { EventType, TAuditLogServiceFactory } from "@app/services/audit-log/audit-log-types";
 import { KeyStorePrefixes, TKeyStoreFactory } from "@app/keystore/keystore";
 import { getConfig } from "@app/lib/config/env";
 import { logger } from "@app/lib/logger";
@@ -70,6 +67,7 @@ import { TProjectMicrosoftTeamsConfigDALFactory } from "../microsoft-teams/proje
 import { TNotificationServiceFactory } from "../notification/notification-service";
 import { NotificationType } from "../notification/notification-types";
 import { TProjectSlackConfigDALFactory } from "../slack/project-slack-config-dal";
+import { TLicenseServiceFactory } from "@app/services/license/license-service";
 
 export type TSecretSyncQueueFactory = ReturnType<typeof secretSyncQueueFactory>;
 
@@ -107,8 +105,8 @@ type TSecretSyncQueueFactoryDep = {
   resourceMetadataDAL: Pick<TResourceMetadataDALFactory, "insertMany" | "delete">;
   folderCommitService: Pick<TFolderCommitServiceFactory, "createCommit">;
   licenseService: Pick<TLicenseServiceFactory, "getPlan">;
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">;
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">;
+  gatewayService?: unknown;
+  gatewayV2Service?: unknown;
   notificationService: Pick<TNotificationServiceFactory, "createUserNotifications">;
   projectSlackConfigDAL: Pick<TProjectSlackConfigDALFactory, "getIntegrationDetailsByProject">;
   projectMicrosoftTeamsConfigDAL: Pick<TProjectMicrosoftTeamsConfigDALFactory, "getIntegrationDetailsByProject">;

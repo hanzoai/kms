@@ -2,7 +2,7 @@ import picomatch from "picomatch";
 import { z } from "zod";
 
 import { SecretApprovalRequestsSchema, SecretType, ServiceTokenScopes } from "@app/db/schemas";
-import { EventType, SecretApprovalEvent, UserAgentType } from "@app/ee/services/audit-log/audit-log-types";
+import { EventType, SecretApprovalEvent, UserAgentType } from "@app/services/audit-log/audit-log-types";
 import { ApiDocsTags, RAW_SECRETS } from "@app/lib/api-docs";
 import { AUDIT_LOG_SENSITIVE_VALUE } from "@app/lib/config/const";
 import { BadRequestError } from "@app/lib/errors";

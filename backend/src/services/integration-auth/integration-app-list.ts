@@ -1,15 +1,15 @@
-/* eslint-disable no-await-in-loop */
 import { createAppAuth } from "@octokit/auth-app";
 import { Octokit } from "@octokit/rest";
 import { Client as OctopusDeployClient, ProjectRepository as OctopusDeployRepository } from "@octopusdeploy/api-client";
-
 import { TIntegrationAuths } from "@app/db/schemas";
 import { getConfig } from "@app/lib/config/env";
 import { request } from "@app/lib/config/request";
 import { NotFoundError } from "@app/lib/errors";
-
 import { IntegrationAuthMetadataSchema, TIntegrationAuthMetadata } from "./integration-auth-schema";
 import { Integrations, IntegrationUrls } from "./integration-list";
+/* eslint-disable no-await-in-loop */
+
+
 
 // akhilmhdh: check this part later. Copied from old base
 // There are couple of improvements to be done from here

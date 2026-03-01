@@ -1,9 +1,8 @@
 import { ForbiddenError, subject } from "@casl/ability";
 
 import { ActionProjectType, TCertificateSyncs } from "@app/db/schemas";
-import { TLicenseServiceFactory } from "@app/ee/services/license/license-service";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
-import { ProjectPermissionPkiSyncActions, ProjectPermissionSub } from "@app/ee/services/permission/project-permission";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
+import { ProjectPermissionPkiSyncActions, ProjectPermissionSub } from "@app/services/permission/project-permission";
 import { getProcessedPermissionRules } from "@app/lib/casl/permission-filter-utils";
 import { BadRequestError, DatabaseError, NotFoundError } from "@app/lib/errors";
 import { OrgServiceActor } from "@app/lib/types";
@@ -37,6 +36,7 @@ import {
   TTriggerPkiSyncSyncCertificatesByIdDTO,
   TUpdatePkiSyncDTO
 } from "./pki-sync-types";
+import { TLicenseServiceFactory } from "@app/services/license/license-service";
 
 const getDestinationAppType = (destination: PkiSync): AppConnection => {
   const appConnection = PKI_SYNC_CONNECTION_MAP[destination];

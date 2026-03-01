@@ -1,11 +1,10 @@
-import { TPamAccountServiceFactory } from "@app/ee/services/pam-account/pam-account-service";
 import { getConfig } from "@app/lib/config/env";
 import { logger } from "@app/lib/logger";
 import { QueueJobs, QueueName, TQueueServiceFactory } from "@app/queue";
 
 type TPamAccountRotationServiceFactoryDep = {
   queueService: TQueueServiceFactory;
-  pamAccountService: Pick<TPamAccountServiceFactory, "rotateAllDueAccounts">;
+  pamAccountService?: unknown;
 };
 
 export type TPamAccountRotationServiceFactory = ReturnType<typeof pamAccountRotationServiceFactory>;

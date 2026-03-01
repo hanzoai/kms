@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Knex } from "knex";
-
 import { TDbClient } from "@app/db";
 import {
   AccessScope,
@@ -15,6 +13,8 @@ import { BadRequestError, DatabaseError } from "@app/lib/errors";
 import { buildFindFilter, ormify, selectAllTableCols, sqlNestRelationships, TFindOpt } from "@app/lib/knex";
 import { logger } from "@app/lib/logger";
 import { QueueName } from "@app/queue";
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 
 export type TSecretVersionV2DALFactory = ReturnType<typeof secretVersionV2BridgeDALFactory>;
 

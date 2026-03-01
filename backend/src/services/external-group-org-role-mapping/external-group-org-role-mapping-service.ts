@@ -1,15 +1,15 @@
 import { ForbiddenError } from "@casl/ability";
 
 import { OrganizationActionScope } from "@app/db/schemas";
-import { TLicenseServiceFactory } from "@app/ee/services/license/license-service";
-import { OrgPermissionActions, OrgPermissionSubjects } from "@app/ee/services/permission/org-permission";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
+import { OrgPermissionActions, OrgPermissionSubjects } from "@app/services/permission/org-permission";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
 import { OrgServiceActor } from "@app/lib/types";
 import { constructGroupOrgMembershipRoleMappings } from "@app/services/external-group-org-role-mapping/external-group-org-role-mapping-fns";
 import { TSyncExternalGroupOrgMembershipRoleMappingsDTO } from "@app/services/external-group-org-role-mapping/external-group-org-role-mapping-types";
 
 import { TRoleDALFactory } from "../role/role-dal";
 import { TExternalGroupOrgRoleMappingDALFactory } from "./external-group-org-role-mapping-dal";
+import { TLicenseServiceFactory } from "@app/services/license/license-service";
 
 type TExternalGroupOrgRoleMappingServiceFactoryDep = {
   externalGroupOrgRoleMappingDAL: TExternalGroupOrgRoleMappingDALFactory;

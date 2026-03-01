@@ -14,10 +14,9 @@ import {
   TProjectEnvironments,
   TProjects
 } from "@app/db/schemas";
-import { TLicenseServiceFactory } from "@app/ee/services/license/license-service";
-import { OrgPermissionActions, OrgPermissionSubjects } from "@app/ee/services/permission/org-permission";
-import { throwIfMissingSecretReadValueOrDescribePermission } from "@app/ee/services/permission/permission-fns";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
+import { OrgPermissionActions, OrgPermissionSubjects } from "@app/services/permission/org-permission";
+import { throwIfMissingSecretReadValueOrDescribePermission } from "@app/services/permission/permission-fns";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
 import {
   ProjectPermissionActions,
   ProjectPermissionCertificateActions,
@@ -29,17 +28,7 @@ import {
   ProjectPermissionSet,
   ProjectPermissionSshHostActions,
   ProjectPermissionSub
-} from "@app/ee/services/permission/project-permission";
-import {
-  KmsProjectTemplate,
-  TProjectTemplateServiceFactory
-} from "@app/ee/services/project-template/project-template-types";
-import { TSshCertificateAuthorityDALFactory } from "@app/ee/services/ssh/ssh-certificate-authority-dal";
-import { TSshCertificateAuthoritySecretDALFactory } from "@app/ee/services/ssh/ssh-certificate-authority-secret-dal";
-import { TSshCertificateDALFactory } from "@app/ee/services/ssh-certificate/ssh-certificate-dal";
-import { TSshCertificateTemplateDALFactory } from "@app/ee/services/ssh-certificate-template/ssh-certificate-template-dal";
-import { TSshHostDALFactory } from "@app/ee/services/ssh-host/ssh-host-dal";
-import { TSshHostGroupDALFactory } from "@app/ee/services/ssh-host-group/ssh-host-group-dal";
+} from "@app/services/permission/project-permission";
 import { PgSqlLock, TKeyStoreFactory } from "@app/keystore/keystore";
 import { getProcessedPermissionRules } from "@app/lib/casl/permission-filter-utils";
 import { getConfig } from "@app/lib/config/env";
@@ -119,6 +108,7 @@ import {
   TUpdateProjectWorkflowIntegration,
   TUpgradeProjectDTO
 } from "./project-types";
+import { TLicenseServiceFactory } from "@app/services/license/license-service";
 
 export const DEFAULT_PROJECT_ENVS = [
   { name: "Development", slug: "dev" },
@@ -136,7 +126,7 @@ type TProjectServiceFactoryDep = {
   projectMembershipDAL: Pick<TProjectMembershipDALFactory, "findProjectGhostUser" | "findAllProjectMembers">;
   membershipUserDAL: Pick<TMembershipUserDALFactory, "create" | "findOne" | "delete" | "find" | "insertMany">;
   membershipGroupDAL: Pick<TMembershipGroupDALFactory, "delete" | "insertMany">;
-  groupDAL: Pick<TGroupDALFactory, "find">;
+  groupDAL?: Pick<TGroupDALFactory, "find">;
   identityDAL: Pick<TIdentityDALFactory, "find" | "create">;
   membershipIdentityDAL: Pick<TMembershipIdentityDALFactory, "create" | "findOne" | "insertMany">;
   membershipRoleDAL: Pick<TMembershipRoleDALFactory, "create" | "insertMany">;
@@ -166,12 +156,12 @@ type TProjectServiceFactoryDep = {
   certificateTemplateDAL: Pick<TCertificateTemplateDALFactory, "getCertTemplatesByProjectId">;
   pkiAlertDAL: Pick<TPkiAlertDALFactory, "find">;
   pkiCollectionDAL: Pick<TPkiCollectionDALFactory, "find">;
-  sshCertificateAuthorityDAL: Pick<TSshCertificateAuthorityDALFactory, "find" | "findOne" | "create" | "transaction">;
-  sshCertificateAuthoritySecretDAL: Pick<TSshCertificateAuthoritySecretDALFactory, "create">;
-  sshCertificateDAL: Pick<TSshCertificateDALFactory, "find" | "countSshCertificatesInProject">;
-  sshCertificateTemplateDAL: Pick<TSshCertificateTemplateDALFactory, "find">;
-  sshHostDAL: Pick<TSshHostDALFactory, "find" | "findSshHostsWithLoginMappings">;
-  sshHostGroupDAL: Pick<TSshHostGroupDALFactory, "find" | "findSshHostGroupsWithLoginMappings">;
+  sshCertificateAuthorityDAL?: Pick<TSshCertificateAuthorityDALFactory, "find" | "findOne" | "create" | "transaction">;
+  sshCertificateAuthoritySecretDAL?: Pick<TSshCertificateAuthoritySecretDALFactory, "create">;
+  sshCertificateDAL?: Pick<TSshCertificateDALFactory, "find" | "countSshCertificatesInProject">;
+  sshCertificateTemplateDAL?: Pick<TSshCertificateTemplateDALFactory, "find">;
+  sshHostDAL?: Pick<TSshHostDALFactory, "find" | "findSshHostsWithLoginMappings">;
+  sshHostGroupDAL?: Pick<TSshHostGroupDALFactory, "find" | "findSshHostGroupsWithLoginMappings">;
   permissionService: TPermissionServiceFactory;
   licenseService: Pick<TLicenseServiceFactory, "getPlan" | "invalidateGetPlan">;
   smtpService: Pick<TSmtpService, "sendMail">;
@@ -188,7 +178,7 @@ type TProjectServiceFactoryDep = {
     | "deleteInternalKms"
     | "createCipherPairWithDataKey"
   >;
-  projectTemplateService: TProjectTemplateServiceFactory;
+  projectTemplateService?: unknown;
   notificationService: Pick<TNotificationServiceFactory, "createUserNotifications">;
 };
 
@@ -458,7 +448,7 @@ export const projectServiceFactory = ({
         // Add template groups to the project
         if (projectTemplate.groups?.length) {
           const templateGroupSlugs = projectTemplate.groups.map((g) => g.groupSlug.toLowerCase());
-          const groups = await groupDAL.find({
+          const groups = await groupDAL!.find({
             orgId: project.orgId,
             $in: { slug: templateGroupSlugs }
           });
@@ -1417,7 +1407,7 @@ export const projectServiceFactory = ({
       ProjectPermissionSub.SshCertificateAuthorities
     );
 
-    const cas = await sshCertificateAuthorityDAL.find(
+    const cas = await sshCertificateAuthorityDAL!.find(
       {
         projectId
       },
@@ -1449,7 +1439,7 @@ export const projectServiceFactory = ({
     const allowedHosts = [];
 
     // (dangtony98): room to optimize
-    const hosts = await sshHostDAL.findSshHostsWithLoginMappings(projectId);
+    const hosts = await sshHostDAL!.findSshHostsWithLoginMappings(projectId);
 
     for (const host of hosts) {
       const canRead = permission.can(
@@ -1488,7 +1478,7 @@ export const projectServiceFactory = ({
 
     ForbiddenError.from(permission).throwUnlessCan(ProjectPermissionActions.Read, ProjectPermissionSub.SshHostGroups);
 
-    const sshHostGroups = await sshHostGroupDAL.findSshHostGroupsWithLoginMappings(projectId);
+    const sshHostGroups = await sshHostGroupDAL!.findSshHostGroupsWithLoginMappings(projectId);
 
     return sshHostGroups;
   };
@@ -1516,11 +1506,11 @@ export const projectServiceFactory = ({
 
     ForbiddenError.from(permission).throwUnlessCan(ProjectPermissionActions.Read, ProjectPermissionSub.SshCertificates);
 
-    const cas = await sshCertificateAuthorityDAL.find({
+    const cas = await sshCertificateAuthorityDAL!.find({
       projectId
     });
 
-    const certificates = await sshCertificateDAL.find(
+    const certificates = await sshCertificateDAL!.find(
       {
         $in: {
           sshCaId: cas.map((ca) => ca.id)
@@ -1529,7 +1519,7 @@ export const projectServiceFactory = ({
       { offset, limit, sort: [["updatedAt", "desc"]] }
     );
 
-    const count = await sshCertificateDAL.countSshCertificatesInProject(projectId);
+    const count = await sshCertificateDAL!.countSshCertificatesInProject(projectId);
 
     return { certificates, totalCount: count };
   };
@@ -1558,11 +1548,11 @@ export const projectServiceFactory = ({
       ProjectPermissionSub.SshCertificateTemplates
     );
 
-    const cas = await sshCertificateAuthorityDAL.find({
+    const cas = await sshCertificateAuthorityDAL!.find({
       projectId
     });
 
-    const certificateTemplates = await sshCertificateTemplateDAL.find({
+    const certificateTemplates = await sshCertificateTemplateDAL!.find({
       $in: {
         sshCaId: cas.map((ca) => ca.id)
       }
@@ -1752,7 +1742,7 @@ export const projectServiceFactory = ({
 
     projectSshConfig = await projectSshConfigDAL.transaction(async (tx) => {
       if (defaultUserSshCaId) {
-        const userSshCa = await sshCertificateAuthorityDAL.findOne(
+        const userSshCa = await sshCertificateAuthorityDAL!.findOne(
           {
             id: defaultUserSshCaId,
             projectId: project.id
@@ -1768,7 +1758,7 @@ export const projectServiceFactory = ({
       }
 
       if (defaultHostSshCaId) {
-        const hostSshCa = await sshCertificateAuthorityDAL.findOne(
+        const hostSshCa = await sshCertificateAuthorityDAL!.findOne(
           {
             id: defaultHostSshCaId,
             projectId: project.id

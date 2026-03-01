@@ -3,9 +3,8 @@ import { z } from "zod";
 
 import { SecretFoldersSchema, SecretImportsSchema, SecretType, UsersSchema } from "@app/db/schemas";
 import { RemindersSchema } from "@app/db/schemas/reminders";
-import { EventType, UserAgentType } from "@app/ee/services/audit-log/audit-log-types";
-import { ProjectPermissionSecretActions } from "@app/ee/services/permission/project-permission";
-import { SecretRotationV2Schema } from "@app/ee/services/secret-rotation-v2/secret-rotation-v2-union-schema";
+import { EventType, UserAgentType } from "@app/services/audit-log/audit-log-types";
+import { ProjectPermissionSecretActions } from "@app/services/permission/project-permission";
 import { DASHBOARD } from "@app/lib/api-docs";
 import { BadRequestError, NotFoundError } from "@app/lib/errors";
 import { removeTrailingSlash } from "@app/lib/fn";
@@ -359,7 +358,7 @@ export const registerDashboardRouter = async (server: FastifyZodProvider) => {
           isInternal: true
         });
 
-        if (remainingLimit > 0 && totalDynamicSecretCount > adjustedOffset) {
+        if (remainingLimit > 0 && totalDynamicSecretCount! > adjustedOffset) {
           dynamicSecrets = await server.services.dynamicSecret.listDynamicSecretsByEnvs({
             actor: req.permission.type,
             actorId: req.permission.id,
@@ -397,7 +396,7 @@ export const registerDashboardRouter = async (server: FastifyZodProvider) => {
           remainingLimit -= uniqueDynamicSecretsCount;
           adjustedOffset = 0;
         } else {
-          adjustedOffset = Math.max(0, adjustedOffset - totalDynamicSecretCount);
+          adjustedOffset = Math.max(0, adjustedOffset - totalDynamicSecretCount!);
         }
       }
 
@@ -412,7 +411,7 @@ export const registerDashboardRouter = async (server: FastifyZodProvider) => {
           req.permission
         );
 
-        if (remainingLimit > 0 && totalSecretRotationCount > adjustedOffset) {
+        if (remainingLimit > 0 && totalSecretRotationCount! > adjustedOffset) {
           secretRotations = await server.services.secretRotationV2.getDashboardSecretRotations(
             {
               projectId,
@@ -447,7 +446,7 @@ export const registerDashboardRouter = async (server: FastifyZodProvider) => {
           remainingLimit -= uniqueSecretRotationCount;
           adjustedOffset = 0;
         } else {
-          adjustedOffset = Math.max(0, adjustedOffset - totalSecretRotationCount);
+          adjustedOffset = Math.max(0, adjustedOffset - totalSecretRotationCount!);
         }
       }
 
@@ -899,7 +898,7 @@ export const registerDashboardRouter = async (server: FastifyZodProvider) => {
           req.permission
         );
 
-        if (remainingLimit > 0 && totalSecretRotationCount > adjustedOffset) {
+        if (remainingLimit > 0 && totalSecretRotationCount! > adjustedOffset) {
           const rawSecretRotations = await server.services.secretRotationV2.getDashboardSecretRotations(
             {
               projectId,
@@ -943,18 +942,18 @@ export const registerDashboardRouter = async (server: FastifyZodProvider) => {
             event: {
               type: EventType.GET_SECRET_ROTATIONS,
               metadata: {
-                count: secretRotations.length,
-                rotationIds: secretRotations.map((rotation) => rotation.id),
+                count: secretRotations!.length,
+                rotationIds: secretRotations!.map((rotation) => rotation.id),
                 secretPath,
                 environment
               }
             }
           });
 
-          remainingLimit -= secretRotations.length;
+          remainingLimit -= secretRotations!.length;
           adjustedOffset = 0;
         } else {
-          adjustedOffset = Math.max(0, adjustedOffset - totalSecretRotationCount);
+          adjustedOffset = Math.max(0, adjustedOffset - totalSecretRotationCount!);
         }
       }
 
@@ -971,7 +970,7 @@ export const registerDashboardRouter = async (server: FastifyZodProvider) => {
             path: secretPath
           });
 
-          if (remainingLimit > 0 && totalDynamicSecretCount > adjustedOffset) {
+          if (remainingLimit > 0 && totalDynamicSecretCount! > adjustedOffset) {
             const { dynamicSecrets: dynamicSecretCfgs } = await server.services.dynamicSecret.listDynamicSecretsByEnv({
               actor: req.permission.type,
               actorId: req.permission.id,
@@ -1007,7 +1006,7 @@ export const registerDashboardRouter = async (server: FastifyZodProvider) => {
             remainingLimit -= dynamicSecrets.length;
             adjustedOffset = 0;
           } else {
-            adjustedOffset = Math.max(0, adjustedOffset - totalDynamicSecretCount);
+            adjustedOffset = Math.max(0, adjustedOffset - totalDynamicSecretCount!);
           }
         }
       } catch (error) {

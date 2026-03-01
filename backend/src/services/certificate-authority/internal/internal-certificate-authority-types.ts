@@ -1,7 +1,6 @@
 import { Knex } from "knex";
 import { z } from "zod";
 
-import { TCertificateAuthorityCrlDALFactory } from "@app/ee/services/certificate-authority-crl/certificate-authority-crl-dal";
 import { TProjectPermission } from "@app/lib/types";
 import { ActorAuthMethod, ActorType } from "@app/services/auth/auth-type";
 import { TCertificateDALFactory } from "@app/services/certificate/certificate-dal";
@@ -301,7 +300,7 @@ export type TGetCaCertChainDTO = {
 export type TRebuildCaCrlDTO = {
   caId: string;
   certificateAuthorityDAL: Pick<TCertificateAuthorityDALFactory, "findByIdWithAssociatedCa">;
-  certificateAuthorityCrlDAL: Pick<TCertificateAuthorityCrlDALFactory, "update">;
+  certificateAuthorityCrlDAL?: { update: (...args: any[]) => any };
   certificateAuthoritySecretDAL: Pick<TCertificateAuthoritySecretDALFactory, "findOne">;
   projectDAL: Pick<TProjectDALFactory, "findOne" | "updateById" | "transaction">;
   certificateDAL: Pick<TCertificateDALFactory, "find">;

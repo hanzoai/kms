@@ -1,16 +1,12 @@
-/* eslint-disable no-await-in-loop */
-/* eslint-disable no-bitwise */
 import { ForbiddenError, subject } from "@casl/ability";
 import * as x509 from "@peculiar/x509";
-
 import { ActionProjectType } from "@app/db/schemas";
-import { TCertificateAuthorityCrlDALFactory } from "@app/ee/services/certificate-authority-crl/certificate-authority-crl-dal";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
 import {
   ProjectPermissionCertificateActions,
   ProjectPermissionPkiSubscriberActions,
   ProjectPermissionSub
-} from "@app/ee/services/permission/project-permission";
+} from "@app/services/permission/project-permission";
 import { getConfig } from "@app/lib/config/env";
 import { BadRequestError, NotFoundError } from "@app/lib/errors";
 import { ms } from "@app/lib/ms";
@@ -42,7 +38,6 @@ import { TPkiSyncQueueFactory } from "@app/services/pki-sync/pki-sync-queue";
 import { triggerAutoSyncForSubscriber } from "@app/services/pki-sync/pki-sync-utils";
 import { TProjectDALFactory } from "@app/services/project/project-dal";
 import { getProjectKmsCertificateKeyId } from "@app/services/project/project-fns";
-
 import { getCertificateCredentials } from "../certificate/certificate-fns";
 import { TCertificateSecretDALFactory } from "../certificate/certificate-secret-dal";
 import { TCertificateAuthorityQueueFactory } from "../certificate-authority/certificate-authority-queue";
@@ -59,6 +54,10 @@ import {
   TSignPkiSubscriberCertDTO,
   TUpdatePkiSubscriberDTO
 } from "./pki-subscriber-types";
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-bitwise */
+
+
 
 type TPkiSubscriberServiceFactoryDep = {
   pkiSubscriberDAL: Pick<
@@ -72,7 +71,7 @@ type TPkiSubscriberServiceFactoryDep = {
   certificateAuthorityCertDAL: Pick<TCertificateAuthorityCertDALFactory, "findById">;
   certificateAuthoritySecretDAL: Pick<TCertificateAuthoritySecretDALFactory, "findOne">;
   certificateAuthorityQueue: Pick<TCertificateAuthorityQueueFactory, "orderCertificateForSubscriber">;
-  certificateAuthorityCrlDAL: Pick<TCertificateAuthorityCrlDALFactory, "findOne">;
+  certificateAuthorityCrlDAL?: { findOne: (...args: any[]) => any };
   certificateDAL: Pick<
     TCertificateDALFactory,
     "create" | "transaction" | "countCertificatesForPkiSubscriber" | "findLatestActiveCertForSubscriber" | "find"
@@ -523,7 +522,7 @@ export const pkiSubscriberServiceFactory = ({
       kmsService
     });
 
-    const caCrl = await certificateAuthorityCrlDAL.findOne({ caSecretId: caSecret.id });
+    const caCrl = await certificateAuthorityCrlDAL!.findOne({ caSecretId: caSecret.id });
     const distributionPointUrl = `${appCfg.SITE_URL}/api/v1/cert-manager/crl/${caCrl.id}/der`;
     const caIssuerUrl = `${appCfg.SITE_URL}/api/v1/cert-manager/ca/internal/${ca.id}/certificates/${caCert.id}/der`;
 

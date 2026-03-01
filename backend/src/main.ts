@@ -5,12 +5,11 @@ import "./lib/telemetry/instrumentation";
 import axios from "axios";
 import dotenv from "dotenv";
 
-import { initializeHsmModule } from "@app/ee/services/hsm/hsm-fns";
 import { keyValueStoreDALFactory } from "@app/keystore/key-value-store-dal";
 
 import { runMigrations } from "./auto-start-migrations";
 import { initAuditLogDbConnection, initDbConnection } from "./db";
-import { hsmServiceFactory } from "./ee/services/hsm/hsm-service";
+import { hsmServiceFactory } from "@app/services/hsm/hsm-service";
 import { keyStoreFactory } from "./keystore/keystore";
 import { buildClickHouseFromConfig } from "./lib/config/clickhouse";
 import { formatSmtpConfig, getDatabaseCredentials, getHsmConfig, initEnvConfig } from "./lib/config/env";
@@ -26,6 +25,7 @@ import { bootstrapCheck } from "./server/boot-strap-check";
 import { kmsRootConfigDALFactory } from "./services/kms/kms-root-config-dal";
 import { smtpServiceFactory } from "./services/smtp/smtp-service";
 import { superAdminDALFactory } from "./services/super-admin/super-admin-dal";
+import { initializeHsmModule } from "@app/services/hsm/hsm-fns";
 
 dotenv.config();
 

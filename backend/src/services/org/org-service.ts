@@ -11,19 +11,13 @@ import {
   TOidcConfigs,
   TSamlConfigs
 } from "@app/db/schemas";
-import { TGroupDALFactory } from "@app/ee/services/group/group-dal";
-import { TUserGroupMembershipDALFactory } from "@app/ee/services/group/user-group-membership-dal";
-import { TLdapConfigDALFactory } from "@app/ee/services/ldap-config/ldap-config-dal";
-import { TLicenseServiceFactory } from "@app/ee/services/license/license-service";
-import { TOidcConfigDALFactory } from "@app/ee/services/oidc/oidc-config-dal";
 import {
   OrgPermissionActions,
   OrgPermissionGroupActions,
   OrgPermissionSecretShareAction,
   OrgPermissionSubjects
-} from "@app/ee/services/permission/org-permission";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
-import { TSamlConfigDALFactory } from "@app/ee/services/saml-config/saml-config-dal";
+} from "@app/services/permission/org-permission";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
 import { getConfig } from "@app/lib/config/env";
 import { crypto } from "@app/lib/crypto/cryptography";
 import { generateUserSrpKeys } from "@app/lib/crypto/srp";
@@ -75,6 +69,7 @@ import {
   TUpgradePrivilegeSystemDTO,
   TVerifyUserToOrgDTO
 } from "./org-types";
+import { TLicenseServiceFactory } from "@app/services/license/license-service";
 
 type TOrgServiceFactoryDep = {
   userAliasDAL: Pick<TUserAliasDALFactory, "delete">;
@@ -84,7 +79,7 @@ type TOrgServiceFactoryDep = {
   orgDAL: TOrgDALFactory;
   roleDAL: TRoleDALFactory;
   userDAL: TUserDALFactory;
-  groupDAL: TGroupDALFactory;
+  groupDAL?: unknown;
   projectDAL: TProjectDALFactory;
   identityMetadataDAL: Pick<TIdentityMetadataDALFactory, "delete" | "insertMany" | "transaction">;
   membershipUserDAL: TMembershipUserDALFactory;
@@ -99,9 +94,9 @@ type TOrgServiceFactoryDep = {
   >;
   membershipRoleDAL: TMembershipRoleDALFactory;
   incidentContactDAL: TIncidentContactsDALFactory;
-  samlConfigDAL: Pick<TSamlConfigDALFactory, "findOne">;
-  oidcConfigDAL: Pick<TOidcConfigDALFactory, "findOne">;
-  ldapConfigDAL: Pick<TLdapConfigDALFactory, "findOne">;
+  samlConfigDAL?: Pick<TSamlConfigDALFactory, "findOne">;
+  oidcConfigDAL?: Pick<TOidcConfigDALFactory, "findOne">;
+  ldapConfigDAL?: Pick<TLdapConfigDALFactory, "findOne">;
   smtpService: TSmtpService;
   tokenService: TAuthTokenServiceFactory;
   permissionService: TPermissionServiceFactory;
@@ -112,7 +107,7 @@ type TOrgServiceFactoryDep = {
   projectBotService: Pick<TProjectBotServiceFactory, "getBotKey">;
   loginService: Pick<TAuthLoginFactory, "generateUserTokens">;
   reminderService: Pick<TReminderServiceFactory, "deleteReminderBySecretId">;
-  userGroupMembershipDAL: TUserGroupMembershipDALFactory;
+  userGroupMembershipDAL?: unknown;
   additionalPrivilegeDAL: TAdditionalPrivilegeDALFactory;
 };
 
@@ -519,11 +514,11 @@ export const orgServiceFactory = ({
     let samlCfg: TSamlConfigs | undefined;
     let oidcCfg: TOidcConfigs | undefined;
     if (authEnforced || googleSsoAuthEnforced) {
-      samlCfg = await samlConfigDAL.findOne({
+      samlCfg = await samlConfigDAL!.findOne({
         orgId,
         isActive: true
       });
-      oidcCfg = await oidcConfigDAL.findOne({
+      oidcCfg = await oidcConfigDAL!.findOne({
         orgId,
         isActive: true
       });
@@ -577,7 +572,7 @@ export const orgServiceFactory = ({
         });
       }
 
-      const ldapCfg = await ldapConfigDAL.findOne({
+      const ldapCfg = await ldapConfigDAL!.findOne({
         orgId,
         isActive: true
       });

@@ -3,7 +3,6 @@ import https from "node:https";
 import axios, { AxiosInstance } from "axios";
 import { v4 as uuidv4 } from "uuid";
 
-import { TGatewayServiceFactory } from "@app/ee/services/gateway/gateway-service";
 import { BadRequestError } from "@app/lib/errors";
 import { GatewayProxyProtocol, withGatewayProxy } from "@app/lib/gateway";
 import { logger } from "@app/lib/logger";
@@ -18,7 +17,7 @@ type VaultData = {
   secretData: Record<string, string>;
 };
 
-const vaultFactory = (gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">) => {
+const vaultFactory = (gatewayService: unknown) => {
   const $gatewayProxyWrapper = async <T>(
     inputs: {
       gatewayId: string;
@@ -530,7 +529,7 @@ export const importVaultDataFn = async (
     gatewayId?: string;
     orgId: string;
   },
-  { gatewayService }: { gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId"> }
+  { gatewayService }: { gatewayService?: unknown }
 ) => {
   await blockLocalAndPrivateIpAddresses(vaultUrl);
 

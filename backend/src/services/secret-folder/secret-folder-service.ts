@@ -1,22 +1,16 @@
-/* eslint-disable no-await-in-loop */
 import { ForbiddenError, subject } from "@casl/ability";
 import { Knex } from "knex";
 import path from "path";
 import { v4 as uuidv4, validate as uuidValidate } from "uuid";
-
 import { ActionProjectType, TProjectEnvironments, TSecretFolders, TSecretFoldersInsert } from "@app/db/schemas";
-import { TDynamicSecretDALFactory } from "@app/ee/services/dynamic-secret/dynamic-secret-dal";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
-import { ProjectPermissionActions, ProjectPermissionSub } from "@app/ee/services/permission/project-permission";
-import { TSecretApprovalPolicyServiceFactory } from "@app/ee/services/secret-approval-policy/secret-approval-policy-service";
-import { TSecretSnapshotServiceFactory } from "@app/ee/services/secret-snapshot/secret-snapshot-service";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
+import { ProjectPermissionActions, ProjectPermissionSub } from "@app/services/permission/project-permission";
 import { PgSqlLock } from "@app/keystore/keystore";
 import { BadRequestError, NotFoundError } from "@app/lib/errors";
 import { OrderByDirection, OrgServiceActor } from "@app/lib/types";
 import { ActorType } from "@app/services/auth/auth-type";
 import { SecretsOrderBy } from "@app/services/secret/secret-types";
 import { buildFolderPath } from "@app/services/secret-folder/secret-folder-fns";
-
 import {
   ChangeType,
   CommitType,
@@ -40,21 +34,24 @@ import {
   TUpdateManyFoldersDTO
 } from "./secret-folder-types";
 import { TSecretFolderVersionDALFactory } from "./secret-folder-version-dal";
+/* eslint-disable no-await-in-loop */
+
+
 
 type TSecretFolderServiceFactoryDep = {
   permissionService: Pick<TPermissionServiceFactory, "getProjectPermission">;
-  snapshotService: Pick<TSecretSnapshotServiceFactory, "performSnapshot">;
+  snapshotService?: { performSnapshot: (folderId: string) => Promise<void> };
   folderDAL: TSecretFolderDALFactory;
   projectEnvDAL: Pick<TProjectEnvDALFactory, "findOne" | "findBySlugs" | "find">;
   folderVersionDAL: Pick<TSecretFolderVersionDALFactory, "findLatestFolderVersions" | "create" | "insertMany" | "find">;
   folderCommitService: Pick<TFolderCommitServiceFactory, "createCommit">;
   projectDAL: Pick<TProjectDALFactory, "findProjectBySlug">;
-  secretApprovalPolicyService: Pick<TSecretApprovalPolicyServiceFactory, "getSecretApprovalPolicy">;
+  secretApprovalPolicyService?: { getSecretApprovalPolicy: (...args: any[]) => Promise<any> };
   secretV2BridgeDAL: Pick<
     TSecretV2BridgeDALFactory,
     "findByFolderIds" | "invalidateSecretCacheByProjectId" | "findOne"
   >;
-  dynamicSecretDAL: Pick<TDynamicSecretDALFactory, "findOne">;
+  dynamicSecretDAL?: Pick<TDynamicSecretDALFactory, "findOne">;
 };
 
 export type TSecretFolderServiceFactory = ReturnType<typeof secretFolderServiceFactory>;
@@ -242,7 +239,7 @@ export const secretFolderServiceFactory = ({
       });
     }
 
-    await snapshotService.performSnapshot(folder.parentId as string);
+    await snapshotService!.performSnapshot(folder.parentId as string);
     return { ...folder, path: folderWithFullPath.path };
   };
 
@@ -391,7 +388,7 @@ export const secretFolderServiceFactory = ({
     // Execute with provided transaction or create new one
     const result = providedTx ? await executeBulkUpdate(providedTx) : await folderDAL.transaction(executeBulkUpdate);
 
-    await Promise.all(result.map(async (res) => snapshotService.performSnapshot(res.newFolder.parentId as string)));
+    await Promise.all(result.map(async (res) => snapshotService!.performSnapshot(res.newFolder.parentId as string)));
 
     await secretV2BridgeDAL.invalidateSecretCacheByProjectId(projectId);
     return {
@@ -517,7 +514,7 @@ export const secretFolderServiceFactory = ({
       });
     }
 
-    await snapshotService.performSnapshot(newFolder.parentId as string);
+    await snapshotService!.performSnapshot(newFolder.parentId as string);
     await secretV2BridgeDAL.invalidateSecretCacheByProjectId(projectId);
     return {
       folder: { ...newFolder, path: newFolderWithFullPath.path },
@@ -615,7 +612,7 @@ export const secretFolderServiceFactory = ({
       // eslint-disable-next-line no-continue
       if (!secrets.some((s) => s.folderId === folderPolicyPath.id)) continue;
 
-      const policy = await secretApprovalPolicyService.getSecretApprovalPolicy(
+      const policy = await secretApprovalPolicyService!.getSecretApprovalPolicy(
         projectId,
         env.slug,
         folderPolicyPath.path
@@ -701,7 +698,7 @@ export const secretFolderServiceFactory = ({
         const secretV2 = await secretV2BridgeDAL.findOne({ folderId: folderToDelete.id }).catch(() => null);
         if (secretV2) throw error;
 
-        const dynamicSecret = await dynamicSecretDAL.findOne({ folderId: folderToDelete.id }).catch(() => null);
+        const dynamicSecret = await dynamicSecretDAL!.findOne({ folderId: folderToDelete.id }).catch(() => null);
         if (dynamicSecret) throw error;
 
         const subfolder = await folderDAL.findOne({ parentId: folderToDelete.id }).catch(() => null);
@@ -743,7 +740,7 @@ export const secretFolderServiceFactory = ({
       return doc;
     });
 
-    await snapshotService.performSnapshot(folder.parentId as string);
+    await snapshotService!.performSnapshot(folder.parentId as string);
     await secretV2BridgeDAL.invalidateSecretCacheByProjectId(projectId);
     return folder;
   };
@@ -1267,7 +1264,7 @@ export const secretFolderServiceFactory = ({
     };
     const result = providedTx ? await executeBulkCreate(providedTx) : await folderDAL.transaction(executeBulkCreate);
     const uniqueParentIds = [...new Set(result.map((folder) => folder.parentId).filter(Boolean))];
-    await Promise.all(uniqueParentIds.map((parentId) => snapshotService.performSnapshot(parentId as string)));
+    await Promise.all(uniqueParentIds.map((parentId) => snapshotService!.performSnapshot(parentId as string)));
 
     return {
       folders: result,
@@ -1412,7 +1409,7 @@ export const secretFolderServiceFactory = ({
     const result = providedTx ? await executeBulkDelete(providedTx) : await folderDAL.transaction(executeBulkDelete);
 
     const uniqueParentIds = [...new Set(result.map((folder) => folder.parentId).filter(Boolean))];
-    await Promise.all(uniqueParentIds.map((parentId) => snapshotService.performSnapshot(parentId as string)));
+    await Promise.all(uniqueParentIds.map((parentId) => snapshotService!.performSnapshot(parentId as string)));
 
     return {
       folders: result,

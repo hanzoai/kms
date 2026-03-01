@@ -1,8 +1,8 @@
 import { Knex } from "knex";
 
 import { AccessScope, OrgMembershipRole, OrgMembershipStatus, TUsers, UserDeviceSchema } from "@app/db/schemas";
-import { EventType, TAuditLogServiceFactory } from "@app/ee/services/audit-log/audit-log-types";
-import { isAuthMethodSaml } from "@app/ee/services/permission/permission-fns";
+import { EventType, TAuditLogServiceFactory } from "@app/services/audit-log/audit-log-types";
+import { isAuthMethodSaml } from "@app/services/permission/permission-fns";
 import { KeyStorePrefixes, TKeyStoreFactory } from "@app/keystore/keystore";
 import { getConfig } from "@app/lib/config/env";
 import { crypto, generateSrpServerKey, srpCheckClientProof } from "@app/lib/crypto";

@@ -1,21 +1,5 @@
 import { ProjectType } from "@app/db/schemas";
 import { TAppConnections } from "@app/db/schemas/app-connections";
-import {
-  ChefConnectionMethod,
-  getChefConnectionListItem,
-  validateChefConnectionCredentials
-} from "@app/ee/services/app-connections/chef";
-import {
-  getOCIConnectionListItem,
-  OCIConnectionMethod,
-  validateOCIConnectionCredentials
-} from "@app/ee/services/app-connections/oci";
-import { getOracleDBConnectionListItem, OracleDBConnectionMethod } from "@app/ee/services/app-connections/oracledb";
-import { TGatewayServiceFactory } from "@app/ee/services/gateway/gateway-service";
-import { TGatewayV2ServiceFactory } from "@app/ee/services/gateway-v2/gateway-v2-service";
-import { TLicenseServiceFactory } from "@app/ee/services/license/license-service";
-import { SECRET_ROTATION_CONNECTION_MAP } from "@app/ee/services/secret-rotation-v2/secret-rotation-v2-maps";
-import { SECRET_SCANNING_DATA_SOURCE_CONNECTION_MAP } from "@app/ee/services/secret-scanning-v2/secret-scanning-v2-maps";
 import { crypto } from "@app/lib/crypto/cryptography";
 import { BadRequestError } from "@app/lib/errors";
 import { APP_CONNECTION_NAME_MAP, APP_CONNECTION_PLAN_MAP } from "@app/services/app-connection/app-connection-maps";
@@ -181,6 +165,7 @@ import {
   WindmillConnectionMethod
 } from "./windmill";
 import { getZabbixConnectionListItem, validateZabbixConnectionCredentials, ZabbixConnectionMethod } from "./zabbix";
+import { TLicenseServiceFactory } from "@app/services/license/license-service";
 
 const SECRET_SYNC_APP_CONNECTION_MAP = Object.fromEntries(
   Object.entries(SECRET_SYNC_CONNECTION_MAP).map(([key, value]) => [value, key])
@@ -342,8 +327,8 @@ export const decryptAppConnectionCredentials = async ({
 
 export const validateAppConnectionCredentials = async (
   appConnection: TAppConnectionConfig,
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown
 ): Promise<TAppConnection["credentials"]> => {
   const VALIDATE_APP_CONNECTION_CREDENTIALS_MAP: Record<AppConnection, TAppConnectionCredentialsValidator> = {
     [AppConnection.AWS]: validateAwsConnectionCredentials as TAppConnectionCredentialsValidator,

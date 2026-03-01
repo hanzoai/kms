@@ -1,9 +1,6 @@
-/* eslint-disable no-bitwise */
 import * as x509 from "@peculiar/x509";
 import RE2 from "re2";
-
 import { TCertificateTemplates, TPkiSubscribers } from "@app/db/schemas";
-import { TCertificateAuthorityCrlDALFactory } from "@app/ee/services/certificate-authority-crl/certificate-authority-crl-dal";
 import { getConfig } from "@app/lib/config/env";
 import { crypto } from "@app/lib/crypto/cryptography";
 import { BadRequestError } from "@app/lib/errors";
@@ -24,7 +21,6 @@ import { TPkiSyncQueueFactory } from "@app/services/pki-sync/pki-sync-queue";
 import { triggerAutoSyncForSubscriber } from "@app/services/pki-sync/pki-sync-utils";
 import { TProjectDALFactory } from "@app/services/project/project-dal";
 import { getProjectKmsCertificateKeyId } from "@app/services/project/project-fns";
-
 import { TCertificateAuthorityCertDALFactory } from "../certificate-authority-cert-dal";
 import { TCertificateAuthorityDALFactory } from "../certificate-authority-dal";
 import { CaStatus } from "../certificate-authority-enums";
@@ -37,6 +33,9 @@ import {
 import { TCertificateAuthoritySecretDALFactory } from "../certificate-authority-secret-dal";
 import { validateAndMapAltNameType } from "../certificate-authority-validators";
 import { TIssueCertWithTemplateDTO } from "./internal-certificate-authority-types";
+/* eslint-disable no-bitwise */
+
+
 
 type TInternalCertificateAuthorityFnsDeps = {
   certificateAuthorityDAL: Pick<
@@ -45,7 +44,7 @@ type TInternalCertificateAuthorityFnsDeps = {
   >;
   certificateAuthorityCertDAL: Pick<TCertificateAuthorityCertDALFactory, "findById">;
   certificateAuthoritySecretDAL: Pick<TCertificateAuthoritySecretDALFactory, "findOne">;
-  certificateAuthorityCrlDAL: Pick<TCertificateAuthorityCrlDALFactory, "findOne">;
+  certificateAuthorityCrlDAL?: { findOne: (...args: any[]) => any };
   projectDAL: Pick<TProjectDALFactory, "findById" | "transaction" | "findOne" | "updateById">;
   kmsService: Pick<
     TKmsServiceFactory,
@@ -133,7 +132,7 @@ export const InternalCertificateAuthorityFns = ({
       kmsService
     });
 
-    const caCrl = await certificateAuthorityCrlDAL.findOne({ caSecretId: caSecret.id });
+    const caCrl = await certificateAuthorityCrlDAL!.findOne({ caSecretId: caSecret.id });
     const appCfg = getConfig();
 
     const distributionPointUrl = `${appCfg.SITE_URL}/api/v1/cert-manager/crl/${caCrl.id}/der`;
@@ -363,7 +362,7 @@ export const InternalCertificateAuthorityFns = ({
       kmsService
     });
 
-    const caCrl = await certificateAuthorityCrlDAL.findOne({ caSecretId: caSecret.id });
+    const caCrl = await certificateAuthorityCrlDAL!.findOne({ caSecretId: caSecret.id });
     const appCfg = getConfig();
 
     const distributionPointUrl = `${appCfg.SITE_URL}/api/v1/cert-manager/crl/${caCrl.id}/der`;

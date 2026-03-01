@@ -1,13 +1,13 @@
-/* eslint-disable no-await-in-loop */
 import axios, { AxiosError } from "axios";
-
 import { BadRequestError } from "@app/lib/errors";
 import { logger } from "@app/lib/logger";
 import { blockLocalAndPrivateIpAddresses } from "@app/lib/validator";
 import { AppConnection } from "@app/services/app-connection/app-connection-enums";
-
 import { DbtConnectionMethod } from "./dbt-connection-constants";
 import { TDbtConnectionConfig, TDbtErrorResponse, TDbtListProjectsResponse } from "./dbt-connection-types";
+/* eslint-disable no-await-in-loop */
+
+
 
 export const getDbtConnectionListItem = () => {
   return {

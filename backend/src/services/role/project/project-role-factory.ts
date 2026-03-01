@@ -9,13 +9,13 @@ import {
   projectNoAccessPermissions,
   projectViewerPermission,
   sshHostBootstrapPermissions
-} from "@app/ee/services/permission/default-roles";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
+} from "@app/services/permission/default-roles";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
 import {
   isCustomProjectRole,
   ProjectPermissionActions,
   ProjectPermissionSub
-} from "@app/ee/services/permission/project-permission";
+} from "@app/services/permission/project-permission";
 import { BadRequestError } from "@app/lib/errors";
 import { TProjectDALFactory } from "@app/services/project/project-dal";
 

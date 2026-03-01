@@ -1,11 +1,11 @@
-/* eslint-disable */
-// Code taken from https://www.npmjs.com/package/fastify-type-provider-zod
-// Full credits goes to https://github.com/turkerdev
-// Code taken to keep in in house
 import type { FastifySchema, FastifySchemaCompiler, FastifyTypeProvider } from "fastify";
 import type { FastifySerializerCompiler } from "fastify/types/schema";
 import type { z, ZodAny, ZodTypeAny } from "zod";
 import { PostProcessCallback, zodToJsonSchema } from "zod-to-json-schema";
+/* eslint-disable */
+// Code taken from https://www.npmjs.com/package/fastify-type-provider-zod
+// Full credits goes to https://github.com/turkerdev
+// Code taken to keep in in house
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type FreeformRecord = Record<string, any>;

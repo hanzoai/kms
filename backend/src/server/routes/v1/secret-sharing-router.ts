@@ -1,7 +1,7 @@
 import fastifyMultipart from "@fastify/multipart";
 import { z } from "zod";
 
-import { EventType } from "@app/ee/services/audit-log/audit-log-types";
+import { EventType } from "@app/services/audit-log/audit-log-types";
 import { ApiDocsTags, SECRET_SHARING } from "@app/lib/api-docs";
 import { BadRequestError, NotFoundError } from "@app/lib/errors";
 import { ms } from "@app/lib/ms";

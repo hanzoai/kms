@@ -6,9 +6,7 @@ import {
   TemporaryPermissionMode,
   TMembershipRolesInsert
 } from "@app/db/schemas";
-import { TUserGroupMembershipDALFactory } from "@app/ee/services/group/user-group-membership-dal";
-import { TLicenseServiceFactory } from "@app/ee/services/license/license-service";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
 import { BadRequestError, NotFoundError } from "@app/lib/errors";
 import { groupBy } from "@app/lib/fn";
 import { ms } from "@app/lib/ms";
@@ -40,6 +38,7 @@ import {
 } from "./membership-user-types";
 import { newOrgMembershipUserFactory } from "./org/org-membership-user-factory";
 import { newProjectMembershipUserFactory } from "./project/project-membership-user-factory";
+import { TLicenseServiceFactory } from "@app/services/license/license-service";
 
 type TMembershipUserServiceFactoryDep = {
   membershipUserDAL: TMembershipUserDALFactory;
@@ -56,7 +55,7 @@ type TMembershipUserServiceFactoryDep = {
   userAliasDAL: TUserAliasDALFactory;
   smtpService: TSmtpService;
   tokenService: TAuthTokenServiceFactory;
-  userGroupMembershipDAL: TUserGroupMembershipDALFactory;
+  userGroupMembershipDAL?: unknown;
   projectDAL: TProjectDALFactory;
   additionalPrivilegeDAL: TAdditionalPrivilegeDALFactory;
 };

@@ -1,7 +1,5 @@
 import { Knex } from "knex";
 
-import { initializeHsmModule } from "@app/ee/services/hsm/hsm-fns";
-import { hsmServiceFactory } from "@app/ee/services/hsm/hsm-service";
 import { getHsmConfig, initEnvConfig } from "@app/lib/config/env";
 import { crypto, SymmetricKeySize } from "@app/lib/crypto/cryptography";
 import { generateUserSrpKeys } from "@app/lib/crypto/srp";
@@ -27,6 +25,8 @@ import {
   TableName
 } from "../schemas";
 import { seedData1 } from "../seed-data";
+import { hsmServiceFactory } from "@app/services/hsm/hsm-service";
+import { initializeHsmModule } from "@app/services/hsm/hsm-fns";
 
 export const DEFAULT_PROJECT_ENVS = [
   { name: "Development", slug: "dev" },

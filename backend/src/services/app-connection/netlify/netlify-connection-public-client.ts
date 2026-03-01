@@ -1,13 +1,13 @@
+import { AxiosInstance, AxiosRequestConfig, AxiosResponse, HttpStatusCode, isAxiosError } from "axios";
+import { createRequestClient } from "@app/lib/config/request";
+import { IntegrationUrls } from "@app/services/integration-auth/integration-list";
+import { NetlifyConnectionMethod } from "./netlify-connection-constants";
+import { TNetlifyAccount, TNetlifyConnectionConfig, TNetlifySite, TNetlifyVariable } from "./netlify-connection-types";
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable class-methods-use-this */
-import { AxiosInstance, AxiosRequestConfig, AxiosResponse, HttpStatusCode, isAxiosError } from "axios";
 
-import { createRequestClient } from "@app/lib/config/request";
-import { IntegrationUrls } from "@app/services/integration-auth/integration-list";
 
-import { NetlifyConnectionMethod } from "./netlify-connection-constants";
-import { TNetlifyAccount, TNetlifyConnectionConfig, TNetlifySite, TNetlifyVariable } from "./netlify-connection-types";
 
 export function getNetlifyAuthHeaders(connection: TNetlifyConnectionConfig): Record<string, string> {
   switch (connection.method) {

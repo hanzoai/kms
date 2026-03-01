@@ -9,7 +9,6 @@ import {
   TSuperAdminUpdate,
   TUsers
 } from "@app/db/schemas";
-import { TLicenseServiceFactory } from "@app/ee/services/license/license-service";
 import { PgSqlLock, TKeyStoreFactory } from "@app/keystore/keystore";
 import {
   getConfig,
@@ -61,6 +60,7 @@ import {
   TGetOrganizationsDTO,
   TResendOrgInviteDTO
 } from "./super-admin-types";
+import { TLicenseServiceFactory } from "@app/services/license/license-service";
 
 type TSuperAdminServiceFactoryDep = {
   identityDAL: TIdentityDALFactory;

@@ -1,11 +1,11 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import { Knex } from "knex";
 import { Tables } from "knex/types/tables";
-
 import { TableName } from "@app/db/schemas";
-
 import { DatabaseError } from "../errors";
 import { buildDynamicKnexQuery, TKnexDynamicOperator } from "./dynamic";
+/* eslint-disable @typescript-eslint/no-misused-promises */
+
+
 
 export * from "./connection";
 export * from "./join";

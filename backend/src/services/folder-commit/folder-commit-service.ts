@@ -1,7 +1,5 @@
-/* eslint-disable no-await-in-loop */
 import { ForbiddenError } from "@casl/ability";
 import { Knex } from "knex";
-
 import {
   ActionProjectType,
   TSecretFolders,
@@ -9,13 +7,12 @@ import {
   TSecretV2TagJunctionInsert,
   TSecretVersionsV2
 } from "@app/db/schemas";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
-import { ProjectPermissionCommitsActions, ProjectPermissionSub } from "@app/ee/services/permission/project-permission";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
+import { ProjectPermissionCommitsActions, ProjectPermissionSub } from "@app/services/permission/project-permission";
 import { getConfig } from "@app/lib/config/env";
 import { BadRequestError, DatabaseError, NotFoundError } from "@app/lib/errors";
 import { chunkArray } from "@app/lib/fn";
 import { logger } from "@app/lib/logger";
-
 import { ActorAuthMethod, ActorType } from "../auth/auth-type";
 import { TFolderCheckpointDALFactory } from "../folder-checkpoint/folder-checkpoint-dal";
 import { TFolderCheckpointResourcesDALFactory } from "../folder-checkpoint-resources/folder-checkpoint-resources-dal";
@@ -35,6 +32,9 @@ import { TSecretVersionV2DALFactory } from "../secret-v2-bridge/secret-version-d
 import { TUserDALFactory } from "../user/user-dal";
 import { TFolderCommitDALFactory } from "./folder-commit-dal";
 import { TFolderCommitQueueServiceFactory } from "./folder-commit-queue";
+/* eslint-disable no-await-in-loop */
+
+
 
 export enum ChangeType {
   ADD = "add",

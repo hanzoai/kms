@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { ExternalGroupOrgRoleMappingsSchema } from "@app/db/schemas/external-group-org-role-mappings";
-import { EventType } from "@app/ee/services/audit-log/audit-log-types";
+import { EventType } from "@app/services/audit-log/audit-log-types";
 import { ApiDocsTags, Scim } from "@app/lib/api-docs";
 import { readLimit, writeLimit } from "@app/server/config/rateLimiter";
 import { slugSchema } from "@app/server/lib/schemas";

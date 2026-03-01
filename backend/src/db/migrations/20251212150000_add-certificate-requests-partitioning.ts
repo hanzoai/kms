@@ -1,8 +1,8 @@
-/* eslint-disable no-console */
 import { Knex } from "knex";
-
 import { TableName } from "../schemas";
 import { createOnUpdateTrigger } from "../utils";
+/* eslint-disable no-console */
+
 
 const INTERMEDIATE_CERTIFICATE_REQUESTS_TABLE = "intermediate_certificate_requests";
 

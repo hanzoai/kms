@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { buildMongoQueryMatcher } from "@casl/ability";
 import { FieldCondition, FieldInstruction, JsInterpreter } from "@ucast/mongo2js";
 import picomatch from "picomatch";
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 const $glob: FieldInstruction<string> = {
   type: "field",

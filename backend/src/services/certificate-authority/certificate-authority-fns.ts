@@ -1,10 +1,7 @@
-/* eslint-disable no-nested-ternary */
 import * as x509 from "@peculiar/x509";
-
 import { crypto } from "@app/lib/crypto/cryptography";
 import { NotFoundError } from "@app/lib/errors";
 import { getProjectKmsCertificateKeyId } from "@app/services/project/project-fns";
-
 import { CertKeyAlgorithm, CertStatus } from "../certificate/certificate-types";
 import { DEFAULT_CRL_VALIDITY_DAYS } from "../certificate-common/certificate-constants";
 import { TCertificateAuthorityDALFactory } from "./certificate-authority-dal";
@@ -15,6 +12,9 @@ import {
   TGetCaCredentialsDTO,
   TRebuildCaCrlDTO
 } from "./internal/internal-certificate-authority-types";
+/* eslint-disable no-nested-ternary */
+
+
 
 /* eslint-disable no-bitwise */
 export const createSerialNumber = () => {
@@ -400,7 +400,7 @@ export const rebuildCaCrl = async ({
     plainText: Buffer.from(new Uint8Array(crl.rawData))
   });
 
-  await certificateAuthorityCrlDAL.update(
+  await certificateAuthorityCrlDAL!.update(
     {
       caId: ca.id
     },

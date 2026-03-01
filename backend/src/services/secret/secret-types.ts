@@ -2,7 +2,7 @@ import { Knex } from "knex";
 import { z } from "zod";
 
 import { SecretType, TSecretBlindIndexes, TSecrets, TSecretsInsert, TSecretsUpdate } from "@app/db/schemas";
-import { ProjectPermissionSecretActions } from "@app/ee/services/permission/project-permission";
+import { ProjectPermissionSecretActions } from "@app/services/permission/project-permission";
 import { OrderByDirection, TProjectPermission } from "@app/lib/types";
 import { TProjectDALFactory } from "@app/services/project/project-dal";
 import { TProjectBotDALFactory } from "@app/services/project-bot/project-bot-dal";

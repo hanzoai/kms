@@ -1,14 +1,14 @@
-/* eslint-disable no-await-in-loop */
 import { AxiosError } from "axios";
 import { z } from "zod";
-
 import { BadRequestError } from "@app/lib/errors";
 import { AppConnection } from "@app/services/app-connection/app-connection-enums";
-
 import { DigitalOceanConnectionMethod } from "./digital-ocean-connection-constants";
 import { DigitalOceanAppPlatformPublicAPI } from "./digital-ocean-connection-public-client";
 import { DigitalOceanConnectionListItemSchema } from "./digital-ocean-connection-schemas";
 import { TDigitalOceanConnectionConfig } from "./digital-ocean-connection-types";
+/* eslint-disable no-await-in-loop */
+
+
 
 export const getDigitalOceanConnectionListItem = () => {
   return {

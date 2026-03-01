@@ -7,14 +7,7 @@ import {
   ProjectKeysSchema,
   ProjectType
 } from "@app/db/schemas";
-import { EventType } from "@app/ee/services/audit-log/audit-log-types";
-import { KmsProjectTemplate } from "@app/ee/services/project-template/project-template-types";
-import { sanitizedSshCa } from "@app/ee/services/ssh/ssh-certificate-authority-schema";
-import { sanitizedSshCertificate } from "@app/ee/services/ssh-certificate/ssh-certificate-schema";
-import { sanitizedSshCertificateTemplate } from "@app/ee/services/ssh-certificate-template/ssh-certificate-template-schema";
-import { loginMappingSchema, sanitizedSshHost } from "@app/ee/services/ssh-host/ssh-host-schema";
-import { LoginMappingSource } from "@app/ee/services/ssh-host/ssh-host-types";
-import { sanitizedSshHostGroup } from "@app/ee/services/ssh-host-group/ssh-host-group-schema";
+import { EventType } from "@app/services/audit-log/audit-log-types";
 import { ApiDocsTags, PROJECTS } from "@app/lib/api-docs";
 import { projectCreationLimit, readLimit, writeLimit } from "@app/server/config/rateLimiter";
 import { slugSchema } from "@app/server/lib/schemas";

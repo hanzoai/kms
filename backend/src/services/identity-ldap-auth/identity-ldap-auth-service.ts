@@ -1,23 +1,18 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { ForbiddenError, subject } from "@casl/ability";
 import { requestContext } from "@fastify/request-context";
 import slugify from "@sindresorhus/slugify";
-
 import { AccessScope, ActionProjectType, IdentityAuthMethod, OrganizationActionScope } from "@app/db/schemas";
-import { TIdentityAuthTemplateDALFactory } from "@app/ee/services/identity-auth-template";
-import { testLDAPConfig } from "@app/ee/services/ldap-config/ldap-fns";
-import { TLicenseServiceFactory } from "@app/ee/services/license/license-service";
 import {
   OrgPermissionIdentityActions,
   OrgPermissionMachineIdentityAuthTemplateActions,
   OrgPermissionSubjects
-} from "@app/ee/services/permission/org-permission";
+} from "@app/services/permission/org-permission";
 import {
   constructPermissionErrorMessage,
   validatePrivilegeChangeOperation
-} from "@app/ee/services/permission/permission-fns";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
-import { ProjectPermissionIdentityActions, ProjectPermissionSub } from "@app/ee/services/permission/project-permission";
+} from "@app/services/permission/permission-fns";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
+import { ProjectPermissionIdentityActions, ProjectPermissionSub } from "@app/services/permission/project-permission";
 import { KeyStorePrefixes, TKeyStoreFactory } from "@app/keystore/keystore";
 import { getConfig } from "@app/lib/config/env";
 import { crypto } from "@app/lib/crypto";
@@ -32,7 +27,6 @@ import {
 import { extractIPDetails, isValidIpOrCidr } from "@app/lib/ip";
 import { logger } from "@app/lib/logger";
 import { AuthAttemptAuthMethod, AuthAttemptAuthResult, authAttemptCounter } from "@app/lib/telemetry/metrics";
-
 import { ActorType, AuthTokenType } from "../auth/auth-type";
 import { TIdentityDALFactory } from "../identity/identity-dal";
 import { TIdentityAccessTokenDALFactory } from "../identity-access-token/identity-access-token-dal";
@@ -53,6 +47,10 @@ import {
   TRevokeLdapAuthDTO,
   TUpdateLdapAuthDTO
 } from "./identity-ldap-auth-types";
+import { TLicenseServiceFactory } from "@app/services/license/license-service";
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
+
 
 type TIdentityLdapAuthServiceFactoryDep = {
   identityAccessTokenDAL: Pick<TIdentityAccessTokenDALFactory, "create" | "delete">;
@@ -65,7 +63,7 @@ type TIdentityLdapAuthServiceFactoryDep = {
   permissionService: Pick<TPermissionServiceFactory, "getOrgPermission" | "getProjectPermission">;
   kmsService: TKmsServiceFactory;
   identityDAL: Pick<TIdentityDALFactory, "findById" | "findOne">;
-  identityAuthTemplateDAL: TIdentityAuthTemplateDALFactory;
+  identityAuthTemplateDAL?: TIdentityAuthTemplateDALFactory;
   keyStore: Pick<
     TKeyStoreFactory,
     "setItemWithExpiry" | "getItem" | "deleteItem" | "getKeysByPattern" | "deleteItems" | "acquireLock"

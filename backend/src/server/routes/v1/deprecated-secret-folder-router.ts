@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { SecretFoldersSchema } from "@app/db/schemas";
-import { EventType } from "@app/ee/services/audit-log/audit-log-types";
+import { EventType } from "@app/services/audit-log/audit-log-types";
 import { ApiDocsTags, FOLDERS } from "@app/lib/api-docs";
 import { prefixWithSlash, removeTrailingSlash } from "@app/lib/fn";
 import { isValidFolderName } from "@app/lib/validator";

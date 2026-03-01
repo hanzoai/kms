@@ -1,10 +1,10 @@
+import { requestContext } from "@fastify/request-context";
+import pino, { Logger } from "pino";
+import { z } from "zod";
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // logger follows a singleton pattern
 // easier to use it that's all.
-import { requestContext } from "@fastify/request-context";
-import pino, { Logger } from "pino";
-import { z } from "zod";
 
 const logLevelToSeverityLookup: Record<string, string> = {
   "10": "TRACE",

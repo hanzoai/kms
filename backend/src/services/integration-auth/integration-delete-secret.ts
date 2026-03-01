@@ -1,14 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { createAppAuth } from "@octokit/auth-app";
 import { retry } from "@octokit/plugin-retry";
 import { Octokit } from "@octokit/rest";
-
 import { TIntegrationAuths, TIntegrations } from "@app/db/schemas";
 import { getConfig } from "@app/lib/config/env";
 import { crypto, SymmetricKeySize } from "@app/lib/crypto/cryptography";
 import { BadRequestError, NotFoundError } from "@app/lib/errors";
 import { logger } from "@app/lib/logger";
-
 import { IntegrationMetadataSchema } from "../integration/integration-schema";
 import { TKmsServiceFactory } from "../kms/kms-service";
 import { KmsDataKey } from "../kms/kms-types";
@@ -21,6 +18,9 @@ import { TSecretV2BridgeDALFactory } from "../secret-v2-bridge/secret-v2-bridge-
 import { IntegrationAuthMetadataSchema, TIntegrationAuthMetadata } from "./integration-auth-schema";
 import { TIntegrationAuthServiceFactory } from "./integration-auth-service";
 import { Integrations } from "./integration-list";
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+
+
 
 const MAX_SYNC_SECRET_DEPTH = 5;
 

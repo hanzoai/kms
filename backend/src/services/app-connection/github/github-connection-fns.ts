@@ -2,9 +2,6 @@ import { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import https from "https";
 import RE2 from "re2";
 
-import { verifyHostInputValidity } from "@app/ee/services/dynamic-secret/dynamic-secret-fns";
-import { TGatewayServiceFactory } from "@app/ee/services/gateway/gateway-service";
-import { TGatewayV2ServiceFactory } from "@app/ee/services/gateway-v2/gateway-v2-service";
 import { getConfig } from "@app/lib/config/env";
 import { request as httpRequest } from "@app/lib/config/request";
 import { crypto } from "@app/lib/crypto";
@@ -51,8 +48,8 @@ export const getGitHubInstanceApiUrl = async (config: {
 export const getGitHubGatewayConnectionDetails = async (
   gatewayId: string,
   targetHost: string,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">
-): Promise<Awaited<ReturnType<TGatewayV2ServiceFactory["getPlatformConnectionDetailsByGatewayId"]>> | undefined> => {
+  gatewayV2Service?: unknown
+): Promise<Awaited<ReturnType<unknown["getPlatformConnectionDetailsByGatewayId"]>> | undefined> => {
   try {
     const urlString = targetHost.includes("://") ? targetHost : `https://${targetHost}`;
     const url = new URL(urlString);
@@ -71,10 +68,10 @@ export const getGitHubGatewayConnectionDetails = async (
 
 export const requestWithGitHubGateway = async <T>(
   appConnection: { gatewayId?: string | null },
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">,
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown,
   requestConfig: AxiosRequestConfig,
-  gatewayConnectionDetails?: Awaited<ReturnType<TGatewayV2ServiceFactory["getPlatformConnectionDetailsByGatewayId"]>>
+  gatewayConnectionDetails?: Awaited<ReturnType<unknown["getPlatformConnectionDetailsByGatewayId"]>>
 ): Promise<AxiosResponse<T>> => {
   const { gatewayId } = appConnection;
 
@@ -174,8 +171,8 @@ export const requestWithGitHubGateway = async <T>(
 
 export const getGitHubAppAuthToken = async (
   appConnection: TGitHubConnection,
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown
 ) => {
   const appCfg = getConfig();
   const appId = appCfg.INF_APP_CONNECTION_GITHUB_APP_ID;
@@ -256,8 +253,8 @@ function extractNextPageUrl(linkHeader: string | undefined): string | null {
 
 export const makePaginatedGitHubRequest = async <T, R = T[]>(
   appConnection: TGitHubConnection,
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">,
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown,
   path: string,
   dataMapper?: (data: R) => T[]
 ): Promise<T[]> => {
@@ -406,8 +403,8 @@ type GitHubEnvironment = {
 
 export const getGitHubRepositories = async (
   appConnection: TGitHubConnection,
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown
 ) => {
   if (appConnection.method === GitHubConnectionMethod.App) {
     return makePaginatedGitHubRequest<GitHubRepository, { repositories: GitHubRepository[] }>(
@@ -431,8 +428,8 @@ export const getGitHubRepositories = async (
 
 export const getGitHubOrganizations = async (
   appConnection: TGitHubConnection,
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown
 ) => {
   if (appConnection.method === GitHubConnectionMethod.App) {
     const installationRepositories = await makePaginatedGitHubRequest<
@@ -455,8 +452,8 @@ export const getGitHubOrganizations = async (
 
 export const getGitHubEnvironments = async (
   appConnection: TGitHubConnection,
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">,
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown,
   owner: string,
   repo: string
 ) => {
@@ -492,8 +489,8 @@ export function isGithubErrorResponse(data: GithubTokenRespData): data is Github
 
 export const validateGitHubConnectionCredentials = async (
   config: TGitHubConnectionConfig,
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown
 ) => {
   const { credentials, method } = config;
 

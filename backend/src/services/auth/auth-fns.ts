@@ -1,5 +1,5 @@
 import { TUsers } from "@app/db/schemas";
-import { isAuthMethodSaml } from "@app/ee/services/permission/permission-fns";
+import { isAuthMethodSaml } from "@app/services/permission/permission-fns";
 import { getConfig } from "@app/lib/config/env";
 import { request } from "@app/lib/config/request";
 import { crypto } from "@app/lib/crypto";

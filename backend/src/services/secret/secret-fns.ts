@@ -1,7 +1,5 @@
-/* eslint-disable no-await-in-loop */
 import path from "path";
 import RE2 from "re2";
-
 import {
   ActionProjectType,
   SecretEncryptionAlgo,
@@ -12,9 +10,9 @@ import {
   TSecretFolders,
   TSecrets
 } from "@app/db/schemas";
-import { hasSecretReadValueOrDescribePermission } from "@app/ee/services/permission/permission-fns";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
-import { ProjectPermissionSecretActions } from "@app/ee/services/permission/project-permission";
+import { hasSecretReadValueOrDescribePermission } from "@app/services/permission/permission-fns";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
+import { ProjectPermissionSecretActions } from "@app/services/permission/project-permission";
 import { getConfig } from "@app/lib/config/env";
 import { buildSecretBlindIndexFromName } from "@app/lib/crypto";
 import { crypto, SymmetricKeySize } from "@app/lib/crypto/cryptography";
@@ -26,7 +24,6 @@ import {
   fnSecretBulkInsert as fnSecretV2BridgeBulkInsert,
   fnSecretBulkUpdate as fnSecretV2BridgeBulkUpdate
 } from "@app/services/secret-v2-bridge/secret-v2-bridge-fns";
-
 import { ActorAuthMethod, ActorType } from "../auth/auth-type";
 import { KmsDataKey } from "../kms/kms-types";
 import { getBotKeyFnFactory } from "../project-bot/project-bot-fns";
@@ -47,6 +44,9 @@ import {
   TUpdateManySecretsRawFn,
   TUpdateManySecretsRawFnFactory
 } from "./secret-types";
+/* eslint-disable no-await-in-loop */
+
+
 
 export const KMS_SECRET_VALUE_HIDDEN_MASK = "<hidden-by-kms>";
 

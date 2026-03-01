@@ -1,14 +1,13 @@
 import { ForbiddenError, subject } from "@casl/ability";
 
 import { ActionProjectType } from "@app/db/schemas";
-import { TLicenseServiceFactory } from "@app/ee/services/license/license-service";
-import { throwIfMissingSecretReadValueOrDescribePermission } from "@app/ee/services/permission/permission-fns";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
+import { throwIfMissingSecretReadValueOrDescribePermission } from "@app/services/permission/permission-fns";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
 import {
   ProjectPermissionSecretActions,
   ProjectPermissionSecretSyncActions,
   ProjectPermissionSub
-} from "@app/ee/services/permission/project-permission";
+} from "@app/services/permission/project-permission";
 import { KeyStorePrefixes, TKeyStoreFactory } from "@app/keystore/keystore";
 import { DatabaseErrorCode } from "@app/lib/error-codes";
 import { BadRequestError, DatabaseError, NotFoundError } from "@app/lib/errors";
@@ -46,6 +45,7 @@ import {
   SECRET_SYNC_SKIP_FIELDS_MAP
 } from "./secret-sync-maps";
 import { TSecretSyncQueueFactory } from "./secret-sync-queue";
+import { TLicenseServiceFactory } from "@app/services/license/license-service";
 
 type TSecretSyncServiceFactoryDep = {
   secretSyncDAL: TSecretSyncDALFactory;

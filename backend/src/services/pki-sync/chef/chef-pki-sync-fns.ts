@@ -1,13 +1,4 @@
-/* eslint-disable no-continue */
-/* eslint-disable no-await-in-loop */
 import { TCertificateSyncs } from "@app/db/schemas";
-import {
-  createChefDataBagItem,
-  listChefDataBagItems,
-  removeChefDataBagItem,
-  updateChefDataBagItem
-} from "@app/ee/services/app-connections/chef";
-import { TChefDataBagItemContent } from "@app/ee/services/secret-sync/chef";
 import { logger } from "@app/lib/logger";
 import { TCertificateDALFactory } from "@app/services/certificate/certificate-dal";
 import { TCertificateSyncDALFactory } from "@app/services/certificate-sync/certificate-sync-dal";
@@ -15,9 +6,11 @@ import { CertificateSyncStatus } from "@app/services/certificate-sync/certificat
 import { createConnectionQueue, RateLimitConfig } from "@app/services/connection-queue";
 import { matchesCertificateNameSchema } from "@app/services/pki-sync/pki-sync-fns";
 import { TCertificateMap, TPkiSyncWithCredentials } from "@app/services/pki-sync/pki-sync-types";
-
 import { CHEF_PKI_SYNC_DEFAULTS } from "./chef-pki-sync-constants";
 import { ChefCertificateDataBagItem, SyncCertificatesResult, TChefPkiSyncWithCredentials } from "./chef-pki-sync-types";
+/* eslint-disable no-continue */
+/* eslint-disable no-await-in-loop */
+
 
 const CHEF_RATE_LIMIT_CONFIG: RateLimitConfig = {
   MAX_CONCURRENT_REQUESTS: 5, // Chef servers generally have lower rate limits

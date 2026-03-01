@@ -1,13 +1,13 @@
-/* eslint-disable no-await-in-loop */
 import { packRules, unpackRules } from "@casl/ability/extra";
 import { Knex } from "knex";
-
 import {
   backfillPermissionV1SchemaToV2Schema,
   ProjectPermissionSub
-} from "@app/ee/services/permission/project-permission";
-
+} from "@app/services/permission/project-permission";
 import { TableName } from "../schemas";
+/* eslint-disable no-await-in-loop */
+
+
 
 const CHUNK_SIZE = 1000;
 export async function up(knex: Knex): Promise<void> {

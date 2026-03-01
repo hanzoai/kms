@@ -5,7 +5,6 @@ import fastifyPlugin from "fastify-plugin";
 import jwt from "jsonwebtoken";
 import { ZodError } from "zod";
 
-import { AcmeError } from "@app/ee/services/pki-acme/pki-acme-errors";
 import { getConfig } from "@app/lib/config/env";
 import {
   BadRequestError,
@@ -248,18 +247,6 @@ export const fastifyErrHandler = fastifyPlugin(async (server: FastifyZodProvider
         error: "TokenError",
         message: errorMessage
       });
-    } else if (error instanceof AcmeError) {
-      void res
-        .type("application/problem+json")
-        .status(error.status)
-        .send({
-          reqId: req.id,
-          error: error.name,
-          status: error.status,
-          type: `urn:ietf:params:acme:error:${error.type}`,
-          detail: error.message
-          // TODO: add subproblems if they exist
-        });
     } else if (error instanceof PolicyViolationError) {
       void res.status(HttpStatusCodes.Forbidden).send({
         reqId: req.id,

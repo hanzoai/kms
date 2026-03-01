@@ -1,8 +1,5 @@
 import { AccessScope, OrgMembershipStatus, TableName } from "@app/db/schemas";
-import { convertPendingGroupAdditionsToGroupMemberships } from "@app/ee/services/group/group-fns";
-import { TUserGroupMembershipDALFactory } from "@app/ee/services/group/user-group-membership-dal";
-import { TLicenseServiceFactory } from "@app/ee/services/license/license-service";
-import { isAuthMethodSaml } from "@app/ee/services/permission/permission-fns";
+import { isAuthMethodSaml } from "@app/services/permission/permission-fns";
 import { getConfig } from "@app/lib/config/env";
 import { crypto } from "@app/lib/crypto/cryptography";
 import { BadRequestError, ForbiddenRequestError, NotFoundError } from "@app/lib/errors";
@@ -25,12 +22,13 @@ import { TAuthDALFactory } from "./auth-dal";
 import { validateProviderAuthToken, validateSignUpAuthorization } from "./auth-fns";
 import { TCompleteAccountInviteDTO, TCompleteAccountSignupDTO } from "./auth-signup-type";
 import { AuthMethod, AuthTokenType } from "./auth-type";
+import { TLicenseServiceFactory } from "@app/services/license/license-service";
 
 type TAuthSignupDep = {
   authDAL: TAuthDALFactory;
   userDAL: TUserDALFactory;
-  userGroupMembershipDAL: Pick<
-    TUserGroupMembershipDALFactory,
+  userGroupMembershipDAL?: Pick<
+    unknown,
     | "find"
     | "transaction"
     | "insertMany"
