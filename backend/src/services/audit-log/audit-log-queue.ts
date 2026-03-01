@@ -42,7 +42,7 @@ export const auditLogQueueServiceFactory = async ({
   // Optional ClickHouse DAL — only instantiated when a client is present.
   const clickhouseDAL =
     clickhouseClient
-      ? clickhouseAuditLogDALFactory(clickhouseClient, {} as never, appCfg.CLICKHOUSE_AUDIT_LOG_TABLE_NAME)
+      ? clickhouseAuditLogDALFactory(clickhouseClient, appCfg.CLICKHOUSE_AUDIT_LOG_TABLE_NAME)
       : null;
 
   queueService.start(QueueName.AuditLog, async (job) => {

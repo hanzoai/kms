@@ -8,16 +8,11 @@
 import { createMongoAbility, MongoAbility, RawRuleOf } from "@casl/ability";
 import { unpackRules } from "@casl/ability/extra";
 
-import { ActionProjectType, ActorType as DbActorType, OrgMembershipRole, ProjectMembershipRole } from "@app/db/schemas";
+import { ActionProjectType, OrgMembershipRole, ProjectMembershipRole } from "@app/db/schemas";
 import { conditionsMatcher } from "@app/lib/casl";
 import { logger } from "@app/lib/logger";
-import { ForbiddenRequestError } from "@app/lib/errors";
 import { ActorAuthMethod, ActorType } from "@app/services/auth/auth-type";
 import { TServiceTokenDALFactory } from "@app/services/service-token/service-token-dal";
-import { TProjectDALFactory } from "@app/services/project/project-dal";
-import { TUserDALFactory } from "@app/services/user/user-dal";
-import { TIdentityDALFactory } from "@app/services/identity/identity-dal";
-import { TKeyStoreFactory } from "@app/keystore/keystore";
 
 import { TPermissionDALFactory } from "./permission-dal";
 import { DEFAULT_ORG_ROLE_PERMISSIONS, DEFAULT_PROJECT_ROLE_PERMISSIONS } from "./default-roles";
@@ -25,25 +20,18 @@ import { OrgPermissionSet } from "./org-permission";
 import { ProjectPermissionSet } from "./project-permission";
 import { TRoleDALFactory } from "@app/services/role/role-dal";
 
-// ---------------------------------------------------------------------------
 // Factory dependencies
-// ---------------------------------------------------------------------------
 
 type TPermissionServiceFactoryDep = {
   permissionDAL: TPermissionDALFactory;
   serviceTokenDAL: TServiceTokenDALFactory;
   projectDAL: Pick<TProjectDALFactory, "findById">;
-  keyStore: Pick<TKeyStoreFactory, "getItem" | "setItemWithExpiry">;
   roleDAL: TRoleDALFactory;
-  userDAL: Pick<TUserDALFactory, "findById">;
-  identityDAL: Pick<TIdentityDALFactory, "findById">;
 };
 
 export type TPermissionServiceFactory = ReturnType<typeof permissionServiceFactory>;
 
-// ---------------------------------------------------------------------------
 // CASL ability builder helpers
-// ---------------------------------------------------------------------------
 
 type ProjectAbility = MongoAbility<ProjectPermissionSet>;
 type OrgAbility = MongoAbility<OrgPermissionSet>;
@@ -68,19 +56,14 @@ const getDefaultOrgRules = (roleSlug: string): RawRuleOf<OrgAbility>[] => {
   return [];
 };
 
-// ---------------------------------------------------------------------------
 // Service factory
-// ---------------------------------------------------------------------------
 
 export const permissionServiceFactory = ({
   permissionDAL,
   serviceTokenDAL,
-  projectDAL,
   roleDAL
 }: TPermissionServiceFactoryDep) => {
-  // ------------------------------------------------------------------
   // Project permission
-  // ------------------------------------------------------------------
 
   /**
    * Builds a CASL ability for the given actor in the given project.
@@ -245,10 +228,8 @@ export const permissionServiceFactory = ({
     identityPermissions: Array<{ permission: ProjectAbility; identityId: string }>;
     groupPermissions: Array<{ permission: ProjectAbility; groupId: string }>;
   }> => {
-    // This is a best-effort implementation — returns empty arrays.
+    // Best-effort stub — returns empty arrays.
     // Full implementation would join all membership tables.
-    // Routes that use this for access visibility are non-critical paths.
-    logger.debug({ projectId }, "getProjectPermissions: returning empty stubs");
     return {
       userPermissions: [],
       identityPermissions: [],
@@ -264,9 +245,7 @@ export const permissionServiceFactory = ({
     // No-op: permissions are computed fresh on each request from the DB.
   };
 
-  // ------------------------------------------------------------------
   // Org permission
-  // ------------------------------------------------------------------
 
   /**
    * Builds a CASL ability for the given actor in the given org.

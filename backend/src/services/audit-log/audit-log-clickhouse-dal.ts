@@ -7,7 +7,6 @@
 // go only to PostgreSQL.
 
 import type { ClickHouseClient } from "@clickhouse/client";
-import { Knex } from "knex";
 
 import { logger } from "@app/lib/logger";
 
@@ -17,7 +16,6 @@ export type TClickhouseAuditLogDALFactory = ReturnType<typeof clickhouseAuditLog
 
 export const clickhouseAuditLogDALFactory = (
   client: ClickHouseClient,
-  _db: Knex,
   tableName = "audit_logs_v2"
 ) => {
   const insertAuditLog = async (dto: TCreateAuditLogDTO & { id: string; createdAt: Date }): Promise<void> => {

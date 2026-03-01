@@ -19,7 +19,7 @@ export const injectPermission = fp(async (server) => {
         parentOrgId: req.auth.parentOrgId
       };
 
-      logger.info(
+      logger.debug(
         `injectPermission: Injecting permissions for [permissionsForIdentity=${req.auth.userId}] [type=${ActorType.USER}]`
       );
     } else if (req.auth.actor === ActorType.IDENTITY) {
@@ -32,7 +32,7 @@ export const injectPermission = fp(async (server) => {
         parentOrgId: req.auth.parentOrgId
       };
 
-      logger.info(
+      logger.debug(
         `injectPermission: Injecting permissions for [permissionsForIdentity=${req.auth.identityId}] [type=${ActorType.IDENTITY}]`
       );
     } else if (req.auth.actor === ActorType.SERVICE) {
@@ -45,7 +45,7 @@ export const injectPermission = fp(async (server) => {
         authMethod: null
       };
 
-      logger.info(
+      logger.debug(
         `injectPermission: Injecting permissions for [permissionsForIdentity=${req.auth.serviceTokenId}] [type=${ActorType.SERVICE}]`
       );
     } else if (req.auth.actor === ActorType.SCIM_CLIENT) {
@@ -58,7 +58,7 @@ export const injectPermission = fp(async (server) => {
         authMethod: null
       };
 
-      logger.info(
+      logger.debug(
         `injectPermission: Injecting permissions for [permissionsForIdentity=${req.auth.scimTokenId}] [type=${ActorType.SCIM_CLIENT}]`
       );
     }
