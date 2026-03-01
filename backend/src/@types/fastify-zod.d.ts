@@ -1,10 +1,10 @@
 import { FastifyInstance, RawReplyDefaultExpression, RawRequestDefaultExpression, RawServerDefault } from "fastify";
 
-import { THsmServiceFactory } from "@app/ee/services/hsm/hsm-service";
 import { CustomLogger } from "@app/lib/logger/logger";
 import { ZodTypeProvider } from "@app/server/plugins/fastify-zod";
 import { TKmsRootConfigDALFactory } from "@app/services/kms/kms-root-config-dal";
 import { TSuperAdminDALFactory } from "@app/services/super-admin/super-admin-dal";
+import { THsmServiceFactory } from "@app/services/hsm/hsm-service";
 
 declare global {
   type FastifyZodProvider = FastifyInstance<

@@ -1,26 +1,16 @@
 import { ForbiddenError, subject } from "@casl/ability";
 
 import { ActionProjectType, OrganizationActionScope, TAppConnections } from "@app/db/schemas";
-import { ValidateChefConnectionCredentialsSchema } from "@app/ee/services/app-connections/chef";
-import { chefConnectionService } from "@app/ee/services/app-connections/chef/chef-connection-service";
-import { ValidateOCIConnectionCredentialsSchema } from "@app/ee/services/app-connections/oci";
-import { ociConnectionService } from "@app/ee/services/app-connections/oci/oci-connection-service";
-import { ValidateOracleDBConnectionCredentialsSchema } from "@app/ee/services/app-connections/oracledb";
-import { TGatewayDALFactory } from "@app/ee/services/gateway/gateway-dal";
-import { TGatewayServiceFactory } from "@app/ee/services/gateway/gateway-service";
-import { TGatewayV2DALFactory } from "@app/ee/services/gateway-v2/gateway-v2-dal";
-import { TGatewayV2ServiceFactory } from "@app/ee/services/gateway-v2/gateway-v2-service";
-import { TLicenseServiceFactory } from "@app/ee/services/license/license-service";
 import {
   OrgPermissionAppConnectionActions,
   OrgPermissionGatewayActions,
   OrgPermissionSubjects
-} from "@app/ee/services/permission/org-permission";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
+} from "@app/services/permission/org-permission";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
 import {
   ProjectPermissionAppConnectionActions,
   ProjectPermissionSub
-} from "@app/ee/services/permission/project-permission";
+} from "@app/services/permission/project-permission";
 import { crypto } from "@app/lib/crypto/cryptography";
 import { DatabaseErrorCode } from "@app/lib/error-codes";
 import { BadRequestError, DatabaseError, NotFoundError } from "@app/lib/errors";
@@ -134,16 +124,17 @@ import { ValidateWindmillConnectionCredentialsSchema } from "./windmill";
 import { windmillConnectionService } from "./windmill/windmill-connection-service";
 import { ValidateZabbixConnectionCredentialsSchema } from "./zabbix";
 import { zabbixConnectionService } from "./zabbix/zabbix-connection-service";
+import { TLicenseServiceFactory } from "@app/services/license/license-service";
 
 export type TAppConnectionServiceFactoryDep = {
   appConnectionDAL: TAppConnectionDALFactory;
   permissionService: Pick<TPermissionServiceFactory, "getOrgPermission" | "getProjectPermission">;
   kmsService: Pick<TKmsServiceFactory, "createCipherPairWithDataKey">;
   licenseService: Pick<TLicenseServiceFactory, "getPlan">;
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">;
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">;
-  gatewayDAL: Pick<TGatewayDALFactory, "find">;
-  gatewayV2DAL: Pick<TGatewayV2DALFactory, "find">;
+  gatewayService?: unknown;
+  gatewayV2Service?: unknown;
+  gatewayDAL?: Pick<TGatewayDALFactory, "find">;
+  gatewayV2DAL?: Pick<TGatewayV2DALFactory, "find">;
   projectDAL: Pick<TProjectDALFactory, "findProjectById">;
 };
 
@@ -422,8 +413,8 @@ export const appConnectionServiceFactory = ({
         OrgPermissionSubjects.Gateway
       );
 
-      const [gateway] = await gatewayDAL.find({ id: gatewayId, orgId: actor.orgId });
-      const [gatewayV2] = await gatewayV2DAL.find({ id: gatewayId, orgId: actor.orgId });
+      const [gateway] = await gatewayDAL!.find({ id: gatewayId, orgId: actor.orgId });
+      const [gatewayV2] = await gatewayV2DAL!.find({ id: gatewayId, orgId: actor.orgId });
       if (!gateway && !gatewayV2) {
         throw new NotFoundError({
           message: `Gateway with ID ${gatewayId} not found for org`
@@ -555,8 +546,8 @@ export const appConnectionServiceFactory = ({
       );
 
       if (gatewayId) {
-        const [gateway] = await gatewayDAL.find({ id: gatewayId, orgId: actor.orgId });
-        const [gatewayV2] = await gatewayV2DAL.find({ id: gatewayId, orgId: actor.orgId });
+        const [gateway] = await gatewayDAL!.find({ id: gatewayId, orgId: actor.orgId });
+        const [gatewayV2] = await gatewayV2DAL!.find({ id: gatewayId, orgId: actor.orgId });
         if (!gateway && !gatewayV2) {
           throw new NotFoundError({
             message: `Gateway with ID ${gatewayId} not found for org`

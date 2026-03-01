@@ -1,9 +1,9 @@
-/* eslint-disable no-console */
 import "ts-node/register";
-
 import dotenv from "dotenv";
 import type { Knex } from "knex";
 import path from "path";
+/* eslint-disable no-console */
+
 
 // Update with your config settings. .
 dotenv.config({

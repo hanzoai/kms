@@ -1,7 +1,5 @@
 import { isAxiosError } from "axios";
 
-import { TGatewayServiceFactory } from "@app/ee/services/gateway/gateway-service";
-import { TGatewayV2ServiceFactory } from "@app/ee/services/gateway-v2/gateway-v2-service";
 import { BadRequestError } from "@app/lib/errors";
 import { removeTrailingSlash } from "@app/lib/fn";
 import {
@@ -35,8 +33,8 @@ const getKvMountVersion = async ({
   mount: string;
   accessToken: string;
   connection: THCVaultConnection;
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">;
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">;
+  gatewayService?: unknown;
+  gatewayV2Service?: unknown;
 }) => {
   const { data } = await requestWithHCVaultGateway<{
     data: {
@@ -74,8 +72,8 @@ const getKvMountVersion = async ({
 const listHCVaultVariables = async (
   { instanceUrl, namespace, mount, mountVersion, accessToken, path }: THCVaultListVariables,
   connection: THCVaultConnection,
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown
 ): Promise<{ [key: string]: string }> => {
   try {
     // KV v2 uses /data/ in the path, KV v1 does not
@@ -133,8 +131,8 @@ const listHCVaultVariables = async (
 const updateHCVaultVariables = async (
   { path, instanceUrl, namespace, accessToken, mount, mountVersion, data }: TPostHCVaultVariable,
   connection: THCVaultConnection,
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown
 ) => {
   // KV v2 uses /data/ in the path, KV v1 does not
   const urlPath =
@@ -161,8 +159,8 @@ export const HCVaultSyncFns = {
   syncSecrets: async (
     secretSync: THCVaultSyncWithCredentials,
     secretMap: TSecretMap,
-    gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-    gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">
+    gatewayService?: unknown,
+    gatewayV2Service?: unknown
   ) => {
     const {
       connection,
@@ -258,8 +256,8 @@ export const HCVaultSyncFns = {
   removeSecrets: async (
     secretSync: THCVaultSyncWithCredentials,
     secretMap: TSecretMap,
-    gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-    gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">
+    gatewayService?: unknown,
+    gatewayV2Service?: unknown
   ) => {
     const {
       connection,
@@ -327,8 +325,8 @@ export const HCVaultSyncFns = {
   },
   getSecrets: async (
     secretSync: THCVaultSyncWithCredentials,
-    gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-    gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">
+    gatewayService?: unknown,
+    gatewayV2Service?: unknown
   ) => {
     const {
       connection,

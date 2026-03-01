@@ -1,13 +1,11 @@
-import { TGatewayV2ServiceFactory } from "@app/ee/services/gateway-v2/gateway-v2-service";
-import { TRelayServiceFactory } from "@app/ee/services/relay/relay-service";
 import { getConfig } from "@app/lib/config/env";
 import { logger } from "@app/lib/logger";
 import { QueueJobs, QueueName, TQueueServiceFactory } from "@app/queue";
 
 type THealthAlertServiceFactoryDep = {
   queueService: TQueueServiceFactory;
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "healthcheckNotify">;
-  relayService: Pick<TRelayServiceFactory, "healthcheckNotify">;
+  gatewayV2Service?: unknown;
+  relayService?: unknown;
 };
 
 export type THealthAlertServiceFactory = ReturnType<typeof healthAlertServiceFactory>;

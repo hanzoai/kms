@@ -9,9 +9,6 @@ import nacl from "tweetnacl";
 import naclUtils from "tweetnacl-util";
 
 import { SecretEncryptionAlgo, SecretKeyEncoding } from "@app/db/schemas";
-import { isHsmActiveAndEnabled } from "@app/ee/services/hsm/hsm-fns";
-import { THsmServiceFactory } from "@app/ee/services/hsm/hsm-service";
-import { TLicenseServiceFactory } from "@app/ee/services/license/license-service";
 import { TKmsRootConfigDALFactory } from "@app/services/kms/kms-root-config-dal";
 import { RootKeyEncryptionStrategy } from "@app/services/kms/kms-types";
 import { TSuperAdminDALFactory } from "@app/services/super-admin/super-admin-dal";
@@ -25,6 +22,9 @@ import { asymmetricFipsValidated } from "./asymmetric-fips";
 import { hasherFipsValidated } from "./hash-fips";
 import type { TDecryptAsymmetricInput, TDecryptSymmetricInput, TEncryptSymmetricInput } from "./types";
 import { DigestType, SymmetricKeySize } from "./types";
+import { TLicenseServiceFactory } from "@app/services/license/license-service";
+import { THsmServiceFactory } from "@app/services/hsm/hsm-service";
+import { isHsmActiveAndEnabled } from "@app/services/hsm/hsm-fns";
 
 const bytesToBits = (bytes: number) => bytes * 8;
 

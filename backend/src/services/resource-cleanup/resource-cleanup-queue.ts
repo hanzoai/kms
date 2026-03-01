@@ -1,6 +1,4 @@
-import { TAuditLogDALFactory } from "@app/ee/services/audit-log/audit-log-dal";
-import { TScimServiceFactory } from "@app/ee/services/scim/scim-types";
-import { TSnapshotDALFactory } from "@app/ee/services/secret-snapshot/snapshot-dal";
+import { TAuditLogDALFactory } from "@app/services/audit-log/audit-log-dal";
 import { TKeyValueStoreDALFactory } from "@app/keystore/key-value-store-dal";
 import { getConfig } from "@app/lib/config/env";
 import { logger } from "@app/lib/logger";
@@ -26,14 +24,14 @@ type TDailyResourceCleanUpQueueServiceFactoryDep = {
   secretVersionDAL: Pick<TSecretVersionDALFactory, "pruneExcessVersions">;
   secretVersionV2DAL: Pick<TSecretVersionV2DALFactory, "pruneExcessVersions">;
   secretFolderVersionDAL: Pick<TSecretFolderVersionDALFactory, "pruneExcessVersions">;
-  snapshotDAL: Pick<TSnapshotDALFactory, "pruneExcessSnapshots">;
+  snapshotDAL?: { pruneExcessSnapshots: (...args: any[]) => any };
   secretSharingDAL: Pick<TSecretSharingDALFactory, "pruneExpiredSharedSecrets" | "pruneExpiredSecretRequests">;
   serviceTokenService: Pick<TServiceTokenServiceFactory, "notifyExpiringTokens">;
   queueService: TQueueServiceFactory;
   orgService: TOrgServiceFactory;
   userNotificationDAL: Pick<TUserNotificationDALFactory, "pruneNotifications">;
   keyValueStoreDAL: Pick<TKeyValueStoreDALFactory, "pruneExpiredKeys">;
-  scimService: Pick<TScimServiceFactory, "notifyExpiringTokens">;
+  scimService?: unknown;
   approvalRequestDAL: Pick<TApprovalRequestDALFactory, "markExpiredRequests">;
   approvalRequestGrantsDAL: Pick<TApprovalRequestGrantsDALFactory, "markExpiredGrants">;
   certificateRequestDAL: Pick<TCertificateRequestDALFactory, "markExpiredApprovalRequests">;
@@ -79,7 +77,7 @@ export const dailyResourceCleanUpQueueServiceFactory = ({
         await identityUniversalAuthClientSecretDAL.removeExpiredClientSecrets();
         await secretSharingDAL.pruneExpiredSharedSecrets();
         await secretSharingDAL.pruneExpiredSecretRequests();
-        await snapshotDAL.pruneExcessSnapshots();
+        await snapshotDAL!.pruneExcessSnapshots();
         await secretVersionDAL.pruneExcessVersions();
         await secretVersionV2DAL.pruneExcessVersions();
         await secretFolderVersionDAL.pruneExcessVersions();

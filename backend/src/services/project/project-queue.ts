@@ -1,6 +1,4 @@
-/* eslint-disable no-await-in-loop */
 import { randomUUID } from "crypto";
-
 import {
   AccessScope,
   IntegrationAuthsSchema,
@@ -17,9 +15,6 @@ import {
   TSecrets,
   TSecretVersions
 } from "@app/db/schemas";
-import { TSecretApprovalRequestDALFactory } from "@app/ee/services/secret-approval-request/secret-approval-request-dal";
-import { TSecretApprovalRequestSecretDALFactory } from "@app/ee/services/secret-approval-request/secret-approval-request-secret-dal";
-import { RequestState } from "@app/ee/services/secret-approval-request/secret-approval-request-types";
 import {
   decryptIntegrationAuths,
   decryptSecretApprovals,
@@ -30,7 +25,6 @@ import {
 import { crypto } from "@app/lib/crypto/cryptography";
 import { logger } from "@app/lib/logger";
 import { QueueJobs, QueueName, TQueueJobTypes, TQueueServiceFactory } from "@app/queue";
-
 import { TIntegrationAuthDALFactory } from "../integration-auth/integration-auth-dal";
 import { TMembershipRoleDALFactory } from "../membership/membership-role-dal";
 import { TMembershipUserDALFactory } from "../membership-user/membership-user-dal";
@@ -45,6 +39,9 @@ import { TSecretFolderDALFactory } from "../secret-folder/secret-folder-dal";
 import { TUserDALFactory } from "../user/user-dal";
 import { TProjectDALFactory } from "./project-dal";
 import { assignWorkspaceKeysToMembers, createProjectKey } from "./project-fns";
+/* eslint-disable no-await-in-loop */
+
+
 
 export type TProjectQueueFactory = ReturnType<typeof projectQueueFactory>;
 
@@ -54,8 +51,8 @@ type TProjectQueueFactoryDep = {
   folderDAL: Pick<TSecretFolderDALFactory, "find">;
   secretDAL: Pick<TSecretDALFactory, "find" | "bulkUpdateNoVersionIncrement">;
   projectKeyDAL: Pick<TProjectKeyDALFactory, "findLatestProjectKey" | "find" | "create" | "delete" | "insertMany">;
-  secretApprovalRequestDAL: Pick<TSecretApprovalRequestDALFactory, "find">;
-  secretApprovalSecretDAL: Pick<TSecretApprovalRequestSecretDALFactory, "find" | "bulkUpdateNoVersionIncrement">;
+  secretApprovalRequestDAL?: { find: (...args: any[]) => any };
+  secretApprovalSecretDAL?: { find: (...args: any[]) => any; bulkUpdateNoVersionIncrement: (...args: any[]) => any };
   projectBotDAL: Pick<TProjectBotDALFactory, "findOne" | "delete" | "create">;
   orgService: Pick<TOrgServiceFactory, "addGhostUser">;
   integrationAuthDAL: TIntegrationAuthDALFactory;
@@ -180,11 +177,11 @@ export const projectQueueFactory = ({
         );
         folderSecretVersionIdsToDelete.push(...deletedSecretVersions.map((el) => el.id));
 
-        const approvalRequests = await secretApprovalRequestDAL.find({
+        const approvalRequests = await secretApprovalRequestDAL!.find({
           status: RequestState.Open,
           folderId: folder.id
         });
-        const secretApprovals = await secretApprovalSecretDAL.find({
+        const secretApprovals = await secretApprovalSecretDAL!.find({
           $in: {
             requestId: approvalRequests.map((el) => el.id)
           }
@@ -572,7 +569,7 @@ export const projectQueueFactory = ({
 
         const secretUpdates = await secretDAL.bulkUpdateNoVersionIncrement(updatedSecrets, tx);
         const secretVersionUpdates = await secretVersionDAL.bulkUpdateNoVersionIncrement(updatedSecretVersions, tx);
-        const secretApprovalUpdates = await secretApprovalSecretDAL.bulkUpdateNoVersionIncrement(
+        const secretApprovalUpdates = await secretApprovalSecretDAL!.bulkUpdateNoVersionIncrement(
           updatedSecretApprovals,
           tx
         );

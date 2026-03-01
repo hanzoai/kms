@@ -1,7 +1,5 @@
 import { Knex } from "knex";
 
-import { initializeHsmModule } from "@app/ee/services/hsm/hsm-fns";
-import { hsmServiceFactory } from "@app/ee/services/hsm/hsm-service";
 import { getHsmConfig, initEnvConfig } from "@app/lib/config/env";
 import { crypto } from "@app/lib/crypto/cryptography";
 import { initLogger, logger } from "@app/lib/logger";
@@ -10,6 +8,8 @@ import { superAdminDALFactory } from "@app/services/super-admin/super-admin-dal"
 
 import { AccessScope, IdentityAuthMethod, OrgMembershipRole, ProjectMembershipRole, TableName } from "../schemas";
 import { seedData1 } from "../seed-data";
+import { hsmServiceFactory } from "@app/services/hsm/hsm-service";
+import { initializeHsmModule } from "@app/services/hsm/hsm-fns";
 
 export async function seed(knex: Knex): Promise<void> {
   // Deletes ALL existing entries

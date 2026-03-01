@@ -1,13 +1,10 @@
-/* eslint-disable no-await-in-loop */
 import { ForbiddenError } from "@casl/ability";
 import { Knex } from "knex";
-
 import { ActionProjectType, TableName } from "@app/db/schemas";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
-import { ProjectPermissionSecretActions, ProjectPermissionSub } from "@app/ee/services/permission/project-permission";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
+import { ProjectPermissionSecretActions, ProjectPermissionSub } from "@app/services/permission/project-permission";
 import { BadRequestError } from "@app/lib/errors";
 import { logger } from "@app/lib/logger";
-
 import { ActorAuthMethod, ActorType } from "../auth/auth-type";
 import { TProjectMembershipDALFactory } from "../project-membership/project-membership-dal";
 import { TReminderRecipientDALFactory } from "../reminder-recipients/reminder-recipient-dal";
@@ -15,6 +12,9 @@ import { TSecretV2BridgeDALFactory } from "../secret-v2-bridge/secret-v2-bridge-
 import { SmtpTemplates, TSmtpService } from "../smtp/smtp-service";
 import { TReminderDALFactory } from "./reminder-dal";
 import { TBatchCreateReminderDTO, TCreateReminderDTO, TReminderServiceFactory } from "./reminder-types";
+/* eslint-disable no-await-in-loop */
+
+
 
 type TReminderServiceFactoryDep = {
   reminderDAL: TReminderDALFactory;

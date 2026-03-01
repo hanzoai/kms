@@ -3,62 +3,9 @@ import "fastify";
 import { Cluster, Redis } from "ioredis";
 
 import { TUsers } from "@app/db/schemas";
-import { TAccessApprovalPolicyServiceFactory } from "@app/ee/services/access-approval-policy/access-approval-policy-types";
-import { TAccessApprovalRequestServiceFactory } from "@app/ee/services/access-approval-request/access-approval-request-types";
-import { TAiMcpActivityLogServiceFactory } from "@app/ee/services/ai-mcp-activity-log/ai-mcp-activity-log-service";
 import { TSecretAiPolicyServiceFactory } from "@app/services/secret-ai-policy/secret-ai-policy-service";
-import { TAiMcpEndpointServiceFactory } from "@app/ee/services/ai-mcp-endpoint/ai-mcp-endpoint-service";
-import { TAiMcpServerServiceFactory } from "@app/ee/services/ai-mcp-server/ai-mcp-server-service";
-import { TAssumePrivilegeServiceFactory } from "@app/ee/services/assume-privilege/assume-privilege-types";
-import { TAuditLogServiceFactory, TCreateAuditLogDTO } from "@app/ee/services/audit-log/audit-log-types";
-import { TAuditLogStreamServiceFactory } from "@app/ee/services/audit-log-stream/audit-log-stream-service";
-import { TCertificateAuthorityCrlServiceFactory } from "@app/ee/services/certificate-authority-crl/certificate-authority-crl-types";
-import { TCertificateEstServiceFactory } from "@app/ee/services/certificate-est/certificate-est-service";
-import { TDynamicSecretServiceFactory } from "@app/ee/services/dynamic-secret/dynamic-secret-types";
-import { TDynamicSecretLeaseServiceFactory } from "@app/ee/services/dynamic-secret-lease/dynamic-secret-lease-types";
-import { TEventBusService as TInternalEventBusService } from "@app/ee/services/event-bus";
-import { TExternalKmsServiceFactory } from "@app/ee/services/external-kms/external-kms-service";
-import { TGatewayServiceFactory } from "@app/ee/services/gateway/gateway-service";
-import { TGatewayV2ServiceFactory } from "@app/ee/services/gateway-v2/gateway-v2-service";
-import { TGithubOrgSyncServiceFactory } from "@app/ee/services/github-org-sync/github-org-sync-service";
-import { TGroupServiceFactory } from "@app/ee/services/group/group-service";
-import { TIdentityAuthTemplateServiceFactory } from "@app/ee/services/identity-auth-template";
-import { TKmipClientDALFactory } from "@app/ee/services/kmip/kmip-client-dal";
-import { TKmipOperationServiceFactory } from "@app/ee/services/kmip/kmip-operation-service";
-import { TKmipServiceFactory } from "@app/ee/services/kmip/kmip-service";
-import { TLdapConfigServiceFactory } from "@app/ee/services/ldap-config/ldap-config-service";
-import { TLicenseServiceFactory } from "@app/ee/services/license/license-service";
-import { TOidcConfigServiceFactory } from "@app/ee/services/oidc/oidc-config-service";
-import { TPamAccountServiceFactory } from "@app/ee/services/pam-account/pam-account-service";
-import { TPamFolderServiceFactory } from "@app/ee/services/pam-folder/pam-folder-service";
-import { TPamResourceServiceFactory } from "@app/ee/services/pam-resource/pam-resource-service";
-import { TPamSessionServiceFactory } from "@app/ee/services/pam-session/pam-session-service";
-import { TPamWebAccessServiceFactory } from "@app/ee/services/pam-web-access/pam-web-access-service";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
-import { TPitServiceFactory } from "@app/ee/services/pit/pit-service";
-import { TPkiAcmeServiceFactory } from "@app/ee/services/pki-acme/pki-acme-types";
-import { TPkiDiscoveryServiceFactory } from "@app/ee/services/pki-discovery/pki-discovery-service";
-import { TPkiInstallationServiceFactory } from "@app/ee/services/pki-discovery/pki-installation-service";
-import { TProjectEventsService } from "@app/ee/services/project-events/project-events-service";
-import { TProjectEventsSSEService } from "@app/ee/services/project-events/project-events-sse-service";
-import { TProjectTemplateServiceFactory } from "@app/ee/services/project-template/project-template-types";
-import { RateLimitConfiguration, TRateLimitServiceFactory } from "@app/ee/services/rate-limit/rate-limit-types";
-import { TRelayServiceFactory } from "@app/ee/services/relay/relay-service";
-import { TSamlConfigServiceFactory } from "@app/ee/services/saml-config/saml-config-types";
-import { TScimServiceFactory } from "@app/ee/services/scim/scim-types";
-import { TSecretApprovalPolicyServiceFactory } from "@app/ee/services/secret-approval-policy/secret-approval-policy-service";
-import { TSecretApprovalRequestServiceFactory } from "@app/ee/services/secret-approval-request/secret-approval-request-service";
-import { TSecretRotationServiceFactory } from "@app/ee/services/secret-rotation/secret-rotation-service";
-import { TSecretRotationV2ServiceFactory } from "@app/ee/services/secret-rotation-v2/secret-rotation-v2-service";
-import { TSecretScanningServiceFactory } from "@app/ee/services/secret-scanning/secret-scanning-service";
-import { TSecretScanningV2ServiceFactory } from "@app/ee/services/secret-scanning-v2/secret-scanning-v2-service";
-import { TSecretSnapshotServiceFactory } from "@app/ee/services/secret-snapshot/secret-snapshot-service";
-import { TSshCertificateAuthorityServiceFactory } from "@app/ee/services/ssh/ssh-certificate-authority-service";
-import { TSshCertificateTemplateServiceFactory } from "@app/ee/services/ssh-certificate-template/ssh-certificate-template-service";
-import { TSshHostServiceFactory } from "@app/ee/services/ssh-host/ssh-host-service";
-import { TSshHostGroupServiceFactory } from "@app/ee/services/ssh-host-group/ssh-host-group-service";
-import { TSubOrgServiceFactory } from "@app/ee/services/sub-org/sub-org-service";
-import { TTrustedIpServiceFactory } from "@app/ee/services/trusted-ip/trusted-ip-types";
+import { TAuditLogServiceFactory, TCreateAuditLogDTO } from "@app/services/audit-log/audit-log-types";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
 import { TAuthMode } from "@app/server/plugins/auth/inject-identity";
 import { TAccountRecoveryServiceFactory } from "@app/services/account-recovery/account-recovery-service";
 import { TAdditionalPrivilegeServiceFactory } from "@app/services/additional-privilege/additional-privilege-service";
@@ -85,7 +32,6 @@ import { TExternalGroupOrgRoleMappingServiceFactory } from "@app/services/extern
 import { TExternalMigrationServiceFactory } from "@app/services/external-migration/external-migration-service";
 import { TFolderCommitServiceFactory } from "@app/services/folder-commit/folder-commit-service";
 import { TGroupProjectServiceFactory } from "@app/services/group-project/group-project-service";
-import { THsmServiceFactory } from "@app/services/hsm/hsm-service";
 import { TIdentityServiceFactory } from "@app/services/identity/identity-service";
 import { TIdentityAccessTokenServiceFactory } from "@app/services/identity-access-token/identity-access-token-service";
 import { TIdentityAliCloudAuthServiceFactory } from "@app/services/identity-alicloud-auth/identity-alicloud-auth-service";
@@ -147,6 +93,10 @@ import { TUserEngagementServiceFactory } from "@app/services/user-engagement/use
 import { TWebAuthnServiceFactory } from "@app/services/webauthn/webauthn-service";
 import { TWebhookServiceFactory } from "@app/services/webhook/webhook-service";
 import { TWorkflowIntegrationServiceFactory } from "@app/services/workflow-integration/workflow-integration-service";
+import { TLicenseServiceFactory } from "@app/services/license/license-service";
+import { TRateLimitServiceFactory } from "@app/services/rate-limit/rate-limit-service";
+import { THsmServiceFactory } from "@app/services/hsm/hsm-service";
+import { TIdentityV2ServiceFactory } from "@app/services/identity-v2/identity-service";
 
 declare module "@fastify/request-context" {
   interface RequestContextData {
@@ -189,6 +139,18 @@ declare module "@fastify/request-context" {
     assumedPrivilegeDetails?: { requesterId: string; actorId: string; actorType: ActorType; projectId: string };
   }
 }
+
+type RateLimitConfiguration = {
+  readLimit: number;
+  writeLimit: number;
+  secretsLimit: number;
+  publicEndpointLimit: number;
+  authRateLimit: number;
+  inviteUserRateLimit: number;
+  mfaRateLimit: number;
+  identityCreationLimit: number;
+  projectCreationLimit: number;
+};
 
 declare module "fastify" {
   interface Session {
@@ -236,10 +198,6 @@ declare module "fastify" {
       name: string;
     };
     auditLogInfo: Pick<TCreateAuditLogDTO, "userAgent" | "userAgentType" | "ipAddress" | "actor">;
-    ssoConfig: Awaited<ReturnType<TSamlConfigServiceFactory["getSaml"]>>;
-    ldapConfig: Awaited<ReturnType<TLdapConfigServiceFactory["getLdapCfg"]>> & {
-      allowedFields?: TAllowedFields[];
-    };
   }
 
   interface FastifyInstance {
@@ -252,10 +210,8 @@ declare module "fastify" {
       authToken: TAuthTokenServiceFactory;
       permission: TPermissionServiceFactory;
       org: TOrgServiceFactory;
-      oidc: TOidcConfigServiceFactory;
       superAdmin: TSuperAdminServiceFactory;
       user: TUserServiceFactory;
-      group: TGroupServiceFactory;
       groupProject: TGroupProjectServiceFactory;
       apiKey: TApiKeyServiceFactory;
       pkiAlert: TPkiAlertServiceFactory;
@@ -289,86 +245,39 @@ declare module "fastify" {
       identityOidcAuth: TIdentityOidcAuthServiceFactory;
       identityJwtAuth: TIdentityJwtAuthServiceFactory;
       identityLdapAuth: TIdentityLdapAuthServiceFactory;
-      accessApprovalPolicy: TAccessApprovalPolicyServiceFactory;
-      accessApprovalRequest: TAccessApprovalRequestServiceFactory;
-      secretApprovalPolicy: TSecretApprovalPolicyServiceFactory;
-      secretApprovalRequest: TSecretApprovalRequestServiceFactory;
-      secretRotation: TSecretRotationServiceFactory;
-      snapshot: TSecretSnapshotServiceFactory;
-      saml: TSamlConfigServiceFactory;
-      scim: TScimServiceFactory;
-      ldap: TLdapConfigServiceFactory;
       auditLog: TAuditLogServiceFactory;
-      auditLogStream: TAuditLogStreamServiceFactory;
       certificate: TCertificateServiceFactory;
       certificateV3: TCertificateV3ServiceFactory;
       certificateRequest: TCertificateRequestServiceFactory;
       certificateTemplate: TCertificateTemplateServiceFactory;
       certificatePolicy: TCertificatePolicyServiceFactory;
       certificateProfile: TCertificateProfileServiceFactory;
-      sshCertificateAuthority: TSshCertificateAuthorityServiceFactory;
-      sshCertificateTemplate: TSshCertificateTemplateServiceFactory;
-      sshHost: TSshHostServiceFactory;
-      sshHostGroup: TSshHostGroupServiceFactory;
       certificateAuthority: TCertificateAuthorityServiceFactory;
-      certificateAuthorityCrl: TCertificateAuthorityCrlServiceFactory;
-      certificateEst: TCertificateEstServiceFactory;
-      pkiAcme: TPkiAcmeServiceFactory;
       certificateEstV3: TCertificateEstV3ServiceFactory;
       pkiCollection: TPkiCollectionServiceFactory;
       pkiSubscriber: TPkiSubscriberServiceFactory;
       pkiSync: TPkiSyncServiceFactory;
-      pkiDiscovery: TPkiDiscoveryServiceFactory;
-      pkiInstallation: TPkiInstallationServiceFactory;
-      secretScanning: TSecretScanningServiceFactory;
-      license: TLicenseServiceFactory;
-      trustedIp: TTrustedIpServiceFactory;
       secretBlindIndex: TSecretBlindIndexServiceFactory;
       telemetry: TTelemetryServiceFactory;
-      dynamicSecret: TDynamicSecretServiceFactory;
-      dynamicSecretLease: TDynamicSecretLeaseServiceFactory;
       secretSharing: TSecretSharingServiceFactory;
-      rateLimit: TRateLimitServiceFactory;
       userEngagement: TUserEngagementServiceFactory;
-      externalKms: TExternalKmsServiceFactory;
-      hsm: THsmServiceFactory;
       orgAdmin: TOrgAdminServiceFactory;
       slack: TSlackServiceFactory;
       workflowIntegration: TWorkflowIntegrationServiceFactory;
       cmek: TCmekServiceFactory;
       migration: TExternalMigrationServiceFactory;
       externalGroupOrgRoleMapping: TExternalGroupOrgRoleMappingServiceFactory;
-      projectTemplate: TProjectTemplateServiceFactory;
       totp: TTotpServiceFactory;
       webAuthn: TWebAuthnServiceFactory;
       appConnection: TAppConnectionServiceFactory;
       secretSync: TSecretSyncServiceFactory;
-      kmip: TKmipServiceFactory;
-      kmipOperation: TKmipOperationServiceFactory;
-      gateway: TGatewayServiceFactory;
-      secretRotationV2: TSecretRotationV2ServiceFactory;
       microsoftTeams: TMicrosoftTeamsServiceFactory;
-      assumePrivileges: TAssumePrivilegeServiceFactory;
-      relay: TRelayServiceFactory;
-      gatewayV2: TGatewayV2ServiceFactory;
-      githubOrgSync: TGithubOrgSyncServiceFactory;
       folderCommit: TFolderCommitServiceFactory;
-      pit: TPitServiceFactory;
-      secretScanningV2: TSecretScanningV2ServiceFactory;
       internalCertificateAuthority: TInternalCertificateAuthorityServiceFactory;
       pkiTemplate: TPkiTemplatesServiceFactory;
       reminder: TReminderServiceFactory;
-      eventBus: TInternalEventBusService;
-      projectEvents: TProjectEventsService;
-      projectEventsSSE: TProjectEventsSSEService;
-      identityAuthTemplate: TIdentityAuthTemplateServiceFactory;
       notification: TNotificationServiceFactory;
       offlineUsageReport: TOfflineUsageReportServiceFactory;
-      pamFolder: TPamFolderServiceFactory;
-      pamResource: TPamResourceServiceFactory;
-      pamAccount: TPamAccountServiceFactory;
-      pamSession: TPamSessionServiceFactory;
-      pamWebAccess: TPamWebAccessServiceFactory;
       mfaSession: TMfaSessionServiceFactory;
       upgradePath: TUpgradePathService;
 
@@ -378,19 +287,17 @@ declare module "fastify" {
       additionalPrivilege: TAdditionalPrivilegeServiceFactory;
       role: TRoleServiceFactory;
       convertor: TConvertorServiceFactory;
-      subOrganization: TSubOrgServiceFactory;
       pkiAlertV2: TPkiAlertV2ServiceFactory;
-      aiMcpServer: TAiMcpServerServiceFactory;
-      aiMcpEndpoint: TAiMcpEndpointServiceFactory;
-      aiMcpActivityLog: TAiMcpActivityLogServiceFactory;
       secretAiPolicy: TSecretAiPolicyServiceFactory;
       approvalPolicy: TApprovalPolicyServiceFactory;
+      license: TLicenseServiceFactory;
+      rateLimit: TRateLimitServiceFactory;
+      hsm: THsmServiceFactory;
     };
     // this is exclusive use for middlewares in which we need to inject data
     // everywhere else access using service layer
     store: {
       user: Pick<TUserDALFactory, "findById">;
-      kmipClient: Pick<TKmipClientDALFactory, "findByProjectAndClientId">;
     };
   }
 }

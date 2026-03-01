@@ -1,5 +1,4 @@
 import { OrgMembershipRole } from "@app/db/schemas";
-import { TFeatureSet } from "@app/ee/services/license/license-types";
 import { BadRequestError, NotFoundError } from "@app/lib/errors";
 
 import { TRoleDALFactory } from "../role/role-dal";

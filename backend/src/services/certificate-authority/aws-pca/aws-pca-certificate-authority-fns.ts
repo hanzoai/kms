@@ -1,4 +1,3 @@
-/* eslint-disable no-await-in-loop */
 import {
   ACMPCAClient,
   CertificateAuthorityStatus,
@@ -11,7 +10,6 @@ import {
 } from "@aws-sdk/client-acm-pca";
 import * as x509 from "@peculiar/x509";
 import RE2 from "re2";
-
 import { TableName } from "@app/db/schemas";
 import { CustomAWSHasher } from "@app/lib/aws/hashing";
 import { crypto } from "@app/lib/crypto/cryptography";
@@ -42,7 +40,6 @@ import { TCertificateProfileDALFactory } from "@app/services/certificate-profile
 import { TKmsServiceFactory } from "@app/services/kms/kms-service";
 import { TProjectDALFactory } from "@app/services/project/project-dal";
 import { getProjectKmsCertificateKeyId } from "@app/services/project/project-fns";
-
 import { TCertificateAuthorityDALFactory } from "../certificate-authority-dal";
 import { CaStatus, CaType } from "../certificate-authority-enums";
 import { keyAlgorithmToAlgCfg } from "../certificate-authority-fns";
@@ -57,6 +54,9 @@ import {
   TCreateAwsPcaCertificateAuthorityDTO,
   TUpdateAwsPcaCertificateAuthorityDTO
 } from "./aws-pca-certificate-authority-types";
+/* eslint-disable no-await-in-loop */
+
+
 
 const base64UrlToBase64 = (base64url: string): string => {
   let base64 = base64url.replace(new RE2(/-/g), "+").replace(new RE2(/_/g), "/");

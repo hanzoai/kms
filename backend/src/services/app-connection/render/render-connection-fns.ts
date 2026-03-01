@@ -1,10 +1,7 @@
-/* eslint-disable no-await-in-loop */
 import { AxiosError } from "axios";
-
 import { request } from "@app/lib/config/request";
 import { BadRequestError } from "@app/lib/errors";
 import { IntegrationUrls } from "@app/services/integration-auth/integration-list";
-
 import { AppConnection } from "../app-connection-enums";
 import { RenderConnectionMethod } from "./render-connection-enums";
 import {
@@ -15,6 +12,9 @@ import {
   TRenderEnvironmentGroup,
   TRenderService
 } from "./render-connection-types";
+/* eslint-disable no-await-in-loop */
+
+
 
 export const getRenderConnectionListItem = () => {
   return {

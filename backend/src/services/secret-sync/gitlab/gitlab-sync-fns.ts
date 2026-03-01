@@ -1,6 +1,4 @@
-/* eslint-disable no-await-in-loop */
 import { GitbeakerRequestError } from "@gitbeaker/rest";
-
 import { TAppConnectionDALFactory } from "@app/services/app-connection/app-connection-dal";
 import {
   getGitLabClient,
@@ -13,9 +11,11 @@ import { TGitLabSyncWithCredentials, TGitLabVariable } from "@app/services/secre
 import { SecretSyncError } from "@app/services/secret-sync/secret-sync-errors";
 import { matchesSchema } from "@app/services/secret-sync/secret-sync-fns";
 import { TSecretMap } from "@app/services/secret-sync/secret-sync-types";
-
 import { SECRET_SYNC_NAME_MAP } from "../secret-sync-maps";
 import { GitLabSyncScope } from "./gitlab-sync-enums";
+/* eslint-disable no-await-in-loop */
+
+
 
 interface TGitLabVariablePayload {
   key?: string;

@@ -9,7 +9,6 @@ import {
   TemporaryPermissionMode,
   UsersSchema
 } from "@app/db/schemas";
-import { FilterReturnedUsers } from "@app/ee/services/group/group-types";
 import { ApiDocsTags, GROUPS, PROJECTS } from "@app/lib/api-docs";
 import { ms } from "@app/lib/ms";
 import { isUuidV4 } from "@app/lib/validator";

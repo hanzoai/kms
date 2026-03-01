@@ -1,12 +1,12 @@
-/* eslint-disable no-await-in-loop */
 import { AxiosError } from "axios";
-
 import { BadRequestError } from "@app/lib/errors";
 import { AppConnection } from "@app/services/app-connection/app-connection-enums";
-
 import { RailwayConnectionMethod } from "./railway-connection-constants";
 import { RailwayPublicAPI } from "./railway-connection-public-client";
 import { TRailwayConnection, TRailwayConnectionConfig } from "./railway-connection-types";
+/* eslint-disable no-await-in-loop */
+
+
 
 export const getRailwayConnectionListItem = () => {
   return {

@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/no-floating-promises */
 import { z } from "zod";
-
 import { CertificateTemplatesSchema } from "@app/db/schemas";
-import { EventType } from "@app/ee/services/audit-log/audit-log-types";
+import { EventType } from "@app/services/audit-log/audit-log-types";
 import { ApiDocsTags, CERTIFICATE_AUTHORITIES } from "@app/lib/api-docs";
 import { ms } from "@app/lib/ms";
 import { readLimit, writeLimit } from "@app/server/config/rateLimiter";
@@ -20,8 +18,10 @@ import {
   validateCaDateField
 } from "@app/services/certificate-authority/certificate-authority-validators";
 import { PostHogEventTypes } from "@app/services/telemetry/telemetry-types";
-
 import { InternalCertificateAuthorityResponseSchema } from "../sanitizedSchemas";
+/* eslint-disable @typescript-eslint/no-floating-promises */
+
+
 
 export const registerCaRouter = async (server: FastifyZodProvider) => {
   server.route({

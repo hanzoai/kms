@@ -1,15 +1,11 @@
-/* eslint-disable no-await-in-loop */
 import { ForbiddenError } from "@casl/ability";
-
 import { AccessScope, ActionProjectType, ProjectMembershipRole, ProjectVersion, TableName } from "@app/db/schemas";
-import { TLicenseServiceFactory } from "@app/ee/services/license/license-service";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
-import { ProjectPermissionMemberActions, ProjectPermissionSub } from "@app/ee/services/permission/project-permission";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
+import { ProjectPermissionMemberActions, ProjectPermissionSub } from "@app/services/permission/project-permission";
 import { getConfig } from "@app/lib/config/env";
 import { BadRequestError, NotFoundError } from "@app/lib/errors";
 import { groupBy } from "@app/lib/fn";
-
-import { TUserGroupMembershipDALFactory } from "../../ee/services/group/user-group-membership-dal";
+import { unknown } from "../../ee/services/group/user-group-membership-dal";
 import { TAdditionalPrivilegeDALFactory } from "../additional-privilege/additional-privilege-dal";
 import { ActorType } from "../auth/auth-type";
 import { TGroupProjectDALFactory } from "../group-project/group-project-dal";
@@ -30,6 +26,10 @@ import {
   TGetProjectMembershipDTO,
   TLeaveProjectDTO
 } from "./project-membership-types";
+import { TLicenseServiceFactory } from "@app/services/license/license-service";
+/* eslint-disable no-await-in-loop */
+
+
 
 type TProjectMembershipServiceFactoryDep = {
   permissionService: Pick<
@@ -41,7 +41,7 @@ type TProjectMembershipServiceFactoryDep = {
   membershipUserDAL: TMembershipUserDALFactory;
   membershipRoleDAL: Pick<TMembershipRoleDALFactory, "insertMany" | "find" | "delete">;
   userDAL: Pick<TUserDALFactory, "find">;
-  userGroupMembershipDAL: TUserGroupMembershipDALFactory;
+  userGroupMembershipDAL?: unknown;
   projectDAL: Pick<TProjectDALFactory, "findById" | "findProjectGhostUser" | "transaction" | "findProjectById">;
   projectKeyDAL: Pick<TProjectKeyDALFactory, "findLatestProjectKey" | "delete" | "insertMany">;
   licenseService: Pick<TLicenseServiceFactory, "getPlan">;

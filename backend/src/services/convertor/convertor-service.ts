@@ -1,5 +1,4 @@
 import { AccessScope } from "@app/db/schemas";
-import { TGroupDALFactory } from "@app/ee/services/group/group-dal";
 import { NotFoundError } from "@app/lib/errors";
 
 import { TAdditionalPrivilegeDALFactory } from "../additional-privilege/additional-privilege-dal";
@@ -9,7 +8,7 @@ import { TProjectDALFactory } from "../project/project-dal";
 type TConvertorServiceFactoryDep = {
   projectDAL: Pick<TProjectDALFactory, "findOne">;
   membershipDAL: Pick<TMembershipDALFactory, "findOne">;
-  groupDAL: Pick<TGroupDALFactory, "findOne">;
+  groupDAL?: Pick<TGroupDALFactory, "findOne">;
   additionalPrivilegeDAL: Pick<TAdditionalPrivilegeDALFactory, "findOne">;
 };
 
@@ -110,7 +109,7 @@ export const convertorServiceFactory = ({
   };
 
   const getGroupIdFromName = async (name: string, orgId: string) => {
-    const group = await groupDAL.findOne({ orgId, name });
+    const group = await groupDAL!.findOne({ orgId, name });
     if (!group) throw new NotFoundError({ message: `Failed to find group with name ${name}` });
     return { groupId: group.id, group };
   };

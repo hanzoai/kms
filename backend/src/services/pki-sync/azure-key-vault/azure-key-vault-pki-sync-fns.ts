@@ -1,7 +1,5 @@
-/* eslint-disable no-await-in-loop */
 import { AxiosError } from "axios";
 import * as crypto from "crypto";
-
 import { TCertificateSyncs } from "@app/db/schemas";
 import { request } from "@app/lib/config/request";
 import { logger } from "@app/lib/logger";
@@ -14,10 +12,12 @@ import { createConnectionQueue, RateLimitConfig } from "@app/services/connection
 import { TKmsServiceFactory } from "@app/services/kms/kms-service";
 import { matchesCertificateNameSchema } from "@app/services/pki-sync/pki-sync-fns";
 import { TCertificateMap } from "@app/services/pki-sync/pki-sync-types";
-
 import { PkiSyncError } from "../pki-sync-errors";
 import { TPkiSyncWithCredentials } from "../pki-sync-types";
 import { GetAzureKeyVaultCertificate, TAzureKeyVaultPkiSyncConfig } from "./azure-key-vault-pki-sync-types";
+/* eslint-disable no-await-in-loop */
+
+
 
 const AZURE_RATE_LIMIT_CONFIG: RateLimitConfig = {
   MAX_CONCURRENT_REQUESTS: 10,

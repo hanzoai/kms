@@ -1,16 +1,16 @@
-/* eslint-disable no-await-in-loop */
-/* eslint-disable class-methods-use-this */
 import { AxiosInstance } from "axios";
-
 import { createRequestClient } from "@app/lib/config/request";
 import { IntegrationUrls } from "@app/services/integration-auth/integration-list";
-
 import { DigitalOceanConnectionMethod } from "./digital-ocean-connection-constants";
 import {
   TDigitalOceanApp,
   TDigitalOceanConnectionConfig,
   TDigitalOceanVariable
 } from "./digital-ocean-connection-types";
+/* eslint-disable no-await-in-loop */
+/* eslint-disable class-methods-use-this */
+
+
 
 class DigitalOceanAppPlatformPublicClient {
   private readonly client: AxiosInstance;

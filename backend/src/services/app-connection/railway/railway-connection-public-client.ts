@@ -1,10 +1,7 @@
-/* eslint-disable class-methods-use-this */
 import { AxiosError, AxiosInstance, AxiosResponse } from "axios";
-
 import { createRequestClient } from "@app/lib/config/request";
 import { BadRequestError } from "@app/lib/errors";
 import { IntegrationUrls } from "@app/services/integration-auth/integration-list";
-
 import { RailwayConnectionMethod } from "./railway-connection-constants";
 import {
   RailwayAccountWorkspaceListSchema,
@@ -13,6 +10,9 @@ import {
   RailwayProjectsListSchema
 } from "./railway-connection-schemas";
 import { RailwayProject, TRailwayConnectionConfig, TRailwayResponse } from "./railway-connection-types";
+/* eslint-disable class-methods-use-this */
+
+
 
 type RailwaySendReqOptions = Pick<TRailwayConnectionConfig, "credentials" | "method">;
 

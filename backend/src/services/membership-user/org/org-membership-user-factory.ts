@@ -1,10 +1,8 @@
 import { ForbiddenError } from "@casl/ability";
 
 import { AccessScope, OrganizationActionScope, OrgMembershipStatus } from "@app/db/schemas";
-import { TUserGroupMembershipDALFactory } from "@app/ee/services/group/user-group-membership-dal";
-import { TLicenseServiceFactory } from "@app/ee/services/license/license-service";
-import { OrgPermissionActions, OrgPermissionSubjects } from "@app/ee/services/permission/org-permission";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
+import { OrgPermissionActions, OrgPermissionSubjects } from "@app/services/permission/org-permission";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
 import { getConfig } from "@app/lib/config/env";
 import { BadRequestError, ForbiddenRequestError, InternalServerError } from "@app/lib/errors";
 import { ActorType } from "@app/services/auth/auth-type";
@@ -19,6 +17,7 @@ import { TUserDALFactory } from "@app/services/user/user-dal";
 
 import { TMembershipUserDALFactory } from "../membership-user-dal";
 import { TMembershipUserScopeFactory } from "../membership-user-types";
+import { TLicenseServiceFactory } from "@app/services/license/license-service";
 
 type TOrgMembershipUserScopeFactoryDep = {
   permissionService: Pick<TPermissionServiceFactory, "getOrgPermission">;
@@ -26,7 +25,7 @@ type TOrgMembershipUserScopeFactoryDep = {
   userDAL: Pick<TUserDALFactory, "findById">;
   smtpService: Pick<TSmtpService, "sendMail">;
   orgDAL: Pick<TOrgDALFactory, "findById">;
-  userGroupMembershipDAL: Pick<TUserGroupMembershipDALFactory, "delete">;
+  userGroupMembershipDAL?: { delete: (...args: any[]) => any };
   licenseService: Pick<TLicenseServiceFactory, "getPlan">;
   membershipUserDAL: Pick<TMembershipUserDALFactory, "find">;
 };

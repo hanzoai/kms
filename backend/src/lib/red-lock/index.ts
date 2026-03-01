@@ -1,13 +1,13 @@
+import { crypto } from "@app/lib/crypto/cryptography";
+import { EventEmitter } from "events";
+import { Redis as IORedisClient, Cluster as IORedisCluster } from "ioredis";
 /* eslint-disable */
 // Source code credits: https://github.com/mike-marcacci/node-redlock
 // Taken to avoid external dependency
-import { crypto } from "@app/lib/crypto/cryptography";
-import { EventEmitter } from "events";
 
 // AbortController became available as a global in node version 16. Once version
 // 14 reaches its end-of-life, this can be removed.
 
-import { Redis as IORedisClient, Cluster as IORedisCluster } from "ioredis";
 
 type Client = IORedisClient | IORedisCluster;
 

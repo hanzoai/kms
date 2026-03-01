@@ -17,11 +17,11 @@ import { initDbConnection } from "@app/db";
 import { queueServiceFactory } from "@app/queue";
 import { keyStoreFactory } from "@app/keystore/keystore";
 import { keyValueStoreDALFactory } from "@app/keystore/key-value-store-dal";
-import { initializeHsmModule } from "@app/ee/services/hsm/hsm-fns";
+import { initializeHsmModule } from "@app/services/hsm/hsm-fns";
 import { buildRedisFromConfig } from "@app/lib/config/redis";
 import { superAdminDALFactory } from "@app/services/super-admin/super-admin-dal";
 import { bootstrapCheck } from "@app/server/boot-strap-check";
-import { hsmServiceFactory } from "@app/ee/services/hsm/hsm-service";
+import { hsmServiceFactory } from "@app/services/hsm/hsm-service";
 import { kmsRootConfigDALFactory } from "@app/services/kms/kms-root-config-dal";
 import { queueJobsDALFactory } from "@app/queue/queue-jobs-dal";
 

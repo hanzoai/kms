@@ -1,16 +1,15 @@
 import { ForbiddenError } from "@casl/ability";
 
 import { ActionProjectType } from "@app/db/schemas";
-import { TListProjectGroupUsersDTO } from "@app/ee/services/group/group-types";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
-import { ProjectPermissionGroupActions, ProjectPermissionSub } from "@app/ee/services/permission/project-permission";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
+import { ProjectPermissionGroupActions, ProjectPermissionSub } from "@app/services/permission/project-permission";
 import { NotFoundError } from "@app/lib/errors";
 
 import { TGroupDALFactory } from "../../ee/services/group/group-dal";
 import { TProjectDALFactory } from "../project/project-dal";
 
 type TGroupProjectServiceFactoryDep = {
-  groupDAL: Pick<TGroupDALFactory, "findOne" | "findAllGroupPossibleUsers">;
+  groupDAL?: Pick<TGroupDALFactory, "findOne" | "findAllGroupPossibleUsers">;
   projectDAL: Pick<TProjectDALFactory, "findOne" | "findProjectGhostUser" | "findById">;
   permissionService: Pick<TPermissionServiceFactory, "getProjectPermission" | "getProjectPermissionByRoles">;
 };
@@ -51,7 +50,7 @@ export const groupProjectServiceFactory = ({
     });
     ForbiddenError.from(permission).throwUnlessCan(ProjectPermissionGroupActions.Read, ProjectPermissionSub.Groups);
 
-    const { members, totalCount } = await groupDAL.findAllGroupPossibleUsers({
+    const { members, totalCount } = await groupDAL!.findAllGroupPossibleUsers({
       orgId: project.orgId,
       groupId: id,
       offset,

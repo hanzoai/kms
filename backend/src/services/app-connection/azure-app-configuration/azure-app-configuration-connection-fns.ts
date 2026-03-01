@@ -1,18 +1,18 @@
-/* eslint-disable no-case-declarations */
 import { AxiosError, AxiosResponse } from "axios";
-
 import { getConfig } from "@app/lib/config/env";
 import { request } from "@app/lib/config/request";
 import { BadRequestError, InternalServerError } from "@app/lib/errors";
 import { getAppConnectionMethodName } from "@app/services/app-connection/app-connection-fns";
 import { IntegrationUrls } from "@app/services/integration-auth/integration-list";
-
 import { AppConnection } from "../app-connection-enums";
 import { AzureAppConfigurationConnectionMethod } from "./azure-app-configuration-connection-enums";
 import {
   ExchangeCodeAzureResponse,
   TAzureAppConfigurationConnectionConfig
 } from "./azure-app-configuration-connection-types";
+/* eslint-disable no-case-declarations */
+
+
 
 export const getAzureAppConfigurationConnectionListItem = () => {
   const { INF_APP_CONNECTION_AZURE_APP_CONFIGURATION_CLIENT_ID } = getConfig();

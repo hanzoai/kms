@@ -1,12 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable no-param-reassign,no-await-in-loop */
-// Taken from old code and too much work at present thus disabling the above any rules
-// resolve it later: akhilmhdh - TODO
-
 import {
   CreateSecretCommand,
   DeleteSecretCommand,
@@ -28,7 +19,6 @@ import sodium from "libsodium-wrappers";
 import isEqual from "lodash.isequal";
 import RE2 from "re2";
 import { z } from "zod";
-
 import { SecretType, TIntegrationAuths, TIntegrations } from "@app/db/schemas";
 import { CustomAWSHasher } from "@app/lib/aws/hashing";
 import { getConfig } from "@app/lib/config/env";
@@ -37,7 +27,6 @@ import { crypto } from "@app/lib/crypto/cryptography";
 import { BadRequestError, InternalServerError } from "@app/lib/errors";
 import { logger } from "@app/lib/logger";
 import { TCreateManySecretsRawFn, TUpdateManySecretsRawFn } from "@app/services/secret/secret-types";
-
 import { TIntegrationDALFactory } from "../integration/integration-dal";
 import { IntegrationMetadataSchema } from "../integration/integration-schema";
 import { ResourceMetadataDTO } from "../resource-metadata/resource-metadata-schema";
@@ -56,6 +45,17 @@ import {
   IntegrationUrls
 } from "./integration-list";
 import { isAzureKeyVaultReference } from "./integration-sync-secret-fns";
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable no-param-reassign,no-await-in-loop */
+// Taken from old code and too much work at present thus disabling the above any rules
+// resolve it later: akhilmhdh - TODO
+
+
+
 
 const getSecretKeyValuePair = (secrets: Record<string, { value: string | null; comment?: string } | null>) =>
   Object.keys(secrets).reduce<Record<string, string | null | undefined>>((prev, key) => {

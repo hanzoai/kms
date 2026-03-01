@@ -1,10 +1,10 @@
-/* eslint-disable no-console */
 import { Knex } from "knex";
-
 import { QueueJobs, QueueName } from "@app/queue";
-
 import { TableName } from "../schemas";
 import { createOnUpdateTrigger, dropOnUpdateTrigger } from "../utils";
+/* eslint-disable no-console */
+
+
 
 interface MigrationConfig<TData> {
   pgBossQueueName: string;

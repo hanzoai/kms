@@ -1,6 +1,5 @@
 import { AccessScope, OrgMembershipRole } from "@app/db/schemas";
-import { TLicenseServiceFactory } from "@app/ee/services/license/license-service";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
 import { TKeyStoreFactory } from "@app/keystore/keystore";
 import { BadRequestError, NotFoundError } from "@app/lib/errors";
 import { getIdentityActiveLockoutAuthMethods } from "@app/services/identity-v2/identity-fns";
@@ -18,6 +17,7 @@ import {
 } from "./identity-types";
 import { newOrgIdentityFactory } from "./org/org-identity-factory";
 import { newProjectIdentityFactory } from "./project/project-identity-factory";
+import { TLicenseServiceFactory } from "@app/services/license/license-service";
 
 type TScopedIdentityV2ServiceFactoryDep = {
   identityDAL: TIdentityV2DALFactory;

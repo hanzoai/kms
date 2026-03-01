@@ -1,6 +1,6 @@
 import fp from "fastify-plugin";
 
-import { UserAgentType } from "@app/ee/services/audit-log/audit-log-types";
+import { UserAgentType } from "@app/services/audit-log/audit-log-types";
 import { BadRequestError } from "@app/lib/errors";
 import { ActorType } from "@app/services/auth/auth-type";
 

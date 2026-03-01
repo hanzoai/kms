@@ -1,7 +1,7 @@
 import { Knex } from "knex";
 
 import { SecretType, TSecretsV2, TSecretsV2Insert, TSecretsV2Update } from "@app/db/schemas";
-import { ProjectPermissionSecretActions } from "@app/ee/services/permission/project-permission";
+import { ProjectPermissionSecretActions } from "@app/services/permission/project-permission";
 import { OrderByDirection, TProjectPermission } from "@app/lib/types";
 import { TProjectDALFactory } from "@app/services/project/project-dal";
 import { PersonalOverridesBehavior, SecretsOrderBy } from "@app/services/secret/secret-types";

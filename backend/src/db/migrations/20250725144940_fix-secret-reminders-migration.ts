@@ -1,11 +1,11 @@
-/* eslint-disable no-await-in-loop */
 import { Knex } from "knex";
-
 import { chunkArray } from "@app/lib/fn";
 import { initLogger, logger } from "@app/lib/logger";
-
 import { TableName } from "../schemas";
 import { TReminders, TRemindersInsert } from "../schemas/reminders";
+/* eslint-disable no-await-in-loop */
+
+
 
 export async function up(knex: Knex): Promise<void> {
   logger.info("Initializing secret reminders migration");

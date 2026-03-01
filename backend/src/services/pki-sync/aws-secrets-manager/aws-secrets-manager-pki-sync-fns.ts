@@ -1,5 +1,3 @@
-/* eslint-disable no-continue */
-/* eslint-disable no-await-in-loop */
 import {
   CreateSecretCommand,
   DeleteSecretCommand,
@@ -8,7 +6,6 @@ import {
   UpdateSecretCommand
 } from "@aws-sdk/client-secrets-manager";
 import RE2 from "re2";
-
 import { TCertificateSyncs } from "@app/db/schemas";
 import { CustomAWSHasher } from "@app/lib/aws/hashing";
 import { crypto } from "@app/lib/crypto";
@@ -22,13 +19,16 @@ import { CertificateSyncStatus } from "@app/services/certificate-sync/certificat
 import { createConnectionQueue, RateLimitConfig } from "@app/services/connection-queue";
 import { matchesCertificateNameSchema } from "@app/services/pki-sync/pki-sync-fns";
 import { TCertificateMap, TPkiSyncWithCredentials } from "@app/services/pki-sync/pki-sync-types";
-
 import { AWS_SECRETS_MANAGER_PKI_SYNC_DEFAULTS } from "./aws-secrets-manager-pki-sync-constants";
 import {
   AwsSecretsManagerCertificateSecret,
   SyncCertificatesResult,
   TAwsSecretsManagerPkiSyncWithCredentials
 } from "./aws-secrets-manager-pki-sync-types";
+/* eslint-disable no-continue */
+/* eslint-disable no-await-in-loop */
+
+
 
 const AWS_SECRETS_MANAGER_RATE_LIMIT_CONFIG: RateLimitConfig = {
   MAX_CONCURRENT_REQUESTS: 10,

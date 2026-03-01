@@ -4,13 +4,12 @@ import { randomUUID } from "crypto";
 import RE2 from "re2";
 
 import { ActionProjectType, TCertificates } from "@app/db/schemas";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
 import {
   ProjectPermissionCertificateActions,
   ProjectPermissionCertificateProfileActions,
   ProjectPermissionSub
-} from "@app/ee/services/permission/project-permission";
-import { TPkiAcmeAccountDALFactory } from "@app/ee/services/pki-acme/pki-acme-account-dal";
+} from "@app/services/permission/project-permission";
 import { BadRequestError, ForbiddenRequestError, NotFoundError } from "@app/lib/errors";
 import { logger } from "@app/lib/logger";
 import { ms } from "@app/lib/ms";
@@ -119,7 +118,7 @@ type TCertificateV3ServiceFactoryDep = {
     "findByIdWithAssociatedCa" | "create" | "transaction" | "updateById" | "findWithAssociatedCa" | "findById"
   >;
   certificateProfileDAL: Pick<TCertificateProfileDALFactory, "findByIdWithConfigs" | "findById">;
-  acmeAccountDAL: Pick<TPkiAcmeAccountDALFactory, "findById">;
+  acmeAccountDAL?: Pick<TPkiAcmeAccountDALFactory, "findById">;
   certificatePolicyService: Pick<TCertificatePolicyServiceFactory, "validateCertificateRequest" | "getPolicyById">;
   internalCaService: Pick<TInternalCertificateAuthorityServiceFactory, "signCertFromCa" | "issueCertFromCa">;
   permissionService: Pick<TPermissionServiceFactory, "getProjectPermission">;
@@ -166,7 +165,7 @@ const validateProfileAndPermissions = async ({
   actorAuthMethod?: ActorAuthMethod;
   actorOrgId?: string;
   certificateProfileDAL: Pick<TCertificateProfileDALFactory, "findByIdWithConfigs">;
-  acmeAccountDAL: Pick<TPkiAcmeAccountDALFactory, "findById">;
+  acmeAccountDAL?: Pick<TPkiAcmeAccountDALFactory, "findById">;
   permissionService: Pick<TPermissionServiceFactory, "getProjectPermission">;
   requiredEnrollmentType: EnrollmentType;
   isInternal?: boolean;
@@ -194,7 +193,7 @@ const validateProfileAndPermissions = async ({
     (actor === ActorType.ACME_ACCOUNT && requiredEnrollmentType === EnrollmentType.ACME) ||
     (actor === ActorType.EST_ACCOUNT && requiredEnrollmentType === EnrollmentType.EST)
   ) {
-    const account = await acmeAccountDAL.findById(actorId);
+    const account = await acmeAccountDAL!.findById(actorId);
     if (!account) {
       throw new NotFoundError({ message: "ACME account not found" });
     }

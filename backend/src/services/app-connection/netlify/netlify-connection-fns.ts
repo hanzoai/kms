@@ -1,12 +1,12 @@
-/* eslint-disable no-await-in-loop */
 import { AxiosError } from "axios";
-
 import { BadRequestError } from "@app/lib/errors";
 import { AppConnection } from "@app/services/app-connection/app-connection-enums";
-
 import { NetlifyConnectionMethod } from "./netlify-connection-constants";
 import { NetlifyPublicAPI } from "./netlify-connection-public-client";
 import { TNetlifyConnectionConfig } from "./netlify-connection-types";
+/* eslint-disable no-await-in-loop */
+
+
 
 export const getNetlifyConnectionListItem = () => {
   return {

@@ -1,6 +1,4 @@
-/* eslint-disable no-await-in-loop */
 import { AxiosError } from "axios";
-
 import { TCertificateSyncs } from "@app/db/schemas";
 import { request } from "@app/lib/config/request";
 import { logger } from "@app/lib/logger";
@@ -10,13 +8,15 @@ import { CertificateSyncStatus } from "@app/services/certificate-sync/certificat
 import { createConnectionQueue, RateLimitConfig } from "@app/services/connection-queue";
 import { IntegrationUrls } from "@app/services/integration-auth/integration-list";
 import { TCertificateMap } from "@app/services/pki-sync/pki-sync-types";
-
 import { PkiSyncError } from "../pki-sync-errors";
 import { TPkiSyncWithCredentials } from "../pki-sync-types";
 import {
   CloudflareEdgeCertificate,
   TCloudflareCustomCertificatePkiSyncConfig
 } from "./cloudflare-custom-certificate-pki-sync-types";
+/* eslint-disable no-await-in-loop */
+
+
 
 const CLOUDFLARE_RATE_LIMIT_CONFIG: RateLimitConfig = {
   MAX_CONCURRENT_REQUESTS: 5,

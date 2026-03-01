@@ -9,7 +9,7 @@ import {
   ServiceActor,
   UnknownUserActor,
   UserActor
-} from "@app/ee/services/audit-log/audit-log-types";
+} from "@app/services/audit-log/audit-log-types";
 
 export enum PostHogEventTypes {
   SecretPush = "secrets pushed",
