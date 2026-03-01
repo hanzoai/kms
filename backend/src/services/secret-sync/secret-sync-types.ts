@@ -1,4 +1,4 @@
-import { Job } from "bullmq";
+import { Job } from "@hanzo/mq";
 
 import { AuditLogInfo } from "@app/services/audit-log/audit-log-types";
 import { QueueJobs } from "@app/queue";
