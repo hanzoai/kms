@@ -75,7 +75,7 @@ export const registerServeUI = async (
       }
     }
 
-    // Inject GTM/analytics CSP domains only for Infisical Cloud deployments
+    // Inject GTM/analytics CSP domains only for Hanzo KMS Cloud deployments
     if (appCfg.isCloud) {
       const cloudCspExtensions: Record<string, string[]> = {
         "script-src": [
