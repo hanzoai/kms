@@ -12,6 +12,7 @@ import { BaseSecretNameSchema, SecretNameSchema } from "@app/server/lib/schemas"
 import { getTelemetryDistinctId } from "@app/server/lib/telemetry";
 import { getUserAgentType } from "@app/server/plugins/audit-log";
 import { verifyAuth } from "@app/server/plugins/auth/verify-auth";
+import { AiReadRequestStatus } from "@app/db/schemas";
 import { ActorType, AuthMode } from "@app/services/auth/auth-type";
 import { ResourceMetadataWithEncryptionSchema } from "@app/services/resource-metadata/resource-metadata-schema";
 import { PersonalOverridesBehavior, SecretProtectionType } from "@app/services/secret/secret-types";
@@ -323,6 +324,28 @@ export const registerSecretRouter = async (server: FastifyZodProvider) => {
       if (!environment) throw new BadRequestError({ message: "Missing environment" });
       if (!projectId) {
         throw new BadRequestError({ message: "You must provide  workspaceId" });
+      }
+
+      // AI access control — check policy when caller is a machine identity
+      if (req.permission.type === ActorType.IDENTITY) {
+        const aiCheck = await server.services.secretAiPolicy.requestSecretRead({
+          identityId: req.permission.id,
+          projectId,
+          environment,
+          secretKey: req.params.secretName,
+          secretPath,
+          agentType: req.headers["x-agent-type"] as string | undefined,
+          tool: req.headers["x-agent-tool"] as string | undefined,
+          deviceId: req.headers["x-device-id"] as string | undefined,
+          reason: req.headers["x-agent-reason"] as string | undefined
+        });
+
+        if (aiCheck.status === AiReadRequestStatus.Pending) {
+          return {
+            secret: null as any,
+            aiAccess: { status: "pending", requestId: aiCheck.requestId }
+          } as any;
+        }
       }
 
       const secret = await server.services.secret.getSecretByNameRaw({
@@ -1423,6 +1446,127 @@ export const registerSecretRouter = async (server: FastifyZodProvider) => {
       });
 
       return message;
+    }
+  });
+
+  // ── AI Access Control ────────────────────────────────────────────────────
+
+  server.route({
+    method: "PATCH",
+    url: "/:secretName/ai-policy",
+    config: { rateLimit: secretsLimit },
+    schema: {
+      operationId: "setSecretAiPolicyV4",
+      tags: [ApiDocsTags.Secrets],
+      description: "Set the AI access policy for a secret path",
+      security: [{ bearerAuth: [] }],
+      params: z.object({ secretName: z.string().trim() }),
+      body: z.object({
+        projectId: z.string().trim(),
+        environment: z.string().trim(),
+        secretPath: z.string().trim().default("/"),
+        policy: z.enum(["auto-approve", "requires-approval", "blocked"]),
+        approverEmails: z.string().email().array().optional(),
+        approvalTimeoutSeconds: z.number().int().min(30).max(3600).optional()
+      }),
+      response: {
+        200: z.object({
+          policy: z.object({
+            id: z.string(),
+            secretPath: z.string(),
+            policy: z.string(),
+            approverEmails: z.string().array().nullable().optional(),
+            approvalTimeoutSeconds: z.number()
+          })
+        })
+      }
+    },
+    onRequest: verifyAuth([AuthMode.JWT, AuthMode.IDENTITY_ACCESS_TOKEN]),
+    handler: async (req) => {
+      const { projectId, environment, secretPath, policy, approverEmails, approvalTimeoutSeconds } = req.body;
+      const result = await server.services.secretAiPolicy.setPolicy({
+        projectId,
+        environment,
+        secretPath,
+        policy,
+        approverEmails,
+        approvalTimeoutSeconds
+      });
+      return { policy: result };
+    }
+  });
+
+  server.route({
+    method: "GET",
+    url: "/ai-read-requests",
+    config: { rateLimit: secretsLimit },
+    schema: {
+      operationId: "listAiReadRequestsV4",
+      tags: [ApiDocsTags.Secrets],
+      description: "List pending AI secret read requests for a project",
+      security: [{ bearerAuth: [] }],
+      querystring: z.object({
+        projectId: z.string().trim(),
+        identityId: z.string().uuid().optional(),
+        secretKey: z.string().optional()
+      }),
+      response: {
+        200: z.object({
+          requests: z
+            .object({
+              id: z.string(),
+              identityId: z.string(),
+              secretKey: z.string(),
+              secretPath: z.string(),
+              environment: z.string(),
+              agentType: z.string().nullable().optional(),
+              tool: z.string().nullable().optional(),
+              deviceId: z.string().nullable().optional(),
+              reason: z.string().nullable().optional(),
+              status: z.string(),
+              expiresAt: z.date()
+            })
+            .array()
+        })
+      }
+    },
+    onRequest: verifyAuth([AuthMode.JWT, AuthMode.IDENTITY_ACCESS_TOKEN]),
+    handler: async (req) => {
+      const { projectId, identityId, secretKey } = req.query;
+      const requests = await server.services.secretAiPolicy.listRequests({ projectId, identityId, secretKey });
+      return { requests };
+    }
+  });
+
+  server.route({
+    method: "PATCH",
+    url: "/ai-read-requests/:requestId",
+    config: { rateLimit: secretsLimit },
+    schema: {
+      operationId: "reviewAiReadRequestV4",
+      tags: [ApiDocsTags.Secrets],
+      description: "Approve or deny a pending AI secret read request",
+      security: [{ bearerAuth: [] }],
+      params: z.object({ requestId: z.string().uuid() }),
+      body: z.object({ decision: z.enum(["approved", "denied"]) }),
+      response: {
+        200: z.object({
+          request: z.object({
+            id: z.string(),
+            status: z.string(),
+            reviewedBy: z.string().nullable().optional()
+          })
+        })
+      }
+    },
+    onRequest: verifyAuth([AuthMode.JWT]),
+    handler: async (req) => {
+      const request = await server.services.secretAiPolicy.reviewRequest({
+        requestId: req.params.requestId,
+        decision: req.body.decision,
+        reviewedBy: req.permission.id
+      });
+      return { request };
     }
   });
 };

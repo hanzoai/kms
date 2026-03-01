@@ -5,6 +5,8 @@ export * from "./access-approval-requests";
 export * from "./access-approval-requests-reviewers";
 export * from "./additional-privileges";
 export * from "./ai-mcp-activity-logs";
+export * from "./ai-secret-read-requests";
+export * from "./secret-ai-policies";
 export * from "./ai-mcp-endpoint-server-tools";
 export * from "./ai-mcp-endpoint-servers";
 export * from "./ai-mcp-endpoints";

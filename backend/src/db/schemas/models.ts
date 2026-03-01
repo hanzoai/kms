@@ -240,6 +240,10 @@ export enum TableName {
   PkiCertificateInstallationCert = "pki_certificate_installation_certs",
   PkiDiscoveryScanHistory = "pki_discovery_scan_history",
 
+  // AI Access Control
+  SecretAiPolicy = "secret_ai_policies",
+  AiSecretReadRequest = "ai_secret_read_requests",
+
   // AI
   AiMcpServer = "ai_mcp_servers",
   AiMcpServerTool = "ai_mcp_server_tools",
