@@ -525,7 +525,7 @@ export const registerRoutes = async (
     ? clickhouseAuditLogDALFactory(clickhouse, db, envConfig.CLICKHOUSE_AUDIT_LOG_TABLE_NAME)
     : undefined;
 
-  const auditLogService = auditLogServiceFactory();
+  const auditLogService = auditLogServiceFactory({ auditLogQueue });
 
   const groupProjectService = groupProjectServiceFactory({
     projectDAL,
@@ -737,7 +737,7 @@ export const registerRoutes = async (
     projectMembershipDAL
   });
 
-  const rateLimitService = rateLimitServiceFactory();
+  const rateLimitService = rateLimitServiceFactory({ db });
   const apiKeyService = apiKeyServiceFactory({ apiKeyDAL, userDAL });
 
 

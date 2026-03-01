@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 //
 // Async queue-backed audit log writer.
-// Uses BullMQ (via queueService) for reliable write-through to PostgreSQL,
+// Uses @hanzo/mq (via queueService) for reliable write-through to PostgreSQL,
 // and optionally ClickHouse when a client is configured.
 
 import type { ClickHouseClient } from "@clickhouse/client";
@@ -86,7 +86,7 @@ export const auditLogQueueServiceFactory = async ({
       }
     } catch (err) {
       logger.error(err, "audit log write failed");
-      throw err; // BullMQ will retry
+      throw err; // @hanzo/mq will retry
     }
   });
 

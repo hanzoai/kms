@@ -35,7 +35,7 @@ const migratePgBossJobsToQueueJobs = async <TData>(knex: Knex, config: Migration
         return {
           queueName: config.queueName,
           queueJobName: config.queueJobName,
-          queueType: "bullmq",
+          queueType: "hanzo-mq",
           queueData: job.data,
           jobId,
           queueOptions
@@ -91,7 +91,7 @@ export async function up(knex: Knex): Promise<void> {
       t.uuid("id", { primaryKey: true }).defaultTo(knex.fn.uuid());
       t.string("queueName").notNullable();
       // helps in golang migration
-      t.string("queueType").notNullable().defaultTo("bullmq");
+      t.string("queueType").notNullable().defaultTo("hanzo-mq");
       t.string("queueJobName").notNullable();
       t.string("jobId").notNullable();
       t.jsonb("queueData").notNullable();
