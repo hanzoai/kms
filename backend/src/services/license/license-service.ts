@@ -1,14 +1,28 @@
 // MIT License
 // Community edition: all features enabled, no license server required.
+// Billing methods delegate to the Hanzo Commerce service when available.
+
+import axios from "axios";
+
+import { logger } from "@app/lib/logger";
 
 export enum InstanceType {
   SelfHosted = "self-hosted",
   Cloud = "cloud"
 }
 
+const COMMERCE_DEFAULT_URL = "http://commerce.hanzo.svc:8001";
+
+type TLicenseServiceFactoryConfig = {
+  commerceUrl?: string;
+};
+
 export type TLicenseServiceFactory = ReturnType<typeof licenseServiceFactory>;
 
-export const licenseServiceFactory = () => {
+export const licenseServiceFactory = (config?: TLicenseServiceFactoryConfig) => {
+  const commerceUrl =
+    process.env.COMMERCE_SERVICE_URL ?? config?.commerceUrl ?? COMMERCE_DEFAULT_URL;
+
   const allFeaturesPlan = {
     slug: "enterprise",
     tier: -1,
@@ -62,14 +76,26 @@ export const licenseServiceFactory = () => {
     has: (_feature: string) => true
   };
 
-  const getOrgBillingInfo = async (_orgId: string) => ({
-    currentPeriodEnd: null as number | null,
-    currentPeriodStart: null as number | null,
-    amount: null as number | null,
-    interval: null as string | null,
-    intervalCount: null as number | null,
-    quantity: null as number | null
-  });
+  const getOrgBillingInfo = async (orgId: string) => {
+    const nullDefaults = {
+      currentPeriodEnd: null as number | null,
+      currentPeriodStart: null as number | null,
+      amount: null as number | null,
+      interval: null as string | null,
+      intervalCount: null as number | null,
+      quantity: null as number | null
+    };
+
+    try {
+      const { data } = await axios.get(`${commerceUrl}/api/v1/billing/org/${orgId}`, {
+        timeout: 5000
+      });
+      return { ...nullDefaults, ...data };
+    } catch (err) {
+      logger.warn({ orgId, err }, "license: getOrgBillingInfo Commerce unreachable — returning nulls");
+      return nullDefaults;
+    }
+  };
 
   const getOrgTaxIds = async (_orgId: string) => [] as unknown[];
 
@@ -83,11 +109,40 @@ export const licenseServiceFactory = () => {
 
   const updateOrgBillingDetails = async (_data: unknown) => {};
 
-  const startFreeTrial = async (_orgId: string) => {};
+  const startFreeTrial = async (orgId: string) => {
+    try {
+      await axios.post(`${commerceUrl}/api/v1/billing/trial`, { orgId }, { timeout: 5000 });
+    } catch (err) {
+      logger.warn({ orgId, err }, "license: startFreeTrial Commerce unreachable — skipping");
+    }
+  };
 
-  const generateOrgCustomerPortalSession = async (_orgId: string) => ({ url: "" });
+  const generateOrgCustomerPortalSession = async (orgId: string) => {
+    try {
+      const { data } = await axios.post(
+        `${commerceUrl}/api/v1/billing/portal-session`,
+        { orgId },
+        { timeout: 5000 }
+      );
+      return { url: (data as { url?: string }).url ?? "" };
+    } catch (err) {
+      logger.warn({ orgId, err }, "license: generateOrgCustomerPortalSession Commerce unreachable — returning empty URL");
+      return { url: "" };
+    }
+  };
 
-  const getOrgPlansTable = async (_orgId: string) => [] as unknown[];
+  const getOrgPlansTable = async (orgId: string) => {
+    try {
+      const { data } = await axios.get(`${commerceUrl}/api/v1/plans`, {
+        params: { orgId },
+        timeout: 5000
+      });
+      return Array.isArray(data) ? data : [];
+    } catch (err) {
+      logger.warn({ orgId, err }, "license: getOrgPlansTable Commerce unreachable — returning empty list");
+      return [] as unknown[];
+    }
+  };
 
   const getOrganizationRateLimit = async (_orgId: string) => ({
     readLimit: 60,

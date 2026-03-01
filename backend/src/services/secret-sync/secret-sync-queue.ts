@@ -1,6 +1,6 @@
 import opentelemetry from "@opentelemetry/api";
 import { AxiosError } from "axios";
-import { Job } from "bullmq";
+import { Job } from "@hanzo/mq";
 import { randomUUID } from "crypto";
 
 import { ProjectMembershipRole, SecretType } from "@app/db/schemas";

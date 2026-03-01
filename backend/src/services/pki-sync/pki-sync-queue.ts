@@ -1,7 +1,7 @@
 import opentelemetry from "@opentelemetry/api";
 import * as x509 from "@peculiar/x509";
 import { AxiosError } from "axios";
-import { Job } from "bullmq";
+import { Job } from "@hanzo/mq";
 import { randomUUID } from "crypto";
 import handlebars from "handlebars";
 import { TCertificates } from "@app/db/schemas";
