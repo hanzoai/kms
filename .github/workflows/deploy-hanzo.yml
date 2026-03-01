@@ -17,9 +17,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: hanzoai/kms
-  # Also push to DO registry for legacy pull secrets
-  DO_REGISTRY: registry.digitalocean.com
-  DO_IMAGE_NAME: hanzo/kms
+  DOCKERHUB_IMAGE: hanzoai/kms
 
 jobs:
   build:
@@ -57,13 +55,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
         with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-
-      - name: Log in to DigitalOcean Container Registry
-        run: doctl registry login --expiry-seconds 3600
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Extract metadata
         id: meta
@@ -71,7 +67,7 @@ jobs:
         with:
           images: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-            ${{ env.DO_REGISTRY }}/${{ env.DO_IMAGE_NAME }}
+            ${{ env.DOCKERHUB_IMAGE }}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -129,13 +125,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
         with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-
-      - name: Log in to DigitalOcean Container Registry
-        run: doctl registry login --expiry-seconds 3600
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -146,7 +140,7 @@ jobs:
         with:
           images: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-            ${{ env.DO_REGISTRY }}/${{ env.DO_IMAGE_NAME }}
+            ${{ env.DOCKERHUB_IMAGE }}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -162,14 +156,10 @@ jobs:
             $(jq -cr '.tags | map(select(startswith("ghcr.io"))) | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
             $(printf '${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@sha256:%s ' *)
 
-      - name: Mirror to DO registry
-        working-directory: /tmp/digests
+      - name: Mirror to Docker Hub
         run: |
           docker buildx imagetools create \
-            -t ${{ env.DO_REGISTRY }}/${{ env.DO_IMAGE_NAME }}:latest \
-            $(printf '${{ env.DO_REGISTRY }}/${{ env.DO_IMAGE_NAME }}@sha256:%s ' *) 2>/dev/null || \
-          docker buildx imagetools create \
-            -t ${{ env.DO_REGISTRY }}/${{ env.DO_IMAGE_NAME }}:latest \
+            -t ${{ env.DOCKERHUB_IMAGE }}:latest \
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest || true
 
       - name: Inspect image
@@ -290,9 +280,10 @@ jobs:
           body: |
             ## KMS ${{ github.ref_name }}
 
-            ### Docker Image
+            ### Docker Images
             ```
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}
+            ${{ env.DOCKERHUB_IMAGE }}:${{ github.ref_name }}
             ```
 
             **Platforms:** linux/amd64, linux/arm64
