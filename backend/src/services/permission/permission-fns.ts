@@ -10,9 +10,7 @@ import { AuthMethod } from "@app/services/auth/auth-type";
 
 import { ProjectPermissionSecretActions, ProjectPermissionSub } from "./project-permission";
 
-// ---------------------------------------------------------------------------
 // Auth method helpers
-// ---------------------------------------------------------------------------
 
 /** Returns true if the auth method is SAML-based. */
 export const isAuthMethodSaml = (authMethod: AuthMethod | null | undefined): boolean => {
@@ -26,9 +24,7 @@ export const isAuthMethodSaml = (authMethod: AuthMethod | null | undefined): boo
   ].includes(authMethod as AuthMethod);
 };
 
-// ---------------------------------------------------------------------------
 // Secret describe/read helpers
-// ---------------------------------------------------------------------------
 
 /**
  * Returns true if the ability can perform the given secret action (action
@@ -76,9 +72,7 @@ export const throwIfMissingSecretReadValueOrDescribePermission = (
   }
 };
 
-// ---------------------------------------------------------------------------
 // Privilege change validation
-// ---------------------------------------------------------------------------
 
 export type TPermissionBoundaryResult = {
   isValid: boolean;

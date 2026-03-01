@@ -9,7 +9,14 @@ import { RawRuleOf, MongoAbility } from "@casl/ability";
 
 import { OrgMembershipRole, ProjectMembershipRole } from "@app/db/schemas";
 
-import { OrgPermissionActions, OrgPermissionSubjects, OrgPermissionSet } from "./org-permission";
+import {
+  OrgPermissionActions,
+  OrgPermissionGroupActions,
+  OrgPermissionIdentityActions,
+  OrgPermissionGatewayActions,
+  OrgPermissionSubjects,
+  OrgPermissionSet
+} from "./org-permission";
 import {
   ProjectPermissionActions,
   ProjectPermissionCmekActions,
@@ -25,9 +32,7 @@ import {
   ProjectPermissionSub
 } from "./project-permission";
 
-// ---------------------------------------------------------------------------
 // Project built-in rules
-// ---------------------------------------------------------------------------
 
 type ProjectRule = RawRuleOf<MongoAbility<ProjectPermissionSet>>;
 
@@ -126,9 +131,7 @@ export const DEFAULT_PROJECT_ROLE_PERMISSIONS: Record<string, ProjectRule[]> = {
   [ProjectMembershipRole.KmsCryptographicOperator]: KMS_CRYPTOGRAPHIC_OPERATOR_RULES
 };
 
-// ---------------------------------------------------------------------------
 // Org built-in rules
-// ---------------------------------------------------------------------------
 
 type OrgRule = RawRuleOf<MongoAbility<OrgPermissionSet>>;
 
@@ -141,14 +144,14 @@ const ADMIN_ORG_RULES: OrgRule[] = [
   { action: [OrgPermissionActions.Read, OrgPermissionActions.Create, OrgPermissionActions.Edit, OrgPermissionActions.Delete], subject: OrgPermissionSubjects.Sso },
   { action: [OrgPermissionActions.Read, OrgPermissionActions.Create, OrgPermissionActions.Edit, OrgPermissionActions.Delete], subject: OrgPermissionSubjects.Scim },
   { action: [OrgPermissionActions.Read, OrgPermissionActions.Create, OrgPermissionActions.Edit, OrgPermissionActions.Delete], subject: OrgPermissionSubjects.Ldap },
-  { action: [OrgPermissionActions.Read, OrgPermissionActions.Create, OrgPermissionActions.Edit, OrgPermissionActions.Delete], subject: OrgPermissionSubjects.Groups },
+  { action: [OrgPermissionGroupActions.Read, OrgPermissionGroupActions.Create, OrgPermissionGroupActions.Edit, OrgPermissionGroupActions.Delete, OrgPermissionGroupActions.AddMembers, OrgPermissionGroupActions.RemoveMembers, OrgPermissionGroupActions.GrantPrivileges, OrgPermissionGroupActions.RevokePrivileges], subject: OrgPermissionSubjects.Groups },
   { action: [OrgPermissionActions.Read, OrgPermissionActions.Create, OrgPermissionActions.Edit, OrgPermissionActions.Delete], subject: OrgPermissionSubjects.SecretScanning },
   { action: [OrgPermissionActions.Read, OrgPermissionActions.Create, OrgPermissionActions.Edit, OrgPermissionActions.Delete], subject: OrgPermissionSubjects.Billing },
-  { action: [OrgPermissionActions.Read, OrgPermissionActions.Create, OrgPermissionActions.Edit, OrgPermissionActions.Delete], subject: OrgPermissionSubjects.Identity },
+  { action: [OrgPermissionIdentityActions.Read, OrgPermissionIdentityActions.Create, OrgPermissionIdentityActions.Edit, OrgPermissionIdentityActions.Delete, OrgPermissionIdentityActions.GrantPrivileges, OrgPermissionIdentityActions.RevokePrivileges], subject: OrgPermissionSubjects.Identity },
   { action: [OrgPermissionActions.Read, OrgPermissionActions.Create, OrgPermissionActions.Edit, OrgPermissionActions.Delete], subject: OrgPermissionSubjects.Kms },
   { action: [OrgPermissionActions.Read, OrgPermissionActions.Create, OrgPermissionActions.Edit, OrgPermissionActions.Delete], subject: OrgPermissionSubjects.AuditLogs },
   { action: [OrgPermissionActions.Read, OrgPermissionActions.Create, OrgPermissionActions.Edit, OrgPermissionActions.Delete], subject: OrgPermissionSubjects.AppConnections },
-  { action: [OrgPermissionActions.Read, OrgPermissionActions.Create, OrgPermissionActions.Edit, OrgPermissionActions.Delete], subject: OrgPermissionSubjects.Gateway }
+  { action: [OrgPermissionGatewayActions.ListGateways, OrgPermissionGatewayActions.CreateGateways, OrgPermissionGatewayActions.DeleteGateways, OrgPermissionGatewayActions.EditGateways, OrgPermissionGatewayActions.AttachGateways], subject: OrgPermissionSubjects.Gateway }
 ];
 
 const MEMBER_ORG_RULES: OrgRule[] = [

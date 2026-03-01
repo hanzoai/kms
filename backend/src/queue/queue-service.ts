@@ -32,6 +32,15 @@ import { TWebhookPayloads } from "@app/services/webhook/webhook-types";
 import { TQueueJobsDALFactory } from "./queue-jobs-dal";
 import { PersistenceQueueStatus } from "./queue-types";
 
+// CE stubs for EE-only queue payload types
+type TScanFullRepoEventPayload = Record<string, unknown>;
+type TScanPushEventPayload = Record<string, unknown>;
+type TSecretRotationSendNotificationJobPayload = Record<string, unknown>;
+type TSecretRotationRotateSecretsJobPayload = Record<string, unknown>;
+type TQueueSecretScanningDataSourceFullScan = Record<string, unknown>;
+type TQueueSecretScanningResourceDiffScan = Record<string, unknown>;
+type TQueueSecretScanningSendNotification = Record<string, unknown>;
+
 const RECOVERY_BATCH_SIZE = 500;
 
 export enum QueueName {

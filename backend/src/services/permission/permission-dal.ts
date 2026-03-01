@@ -28,17 +28,10 @@ export type TProjectRolePermissionRow = {
 export type TOrgRolePermissionRow = {
   roleSlug: string;
   permissions: unknown;
-  isTemporary?: boolean | null;
-  temporaryMode?: string | null;
-  temporaryRange?: string | null;
-  temporaryAccessStartTime?: Date | null;
-  temporaryAccessEndTime?: Date | null;
 };
 
 export const permissionDALFactory = (db: TDbClient) => {
-  // ------------------------------------------------------------------
   // Project permission queries
-  // ------------------------------------------------------------------
 
   /**
    * Returns all role permission rows for a user in a given project.
@@ -119,9 +112,7 @@ export const permissionDALFactory = (db: TDbClient) => {
     }
   };
 
-  // ------------------------------------------------------------------
   // Org permission queries
-  // ------------------------------------------------------------------
 
   /**
    * Returns all role permission rows for a user in a given org.
