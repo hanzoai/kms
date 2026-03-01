@@ -3,19 +3,16 @@ import path from "node:path";
 import { ForbiddenError, subject } from "@casl/ability";
 
 import { ActionProjectType, TableName } from "@app/db/schemas";
-import { TLicenseServiceFactory } from "@app/ee/services/license/license-service";
 import {
   hasSecretReadValueOrDescribePermission,
   throwIfMissingSecretReadValueOrDescribePermission
-} from "@app/ee/services/permission/permission-fns";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
+} from "@app/services/permission/permission-fns";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
 import {
   ProjectPermissionActions,
   ProjectPermissionSecretActions,
   ProjectPermissionSub
-} from "@app/ee/services/permission/project-permission";
-import { ProjectEvents } from "@app/ee/services/project-events/project-events-types";
-import { getReplicationFolderName } from "@app/ee/services/secret-replication/secret-replication-service";
+} from "@app/services/permission/project-permission";
 import { BadRequestError, NotFoundError } from "@app/lib/errors";
 
 import { TKmsServiceFactory } from "../kms/kms-service";
@@ -40,6 +37,7 @@ import {
   TResyncSecretImportReplicationDTO,
   TUpdateSecretImportDTO
 } from "./secret-import-types";
+import { TLicenseServiceFactory } from "@app/services/license/license-service";
 
 type TSecretImportServiceFactoryDep = {
   secretImportDAL: TSecretImportDALFactory;

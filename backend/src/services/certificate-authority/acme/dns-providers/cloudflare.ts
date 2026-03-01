@@ -1,9 +1,9 @@
-/* eslint-disable no-await-in-loop */
 import axios from "axios";
-
 import { request } from "@app/lib/config/request";
 import { TCloudflareConnectionConfig } from "@app/services/app-connection/cloudflare/cloudflare-connection-types";
 import { IntegrationUrls } from "@app/services/integration-auth/integration-list";
+/* eslint-disable no-await-in-loop */
+
 
 export const cloudflareInsertTxtRecord = async (
   connection: TCloudflareConnectionConfig,

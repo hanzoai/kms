@@ -1,19 +1,16 @@
-/* eslint-disable no-nested-ternary */
-/* eslint-disable no-bitwise */
 import { ForbiddenError, subject } from "@casl/ability";
 import * as x509 from "@peculiar/x509";
 import slugify from "@sindresorhus/slugify";
 import { Knex } from "knex";
-
 import { ActionProjectType, TableName, TCertificateAuthorities, TCertificateTemplates } from "@app/db/schemas";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
 import {
   ProjectPermissionCertificateActions,
   ProjectPermissionCertificateAuthorityActions,
   ProjectPermissionCertificateProfileActions,
   ProjectPermissionPkiTemplateActions,
   ProjectPermissionSub
-} from "@app/ee/services/permission/project-permission";
+} from "@app/services/permission/project-permission";
 import { extractX509CertFromChain } from "@app/lib/certificates/extract-certificate";
 import { getConfig } from "@app/lib/config/env";
 import { crypto } from "@app/lib/crypto/cryptography";
@@ -28,8 +25,7 @@ import { TPkiCollectionDALFactory } from "@app/services/pki-collection/pki-colle
 import { TPkiCollectionItemDALFactory } from "@app/services/pki-collection/pki-collection-item-dal";
 import { TProjectDALFactory } from "@app/services/project/project-dal";
 import { getProjectKmsCertificateKeyId } from "@app/services/project/project-fns";
-
-import { TCertificateAuthorityCrlDALFactory } from "../../../ee/services/certificate-authority-crl/certificate-authority-crl-dal";
+import { unknown } from "../../../ee/services/certificate-authority-crl/certificate-authority-crl-dal";
 import { extractCertificateFields } from "../../certificate/certificate-fns";
 import { TCertificateSecretDALFactory } from "../../certificate/certificate-secret-dal";
 import {
@@ -79,6 +75,10 @@ import {
   TSignIntermediateDTO,
   TUpdateCaDTO
 } from "./internal-certificate-authority-types";
+/* eslint-disable no-nested-ternary */
+/* eslint-disable no-bitwise */
+
+
 
 type TInternalCertificateAuthorityServiceFactoryDep = {
   certificateAuthorityDAL: Pick<
@@ -101,7 +101,7 @@ type TInternalCertificateAuthorityServiceFactoryDep = {
     "create" | "findOne" | "transaction" | "find" | "findById"
   >;
   certificateAuthoritySecretDAL: Pick<TCertificateAuthoritySecretDALFactory, "create" | "findOne">;
-  certificateAuthorityCrlDAL: Pick<TCertificateAuthorityCrlDALFactory, "create" | "findOne" | "update">;
+  certificateAuthorityCrlDAL?: { create: (...args: any[]) => any; findOne: (...args: any[]) => any; update: (...args: any[]) => any };
   certificateTemplateDAL: Pick<TCertificateTemplateDALFactory, "getById" | "find">;
   certificateAuthorityQueue: TCertificateAuthorityQueueFactory; // TODO: Pick
   certificateDAL: Pick<TCertificateDALFactory, "transaction" | "create" | "find">;
@@ -411,7 +411,7 @@ export const internalCertificateAuthorityServiceFactory = ({
         plainText: Buffer.from(new Uint8Array(crl.rawData))
       });
 
-      await certificateAuthorityCrlDAL.create(
+      await certificateAuthorityCrlDAL!.create(
         {
           caId: ca.id,
           encryptedCrl,
@@ -1126,7 +1126,7 @@ export const internalCertificateAuthorityServiceFactory = ({
 
     const serialNumber = createSerialNumber();
 
-    const caCrl = await certificateAuthorityCrlDAL.findOne({ caSecretId: caSecret.id });
+    const caCrl = await certificateAuthorityCrlDAL!.findOne({ caSecretId: caSecret.id });
     const distributionPointUrl = `${appCfg.SITE_URL}/api/v1/cert-manager/crl/${caCrl.id}/der`;
 
     const caIssuerUrl = `${appCfg.SITE_URL}/api/v1/cert-manager/ca/internal/${ca.id}/certificates/${caCert.id}/der`;
@@ -1637,7 +1637,7 @@ export const internalCertificateAuthorityServiceFactory = ({
       signatureAlgorithm: signingAlg
     });
 
-    const caCrl = await certificateAuthorityCrlDAL.findOne({ caSecretId: caSecret.id });
+    const caCrl = await certificateAuthorityCrlDAL!.findOne({ caSecretId: caSecret.id });
     const appCfg = getConfig();
 
     const distributionPointUrl = `${appCfg.SITE_URL}/api/v1/cert-manager/crl/${caCrl.id}/der`;
@@ -2018,7 +2018,7 @@ export const internalCertificateAuthorityServiceFactory = ({
       signatureAlgorithm: alg
     });
 
-    const caCrl = await certificateAuthorityCrlDAL.findOne({ caSecretId: caSecret.id });
+    const caCrl = await certificateAuthorityCrlDAL!.findOne({ caSecretId: caSecret.id });
     const distributionPointUrl = `${appCfg.SITE_URL}/api/v1/cert-manager/crl/${caCrl.id}/der`;
 
     const caIssuerUrl = `${appCfg.SITE_URL}/api/v1/cert-manager/ca/internal/${ca.id}/certificates/${caCert.id}/der`;

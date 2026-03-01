@@ -1,6 +1,5 @@
 import { Knex } from "knex";
 
-import { CertificateSource } from "@app/ee/services/pki-discovery/pki-discovery-types";
 
 import { TableName } from "../schemas";
 import { createOnUpdateTrigger, dropOnUpdateTrigger } from "../utils";

@@ -1,7 +1,5 @@
 import { PostHog } from "posthog-node";
 
-import { TLicenseServiceFactory } from "@app/ee/services/license/license-service";
-import { InstanceType } from "@app/ee/services/license/license-types";
 import { TKeyStoreFactory } from "@app/keystore/keystore";
 import { getConfig } from "@app/lib/config/env";
 import { request } from "@app/lib/config/request";
@@ -9,6 +7,7 @@ import { crypto } from "@app/lib/crypto/cryptography";
 import { logger } from "@app/lib/logger";
 
 import { PostHogEventTypes, TPostHogEvent, TSecretModifiedEvent } from "./telemetry-types";
+import { InstanceType, TLicenseServiceFactory } from "@app/services/license/license-service";
 
 export const TELEMETRY_SECRET_PROCESSED_KEY = "telemetry-secret-processed";
 export const TELEMETRY_SECRET_OPERATIONS_KEY = "telemetry-secret-operations";

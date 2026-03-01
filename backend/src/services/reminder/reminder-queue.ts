@@ -1,12 +1,12 @@
-/* eslint-disable no-await-in-loop */
 import RE2 from "re2";
-
 import { logger } from "@app/lib/logger";
 import { QueueJobs, QueueName, TQueueServiceFactory } from "@app/queue";
-
 import { TSecretReminderRecipientsDALFactory } from "../secret-reminder-recipients/secret-reminder-recipients-dal";
 import { TSecretV2BridgeDALFactory } from "../secret-v2-bridge/secret-v2-bridge-dal";
 import { TReminderServiceFactory } from "./reminder-types";
+/* eslint-disable no-await-in-loop */
+
+
 
 type TDailyReminderQueueServiceFactoryDep = {
   reminderService: TReminderServiceFactory;

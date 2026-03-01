@@ -4,13 +4,15 @@ import fp from "fastify-plugin";
 import type { JwtPayload } from "jsonwebtoken";
 
 import { TServiceTokens, TUsers } from "@app/db/schemas";
-import { TScimTokenJwtPayload } from "@app/ee/services/scim/scim-types";
 import { getConfig } from "@app/lib/config/env";
 import { crypto } from "@app/lib/crypto";
 import { BadRequestError } from "@app/lib/errors";
 import { ActorType, AuthMethod, AuthMode, AuthModeJwtTokenPayload, AuthTokenType } from "@app/services/auth/auth-type";
 import { TIdentityAccessTokenJwtPayload } from "@app/services/identity-access-token/identity-access-token-types";
 import { getServerCfg } from "@app/services/super-admin/super-admin-service";
+
+// Community edition stub: SCIM token payload type.
+type TScimTokenJwtPayload = { scimTokenId: string; orgId: string };
 
 export type TAuthMode =
   | {
@@ -266,20 +268,8 @@ export const injectIdentity = fp(
           });
         }
         case AuthMode.SCIM_TOKEN: {
-          const { orgId, scimTokenId } = await server.services.scim.fnValidateScimToken(token);
-          requestContext.set("orgId", orgId);
-
-          req.auth = {
-            authMode: AuthMode.SCIM_TOKEN,
-            actor,
-            scimTokenId,
-            orgId,
-            authMethod: null,
-            // scim cannot be done for sub organization
-            rootOrgId: orgId,
-            parentOrgId: orgId
-          };
-          break;
+          // Community edition: SCIM is not supported.
+          throw new BadRequestError({ message: "SCIM is not available in this edition." });
         }
         default:
           throw new BadRequestError({ message: "Invalid token strategy provided" });

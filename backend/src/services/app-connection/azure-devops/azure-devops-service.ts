@@ -1,7 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable no-case-declarations */
 import { AxiosError } from "axios";
-
 import { request } from "@app/lib/config/request";
 import { BadRequestError } from "@app/lib/errors";
 import { OrgServiceActor } from "@app/lib/types";
@@ -9,10 +6,13 @@ import { TAppConnectionDALFactory } from "@app/services/app-connection/app-conne
 import { AppConnection } from "@app/services/app-connection/app-connection-enums";
 import { IntegrationUrls } from "@app/services/integration-auth/integration-list";
 import { TKmsServiceFactory } from "@app/services/kms/kms-service";
-
 import { AzureDevOpsConnectionMethod } from "./azure-devops-enums";
 import { getAzureDevopsConnection } from "./azure-devops-fns";
 import { TAzureDevOpsConnection } from "./azure-devops-types";
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable no-case-declarations */
+
+
 
 type TGetAppConnectionFunc = (
   app: AppConnection,

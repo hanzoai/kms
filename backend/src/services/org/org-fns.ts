@@ -1,6 +1,4 @@
 import { AccessScope } from "@app/db/schemas";
-import { TUserGroupMembershipDALFactory } from "@app/ee/services/group/user-group-membership-dal";
-import { TLicenseServiceFactory } from "@app/ee/services/license/license-service";
 import { BadRequestError } from "@app/lib/errors";
 import { TOrgDALFactory } from "@app/services/org/org-dal";
 import { TProjectKeyDALFactory } from "@app/services/project-key/project-key-dal";
@@ -9,12 +7,13 @@ import { TUserAliasDALFactory } from "@app/services/user-alias/user-alias-dal";
 import { TAdditionalPrivilegeDALFactory } from "../additional-privilege/additional-privilege-dal";
 import { TMembershipRoleDALFactory } from "../membership/membership-role-dal";
 import { TMembershipUserDALFactory } from "../membership-user/membership-user-dal";
+import { TLicenseServiceFactory } from "@app/services/license/license-service";
 
 type TDeleteOrgMemberships = {
   orgMembershipIds: string[];
   orgId: string;
   orgDAL: Pick<TOrgDALFactory, "transaction" | "find">;
-  userGroupMembershipDAL: Pick<TUserGroupMembershipDALFactory, "delete">;
+  userGroupMembershipDAL?: { delete: (...args: any[]) => any };
   membershipUserDAL: Pick<TMembershipUserDALFactory, "delete" | "find">;
   membershipRoleDAL: Pick<TMembershipRoleDALFactory, "delete">;
   projectKeyDAL: Pick<TProjectKeyDALFactory, "find" | "delete">;
@@ -95,7 +94,7 @@ export const deleteOrgMembershipsFn = async ({
 
     const groupIds = orgGroups.filter((el) => el.actorGroupId).map((el) => el.actorGroupId as string);
 
-    await userGroupMembershipDAL.delete(
+    await userGroupMembershipDAL!.delete(
       {
         $in: {
           userId: membershipUserIds,

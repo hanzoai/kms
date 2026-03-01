@@ -2,12 +2,11 @@ import { ForbiddenError, subject } from "@casl/ability";
 import { randomUUID } from "crypto";
 
 import { ActionProjectType } from "@app/db/schemas";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
 import {
   ProjectPermissionCertificateProfileActions,
   ProjectPermissionSub
-} from "@app/ee/services/permission/project-permission";
-import { TPkiAcmeAccountDALFactory } from "@app/ee/services/pki-acme/pki-acme-account-dal";
+} from "@app/services/permission/project-permission";
 import { BadRequestError, ForbiddenRequestError, NotFoundError } from "@app/lib/errors";
 import { ActorAuthMethod, ActorType } from "@app/services/auth/auth-type";
 import { TCertificateBodyDALFactory } from "@app/services/certificate/certificate-body-dal";
@@ -50,7 +49,7 @@ import { TAltNameEntry, TCertificateIssuanceResponse } from "./certificate-v3-ty
 export type TIssueCertificateFromApprovedRequestDeps = {
   certificateRequestDAL: Pick<TCertificateRequestDALFactory, "updateById" | "findById">;
   certificateProfileDAL: Pick<TCertificateProfileDALFactory, "findByIdWithConfigs">;
-  acmeAccountDAL: Pick<TPkiAcmeAccountDALFactory, "findById">;
+  acmeAccountDAL?: Pick<TPkiAcmeAccountDALFactory, "findById">;
   permissionService: Pick<TPermissionServiceFactory, "getProjectPermission">;
   certificateAuthorityDAL: Pick<TCertificateAuthorityDALFactory, "findByIdWithAssociatedCa">;
   internalCaService: Pick<TInternalCertificateAuthorityServiceFactory, "signCertFromCa" | "issueCertFromCa">;
@@ -122,7 +121,7 @@ export const certificateApprovalServiceFactory = (
       (actor === ActorType.ACME_ACCOUNT && requiredEnrollmentType === EnrollmentType.ACME) ||
       (actor === ActorType.EST_ACCOUNT && requiredEnrollmentType === EnrollmentType.EST)
     ) {
-      const account = await acmeAccountDAL.findById(actorId!);
+      const account = await acmeAccountDAL!.findById(actorId!);
       if (!account) {
         throw new NotFoundError({ message: "ACME account not found" });
       }

@@ -1,7 +1,6 @@
 import * as handlebars from "handlebars";
 import { z, ZodSchema } from "zod";
 
-import { TLicenseServiceFactory } from "@app/ee/services/license/license-service";
 import { BadRequestError } from "@app/lib/errors";
 import { TAppConnectionDALFactory } from "@app/services/app-connection/app-connection-dal";
 import { TCertificateDALFactory } from "@app/services/certificate/certificate-dal";
@@ -22,6 +21,7 @@ import { CLOUDFLARE_CUSTOM_CERTIFICATE_PKI_SYNC_LIST_OPTION } from "./cloudflare
 import { cloudflareCustomCertificatePkiSyncFactory } from "./cloudflare-custom-certificate/cloudflare-custom-certificate-pki-sync-fns";
 import { PkiSync } from "./pki-sync-enums";
 import { TCertificateMap, TPkiSyncWithCredentials } from "./pki-sync-types";
+import { TLicenseServiceFactory } from "@app/services/license/license-service";
 
 const ENTERPRISE_PKI_SYNCS: PkiSync[] = [];
 

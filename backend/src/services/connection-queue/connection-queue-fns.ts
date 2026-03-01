@@ -1,7 +1,7 @@
-/* eslint-disable no-await-in-loop */
 import { AxiosError } from "axios";
-
 import { logger } from "@app/lib/logger";
+/* eslint-disable no-await-in-loop */
+
 
 export type RateLimitConfig = {
   MAX_CONCURRENT_REQUESTS: number;

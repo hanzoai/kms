@@ -1,8 +1,8 @@
-/* eslint-disable no-underscore-dangle */
 import type { SourceData } from "@smithy/types";
 import { Hash, Hmac } from "crypto";
-
 import { crypto } from "@app/lib/crypto";
+/* eslint-disable no-underscore-dangle */
+
 
 export class CustomAWSHasher {
   public algorithmIdentifier: string = "sha256";

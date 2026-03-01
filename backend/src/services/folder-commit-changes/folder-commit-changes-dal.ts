@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import { Knex } from "knex";
-
 import { TDbClient } from "@app/db";
 import {
   TableName,
@@ -12,6 +10,8 @@ import {
 } from "@app/db/schemas";
 import { DatabaseError } from "@app/lib/errors";
 import { buildFindFilter, ormify, selectAllTableCols } from "@app/lib/knex";
+/* eslint-disable @typescript-eslint/no-misused-promises */
+
 
 export type TFolderCommitChangesDALFactory = ReturnType<typeof folderCommitChangesDALFactory>;
 

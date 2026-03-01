@@ -1,7 +1,6 @@
 import { Knex } from "knex";
 
 import { TApprovalRequests } from "@app/db/schemas";
-import { TUserGroupMembershipDALFactory } from "@app/ee/services/group/user-group-membership-dal";
 import { TNotificationServiceFactory } from "@app/services/notification/notification-service";
 import { NotificationType } from "@app/services/notification/notification-types";
 
@@ -146,7 +145,7 @@ export const notifyApproversForStep = async (
   step: ApprovalPolicyStep,
   request: TApprovalRequests,
   dependencies: {
-    userGroupMembershipDAL: Pick<TUserGroupMembershipDALFactory, "find">;
+    userGroupMembershipDAL?: { find: (...args: any[]) => any };
     notificationService: Pick<TNotificationServiceFactory, "createUserNotifications">;
   }
 ): Promise<void> => {
@@ -159,7 +158,7 @@ export const notifyApproversForStep = async (
     if (approver.type === ApproverType.User) {
       userIdsToNotify.add(approver.id);
     } else if (approver.type === ApproverType.Group) {
-      const members = await userGroupMembershipDAL.find({ groupId: approver.id });
+      const members = await userGroupMembershipDAL!.find({ groupId: approver.id });
       members.forEach((member) => userIdsToNotify.add(member.userId));
     }
   }

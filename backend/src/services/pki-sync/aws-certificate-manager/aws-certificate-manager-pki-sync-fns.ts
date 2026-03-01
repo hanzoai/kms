@@ -1,8 +1,6 @@
-/* eslint-disable no-await-in-loop */
 import AWS from "aws-sdk";
 import RE2 from "re2";
 import { z } from "zod";
-
 import { TCertificateSyncs } from "@app/db/schemas";
 import { BadRequestError, NotFoundError } from "@app/lib/errors";
 import { logger } from "@app/lib/logger";
@@ -22,7 +20,6 @@ import { CertificateSyncStatus } from "@app/services/certificate-sync/certificat
 import { createConnectionQueue, RateLimitConfig } from "@app/services/connection-queue";
 import { TKmsServiceFactory } from "@app/services/kms/kms-service";
 import { TCertificateMap } from "@app/services/pki-sync/pki-sync-types";
-
 import { PkiSyncError } from "../pki-sync-errors";
 import { TPkiSyncWithCredentials } from "../pki-sync-types";
 import {
@@ -32,6 +29,9 @@ import {
   SyncCertificatesResult,
   TAwsCertificateManagerPkiSyncConfig
 } from "./aws-certificate-manager-pki-sync-types";
+/* eslint-disable no-await-in-loop */
+
+
 
 const KMS_CERTIFICATE_TAG = "KMSCertificate";
 const AWS_CERTIFICATE_ARN_PATTERN = new RE2("^arn:aws:acm:[a-z0-9-]+:\\d{12}:certificate/[a-f0-9-]{36}$");

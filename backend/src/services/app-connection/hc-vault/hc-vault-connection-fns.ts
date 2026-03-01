@@ -1,10 +1,6 @@
 import { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import https from "https";
 
-import { verifyHostInputValidity } from "@app/ee/services/dynamic-secret/dynamic-secret-fns";
-import { TGatewayServiceFactory } from "@app/ee/services/gateway/gateway-service";
-import { TGatewayV2ServiceFactory } from "@app/ee/services/gateway-v2/gateway-v2-service";
-import { TGatewayV2ConnectionDetails } from "@app/ee/services/gateway-v2/gateway-v2-types";
 import { request } from "@app/lib/config/request";
 import { BadRequestError } from "@app/lib/errors";
 import { removeTrailingSlash } from "@app/lib/fn";
@@ -130,8 +126,8 @@ type TokenRespData = {
 
 export const requestWithHCVaultGateway = async <T>(
   appConnection: { gatewayId?: string | null },
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">,
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown,
   requestConfig: AxiosRequestConfig,
   gatewayDetails?: TGatewayDetails
 ): Promise<AxiosResponse<T>> => {
@@ -264,8 +260,8 @@ export const requestWithHCVaultGateway = async <T>(
 
 export const getHCVaultAccessToken = async (
   connection: THCVaultConnection,
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown
 ) => {
   // Return access token directly if not using AppRole method
   if (connection.method !== HCVaultConnectionMethod.AppRole) {
@@ -303,8 +299,8 @@ export const getHCVaultAccessToken = async (
 
 export const validateHCVaultConnectionCredentials = async (
   connection: THCVaultConnection,
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown
 ) => {
   const instanceUrl = await getHCVaultInstanceUrl(connection);
 
@@ -341,8 +337,8 @@ export const validateHCVaultConnectionCredentials = async (
 export const getHCVaultPolicyNames = async (
   namespace: string,
   connection: THCVaultConnection,
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">,
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown,
   gatewayDetails?: TGatewayDetails
 ) => {
   const instanceUrl = await getHCVaultInstanceUrl(connection);
@@ -389,8 +385,8 @@ export const getHCVaultPolicyNames = async (
 export const listHCVaultPolicies = async (
   namespace: string,
   connection: THCVaultConnection,
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">,
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown,
   gatewayDetails?: TGatewayDetails
 ) => {
   const instanceUrl = await getHCVaultInstanceUrl(connection);
@@ -464,8 +460,8 @@ export const listHCVaultPolicies = async (
 
 export const listHCVaultNamespaces = async (
   connection: THCVaultConnection,
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown
 ) => {
   const instanceUrl = await getHCVaultInstanceUrl(connection);
   const accessToken = await getHCVaultAccessToken(connection, gatewayService, gatewayV2Service);
@@ -581,8 +577,8 @@ export const listHCVaultNamespaces = async (
 
 export const listHCVaultMounts = async (
   connection: THCVaultConnection,
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">,
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown,
   namespace?: string,
   gatewayDetails?: TGatewayDetails
 ) => {
@@ -622,8 +618,8 @@ export const listHCVaultMounts = async (
 export const listHCVaultSecretPaths = async (
   namespace: string,
   connection: THCVaultConnection,
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">,
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown,
   filterMountPath?: string,
   gatewayDetails?: TGatewayDetails
 ) => {
@@ -738,8 +734,8 @@ export const getHCVaultSecretsForPath = async (
   namespace: string,
   secretPath: string,
   connection: THCVaultConnection,
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown
 ) => {
   const instanceUrl = await getHCVaultInstanceUrl(connection);
   const accessToken = await getHCVaultAccessToken(connection, gatewayService, gatewayV2Service);
@@ -833,8 +829,8 @@ export const getHCVaultAuthMounts = async (
   namespace: string,
   authType: HCVaultAuthType | undefined,
   connection: THCVaultConnection,
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">,
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown,
   gatewayDetails?: TGatewayDetails
 ): Promise<THCVaultAuthMount[]> => {
   const instanceUrl = await getHCVaultInstanceUrl(connection);
@@ -891,8 +887,8 @@ export const getHCVaultKubernetesAuthRoles = async (
   namespace: string,
   mountPath: string,
   connection: THCVaultConnection,
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown
 ): Promise<THCVaultKubernetesAuthRoleWithConfig[]> => {
   const instanceUrl = await getHCVaultInstanceUrl(connection);
   const accessToken = await getHCVaultAccessToken(connection, gatewayService, gatewayV2Service);
@@ -992,8 +988,8 @@ export const getHCVaultKubernetesRoles = async (
   namespace: string,
   mountPath: string,
   connection: THCVaultConnection,
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown
 ): Promise<THCVaultKubernetesRole[]> => {
   // Remove trailing slash from mount path
   const cleanMountPath = mountPath.endsWith("/") ? mountPath.slice(0, -1) : mountPath;
@@ -1095,8 +1091,8 @@ export const getHCVaultDatabaseRoles = async (
   namespace: string,
   mountPath: string,
   connection: THCVaultConnection,
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown
 ): Promise<THCVaultDatabaseRole[]> => {
   // Remove trailing slash from mount path
   const cleanMountPath = mountPath.endsWith("/") ? mountPath.slice(0, -1) : mountPath;
@@ -1232,8 +1228,8 @@ export const getHCVaultLdapRoles = async (
   namespace: string,
   mountPath: string,
   connection: THCVaultConnection,
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown
 ): Promise<THCVaultLdapRole[]> => {
   // Remove trailing slash from mount path
   const cleanMountPath = mountPath.endsWith("/") ? mountPath.slice(0, -1) : mountPath;

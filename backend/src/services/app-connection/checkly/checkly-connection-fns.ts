@@ -1,12 +1,12 @@
-/* eslint-disable no-await-in-loop */
 import { AxiosError } from "axios";
-
 import { BadRequestError } from "@app/lib/errors";
 import { AppConnection } from "@app/services/app-connection/app-connection-enums";
-
 import { ChecklyConnectionMethod } from "./checkly-connection-constants";
 import { ChecklyPublicAPI } from "./checkly-connection-public-client";
 import { TChecklyConnectionConfig } from "./checkly-connection-types";
+/* eslint-disable no-await-in-loop */
+
+
 
 export const getChecklyConnectionListItem = () => {
   return {

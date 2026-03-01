@@ -1,6 +1,4 @@
-/* eslint-disable no-await-in-loop */
 import https from "https";
-
 import { request } from "@app/lib/config/request";
 import { BadRequestError } from "@app/lib/errors";
 import { TAppConnectionDALFactory } from "@app/services/app-connection/app-connection-dal";
@@ -9,8 +7,10 @@ import { isAzureKeyVaultReference } from "@app/services/integration-auth/integra
 import { TKmsServiceFactory } from "@app/services/kms/kms-service";
 import { matchesSchema } from "@app/services/secret-sync/secret-sync-fns";
 import { TSecretMap } from "@app/services/secret-sync/secret-sync-types";
-
 import { TAzureAppConfigurationSyncWithCredentials } from "./azure-app-configuration-sync-types";
+/* eslint-disable no-await-in-loop */
+
+
 
 type TAzureAppConfigurationSyncFactoryDeps = {
   appConnectionDAL: Pick<TAppConnectionDALFactory, "findById" | "updateById">;

@@ -2,13 +2,6 @@ import fs from "fs";
 import knex, { Knex } from "knex";
 import oracledb from "oracledb";
 
-import { verifyHostInputValidity } from "@app/ee/services/dynamic-secret/dynamic-secret-fns";
-import { TGatewayServiceFactory } from "@app/ee/services/gateway/gateway-service";
-import { TGatewayV2ServiceFactory } from "@app/ee/services/gateway-v2/gateway-v2-service";
-import {
-  TSqlCredentialsRotationGeneratedCredentials,
-  TSqlCredentialsRotationWithConnection
-} from "@app/ee/services/secret-rotation-v2/shared/sql-credentials/sql-credentials-rotation-types";
 import { getConfig } from "@app/lib/config/env";
 import { BadRequestError, DatabaseError } from "@app/lib/errors";
 import { GatewayProxyProtocol, withGatewayProxy } from "@app/lib/gateway";
@@ -142,8 +135,8 @@ export const getSqlConnectionClient = async (appConnection: Pick<TSqlConnection,
 
 export const executeWithPotentialGateway = async <T>(
   config: TSqlConnectionConfig,
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">,
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown,
   operation: (client: Knex) => Promise<T>
 ): Promise<T> => {
   const { credentials, app, gatewayId } = config;
@@ -230,8 +223,8 @@ export const executeWithPotentialGateway = async <T>(
 
 export const validateSqlConnectionCredentials = async (
   config: TSqlConnectionConfig,
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown
 ) => {
   try {
     await executeWithPotentialGateway(config, gatewayService, gatewayV2Service, async (client) => {
@@ -261,8 +254,8 @@ export const SQL_CONNECTION_ALTER_LOGIN_STATEMENT: Record<
 export const transferSqlConnectionCredentialsToPlatform = async (
   config: TSqlConnectionConfig,
   callback: (credentials: TSqlConnectionConfig["credentials"]) => Promise<TAppConnectionRaw>,
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">
+  gatewayService?: unknown,
+  gatewayV2Service?: unknown
 ) => {
   const { credentials, app } = config;
 

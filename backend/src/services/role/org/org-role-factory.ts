@@ -7,8 +7,8 @@ import {
   orgNoAccessPermissions,
   OrgPermissionActions,
   OrgPermissionSubjects
-} from "@app/ee/services/permission/org-permission";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
+} from "@app/services/permission/org-permission";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
 import { BadRequestError } from "@app/lib/errors";
 import { TExternalGroupOrgRoleMappingDALFactory } from "@app/services/external-group-org-role-mapping/external-group-org-role-mapping-dal";
 import { isCustomOrgRole } from "@app/services/org/org-role-fns";

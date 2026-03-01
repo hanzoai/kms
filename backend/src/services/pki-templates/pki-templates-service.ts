@@ -1,19 +1,15 @@
-/* eslint-disable no-bitwise */
 import { ForbiddenError, subject } from "@casl/ability";
 import * as x509 from "@peculiar/x509";
 import RE2 from "re2";
-
 import { ActionProjectType } from "@app/db/schemas";
-import { TCertificateAuthorityCrlDALFactory } from "@app/ee/services/certificate-authority-crl/certificate-authority-crl-dal";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
 import {
   ProjectPermissionPkiTemplateActions,
   ProjectPermissionSub
-} from "@app/ee/services/permission/project-permission";
+} from "@app/services/permission/project-permission";
 import { getConfig } from "@app/lib/config/env";
 import { BadRequestError, NotFoundError } from "@app/lib/errors";
 import { ms } from "@app/lib/ms";
-
 import { TCertificateBodyDALFactory } from "../certificate/certificate-body-dal";
 import { TCertificateDALFactory } from "../certificate/certificate-dal";
 import { TCertificateSecretDALFactory } from "../certificate/certificate-secret-dal";
@@ -50,6 +46,9 @@ import {
   TSignCertPkiTemplateDTO,
   TUpdatePkiTemplateDTO
 } from "./pki-templates-types";
+/* eslint-disable no-bitwise */
+
+
 
 type TPkiTemplatesServiceFactoryDep = {
   pkiTemplatesDAL: TPkiTemplatesDALFactory;
@@ -68,7 +67,7 @@ type TPkiTemplatesServiceFactoryDep = {
   kmsService: Pick<TKmsServiceFactory, "generateKmsKey" | "decryptWithKmsKey" | "encryptWithKmsKey">;
   certificateAuthorityCertDAL: Pick<TCertificateAuthorityCertDALFactory, "findById">;
   certificateAuthoritySecretDAL: Pick<TCertificateAuthoritySecretDALFactory, "findOne">;
-  certificateAuthorityCrlDAL: Pick<TCertificateAuthorityCrlDALFactory, "findOne">;
+  certificateAuthorityCrlDAL?: { findOne: (...args: any[]) => any };
   certificateDAL: Pick<
     TCertificateDALFactory,
     "create" | "transaction" | "countCertificatesForPkiSubscriber" | "findLatestActiveCertForSubscriber" | "find"
@@ -465,7 +464,7 @@ export const pkiTemplatesServiceFactory = ({
       kmsService
     });
 
-    const caCrl = await certificateAuthorityCrlDAL.findOne({ caSecretId: caSecret.id });
+    const caCrl = await certificateAuthorityCrlDAL!.findOne({ caSecretId: caSecret.id });
     const distributionPointUrl = `${appCfg.SITE_URL}/api/v1/cert-manager/crl/${caCrl.id}/der`;
     const caIssuerUrl = `${appCfg.SITE_URL}/api/v1/cert-manager/ca/internal/${ca.id}/certificates/${caCert.id}/der`;
 

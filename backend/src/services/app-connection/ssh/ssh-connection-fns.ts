@@ -1,7 +1,5 @@
 import { Client, ConnectConfig } from "ssh2";
 
-import { TGatewayServiceFactory } from "@app/ee/services/gateway/gateway-service";
-import { TGatewayV2ServiceFactory } from "@app/ee/services/gateway-v2/gateway-v2-service";
 import { BadRequestError, InternalServerError } from "@app/lib/errors";
 import { GatewayProxyProtocol } from "@app/lib/gateway";
 import { withGatewayV2Proxy } from "@app/lib/gateway-v2/gateway-v2";
@@ -99,7 +97,7 @@ export const getSshConnectionClient = async (
 
 export const executeWithPotentialGateway = async <T>(
   config: TSshConnectionConfig,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">,
+  gatewayV2Service?: unknown,
   operation: (targetHost: string, targetPort: number) => Promise<T>
 ): Promise<T> => {
   const { gatewayId, credentials } = config;
@@ -137,8 +135,8 @@ export const executeWithPotentialGateway = async <T>(
 
 export const validateSshConnectionCredentials = async (
   config: TSshConnectionConfig,
-  _gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">,
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">
+  _gatewayService: unknown,
+  gatewayV2Service?: unknown
 ) => {
   try {
     await executeWithPotentialGateway(config, gatewayV2Service, async (targetHost, targetPort) => {

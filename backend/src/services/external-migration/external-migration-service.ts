@@ -4,11 +4,8 @@ import {
   EventType,
   SecretApprovalEvent,
   TAuditLogServiceFactory
-} from "@app/ee/services/audit-log/audit-log-types";
-import { verifyHostInputValidity } from "@app/ee/services/dynamic-secret/dynamic-secret-fns";
-import { TGatewayServiceFactory } from "@app/ee/services/gateway/gateway-service";
-import { TGatewayV2ServiceFactory } from "@app/ee/services/gateway-v2/gateway-v2-service";
-import { TPermissionServiceFactory } from "@app/ee/services/permission/permission-service-types";
+} from "@app/services/audit-log/audit-log-types";
+import { TPermissionServiceFactory } from "@app/services/permission/permission-service-types";
 import { crypto } from "@app/lib/crypto/cryptography";
 import { DatabaseErrorCode } from "@app/lib/error-codes";
 import { BadRequestError, DatabaseError, ForbiddenRequestError, NotFoundError } from "@app/lib/errors";
@@ -70,8 +67,8 @@ type TExternalMigrationServiceFactoryDep = {
     "create" | "findOne" | "transaction" | "find" | "updateById" | "deleteById" | "findById"
   >;
   userDAL: Pick<TUserDALFactory, "findById">;
-  gatewayService: Pick<TGatewayServiceFactory, "fnGetGatewayClientTlsByGatewayId">;
-  gatewayV2Service: Pick<TGatewayV2ServiceFactory, "getPlatformConnectionDetailsByGatewayId">;
+  gatewayService?: unknown;
+  gatewayV2Service?: unknown;
   kmsService: Pick<TKmsServiceFactory, "createCipherPairWithDataKey">;
 };
 

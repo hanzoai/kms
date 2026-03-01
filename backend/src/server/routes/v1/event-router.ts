@@ -1,14 +1,12 @@
-/* eslint-disable @typescript-eslint/no-floating-promises */
 import { pipeline } from "stream/promises";
 import { z } from "zod";
-
 import { ActionProjectType } from "@app/db/schemas";
-import { getSSEHeaders } from "@app/ee/services/project-events/project-events-sse-service";
-import { ProjectEventRegisterSchema } from "@app/ee/services/project-events/project-events-types";
 import { ApiDocsTags, EventSubscriptions } from "@app/lib/api-docs";
 import { readLimit } from "@app/server/config/rateLimiter";
 import { verifyAuth } from "@app/server/plugins/auth/verify-auth";
 import { AuthMode } from "@app/services/auth/auth-type";
+/* eslint-disable @typescript-eslint/no-floating-promises */
+
 
 const CONNECTION_TIMEOUT_MS = 60 * 60 * 1000; // 1 hour
 

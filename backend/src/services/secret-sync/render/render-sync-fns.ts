@@ -1,14 +1,14 @@
-/* eslint-disable no-await-in-loop */
 import { AxiosRequestConfig, isAxiosError } from "axios";
-
 import { request } from "@app/lib/config/request";
 import { BadRequestError } from "@app/lib/errors";
 import { IntegrationUrls } from "@app/services/integration-auth/integration-list";
 import { matchesSchema } from "@app/services/secret-sync/secret-sync-fns";
 import { TSecretMap } from "@app/services/secret-sync/secret-sync-types";
-
 import { RenderSyncScope } from "./render-sync-enums";
 import { TRenderSecret, TRenderSyncWithCredentials } from "./render-sync-types";
+/* eslint-disable no-await-in-loop */
+
+
 
 const MAX_RETRIES = 5;
 

@@ -1,13 +1,7 @@
 import { z } from "zod";
 
 import { ProjectType } from "@app/db/schemas";
-import { ChefConnectionListItemSchema, SanitizedChefConnectionSchema } from "@app/ee/services/app-connections/chef";
-import { OCIConnectionListItemSchema, SanitizedOCIConnectionSchema } from "@app/ee/services/app-connections/oci";
-import {
-  OracleDBConnectionListItemSchema,
-  SanitizedOracleDBConnectionSchema
-} from "@app/ee/services/app-connections/oracledb";
-import { EventType } from "@app/ee/services/audit-log/audit-log-types";
+import { EventType } from "@app/services/audit-log/audit-log-types";
 import { ApiDocsTags, AppConnections } from "@app/lib/api-docs";
 import { readLimit } from "@app/server/config/rateLimiter";
 import { verifyAuth } from "@app/server/plugins/auth/verify-auth";

@@ -1,7 +1,5 @@
-/* eslint-disable no-await-in-loop */
 import { GitbeakerRequestError, Gitlab } from "@gitbeaker/rest";
 import { AxiosError } from "axios";
-
 import { getConfig } from "@app/lib/config/env";
 import { request } from "@app/lib/config/request";
 import { BadRequestError, InternalServerError } from "@app/lib/errors";
@@ -12,10 +10,12 @@ import { AppConnection } from "@app/services/app-connection/app-connection-enums
 import { encryptAppConnectionCredentials } from "@app/services/app-connection/app-connection-fns";
 import { IntegrationUrls } from "@app/services/integration-auth/integration-list";
 import { TKmsServiceFactory } from "@app/services/kms/kms-service";
-
 import { TAppConnectionDALFactory } from "../app-connection-dal";
 import { GitLabAccessTokenType, GitLabConnectionMethod } from "./gitlab-connection-enums";
 import { TGitLabConnection, TGitLabConnectionConfig, TGitLabGroup, TGitLabProject } from "./gitlab-connection-types";
+/* eslint-disable no-await-in-loop */
+
+
 
 interface GitLabOAuthTokenResponse {
   access_token: string;

@@ -1,7 +1,5 @@
-/* eslint-disable no-await-in-loop */
 import * as x509 from "@peculiar/x509";
 import RE2 from "re2";
-
 import { TableName } from "@app/db/schemas";
 import { crypto } from "@app/lib/crypto/cryptography";
 import { BadRequestError, NotFoundError } from "@app/lib/errors";
@@ -34,7 +32,6 @@ import { TPkiSyncQueueFactory } from "@app/services/pki-sync/pki-sync-queue";
 import { triggerAutoSyncForSubscriber } from "@app/services/pki-sync/pki-sync-utils";
 import { TProjectDALFactory } from "@app/services/project/project-dal";
 import { getProjectKmsCertificateKeyId } from "@app/services/project/project-fns";
-
 import { TCertificateAuthorityDALFactory } from "../certificate-authority-dal";
 import { CaStatus, CaType } from "../certificate-authority-enums";
 import { keyAlgorithmToAlgCfg } from "../certificate-authority-fns";
@@ -44,6 +41,9 @@ import {
   TCreateAzureAdCsCertificateAuthorityDTO,
   TUpdateAzureAdCsCertificateAuthorityDTO
 } from "./azure-ad-cs-certificate-authority-types";
+/* eslint-disable no-await-in-loop */
+
+
 
 const parseTtlToDays = (ttl: string): number => {
   const match = ttl.match(new RE2("^(\\d+)([dhm])$"));

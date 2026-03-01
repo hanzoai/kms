@@ -1,11 +1,11 @@
-/* eslint-disable no-console */
 import { Knex } from "knex";
 import { createTransport } from "nodemailer";
-
 import { formatSmtpConfig, getConfig } from "@app/lib/config/env";
 import { buildRedisFromConfig } from "@app/lib/config/redis";
 import { logger } from "@app/lib/logger";
 import { getServerCfg } from "@app/services/super-admin/super-admin-service";
+/* eslint-disable no-console */
+
 
 type BootstrapOpt = {
   db: Knex;
