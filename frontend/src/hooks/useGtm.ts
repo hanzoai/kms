@@ -9,7 +9,7 @@ const CLOUD_HOSTNAMES = ["kms.hanzo.ai", "us.kms.hanzo.ai", "eu.kms.hanzo.ai"];
 const isCloudHostname = () => CLOUD_HOSTNAMES.includes(window.location.hostname);
 
 /**
- * Loads GTM only on Infisical Cloud pre-auth pages.
+ * Loads GTM only on Hanzo KMS Cloud pre-auth pages.
  * Cleans up GTM scripts on unmount (when navigating to authenticated pages).
  */
 export const useGtm = () => {

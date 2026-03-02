@@ -4,9 +4,9 @@
 echo "🔥 Pre-commit hook is running!"
 
 # Check if kms CLI is installed
-if ! command -v infisical >/dev/null 2>&1; then
-    echo "\nError: KMS CLI (infisical) is not installed. Please install the KMS CLI before committing.\n You can refer to the documentation at https://kms.hanzo.ai/docs/cli/overview\n\n"
+if ! command -v kms >/dev/null 2>&1; then
+    echo "\nError: KMS CLI (kms) is not installed. Please install the KMS CLI before committing.\n You can refer to the documentation at https://kms.hanzo.ai/docs/cli/overview\n\n"
     exit 1
 fi
 
-infisical scan git-changes --staged -v
+kms scan git-changes --staged -v
