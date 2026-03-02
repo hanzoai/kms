@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: >-
-  CloudFormation template to deploy Infisical on a EC2 instance with a
+  CloudFormation template to deploy Hanzo KMS on an EC2 instance with a
   DocumentDB instance
 Parameters:
   KeyPairName:
@@ -77,10 +77,10 @@ Resources:
           sh get-docker.sh
           sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
-          git clone https://github.com/Infisical/infisical.git
-          cd infisical
+          git clone https://github.com/hanzoai/kms.git
+          cd kms
 
-          DOCUMENT_DB_CONNECTION_URL="mongodb://${DocumentDBUsername}:${DocumentDBPassword}@${DocumentDBCluster.Endpoint}:${DocumentDBCluster.Port}/infisical?replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false"
+          DOCUMENT_DB_CONNECTION_URL="mongodb://${DocumentDBUsername}:${DocumentDBPassword}@${DocumentDBCluster.Endpoint}:${DocumentDBCluster.Port}/kms?replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false"
 
           ENCRYPTION_KEY=$(openssl rand -hex 16)
           JWT_SIGNUP_SECRET=$(openssl rand -hex 16)
@@ -105,7 +105,7 @@ Resources:
         - !Ref InstanceSecurityGroup
       Tags:
         - Key: Name
-          Value: infisical
+          Value: hanzo-kms
     Metadata:
       "AWS::CloudFormation::Designer":
         id: 2c0a771c-5002-4785-9848-0377e33cd0e9

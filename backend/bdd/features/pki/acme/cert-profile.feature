@@ -46,4 +46,4 @@ Feature: ACME Cert Profile
     And I memorize response with jq ".eabKid" as eab_kid
     And I memorize response with jq ".eabSecret" as eab_secret
     When I have an ACME client connecting to "{BASE_URL}/api/v1/cert-manager/acme/profiles/{profile_id}/directory"
-    Then I register a new ACME account with email fangpen@infisical.com and EAB key id "{eab_kid}" with secret "{eab_secret}" as acme_account
+    Then I register a new ACME account with email test@hanzo.ai and EAB key id "{eab_kid}" with secret "{eab_secret}" as acme_account

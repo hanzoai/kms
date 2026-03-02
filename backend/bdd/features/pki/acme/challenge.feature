@@ -3,7 +3,7 @@ Feature: Challenge
   Scenario: Validate challenge with HTTP-01
     Given I have an ACME cert profile as "acme_profile"
     When I have an ACME client connecting to "{BASE_URL}/api/v1/cert-manager/acme/profiles/{acme_profile.id}/directory"
-    Then I register a new ACME account with email fangpen@infisical.com and EAB key id "{acme_profile.eab_kid}" with secret "{acme_profile.eab_secret}" as acme_account
+    Then I register a new ACME account with email test@hanzo.ai and EAB key id "{acme_profile.eab_kid}" with secret "{acme_profile.eab_secret}" as acme_account
     When I create certificate signing request as csr
     Then I add names to certificate signing request csr
       """
@@ -25,7 +25,7 @@ Feature: Challenge
   Scenario: Validate challenge with DNS-01
     Given I have an ACME cert profile as "acme_profile"
     When I have an ACME client connecting to "{BASE_URL}/api/v1/cert-manager/acme/profiles/{acme_profile.id}/directory"
-    Then I register a new ACME account with email fangpen@infisical.com and EAB key id "{acme_profile.eab_kid}" with secret "{acme_profile.eab_secret}" as acme_account
+    Then I register a new ACME account with email test@hanzo.ai and EAB key id "{acme_profile.eab_kid}" with secret "{acme_profile.eab_secret}" as acme_account
     When I create certificate signing request as csr
     Then I add names to certificate signing request csr
       """
@@ -47,7 +47,7 @@ Feature: Challenge
   Scenario: Validate challenge with retry
     Given I have an ACME cert profile as "acme_profile"
     When I have an ACME client connecting to "{BASE_URL}/api/v1/cert-manager/acme/profiles/{acme_profile.id}/directory"
-    Then I register a new ACME account with email fangpen@infisical.com and EAB key id "{acme_profile.eab_kid}" with secret "{acme_profile.eab_secret}" as acme_account
+    Then I register a new ACME account with email test@hanzo.ai and EAB key id "{acme_profile.eab_kid}" with secret "{acme_profile.eab_secret}" as acme_account
     When I create certificate signing request as csr
     Then I add names to certificate signing request csr
       """
@@ -69,7 +69,7 @@ Feature: Challenge
   Scenario: Validate challenges for multiple domains
     Given I have an ACME cert profile as "acme_profile"
     When I have an ACME client connecting to "{BASE_URL}/api/v1/cert-manager/acme/profiles/{acme_profile.id}/directory"
-    Then I register a new ACME account with email fangpen@infisical.com and EAB key id "{acme_profile.eab_kid}" with secret "{acme_profile.eab_secret}" as acme_account
+    Then I register a new ACME account with email test@hanzo.ai and EAB key id "{acme_profile.eab_kid}" with secret "{acme_profile.eab_secret}" as acme_account
     When I create certificate signing request as csr
     Then I add names to certificate signing request csr
       """
@@ -80,7 +80,7 @@ Feature: Challenge
     And I add subject alternative name to certificate signing request csr
       """
       [
-        "infisical.com",
+        "hanzo.ai",
         "example.com"
       ]
       """
@@ -96,14 +96,14 @@ Feature: Challenge
       """
       [
         "example.com",
-        "infisical.com"
+        "hanzo.ai"
       ]
       """
 
   Scenario: Did not finish all challenges
     Given I have an ACME cert profile as "acme_profile"
     When I have an ACME client connecting to "{BASE_URL}/api/v1/cert-manager/acme/profiles/{acme_profile.id}/directory"
-    Then I register a new ACME account with email fangpen@infisical.com and EAB key id "{acme_profile.eab_kid}" with secret "{acme_profile.eab_secret}" as acme_account
+    Then I register a new ACME account with email test@hanzo.ai and EAB key id "{acme_profile.eab_kid}" with secret "{acme_profile.eab_secret}" as acme_account
     When I create certificate signing request as csr
     Then I add names to certificate signing request csr
       """
@@ -113,7 +113,7 @@ Feature: Challenge
       """
       [
         "localhost",
-        "infisical.com"
+        "hanzo.ai"
       ]
       """
     And I create a RSA private key pair as cert_key
@@ -127,10 +127,10 @@ Feature: Challenge
     And I memorize order with jq ".authorizations | map(select(.body.identifier.value == "localhost")) | first | .uri" as localhost_auth
     And I wait until the status of authorization localhost_auth becomes valid
 
-    # the infisical.com auth should still be pending
-    And I memorize order with jq ".authorizations | map(select(.body.identifier.value == "infisical.com")) | first | .uri" as infisical_auth
-    And I post-as-get {infisical_auth} as infisical_auth_resp
-    And the value infisical_auth_resp with jq ".status" should be equal to "pending"
+    # the hanzo.ai auth should still be pending
+    And I memorize order with jq ".authorizations | map(select(.body.identifier.value == "hanzo.ai")) | first | .uri" as hanzo_auth
+    And I post-as-get {hanzo_auth} as hanzo_auth_resp
+    And the value hanzo_auth_resp with jq ".status" should be equal to "pending"
 
     # the order should be pending as well
     And I post-as-get {order.uri} as order_resp
@@ -160,7 +160,7 @@ Feature: Challenge
   Scenario: CSR names mismatch with order identifier
     Given I have an ACME cert profile as "acme_profile"
     When I have an ACME client connecting to "{BASE_URL}/api/v1/cert-manager/acme/profiles/{acme_profile.id}/directory"
-    Then I register a new ACME account with email fangpen@infisical.com and EAB key id "{acme_profile.eab_kid}" with secret "{acme_profile.eab_secret}" as acme_account
+    Then I register a new ACME account with email test@hanzo.ai and EAB key id "{acme_profile.eab_kid}" with secret "{acme_profile.eab_secret}" as acme_account
     When I create certificate signing request as csr
     Then I add names to certificate signing request csr
       """
@@ -183,7 +183,7 @@ Feature: Challenge
         "payload": {
           "identifiers": [
            { "type": "dns", "value": "localhost" },
-           { "type": "dns", "value": "infisical.com" }
+           { "type": "dns", "value": "hanzo.ai" }
           ]
         }
       }
@@ -223,7 +223,7 @@ Feature: Challenge
       }
       """
     When I have an ACME client connecting to "{BASE_URL}/api/v1/cert-manager/acme/profiles/{acme_profile.id}/directory"
-    Then I register a new ACME account with email fangpen@infisical.com and EAB key id "{acme_profile.eab_kid}" with secret "{acme_profile.eab_secret}" as acme_account
+    Then I register a new ACME account with email test@hanzo.ai and EAB key id "{acme_profile.eab_kid}" with secret "{acme_profile.eab_secret}" as acme_account
     When I create certificate signing request as csr
     Then I add names to certificate signing request csr
       """
