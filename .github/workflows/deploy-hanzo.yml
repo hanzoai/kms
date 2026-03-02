@@ -50,13 +50,17 @@ jobs:
           fetch-depth: 0
 
       - name: Load secrets from Hanzo KMS
-        uses: hanzoai/universe/.github/actions/kms-action@main
+        uses: Infisical/secrets-action@v1.0.12
         with:
+          method: oidc
           identity-id: ${{ vars.KMS_IDENTITY_ID }}
-          project-id: ${{ vars.KMS_PROJECT_ID }}
-          environment: production
+          oidc-audience: kms.hanzo.ai
+          domain: https://kms.hanzo.ai
+          env-slug: production
+          project-slug: ${{ vars.KMS_PROJECT_ID }}
           secret-path: /github-actions/docker
-          kms-domain: https://kms.hanzo.ai
+          export-type: env
+          include-imports: true
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -132,13 +136,17 @@ jobs:
           merge-multiple: true
 
       - name: Load secrets from Hanzo KMS
-        uses: hanzoai/universe/.github/actions/kms-action@main
+        uses: Infisical/secrets-action@v1.0.12
         with:
+          method: oidc
           identity-id: ${{ vars.KMS_IDENTITY_ID }}
-          project-id: ${{ vars.KMS_PROJECT_ID }}
-          environment: production
+          oidc-audience: kms.hanzo.ai
+          domain: https://kms.hanzo.ai
+          env-slug: production
+          project-slug: ${{ vars.KMS_PROJECT_ID }}
           secret-path: /github-actions/docker
-          kms-domain: https://kms.hanzo.ai
+          export-type: env
+          include-imports: true
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -199,13 +207,17 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Load secrets from Hanzo KMS
-        uses: hanzoai/universe/.github/actions/kms-action@main
+        uses: Infisical/secrets-action@v1.0.12
         with:
+          method: oidc
           identity-id: ${{ vars.KMS_IDENTITY_ID }}
-          project-id: ${{ vars.KMS_PROJECT_ID }}
-          environment: production
+          oidc-audience: kms.hanzo.ai
+          domain: https://kms.hanzo.ai
+          env-slug: production
+          project-slug: ${{ vars.KMS_PROJECT_ID }}
           secret-path: /github-actions/deploy
-          kms-domain: https://kms.hanzo.ai
+          export-type: env
+          include-imports: true
 
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
