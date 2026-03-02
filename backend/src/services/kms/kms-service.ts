@@ -51,7 +51,7 @@ type TKmsServiceFactoryDep = {
   keyStore: Pick<TKeyStoreFactory, "acquireLock" | "waitTillReady" | "setItemWithExpiry">;
   internalKmsDAL: Pick<TInternalKmsDALFactory, "create">;
   hsmService: THsmServiceFactory;
-  envConfig: Pick<TEnvConfig, "ENCRYPTION_KEY" | "ROOT_ENCRYPTION_KEY">;
+  envConfig: Pick<TEnvConfig, "ENCRYPTION_KEY" | "ROOT_ENCRYPTION_KEY" | "orgEncryptionKeys">;
 };
 
 export type TKmsServiceFactory = ReturnType<typeof kmsServiceFactory>;
@@ -74,12 +74,27 @@ export const kmsServiceFactory = ({
   let ROOT_ENCRYPTION_KEY = Buffer.alloc(0);
 
   /*
+   * Return the root encryption key for a given org slug.
+   * When ORG_ENCRYPTION_KEYS contains an entry for the slug, that key is used.
+   * Falls back to ROOT_ENCRYPTION_KEY so existing data encrypted with the
+   * global key continues to decrypt correctly.
+   */
+  const getOrgRootKey = (orgSlug: string): Buffer => {
+    const orgKey = (envConfig.orgEncryptionKeys || {})[orgSlug];
+    if (orgKey) {
+      return Buffer.from(orgKey, "base64");
+    }
+    return ROOT_ENCRYPTION_KEY;
+  };
+
+  /*
    * Generate KMS Key
    * This function is responsibile for generating the Hanzo internal KMS for various entities
    * Like for secret manager, cert manager or for organization
    */
   const generateKmsKey = async ({
     orgId,
+    orgSlug,
     isReserved = true,
     tx,
     name,
@@ -113,7 +128,8 @@ export const kmsServiceFactory = ({
     }
 
     const cipher = symmetricCipherService(SymmetricKeyAlgorithm.AES_GCM_256);
-    const encryptedKeyMaterial = cipher.encrypt(kmsKeyMaterial, ROOT_ENCRYPTION_KEY);
+    const rootKey = orgSlug ? getOrgRootKey(orgSlug) : ROOT_ENCRYPTION_KEY;
+    const encryptedKeyMaterial = cipher.encrypt(kmsKeyMaterial, rootKey);
     const sanitizedName = name ? slugify(name) : slugify(alphaNumericNanoId(8).toLowerCase());
     const dbQuery = async (db: Knex) => {
       const kmsDoc = await kmsDAL.create(
@@ -221,6 +237,7 @@ export const kmsServiceFactory = ({
             const key = await generateKmsKey({
               isReserved: true,
               orgId: org.id,
+              orgSlug: org.slug,
               tx
             });
 
@@ -351,7 +368,8 @@ export const kmsServiceFactory = ({
     // internal KMS
     const keyCipher = symmetricCipherService(SymmetricKeyAlgorithm.AES_GCM_256);
     const dataCipher = symmetricCipherService(encryptionAlgorithm);
-    const kmsKey = keyCipher.decrypt(kmsDoc.internalKms?.encryptedKey as Buffer, ROOT_ENCRYPTION_KEY);
+    const rootKey = getOrgRootKey(kmsDoc.orgSlug || "");
+    const kmsKey = keyCipher.decrypt(kmsDoc.internalKms?.encryptedKey as Buffer, rootKey);
 
     return ({ cipherTextBlob: versionedCipherTextBlob }: Pick<TDecryptWithKmsDTO, "cipherTextBlob">) => {
       const cipherTextBlob = versionedCipherTextBlob.subarray(0, -KMS_VERSION_BLOB_LENGTH);
@@ -379,7 +397,8 @@ export const kmsServiceFactory = ({
     }
 
     const keyCipher = symmetricCipherService(SymmetricKeyAlgorithm.AES_GCM_256);
-    const kmsKey = keyCipher.decrypt(kmsDoc.internalKms?.encryptedKey as Buffer, ROOT_ENCRYPTION_KEY);
+    const rootKey = getOrgRootKey(kmsDoc.orgSlug || "");
+    const kmsKey = keyCipher.decrypt(kmsDoc.internalKms?.encryptedKey as Buffer, rootKey);
 
     return kmsKey;
   };
@@ -391,6 +410,11 @@ export const kmsServiceFactory = ({
     // daniel: currently we only support imports for encrypt/decrypt keys
     verifyKeyTypeAndAlgorithm(keyUsage, algorithm, { forceType: KmsKeyUsage.ENCRYPT_DECRYPT });
 
+    // Resolve per-org root key: look up org slug to select the correct root key.
+    // importKeyMaterial only has orgId, so we fall back to ROOT_ENCRYPTION_KEY unless
+    // we fetch the org slug here. Since this is a write path and org slug is not
+    // passed in TImportKeyMaterialDTO, we use ROOT_ENCRYPTION_KEY. Callers that know
+    // the org slug should pass orgSlug in a future DTO update.
     const cipher = symmetricCipherService(SymmetricKeyAlgorithm.AES_GCM_256);
 
     const encryptedKeyMaterial = cipher.encrypt(key, ROOT_ENCRYPTION_KEY);
@@ -437,7 +461,8 @@ export const kmsServiceFactory = ({
     });
 
     const keyCipher = symmetricCipherService(SymmetricKeyAlgorithm.AES_GCM_256);
-    const kmsKey = keyCipher.decrypt(kmsDoc.internalKms?.encryptedKey as Buffer, ROOT_ENCRYPTION_KEY);
+    const rootKey = getOrgRootKey(kmsDoc.orgSlug || "");
+    const kmsKey = keyCipher.decrypt(kmsDoc.internalKms?.encryptedKey as Buffer, rootKey);
 
     return signingService(encryptionAlgorithm).getPublicKeyFromPrivateKey(kmsKey);
   };
@@ -454,13 +479,14 @@ export const kmsServiceFactory = ({
     });
 
     const keyCipher = symmetricCipherService(SymmetricKeyAlgorithm.AES_GCM_256);
+    const rootKey = getOrgRootKey(kmsDoc.orgSlug || "");
     const { sign } = signingService(encryptionAlgorithm);
     return async ({
       data,
       signingAlgorithm,
       isDigest
     }: Pick<TSignWithKmsDTO, "data" | "signingAlgorithm" | "isDigest">) => {
-      const kmsKey = keyCipher.decrypt(kmsDoc.internalKms?.encryptedKey as Buffer, ROOT_ENCRYPTION_KEY);
+      const kmsKey = keyCipher.decrypt(kmsDoc.internalKms?.encryptedKey as Buffer, rootKey);
       const signature = await sign(data, kmsKey, signingAlgorithm, isDigest);
 
       return Promise.resolve({ signature, algorithm: signingAlgorithm });
@@ -482,9 +508,10 @@ export const kmsServiceFactory = ({
     });
 
     const keyCipher = symmetricCipherService(SymmetricKeyAlgorithm.AES_GCM_256);
+    const rootKey = getOrgRootKey(kmsDoc.orgSlug || "");
     const { verify, getPublicKeyFromPrivateKey } = signingService(encryptionAlgorithm);
     return async ({ data, signature, isDigest }: Pick<TVerifyWithKmsDTO, "data" | "signature" | "isDigest">) => {
-      const kmsKey = keyCipher.decrypt(kmsDoc.internalKms?.encryptedKey as Buffer, ROOT_ENCRYPTION_KEY);
+      const kmsKey = keyCipher.decrypt(kmsDoc.internalKms?.encryptedKey as Buffer, rootKey);
 
       const publicKey = getPublicKeyFromPrivateKey(kmsKey);
       const signatureValid = await verify(data, signature, publicKey, signingAlgorithm, isDigest);
@@ -563,8 +590,9 @@ export const kmsServiceFactory = ({
     // internal KMS
     const keyCipher = symmetricCipherService(SymmetricKeyAlgorithm.AES_GCM_256);
     const dataCipher = symmetricCipherService(encryptionAlgorithm);
+    const rootKey = getOrgRootKey(kmsDoc.orgSlug || "");
     return ({ plainText }: Pick<TEncryptWithKmsDTO, "plainText">) => {
-      const kmsKey = keyCipher.decrypt(kmsDoc.internalKms?.encryptedKey as Buffer, ROOT_ENCRYPTION_KEY);
+      const kmsKey = keyCipher.decrypt(kmsDoc.internalKms?.encryptedKey as Buffer, rootKey);
       const encryptedPlainTextBlob = dataCipher.encrypt(plainText, kmsKey);
 
       // Buffer#1 encrypted text + Buffer#2 version number
