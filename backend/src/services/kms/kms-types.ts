@@ -30,6 +30,7 @@ export type TEncryptWithKmsDataKeyDTO =
 
 export type TGenerateKMSDTO = {
   orgId: string;
+  orgSlug?: string;
   projectId?: string;
   encryptionAlgorithm?: SymmetricKeyAlgorithm | AsymmetricKeyAlgorithm;
   keyUsage?: KmsKeyUsage;
