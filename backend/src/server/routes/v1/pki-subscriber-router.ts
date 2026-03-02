@@ -15,7 +15,7 @@ import { CertExtendedKeyUsage, CertKeyUsage } from "@app/services/certificate/ce
 import { validateAltNameField } from "@app/services/certificate-authority/certificate-authority-validators";
 import { sanitizedPkiSubscriber } from "@app/services/pki-subscriber/pki-subscriber-schema";
 import { PkiSubscriberStatus } from "@app/services/pki-subscriber/pki-subscriber-types";
-import { PostHogEventTypes } from "@app/services/telemetry/telemetry-types";
+import { InsightsEventTypes } from "@app/services/telemetry/telemetry-types";
 
 export const registerPkiSubscriberRouter = async (server: FastifyZodProvider) => {
   server.route({
@@ -496,8 +496,8 @@ export const registerPkiSubscriberRouter = async (server: FastifyZodProvider) =>
         }
       });
 
-      await server.services.telemetry.sendPostHogEvents({
-        event: PostHogEventTypes.IssueCert,
+      await server.services.telemetry.sendInsightsEvents({
+        event: InsightsEventTypes.IssueCert,
         organizationId: req.permission.orgId,
         distinctId: getTelemetryDistinctId(req),
         properties: {
@@ -565,8 +565,8 @@ export const registerPkiSubscriberRouter = async (server: FastifyZodProvider) =>
         }
       });
 
-      await server.services.telemetry.sendPostHogEvents({
-        event: PostHogEventTypes.IssueCert,
+      await server.services.telemetry.sendInsightsEvents({
+        event: InsightsEventTypes.IssueCert,
         distinctId: getTelemetryDistinctId(req),
         organizationId: req.permission.orgId,
         properties: {
@@ -639,8 +639,8 @@ export const registerPkiSubscriberRouter = async (server: FastifyZodProvider) =>
         }
       });
 
-      await server.services.telemetry.sendPostHogEvents({
-        event: PostHogEventTypes.SignCert,
+      await server.services.telemetry.sendInsightsEvents({
+        event: InsightsEventTypes.SignCert,
         distinctId: getTelemetryDistinctId(req),
         organizationId: req.permission.orgId,
         properties: {

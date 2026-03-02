@@ -11,7 +11,7 @@ import { AuthMode } from "@app/services/auth/auth-type";
 import { IntegrationMetadataSchema } from "@app/services/integration/integration-schema";
 import { Integrations } from "@app/services/integration-auth/integration-list";
 import {
-  PostHogEventTypes,
+  InsightsEventTypes,
   TIntegrationCreatedEvent,
   TIntegrationDeletedEvent,
   TIntegrationSyncedEvent
@@ -107,8 +107,8 @@ export const registerIntegrationRouter = async (server: FastifyZodProvider) => {
         }
       });
 
-      await server.services.telemetry.sendPostHogEvents({
-        event: PostHogEventTypes.IntegrationCreated,
+      await server.services.telemetry.sendInsightsEvents({
+        event: InsightsEventTypes.IntegrationCreated,
         organizationId: req.permission.orgId,
         distinctId: getTelemetryDistinctId(req),
         properties: {
@@ -327,8 +327,8 @@ export const registerIntegrationRouter = async (server: FastifyZodProvider) => {
         }
       });
 
-      await server.services.telemetry.sendPostHogEvents({
-        event: PostHogEventTypes.IntegrationDeleted,
+      await server.services.telemetry.sendInsightsEvents({
+        event: InsightsEventTypes.IntegrationDeleted,
         organizationId: req.permission.orgId,
         distinctId: getTelemetryDistinctId(req),
         properties: {
@@ -403,8 +403,8 @@ export const registerIntegrationRouter = async (server: FastifyZodProvider) => {
         }
       });
 
-      await server.services.telemetry.sendPostHogEvents({
-        event: PostHogEventTypes.IntegrationSynced,
+      await server.services.telemetry.sendInsightsEvents({
+        event: InsightsEventTypes.IntegrationSynced,
         organizationId: req.permission.orgId,
         distinctId: getTelemetryDistinctId(req),
         properties: {

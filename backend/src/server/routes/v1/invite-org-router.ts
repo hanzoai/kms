@@ -5,7 +5,7 @@ import { inviteUserRateLimit, smtpRateLimit } from "@app/server/config/rateLimit
 import { getTelemetryDistinctId } from "@app/server/lib/telemetry";
 import { verifyAuth } from "@app/server/plugins/auth/verify-auth";
 import { ActorType, AuthMode } from "@app/services/auth/auth-type";
-import { PostHogEventTypes } from "@app/services/telemetry/telemetry-types";
+import { InsightsEventTypes } from "@app/services/telemetry/telemetry-types";
 
 export const registerInviteOrgRouter = async (server: FastifyZodProvider) => {
   server.route({
@@ -56,8 +56,8 @@ export const registerInviteOrgRouter = async (server: FastifyZodProvider) => {
         }
       });
 
-      await server.services.telemetry.sendPostHogEvents({
-        event: PostHogEventTypes.UserOrgInvitation,
+      await server.services.telemetry.sendInsightsEvents({
+        event: InsightsEventTypes.UserOrgInvitation,
         distinctId: getTelemetryDistinctId(req),
         organizationId: req.permission.orgId,
         properties: {

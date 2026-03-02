@@ -55,7 +55,7 @@ import { TSecretVersionV2DALFactory } from "../secret-v2-bridge/secret-version-d
 import { TSecretVersionV2TagDALFactory } from "../secret-v2-bridge/secret-version-tag-dal";
 import { SmtpTemplates, TSmtpService } from "../smtp/smtp-service";
 import { TTelemetryServiceFactory } from "../telemetry/telemetry-service";
-import { PostHogEventTypes } from "../telemetry/telemetry-types";
+import { InsightsEventTypes } from "../telemetry/telemetry-types";
 import { TUserDALFactory } from "../user/user-dal";
 import { TWebhookDALFactory } from "../webhook/webhook-dal";
 import { fnTriggerWebhook } from "../webhook/webhook-fns";
@@ -116,7 +116,7 @@ type TSecretQueueFactoryDep = {
   reminderService: Pick<TReminderServiceFactory, "createReminderInternal" | "deleteReminderBySecretId">;
   projectEventsService?: unknown;
   licenseService: Pick<TLicenseServiceFactory, "getPlan">;
-  telemetryService: Pick<TTelemetryServiceFactory, "sendPostHogEvents">;
+  telemetryService: Pick<TTelemetryServiceFactory, "sendInsightsEvents">;
 };
 
 export type TGetSecrets = {
@@ -993,8 +993,8 @@ export const secretQueueFactory = ({
               isSynced: response?.isSynced ?? true
             });
 
-            await telemetryService.sendPostHogEvents({
-              event: PostHogEventTypes.IntegrationSynced,
+            await telemetryService.sendInsightsEvents({
+              event: InsightsEventTypes.IntegrationSynced,
               distinctId: `project/${projectId}`,
               organizationId: project.orgId,
               properties: {

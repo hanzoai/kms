@@ -33,7 +33,7 @@ export const registerServeUI = async (
       void res.type("application/javascript");
       const config = {
         CAPTCHA_SITE_KEY: appCfg.CAPTCHA_SITE_KEY,
-        POSTHOG_API_KEY: appCfg.POSTHOG_PROJECT_API_KEY,
+        POSTHOG_API_KEY: appCfg.INSIGHTS_API_KEY,
         INTERCOM_ID: appCfg.INTERCOM_ID,
         TELEMETRY_CAPTURING_ENABLED: appCfg.TELEMETRY_ENABLED,
         CDN_HOST: cdnHost

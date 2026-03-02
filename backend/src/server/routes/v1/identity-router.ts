@@ -12,7 +12,7 @@ import { verifyAuth } from "@app/server/plugins/auth/verify-auth";
 import { AuthMode } from "@app/services/auth/auth-type";
 import { OrgIdentityOrderBy } from "@app/services/identity/identity-types";
 import { isSuperAdmin } from "@app/services/super-admin/super-admin-fns";
-import { PostHogEventTypes } from "@app/services/telemetry/telemetry-types";
+import { InsightsEventTypes } from "@app/services/telemetry/telemetry-types";
 
 import { SanitizedProjectSchema } from "../sanitizedSchemas";
 
@@ -86,8 +86,8 @@ export const registerIdentityRouter = async (server: FastifyZodProvider) => {
         }
       });
 
-      await server.services.telemetry.sendPostHogEvents({
-        event: PostHogEventTypes.MachineIdentityCreated,
+      await server.services.telemetry.sendInsightsEvents({
+        event: InsightsEventTypes.MachineIdentityCreated,
         distinctId: getTelemetryDistinctId(req),
         organizationId: req.permission.orgId,
         properties: {
