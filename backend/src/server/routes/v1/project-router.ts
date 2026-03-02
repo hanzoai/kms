@@ -33,7 +33,7 @@ import { validateMicrosoftTeamsChannelsSchema } from "@app/services/microsoft-te
 import { sanitizedPkiSubscriber } from "@app/services/pki-subscriber/pki-subscriber-schema";
 import { ProjectFilterType, SearchProjectSortBy } from "@app/services/project/project-types";
 import { validateSlackChannelsField } from "@app/services/slack/slack-auth-validators";
-import { PostHogEventTypes } from "@app/services/telemetry/telemetry-types";
+import { InsightsEventTypes } from "@app/services/telemetry/telemetry-types";
 import { WorkflowIntegration } from "@app/services/workflow-integration/workflow-integration-types";
 
 import {
@@ -183,8 +183,8 @@ export const registerProjectRouter = async (server: FastifyZodProvider) => {
         hasDeleteProtection: req.body.hasDeleteProtection
       });
 
-      await server.services.telemetry.sendPostHogEvents({
-        event: PostHogEventTypes.ProjectCreated,
+      await server.services.telemetry.sendInsightsEvents({
+        event: InsightsEventTypes.ProjectCreated,
         distinctId: getTelemetryDistinctId(req),
         organizationId: req.permission.orgId,
         properties: {

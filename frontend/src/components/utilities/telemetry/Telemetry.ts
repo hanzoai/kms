@@ -1,13 +1,13 @@
 /* eslint-disable */
 import { PostHog } from "posthog-js";
-import { initPostHog } from "@app/components/analytics/posthog";
+import { initInsights } from "@app/components/analytics/insights";
 import { envConfig } from "@app/config/env";
 
 class Capturer {
   api: PostHog;
 
   constructor() {
-    this.api = initPostHog()!;
+    this.api = initInsights()!;
   }
 
   capture(item: string) {
@@ -15,7 +15,7 @@ class Capturer {
       try {
         this.api.capture(item);
       } catch (error) {
-        console.error("PostHog", error);
+        console.error("Insights", error);
       }
     }
   }
@@ -27,7 +27,7 @@ class Capturer {
           email: email
         });
       } catch (error) {
-        console.error("PostHog", error);
+        console.error("Insights", error);
       }
     }
   }

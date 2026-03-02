@@ -7,7 +7,7 @@ import { authRateLimit, smtpRateLimit } from "@app/server/config/rateLimiter";
 import { addAuthOriginDomainCookie } from "@app/server/lib/cookie";
 import { GenericResourceNameSchema } from "@app/server/lib/schemas";
 import { getServerCfg } from "@app/services/super-admin/super-admin-service";
-import { PostHogEventTypes } from "@app/services/telemetry/telemetry-types";
+import { InsightsEventTypes } from "@app/services/telemetry/telemetry-types";
 
 export const registerSignupRouter = async (server: FastifyZodProvider) => {
   server.route({
@@ -148,8 +148,8 @@ export const registerSignupRouter = async (server: FastifyZodProvider) => {
         void server.services.telemetry.sendLoopsEvent(user.email, user.firstName || "", user.lastName || "");
       }
 
-      void server.services.telemetry.sendPostHogEvents({
-        event: PostHogEventTypes.UserSignedUp,
+      void server.services.telemetry.sendInsightsEvents({
+        event: InsightsEventTypes.UserSignedUp,
         distinctId: user.username ?? "",
         properties: {
           username: user.username,
@@ -210,8 +210,8 @@ export const registerSignupRouter = async (server: FastifyZodProvider) => {
         void server.services.telemetry.sendLoopsEvent(user.email, user.firstName || "", user.lastName || "");
       }
 
-      void server.services.telemetry.sendPostHogEvents({
-        event: PostHogEventTypes.UserSignedUp,
+      void server.services.telemetry.sendInsightsEvents({
+        event: InsightsEventTypes.UserSignedUp,
         distinctId: user.username ?? "",
         properties: {
           username: user.username,
