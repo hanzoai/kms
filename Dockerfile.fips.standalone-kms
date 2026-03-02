@@ -78,7 +78,7 @@ RUN apt-get update && apt-get install -y \
 # Configure ODBC
 RUN printf "[FreeTDS]\nDescription = FreeTDS Driver\nDriver = /usr/lib/x86_64-linux-gnu/odbc/libtdsodbc.so\nSetup = /usr/lib/x86_64-linux-gnu/odbc/libtdsS.so\nFileUsage = 1\n" > /etc/odbcinst.ini
 
-COPY backend/package*.json ./
+COPY backend/package.json backend/package-lock.json ./
 RUN npm ci
 
 COPY /backend .

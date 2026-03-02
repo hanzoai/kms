@@ -78,7 +78,7 @@ RUN apt-get update && apt-get install -y \
 RUN groupadd --system --gid 1001 nodejs
 RUN useradd --system --uid 1001 --gid nodejs non-root-user
 
-COPY backend/package*.json ./
+COPY backend/package.json backend/package-lock.json ./
 RUN npm ci
 
 COPY /backend .
