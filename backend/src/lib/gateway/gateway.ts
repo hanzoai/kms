@@ -1,5 +1,5 @@
 import net from "node:net";
-import quicDefault, * as quicModule from "@infisical/quic";
+import quicDefault, * as quicModule from "@hanzo/quic";
 import axios from "axios";
 import https from "https";
 import { crypto } from "@app/lib/crypto/cryptography";
