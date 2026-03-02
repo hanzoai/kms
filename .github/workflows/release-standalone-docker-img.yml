@@ -59,7 +59,7 @@ jobs:
                       ghcr.io/hanzoai/kms:latest
                       ghcr.io/hanzoai/kms:${{ steps.commit.outputs.short }}
                       ghcr.io/hanzoai/kms:${{ steps.extract_version.outputs.version }}
-                  platforms: linux/amd64,linux/arm64
+                  platforms: linux/amd64
                   file: Dockerfile.standalone-kms
                   build-args: |
                       POSTHOG_API_KEY=${{ secrets.PUBLIC_POSTHOG_API_KEY }}
@@ -123,7 +123,7 @@ jobs:
                       ghcr.io/hanzoai/kms-fips:latest
                       ghcr.io/hanzoai/kms-fips:${{ steps.commit.outputs.short }}
                       ghcr.io/hanzoai/kms-fips:${{ steps.extract_version.outputs.version }}
-                  platforms: linux/amd64,linux/arm64
+                  platforms: linux/amd64
                   file: Dockerfile.fips.standalone-kms
                   build-args: |
                       POSTHOG_API_KEY=${{ secrets.PUBLIC_POSTHOG_API_KEY }}
