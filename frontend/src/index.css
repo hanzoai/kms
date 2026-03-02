@@ -73,18 +73,18 @@
   --color-org-v1: #a3a3a3;
   --color-namespace-v1: #8a8a8a;
 
-  /* Primary - Hanzo Monochrome */
-  --color-primary-50: #fafafa;
-  --color-primary-100: #f5f5f5;
-  --color-primary-200: #ebebeb;
-  --color-primary-300: #d4d4d4;
-  --color-primary-400: #e0e0e0;
-  --color-primary-500: #ffffff;
-  --color-primary-600: #d4d4d4;
-  --color-primary-700: #a3a3a3;
-  --color-primary-800: #737373;
-  --color-primary-900: #525252;
-  --color-primary: #ffffff;
+  /* Primary - Hanzo Red */
+  --color-primary-50: #fff5f5;
+  --color-primary-100: #ffe0e0;
+  --color-primary-200: #ffbdbd;
+  --color-primary-300: #ff9090;
+  --color-primary-400: #ff6060;
+  --color-primary-500: #fd4444;
+  --color-primary-600: #e02020;
+  --color-primary-700: #b91414;
+  --color-primary-800: #8c0c0c;
+  --color-primary-900: #5e0808;
+  --color-primary: #fd4444;
 
   /* Grey + Misc */
   --color-grey: #0d1117;
