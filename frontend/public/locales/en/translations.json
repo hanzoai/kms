@@ -39,7 +39,7 @@
     "schedule-demo": "Schedule a Demo"
   },
   "common": {
-    "head-title": "{{title}} | KMS",
+    "head-title": "{{title}} | Hanzo KMS",
     "error_project-already-exists": "A project with this name already exists.",
     "email": "Email",
     "password": "Password",
@@ -129,10 +129,10 @@
   },
   "login": {
     "title": "Login",
-    "og-title": "Log In to KMS",
-    "og-description": "KMS is a simple end-to-end encrypted platform that enables teams to sync and manage their .env files.",
+    "og-title": "Log In to Hanzo KMS",
+    "og-description": "Hanzo KMS is a simple end-to-end encrypted platform that enables teams to sync and manage their secrets.",
     "login": "Log In",
-    "need-account": "Need a KMS account?",
+    "need-account": "Need a Hanzo KMS account?",
     "create-account": "Create an account",
     "forgot-password": "Forgot your password?",
     "error-login": "Wrong credentials.",
