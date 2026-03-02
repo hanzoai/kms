@@ -21,23 +21,23 @@ Prerequisites:
         <Tab title="Alpine">
                 ```dockerfile
                 RUN apk add --no-cache bash sudo wget && wget -qO- \
-            'https://artifacts-cli.infisical.com/setup.apk.sh' | sh \
-            && apk add infisical
+            'https://artifacts-cli.kms.hanzo.ai/setup.apk.sh' | sh \
+            && apk add kms
                 ```
 
         </Tab>
         <Tab title="RedHat/CentOs/Amazon-linux">
                 ```dockerfile
             RUN curl -1sLf \
-            'https://artifacts-cli.infisical.com/setup.rpm.sh' | sh \
-            && yum install -y infisical
+            'https://artifacts-cli.kms.hanzo.ai/setup.rpm.sh' | sh \
+            && yum install -y kms
                 ```
         </Tab>
         <Tab title="Debian/Ubuntu">
             ```dockerfile
             RUN apt-get update && apt-get install -y bash curl && curl -1sLf \
-            'https://artifacts-cli.infisical.com/setup.deb.sh' | bash \
-            && apt-get update && apt-get install -y infisical
+            'https://artifacts-cli.kms.hanzo.ai/setup.deb.sh' | bash \
+            && apt-get update && apt-get install -y kms
                 ```
         </Tab>
     </Tabs>
@@ -66,8 +66,8 @@ Prerequisites:
 
     # Add the KMS CLI to your Dockerfile (choose the appropriate block based on your base image)
     RUN apk add --no-cache bash sudo wget && wget -qO- \
-        'https://artifacts-cli.infisical.com/setup.apk.sh' | sh \
-        && apk add infisical
+        'https://artifacts-cli.kms.hanzo.ai/setup.apk.sh' | sh \
+        && apk add kms
 
     # Install any additional dependencies or packages your service requires
     # RUN <additional commands for your service>
@@ -93,23 +93,23 @@ Prerequisites:
         <Tab title="Alpine">
                 ```dockerfile
                 RUN apk add --no-cache bash sudo wget && wget -qO- \
-            'https://artifacts-cli.infisical.com/setup.apk.sh' | sh \
-            && apk add infisical
+            'https://artifacts-cli.kms.hanzo.ai/setup.apk.sh' | sh \
+            && apk add kms
                 ```
 
         </Tab>
         <Tab title="RedHat/CentOs/Amazon-linux">
                 ```dockerfile
             RUN curl -1sLf \
-            'https://artifacts-cli.infisical.com/setup.rpm.sh' | sh \ 
-            && yum install -y infisical
+            'https://artifacts-cli.kms.hanzo.ai/setup.rpm.sh' | sh \ 
+            && yum install -y kms
                 ```
         </Tab>
         <Tab title="Debian/Ubuntu">
             ```dockerfile
             RUN apt-get update && apt-get install -y bash curl && curl -1sLf \
-            'https://artifacts-cli.infisical.com/setup.deb.sh' | bash \
-            && apt-get update && apt-get install -y infisical
+            'https://artifacts-cli.kms.hanzo.ai/setup.deb.sh' | bash \
+            && apt-get update && apt-get install -y kms
                 ```
         </Tab>
     </Tabs>
@@ -128,8 +128,8 @@ Prerequisites:
 
     # Add the KMS CLI to your Dockerfile (choose the appropriate block based on your base image)
     RUN apk add --no-cache bash sudo wget && wget -qO- \
-        'https://artifacts-cli.infisical.com/setup.apk.sh' | sh \
-        && apk add infisical
+        'https://artifacts-cli.kms.hanzo.ai/setup.apk.sh' | sh \
+        && apk add kms
 
     # Install any additional dependencies or packages your service requires
     # RUN <additional commands for your service>
