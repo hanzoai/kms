@@ -14,7 +14,7 @@ import {
   validateAltNamesField,
   validateCaDateField
 } from "@app/services/certificate-authority/certificate-authority-validators";
-import { PostHogEventTypes } from "@app/services/telemetry/telemetry-types";
+import { InsightsEventTypes } from "@app/services/telemetry/telemetry-types";
 /* eslint-disable @typescript-eslint/no-floating-promises */
 
 
@@ -264,8 +264,8 @@ export const registerDeprecatedCertRouter = async (server: FastifyZodProvider) =
         }
       });
 
-      await server.services.telemetry.sendPostHogEvents({
-        event: PostHogEventTypes.IssueCert,
+      await server.services.telemetry.sendInsightsEvents({
+        event: InsightsEventTypes.IssueCert,
         distinctId: getTelemetryDistinctId(req),
         organizationId: req.permission.orgId,
         properties: {
@@ -441,8 +441,8 @@ export const registerDeprecatedCertRouter = async (server: FastifyZodProvider) =
         }
       });
 
-      await server.services.telemetry.sendPostHogEvents({
-        event: PostHogEventTypes.SignCert,
+      await server.services.telemetry.sendInsightsEvents({
+        event: InsightsEventTypes.SignCert,
         distinctId: getTelemetryDistinctId(req),
         organizationId: req.permission.orgId,
         properties: {

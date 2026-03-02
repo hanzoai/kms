@@ -12,7 +12,7 @@ import {
   TELEMETRY_SECRET_PROCESSED_KEY,
   TTelemetryServiceFactory
 } from "./telemetry-service";
-import { PostHogEventTypes } from "./telemetry-types";
+import { InsightsEventTypes } from "./telemetry-types";
 
 type TTelemetryQueueServiceFactoryDep = {
   queueService: TQueueServiceFactory;
@@ -32,7 +32,7 @@ export const telemetryQueueServiceFactory = ({
   const appCfg = getConfig();
   const postHog =
     appCfg.isProductionMode && appCfg.TELEMETRY_ENABLED
-      ? new PostHog(appCfg.POSTHOG_PROJECT_API_KEY, { host: appCfg.POSTHOG_HOST, flushAt: 1, flushInterval: 0 })
+      ? new PostHog(appCfg.INSIGHTS_API_KEY, { host: appCfg.INSIGHTS_HOST, flushAt: 1, flushInterval: 0 })
       : undefined;
 
   queueService.start(QueueName.TelemetryInstanceStats, async () => {
@@ -45,7 +45,7 @@ export const telemetryQueueServiceFactory = ({
 
     // send to postHog
     postHog?.capture({
-      event: PostHogEventTypes.TelemetryInstanceStats,
+      event: InsightsEventTypes.TelemetryInstanceStats,
       distinctId: instanceId,
       properties: stats
     });

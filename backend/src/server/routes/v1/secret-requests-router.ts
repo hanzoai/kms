@@ -10,7 +10,7 @@ import { getTelemetryDistinctId } from "@app/server/lib/telemetry";
 import { verifyAuth } from "@app/server/plugins/auth/verify-auth";
 import { AuthMode } from "@app/services/auth/auth-type";
 import { SecretSharingType } from "@app/services/secret-sharing/secret-sharing-types";
-import { PostHogEventTypes } from "@app/services/telemetry/telemetry-types";
+import { InsightsEventTypes } from "@app/services/telemetry/telemetry-types";
 
 export const registerSecretRequestsRouter = async (server: FastifyZodProvider) => {
   server.route({
@@ -227,8 +227,8 @@ export const registerSecretRequestsRouter = async (server: FastifyZodProvider) =
         type: SecretSharingType.Request
       });
 
-      await server.services.telemetry.sendPostHogEvents({
-        event: PostHogEventTypes.SecretRequestDeleted,
+      await server.services.telemetry.sendInsightsEvents({
+        event: InsightsEventTypes.SecretRequestDeleted,
         distinctId: getTelemetryDistinctId(req),
         organizationId: req.permission.orgId,
         properties: {
@@ -349,8 +349,8 @@ export const registerSecretRequestsRouter = async (server: FastifyZodProvider) =
         }
       });
 
-      await server.services.telemetry.sendPostHogEvents({
-        event: PostHogEventTypes.SecretRequestCreated,
+      await server.services.telemetry.sendInsightsEvents({
+        event: InsightsEventTypes.SecretRequestCreated,
         distinctId: getTelemetryDistinctId(req),
         organizationId: req.permission.orgId,
         properties: {

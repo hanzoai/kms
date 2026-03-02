@@ -12,13 +12,20 @@ export const envConfig = {
   get INTERCOM_ID() {
     return window?.__KMS_RUNTIME_ENV__?.INTERCOM_ID || import.meta.env.VITE_INTERCOM_ID;
   },
-  get POSTHOG_API_KEY() {
+  get INSIGHTS_API_KEY() {
     return (
-      window?.__KMS_RUNTIME_ENV__?.POSTHOG_API_KEY || import.meta.env.VITE_POSTHOG_API_KEY
+      window?.__KMS_RUNTIME_ENV__?.INSIGHTS_API_KEY ||
+      import.meta.env.VITE_INSIGHTS_API_KEY ||
+      window?.__KMS_RUNTIME_ENV__?.POSTHOG_API_KEY ||
+      import.meta.env.VITE_POSTHOG_API_KEY
     );
   },
-  get POSTHOG_HOST() {
-    return import.meta.env.VITE_POSTHOG_HOST! || "https://app.posthog.com";
+  get INSIGHTS_HOST() {
+    return (
+      import.meta.env.VITE_INSIGHTS_HOST ||
+      import.meta.env.VITE_POSTHOG_HOST ||
+      "https://insights.hanzo.ai"
+    );
   },
   get TELEMETRY_CAPTURING_ENABLED() {
     return (

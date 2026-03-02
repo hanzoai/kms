@@ -6,7 +6,7 @@ import { readLimit, writeLimit } from "@app/server/config/rateLimiter";
 import { getTelemetryDistinctId } from "@app/server/lib/telemetry";
 import { verifyAuth } from "@app/server/plugins/auth/verify-auth";
 import { AuthMode } from "@app/services/auth/auth-type";
-import { PostHogEventTypes } from "@app/services/telemetry/telemetry-types";
+import { InsightsEventTypes } from "@app/services/telemetry/telemetry-types";
 
 export const registerNotificationRouter = async (server: FastifyZodProvider) => {
   server.route({
@@ -102,8 +102,8 @@ export const registerNotificationRouter = async (server: FastifyZodProvider) => 
         ...req.body
       });
 
-      await server.services.telemetry.sendPostHogEvents({
-        event: PostHogEventTypes.NotificationUpdated,
+      await server.services.telemetry.sendInsightsEvents({
+        event: InsightsEventTypes.NotificationUpdated,
         distinctId: getTelemetryDistinctId(req),
         organizationId: req.permission.orgId,
         properties: {
