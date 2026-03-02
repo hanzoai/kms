@@ -172,10 +172,11 @@ RUN ARCH=$(dpkg --print-architecture) && \
 # Install smbclient for Windows SMB operations
 RUN apt-get update && apt-get install -y smbclient && rm -rf /var/lib/apt/lists/*
 
-# Install KMS CLI (upstream package: infisical)
+# Install KMS CLI (built on infisical upstream, exposed as 'kms')
 RUN curl -1sLf 'https://artifacts-cli.infisical.com/setup.deb.sh' | bash \
     && apt-get update && apt-get install -y infisical=0.43.47 \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && ln -sf /usr/bin/infisical /usr/local/bin/kms
 
 WORKDIR /
 
