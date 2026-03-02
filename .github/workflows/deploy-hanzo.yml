@@ -161,6 +161,7 @@ jobs:
 
       - name: Load deploy secrets from Hanzo KMS
         continue-on-error: true
+        # TODO: Replace with hanzoai/kms-secrets-action when available
         uses: Infisical/secrets-action@v1.0.12
         with:
           method: oidc

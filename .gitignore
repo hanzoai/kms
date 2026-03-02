@@ -5,7 +5,7 @@ node_modules
 .env.dev
 .env.gamma
 .env.prod
-.env.infisical
+.env.kms
 .env.migration
 *~
 *.swp
@@ -54,11 +54,13 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 .vercel
-.env.infisical
+.env.kms
 
-# Infisical init
+# KMS init
+.kms.json
 .infisical.json
 
+.kmsignore
 .infisicalignore
 
 # Editor specific
@@ -68,10 +70,10 @@ yarn-error.log*
 frontend-build
 
 *.tgz
-cli/infisical-merge
-cli/test/infisical-merge
+cli/kms-merge
+cli/test/kms-merge
 /backend/binary
-backend/bdd/.bdd-infisical-bootstrap-result.json
+backend/bdd/.bdd-kms-bootstrap-result.json
 
 /npm/bin
 __pycache__

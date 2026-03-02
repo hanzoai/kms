@@ -81,10 +81,12 @@ RUN mkdir -p /opt/oracle && \
 # Install smbclient for Windows SMB operations
 RUN apt-get update && apt-get install -y smbclient
 
-# Install KMS CLI (upstream package: infisical)
+# Install KMS CLI
+# TODO: Replace with Hanzo-built CLI from ghcr.io/hanzoai/kms-cli
 RUN curl -1sLf 'https://artifacts-cli.infisical.com/setup.deb.sh' | bash && \
     apt-get update && \
-    apt-get install -y infisical=0.43.14
+    apt-get install -y infisical=0.43.14 && \
+    ln -sf /usr/bin/infisical /usr/local/bin/kms
 
 WORKDIR /app
 

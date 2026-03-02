@@ -13,23 +13,23 @@ The following sequence diagram illustrates the OIDC Auth workflow for authentica
 sequenceDiagram
   participant Client as GitLab Pipeline
   participant Idp as GitLab Identity Provider
-  participant Infis as Hanzo KMS
+  participant KMS as Hanzo KMS
 
   Client->>Idp: Step 1: Request identity token
   Idp-->>Client: Return JWT with verifiable claims
 
-  Note over Client,Infis: Step 2: Login Operation
-  Client->>Infis: Send signed JWT to /api/v1/auth/oidc-auth/login
+  Note over Client,KMS: Step 2: Login Operation
+  Client->>KMS: Send signed JWT to /api/v1/auth/oidc-auth/login
 
-  Note over Infis,Idp: Step 3: Query verification
-  Infis->>Idp: Request JWT public key using OIDC Discovery
-  Idp-->>Infis: Return public key
+  Note over KMS,Idp: Step 3: Query verification
+  KMS->>Idp: Request JWT public key using OIDC Discovery
+  Idp-->>KMS: Return public key
 
-  Note over Infis: Step 4: JWT validation
-  Infis->>Client: Return short-lived access token
+  Note over KMS: Step 4: JWT validation
+  KMS->>Client: Return short-lived access token
 
-  Note over Client,Infis: Step 5: Access Hanzo KMS API with Token
-  Client->>Infis: Make authenticated requests using the short-lived access token
+  Note over Client,KMS: Step 5: Access KMS API with Token
+  Client->>KMS: Make authenticated requests using the short-lived access token
 ```
 
 ## Concept
@@ -127,10 +127,10 @@ In the following steps, we explore how to create and use identities to access th
                 aud: kms-aud-test
         script:
             - apt update && apt install -y curl
-            - curl -1sLf 'https://artifacts-cli.infisical.com/setup.deb.sh' | bash
-            - apt-get update && apt-get install -y infisical
-            - export INFISICAL_TOKEN=$(infisical login --method=oidc-auth --machine-identity-id=4e807a78-1b1c-4bd6-9609-ef2b0cf4fd54 --oidc-jwt=$INFISICAL_ID_TOKEN --silent --plain)
-            - infisical run --projectId=1d0443c1-cd43-4b3a-91a3-9d5f81254a89 --env=dev -- npm run build
+            - curl -1sLf 'https://artifacts-cli.kms.hanzo.ai/setup.deb.sh' | bash
+            - apt-get update && apt-get install -y kms
+            - export KMS_TOKEN=$(hanzo-kms login --method=oidc-auth --machine-identity-id=4e807a78-1b1c-4bd6-9609-ef2b0cf4fd54 --oidc-jwt=$KMS_ID_TOKEN --silent --plain)
+            - hanzo-kms run --projectId=1d0443c1-cd43-4b3a-91a3-9d5f81254a89 --env=dev -- npm run build
         ```
 
         The `id_tokens` keyword is used to request an ID token for the job. In this example, an ID token named `KMS_ID_TOKEN` is requested with the audience (`aud`) claim set to "kms-aud-test". This ID token will be used to authenticate with Hanzo KMS.
