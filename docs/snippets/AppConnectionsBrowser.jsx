@@ -26,7 +26,7 @@ export const AppConnectionsBrowser = () => {
       slug: "aws",
       path: "/integrations/app-connections/aws",
       description:
-        "Learn how to connect your AWS applications to pull secrets from Infisical.",
+        "Learn how to connect your AWS applications to pull secrets from Hanzo KMS.",
       category: "Cloud Providers",
     },
     {
@@ -34,7 +34,7 @@ export const AppConnectionsBrowser = () => {
       slug: "azure-key-vault",
       path: "/integrations/app-connections/azure-key-vault",
       description:
-        "Learn how to connect your Azure Key Vault to pull secrets from Infisical.",
+        "Learn how to connect your Azure Key Vault to pull secrets from Hanzo KMS.",
       category: "Cloud Providers",
     },
     {
@@ -42,7 +42,7 @@ export const AppConnectionsBrowser = () => {
       slug: "azure-app-configuration",
       path: "/integrations/app-connections/azure-app-configuration",
       description:
-        "Learn how to connect your Azure App Configuration to pull secrets from Infisical.",
+        "Learn how to connect your Azure App Configuration to pull secrets from Hanzo KMS.",
       category: "Cloud Providers",
     },
     {
@@ -50,7 +50,7 @@ export const AppConnectionsBrowser = () => {
       slug: "azure-client-secrets",
       path: "/integrations/app-connections/azure-client-secrets",
       description:
-        "Learn how to connect your Azure Client Secrets to pull secrets from Infisical.",
+        "Learn how to connect your Azure Client Secrets to pull secrets from Hanzo KMS.",
       category: "Cloud Providers",
     },
     {
@@ -58,7 +58,7 @@ export const AppConnectionsBrowser = () => {
       slug: "azure-devops",
       path: "/integrations/app-connections/azure-devops",
       description:
-        "Learn how to connect your Azure DevOps to pull secrets from Infisical.",
+        "Learn how to connect your Azure DevOps to pull secrets from Hanzo KMS.",
       category: "CI/CD",
     },
     {
@@ -66,7 +66,7 @@ export const AppConnectionsBrowser = () => {
       slug: "azure-adcs",
       path: "/integrations/app-connections/azure-adcs",
       description:
-        "Learn how to connect your Azure ADCS to pull secrets from Infisical.",
+        "Learn how to connect your Azure ADCS to pull secrets from Hanzo KMS.",
       category: "Cloud Providers",
     },
     {
@@ -81,7 +81,7 @@ export const AppConnectionsBrowser = () => {
       slug: "gcp",
       path: "/integrations/app-connections/gcp",
       description:
-        "Learn how to connect your GCP applications to pull secrets from Infisical.",
+        "Learn how to connect your GCP applications to pull secrets from Hanzo KMS.",
       category: "Cloud Providers",
     },
     {
@@ -89,7 +89,7 @@ export const AppConnectionsBrowser = () => {
       slug: "hashicorp-vault",
       path: "/integrations/app-connections/hashicorp-vault",
       description:
-        "Learn how to connect your HashiCorp Vault to pull secrets from Infisical.",
+        "Learn how to connect your HashiCorp Vault to pull secrets from Hanzo KMS.",
       category: "Security",
     },
     {
@@ -97,7 +97,7 @@ export const AppConnectionsBrowser = () => {
       slug: "1password",
       path: "/integrations/app-connections/1password",
       description:
-        "Learn how to connect your 1Password to pull secrets from Infisical.",
+        "Learn how to connect your 1Password to pull secrets from Hanzo KMS.",
       category: "Security",
     },
     {
@@ -105,7 +105,7 @@ export const AppConnectionsBrowser = () => {
       slug: "vercel",
       path: "/integrations/app-connections/vercel",
       description:
-        "Learn how to connect your Vercel application to pull secrets from Infisical.",
+        "Learn how to connect your Vercel application to pull secrets from Hanzo KMS.",
       category: "Hosting",
     },
     {
@@ -113,7 +113,7 @@ export const AppConnectionsBrowser = () => {
       slug: "netlify",
       path: "/integrations/app-connections/netlify",
       description:
-        "Learn how to connect your Netlify application to pull secrets from Infisical.",
+        "Learn how to connect your Netlify application to pull secrets from Hanzo KMS.",
       category: "Hosting",
     },
     {
@@ -121,7 +121,7 @@ export const AppConnectionsBrowser = () => {
       slug: "railway",
       path: "/integrations/app-connections/railway",
       description:
-        "Learn how to connect your Railway application to pull secrets from Infisical.",
+        "Learn how to connect your Railway application to pull secrets from Hanzo KMS.",
       category: "Hosting",
     },
     {
@@ -129,7 +129,7 @@ export const AppConnectionsBrowser = () => {
       slug: "flyio",
       path: "/integrations/app-connections/flyio",
       description:
-        "Learn how to connect your Fly.io application to pull secrets from Infisical.",
+        "Learn how to connect your Fly.io application to pull secrets from Hanzo KMS.",
       category: "Hosting",
     },
     {
@@ -137,7 +137,7 @@ export const AppConnectionsBrowser = () => {
       slug: "render",
       path: "/integrations/app-connections/render",
       description:
-        "Learn how to connect your Render application to pull secrets from Infisical.",
+        "Learn how to connect your Render application to pull secrets from Hanzo KMS.",
       category: "Hosting",
     },
     {
@@ -145,7 +145,7 @@ export const AppConnectionsBrowser = () => {
       slug: "heroku",
       path: "/integrations/app-connections/heroku",
       description:
-        "Learn how to connect your Heroku application to pull secrets from Infisical.",
+        "Learn how to connect your Heroku application to pull secrets from Hanzo KMS.",
       category: "Hosting",
     },
     {
@@ -153,7 +153,7 @@ export const AppConnectionsBrowser = () => {
       slug: "dbt",
       path: "/integrations/app-connections/dbt",
       description:
-        "Learn how to connect your DBT application to pull secrets from Infisical.",
+        "Learn how to connect your DBT application to pull secrets from Hanzo KMS.",
       category: "Data Analytics",
     },
     {
@@ -161,7 +161,7 @@ export const AppConnectionsBrowser = () => {
       slug: "digital-ocean",
       path: "/integrations/app-connections/digital-ocean",
       description:
-        "Learn how to connect your DigitalOcean application to pull secrets from Infisical.",
+        "Learn how to connect your DigitalOcean application to pull secrets from Hanzo KMS.",
       category: "Hosting",
     },
     {
@@ -169,7 +169,7 @@ export const AppConnectionsBrowser = () => {
       slug: "supabase",
       path: "/integrations/app-connections/supabase",
       description:
-        "Learn how to connect your Supabase application to pull secrets from Infisical.",
+        "Learn how to connect your Supabase application to pull secrets from Hanzo KMS.",
       category: "Databases",
     },
     {
@@ -177,7 +177,7 @@ export const AppConnectionsBrowser = () => {
       slug: "checkly",
       path: "/integrations/app-connections/checkly",
       description:
-        "Learn how to connect your Checkly application to pull secrets from Infisical.",
+        "Learn how to connect your Checkly application to pull secrets from Hanzo KMS.",
       category: "Monitoring",
     },
     {
@@ -185,7 +185,7 @@ export const AppConnectionsBrowser = () => {
       slug: "github",
       path: "/integrations/app-connections/github",
       description:
-        "Learn how to connect your GitHub application to pull secrets from Infisical.",
+        "Learn how to connect your GitHub application to pull secrets from Hanzo KMS.",
       category: "CI/CD",
     },
     {
@@ -193,7 +193,7 @@ export const AppConnectionsBrowser = () => {
       slug: "github-radar",
       path: "/integrations/app-connections/github-radar",
       description:
-        "Learn how to connect your GitHub Radar to pull secrets from Infisical.",
+        "Learn how to connect your GitHub Radar to pull secrets from Hanzo KMS.",
       category: "CI/CD",
     },
     {
@@ -201,7 +201,7 @@ export const AppConnectionsBrowser = () => {
       slug: "gitlab",
       path: "/integrations/app-connections/gitlab",
       description:
-        "Learn how to connect your GitLab application to pull secrets from Infisical.",
+        "Learn how to connect your GitLab application to pull secrets from Hanzo KMS.",
       category: "CI/CD",
     },
     {
@@ -209,7 +209,7 @@ export const AppConnectionsBrowser = () => {
       slug: "teamcity",
       path: "/integrations/app-connections/teamcity",
       description:
-        "Learn how to connect your TeamCity to pull secrets from Infisical.",
+        "Learn how to connect your TeamCity to pull secrets from Hanzo KMS.",
       category: "CI/CD",
     },
     {
@@ -217,7 +217,7 @@ export const AppConnectionsBrowser = () => {
       slug: "bitbucket",
       path: "/integrations/app-connections/bitbucket",
       description:
-        "Learn how to connect your Bitbucket to pull secrets from Infisical.",
+        "Learn how to connect your Bitbucket to pull secrets from Hanzo KMS.",
       category: "CI/CD",
     },
     {
@@ -225,7 +225,7 @@ export const AppConnectionsBrowser = () => {
       slug: "terraform-cloud",
       path: "/integrations/app-connections/terraform-cloud",
       description:
-        "Learn how to connect your Terraform Cloud to pull secrets from Infisical.",
+        "Learn how to connect your Terraform Cloud to pull secrets from Hanzo KMS.",
       category: "DevOps Tools",
     },
     {
@@ -233,7 +233,7 @@ export const AppConnectionsBrowser = () => {
       slug: "cloudflare",
       path: "/integrations/app-connections/cloudflare",
       description:
-        "Learn how to connect your Cloudflare application to pull secrets from Infisical.",
+        "Learn how to connect your Cloudflare application to pull secrets from Hanzo KMS.",
       category: "Cloud Providers",
     },
     {
@@ -241,7 +241,7 @@ export const AppConnectionsBrowser = () => {
       slug: "circleci",
       path: "/integrations/app-connections/circleci",
       description:
-        "Learn how to connect your CircleCI application to pull secrets from Infisical.",
+        "Learn how to connect your CircleCI application to pull secrets from Hanzo KMS.",
       category: "CI/CD",
     },
     {
@@ -249,21 +249,21 @@ export const AppConnectionsBrowser = () => {
       slug: "databricks",
       path: "/integrations/app-connections/databricks",
       description:
-        "Learn how to connect your Databricks to pull secrets from Infisical.",
+        "Learn how to connect your Databricks to pull secrets from Hanzo KMS.",
       category: "Data Analytics",
     },
     {
       name: "DNS Made Easy",
       slug: "dns-made-easy",
       path: "/integrations/app-connections/dns-made-easy",
-      description: "Learn how to connect Infisical to DNS Made Easy.",
+      description: "Learn how to connect Hanzo KMS to DNS Made Easy.",
       category: "Networking & DNS",
     },
     {
       name: "Azure DNS",
       slug: "azure-dns",
       path: "/integrations/app-connections/azure-dns",
-      description: "Learn how to connect Infisical to Azure DNS for ACME DNS validation.",
+      description: "Learn how to connect Hanzo KMS to Azure DNS for ACME DNS validation.",
       category: "Networking & DNS",
     },
     {
@@ -271,7 +271,7 @@ export const AppConnectionsBrowser = () => {
       slug: "windmill",
       path: "/integrations/app-connections/windmill",
       description:
-        "Learn how to connect your Windmill to pull secrets from Infisical.",
+        "Learn how to connect your Windmill to pull secrets from Hanzo KMS.",
       category: "DevOps Tools",
     },
     {
@@ -279,7 +279,7 @@ export const AppConnectionsBrowser = () => {
       slug: "camunda",
       path: "/integrations/app-connections/camunda",
       description:
-        "Learn how to connect your Camunda to pull secrets from Infisical.",
+        "Learn how to connect your Camunda to pull secrets from Hanzo KMS.",
       category: "DevOps Tools",
     },
     {
@@ -287,7 +287,7 @@ export const AppConnectionsBrowser = () => {
       slug: "humanitec",
       path: "/integrations/app-connections/humanitec",
       description:
-        "Learn how to connect your Humanitec to pull secrets from Infisical.",
+        "Learn how to connect your Humanitec to pull secrets from Hanzo KMS.",
       category: "DevOps Tools",
     },
     {
@@ -295,7 +295,7 @@ export const AppConnectionsBrowser = () => {
       slug: "oci",
       path: "/integrations/app-connections/oci",
       description:
-        "Learn how to connect your OCI applications to pull secrets from Infisical.",
+        "Learn how to connect your OCI applications to pull secrets from Hanzo KMS.",
       category: "Cloud Providers",
     },
     {
@@ -303,7 +303,7 @@ export const AppConnectionsBrowser = () => {
       slug: "zabbix",
       path: "/integrations/app-connections/zabbix",
       description:
-        "Learn how to connect your Zabbix to pull secrets from Infisical.",
+        "Learn how to connect your Zabbix to pull secrets from Hanzo KMS.",
       category: "Monitoring",
     },
     {
@@ -311,7 +311,7 @@ export const AppConnectionsBrowser = () => {
       slug: "mysql",
       path: "/integrations/app-connections/mysql",
       description:
-        "Learn how to connect your MySQL database to pull secrets from Infisical.",
+        "Learn how to connect your MySQL database to pull secrets from Hanzo KMS.",
       category: "Databases",
     },
     {
@@ -319,7 +319,7 @@ export const AppConnectionsBrowser = () => {
       slug: "postgres",
       path: "/integrations/app-connections/postgres",
       description:
-        "Learn how to connect your PostgreSQL database to pull secrets from Infisical.",
+        "Learn how to connect your PostgreSQL database to pull secrets from Hanzo KMS.",
       category: "Databases",
     },
     {
@@ -327,7 +327,7 @@ export const AppConnectionsBrowser = () => {
       slug: "mssql",
       path: "/integrations/app-connections/mssql",
       description:
-        "Learn how to connect your SQL Server database to pull secrets from Infisical.",
+        "Learn how to connect your SQL Server database to pull secrets from Hanzo KMS.",
       category: "Databases",
     },
     {
@@ -335,14 +335,14 @@ export const AppConnectionsBrowser = () => {
       slug: "oracledb",
       path: "/integrations/app-connections/oracledb",
       description:
-        "Learn how to connect your Oracle database to pull secrets from Infisical.",
+        "Learn how to connect your Oracle database to pull secrets from Hanzo KMS.",
       category: "Databases",
     },
     {
       name: "Redis",
       slug: "redis",
       path: "/integrations/app-connections/redis",
-      description: "Learn how to connect Redis to pull secrets from Infisical.",
+      description: "Learn how to connect Redis to pull secrets from Hanzo KMS.",
       category: "Databases",
     },
     {
@@ -350,7 +350,7 @@ export const AppConnectionsBrowser = () => {
       slug: "ldap",
       path: "/integrations/app-connections/ldap",
       description:
-        "Learn how to connect your LDAP to pull secrets from Infisical.",
+        "Learn how to connect your LDAP to pull secrets from Hanzo KMS.",
       category: "Directory Services",
     },
     {
@@ -358,7 +358,7 @@ export const AppConnectionsBrowser = () => {
       slug: "auth0",
       path: "/integrations/app-connections/auth0",
       description:
-        "Learn how to connect your Auth0 to pull secrets from Infisical.",
+        "Learn how to connect your Auth0 to pull secrets from Hanzo KMS.",
       category: "Identity & Auth",
     },
     {
@@ -366,7 +366,7 @@ export const AppConnectionsBrowser = () => {
       slug: "okta",
       path: "/integrations/app-connections/okta",
       description:
-        "Learn how to connect your Okta to pull secrets from Infisical.",
+        "Learn how to connect your Okta to pull secrets from Hanzo KMS.",
       category: "Identity & Auth",
     },
     {
@@ -374,7 +374,7 @@ export const AppConnectionsBrowser = () => {
       slug: "openrouter",
       path: "/integrations/app-connections/openrouter",
       description:
-        "Learn how to connect OpenRouter (unified LLM router) to manage and rotate API keys with Infisical.",
+        "Learn how to connect OpenRouter (unified LLM router) to manage and rotate API keys with Hanzo KMS.",
       category: "AI & LLM",
     },
     {
@@ -382,7 +382,7 @@ export const AppConnectionsBrowser = () => {
       slug: "laravel-forge",
       path: "/integrations/app-connections/laravel-forge",
       description:
-        "Learn how to connect your Laravel Forge to pull secrets from Infisical.",
+        "Learn how to connect your Laravel Forge to pull secrets from Hanzo KMS.",
       category: "Hosting",
     },
     {
@@ -390,7 +390,7 @@ export const AppConnectionsBrowser = () => {
       slug: "chef",
       path: "/integrations/app-connections/chef",
       description:
-        "Learn how to connect your Chef to pull secrets from Infisical.",
+        "Learn how to connect your Chef to pull secrets from Hanzo KMS.",
       category: "DevOps Tools",
     },
     {
@@ -398,21 +398,21 @@ export const AppConnectionsBrowser = () => {
       slug: "northflank",
       path: "/integrations/app-connections/northflank",
       description:
-        "Learn how to connect your Northflank projects to pull secrets from Infisical.",
+        "Learn how to connect your Northflank projects to pull secrets from Hanzo KMS.",
       category: "Hosting",
     },
     {
       name: "MongoDB",
       slug: "mongodb",
       path: "/integrations/app-connections/mongodb",
-      description: "Learn how to connect your MongoDB to pull secrets from Infisical.",
+      description: "Learn how to connect your MongoDB to pull secrets from Hanzo KMS.",
       category: "Databases"
     },
     {
       name: "Octopus Deploy",
       slug: "octopus-deploy",
       path: "/integrations/app-connections/octopus-deploy",
-      description: "Learn how to connect your Octopus Deploy to pull secrets from Infisical.",
+      description: "Learn how to connect your Octopus Deploy to pull secrets from Hanzo KMS.",
       category: "DevOps Tools",
     },
     {

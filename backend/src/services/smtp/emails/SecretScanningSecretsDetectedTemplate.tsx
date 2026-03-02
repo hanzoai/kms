@@ -59,7 +59,7 @@ export const SecretScanningSecretsDetectedTemplate = ({
           .
         </Text>
         <Text className="text-[14px]">
-          If these are test secrets, please add `infisical-scan:ignore` at the end of the line containing the secret as
+          If these are test secrets, please add `kms-scan:ignore` at the end of the line containing the secret as
           a comment in the given programming language. This will prevent future notifications from being sent out for
           these secrets.
         </Text>

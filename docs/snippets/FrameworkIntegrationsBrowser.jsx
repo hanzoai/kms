@@ -4,24 +4,24 @@ export const FrameworkIntegrationsBrowser = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const integrations = [
-    {"name": "React", "slug": "react", "path": "/integrations/frameworks/react", "description": "Learn how to integrate Infisical with React applications for secure secret management.", "category": "Web Frameworks"},
-    {"name": "Next.js", "slug": "nextjs", "path": "/integrations/frameworks/nextjs", "description": "Learn how to integrate Infisical with Next.js applications.", "category": "Web Frameworks"},
-    {"name": "Vue", "slug": "vuejs", "path": "/integrations/frameworks/vue", "description": "Learn how to integrate Infisical with Vue.js applications.", "category": "Web Frameworks"},
-    {"name": "Nuxt", "slug": "nuxtjs", "path": "/integrations/frameworks/nuxt", "description": "Learn how to integrate Infisical with Nuxt.js applications.", "category": "Web Frameworks"},
-    {"name": "SvelteKit", "slug": "sveltekit", "path": "/integrations/frameworks/sveltekit", "description": "Learn how to integrate Infisical with SvelteKit applications.", "category": "Web Frameworks"},
-    {"name": "Express, Fastify, Koa", "slug": "express", "path": "/integrations/frameworks/express", "description": "Learn how to integrate Infisical with Express.js backend applications.", "category": "Web Frameworks"},
-    {"name": "NestJS", "slug": "nestjs", "path": "/integrations/frameworks/nestjs", "description": "Learn how to integrate Infisical with NestJS applications.", "category": "Web Frameworks"},
-    {"name": "Django", "slug": "django", "path": "/integrations/frameworks/django", "description": "Learn how to integrate Infisical with Django applications.", "category": "Web Frameworks"},
-    {"name": "Flask", "slug": "flask", "path": "/integrations/frameworks/flask", "description": "Learn how to integrate Infisical with Flask applications.", "category": "Web Frameworks"},
-    {"name": "Ruby on Rails", "slug": "rails", "path": "/integrations/frameworks/rails", "description": "Learn how to integrate Infisical with Ruby on Rails applications.", "category": "Web Frameworks"},
-    {"name": "Spring Boot", "slug": "spring-boot-maven", "path": "/integrations/frameworks/spring-boot-maven", "description": "Learn how to integrate Infisical with Spring Boot applications.", "category": "Web Frameworks"},
-    {"name": "Laravel", "slug": "laravel", "path": "/integrations/frameworks/laravel", "description": "Learn how to integrate Infisical with Laravel applications.", "category": "Web Frameworks"},
-    {"name": ".NET", "slug": "dotnet", "path": "/integrations/frameworks/dotnet", "description": "Learn how to integrate Infisical with .NET applications.", "category": "Web Frameworks"},
-    {"name": "Fiber", "slug": "fiber", "path": "/integrations/frameworks/fiber", "description": "Learn how to integrate Infisical with Fiber (Go) framework.", "category": "Web Frameworks"},
-    {"name": "Gatsby", "slug": "gatsby", "path": "/integrations/frameworks/gatsby", "description": "Learn how to integrate Infisical with Gatsby applications.", "category": "Web Frameworks"},
-    {"name": "Remix", "slug": "remix", "path": "/integrations/frameworks/remix", "description": "Learn how to integrate Infisical with Remix applications.", "category": "Web Frameworks"},
-    {"name": "Vite", "slug": "vite", "path": "/integrations/frameworks/vite", "description": "Learn how to integrate Infisical with Vite applications.", "category": "Web Frameworks"},
-    {"name": "AB Initio", "slug": "ab-initio", "path": "/integrations/frameworks/ab-initio", "description": "Learn how to integrate Infisical with AB Initio applications.", "category": "Web Frameworks"}
+    {"name": "React", "slug": "react", "path": "/integrations/frameworks/react", "description": "Learn how to integrate Hanzo KMS with React applications for secure secret management.", "category": "Web Frameworks"},
+    {"name": "Next.js", "slug": "nextjs", "path": "/integrations/frameworks/nextjs", "description": "Learn how to integrate Hanzo KMS with Next.js applications.", "category": "Web Frameworks"},
+    {"name": "Vue", "slug": "vuejs", "path": "/integrations/frameworks/vue", "description": "Learn how to integrate Hanzo KMS with Vue.js applications.", "category": "Web Frameworks"},
+    {"name": "Nuxt", "slug": "nuxtjs", "path": "/integrations/frameworks/nuxt", "description": "Learn how to integrate Hanzo KMS with Nuxt.js applications.", "category": "Web Frameworks"},
+    {"name": "SvelteKit", "slug": "sveltekit", "path": "/integrations/frameworks/sveltekit", "description": "Learn how to integrate Hanzo KMS with SvelteKit applications.", "category": "Web Frameworks"},
+    {"name": "Express, Fastify, Koa", "slug": "express", "path": "/integrations/frameworks/express", "description": "Learn how to integrate Hanzo KMS with Express.js backend applications.", "category": "Web Frameworks"},
+    {"name": "NestJS", "slug": "nestjs", "path": "/integrations/frameworks/nestjs", "description": "Learn how to integrate Hanzo KMS with NestJS applications.", "category": "Web Frameworks"},
+    {"name": "Django", "slug": "django", "path": "/integrations/frameworks/django", "description": "Learn how to integrate Hanzo KMS with Django applications.", "category": "Web Frameworks"},
+    {"name": "Flask", "slug": "flask", "path": "/integrations/frameworks/flask", "description": "Learn how to integrate Hanzo KMS with Flask applications.", "category": "Web Frameworks"},
+    {"name": "Ruby on Rails", "slug": "rails", "path": "/integrations/frameworks/rails", "description": "Learn how to integrate Hanzo KMS with Ruby on Rails applications.", "category": "Web Frameworks"},
+    {"name": "Spring Boot", "slug": "spring-boot-maven", "path": "/integrations/frameworks/spring-boot-maven", "description": "Learn how to integrate Hanzo KMS with Spring Boot applications.", "category": "Web Frameworks"},
+    {"name": "Laravel", "slug": "laravel", "path": "/integrations/frameworks/laravel", "description": "Learn how to integrate Hanzo KMS with Laravel applications.", "category": "Web Frameworks"},
+    {"name": ".NET", "slug": "dotnet", "path": "/integrations/frameworks/dotnet", "description": "Learn how to integrate Hanzo KMS with .NET applications.", "category": "Web Frameworks"},
+    {"name": "Fiber", "slug": "fiber", "path": "/integrations/frameworks/fiber", "description": "Learn how to integrate Hanzo KMS with Fiber (Go) framework.", "category": "Web Frameworks"},
+    {"name": "Gatsby", "slug": "gatsby", "path": "/integrations/frameworks/gatsby", "description": "Learn how to integrate Hanzo KMS with Gatsby applications.", "category": "Web Frameworks"},
+    {"name": "Remix", "slug": "remix", "path": "/integrations/frameworks/remix", "description": "Learn how to integrate Hanzo KMS with Remix applications.", "category": "Web Frameworks"},
+    {"name": "Vite", "slug": "vite", "path": "/integrations/frameworks/vite", "description": "Learn how to integrate Hanzo KMS with Vite applications.", "category": "Web Frameworks"},
+    {"name": "AB Initio", "slug": "ab-initio", "path": "/integrations/frameworks/ab-initio", "description": "Learn how to integrate Hanzo KMS with AB Initio applications.", "category": "Web Frameworks"}
   ].sort(function(a, b) {
       return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
   });
