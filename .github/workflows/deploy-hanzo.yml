@@ -16,6 +16,7 @@ jobs:
     with:
       image: ghcr.io/hanzoai/kms
       dockerfile: Dockerfile.standalone-kms
+      platforms: linux/amd64
       deploy: true
       deploy-deployment: kms
       deploy-namespace: hanzo
