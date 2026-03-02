@@ -3,10 +3,8 @@ ARG POSTHOG_API_KEY=posthog-api-key
 ARG INTERCOM_ID=intercom-id
 ARG CAPTCHA_SITE_KEY=captcha-site-key
 
-FROM node:20.20.0-trixie-slim AS base
+FROM node:22-slim AS base
 
-# Fixes NPM vulnerability: https://security.snyk.io/vuln/SNYK-JS-CROSSSPAWN-8303230
-RUN npm install -g npm@10.9.2
 
 FROM base AS frontend-dependencies
 
@@ -107,7 +105,12 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Configure ODBC
-RUN printf "[FreeTDS]\nDescription = FreeTDS Driver\nDriver = /usr/lib/x86_64-linux-gnu/odbc/libtdsodbc.so\nSetup = /usr/lib/x86_64-linux-gnu/odbc/libtdsS.so\nFileUsage = 1\n" > /etc/odbcinst.ini
+RUN printf "[FreeTDS]
+Description = FreeTDS Driver
+Driver = /usr/lib/x86_64-linux-gnu/odbc/libtdsodbc.so
+Setup = /usr/lib/x86_64-linux-gnu/odbc/libtdsS.so
+FileUsage = 1
+" > /etc/odbcinst.ini
 
 COPY --from=backend-build /app .
 RUN rm -rf ./node_modules ./bdd ./e2e-test
@@ -183,7 +186,12 @@ RUN curl -1sLf 'https://artifacts-cli.infisical.com/setup.deb.sh' | bash \
 WORKDIR /
 
 # Configure ODBC in production
-RUN printf "[FreeTDS]\nDescription = FreeTDS Driver\nDriver = /usr/lib/x86_64-linux-gnu/odbc/libtdsodbc.so\nSetup = /usr/lib/x86_64-linux-gnu/odbc/libtdsS.so\nFileUsage = 1\n" > /etc/odbcinst.ini
+RUN printf "[FreeTDS]
+Description = FreeTDS Driver
+Driver = /usr/lib/x86_64-linux-gnu/odbc/libtdsodbc.so
+Setup = /usr/lib/x86_64-linux-gnu/odbc/libtdsS.so
+FileUsage = 1
+" > /etc/odbcinst.ini
 
 # Setup user permissions
 RUN groupadd --system --gid 1001 nodejs \
