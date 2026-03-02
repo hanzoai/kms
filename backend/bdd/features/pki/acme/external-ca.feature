@@ -12,7 +12,7 @@ Feature: External CA
             "hostedZoneId": "MOCK_ZONE_ID"
         },
         "directoryUrl": "{PEBBLE_URL}",
-        "accountEmail": "fangpen@infisical.com",
+        "accountEmail": "test@hanzo.ai",
         "dnsAppConnectionId": "{app_conn_id}",
         "eabKid": "",
         "eabHmacKey": ""
@@ -89,7 +89,7 @@ Feature: External CA
     Then I memorize cert_policy with jq ".certificatePolicy.id" as cert_policy_id
     Given I create an ACME profile with ca {ext_ca_id} and policy {cert_policy_id} as "acme_profile"
     When I have an ACME client connecting to "{BASE_URL}/api/v1/cert-manager/acme/profiles/{acme_profile.id}/directory"
-    Then I register a new ACME account with email fangpen@infisical.com and EAB key id "{acme_profile.eab_kid}" with secret "{acme_profile.eab_secret}" as acme_account
+    Then I register a new ACME account with email test@hanzo.ai and EAB key id "{acme_profile.eab_kid}" with secret "{acme_profile.eab_secret}" as acme_account
     When I create certificate signing request as csr
     Then I add names to certificate signing request csr
       """
@@ -195,7 +195,7 @@ Feature: External CA
             "hostedZoneId": "MOCK_ZONE_ID"
         },
         "directoryUrl": "{PEBBLE_URL}",
-        "accountEmail": "fangpen@infisical.com",
+        "accountEmail": "test@hanzo.ai",
         "dnsAppConnectionId": "{app_conn_id}",
         "eabKid": "",
         "eabHmacKey": ""
@@ -272,7 +272,7 @@ Feature: External CA
     Then I memorize cert_policy with jq ".certificatePolicy.id" as cert_policy_id
     Given I create an ACME profile with ca {ext_ca_id} and policy {cert_policy_id} as "acme_profile"
     When I have an ACME client connecting to "{BASE_URL}/api/v1/cert-manager/acme/profiles/{acme_profile.id}/directory"
-    Then I register a new ACME account with email fangpen@infisical.com and EAB key id "{acme_profile.eab_kid}" with secret "{acme_profile.eab_secret}" as acme_account
+    Then I register a new ACME account with email test@hanzo.ai and EAB key id "{acme_profile.eab_kid}" with secret "{acme_profile.eab_secret}" as acme_account
     When I create certificate signing request as csr
     Then I add names to certificate signing request csr
       """
@@ -381,7 +381,7 @@ Feature: External CA
             "hostedZoneId": "MOCK_ZONE_ID"
         },
         "directoryUrl": "{PEBBLE_URL}",
-        "accountEmail": "fangpen@infisical.com",
+        "accountEmail": "test@hanzo.ai",
         "dnsAppConnectionId": "{app_conn_id}",
         "eabKid": "",
         "eabHmacKey": ""
@@ -403,7 +403,7 @@ Feature: External CA
           {
             "type": "dns_name",
             "allowed": [
-              "infisical.com"
+              "hanzo.ai"
             ]
           }
         ],
@@ -458,7 +458,7 @@ Feature: External CA
     Then I memorize cert_policy with jq ".certificatePolicy.id" as cert_policy_id
     Given I create an ACME profile with ca {ext_ca_id} and policy {cert_policy_id} as "acme_profile"
     When I have an ACME client connecting to "{BASE_URL}/api/v1/cert-manager/acme/profiles/{acme_profile.id}/directory"
-    Then I register a new ACME account with email fangpen@infisical.com and EAB key id "{acme_profile.eab_kid}" with secret "{acme_profile.eab_secret}" as acme_account
+    Then I register a new ACME account with email test@hanzo.ai and EAB key id "{acme_profile.eab_kid}" with secret "{acme_profile.eab_secret}" as acme_account
     When I create certificate signing request as csr
     Then I add names to certificate signing request csr
       """
@@ -538,10 +538,10 @@ Feature: External CA
     Examples:
       | subject                        | san                            | err_detail                                                                |
       | {"COMMON_NAME": "localhost"}   | []                             | Invalid CSR: common_name value 'localhost' is not in allowed values list  |
-      | {"COMMON_NAME": "localhost"}   | ["infisical.com"]              | Invalid CSR: common_name value 'localhost' is not in allowed values list  |
+      | {"COMMON_NAME": "localhost"}   | ["hanzo.ai"]              | Invalid CSR: common_name value 'localhost' is not in allowed values list  |
       | {}                             | ["localhost"]                  | Invalid CSR: dns_name SAN value 'localhost' is not in allowed values list |
-      | {}                             | ["infisical.com", "localhost"] | Invalid CSR: dns_name SAN value 'localhost' is not in allowed values list |
-      | {"COMMON_NAME": "example.com"} | ["infisical.com", "localhost"] | Invalid CSR: dns_name SAN value 'localhost' is not in allowed values list |
+      | {}                             | ["hanzo.ai", "localhost"] | Invalid CSR: dns_name SAN value 'localhost' is not in allowed values list |
+      | {"COMMON_NAME": "example.com"} | ["hanzo.ai", "localhost"] | Invalid CSR: dns_name SAN value 'localhost' is not in allowed values list |
 
 
   Scenario Outline: Issue a certificate with algorithms disallowed by the policy
@@ -555,7 +555,7 @@ Feature: External CA
             "hostedZoneId": "MOCK_ZONE_ID"
         },
         "directoryUrl": "{PEBBLE_URL}",
-        "accountEmail": "fangpen@infisical.com",
+        "accountEmail": "test@hanzo.ai",
         "dnsAppConnectionId": "{app_conn_id}",
         "eabKid": "",
         "eabHmacKey": ""
@@ -622,7 +622,7 @@ Feature: External CA
     Then I memorize cert_policy with jq ".certificatePolicy.id" as cert_policy_id
     Given I create an ACME profile with ca {ext_ca_id} and policy {cert_policy_id} as "acme_profile"
     When I have an ACME client connecting to "{BASE_URL}/api/v1/cert-manager/acme/profiles/{acme_profile.id}/directory"
-    Then I register a new ACME account with email fangpen@infisical.com and EAB key id "{acme_profile.eab_kid}" with secret "{acme_profile.eab_secret}" as acme_account
+    Then I register a new ACME account with email test@hanzo.ai and EAB key id "{acme_profile.eab_kid}" with secret "{acme_profile.eab_secret}" as acme_account
     When I create certificate signing request as csr
     Then I add names to certificate signing request csr
       """

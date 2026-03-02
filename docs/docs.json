@@ -316,7 +316,7 @@
               {
                 "group": "Installation methods",
                 "pages": [
-                  "self-hosting/deployment-options/standalone-infisical",
+                  "self-hosting/deployment-options/standalone-kms",
                   "self-hosting/deployment-options/docker-swarm",
                   "self-hosting/deployment-options/docker-compose",
                   "self-hosting/deployment-options/kubernetes-helm",
@@ -333,7 +333,7 @@
                 ]
               },
               "self-hosting/guides/replication",
-              "self-hosting/guides/upgrading-infisical",
+              "self-hosting/guides/upgrading-kms",
               "self-hosting/configuration/envars",
               "self-hosting/guides/releases",
               "self-hosting/configuration/requirements",
@@ -519,18 +519,18 @@
                     "group": "Kubernetes Operator",
                     "pages": [
                       "integrations/platforms/kubernetes/overview",
-                      "integrations/platforms/kubernetes/infisical-secret-crd",
-                      "integrations/platforms/kubernetes/infisical-push-secret-crd",
-                      "integrations/platforms/kubernetes/infisical-dynamic-secret-crd"
+                      "integrations/platforms/kubernetes/kms-secret-crd",
+                      "integrations/platforms/kubernetes/kms-push-secret-crd",
+                      "integrations/platforms/kubernetes/kms-dynamic-secret-crd"
                     ]
                   },
                   "integrations/platforms/kubernetes-injector",
                   "integrations/platforms/kubernetes-csi",
-                  "integrations/platforms/infisical-proxy",
+                  "integrations/platforms/kms-proxy",
                   {
                     "group": "Agent",
                     "pages": [
-                      "integrations/platforms/infisical-agent",
+                      "integrations/platforms/kms-agent",
                       "integrations/platforms/docker-swarm-with-agent",
                       "integrations/platforms/ecs-with-agent"
                     ]
@@ -3175,7 +3175,7 @@
           },
           {
             "label": "KMS Proxy",
-            "href": "https://kms.hanzo.ai/docs/integrations/platforms/infisical-proxy"
+            "href": "https://kms.hanzo.ai/docs/integrations/platforms/kms-proxy"
           },
           {
             "label": "Kubernetes",
