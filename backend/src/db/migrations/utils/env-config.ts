@@ -39,7 +39,9 @@ const envSchema = z
   .transform((data) => ({
     ...data,
     isHsmConfigured:
-      Boolean(data.HSM_LIB_PATH) && Boolean(data.HSM_PIN) && Boolean(data.HSM_KEY_LABEL) && data.HSM_SLOT !== undefined
+      Boolean(data.HSM_LIB_PATH) && Boolean(data.HSM_PIN) && Boolean(data.HSM_KEY_LABEL) && data.HSM_SLOT !== undefined,
+    // Per-org encryption keys — parsed here so migrations can also support per-org key isolation.
+    orgEncryptionKeys: {} as Record<string, string>
   }));
 
 export type TMigrationEnvConfig = z.infer<typeof envSchema>;

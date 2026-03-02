@@ -156,6 +156,10 @@ const envSchema = z
     // TODO(akhilmhdh): will be changed to one
     ENCRYPTION_KEY: zpStr(z.string().optional()),
     ROOT_ENCRYPTION_KEY: zpStr(z.string().optional()),
+    // Per-org root encryption keys. JSON map of org slug → base64-encoded 32-byte key.
+    // Example: {"hanzo":"<base64>","lux":"<base64>"}
+    // Falls back to ROOT_ENCRYPTION_KEY when org slug is not present.
+    ORG_ENCRYPTION_KEYS: zpStr(z.string().optional()),
     QUEUE_WORKERS_ENABLED: zodStrBool.default("true"),
     QUEUE_WORKER_PROFILE: z.nativeEnum(QueueWorkerProfile).default(QueueWorkerProfile.All),
     HTTPS_ENABLED: zodStrBool,
@@ -459,6 +463,7 @@ const envSchema = z
   .transform((data) => ({
     ...data,
     SALT_ROUNDS: data.SALT_ROUNDS || data.BCRYPT_SALT_ROUND || 12,
+    orgEncryptionKeys: data.ORG_ENCRYPTION_KEYS ? (JSON.parse(data.ORG_ENCRYPTION_KEYS) as Record<string, string>) : ({} as Record<string, string>),
     DB_READ_REPLICAS: data.DB_READ_REPLICAS
       ? databaseReadReplicaSchema.parse(JSON.parse(data.DB_READ_REPLICAS))
       : undefined,
