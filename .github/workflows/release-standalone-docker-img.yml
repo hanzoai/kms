@@ -6,152 +6,342 @@ on:
             - "v*.*.*-nightly-*"
             - "v*.*.*-nightly-*.*"
 
+env:
+    REGISTRY: ghcr.io
+
 jobs:
     kms-tests:
         name: Run tests before deployment
-        # https://docs.github.com/en/actions/using-workflows/reusing-workflows#overview
         uses: ./.github/workflows/run-backend-tests.yml
 
-    kms-standalone:
-        name: Build kms standalone image postgres
-        runs-on: ubuntu-latest
+    # ── KMS standalone (amd64) ──────────────────────────────────────────
+    kms-build-amd64:
+        name: Build KMS standalone (amd64)
+        runs-on: hanzo-build
         needs: [kms-tests]
         permissions:
             contents: read
             packages: write
             id-token: write
+        outputs:
+            image-digest: ${{ steps.build.outputs.digest }}
         steps:
             - name: Extract version from tag
               id: extract_version
-              run: echo "::set-output name=version::${GITHUB_REF_NAME}"
-            - name: ☁️ Checkout source
-              uses: actions/checkout@v3
+              run: echo "version=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+            - name: Checkout source
+              uses: actions/checkout@v4
               with:
                   fetch-depth: 0
-            - name: 📦 Install dependencies to test all dependencies
+            - name: Install dependencies
               run: npm ci --only-production
               working-directory: backend
-            - name: version output
-              run: |
-                  echo "Output Value: ${{ steps.version.outputs.major }}"
-                  echo "Output Value: ${{ steps.version.outputs.minor }}"
-                  echo "Output Value: ${{ steps.version.outputs.patch }}"
-                  echo "Output Value: ${{ steps.version.outputs.version }}"
-                  echo "Output Value: ${{ steps.version.outputs.version_type }}"
-                  echo "Output Value: ${{ steps.version.outputs.increment }}"
             - name: Save commit hashes for tag
               id: commit
               uses: pr-mpt/actions-commit-hash@v2
-            - name: 🔧 Set up Docker Buildx
-              uses: docker/setup-buildx-action@v2
-            - name: 🐋 Login to GHCR
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
+              with:
+                  driver: docker-container
+                  driver-opts: network=host
+            - name: Login to GHCR
               uses: docker/login-action@v3
               with:
-                  registry: ghcr.io
+                  registry: ${{ env.REGISTRY }}
                   username: ${{ github.actor }}
                   password: ${{ secrets.GITHUB_TOKEN }}
-            - name: 📦 Build backend and export to Docker
-              uses: docker/build-push-action@v5
+            - name: Build and push amd64 image
+              id: build
+              uses: docker/build-push-action@v6
               with:
                   push: true
                   context: .
                   tags: |
-                      ghcr.io/hanzoai/kms:latest
-                      ghcr.io/hanzoai/kms:${{ steps.commit.outputs.short }}
-                      ghcr.io/hanzoai/kms:${{ steps.extract_version.outputs.version }}
-                  platforms: linux/amd64,linux/arm64
+                      ${{ env.REGISTRY }}/hanzoai/kms:latest
+                      ${{ env.REGISTRY }}/hanzoai/kms:${{ steps.commit.outputs.short }}
+                      ${{ env.REGISTRY }}/hanzoai/kms:${{ steps.extract_version.outputs.version }}
+                  platforms: linux/amd64
                   file: Dockerfile.standalone-kms
+                  provenance: false
                   build-args: |
                       POSTHOG_API_KEY=${{ secrets.PUBLIC_POSTHOG_API_KEY }}
                       KMS_PLATFORM_VERSION=${{ steps.extract_version.outputs.version }}
                       DD_GIT_REPOSITORY_URL=${{ github.server_url }}/${{ github.repository }}
                       DD_GIT_COMMIT_SHA=${{ github.sha }}
-            - name: Snyk to check Docker image for vulnerabilities
-              continue-on-error: true 
-              uses: snyk/actions/docker@master
-              env:
-                SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-              with:
-                image: ghcr.io/hanzoai/kms:${{ steps.extract_version.outputs.version }}
-                command: monitor
-                args: --file=Dockerfile.standalone-kms --project-name="kms-core-docker-image"
+                  cache-from: type=registry,ref=${{ env.REGISTRY }}/hanzoai/kms-cache:amd64
+                  cache-to: type=registry,ref=${{ env.REGISTRY }}/hanzoai/kms-cache:amd64,mode=max
 
-    kms-fips-standalone:
-        name: Build kms standalone image postgres
-        runs-on: ubuntu-latest
+    # ── KMS standalone (arm64) ──────────────────────────────────────────
+    kms-build-arm64:
+        name: Build KMS standalone (arm64)
+        runs-on: hanzo-build-arm64
         needs: [kms-tests]
         permissions:
             contents: read
             packages: write
             id-token: write
+        outputs:
+            image-digest: ${{ steps.build.outputs.digest }}
         steps:
             - name: Extract version from tag
               id: extract_version
-              run: echo "::set-output name=version::${GITHUB_REF_NAME}"
-            - name: ☁️ Checkout source
-              uses: actions/checkout@v3
+              run: echo "version=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+            - name: Checkout source
+              uses: actions/checkout@v4
               with:
                   fetch-depth: 0
-            - name: 📦 Install dependencies to test all dependencies
+            - name: Install dependencies
               run: npm ci --only-production
               working-directory: backend
-            - name: version output
-              run: |
-                  echo "Output Value: ${{ steps.version.outputs.major }}"
-                  echo "Output Value: ${{ steps.version.outputs.minor }}"
-                  echo "Output Value: ${{ steps.version.outputs.patch }}"
-                  echo "Output Value: ${{ steps.version.outputs.version }}"
-                  echo "Output Value: ${{ steps.version.outputs.version_type }}"
-                  echo "Output Value: ${{ steps.version.outputs.increment }}"
             - name: Save commit hashes for tag
               id: commit
               uses: pr-mpt/actions-commit-hash@v2
-            - name: 🔧 Set up Docker Buildx
-              uses: docker/setup-buildx-action@v2
-            - name: 🐋 Login to GHCR
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
+            - name: Login to GHCR
               uses: docker/login-action@v3
               with:
-                  registry: ghcr.io
+                  registry: ${{ env.REGISTRY }}
                   username: ${{ github.actor }}
                   password: ${{ secrets.GITHUB_TOKEN }}
-            - name: 📦 Build backend and export to Docker
-              uses: docker/build-push-action@v5
+            - name: Build and push arm64 image
+              id: build
+              uses: docker/build-push-action@v6
               with:
                   push: true
                   context: .
                   tags: |
-                      ghcr.io/hanzoai/kms-fips:latest
-                      ghcr.io/hanzoai/kms-fips:${{ steps.commit.outputs.short }}
-                      ghcr.io/hanzoai/kms-fips:${{ steps.extract_version.outputs.version }}
-                  platforms: linux/amd64,linux/arm64
-                  file: Dockerfile.fips.standalone-kms
+                      ${{ env.REGISTRY }}/hanzoai/kms:latest
+                      ${{ env.REGISTRY }}/hanzoai/kms:${{ steps.commit.outputs.short }}
+                      ${{ env.REGISTRY }}/hanzoai/kms:${{ steps.extract_version.outputs.version }}
+                  platforms: linux/arm64
+                  file: Dockerfile.standalone-kms
+                  provenance: false
                   build-args: |
                       POSTHOG_API_KEY=${{ secrets.PUBLIC_POSTHOG_API_KEY }}
                       KMS_PLATFORM_VERSION=${{ steps.extract_version.outputs.version }}
+                      DD_GIT_REPOSITORY_URL=${{ github.server_url }}/${{ github.repository }}
+                      DD_GIT_COMMIT_SHA=${{ github.sha }}
+                  cache-from: type=registry,ref=${{ env.REGISTRY }}/hanzoai/kms-cache:arm64
+                  cache-to: type=registry,ref=${{ env.REGISTRY }}/hanzoai/kms-cache:arm64,mode=max
+
+    # ── KMS standalone manifest ─────────────────────────────────────────
+    kms-create-manifest:
+        name: Create KMS multi-arch manifest
+        runs-on: hanzo-build
+        needs: [kms-build-amd64, kms-build-arm64]
+        permissions:
+            contents: read
+            packages: write
+        steps:
+            - name: Extract version from tag
+              id: extract_version
+              run: echo "version=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+            - name: Save commit hashes for tag
+              id: commit
+              uses: pr-mpt/actions-commit-hash@v2
+            - name: Login to GHCR
+              uses: docker/login-action@v3
+              with:
+                  registry: ${{ env.REGISTRY }}
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
+            - name: Create and push multi-arch manifest
+              run: |
+                  TAGS=(
+                    "${{ env.REGISTRY }}/hanzoai/kms:latest"
+                    "${{ env.REGISTRY }}/hanzoai/kms:${{ steps.commit.outputs.short }}"
+                    "${{ env.REGISTRY }}/hanzoai/kms:${{ steps.extract_version.outputs.version }}"
+                  )
+                  TAG_ARGS=""
+                  for tag in "${TAGS[@]}"; do
+                    TAG_ARGS="$TAG_ARGS -t $tag"
+                  done
+                  docker buildx imagetools create $TAG_ARGS \
+                    ${{ needs.kms-build-amd64.outputs.image-digest }} \
+                    ${{ needs.kms-build-arm64.outputs.image-digest }}
+            - name: Snyk vulnerability scan
+              continue-on-error: true
+              uses: snyk/actions/docker@master
+              env:
+                  SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+              with:
+                  image: ${{ env.REGISTRY }}/hanzoai/kms:${{ steps.extract_version.outputs.version }}
+                  command: monitor
+                  args: --file=Dockerfile.standalone-kms --project-name="kms-core-docker-image"
+
+    # ── KMS FIPS standalone (amd64) ─────────────────────────────────────
+    kms-fips-build-amd64:
+        name: Build KMS FIPS standalone (amd64)
+        runs-on: hanzo-build
+        needs: [kms-tests]
+        permissions:
+            contents: read
+            packages: write
+            id-token: write
+        outputs:
+            image-digest: ${{ steps.build.outputs.digest }}
+        steps:
+            - name: Extract version from tag
+              id: extract_version
+              run: echo "version=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+            - name: Checkout source
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+            - name: Install dependencies
+              run: npm ci --only-production
+              working-directory: backend
+            - name: Save commit hashes for tag
+              id: commit
+              uses: pr-mpt/actions-commit-hash@v2
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
+              with:
+                  driver: docker-container
+                  driver-opts: network=host
+            - name: Login to GHCR
+              uses: docker/login-action@v3
+              with:
+                  registry: ${{ env.REGISTRY }}
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+            - name: Build and push amd64 image
+              id: build
+              uses: docker/build-push-action@v6
+              with:
+                  push: true
+                  context: .
+                  tags: |
+                      ${{ env.REGISTRY }}/hanzoai/kms-fips:latest
+                      ${{ env.REGISTRY }}/hanzoai/kms-fips:${{ steps.commit.outputs.short }}
+                      ${{ env.REGISTRY }}/hanzoai/kms-fips:${{ steps.extract_version.outputs.version }}
+                  platforms: linux/amd64
+                  file: Dockerfile.fips.standalone-kms
+                  provenance: false
+                  build-args: |
+                      POSTHOG_API_KEY=${{ secrets.PUBLIC_POSTHOG_API_KEY }}
+                      KMS_PLATFORM_VERSION=${{ steps.extract_version.outputs.version }}
+                  cache-from: type=registry,ref=${{ env.REGISTRY }}/hanzoai/kms-fips-cache:amd64
+                  cache-to: type=registry,ref=${{ env.REGISTRY }}/hanzoai/kms-fips-cache:amd64,mode=max
+
+    # ── KMS FIPS standalone (arm64) ─────────────────────────────────────
+    kms-fips-build-arm64:
+        name: Build KMS FIPS standalone (arm64)
+        runs-on: hanzo-build-arm64
+        needs: [kms-tests]
+        permissions:
+            contents: read
+            packages: write
+            id-token: write
+        outputs:
+            image-digest: ${{ steps.build.outputs.digest }}
+        steps:
+            - name: Extract version from tag
+              id: extract_version
+              run: echo "version=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+            - name: Checkout source
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+            - name: Install dependencies
+              run: npm ci --only-production
+              working-directory: backend
+            - name: Save commit hashes for tag
+              id: commit
+              uses: pr-mpt/actions-commit-hash@v2
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
+            - name: Login to GHCR
+              uses: docker/login-action@v3
+              with:
+                  registry: ${{ env.REGISTRY }}
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+            - name: Build and push arm64 image
+              id: build
+              uses: docker/build-push-action@v6
+              with:
+                  push: true
+                  context: .
+                  tags: |
+                      ${{ env.REGISTRY }}/hanzoai/kms-fips:latest
+                      ${{ env.REGISTRY }}/hanzoai/kms-fips:${{ steps.commit.outputs.short }}
+                      ${{ env.REGISTRY }}/hanzoai/kms-fips:${{ steps.extract_version.outputs.version }}
+                  platforms: linux/arm64
+                  file: Dockerfile.fips.standalone-kms
+                  provenance: false
+                  build-args: |
+                      POSTHOG_API_KEY=${{ secrets.PUBLIC_POSTHOG_API_KEY }}
+                      KMS_PLATFORM_VERSION=${{ steps.extract_version.outputs.version }}
+                  cache-from: type=registry,ref=${{ env.REGISTRY }}/hanzoai/kms-fips-cache:arm64
+                  cache-to: type=registry,ref=${{ env.REGISTRY }}/hanzoai/kms-fips-cache:arm64,mode=max
+
+    # ── KMS FIPS manifest ───────────────────────────────────────────────
+    kms-fips-create-manifest:
+        name: Create KMS FIPS multi-arch manifest
+        runs-on: hanzo-build
+        needs: [kms-fips-build-amd64, kms-fips-build-arm64]
+        permissions:
+            contents: read
+            packages: write
+        steps:
+            - name: Extract version from tag
+              id: extract_version
+              run: echo "version=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+            - name: Save commit hashes for tag
+              id: commit
+              uses: pr-mpt/actions-commit-hash@v2
+            - name: Login to GHCR
+              uses: docker/login-action@v3
+              with:
+                  registry: ${{ env.REGISTRY }}
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
+            - name: Create and push multi-arch manifest
+              run: |
+                  TAGS=(
+                    "${{ env.REGISTRY }}/hanzoai/kms-fips:latest"
+                    "${{ env.REGISTRY }}/hanzoai/kms-fips:${{ steps.commit.outputs.short }}"
+                    "${{ env.REGISTRY }}/hanzoai/kms-fips:${{ steps.extract_version.outputs.version }}"
+                  )
+                  TAG_ARGS=""
+                  for tag in "${TAGS[@]}"; do
+                    TAG_ARGS="$TAG_ARGS -t $tag"
+                  done
+                  docker buildx imagetools create $TAG_ARGS \
+                    ${{ needs.kms-fips-build-amd64.outputs.image-digest }} \
+                    ${{ needs.kms-fips-build-arm64.outputs.image-digest }}
+
+    # ── Trigger omnibus binary release ──────────────────────────────────
     trigger-binary-release:
-      runs-on: ubuntu-latest
-      needs: [kms-standalone, kms-fips-standalone]
-      steps:
-        - name: Create tag if it doesn't exist
-          run: |
-            TAG_NAME="${{ github.ref_name }}"
-            echo "Checking for tag: $TAG_NAME"
+        runs-on: hanzo-build
+        needs: [kms-create-manifest, kms-fips-create-manifest]
+        steps:
+            - name: Create tag if it doesn't exist
+              run: |
+                  TAG_NAME="${{ github.ref_name }}"
+                  echo "Checking for tag: $TAG_NAME"
 
-            EXACT_MATCH=$(gh api repos/hanzoai/kms-omnibus/git/refs/tags/$TAG_NAME 2>/dev/null | jq -r 'if type == "array" then .[].ref else .ref end' | grep -x "refs/tags/$TAG_NAME" || true)
+                  EXACT_MATCH=$(gh api repos/hanzoai/kms-omnibus/git/refs/tags/$TAG_NAME 2>/dev/null | jq -r 'if type == "array" then .[].ref else .ref end' | grep -x "refs/tags/$TAG_NAME" || true)
 
-            if [ "$EXACT_MATCH" == "refs/tags/$TAG_NAME" ]; then
-              echo "Tag $TAG_NAME already exists, skipping..."
-            else
-              echo "Creating tag in hanzoai/kms-omnibus: $TAG_NAME"
-              LATEST_SHA=$(gh api repos/hanzoai/kms-omnibus/git/refs/heads/main --jq '.object.sha')
-              echo "Latest SHA: $LATEST_SHA"
-              
-              gh api repos/hanzoai/kms-omnibus/git/refs \
-                --method POST \
-                --field ref="refs/tags/$TAG_NAME" \
-                --field sha="$LATEST_SHA"
-              
-              echo "Successfully created tag $TAG_NAME"
-            fi
-          env:
-            GH_TOKEN: ${{ secrets.OMNIBUS_RELEASE_TOKEN }}
+                  if [ "$EXACT_MATCH" == "refs/tags/$TAG_NAME" ]; then
+                    echo "Tag $TAG_NAME already exists, skipping..."
+                  else
+                    echo "Creating tag in hanzoai/kms-omnibus: $TAG_NAME"
+                    LATEST_SHA=$(gh api repos/hanzoai/kms-omnibus/git/refs/heads/main --jq '.object.sha')
+                    echo "Latest SHA: $LATEST_SHA"
+
+                    gh api repos/hanzoai/kms-omnibus/git/refs \
+                      --method POST \
+                      --field ref="refs/tags/$TAG_NAME" \
+                      --field sha="$LATEST_SHA"
+
+                    echo "Successfully created tag $TAG_NAME"
+                  fi
+              env:
+                  GH_TOKEN: ${{ secrets.OMNIBUS_RELEASE_TOKEN }}
