@@ -1,8 +1,8 @@
 build:
-	docker-compose -f docker-compose.yml build
+	docker compose -f docker-compose.prod.yml build
 
 push:
-	docker-compose -f docker-compose.yml push
+	docker compose -f docker-compose.prod.yml push
 
 up-dev:
 	docker compose -f docker-compose.dev.yml up --build

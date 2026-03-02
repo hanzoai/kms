@@ -83,10 +83,12 @@ RUN rm -rf ./bdd ./e2e-test
 # Install smbclient for Windows SMB operations
 RUN apt-get update && apt-get install -y smbclient
 
-# Install KMS CLI (upstream package: infisical)
+# Install KMS CLI
+# TODO: Replace with Hanzo-built CLI from ghcr.io/hanzoai/kms-cli
 RUN apt-get update && apt-get install -y curl bash && \
     curl -1sLf 'https://artifacts-cli.infisical.com/setup.deb.sh' | bash && \
-    apt-get update && apt-get install -y infisical=0.43.14 git
+    apt-get update && apt-get install -y infisical=0.43.14 git && \
+    ln -sf /usr/bin/infisical /usr/local/bin/kms
 
 HEALTHCHECK --interval=10s --timeout=3s --start-period=10s \
     CMD node healthcheck.js

@@ -1,11 +1,10 @@
-Copyright (c) 2022 Infisical Inc.
-Copyright (c) 2025 Hanzo AI, Inc.
+Copyright (c) 2025-2026 Hanzo AI, Inc.
 
-Portions of this software are licensed as follows:
+Portions of this software are derived from Infisical (MIT License, Copyright 2022 Infisical Inc.).
 
-- All content that resides under any "ee/" directory of this repository, if such directories exists, are licensed under the license defined in "ee/LICENSE".
-- All third party components incorporated into the Hanzo KMS Software are licensed under the original license provided by the owner of the applicable component.
-- Content outside of the above mentioned directories or restrictions above is available under the "MIT Expat" license as defined below.
+All third party components incorporated into the Hanzo KMS Software are licensed under the original license provided by the owner of the applicable component.
+
+The following terms apply to all content in this repository:
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
