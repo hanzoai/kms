@@ -17,7 +17,7 @@ import { ActorType, AuthMode } from "@app/services/auth/auth-type";
 import { ResourceMetadataWithEncryptionSchema } from "@app/services/resource-metadata/resource-metadata-schema";
 import { PersonalOverridesBehavior, SecretProtectionType } from "@app/services/secret/secret-types";
 import { SecretUpdateMode } from "@app/services/secret-v2-bridge/secret-v2-bridge-types";
-import { PostHogEventTypes } from "@app/services/telemetry/telemetry-types";
+import { InsightsEventTypes } from "@app/services/telemetry/telemetry-types";
 
 import { SanitizedTagSchema, secretRawSchema } from "../sanitizedSchemas";
 
@@ -211,8 +211,8 @@ export const registerSecretRouter = async (server: FastifyZodProvider) => {
       });
 
       if (getUserAgentType(req.headers["user-agent"]) !== UserAgentType.K8_OPERATOR) {
-        await server.services.telemetry.sendPostHogEvents({
-          event: PostHogEventTypes.SecretPulled,
+        await server.services.telemetry.sendInsightsEvents({
+          event: InsightsEventTypes.SecretPulled,
           distinctId: getTelemetryDistinctId(req),
           organizationId: req.permission.orgId,
           properties: {
@@ -386,8 +386,8 @@ export const registerSecretRouter = async (server: FastifyZodProvider) => {
       });
 
       if (getUserAgentType(req.headers["user-agent"]) !== UserAgentType.K8_OPERATOR) {
-        await server.services.telemetry.sendPostHogEvents({
-          event: PostHogEventTypes.SecretPulled,
+        await server.services.telemetry.sendInsightsEvents({
+          event: InsightsEventTypes.SecretPulled,
           organizationId: req.permission.orgId,
           distinctId: getTelemetryDistinctId(req),
           properties: {
@@ -525,8 +525,8 @@ export const registerSecretRouter = async (server: FastifyZodProvider) => {
         }
       });
 
-      await server.services.telemetry.sendPostHogEvents({
-        event: PostHogEventTypes.SecretCreated,
+      await server.services.telemetry.sendInsightsEvents({
+        event: InsightsEventTypes.SecretCreated,
         distinctId: getTelemetryDistinctId(req),
         organizationId: req.permission.orgId,
         properties: {
@@ -674,8 +674,8 @@ export const registerSecretRouter = async (server: FastifyZodProvider) => {
         }
       });
 
-      await server.services.telemetry.sendPostHogEvents({
-        event: PostHogEventTypes.SecretUpdated,
+      await server.services.telemetry.sendInsightsEvents({
+        event: InsightsEventTypes.SecretUpdated,
         distinctId: getTelemetryDistinctId(req),
         organizationId: req.permission.orgId,
         properties: {
@@ -783,8 +783,8 @@ export const registerSecretRouter = async (server: FastifyZodProvider) => {
         }
       });
 
-      await server.services.telemetry.sendPostHogEvents({
-        event: PostHogEventTypes.SecretDeleted,
+      await server.services.telemetry.sendInsightsEvents({
+        event: InsightsEventTypes.SecretDeleted,
         distinctId: getTelemetryDistinctId(req),
         organizationId: req.permission.orgId,
         properties: {
@@ -973,8 +973,8 @@ export const registerSecretRouter = async (server: FastifyZodProvider) => {
         }
       });
 
-      await server.services.telemetry.sendPostHogEvents({
-        event: PostHogEventTypes.SecretCreated,
+      await server.services.telemetry.sendInsightsEvents({
+        event: InsightsEventTypes.SecretCreated,
         distinctId: getTelemetryDistinctId(req),
         organizationId: req.permission.orgId,
         properties: {
@@ -1152,8 +1152,8 @@ export const registerSecretRouter = async (server: FastifyZodProvider) => {
         });
       }
 
-      await server.services.telemetry.sendPostHogEvents({
-        event: PostHogEventTypes.SecretUpdated,
+      await server.services.telemetry.sendInsightsEvents({
+        event: InsightsEventTypes.SecretUpdated,
         distinctId: getTelemetryDistinctId(req),
         organizationId: req.permission.orgId,
         properties: {
@@ -1269,8 +1269,8 @@ export const registerSecretRouter = async (server: FastifyZodProvider) => {
         }
       });
 
-      await server.services.telemetry.sendPostHogEvents({
-        event: PostHogEventTypes.SecretDeleted,
+      await server.services.telemetry.sendInsightsEvents({
+        event: InsightsEventTypes.SecretDeleted,
         distinctId: getTelemetryDistinctId(req),
         organizationId: req.permission.orgId,
         properties: {
