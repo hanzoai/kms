@@ -56,6 +56,8 @@ import { TerraformCloudSyncListItemSchema, TerraformCloudSyncSchema } from "@app
 import { VercelSyncListItemSchema, VercelSyncSchema } from "@app/services/secret-sync/vercel";
 import { WindmillSyncListItemSchema, WindmillSyncSchema } from "@app/services/secret-sync/windmill";
 import { ZabbixSyncListItemSchema, ZabbixSyncSchema } from "@app/services/secret-sync/zabbix";
+import { ChefSyncListItemSchema, ChefSyncSchema } from "@app/services/secret-sync/chef";
+import { OCIVaultSyncListItemSchema, OCIVaultSyncSchema } from "@app/services/secret-sync/oci-vault";
 
 const SecretSyncSchema = z.discriminatedUnion("destination", [
   AwsParameterStoreSyncSchema,
