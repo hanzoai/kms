@@ -7,6 +7,10 @@ import { verifyAuth } from "@app/server/plugins/auth/verify-auth";
 import { AuthMode } from "@app/services/auth/auth-type";
 /* eslint-disable @typescript-eslint/no-floating-promises */
 
+// Stubs for stripped EE event features
+const ProjectEventRegisterSchema = z.object({ eventType: z.string(), environmentId: z.string().optional() });
+const getSSEHeaders = () => ({ "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" });
+
 
 const CONNECTION_TIMEOUT_MS = 60 * 60 * 1000; // 1 hour
 
