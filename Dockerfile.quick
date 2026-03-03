@@ -1,4 +1,6 @@
 # syntax=docker/dockerfile:1
+# Quick build: expects pre-built frontend at frontend/dist/
+# Usage: pnpm --filter frontend run build && docker buildx build -f Dockerfile.quick ...
 ARG POSTHOG_HOST=https://app.posthog.com
 ARG POSTHOG_API_KEY=posthog-api-key
 ARG INTERCOM_ID=intercom-id
@@ -11,57 +13,12 @@ ENV PNPM_HOME="/root/.local/share/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
-
-FROM base AS frontend-dependencies
-
-WORKDIR /app
-
-COPY frontend/package.json frontend/pnpm-lock.yaml* ./
-
-# Strip file: deps (monorepo-local refs unavailable in Docker context), then install
-RUN node -e "\
-  const p=JSON.parse(require('fs').readFileSync('package.json','utf8'));\
-  for(const s of['dependencies','devDependencies','optionalDependencies'])\
-    if(p[s])for(const[k,v]of Object.entries(p[s]))\
-      if(typeof v==='string'&&v.startsWith('file:'))p[s][k]='*';\
-  require('fs').writeFileSync('package.json',JSON.stringify(p,null,2))"
-RUN pnpm install --no-frozen-lockfile --ignore-scripts
-
-# Rebuild the source code only when needed
-FROM base AS frontend-builder
-WORKDIR /app
-
-# Copy dependencies
-COPY --from=frontend-dependencies /app/node_modules ./node_modules
-# Copy all files
-COPY /frontend .
-
-ENV NODE_ENV production
-ARG POSTHOG_HOST
-ENV VITE_POSTHOG_HOST $POSTHOG_HOST
-ARG POSTHOG_API_KEY
-ENV VITE_POSTHOG_API_KEY $POSTHOG_API_KEY
-ARG INTERCOM_ID
-ENV VITE_INTERCOM_ID $INTERCOM_ID
-ARG KMS_PLATFORM_VERSION
-ENV KMS_PLATFORM_VERSION $KMS_PLATFORM_VERSION
-ENV VITE_KMS_PLATFORM_VERSION $KMS_PLATFORM_VERSION
-ARG CAPTCHA_SITE_KEY
-ENV VITE_CAPTCHA_SITE_KEY $CAPTCHA_SITE_KEY
-ENV NODE_OPTIONS="--max-old-space-size=8192"
-
-# Build
-RUN pnpm run build
-
-# Production image
+# Pre-built frontend (static assets, platform-independent)
 FROM base AS frontend-runner
 WORKDIR /app
-
-RUN groupadd --system --gid 1001 nodejs
-RUN useradd --system --uid 1001 --gid nodejs non-root-user
-
-COPY --from=frontend-builder --chown=non-root-user:nodejs /app/dist ./
-
+RUN groupadd --system --gid 1001 nodejs \
+  && useradd --system --uid 1001 --gid nodejs non-root-user
+COPY --chown=non-root-user:nodejs frontend/dist ./
 USER non-root-user
 
 ##
@@ -222,26 +179,26 @@ COPY --from=frontend-runner /app ./backend/frontend-build
 RUN chmod +x /backend/scripts/export-assets.sh
 
 ARG KMS_PLATFORM_VERSION
-ENV KMS_PLATFORM_VERSION $KMS_PLATFORM_VERSION
+ENV KMS_PLATFORM_VERSION=$KMS_PLATFORM_VERSION
 
 ARG DD_GIT_REPOSITORY_URL
-ENV DD_GIT_REPOSITORY_URL $DD_GIT_REPOSITORY_URL
+ENV DD_GIT_REPOSITORY_URL=$DD_GIT_REPOSITORY_URL
 
 ARG DD_GIT_COMMIT_SHA
-ENV DD_GIT_COMMIT_SHA $DD_GIT_COMMIT_SHA
+ENV DD_GIT_COMMIT_SHA=$DD_GIT_COMMIT_SHA
 
-ENV PORT 8080
+ENV PORT=8080
 ENV HOST=0.0.0.0
-ENV HTTPS_ENABLED false
-ENV NODE_ENV production
-ENV STANDALONE_BUILD true
-ENV STANDALONE_MODE true
+ENV HTTPS_ENABLED=false
+ENV NODE_ENV=production
+ENV STANDALONE_BUILD=true
+ENV STANDALONE_MODE=true
 ENV NODE_OPTIONS="--max-old-space-size=2048"
 ENV ChrystokiConfigurationPath=/usr/safenet/lunaclient/
 
 WORKDIR /backend
 
-ENV TELEMETRY_ENABLED true
+ENV TELEMETRY_ENABLED=true
 
 EXPOSE 8080
 EXPOSE 443
