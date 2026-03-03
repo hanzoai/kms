@@ -9,7 +9,7 @@ import { Mfa } from "@app/components/auth/Mfa";
 import InputField from "@app/components/basic/InputField";
 import checkPassword from "@app/components/utilities/checks/password/checkPassword";
 import SecurityClient from "@app/components/utilities/SecurityClient";
-import { Button } from "@app/components/v2";
+import { BrandLogo, Button } from "@app/components/v2";
 import { useToggle } from "@app/hooks";
 import {
   completeAccountSignupInvite,
@@ -19,7 +19,7 @@ import {
 import { MfaMethod } from "@app/hooks/api/auth/types";
 import { fetchOrganizations } from "@app/hooks/api/organization/queries";
 import { isLoggedIn } from "@app/hooks/api/reactQuery";
-import { getBrand } from "@app/lib/branding";
+
 
 type Errors = {
   tooShort?: string;
@@ -281,7 +281,7 @@ export const SignupInvitePage = () => {
         <>
           <Link to="/">
             <div className="mt-20 mb-4 flex justify-center">
-              <img src={getBrand().logo} height={90} width={120} alt="KMS Logo" />
+              <BrandLogo className="h-[90px] w-[120px] text-white" />
             </div>
           </Link>
           {step === 1 && stepConfirmEmail}

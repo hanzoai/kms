@@ -6,13 +6,12 @@ import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { createNotification } from "@app/components/notifications";
-import { Button, FilterableSelect, FormControl } from "@app/components/v2";
+import { BrandLogo, Button, FilterableSelect, FormControl } from "@app/components/v2";
 
 import {
   useCalculateUpgradePath,
   useGetUpgradePathVersions
 } from "../../../hooks/api/upgradePath/queries";
-import { getBrand } from "@app/lib/branding";
 
 type VersionOption = {
   label: string;
@@ -151,13 +150,7 @@ export const UpgradePathPage = () => {
             <div className="mb-8 text-center">
               <div className="mb-4 flex justify-center pt-8">
                 <a target="_blank" rel="noopener noreferrer" href="https://hanzo.ai">
-                  <img
-                    src={getBrand().logo}
-                    height={90}
-                    width={120}
-                    alt="KMS logo"
-                    className="cursor-pointer"
-                  />
+                  <BrandLogo className="h-[90px] w-[120px] cursor-pointer text-white" />
                 </a>
               </div>
               <h1 className="bg-linear-to-b from-white to-bunker-200 bg-clip-text text-center text-4xl font-medium text-transparent">
