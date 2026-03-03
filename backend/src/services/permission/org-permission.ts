@@ -4,6 +4,8 @@
 //
 // Org-level RBAC permission subjects and actions.
 
+import { RawRuleOf, MongoAbility } from "@casl/ability";
+
 export enum OrgPermissionActions {
   Read = "read",
   Create = "create",
@@ -111,3 +113,36 @@ export type OrgPermissionSet =
   | [OrgPermissionSecretShareAction, OrgPermissionSubjects.SecretShare]
   | [OrgPermissionSubOrgActions, OrgPermissionSubjects.SubOrg]
   | [OrgPermissionMachineIdentityAuthTemplateActions, OrgPermissionSubjects.MachineIdentityAuthTemplates];
+
+// Serialised CASL rule arrays for built-in org roles.
+// Exported here because org-role-factory imports them from this module.
+type OrgRule = RawRuleOf<MongoAbility<OrgPermissionSet>>;
+
+export const orgAdminPermissions: OrgRule[] = [
+  { action: [OrgPermissionActions.Read, OrgPermissionActions.Create, OrgPermissionActions.Edit, OrgPermissionActions.Delete], subject: OrgPermissionSubjects.Workspace },
+  { action: [OrgPermissionActions.Read, OrgPermissionActions.Create, OrgPermissionActions.Edit, OrgPermissionActions.Delete], subject: OrgPermissionSubjects.Role },
+  { action: [OrgPermissionActions.Read, OrgPermissionActions.Create, OrgPermissionActions.Edit, OrgPermissionActions.Delete], subject: OrgPermissionSubjects.Member },
+  { action: [OrgPermissionActions.Read, OrgPermissionActions.Create, OrgPermissionActions.Edit, OrgPermissionActions.Delete], subject: OrgPermissionSubjects.Settings },
+  { action: [OrgPermissionActions.Read, OrgPermissionActions.Create, OrgPermissionActions.Edit, OrgPermissionActions.Delete], subject: OrgPermissionSubjects.IncidentAccount },
+  { action: [OrgPermissionActions.Read, OrgPermissionActions.Create, OrgPermissionActions.Edit, OrgPermissionActions.Delete], subject: OrgPermissionSubjects.Sso },
+  { action: [OrgPermissionActions.Read, OrgPermissionActions.Create, OrgPermissionActions.Edit, OrgPermissionActions.Delete], subject: OrgPermissionSubjects.Scim },
+  { action: [OrgPermissionActions.Read, OrgPermissionActions.Create, OrgPermissionActions.Edit, OrgPermissionActions.Delete], subject: OrgPermissionSubjects.Ldap },
+  { action: [OrgPermissionGroupActions.Read, OrgPermissionGroupActions.Create, OrgPermissionGroupActions.Edit, OrgPermissionGroupActions.Delete, OrgPermissionGroupActions.AddMembers, OrgPermissionGroupActions.RemoveMembers, OrgPermissionGroupActions.GrantPrivileges, OrgPermissionGroupActions.RevokePrivileges], subject: OrgPermissionSubjects.Groups },
+  { action: [OrgPermissionActions.Read, OrgPermissionActions.Create, OrgPermissionActions.Edit, OrgPermissionActions.Delete], subject: OrgPermissionSubjects.SecretScanning },
+  { action: [OrgPermissionActions.Read, OrgPermissionActions.Create, OrgPermissionActions.Edit, OrgPermissionActions.Delete], subject: OrgPermissionSubjects.Billing },
+  { action: [OrgPermissionIdentityActions.Read, OrgPermissionIdentityActions.Create, OrgPermissionIdentityActions.Edit, OrgPermissionIdentityActions.Delete, OrgPermissionIdentityActions.GrantPrivileges, OrgPermissionIdentityActions.RevokePrivileges], subject: OrgPermissionSubjects.Identity },
+  { action: [OrgPermissionActions.Read, OrgPermissionActions.Create, OrgPermissionActions.Edit, OrgPermissionActions.Delete], subject: OrgPermissionSubjects.Kms },
+  { action: [OrgPermissionActions.Read, OrgPermissionActions.Create, OrgPermissionActions.Edit, OrgPermissionActions.Delete], subject: OrgPermissionSubjects.AuditLogs },
+  { action: [OrgPermissionActions.Read, OrgPermissionActions.Create, OrgPermissionActions.Edit, OrgPermissionActions.Delete], subject: OrgPermissionSubjects.AppConnections },
+  { action: [OrgPermissionGatewayActions.ListGateways, OrgPermissionGatewayActions.CreateGateways, OrgPermissionGatewayActions.DeleteGateways, OrgPermissionGatewayActions.EditGateways, OrgPermissionGatewayActions.AttachGateways], subject: OrgPermissionSubjects.Gateway }
+];
+
+export const orgMemberPermissions: OrgRule[] = [
+  { action: [OrgPermissionActions.Read, OrgPermissionActions.Create], subject: OrgPermissionSubjects.Workspace },
+  { action: [OrgPermissionActions.Read], subject: OrgPermissionSubjects.Member },
+  { action: [OrgPermissionActions.Read], subject: OrgPermissionSubjects.Role },
+  { action: [OrgPermissionActions.Read], subject: OrgPermissionSubjects.Groups },
+  { action: [OrgPermissionActions.Read], subject: OrgPermissionSubjects.Identity }
+];
+
+export const orgNoAccessPermissions: OrgRule[] = [];

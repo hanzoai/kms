@@ -252,6 +252,12 @@ export type ProjectPermissionSet =
   | [ProjectPermissionApprovalRequestActions, ProjectPermissionSub.ApprovalRequests]
   | [ProjectPermissionApprovalRequestGrantActions, ProjectPermissionSub.ApprovalRequestGrants];
 
+// Migration helper: maps v1 permission schema to v2.
+// The migration (20241008172622) that uses this has already been applied in production.
+// This is a pass-through stub to prevent runtime ERR_MODULE_NOT_FOUND.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const backfillPermissionV1SchemaToV2Schema = (rules: any[], _isRole?: boolean): any[] => rules;
+
 // Helpers
 
 const RESERVED_PROJECT_ROLE_SLUGS = [
