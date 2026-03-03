@@ -127,9 +127,15 @@ RUN apt-get update && apt-get install -y \
 RUN printf "[FreeTDS]\nDescription = FreeTDS Driver\nDriver = /usr/lib/x86_64-linux-gnu/odbc/libtdsodbc.so\nSetup = /usr/lib/x86_64-linux-gnu/odbc/libtdsS.so\nFileUsage = 1\n" > /etc/odbcinst.ini
 
 COPY --from=backend-build /app .
-RUN rm -rf ./bdd ./e2e-test
-# Prune devDependencies in-place (keeps symlink structure intact, unlike rm + reinstall)
-RUN pnpm prune --prod
+RUN rm -rf ./bdd ./e2e-test ./node_modules
+# Strip file: deps (monorepo refs not available in Docker), then install prod-only
+RUN node -e "\
+  const p=JSON.parse(require('fs').readFileSync('package.json','utf8'));\
+  for(const s of['dependencies','devDependencies','optionalDependencies'])\
+    if(p[s])for(const[k,v]of Object.entries(p[s]))\
+      if(typeof v==='string'&&v.startsWith('file:'))p[s][k]='*';\
+  require('fs').writeFileSync('package.json',JSON.stringify(p,null,2))"
+RUN pnpm install --prod --frozen-lockfile=false
 
 RUN mkdir frontend-build
 
