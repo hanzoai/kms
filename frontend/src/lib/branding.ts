@@ -5,6 +5,6 @@ export const getBrand = () => {
   return {
     name: wl.name,
     logo: wl.logo,
-    favicon: "/favicon.ico"
+    favicon: wl.favicon
   };
 };
