@@ -1,4 +1,3 @@
-<svg viewBox="0 0 67 67" xmlns="http://www.w3.org/2000/svg">
-  <!-- Zoo Z mark - monochrome white -->
-  <path d="M10 8h47v12L22.5 46H57v12H10V46L44.5 20H10V8z" fill="#ffffff"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <path d="M6 4h20v5.5L11.5 23H26v5H6v-5.5L20.5 9H6V4z" fill="white"/>
 </svg>
