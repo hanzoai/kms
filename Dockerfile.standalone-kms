@@ -13,12 +13,12 @@ WORKDIR /app
 
 COPY frontend/package.json frontend/package-lock.json  ./
 
-# Downgrade npm to 10.5.0 to avoid 'Cannot read properties of undefined (reading extraneous)' bug in 10.9.x
-RUN npm install -g npm@10.5.0
+# Downgrade npm to 10.7.0 to avoid 'Cannot read properties of undefined (reading extraneous)' bug in 10.9.x
+RUN npm install -g npm@10.7.0
 
 # Install dependencies (cache npm store across builds)
 RUN --mount=type=cache,target=/root/.npm \
-    npm ci --ignore-scripts
+    npm install --ignore-scripts
 
 # Rebuild the source code only when needed
 FROM base AS frontend-builder
@@ -82,9 +82,9 @@ RUN groupadd --system --gid 1001 nodejs
 RUN useradd --system --uid 1001 --gid nodejs non-root-user
 
 COPY backend/package.json backend/package-lock.json ./
-RUN npm install -g npm@10.5.0
+RUN npm install -g npm@10.7.0
 RUN --mount=type=cache,target=/root/.npm \
-    npm ci
+    npm install --no-audit --no-fund
 
 COPY /backend .
 COPY --chown=non-root-user:nodejs standalone-entrypoint.sh standalone-entrypoint.sh
@@ -116,9 +116,9 @@ RUN printf "[FreeTDS]\nDescription = FreeTDS Driver\nDriver = /usr/lib/x86_64-li
 
 COPY --from=backend-build /app .
 RUN rm -rf ./node_modules ./bdd ./e2e-test
-RUN npm install -g npm@10.5.0
+RUN npm install -g npm@10.7.0
 RUN --mount=type=cache,target=/root/.npm \
-    npm ci --omit=dev
+    npm install --no-audit --no-fund --omit=dev
 
 RUN mkdir frontend-build
 
