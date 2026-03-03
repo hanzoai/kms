@@ -1,16 +1,57 @@
+# Build artifacts and dependencies
 backend/node_modules
 frontend/node_modules
 backend/frontend-build
 **/node_modules
 **/.next
-.dockerignore
-.git
-README.md
+**/dist
+
+# Docker files
 .dockerignore
 **/Dockerfile
+**/Dockerfile.*
+docker-compose*.yml
+docker-swarm
 
-# Exclude test directories and test private keys from production images
+# VCS and CI
+.git
+.github
+.husky
+
+# Documentation and metadata
+*.md
+docs
+img
+company
+
+# Test directories and test keys
 backend/bdd
 backend/e2e-test
 **/*.test.ts
 **/*.spec.ts
+cypress.config.js
+
+# Infrastructure (not needed in Docker build)
+helm-charts
+cloudformation
+k8s
+nginx
+
+# Config and env files
+.env*
+.envrc
+.kmsignore
+.eslintignore
+ct.yaml
+render.yaml
+servers.json
+otel-collector-config.yaml
+prometheus.dev.yml
+flake.lock
+flake.nix
+
+# CLI (separate build)
+cli
+
+# Sink (separate service)
+sink
