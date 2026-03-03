@@ -15,7 +15,58 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # ── Test gates — broken code does not ship ───────────────────
+  lint-and-typecheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: true
+      matrix:
+        target: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: ${{ matrix.target }}/package-lock.json
+      - run: npm ci
+        working-directory: ${{ matrix.target }}
+      - run: npm run type:check
+        working-directory: ${{ matrix.target }}
+      - run: npm run lint
+        working-directory: ${{ matrix.target }}
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+      - run: npm ci
+        working-directory: backend
+      - name: Start postgres and redis
+        run: touch .env && docker compose -f docker-compose.dev.yml up -d db redis
+      - name: Wait for services
+        run: |
+          for i in $(seq 1 30); do
+            docker compose -f docker-compose.dev.yml exec -T db pg_isready -U hanzokms && break
+            sleep 1
+          done
+      - run: npm run test:unit
+        working-directory: backend
+        env:
+          REDIS_URL: redis://172.17.0.1:6379
+          DB_CONNECTION_URI: postgres://hanzokms:hanzokms@172.17.0.1:5432/hanzokms?sslmode=disable
+          AUTH_SECRET: something-random
+
+  # ── Build + deploy (only after gates pass) ──────────────────
   docker:
+    needs: [lint-and-typecheck, unit-tests]
     uses: hanzoai/.github/.github/workflows/docker-build.yml@main
     with:
       image: ghcr.io/hanzoai/kms
