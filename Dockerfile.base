@@ -1,0 +1,83 @@
+# syntax=docker/dockerfile:1
+#
+# KMS base image — pre-bakes ALL system deps that never change between code pushes.
+# Rebuild weekly or when this file changes.
+#
+# Image: ghcr.io/hanzoai/kms-base:latest
+#
+FROM node:22-slim
+
+LABEL org.opencontainers.image.source="https://github.com/hanzoai/kms"
+LABEL org.opencontainers.image.description="KMS base image with system dependencies"
+
+# ── System packages (build + runtime) ──────────────────────────
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    autoconf \
+    automake \
+    libtool \
+    libssl-dev \
+    ca-certificates \
+    bash \
+    curl \
+    git \
+    python3 \
+    make \
+    g++ \
+    unixodbc \
+    freetds-bin \
+    unixodbc-dev \
+    libc-dev \
+    freetds-dev \
+    wget \
+    openssh-client \
+    smbclient \
+    && rm -rf /var/lib/apt/lists/*
+
+# ── Oracle Instant Client (per-arch) ──────────────────────────
+RUN ARCH=$(dpkg --print-architecture) && \
+    if [ "$ARCH" = "amd64" ]; then \
+        ORACLE_ZIP="instantclient-basic-linux.x64-23.26.0.0.0.zip" && \
+        ORACLE_URL="https://download.oracle.com/otn_software/linux/instantclient/2326000/${ORACLE_ZIP}" && \
+        EXPECTED_SHA="d6c79cbcf0ff209363e779855c690d4fc730aed847e9198a2c439bcf34760af5" && \
+        apt-get update && apt-get install -y libaio1t64 unzip && \
+        ln -sf /lib/x86_64-linux-gnu/libaio.so.1t64 /lib/x86_64-linux-gnu/libaio.so.1 && \
+        wget -q "$ORACLE_URL" && \
+        echo "$EXPECTED_SHA  $ORACLE_ZIP" | sha256sum -c - && \
+        unzip "$ORACLE_ZIP" -d /opt/oracle && \
+        rm "$ORACLE_ZIP"; \
+    elif [ "$ARCH" = "arm64" ]; then \
+        ORACLE_ZIP="instantclient-basic-linux.arm64-23.26.0.0.0.zip" && \
+        ORACLE_URL="https://download.oracle.com/otn_software/linux/instantclient/2326000/${ORACLE_ZIP}" && \
+        EXPECTED_SHA="9c9a32051e97f087016fb334b7ad5c0aea8511ca8363afd8e0dc6ec4fc515c32" && \
+        apt-get update && apt-get install -y libaio1t64 unzip && \
+        ln -sf /lib/aarch64-linux-gnu/libaio.so.1t64 /lib/aarch64-linux-gnu/libaio.so.1 && \
+        wget -q "$ORACLE_URL" && \
+        echo "$EXPECTED_SHA  $ORACLE_ZIP" | sha256sum -c - && \
+        unzip "$ORACLE_ZIP" -d /opt/oracle && \
+        rm "$ORACLE_ZIP"; \
+    fi && \
+    echo /opt/oracle/instantclient_23_26 > /etc/ld.so.conf.d/oracle-instantclient.conf && \
+    ldconfig && \
+    rm -rf /var/lib/apt/lists/*
+
+# ── KMS CLI ───────────────────────────────────────────────────
+RUN curl -1sLf 'https://artifacts-cli.infisical.com/setup.deb.sh' | bash \
+    && apt-get update && apt-get install -y infisical=0.43.47 \
+    && rm -rf /var/lib/apt/lists/* \
+    && ln -sf /usr/bin/infisical /usr/local/bin/kms
+
+# ── ODBC config ───────────────────────────────────────────────
+RUN printf "[FreeTDS]\nDescription = FreeTDS Driver\nDriver = /usr/lib/x86_64-linux-gnu/odbc/libtdsodbc.so\nSetup = /usr/lib/x86_64-linux-gnu/odbc/libtdsS.so\nFileUsage = 1\n" > /etc/odbcinst.ini
+
+# ── Non-root user ─────────────────────────────────────────────
+RUN groupadd --system --gid 1001 nodejs \
+    && useradd --system --uid 1001 --gid nodejs non-root-user
+
+# ── SSL cert permissions for non-root ─────────────────────────
+RUN chown -R non-root-user /etc/ssl/certs \
+    && chown non-root-user /etc/ssl/certs/ca-certificates.crt \
+    && chmod -R u+rwx /etc/ssl/certs \
+    && chmod u+rw /etc/ssl/certs/ca-certificates.crt \
+    && chown non-root-user /usr/sbin/update-ca-certificates \
+    && chmod u+rx /usr/sbin/update-ca-certificates
