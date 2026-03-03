@@ -25,7 +25,6 @@ import { TPkiCollectionDALFactory } from "@app/services/pki-collection/pki-colle
 import { TPkiCollectionItemDALFactory } from "@app/services/pki-collection/pki-collection-item-dal";
 import { TProjectDALFactory } from "@app/services/project/project-dal";
 import { getProjectKmsCertificateKeyId } from "@app/services/project/project-fns";
-import { unknown } from "../../../ee/services/certificate-authority-crl/certificate-authority-crl-dal";
 import { extractCertificateFields } from "../../certificate/certificate-fns";
 import { TCertificateSecretDALFactory } from "../../certificate/certificate-secret-dal";
 import {
