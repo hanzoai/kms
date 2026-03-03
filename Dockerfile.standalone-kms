@@ -80,7 +80,7 @@ RUN useradd --system --uid 1001 --gid nodejs non-root-user
 
 COPY backend/package.json backend/package-lock.json ./
 RUN --mount=type=cache,target=/root/.npm \
-    npm install -g npm@10.8.2 && npm install --legacy-peer-deps
+    npm install -g npm@10.8.2 && npm ci --legacy-peer-deps
 
 COPY /backend .
 COPY --chown=non-root-user:nodejs standalone-entrypoint.sh standalone-entrypoint.sh
@@ -113,7 +113,7 @@ RUN printf "[FreeTDS]\nDescription = FreeTDS Driver\nDriver = /usr/lib/x86_64-li
 COPY --from=backend-build /app .
 RUN rm -rf ./node_modules ./bdd ./e2e-test
 RUN --mount=type=cache,target=/root/.npm \
-    npm install -g npm@10.8.2 && npm install --legacy-peer-deps --omit=dev
+    npm install -g npm@10.8.2 && npm ci --legacy-peer-deps --omit=dev
 
 RUN mkdir frontend-build
 
