@@ -31,6 +31,7 @@ import { createNotification } from "@app/components/notifications";
 import { OrgPermissionCan } from "@app/components/permissions";
 import SecurityClient from "@app/components/utilities/SecurityClient";
 import {
+  BrandLogo,
   Button,
   DropdownMenu,
   DropdownMenuContent,
@@ -343,7 +344,7 @@ export const Navbar = () => {
       <div className="mr-auto flex h-full min-w-34 items-center">
         <div className="mt-0.5 shrink-0">
           <Link to="/organizations/$orgId/projects" params={{ orgId: currentOrg.id }}>
-            <img alt="KMS logo" src="/images/logotransparent.png" className="h-4" />
+            <BrandLogo className="h-4 w-auto text-white" />
           </Link>
         </div>
         <ChevronRight size={18} className="mx-3 mt-[3px] text-mineshaft-400/70" />

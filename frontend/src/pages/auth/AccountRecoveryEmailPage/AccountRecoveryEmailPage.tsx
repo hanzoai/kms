@@ -2,11 +2,10 @@ import { FormEvent, useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link } from "@tanstack/react-router";
 
-import { Button, EmailServiceSetupModal, Input } from "@app/components/v2";
+import { BrandLogo, Button, EmailServiceSetupModal, Input } from "@app/components/v2";
 import { usePopUp } from "@app/hooks";
 import { useSendAccountRecoveryEmail } from "@app/hooks/api";
 import { useFetchServerStatus } from "@app/hooks/api/serverDetails";
-import { getBrand } from "@app/lib/branding";
 
 export const AccountRecoveryEmailPage = () => {
   const [loading, setLoading] = useState(false);
@@ -57,14 +56,7 @@ export const AccountRecoveryEmailPage = () => {
       </Helmet>
       <Link to="/">
         <div className="mt-20 mb-4 flex justify-center">
-          <img
-            src={getBrand().logo}
-            style={{
-              height: "90px",
-              width: "120px"
-            }}
-            alt="KMS Logo"
-          />
+          <BrandLogo className="h-[90px] w-[120px] text-white" />
         </div>
       </Link>
       {step === 1 && (

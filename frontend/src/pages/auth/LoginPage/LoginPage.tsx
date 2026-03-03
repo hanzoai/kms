@@ -3,11 +3,11 @@ import { Helmet } from "react-helmet";
 import { useTranslation } from "react-i18next";
 import { Link } from "@tanstack/react-router";
 
+import { BrandLogo } from "@app/components/v2";
 import { isLoggedIn } from "@app/hooks/api/reactQuery";
 
 import { InitialStep, SSOStep } from "./components";
 import { useNavigateToSelectOrganization } from "./Login.utils";
-import { getBrand } from "@app/lib/branding";
 
 export const LoginPage = ({ isAdmin }: { isAdmin?: boolean }) => {
   const { t } = useTranslation();
@@ -75,14 +75,7 @@ export const LoginPage = ({ isAdmin }: { isAdmin?: boolean }) => {
       </Helmet>
       <Link to="/">
         <div className="mt-20 mb-4 flex justify-center">
-          <img
-            src={getBrand().logo}
-            style={{
-              height: "90px",
-              width: "120px"
-            }}
-            alt="KMS logo"
-          />
+          <BrandLogo className="h-[90px] w-[120px] text-white" />
         </div>
       </Link>
       <div className="pb-28">{renderView()}</div>
