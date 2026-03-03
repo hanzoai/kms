@@ -267,6 +267,16 @@ export enum EventType {
   GET_ORG_AUDIT_LOGS = "get-org-audit-logs"
 }
 
+// Secret approval events for audit logging when secret approvals are merged.
+export enum SecretApprovalEvent {
+  Create = "secret-approval-create",
+  Update = "secret-approval-update",
+  Delete = "secret-approval-delete",
+  CreateMany = "secret-approval-create-many",
+  UpdateMany = "secret-approval-update-many",
+  DeleteMany = "secret-approval-delete-many"
+}
+
 export type Actor = {
   type: ActorType;
   metadata: Record<string, unknown>;
@@ -284,6 +294,23 @@ export type TCreateAuditLogDTO = {
   userAgent?: string;
   userAgentType?: UserAgentType;
 };
+
+// Webhook triggered event payload for audit logging.
+export type WebhookTriggeredEvent = {
+  type: "webhook-triggered";
+  metadata: {
+    webhookId: string;
+    url: string;
+    environment: string;
+    secretPath: string;
+    isSecretChange: boolean;
+    statusCode?: number;
+    error?: string;
+  };
+};
+
+// Convenience alias used across the codebase for audit log metadata.
+export type AuditLogInfo = Pick<TCreateAuditLogDTO, "userAgent" | "userAgentType" | "ipAddress" | "actor">;
 
 // Re-export from service to keep fastify.d.ts import working.
 export type { TAuditLogServiceFactory } from "./audit-log-service";
