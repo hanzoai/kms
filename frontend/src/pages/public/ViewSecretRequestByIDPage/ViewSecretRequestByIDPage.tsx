@@ -8,7 +8,7 @@ import { addSeconds, formatISO } from "date-fns";
 import { twMerge } from "tailwind-merge";
 
 import { createNotification } from "@app/components/notifications";
-import { HanzoLogoLoader } from "@app/components/v2";
+import { BrandLogo, HanzoLogoLoader } from "@app/components/v2";
 import { SessionStorageKeys } from "@app/const";
 import { ROUTE_PATHS } from "@app/const/routes";
 import { TBrandingConfig, useGetSecretRequestById } from "@app/hooks/api/secretSharing";
@@ -194,13 +194,7 @@ export const ViewSecretRequestByIDPage = () => {
                 />
               ) : (
                 <a target="_blank" rel="noopener noreferrer" href="https://hanzo.ai">
-                  <img
-                    src={logoUrl}
-                    height={90}
-                    width={120}
-                    alt="KMS logo"
-                    className="cursor-pointer"
-                  />
+                  <BrandLogo className="h-[90px] w-[120px] cursor-pointer text-white" />
                 </a>
               )}
             </div>

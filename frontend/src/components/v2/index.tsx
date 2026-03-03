@@ -2,6 +2,7 @@
 export * from "./AccessRestrictedBanner";
 export * from "./Accordion";
 export * from "./Alert";
+export * from "./BrandLogo";
 export * from "./Breadcrumb";
 export * from "./Button";
 export * from "./Card";

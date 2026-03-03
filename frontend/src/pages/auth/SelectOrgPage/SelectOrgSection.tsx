@@ -12,7 +12,7 @@ import { Mfa } from "@app/components/auth/Mfa";
 import { createNotification } from "@app/components/notifications";
 import { IsCliLoginSuccessful } from "@app/components/utilities/attemptCliLogin";
 import SecurityClient from "@app/components/utilities/SecurityClient";
-import { Button, ContentLoader, Spinner } from "@app/components/v2";
+import { BrandLogo, Button, ContentLoader, Spinner } from "@app/components/v2";
 import { SessionStorageKeys } from "@app/const";
 import { OrgMembershipRole } from "@app/helpers/roles";
 import { useToggle } from "@app/hooks";
@@ -28,7 +28,7 @@ import { Organization } from "@app/hooks/api/types";
 import { AuthMethod } from "@app/hooks/api/users/types";
 
 import { navigateUserToOrg } from "../LoginPage/Login.utils";
-import { getBrand } from "@app/lib/branding";
+
 
 export const SelectOrganizationSection = () => {
   const navigate = useNavigate();
@@ -286,14 +286,7 @@ export const SelectOrganizationSection = () => {
         <div className="mx-auto mt-20 w-fit rounded-lg border-2 border-mineshaft-500 p-10 shadow-lg">
           <Link to="/">
             <div className="mb-4 flex justify-center">
-              <img
-                src={getBrand().logo}
-                style={{
-                  height: "90px",
-                  width: "120px"
-                }}
-                alt="KMS logo"
-              />
+              <BrandLogo className="h-[90px] w-[120px] text-white" />
             </div>
           </Link>
           <form className="mx-auto flex w-full flex-col items-center justify-center">
