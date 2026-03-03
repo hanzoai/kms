@@ -146,6 +146,12 @@ import {
   WindmillConnectionListItemSchema
 } from "@app/services/app-connection/windmill";
 import { SanitizedZabbixConnectionSchema, ZabbixConnectionListItemSchema } from "@app/services/app-connection/zabbix";
+import { OCIConnectionListItemSchema, SanitizedOCIConnectionSchema } from "@app/services/app-connection/oci";
+import {
+  OracleDBConnectionListItemSchema,
+  SanitizedOracleDBConnectionSchema
+} from "@app/services/app-connection/oracle-db";
+import { ChefConnectionListItemSchema, SanitizedChefConnectionSchema } from "@app/services/app-connection/chef";
 import { AuthMode } from "@app/services/auth/auth-type";
 
 // can't use discriminated due to multiple schemas for certain apps

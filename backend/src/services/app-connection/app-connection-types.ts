@@ -280,6 +280,9 @@ import {
   TZabbixConnectionConfig,
   TZabbixConnectionInput
 } from "./zabbix";
+import { TOCIConnection, TOCIConnectionConfig, TOCIConnectionInput, TValidateOCIConnectionCredentialsSchema } from "./oci";
+import { TOracleDBConnection, TOracleDBConnectionInput, TValidateOracleDBConnectionCredentialsSchema } from "./oracle-db";
+import { TChefConnection, TChefConnectionConfig, TChefConnectionInput, TValidateChefConnectionCredentialsSchema } from "./chef";
 
 export type TAppConnection = { id: string } & (
   | TAwsConnection

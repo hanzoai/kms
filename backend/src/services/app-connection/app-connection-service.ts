@@ -124,6 +124,11 @@ import { ValidateWindmillConnectionCredentialsSchema } from "./windmill";
 import { windmillConnectionService } from "./windmill/windmill-connection-service";
 import { ValidateZabbixConnectionCredentialsSchema } from "./zabbix";
 import { zabbixConnectionService } from "./zabbix/zabbix-connection-service";
+import { ValidateChefConnectionCredentialsSchema } from "./chef";
+import { chefConnectionService } from "./chef/chef-connection-service";
+import { ValidateOCIConnectionCredentialsSchema } from "./oci";
+import { ociConnectionService } from "./oci/oci-connection-service";
+import { ValidateOracleDBConnectionCredentialsSchema } from "./oracle-db";
 import { TLicenseServiceFactory } from "@app/services/license/license-service";
 
 export type TAppConnectionServiceFactoryDep = {

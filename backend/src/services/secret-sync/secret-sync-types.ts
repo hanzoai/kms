@@ -163,6 +163,8 @@ import {
 } from "./terraform-cloud";
 import { TVercelSync, TVercelSyncInput, TVercelSyncListItem, TVercelSyncWithCredentials } from "./vercel";
 import { TZabbixSync, TZabbixSyncInput, TZabbixSyncListItem, TZabbixSyncWithCredentials } from "./zabbix";
+import { TChefSync, TChefSyncInput, TChefSyncListItem, TChefSyncWithCredentials } from "./chef";
+import { TOCIVaultSync, TOCIVaultSyncInput, TOCIVaultSyncListItem, TOCIVaultSyncWithCredentials } from "./oci-vault";
 
 export type TSecretSync =
   | TAwsParameterStoreSync
