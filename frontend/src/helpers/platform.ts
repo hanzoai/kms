@@ -17,10 +17,10 @@ export const getWhiteLabelBrand = (): WhiteLabelBrand => {
 export const getWhiteLabelConfig = () => {
   const brand = getWhiteLabelBrand();
   const configs: Record<WhiteLabelBrand, { name: string; primaryColor: string; logo: string }> = {
-    hanzo: { name: "Hanzo KMS", primaryColor: "#fd4444", logo: "/images/gradientLogo.svg" },
-    lux:   { name: "Lux KMS",   primaryColor: "#6366f1", logo: "/images/gradientLogo.svg" },
-    pars:  { name: "Pars KMS",  primaryColor: "#fd4444", logo: "/images/gradientLogo.svg" },
-    zoo:   { name: "Zoo KMS",   primaryColor: "#10b981", logo: "/images/gradientLogo.svg" }
+    hanzo: { name: "Hanzo KMS", primaryColor: "#ffffff", logo: "/images/hanzo-logo.svg" },
+    lux:   { name: "Lux KMS",   primaryColor: "#ffffff", logo: "/images/lux-logo.svg" },
+    pars:  { name: "Pars KMS",  primaryColor: "#ffffff", logo: "/images/pars-logo.svg" },
+    zoo:   { name: "Zoo KMS",   primaryColor: "#ffffff", logo: "/images/zoo-logo.svg" }
   };
   return configs[brand];
 };

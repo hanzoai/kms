@@ -29,7 +29,7 @@ const buttonVariants = cva(
   {
     variants: {
       colorSchema: {
-        primary: ["bg-primary", "text-white", "border-primary bg-opacity-90 hover:bg-opacity-100"],
+        primary: ["bg-primary", "text-black", "border-primary bg-opacity-90 hover:bg-opacity-100"],
         secondary: ["bg-mineshaft", "text-gray-300", "border-mineshaft hover:bg-opacity-80"],
         danger: ["bg-red!", "text-white!", "border-red! hover:!bg-opacity-90"],
         gray: ["bg-bunker-500", "text-bunker-200"]
@@ -73,7 +73,7 @@ const buttonVariants = cva(
       {
         colorSchema: "primary",
         variant: "solid",
-        className: "text-white bg-primary-500 bg-opacity-90 hover:bg-primary-500 hover:text-white"
+        className: "text-black bg-primary-500 bg-opacity-90 hover:bg-primary-500 hover:text-black"
       },
       {
         colorSchema: "primary",
@@ -194,8 +194,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           <Lottie
             icon={
               variant === "solid" && colorSchema === "primary"
-                ? "hanzo_loading_white"
-                : "hanzo_loading"
+                ? "hanzo_loading"
+                : "hanzo_loading_white"
             }
             isAutoPlay
             className="absolute w-8 rounded-xl opacity-80 shadow-xs"
