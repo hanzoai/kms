@@ -63,7 +63,7 @@ vi.mock("@app/services/project/project-fns", () => ({
   getProjectKmsCertificateKeyId: vi.fn(() => Promise.resolve("mock-kms-id"))
 }));
 
-vi.mock("../../ee/services/certificate-est/certificate-est-fns", () => ({
+vi.mock("./certificate-est-fns", () => ({
   convertRawCertsToPkcs7: vi.fn(() => "mocked-pkcs7-response")
 }));
 

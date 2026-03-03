@@ -17,8 +17,8 @@ import { TKmsServiceFactory } from "@app/services/kms/kms-service";
 import { TProjectDALFactory } from "@app/services/project/project-dal";
 import { getProjectKmsCertificateKeyId } from "@app/services/project/project-fns";
 
-import { convertRawCertsToPkcs7 } from "../../ee/services/certificate-est/certificate-est-fns";
-import { TLicenseServiceFactory } from "../../ee/services/license/license-service";
+import { convertRawCertsToPkcs7 } from "./certificate-est-fns";
+import { TLicenseServiceFactory } from "@app/services/license/license-service";
 import { TCertificatePolicyDALFactory } from "../certificate-policy/certificate-policy-dal";
 
 type TCertificateEstV3ServiceFactoryDep = {
