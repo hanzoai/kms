@@ -2,6 +2,10 @@ import { AppConnection } from "@app/services/app-connection/app-connection-enums
 import { APP_CONNECTION_NAME_MAP } from "@app/services/app-connection/app-connection-maps";
 import { CaType } from "@app/services/certificate-authority/certificate-authority-enums";
 import { CERTIFICATE_AUTHORITIES_TYPE_MAP } from "@app/services/certificate-authority/certificate-authority-maps";
+import { SecretRotation } from "@app/services/secret-rotation/secret-rotation-v2-enums";
+import { SECRET_ROTATION_CONNECTION_MAP, SECRET_ROTATION_NAME_MAP } from "@app/services/secret-rotation/secret-rotation-v2-maps";
+import { SecretScanningDataSource } from "@app/services/secret-scanning/secret-scanning-enums";
+import { AUTO_SYNC_DESCRIPTION_HELPER, SECRET_SCANNING_DATA_SOURCE_CONNECTION_MAP, SECRET_SCANNING_DATA_SOURCE_NAME_MAP } from "@app/services/secret-scanning/secret-scanning-maps";
 import { SecretSync } from "@app/services/secret-sync/secret-sync-enums";
 import { SECRET_SYNC_CONNECTION_MAP, SECRET_SYNC_NAME_MAP } from "@app/services/secret-sync/secret-sync-maps";
 

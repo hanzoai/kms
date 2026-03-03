@@ -48,6 +48,9 @@ import { registerTerraformCloudConnectionRouter } from "./terraform-cloud-router
 import { registerVercelConnectionRouter } from "./vercel-connection-router";
 import { registerWindmillConnectionRouter } from "./windmill-connection-router";
 import { registerZabbixConnectionRouter } from "./zabbix-connection-router";
+import { registerOCIConnectionRouter } from "./oci-connection-router";
+import { registerOracleDBConnectionRouter } from "./oracle-db-connection-router";
+import { registerChefConnectionRouter } from "./chef-connection-router";
 
 export * from "./app-connection-router";
 
