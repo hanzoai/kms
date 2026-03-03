@@ -22,6 +22,16 @@ import { InsightsEventTypes } from "@app/services/telemetry/telemetry-types";
 
 import { InternalCertificateAuthorityResponseSchema, SanitizedProjectSchema } from "../sanitizedSchemas";
 
+// Stubs for stripped EE features
+enum KmsProjectTemplate { Default = "default" }
+enum LoginMappingSource { HOST = "host", PRINCIPAL = "principal" }
+const loginMappingSchema = z.object({ loginUser: z.string(), source: z.nativeEnum(LoginMappingSource), sourceValue: z.string() });
+const sanitizedSshCertificate = z.object({ id: z.string(), status: z.string() });
+const sanitizedSshCertificateTemplate = z.object({ id: z.string(), name: z.string() });
+const sanitizedSshCa = z.object({ id: z.string(), status: z.string(), friendlyName: z.string() });
+const sanitizedSshHost = z.object({ id: z.string(), hostname: z.string(), loginMappings: z.array(loginMappingSchema).optional() });
+const sanitizedSshHostGroup = z.object({ id: z.string(), name: z.string(), loginMappings: z.array(loginMappingSchema).optional() });
+
 const projectWithEnv = SanitizedProjectSchema.extend({
   _id: z.string(),
   environments: z.object({ name: z.string(), slug: z.string(), id: z.string() }).array(),

@@ -1,6 +1,10 @@
 import DOMPurify from "isomorphic-dompurify";
 import { z } from "zod";
 
+// Stubs for stripped EE license features
+enum LicenseType { Offline = "offline", Online = "online" }
+const getLicenseKeyConfig = () => ({ isValid: false, type: LicenseType.Online });
+
 import {
   IdentitiesSchema,
   OrganizationsSchema,

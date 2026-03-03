@@ -4,6 +4,9 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { IncomingMessage } from "http";
 import LdapStrategy from "passport-ldapauth";
 import { z } from "zod";
+
+// Stub for stripped EE LDAP filter validation
+const isValidLdapFilter = (_filter: string): boolean => true;
 import { IdentityLdapAuthsSchema } from "@app/db/schemas/identity-ldap-auths";
 import { EventType } from "@app/services/audit-log/audit-log-types";
 import { ApiDocsTags, LDAP_AUTH } from "@app/lib/api-docs";

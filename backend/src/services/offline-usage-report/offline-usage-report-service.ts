@@ -2,6 +2,10 @@ import crypto from "crypto";
 
 import { BadRequestError } from "@app/lib/errors";
 
+// Stubs for stripped EE license features
+enum LicenseType { Offline = "offline", Online = "online" }
+const getLicenseKeyConfig = () => ({ isValid: false, type: LicenseType.Online });
+
 import { TOfflineUsageReportDALFactory } from "./offline-usage-report-dal";
 import { TLicenseServiceFactory } from "@app/services/license/license-service";
 

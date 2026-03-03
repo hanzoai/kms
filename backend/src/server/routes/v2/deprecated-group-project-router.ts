@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+// Stub for stripped EE group filtering
+enum FilterReturnedUsers { All = "all", NonMembers = "non-members", Members = "members" }
+
 import {
   AccessScope,
   GroupProjectMembershipsSchema,
