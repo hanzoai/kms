@@ -11,6 +11,17 @@ import { BadRequestError } from "../errors";
 import { GatewayProxyProtocol } from "../gateway/types";
 import { logger } from "../logger";
 
+// Stub for stripped EE gateway feature
+type TGatewayV2ConnectionDetails = {
+  relayHost: string;
+  gateway?: unknown;
+  relay?: unknown;
+};
+
+const verifyHostInputValidity = async (opts: { host: string; isDynamicSecret?: boolean; isGateway?: boolean }): Promise<string[]> => {
+  return [opts.host];
+};
+
 interface IGatewayRelayServer {
   server: net.Server;
   port: number;
