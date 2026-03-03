@@ -7,14 +7,13 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { format } from "date-fns";
 
 import { createNotification } from "@app/components/notifications";
-import { Button, DeleteActionModal, Tooltip } from "@app/components/v2";
+import { BrandLogo, Button, DeleteActionModal, Tooltip } from "@app/components/v2";
 import { usePopUp } from "@app/hooks";
 import {
   useGetMyDuplicateAccount,
   useLogoutUser,
   useRemoveMyDuplicateAccounts
 } from "@app/hooks/api";
-import { getBrand } from "@app/lib/branding";
 
 type Props = {
   onRemoveDuplicateLater: () => void;
@@ -49,14 +48,7 @@ export const EmailDuplicationConfirmation = ({ onRemoveDuplicateLater }: Props) 
       <div className="mx-auto mt-20 w-fit max-w-2xl rounded-lg border-2 border-mineshaft-500 p-10 shadow-lg">
         <Link to="/">
           <div className="mb-4 flex justify-center">
-            <img
-              src={getBrand().logo}
-              style={{
-                height: "90px",
-                width: "120px"
-              }}
-              alt="KMS logo"
-            />
+            <BrandLogo className="h-[90px] w-[120px] text-white" />
           </div>
         </Link>
         <form className="mx-auto flex w-full flex-col items-center justify-center">

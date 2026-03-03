@@ -8,7 +8,7 @@ import Error from "@app/components/basic/Error";
 import TotpRegistration from "@app/components/mfa/TotpRegistration";
 import { createNotification } from "@app/components/notifications";
 import SecurityClient from "@app/components/utilities/SecurityClient";
-import { Button, Input, Tooltip } from "@app/components/v2";
+import { BrandLogo, Button, Input, Tooltip } from "@app/components/v2";
 import { isHanzoCloud } from "@app/helpers/platform";
 import { useLogoutUser, useSendMfaToken } from "@app/hooks/api";
 import {
@@ -25,7 +25,6 @@ import {
   useVerifyAuthentication,
   useVerifyRegistration
 } from "@app/hooks/api/webauthn";
-import { getBrand } from "@app/lib/branding";
 
 // The style for the verification code input
 const codeInputProps = {
@@ -381,7 +380,7 @@ export const Mfa = ({ successCallback, closeMfa, hideLogo, email, method }: Prop
       {!hideLogo && (
         <Link to="/">
           <div className="mb-4 flex justify-center">
-            <img src={getBrand().logo} height={90} width={120} alt="KMS logo" />
+            <BrandLogo className="h-[90px] w-[120px] text-white" />
           </div>
         </Link>
       )}

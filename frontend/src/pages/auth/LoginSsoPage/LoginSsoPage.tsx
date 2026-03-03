@@ -4,10 +4,10 @@ import { useTranslation } from "react-i18next";
 import { Link, useSearch } from "@tanstack/react-router";
 import { jwtDecode } from "jwt-decode";
 
+import { BrandLogo } from "@app/components/v2";
 import { ROUTE_PATHS } from "@app/const/routes";
 
 import { PasswordStep } from "../LoginPage/components";
-import { getBrand } from "@app/lib/branding";
 
 export const LoginSsoPage = () => {
   const { t } = useTranslation();
@@ -54,11 +54,7 @@ export const LoginSsoPage = () => {
       </Helmet>
       <Link to="/">
         <div className="mt-20 mb-4 flex justify-center">
-          <img
-            src={getBrand().logo}
-            style={{ height: "90px", width: "120px" }}
-            alt="KMS logo"
-          />
+          <BrandLogo className="h-[90px] w-[120px] text-white" />
         </div>
       </Link>
       <div>{renderView()}</div>

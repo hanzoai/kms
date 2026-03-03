@@ -6,9 +6,10 @@ import { jwtDecode } from "jwt-decode";
 
 import { ROUTE_PATHS } from "@app/const/routes";
 
+import { BrandLogo } from "@app/components/v2";
+
 import { EmailConfirmationStep } from "./components/EmailConfirmationStep";
 import { UserInfoSSOStep } from "./components/UserInfoSSOStep";
-import { getBrand } from "@app/lib/branding";
 
 export const SignupSsoPage = () => {
   const { t } = useTranslation();
@@ -77,14 +78,7 @@ export const SignupSsoPage = () => {
         <meta name="og:description" content={t("signup.og-description") as string} />
       </Helmet>
       <div className="mt-20 mb-4 flex justify-center">
-        <img
-          src={getBrand().logo}
-          style={{
-            height: "90px",
-            width: "120px"
-          }}
-          alt="KMS Logo"
-        />
+        <BrandLogo className="h-[90px] w-[120px] text-white" />
       </div>
       <div>{renderView()}</div>
     </div>

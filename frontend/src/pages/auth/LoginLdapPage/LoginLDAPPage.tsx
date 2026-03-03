@@ -4,10 +4,9 @@ import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "@tanstack/react-router";
 
 import { createNotification } from "@app/components/notifications";
-import { Button, Input } from "@app/components/v2";
+import { BrandLogo, Button, Input } from "@app/components/v2";
 import { useServerConfig } from "@app/context";
 import { loginLDAPRedirect } from "@app/hooks/api/auth/queries";
-import { getBrand } from "@app/lib/branding";
 
 export const LoginLdapPage = () => {
   const { t } = useTranslation();
@@ -73,14 +72,7 @@ export const LoginLdapPage = () => {
       </Helmet>
       <Link to="/">
         <div className="mt-20 mb-4 flex justify-center">
-          <img
-            src={getBrand().logo}
-            style={{
-              height: "90px",
-              width: "120px"
-            }}
-            alt="KMS logo"
-          />
+          <BrandLogo className="h-[90px] w-[120px] text-white" />
         </div>
       </Link>
       <div className="mx-auto w-full max-w-md md:px-6">
