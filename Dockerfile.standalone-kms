@@ -16,8 +16,14 @@ WORKDIR /app
 
 COPY frontend/package.json frontend/package-lock.json  ./
 
-# Convert npm lockfile to pnpm and install
-RUN pnpm import && pnpm install --frozen-lockfile --ignore-scripts
+# Strip file: deps (monorepo-local refs unavailable in Docker context), then install
+RUN node -e "\
+  const p=JSON.parse(require('fs').readFileSync('package.json','utf8'));\
+  for(const s of['dependencies','devDependencies','optionalDependencies'])\
+    if(p[s])for(const[k,v]of Object.entries(p[s]))\
+      if(typeof v==='string'&&v.startsWith('file:'))p[s][k]='*';\
+  require('fs').writeFileSync('package.json',JSON.stringify(p,null,2))"
+RUN pnpm install --ignore-scripts
 
 # Rebuild the source code only when needed
 FROM base AS frontend-builder
@@ -81,7 +87,14 @@ RUN groupadd --system --gid 1001 nodejs
 RUN useradd --system --uid 1001 --gid nodejs non-root-user
 
 COPY backend/package.json backend/package-lock.json ./
-RUN pnpm import && pnpm install --frozen-lockfile
+# Strip file: deps (monorepo-local refs unavailable in Docker context)
+RUN node -e "\
+  const p=JSON.parse(require('fs').readFileSync('package.json','utf8'));\
+  for(const s of['dependencies','devDependencies','optionalDependencies'])\
+    if(p[s])for(const[k,v]of Object.entries(p[s]))\
+      if(typeof v==='string'&&v.startsWith('file:'))p[s][k]='*';\
+  require('fs').writeFileSync('package.json',JSON.stringify(p,null,2))"
+RUN pnpm install
 
 COPY /backend .
 COPY --chown=non-root-user:nodejs standalone-entrypoint.sh standalone-entrypoint.sh
@@ -113,7 +126,14 @@ RUN printf "[FreeTDS]\nDescription = FreeTDS Driver\nDriver = /usr/lib/x86_64-li
 
 COPY --from=backend-build /app .
 RUN rm -rf ./node_modules ./bdd ./e2e-test
-RUN pnpm import && pnpm install --frozen-lockfile --prod
+# Strip file: deps for prod install
+RUN node -e "\
+  const p=JSON.parse(require('fs').readFileSync('package.json','utf8'));\
+  for(const s of['dependencies','devDependencies','optionalDependencies'])\
+    if(p[s])for(const[k,v]of Object.entries(p[s]))\
+      if(typeof v==='string'&&v.startsWith('file:'))p[s][k]='*';\
+  require('fs').writeFileSync('package.json',JSON.stringify(p,null,2))"
+RUN pnpm install --prod
 
 RUN mkdir frontend-build
 
