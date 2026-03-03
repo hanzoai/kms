@@ -8,6 +8,8 @@ import {
   validateSqlConnectionCredentials
 } from "@app/services/app-connection/shared/sql";
 import { KmsDataKey } from "@app/services/kms/kms-types";
+import { SECRET_ROTATION_CONNECTION_MAP } from "@app/services/secret-rotation/secret-rotation-v2-maps";
+import { SECRET_SCANNING_DATA_SOURCE_CONNECTION_MAP } from "@app/services/secret-scanning/secret-scanning-maps";
 import { SECRET_SYNC_CONNECTION_MAP } from "@app/services/secret-sync/secret-sync-maps";
 
 import {
@@ -165,6 +167,9 @@ import {
   WindmillConnectionMethod
 } from "./windmill";
 import { getZabbixConnectionListItem, validateZabbixConnectionCredentials, ZabbixConnectionMethod } from "./zabbix";
+import { ChefConnectionMethod, getChefConnectionListItem, validateChefConnectionCredentials } from "./chef";
+import { OCIConnectionMethod, getOCIConnectionListItem, validateOCIConnectionCredentials } from "./oci";
+import { OracleDBConnectionMethod, getOracleDBConnectionListItem } from "./oracle-db";
 import { TLicenseServiceFactory } from "@app/services/license/license-service";
 
 const SECRET_SYNC_APP_CONNECTION_MAP = Object.fromEntries(

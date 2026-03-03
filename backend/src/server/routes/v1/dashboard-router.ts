@@ -22,6 +22,7 @@ import {
 import { AuthMode } from "@app/services/auth/auth-type";
 import { ResourceMetadataWithEncryptionSchema } from "@app/services/resource-metadata/resource-metadata-schema";
 import { PersonalOverridesBehavior, SecretsOrderBy } from "@app/services/secret/secret-types";
+import { SecretRotationV2Schema } from "@app/services/secret-rotation/secret-rotation-v2-schemas";
 import { InsightsEventTypes } from "@app/services/telemetry/telemetry-types";
 
 const MAX_DEEP_SEARCH_LIMIT = 500; // arbitrary limit to prevent excessive results

@@ -61,6 +61,8 @@ import { TERRAFORM_CLOUD_SYNC_LIST_OPTION, TerraformCloudSyncFns } from "./terra
 import { VERCEL_SYNC_LIST_OPTION, VercelSyncFns } from "./vercel";
 import { WINDMILL_SYNC_LIST_OPTION, WindmillSyncFns } from "./windmill";
 import { ZABBIX_SYNC_LIST_OPTION, ZabbixSyncFns } from "./zabbix";
+import { OCI_VAULT_SYNC_LIST_OPTION, OCIVaultSyncFns } from "./oci-vault";
+import { CHEF_SYNC_LIST_OPTION, ChefSyncFns } from "./chef";
 import { TLicenseServiceFactory } from "@app/services/license/license-service";
 
 const SECRET_SYNC_LIST_OPTIONS: Record<SecretSync, TSecretSyncListItem> = {

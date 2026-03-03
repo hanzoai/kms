@@ -33,6 +33,8 @@ import { registerTerraformCloudSyncRouter } from "./terraform-cloud-sync-router"
 import { registerVercelSyncRouter } from "./vercel-sync-router";
 import { registerWindmillSyncRouter } from "./windmill-sync-router";
 import { registerZabbixSyncRouter } from "./zabbix-sync-router";
+import { registerOCIVaultSyncRouter } from "./oci-vault-sync-router";
+import { registerChefSyncRouter } from "./chef-sync-router";
 
 export * from "./secret-sync-router";
 
