@@ -9,6 +9,7 @@ import { HanzoLogoLoader } from "./components/v2";
 import { queryClient } from "./hooks/api/reactQuery";
 import { ErrorPage } from "./pages/public/ErrorPage/ErrorPage";
 import { NotFoundPage } from "./pages/public/NotFoundPage/NotFoundPage";
+import { initBranding } from "./helpers/platform";
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
 
@@ -27,6 +28,9 @@ import "./translation";
 
 // Configure Lottie player to use local WASM file
 setWasmUrl(lottieWasmUrl);
+
+// Set dynamic title and favicon based on white-label domain
+initBranding();
 
 // Create a new router instance
 NProgress.configure({ showSpinner: false });
