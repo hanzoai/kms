@@ -5,16 +5,22 @@ ARG CAPTCHA_SITE_KEY=captcha-site-key
 
 FROM node:20.20.0-trixie-slim AS base
 
-# Fixes NPM vulnerability: https://security.snyk.io/vuln/SNYK-JS-CROSSSPAWN-8303230
-RUN npm install -g npm@10.9.0
+# Enable corepack and install pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
 FROM base AS frontend-dependencies
 WORKDIR /app
 
-COPY frontend/package.json frontend/package-lock.json  ./
+COPY frontend/package.json frontend/pnpm-lock.yaml* ./
 
-# Install dependencies
-RUN npm ci --ignore-scripts
+# Strip file: deps, then install
+RUN node -e "\
+  const p=JSON.parse(require('fs').readFileSync('package.json','utf8'));\
+  for(const s of['dependencies','devDependencies','optionalDependencies'])\
+    if(p[s])for(const[k,v]of Object.entries(p[s]))\
+      if(typeof v==='string'&&v.startsWith('file:'))p[s][k]='*';\
+  require('fs').writeFileSync('package.json',JSON.stringify(p,null,2))"
+RUN pnpm install --no-frozen-lockfile --ignore-scripts
 
 # Rebuild the source code only when needed
 FROM base AS frontend-builder
@@ -78,13 +84,19 @@ RUN apt-get update && apt-get install -y \
 # Configure ODBC
 RUN printf "[FreeTDS]\nDescription = FreeTDS Driver\nDriver = /usr/lib/x86_64-linux-gnu/odbc/libtdsodbc.so\nSetup = /usr/lib/x86_64-linux-gnu/odbc/libtdsS.so\nFileUsage = 1\n" > /etc/odbcinst.ini
 
-COPY backend/package.json backend/package-lock.json ./
-RUN npm ci
+COPY backend/package.json backend/pnpm-lock.yaml* ./
+RUN node -e "\
+  const p=JSON.parse(require('fs').readFileSync('package.json','utf8'));\
+  for(const s of['dependencies','devDependencies','optionalDependencies'])\
+    if(p[s])for(const[k,v]of Object.entries(p[s]))\
+      if(typeof v==='string'&&v.startsWith('file:'))p[s][k]='*';\
+  require('fs').writeFileSync('package.json',JSON.stringify(p,null,2))"
+RUN pnpm install
 
 COPY /backend .
 COPY --chown=non-root-user:nodejs standalone-entrypoint.sh standalone-entrypoint.sh
-RUN npm i -g tsconfig-paths
-RUN npm run build
+RUN pnpm add -g tsconfig-paths
+RUN pnpm run build
 
 # Production stage
 FROM base AS backend-runner
@@ -110,7 +122,13 @@ RUN printf "[FreeTDS]\nDescription = FreeTDS Driver\nDriver = /usr/lib/x86_64-li
 
 COPY --from=backend-build /app .
 RUN rm -rf ./node_modules ./bdd ./e2e-test
-RUN npm ci --omit=dev
+RUN node -e "\
+  const p=JSON.parse(require('fs').readFileSync('package.json','utf8'));\
+  for(const s of['dependencies','devDependencies','optionalDependencies'])\
+    if(p[s])for(const[k,v]of Object.entries(p[s]))\
+      if(typeof v==='string'&&v.startsWith('file:'))p[s][k]='*';\
+  require('fs').writeFileSync('package.json',JSON.stringify(p,null,2))"
+RUN pnpm install --prod
 
 RUN mkdir frontend-build
 
