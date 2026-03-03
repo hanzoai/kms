@@ -5,6 +5,7 @@ backend/frontend-build
 **/node_modules
 **/.next
 **/dist
+!frontend/dist
 
 # Docker files
 .dockerignore
