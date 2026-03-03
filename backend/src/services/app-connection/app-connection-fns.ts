@@ -172,17 +172,25 @@ import { OCIConnectionMethod, getOCIConnectionListItem, validateOCIConnectionCre
 import { OracleDBConnectionMethod, getOracleDBConnectionListItem } from "./oracle-db";
 import { TLicenseServiceFactory } from "@app/services/license/license-service";
 
-const SECRET_SYNC_APP_CONNECTION_MAP = Object.fromEntries(
-  Object.entries(SECRET_SYNC_CONNECTION_MAP).map(([key, value]) => [value, key])
-);
+// Lazy-init to avoid circular dependency crashes in ESM (imported maps may not be evaluated yet at module scope)
+let _secretSyncAppConnectionMap: Record<string, string> | undefined;
+let _secretRotationAppConnectionMap: Record<string, string> | undefined;
+let _secretScanningAppConnectionMap: Record<string, string> | undefined;
 
-const SECRET_ROTATION_APP_CONNECTION_MAP = Object.fromEntries(
-  Object.entries(SECRET_ROTATION_CONNECTION_MAP).map(([key, value]) => [value, key])
-);
+const getSecretSyncAppConnectionMap = () =>
+  (_secretSyncAppConnectionMap ??= Object.fromEntries(
+    Object.entries(SECRET_SYNC_CONNECTION_MAP).map(([key, value]) => [value, key])
+  ));
 
-const SECRET_SCANNING_APP_CONNECTION_MAP = Object.fromEntries(
-  Object.entries(SECRET_SCANNING_DATA_SOURCE_CONNECTION_MAP).map(([key, value]) => [value, key])
-);
+const getSecretRotationAppConnectionMap = () =>
+  (_secretRotationAppConnectionMap ??= Object.fromEntries(
+    Object.entries(SECRET_ROTATION_CONNECTION_MAP).map(([key, value]) => [value, key])
+  ));
+
+const getSecretScanningAppConnectionMap = () =>
+  (_secretScanningAppConnectionMap ??= Object.fromEntries(
+    Object.entries(SECRET_SCANNING_DATA_SOURCE_CONNECTION_MAP).map(([key, value]) => [value, key])
+  ));
 
 // scott: ideally this would be derived from a utilized map like the above
 const PKI_APP_CONNECTIONS = [
@@ -253,11 +261,11 @@ export const listAppConnectionOptions = (projectType?: ProjectType) => {
       switch (projectType) {
         case ProjectType.SecretManager:
           return (
-            Boolean(SECRET_SYNC_APP_CONNECTION_MAP[option.app]) ||
-            Boolean(SECRET_ROTATION_APP_CONNECTION_MAP[option.app])
+            Boolean(getSecretSyncAppConnectionMap()[option.app]) ||
+            Boolean(getSecretRotationAppConnectionMap()[option.app])
           );
         case ProjectType.SecretScanning:
-          return Boolean(SECRET_SCANNING_APP_CONNECTION_MAP[option.app]);
+          return Boolean(getSecretScanningAppConnectionMap()[option.app]);
         case ProjectType.CertificateManager:
           return PKI_APP_CONNECTIONS.includes(option.app);
         case ProjectType.KMS:
