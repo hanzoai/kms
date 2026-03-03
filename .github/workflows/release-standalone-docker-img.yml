@@ -28,8 +28,10 @@ jobs:
               uses: actions/checkout@v3
               with:
                   fetch-depth: 0
+            - name: 📦 Install pnpm
+              run: corepack enable && corepack prepare pnpm@latest --activate
             - name: 📦 Install dependencies to test all dependencies
-              run: npm ci --only-production
+              run: pnpm install --prod
               working-directory: backend
             - name: version output
               run: |
@@ -67,7 +69,7 @@ jobs:
                       DD_GIT_REPOSITORY_URL=${{ github.server_url }}/${{ github.repository }}
                       DD_GIT_COMMIT_SHA=${{ github.sha }}
             - name: Snyk to check Docker image for vulnerabilities
-              continue-on-error: true 
+              continue-on-error: true
               uses: snyk/actions/docker@master
               env:
                 SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
@@ -92,8 +94,10 @@ jobs:
               uses: actions/checkout@v3
               with:
                   fetch-depth: 0
+            - name: 📦 Install pnpm
+              run: corepack enable && corepack prepare pnpm@latest --activate
             - name: 📦 Install dependencies to test all dependencies
-              run: npm ci --only-production
+              run: pnpm install --prod
               working-directory: backend
             - name: version output
               run: |
