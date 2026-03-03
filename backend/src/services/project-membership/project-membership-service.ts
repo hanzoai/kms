@@ -5,7 +5,6 @@ import { ProjectPermissionMemberActions, ProjectPermissionSub } from "@app/servi
 import { getConfig } from "@app/lib/config/env";
 import { BadRequestError, NotFoundError } from "@app/lib/errors";
 import { groupBy } from "@app/lib/fn";
-import { unknown } from "../../ee/services/group/user-group-membership-dal";
 import { TAdditionalPrivilegeDALFactory } from "../additional-privilege/additional-privilege-dal";
 import { ActorType } from "../auth/auth-type";
 import { TGroupProjectDALFactory } from "../group-project/group-project-dal";
