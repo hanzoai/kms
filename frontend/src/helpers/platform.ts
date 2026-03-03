@@ -16,11 +16,20 @@ export const getWhiteLabelBrand = (): WhiteLabelBrand => {
 
 export const getWhiteLabelConfig = () => {
   const brand = getWhiteLabelBrand();
-  const configs: Record<WhiteLabelBrand, { name: string; primaryColor: string; logo: string }> = {
-    hanzo: { name: "Hanzo KMS", primaryColor: "#ffffff", logo: "/images/hanzo-logo.svg" },
-    lux:   { name: "Lux KMS",   primaryColor: "#ffffff", logo: "/images/lux-logo.svg" },
-    pars:  { name: "Pars KMS",  primaryColor: "#ffffff", logo: "/images/pars-logo.svg" },
-    zoo:   { name: "Zoo KMS",   primaryColor: "#ffffff", logo: "/images/zoo-logo.svg" }
+  const configs: Record<WhiteLabelBrand, { name: string; primaryColor: string; logo: string; favicon: string }> = {
+    hanzo: { name: "Hanzo KMS", primaryColor: "#ffffff", logo: "/images/hanzo-logo.svg", favicon: "/images/hanzo-favicon.svg" },
+    lux:   { name: "Lux KMS",   primaryColor: "#ffffff", logo: "/images/lux-logo.svg",   favicon: "/images/lux-favicon.svg" },
+    pars:  { name: "Pars KMS",  primaryColor: "#ffffff", logo: "/images/pars-logo.svg",  favicon: "/images/pars-favicon.svg" },
+    zoo:   { name: "Zoo KMS",   primaryColor: "#ffffff", logo: "/images/zoo-logo.svg",   favicon: "/images/zoo-favicon.svg" }
   };
   return configs[brand];
+};
+
+export const initBranding = () => {
+  const config = getWhiteLabelConfig();
+  document.title = config.name;
+  const link = document.querySelector<HTMLLinkElement>("link[rel='icon']");
+  if (link) {
+    link.href = config.favicon;
+  }
 };
