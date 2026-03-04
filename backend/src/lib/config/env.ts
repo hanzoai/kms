@@ -238,6 +238,10 @@ const envSchema = z
         .default(process.env.URL_GITLAB_LOGIN ?? GITLAB_URL)
     ), // fallback since URL_GITLAB_LOGIN has been renamed
     DEFAULT_SAML_ORG_SLUG: zpStr(z.string().optional()).default(process.env.NEXT_PUBLIC_SAML_ORG_SLUG),
+    // Hanzo IAM (hanzo.id) OIDC
+    IAM_SERVER_URL: zpStr(z.string().optional()),
+    IAM_CLIENT_ID: zpStr(z.string().optional()),
+    IAM_CLIENT_SECRET: zpStr(z.string().optional()),
     // integration client secrets
     // heroku
     CLIENT_ID_HEROKU: zpStr(z.string().optional()),
