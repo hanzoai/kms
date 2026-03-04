@@ -895,18 +895,13 @@ export const queueServiceFactory = (
 
     const { persistence, ...restQueueSettings } = queueSettings || {};
 
+    const fipsSettings = crypto.isFipsModeEnabled() ? { settings: { repeatKeyHashAlgorithm: "sha256" as const } } : {};
+
     queueContainer[name] = new Queue(name as string, {
       // ref: @hanzo/mq redis-cluster pattern
       prefix: isClusterMode ? `{${name}}` : undefined,
       ...restQueueSettings,
-      ...(crypto.isFipsModeEnabled()
-        ? {
-            settings: {
-              ...restQueueSettings?.settings,
-              repeatKeyHashAlgorithm: "sha256"
-            }
-          }
-        : {}),
+      ...fipsSettings,
       connection
     });
 
