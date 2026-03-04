@@ -122,7 +122,7 @@ encrypted with a distinct root key rather than the shared `ROOT_ENCRYPTION_KEY`.
 - KMS DB (`kms.hanzo.ai`): 4 orgs — `hanzo`, `lux`, `pars`, `zoo`
 - `ORG_ENCRYPTION_KEYS` stored in:
   - K8s secret `kms-secrets` (namespace `hanzo`)
-  - Infisical prod project `2928fb55-6b08-454a-a338-a48d99a699a4`
+  - KMS prod project `2928fb55-6b08-454a-a338-a48d99a699a4`
 - Per-org K8s secrets (`kms-lux-casdoor-credentials`, etc.) each have their `ROOT_ENCRYPTION_KEY`
   for future standalone org-specific KMS deployments.
 
