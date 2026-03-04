@@ -85,11 +85,8 @@ export const InitialStep = ({
   };
 
   const handleOidc = () => {
-    if (config.defaultAuthOrgSlug) {
-      redirectToOidc(config.defaultAuthOrgSlug);
-    } else {
-      setStep(3);
-    }
+    // Default to "hanzo" org for Hanzo IAM login
+    redirectToOidc(config.defaultAuthOrgSlug || "hanzo");
   };
 
   const shouldDisplayLoginMethod = (method: LoginMethod) =>
@@ -220,8 +217,21 @@ export const InitialStep = ({
         Login to Hanzo KMS
       </h1>
       <RegionSelect />
-      {shouldDisplayLoginMethod(LoginMethod.SAML) && (
+      {shouldDisplayLoginMethod(LoginMethod.OIDC) && (
         <div className="w-1/4 min-w-[21.2rem] rounded-md text-center md:min-w-[20.1rem] lg:w-1/6">
+          <Button
+            colorSchema="primary"
+            variant="solid"
+            onClick={handleOidc}
+            leftIcon={<FontAwesomeIcon icon={faLock} className="mr-2" />}
+            className="mx-0 h-10 w-full"
+          >
+            Sign in with Hanzo
+          </Button>
+        </div>
+      )}
+      {shouldDisplayLoginMethod(LoginMethod.SAML) && (
+        <div className="mt-2 w-1/4 min-w-[21.2rem] rounded-md text-center md:min-w-[20.1rem] lg:w-1/6">
           <Button
             colorSchema="primary"
             variant="outline_bg"
@@ -230,19 +240,6 @@ export const InitialStep = ({
             className="mx-0 h-10 w-full"
           >
             Continue with SAML
-          </Button>
-        </div>
-      )}
-      {shouldDisplayLoginMethod(LoginMethod.OIDC) && (
-        <div className="mt-2 w-1/4 min-w-[21.2rem] rounded-md text-center md:min-w-[20.1rem] lg:w-1/6">
-          <Button
-            colorSchema="primary"
-            variant="outline_bg"
-            onClick={handleOidc}
-            leftIcon={<FontAwesomeIcon icon={faLock} className="mr-2" />}
-            className="mx-0 h-10 w-full"
-          >
-            Continue with Hanzo ID
           </Button>
         </div>
       )}
