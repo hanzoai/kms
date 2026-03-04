@@ -18,6 +18,8 @@ import { useFetchServerStatus } from "@app/hooks/api";
 import { LoginMethod } from "@app/hooks/api/admin/types";
 import { AuthMethod } from "@app/hooks/api/users/types";
 
+import { getWhiteLabelBrand, getWhiteLabelConfig } from "@app/helpers/platform";
+
 import { useNavigateToSelectOrganization } from "../../Login.utils";
 
 type Props = {
@@ -38,6 +40,8 @@ export const InitialStep = ({
   isAdmin
 }: Props) => {
   const navigate = useNavigate();
+  const brandConfig = getWhiteLabelConfig();
+  const brand = getWhiteLabelBrand();
 
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
@@ -175,7 +179,7 @@ export const InitialStep = ({
         className="mx-auto flex w-full flex-col items-center justify-center"
       >
         <h1 className="mb-8 bg-linear-to-b from-white to-bunker-200 bg-clip-text text-center text-xl font-medium text-transparent">
-          Login to KMS
+          Login to {brandConfig.name}
         </h1>
         <RegionSelect />
         {config.defaultAuthOrgAuthMethod === AuthMethod.SAML && (
@@ -200,7 +204,7 @@ export const InitialStep = ({
               leftIcon={<FontAwesomeIcon icon={faLock} className="mr-2" />}
               className="mx-0 h-10 w-full"
             >
-              Continue with Hanzo ID
+              Sign in with Hanzo
             </Button>
           </div>
         )}
@@ -214,7 +218,7 @@ export const InitialStep = ({
       className="mx-auto flex w-full flex-col items-center justify-center"
     >
       <h1 className="mb-8 bg-linear-to-b from-white to-bunker-200 bg-clip-text text-center text-xl font-medium text-transparent">
-        Login to Hanzo KMS
+        Login to {brandConfig.name}
       </h1>
       <RegionSelect />
       {shouldDisplayLoginMethod(LoginMethod.OIDC) && (
