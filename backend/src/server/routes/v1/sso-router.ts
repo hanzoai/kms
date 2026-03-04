@@ -37,6 +37,66 @@ export const registerOauthMiddlewares = (server: FastifyZodProvider) => {
   serverInstance = server;
   const appCfg = getConfig();
 
+  // passport oauth strategy for Hanzo IAM (hanzo.id)
+  const isIamOauthActive = Boolean(appCfg.IAM_SERVER_URL && appCfg.IAM_CLIENT_ID && appCfg.IAM_CLIENT_SECRET);
+  if (isIamOauthActive) {
+    const iamBaseUrl = appCfg.IAM_SERVER_URL!.replace(/\/$/, "");
+    passport.use(
+      "iam",
+      new OAuth2Strategy(
+        {
+          authorizationURL: `${iamBaseUrl}/login/oauth/authorize`,
+          tokenURL: `${iamBaseUrl}/api/login/oauth/access_token`,
+          clientID: appCfg.IAM_CLIENT_ID!,
+          clientSecret: appCfg.IAM_CLIENT_SECRET!,
+          callbackURL: `${appCfg.SITE_URL}/api/v1/sso/oidc/callback`,
+          scope: "openid profile email",
+          state: true,
+          pkce: true,
+          passReqToCallback: true
+        },
+        async (req: any, accessToken: string, _refreshToken: string, _profile: any, done: Function) => {
+          try {
+            // Fetch user info from IAM
+            const userinfoRes = await fetch(`${iamBaseUrl}/api/userinfo`, {
+              headers: { Authorization: `Bearer ${accessToken}` }
+            });
+            if (!userinfoRes.ok) throw new Error(`IAM userinfo failed: ${userinfoRes.status}`);
+            const userinfo = (await userinfoRes.json()) as {
+              sub?: string;
+              email?: string;
+              name?: string;
+              displayName?: string;
+              preferred_username?: string;
+            };
+
+            const email = userinfo.email || userinfo.preferred_username;
+            if (!email) throw new Error("No email returned from IAM");
+
+            const nameParts = (userinfo.displayName || userinfo.name || email).split(" ");
+            const firstName = nameParts[0] || "";
+            const lastName = nameParts.slice(1).join(" ") || "";
+
+            const callbackPort = req.session.get("callbackPort");
+
+            const { isUserCompleted, providerAuthToken } = await server.services.login.oauth2Login({
+              email,
+              firstName,
+              lastName,
+              authMethod: AuthMethod.OIDC,
+              callbackPort
+            });
+
+            done(null, { isUserCompleted, providerAuthToken });
+          } catch (err) {
+            logger.error(err);
+            done(err as Error, false);
+          }
+        }
+      )
+    );
+  }
+
   // passport oauth strategy for Google
   const isGoogleOauthActive = Boolean(appCfg.CLIENT_ID_GOOGLE_LOGIN && appCfg.CLIENT_SECRET_GOOGLE_LOGIN);
   if (isGoogleOauthActive) {
@@ -285,6 +345,56 @@ export const registerSsoRouter = async (server: FastifyZodProvider) => {
   await server.register(passport.secureSession());
 
   registerOauthMiddlewares(server);
+
+  // Hanzo IAM (hanzo.id) OIDC login + callback
+  server.route({
+    url: "/oidc/login",
+    method: "GET",
+    schema: {
+      operationId: "redirectOidcLogin",
+      querystring: z.object({
+        orgSlug: z.string().optional(),
+        callbackPort: z.string().optional()
+      })
+    },
+    preValidation: [
+      async (req, res) => {
+        const { callbackPort } = req.query;
+        await req.session.regenerate();
+        if (callbackPort) {
+          req.session.set("callbackPort", callbackPort);
+        }
+        return (
+          passport.authenticate("iam", {
+            scope: ["openid", "profile", "email"],
+            authInfo: false
+          }) as any
+        )(req, res);
+      }
+    ],
+    handler: () => {}
+  });
+
+  server.route({
+    url: "/oidc/callback",
+    method: "GET",
+    preValidation: passport.authenticate("iam", {
+      session: false,
+      failureRedirect: "/login/provider/error",
+      authInfo: false
+    }) as any,
+    handler: async (req, res) => {
+      await req.session.destroy();
+      if (req.passportUser.isUserCompleted) {
+        return res.redirect(
+          `${appCfg.SITE_URL}/login/sso?token=${encodeURIComponent(req.passportUser.providerAuthToken)}`
+        );
+      }
+      return res.redirect(
+        `${appCfg.SITE_URL}/signup/sso?token=${encodeURIComponent(req.passportUser.providerAuthToken)}`
+      );
+    }
+  });
 
   server.route({
     url: "/redirect/google",
