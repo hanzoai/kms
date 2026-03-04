@@ -19,7 +19,7 @@ export const AppConnectionsPage = withPermission(
       <div className="bg-bunker-800">
         <Helmet>
           <title>KMS | App Connections</title>
-          <link rel="icon" href="/hanzo.ico" />
+          <link rel="icon" href="/favicon.ico" />
           <meta property="og:image" content="/images/message.png" />
         </Helmet>
         <div className="flex w-full justify-center bg-bunker-800 text-white">
