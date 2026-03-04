@@ -188,7 +188,7 @@ export const PkiCollectionDetailsByIDPage = () => {
     <>
       <Helmet>
         <title>{t("common.head-title", { title: "PKI Collection" })}</title>
-        <link rel="icon" href="/hanzo.ico" />
+        <link rel="icon" href="/favicon.ico" />
       </Helmet>
       <ProjectPermissionCan
         renderGuardBanner

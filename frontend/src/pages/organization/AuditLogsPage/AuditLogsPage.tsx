@@ -14,7 +14,7 @@ export const AuditLogsPage = () => {
     <div className="h-full bg-bunker-800">
       <Helmet>
         <title>KMS | Audit Logs</title>
-        <link rel="icon" href="/hanzo.ico" />
+        <link rel="icon" href="/favicon.ico" />
         <meta property="og:image" content="/images/message.png" />
       </Helmet>
       <div className="flex w-full justify-center bg-bunker-800 pb-6 text-white">
