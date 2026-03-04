@@ -195,7 +195,7 @@ export const RoleByIDPage = () => {
     <>
       <Helmet>
         <title>{t("common.head-title", { title: t("settings.org.title") })}</title>
-        <link rel="icon" href="/hanzo.ico" />
+        <link rel="icon" href="/favicon.ico" />
       </Helmet>
       <OrgPermissionCan
         passThrough={false}
