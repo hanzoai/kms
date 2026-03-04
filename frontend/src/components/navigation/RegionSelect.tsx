@@ -73,6 +73,9 @@ const regions = [
 ];
 
 export const RegionSelect = () => {
+  // US-only for now — hide region selector entirely
+  return null;
+
   const location = useLocation();
 
   const handleRegionSelect = (value: Region) => {
