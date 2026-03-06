@@ -19,8 +19,7 @@ import { userDALFactory } from "@app/services/user/user-dal";
 import { TMigrationEnvConfig } from "./env-config";
 import { hsmServiceFactory } from "@app/services/hsm/hsm-service";
 import { licenseServiceFactory } from "@app/services/license/license-service";
-import { isHsmActiveAndEnabled } from "@app/services/hsm/hsm-fns";
-import { initializeHsmModule } from "@app/services/hsm/hsm-fns";
+import { isHsmActiveAndEnabled, initializeHsmModule } from "@app/services/hsm/hsm-fns";
 
 type TDependencies = {
   envConfig: TMigrationEnvConfig;
@@ -49,7 +48,6 @@ export const getMigrationHsmService = async ({ envConfig }: THsmServiceDependenc
 export const getMigrationEncryptionServices = async ({ envConfig, db, keyStore }: TDependencies) => {
   // ----- DAL dependencies -----
   const orgDAL = orgDALFactory(db);
-  const licenseDAL = licenseDALFactory(db);
   const permissionDAL = permissionDALFactory(db);
   const projectDAL = projectDALFactory(db);
   const roleDAL = roleDALFactory(db);
@@ -71,14 +69,7 @@ export const getMigrationEncryptionServices = async ({ envConfig, db, keyStore }
     identityDAL
   });
 
-  const licenseService = licenseServiceFactory({
-    permissionService,
-    orgDAL,
-    licenseDAL,
-    keyStore,
-    projectDAL,
-    envConfig
-  });
+  const licenseService = licenseServiceFactory();
 
   // ----- HSM startup -----
 

@@ -15,15 +15,12 @@ export const envConfig = {
   get INSIGHTS_API_KEY() {
     return (
       window?.__KMS_RUNTIME_ENV__?.INSIGHTS_API_KEY ||
-      import.meta.env.VITE_INSIGHTS_API_KEY ||
-      window?.__KMS_RUNTIME_ENV__?.POSTHOG_API_KEY ||
-      import.meta.env.VITE_POSTHOG_API_KEY
+      import.meta.env.VITE_INSIGHTS_API_KEY
     );
   },
   get INSIGHTS_HOST() {
     return (
       import.meta.env.VITE_INSIGHTS_HOST ||
-      import.meta.env.VITE_POSTHOG_HOST ||
       "https://insights.hanzo.ai"
     );
   },

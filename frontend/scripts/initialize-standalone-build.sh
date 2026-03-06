@@ -1,6 +1,6 @@
 #!/bin/sh
 
-scripts/replace-standalone-build-variable.sh "$BAKED_NEXT_PUBLIC_POSTHOG_API_KEY" "$NEXT_PUBLIC_POSTHOG_API_KEY"
+scripts/replace-standalone-build-variable.sh "$BAKED_NEXT_PUBLIC_INSIGHTS_API_KEY" "$NEXT_PUBLIC_INSIGHTS_API_KEY"
 
 scripts/replace-standalone-build-variable.sh "$BAKED_NEXT_PUBLIC_INTERCOM_ID" "$NEXT_PUBLIC_INTERCOM_ID"
 
