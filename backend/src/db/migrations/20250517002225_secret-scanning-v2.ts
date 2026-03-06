@@ -42,7 +42,7 @@ export async function up(knex: Knex): Promise<void> {
   if (!(await knex.schema.hasTable(TableName.SecretScanningScan))) {
     await knex.schema.createTable(TableName.SecretScanningScan, (t) => {
       t.uuid("id", { primaryKey: true }).defaultTo(knex.fn.uuid());
-      t.string("status").notNullable().defaultTo(SecretScanningScanStatus.Queued);
+      t.string("status").notNullable().defaultTo("queued");
       t.string("statusMessage", 1024);
       t.string("type").notNullable();
       t.uuid("resourceId").notNullable();
@@ -60,7 +60,7 @@ export async function up(knex: Knex): Promise<void> {
       t.string("resourceType").notNullable();
       t.string("rule").notNullable();
       t.string("severity").notNullable();
-      t.string("status").notNullable().defaultTo(SecretScanningFindingStatus.Unresolved);
+      t.string("status").notNullable().defaultTo("unresolved");
       t.string("remarks");
       t.string("fingerprint").notNullable();
       t.jsonb("details").notNullable();

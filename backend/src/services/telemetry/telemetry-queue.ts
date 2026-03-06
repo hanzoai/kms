@@ -1,4 +1,4 @@
-import { PostHog } from "posthog-node";
+import { Insights } from "@hanzo/insights-node";
 
 import { TKeyStoreFactory } from "@app/keystore/keystore";
 import { getConfig } from "@app/lib/config/env";
@@ -30,9 +30,9 @@ export const telemetryQueueServiceFactory = ({
   telemetryService
 }: TTelemetryQueueServiceFactoryDep) => {
   const appCfg = getConfig();
-  const postHog =
+  const insights =
     appCfg.isProductionMode && appCfg.TELEMETRY_ENABLED
-      ? new PostHog(appCfg.INSIGHTS_API_KEY, { host: appCfg.INSIGHTS_HOST, flushAt: 1, flushInterval: 0 })
+      ? new Insights(appCfg.INSIGHTS_API_KEY, { host: appCfg.INSIGHTS_HOST, flushAt: 1, flushInterval: 0 })
       : undefined;
 
   queueService.start(QueueName.TelemetryInstanceStats, async () => {
@@ -43,8 +43,8 @@ export const telemetryQueueServiceFactory = ({
     const numberOfSecretProcessed = parseInt((await keyStore.getItem(TELEMETRY_SECRET_PROCESSED_KEY)) || "0", 10);
     const stats = { ...telemtryStats, numberOfSecretProcessed, numberOfSecretOperationsMade };
 
-    // send to postHog
-    postHog?.capture({
+    // send to insights
+    insights?.capture({
       event: InsightsEventTypes.TelemetryInstanceStats,
       distinctId: instanceId,
       properties: stats
@@ -71,7 +71,7 @@ export const telemetryQueueServiceFactory = ({
       QueueName.TelemetryInstanceStats // just a job id
     );
 
-    if (postHog) {
+    if (insights) {
       await queueService.queue(QueueName.TelemetryInstanceStats, QueueJobs.TelemetryInstanceStats, undefined, {
         jobId: QueueName.TelemetryInstanceStats,
         repeat: { pattern: "0 0 * * *", utc: true, key: QueueName.TelemetryInstanceStats }
@@ -88,7 +88,7 @@ export const telemetryQueueServiceFactory = ({
       QueueName.TelemetryAggregatedEvents // just a job id
     );
 
-    if (postHog) {
+    if (insights) {
       // Start aggregated events job (runs every five minutes)
       await queueService.queue(QueueName.TelemetryAggregatedEvents, QueueJobs.TelemetryAggregatedEvents, undefined, {
         jobId: QueueName.TelemetryAggregatedEvents,
