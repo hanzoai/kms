@@ -45,8 +45,8 @@ export const registerOauthMiddlewares = (server: FastifyZodProvider) => {
       "iam",
       new OAuth2Strategy(
         {
-          authorizationURL: `${iamBaseUrl}/login/oauth/authorize`,
-          tokenURL: `${iamBaseUrl}/api/login/oauth/access_token`,
+          authorizationURL: `${iamBaseUrl}/oauth/authorize`,
+          tokenURL: `${iamBaseUrl}/oauth/token`,
           clientID: appCfg.IAM_CLIENT_ID!,
           clientSecret: appCfg.IAM_CLIENT_SECRET!,
           callbackURL: `${appCfg.SITE_URL}/api/v1/sso/oidc/callback`,
@@ -58,7 +58,7 @@ export const registerOauthMiddlewares = (server: FastifyZodProvider) => {
         async (req: any, accessToken: string, _refreshToken: string, _profile: any, done: Function) => {
           try {
             // Fetch user info from IAM
-            const userinfoRes = await fetch(`${iamBaseUrl}/api/userinfo`, {
+            const userinfoRes = await fetch(`${iamBaseUrl}/oauth/userinfo`, {
               headers: { Authorization: `Bearer ${accessToken}` }
             });
             if (!userinfoRes.ok) throw new Error(`IAM userinfo failed: ${userinfoRes.status}`);

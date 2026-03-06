@@ -1,10 +1,9 @@
 /* eslint-disable */
-import { PostHog } from "posthog-js";
 import { initInsights } from "@app/components/analytics/insights";
 import { envConfig } from "@app/config/env";
 
 class Capturer {
-  api: PostHog;
+  api: ReturnType<typeof initInsights>;
 
   constructor() {
     this.api = initInsights()!;
