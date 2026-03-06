@@ -13,8 +13,8 @@ export async function up(knex: Knex): Promise<void> {
       });
 
       // Backfill: certs with a profileId were issued, others were imported
-      await knex(TableName.Certificate).whereNotNull("profileId").update({ source: CertificateSource.Issued });
-      await knex(TableName.Certificate).whereNull("profileId").update({ source: CertificateSource.Imported });
+      await knex(TableName.Certificate).whereNotNull("profileId").update({ source: "issued" });
+      await knex(TableName.Certificate).whereNull("profileId").update({ source: "imported" });
     }
 
     const hasFingerprintCol = await knex.schema.hasColumn(TableName.Certificate, "fingerprintSha256");

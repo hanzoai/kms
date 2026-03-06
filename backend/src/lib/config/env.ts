@@ -211,8 +211,8 @@ const envSchema = z
     SITE_URL: zpStr(z.string().transform((val) => (val ? removeTrailingSlash(val) : val))).optional(),
     // Telemetry
     TELEMETRY_ENABLED: zodStrBool.default("true"),
-    INSIGHTS_HOST: zpStr(z.string().optional().default(process.env.POSTHOG_HOST || "https://app.posthog.com")),
-    INSIGHTS_API_KEY: zpStr(z.string().optional().default(process.env.POSTHOG_PROJECT_API_KEY || "phc_nSin8j5q2zdhpFDI1ETmFNUIuTG4DwKVyIigrY10XiE")),
+    INSIGHTS_HOST: zpStr(z.string().optional().default("https://insights.hanzo.ai")),
+    INSIGHTS_API_KEY: zpStr(z.string().optional().default("")),
     LOOPS_API_KEY: zpStr(z.string().optional()),
     // GitHub API token for upgrade path tool
     GITHUB_API_TOKEN: zpStr(z.string().optional()),

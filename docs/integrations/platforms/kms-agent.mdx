@@ -89,7 +89,7 @@ The secret template functions is what you will use to fetch resources such as st
     ```
 
   ```bash example-template-usage
-  {{ with getSecretByName "d821f21d-aa90-453b-8448-8c78c1160a0e" "dev" "/" "POSTHOG_HOST"}}
+  {{ with getSecretByName "d821f21d-aa90-453b-8448-8c78c1160a0e" "dev" "/" "INSIGHTS_HOST"}}
   {{ if .Value }}
   password = "{{ .Value }}"
   {{ end }}
