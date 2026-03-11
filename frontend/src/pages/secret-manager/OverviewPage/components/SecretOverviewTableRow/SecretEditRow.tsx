@@ -101,7 +101,8 @@ export const SecretEditRow = ({
   isSecretPresent
 }: Props) => {
   const { handlePopUpOpen, handlePopUpToggle, handlePopUpClose, popUp } = usePopUp([
-    "editSecret"
+    "editSecret",
+    "secretReferenceTree"
   ] as const);
 
   const { currentProject } = useProject();
@@ -381,35 +382,36 @@ export const SecretEditRow = ({
             </div>
 
             <div className="opacity-0 group-hover:opacity-100">
-              <Modal>
-                <ModalTrigger asChild>
-                  <div className="opacity-0 group-hover:opacity-100">
-                    <Tooltip content="Secret Reference Tree">
-                      <IconButton
-                        variant="plain"
-                        ariaLabel="reference-tree"
-                        className="h-full"
-                        isDisabled={!canReadSecretValue || !secretId || isEmpty}
-                      >
-                        <FontAwesomeIcon icon={faProjectDiagram} />
-                      </IconButton>
-                    </Tooltip>
-                  </div>
-                </ModalTrigger>
-                <ModalContent
-                  className="max-w-3xl"
-                  title="Secret Reference Details"
-                  subTitle="Visual breakdown of secrets referenced by this secret."
-                  onOpenAutoFocus={(e) => e.preventDefault()} // prevents secret input from displaying value on open
+              <Tooltip content="Secret Reference Tree">
+                <IconButton
+                  variant="plain"
+                  ariaLabel="reference-tree"
+                  className="h-full"
+                  isDisabled={!canReadSecretValue || !secretId || isEmpty}
+                  onClick={() => handlePopUpOpen("secretReferenceTree")}
                 >
-                  <SecretReferenceTree
-                    secretPath={secretPath}
-                    environment={environment}
-                    secretKey={secretName}
-                  />
-                </ModalContent>
-              </Modal>
+                  <FontAwesomeIcon icon={faProjectDiagram} />
+                </IconButton>
+              </Tooltip>
             </div>
+            <Modal
+              isOpen={popUp.secretReferenceTree.isOpen}
+              onOpenChange={(isOpen) => handlePopUpToggle("secretReferenceTree", isOpen)}
+            >
+              <ModalContent
+                className="max-w-3xl"
+                title="Secret Reference Details"
+                subTitle="Visual breakdown of secrets referenced by this secret."
+                onOpenAutoFocus={(e) => e.preventDefault()} // prevents secret input from displaying value on open
+              >
+                <SecretReferenceTree
+                  secretPath={secretPath}
+                  environment={environment}
+                  secretKey={secretName}
+                  onClose={() => handlePopUpToggle("secretReferenceTree", false)}
+                />
+              </ModalContent>
+            </Modal>
 
             <ProjectPermissionCan
               I={ProjectPermissionActions.Delete}

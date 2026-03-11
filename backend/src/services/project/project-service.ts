@@ -166,7 +166,7 @@ type TProjectServiceFactoryDep = {
   licenseService: Pick<TLicenseServiceFactory, "getPlan" | "invalidateGetPlan">;
   smtpService: Pick<TSmtpService, "sendMail">;
   orgDAL: Pick<TOrgDALFactory, "findOne" | "findEffectiveOrgMembership">;
-  keyStore: Pick<TKeyStoreFactory, "deleteItem">;
+  keyStore: Pick<TKeyStoreFactory, "deleteItem" | "acquireLock">;
   roleDAL: Pick<TRoleDALFactory, "find" | "insertMany" | "delete">;
   kmsService: Pick<
     TKmsServiceFactory,
@@ -730,44 +730,56 @@ export const projectServiceFactory = ({
       });
     }
 
-    const deletedProject = await projectDAL.transaction(async (tx) => {
-      // delete these so that project custom roles can be deleted in cascade effect
-      // direct deletion of project without these will cause fk error
-      // this will clean up all memberships
-      await membershipUserDAL.delete(
-        { scopeOrgId: project.orgId, scopeProjectId: project.id, scope: AccessScope.Project },
-        tx
-      );
-      const delProject = await projectDAL.deleteById(project.id, tx);
-      const projectGhostUser = await projectMembershipDAL.findProjectGhostUser(project.id, tx).catch(() => null);
-      // akhilmhdh: before removing those kms checking any other project uses it
-      // happened due to project split
-      if (delProject.kmsCertificateKeyId) {
-        const projectsLinkedToForiegnKey = await projectDAL.find(
-          { kmsCertificateKeyId: delProject.kmsCertificateKeyId },
-          { tx }
-        );
-        if (!projectsLinkedToForiegnKey.length) {
-          await kmsService.deleteInternalKms(delProject.kmsCertificateKeyId, delProject.orgId, tx);
-        }
-      }
+    let lock: Awaited<ReturnType<typeof keyStore.acquireLock>> | undefined;
+    try {
+      lock = await keyStore.acquireLock([KeyStorePrefixes.ProjectDeleteLock(project.id)], 30_000, {
+        retryCount: 0
+      });
+    } catch {
+      throw new BadRequestError({
+        message: "Project is already being deleted."
+      });
+    }
 
-      if (delProject.kmsSecretManagerKeyId) {
-        const projectsLinkedToForiegnKey = await projectDAL.find(
-          { kmsSecretManagerKeyId: delProject.kmsSecretManagerKeyId },
-          { tx }
+    try {
+      const deletedProject = await projectDAL.transaction(async (tx) => {
+        // delete these so that project custom roles can be deleted in cascade effect
+        // direct deletion of project without these will cause fk error
+        // this will clean up all memberships
+        await membershipUserDAL.delete(
+          { scopeOrgId: project.orgId, scopeProjectId: project.id, scope: AccessScope.Project },
+          tx
         );
-        if (!projectsLinkedToForiegnKey.length) {
-          await kmsService.deleteInternalKms(delProject.kmsSecretManagerKeyId, delProject.orgId, tx);
+        const delProject = await projectDAL.deleteById(project.id, tx);
+        const projectGhostUser = await projectMembershipDAL.findProjectGhostUser(project.id, tx).catch(() => null);
+        // akhilmhdh: before removing those kms checking any other project uses it
+        // happened due to project split
+        if (delProject.kmsCertificateKeyId) {
+          const projectsLinkedToForiegnKey = await projectDAL.find(
+            { kmsCertificateKeyId: delProject.kmsCertificateKeyId },
+            { tx }
+          );
+          if (!projectsLinkedToForiegnKey.length) {
+            await kmsService.deleteInternalKms(delProject.kmsCertificateKeyId, delProject.orgId, tx);
+          }
         }
-      }
-      // Delete the org membership for the ghost user if it's found.
-      if (projectGhostUser) {
-        await userDAL.deleteById(projectGhostUser.id, tx);
-      }
 
-      return delProject;
-    });
+        if (delProject.kmsSecretManagerKeyId) {
+          const projectsLinkedToForiegnKey = await projectDAL.find(
+            { kmsSecretManagerKeyId: delProject.kmsSecretManagerKeyId },
+            { tx }
+          );
+          if (!projectsLinkedToForiegnKey.length) {
+            await kmsService.deleteInternalKms(delProject.kmsSecretManagerKeyId, delProject.orgId, tx);
+          }
+        }
+        // Delete the org membership for the ghost user if it's found.
+        if (projectGhostUser) {
+          await userDAL.deleteById(projectGhostUser.id, tx);
+        }
+
+        return delProject;
+      });
 
     await keyStore.deleteItem(`kms-cloud-plan-${actorOrgId}`);
     return deletedProject;
@@ -1185,6 +1197,7 @@ export const projectServiceFactory = ({
     profileIds,
     fromDate,
     toDate,
+    metadataFilter,
     actorId,
     actorOrgId,
     actorAuthMethod,
@@ -1216,7 +1229,8 @@ export const projectServiceFactory = ({
       ...(status && { status: Array.isArray(status) ? status[0] : status }),
       ...(profileIds && { profileIds }),
       ...(fromDate && { fromDate }),
-      ...(toDate && { toDate })
+      ...(toDate && { toDate }),
+      ...(metadataFilter && { metadataFilter })
     };
     const permissionFilters = getProcessedPermissionRules(
       permission,
@@ -1244,7 +1258,8 @@ export const projectServiceFactory = ({
       ...(regularFilters.status && { status: String(regularFilters.status) }),
       ...(regularFilters.profileIds && { profileIds: regularFilters.profileIds }),
       ...(regularFilters.fromDate && { fromDate: regularFilters.fromDate }),
-      ...(regularFilters.toDate && { toDate: regularFilters.toDate })
+      ...(regularFilters.toDate && { toDate: regularFilters.toDate }),
+      ...(regularFilters.metadataFilter && { metadataFilter: regularFilters.metadataFilter })
     };
 
     const count = forPkiSync

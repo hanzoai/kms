@@ -643,6 +643,18 @@ export const registerAdminRouter = async (server: FastifyZodProvider) => {
         }
       });
 
+      const adminDistinctId = user.user.username ?? user.user.email ?? "";
+      if (adminDistinctId) {
+        void server.services.telemetry.identifyUser(adminDistinctId, {
+          email: user.user.email ?? undefined,
+          username: user.user.username,
+          userId: user.user.id,
+          firstName: user.user.firstName ?? undefined,
+          lastName: user.user.lastName ?? undefined,
+          superAdmin: true
+        });
+      }
+
       void res.setCookie("jid", token.refresh, {
         httpOnly: true,
         path: "/",
@@ -791,6 +803,18 @@ export const registerAdminRouter = async (server: FastifyZodProvider) => {
           firstName: user.user.firstName || ""
         }
       });
+
+      const bootstrapDistinctId = user.user.username ?? user.user.email ?? "";
+      if (bootstrapDistinctId) {
+        void server.services.telemetry.identifyUser(bootstrapDistinctId, {
+          email: user.user.email ?? undefined,
+          username: user.user.username,
+          userId: user.user.id,
+          firstName: user.user.firstName ?? undefined,
+          lastName: user.user.lastName ?? undefined,
+          superAdmin: true
+        });
+      }
 
       return {
         message: "Successfully bootstrapped instance",

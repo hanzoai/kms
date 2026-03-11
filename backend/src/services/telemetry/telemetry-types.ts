@@ -38,7 +38,11 @@ export enum InsightsEventTypes {
   SignCert = "Sign PKI Certificate",
   IssueCert = "Issue PKI Certificate",
   InvalidateCache = "Invalidate Cache",
-  NotificationUpdated = "Notification Updated"
+  NotificationUpdated = "Notification Updated",
+  DynamicSecretCreated = "Dynamic Secret Created",
+  DynamicSecretDeleted = "Dynamic Secret Deleted",
+  DynamicSecretLeaseCreated = "Dynamic Secret Lease Created",
+  DynamicSecretLeaseRenewed = "Dynamic Secret Lease Renewed"
 }
 
 export type TSecretModifiedEvent = {
@@ -312,4 +316,8 @@ export type TInsightsEvent = { distinctId: string; organizationId?: string } & (
   | TIssueCertificateEvent
   | TInvalidateCacheEvent
   | TNotificationUpdatedEvent
+  | TDynamicSecretCreatedEvent
+  | TDynamicSecretDeletedEvent
+  | TDynamicSecretLeaseCreatedEvent
+  | TDynamicSecretLeaseRenewedEvent
 );

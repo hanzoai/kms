@@ -838,7 +838,16 @@ export const SUB_ORGANIZATIONS = {
   LIST: {
     limit: "The number of sub organizations to return.",
     offset: "The offset to start from. If you enter 10, it will start from the 10th sub organization.",
+    search: "Optional. Filter sub organizations by name (case-insensitive substring match).",
+    orderBy: "The field to order sub organizations by. Currently only 'name' is supported.",
+    orderDirection: "The direction to order sub organizations. Either 'asc' or 'desc'.",
     isAccessible: "Filter to only return sub organizations that the actor has access to."
+  },
+  DELETE: {
+    subOrgId: "The id of the sub organization to delete."
+  },
+  JOIN: {
+    subOrgId: "The id of the sub organization to create a membership in."
   }
 } as const;
 
@@ -937,6 +946,20 @@ export const PROJECTS = {
     commonName: "The common name of the certificate to filter by.",
     offset: "The offset to start from. If you enter 10, it will start from the 10th certificate.",
     limit: "The number of certificates to return."
+  },
+  SEARCH_CERTIFICATES: {
+    friendlyName: "The friendly name of the certificate to filter by.",
+    commonName: "The common name of the certificate to filter by.",
+    offset: "The offset to start from. If you enter 10, it will start from the 10th certificate.",
+    limit: "The number of certificates to return.",
+    forPkiSync: "Retrieve only certificates available for PKI sync.",
+    search: "Search by SAN, CN, certificate ID, or serial number.",
+    status: "Filter by certificate status.",
+    profileIds: "Filter by certificate profile IDs.",
+    fromDate: "Filter certificates created from this date.",
+    toDate: "Filter certificates created until this date.",
+    metadata:
+      "Filter by metadata key-value pairs. Each entry should have a key (required) and optionally a value to match against."
   },
   LIST_PKI_SUBSCRIBERS: {
     projectId: "The ID of the project to list PKI subscribers for."

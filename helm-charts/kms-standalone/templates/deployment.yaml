@@ -73,6 +73,9 @@ spec:
         - name: REDIS_URL
           value: {{ include "kms.redisConnectionString" . }}
         {{- end }}
+        {{- with $infisicalValues.extraEnv }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
         envFrom:
         - secretRef:
             name: {{ $kmsValues.kubeSecretRef }}

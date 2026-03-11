@@ -32,6 +32,7 @@ import {
   PamResourceAccountsSection,
   PamResourceConnectionSection,
   PamResourceDetailsSection,
+  PamResourceMetadataSection,
   PamResourceRelatedResourcesSection
 } from "./components";
 import { getBrand } from "@app/lib/branding";
@@ -181,6 +182,7 @@ const PageContent = () => {
             resource={resource}
             onEdit={() => setIsEditModalOpen(true)}
           />
+          <PamResourceMetadataSection resource={resource} />
         </div>
 
         {/* Right Column - Tabbed Content */}

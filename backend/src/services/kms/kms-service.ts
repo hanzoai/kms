@@ -48,7 +48,6 @@ type TKmsServiceFactoryDep = {
   projectDAL: Pick<TProjectDALFactory, "findById" | "updateById" | "transaction">;
   orgDAL: Pick<TOrgDALFactory, "findById" | "updateById" | "transaction">;
   kmsRootConfigDAL: Pick<TKmsRootConfigDALFactory, "findById" | "create" | "updateById" | "transaction">;
-  keyStore: Pick<TKeyStoreFactory, "acquireLock" | "waitTillReady" | "setItemWithExpiry">;
   internalKmsDAL: Pick<TInternalKmsDALFactory, "create">;
   hsmService: THsmServiceFactory;
   envConfig: Pick<TEnvConfig, "ENCRYPTION_KEY" | "ROOT_ENCRYPTION_KEY" | "orgEncryptionKeys">;
@@ -65,13 +64,12 @@ export const kmsServiceFactory = ({
   envConfig,
   kmsDAL,
   kmsRootConfigDAL,
-  keyStore,
   internalKmsDAL,
   orgDAL,
   projectDAL,
   hsmService
 }: TKmsServiceFactoryDep) => {
-  let ROOT_ENCRYPTION_KEY = Buffer.alloc(0);
+  let ROOT_ENCRYPTION_KEY: Buffer = Buffer.alloc(0);
 
   /*
    * Return the root encryption key for a given org slug.
@@ -206,8 +204,32 @@ export const kmsServiceFactory = ({
    * In mean time the rest of the request will wait until creation is finished followed by getting the created on
    * In real time this would be milliseconds
    */
+  // Helper function to create org KMS key within a transaction
+  const $createOrgKmsKey = async (orgId: string, tx: Knex) => {
+    const org = await orgDAL.findById(orgId, tx);
+    if (org.kmsDefaultKeyId) {
+      return org.kmsDefaultKeyId;
+    }
+
+    const key = await generateKmsKey({
+      isReserved: true,
+      orgId: org.id,
+      tx
+    });
+
+    await orgDAL.updateById(
+      org.id,
+      {
+        kmsDefaultKeyId: key.id
+      },
+      tx
+    );
+
+    return key.id;
+  };
+
   const getOrgKmsKeyId = async (orgId: string, trx?: Knex) => {
-    let org = await orgDAL.findById(orgId, trx);
+    const org = await orgDAL.findById(orgId, trx);
 
     if (!org) {
       throw new NotFoundError({ message: `Organization with ID '${orgId}' not found` });
@@ -259,10 +281,14 @@ export const kmsServiceFactory = ({
       } finally {
         await lock?.release();
       }
-    }
 
-    if (!org.kmsDefaultKeyId) {
-      throw new BadRequestError({ message: "Invalid organization KMS" });
+      const keyId = await orgDAL.transaction(async (tx) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        await tx.raw("SELECT pg_advisory_xact_lock(?)", [PgSqlLock.KmsOrgKeyCreation(orgId)]);
+        return $createOrgKmsKey(orgId, tx);
+      });
+
+      return keyId;
     }
 
     return org.kmsDefaultKeyId;
@@ -603,6 +629,22 @@ export const kmsServiceFactory = ({
     };
   };
 
+  // Helper function to create org data key within a transaction
+  const $createOrgKmsDataKey = async (orgId: string, kmsKeyId: string, tx: Knex) => {
+    const org = await orgDAL.findById(orgId, tx);
+    if (org.kmsEncryptedDataKey) {
+      return;
+    }
+
+    const dataKey = crypto.randomBytes(32);
+    const kmsEncryptor = await encryptWithKmsKey({ kmsId: kmsKeyId }, tx);
+    const { cipherTextBlob } = await kmsEncryptor({ plainText: dataKey });
+
+    await orgDAL.updateById(org.id, { kmsEncryptedDataKey: cipherTextBlob }, tx);
+
+    return dataKey;
+  };
+
   const $getOrgKmsDataKey = async (orgId: string, trx?: Knex) => {
     const kmsKeyId = await getOrgKmsKeyId(orgId, trx);
     let org = await orgDAL.findById(orgId, trx);
@@ -612,62 +654,25 @@ export const kmsServiceFactory = ({
     }
 
     if (!org.kmsEncryptedDataKey) {
-      const lock = await keyStore
-        .acquireLock([KeyStorePrefixes.KmsOrgDataKeyCreation, orgId], 500, { retryCount: 0 })
-        .catch(() => null);
+      let orgDataKey: Buffer | undefined;
 
-      try {
-        if (!lock) {
-          await keyStore.waitTillReady({
-            key: `${KeyStorePrefixes.WaitUntilReadyKmsOrgDataKeyCreation}${orgId}`,
-            keyCheckCb: (val) => val === "true",
-            waitingCb: () => logger.info("KMS. Waiting for org data key to be created")
-          });
-
-          org = await orgDAL.findById(orgId, trx);
-        } else {
-          const orgDataKey = await (trx || orgDAL).transaction(async (tx) => {
-            org = await orgDAL.findById(orgId, tx);
-            if (org.kmsEncryptedDataKey) {
-              return;
-            }
-
-            const dataKey = crypto.randomBytes(32);
-            const kmsEncryptor = await encryptWithKmsKey(
-              {
-                kmsId: kmsKeyId
-              },
-              tx
-            );
-
-            const { cipherTextBlob } = await kmsEncryptor({
-              plainText: dataKey
-            });
-
-            await orgDAL.updateById(
-              org.id,
-              {
-                kmsEncryptedDataKey: cipherTextBlob
-              },
-              tx
-            );
-
-            await keyStore.setItemWithExpiry(
-              `${KeyStorePrefixes.WaitUntilReadyKmsOrgDataKeyCreation}${orgId}`,
-              10,
-              "true"
-            );
-
-            return dataKey;
-          });
-
-          if (orgDataKey) {
-            return orgDataKey;
-          }
-        }
-      } finally {
-        await lock?.release();
+      if (trx) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        await trx.raw("SELECT pg_advisory_xact_lock(?)", [PgSqlLock.KmsOrgDataKeyCreation(orgId)]);
+        orgDataKey = await $createOrgKmsDataKey(orgId, kmsKeyId, trx);
+      } else {
+        orgDataKey = await orgDAL.transaction(async (tx) => {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+          await tx.raw("SELECT pg_advisory_xact_lock(?)", [PgSqlLock.KmsOrgDataKeyCreation(orgId)]);
+          return $createOrgKmsDataKey(orgId, kmsKeyId, tx);
+        });
       }
+
+      if (orgDataKey) {
+        return orgDataKey;
+      }
+
+      org = await orgDAL.findById(orgId, trx);
     }
 
     if (!org.kmsEncryptedDataKey) {
@@ -684,69 +689,63 @@ export const kmsServiceFactory = ({
     });
   };
 
+  // Helper function to create project KMS key within a transaction
+  const $createProjectKmsKey = async (projectId: string, tx: Knex) => {
+    const project = await projectDAL.findById(projectId, tx);
+    if (project.kmsSecretManagerKeyId) {
+      return project.kmsSecretManagerKeyId;
+    }
+
+    const key = await generateKmsKey({
+      isReserved: true,
+      orgId: project.orgId,
+      tx
+    });
+
+    await projectDAL.updateById(projectId, { kmsSecretManagerKeyId: key.id }, tx);
+
+    return key.id;
+  };
+
   const getProjectSecretManagerKmsKeyId = async (projectId: string, trx?: Knex) => {
-    let project = await projectDAL.findById(projectId, trx);
+    const project = await projectDAL.findById(projectId, trx);
     if (!project) {
       throw new NotFoundError({ message: `Project with ID '${projectId}' not found` });
     }
 
     if (!project.kmsSecretManagerKeyId) {
-      const lock = await keyStore
-        .acquireLock([KeyStorePrefixes.KmsProjectKeyCreation, projectId], 3000, { retryCount: 0 })
-        .catch(() => null);
-
-      try {
-        if (!lock) {
-          await keyStore.waitTillReady({
-            key: `${KeyStorePrefixes.WaitUntilReadyKmsProjectKeyCreation}${projectId}`,
-            keyCheckCb: (val) => val === "true",
-            waitingCb: () => logger.debug("KMS. Waiting for project key to be created"),
-            delay: 500
-          });
-
-          project = await projectDAL.findById(projectId);
-        } else {
-          const kmsKeyId = await (trx || projectDAL).transaction(async (tx) => {
-            project = await projectDAL.findById(projectId, tx);
-            if (project.kmsSecretManagerKeyId) {
-              return project.kmsSecretManagerKeyId;
-            }
-
-            const key = await generateKmsKey({
-              isReserved: true,
-              orgId: project.orgId,
-              tx
-            });
-
-            await projectDAL.updateById(
-              projectId,
-              {
-                kmsSecretManagerKeyId: key.id
-              },
-              tx
-            );
-
-            return key.id;
-          });
-
-          await keyStore.setItemWithExpiry(
-            `${KeyStorePrefixes.WaitUntilReadyKmsProjectKeyCreation}${projectId}`,
-            10,
-            "true"
-          );
-
-          return kmsKeyId;
-        }
-      } finally {
-        await lock?.release();
+      if (trx) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        await trx.raw("SELECT pg_advisory_xact_lock(?)", [PgSqlLock.KmsProjectKeyCreation(projectId)]);
+        return $createProjectKmsKey(projectId, trx);
       }
-    }
 
-    if (!project.kmsSecretManagerKeyId) {
-      throw new BadRequestError({ message: "Missing project KMS key ID" });
+      const kmsKeyId = await projectDAL.transaction(async (tx) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        await tx.raw("SELECT pg_advisory_xact_lock(?)", [PgSqlLock.KmsProjectKeyCreation(projectId)]);
+        return $createProjectKmsKey(projectId, tx);
+      });
+
+      return kmsKeyId;
     }
 
     return project.kmsSecretManagerKeyId;
+  };
+
+  // Helper function to create project data key within a transaction
+  const $createProjectKmsDataKey = async (projectId: string, kmsKeyId: string, tx: Knex) => {
+    const project = await projectDAL.findById(projectId, tx);
+    if (project.kmsSecretManagerEncryptedDataKey) {
+      return;
+    }
+
+    const dataKey = crypto.randomBytes(32);
+    const kmsEncryptor = await encryptWithKmsKey({ kmsId: kmsKeyId }, tx);
+    const { cipherTextBlob } = await kmsEncryptor({ plainText: dataKey });
+
+    await projectDAL.updateById(projectId, { kmsSecretManagerEncryptedDataKey: cipherTextBlob }, tx);
+
+    return dataKey;
   };
 
   const $getProjectSecretManagerKmsDataKey = async (projectId: string, trx?: Knex) => {
@@ -754,72 +753,25 @@ export const kmsServiceFactory = ({
     let project = await projectDAL.findById(projectId, trx);
 
     if (!project.kmsSecretManagerEncryptedDataKey) {
-      const lock = await keyStore
-        .acquireLock([KeyStorePrefixes.KmsProjectDataKeyCreation, projectId], 3000, { retryCount: 0 })
-        .catch((err) => {
-          logger.error(err, "KMS. Failed to acquire lock.");
-          return null;
+      let projectDataKey: Buffer | undefined;
+
+      if (trx) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        await trx.raw("SELECT pg_advisory_xact_lock(?)", [PgSqlLock.KmsProjectDataKeyCreation(projectId)]);
+        projectDataKey = await $createProjectKmsDataKey(projectId, kmsKeyId, trx);
+      } else {
+        projectDataKey = await projectDAL.transaction(async (tx) => {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+          await tx.raw("SELECT pg_advisory_xact_lock(?)", [PgSqlLock.KmsProjectDataKeyCreation(projectId)]);
+          return $createProjectKmsDataKey(projectId, kmsKeyId, tx);
         });
-
-      try {
-        if (!lock) {
-          await keyStore.waitTillReady({
-            key: `${KeyStorePrefixes.WaitUntilReadyKmsProjectDataKeyCreation}${projectId}`,
-            keyCheckCb: (val) => val === "true",
-            waitingCb: () => logger.info("KMS. Waiting for secret manager data key to be created"),
-            delay: 500
-          });
-
-          project = await projectDAL.findById(projectId, trx);
-        } else {
-          logger.info(`KMS. Generating KMS key for project ${projectId}`);
-          const projectDataKey = await (trx || projectDAL).transaction(async (tx) => {
-            project = await projectDAL.findById(projectId, tx);
-            if (project.kmsSecretManagerEncryptedDataKey) {
-              return project.kmsSecretManagerEncryptedDataKey;
-            }
-
-            const dataKey = crypto.randomBytes(32);
-            const kmsEncryptor = await encryptWithKmsKey(
-              {
-                kmsId: kmsKeyId
-              },
-              tx
-            );
-
-            const { cipherTextBlob } = await kmsEncryptor({
-              plainText: dataKey
-            });
-
-            await projectDAL.updateById(
-              projectId,
-              {
-                kmsSecretManagerEncryptedDataKey: cipherTextBlob
-              },
-              tx
-            );
-
-            await keyStore.setItemWithExpiry(
-              `${KeyStorePrefixes.WaitUntilReadyKmsProjectDataKeyCreation}${projectId}`,
-              10,
-              "true"
-            );
-            return dataKey;
-          });
-
-          if (projectDataKey) {
-            return projectDataKey;
-          }
-        }
-      } catch (error) {
-        logger.error(
-          error,
-          `getProjectSecretManagerKmsDataKey: Failed to get project data key for [projectId=${projectId}]`
-        );
-        throw error;
-      } finally {
-        await lock?.release();
       }
+
+      if (projectDataKey) {
+        return projectDataKey;
+      }
+
+      project = await projectDAL.findById(projectId, trx);
     }
 
     if (!project.kmsSecretManagerEncryptedDataKey) {
