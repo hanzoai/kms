@@ -899,7 +899,7 @@ export const secretV2BridgeServiceFactory = ({
         actorOrgId,
         actionProjectType: ActionProjectType.SecretManager
       });
-      throwIfMissingSecretReadValueOrDescribePermission(permission, ProjectPermissionSecretActions.DescribeSecret);
+      throwIfMissingSecretReadValueOrDescribePermission(permission, ProjectPermissionSub.Secrets);
     }
 
     const folders = await folderDAL.findBySecretPathMultiEnv(projectId, environments, path);
@@ -946,7 +946,7 @@ export const secretV2BridgeServiceFactory = ({
       actorOrgId,
       actionProjectType: ActionProjectType.SecretManager
     });
-    throwIfMissingSecretReadValueOrDescribePermission(permission, ProjectPermissionSecretActions.DescribeSecret);
+    throwIfMissingSecretReadValueOrDescribePermission(permission, ProjectPermissionSub.Secrets);
 
     const folder = await folderDAL.findBySecretPath(projectId, environment, path);
     if (!folder) return 0;
@@ -1054,7 +1054,7 @@ export const secretV2BridgeServiceFactory = ({
       actionProjectType: ActionProjectType.SecretManager
     });
     if (!isInternal) {
-      throwIfMissingSecretReadValueOrDescribePermission(permission, ProjectPermissionSecretActions.DescribeSecret);
+      throwIfMissingSecretReadValueOrDescribePermission(permission, ProjectPermissionSub.Secrets);
     }
 
     const folders = await folderDAL.findBySecretPathMultiEnv(projectId, environments, path);
@@ -1109,7 +1109,7 @@ export const secretV2BridgeServiceFactory = ({
       actorOrgId,
       actionProjectType: ActionProjectType.SecretManager
     });
-    throwIfMissingSecretReadValueOrDescribePermission(permission, ProjectPermissionSecretActions.DescribeSecret);
+    throwIfMissingSecretReadValueOrDescribePermission(permission, ProjectPermissionSub.Secrets);
 
     recordSecretReadMetric({
       environment,
