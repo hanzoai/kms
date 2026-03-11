@@ -76,6 +76,7 @@ type TCertificateServiceFactoryDep = {
   pkiSyncDAL: Pick<TPkiSyncDALFactory, "find">;
   pkiSyncQueue: Pick<TPkiSyncQueueFactory, "queuePkiSyncSyncCertificatesById">;
   certificateAuthorityService: Pick<TCertificateAuthorityServiceFactory, "revokeCertificate">;
+  resourceMetadataDAL: Pick<TResourceMetadataDALFactory, "find">;
 };
 
 export type TCertificateServiceFactory = ReturnType<typeof certificateServiceFactory>;
@@ -96,7 +97,8 @@ export const certificateServiceFactory = ({
   certificateSyncDAL,
   pkiSyncDAL,
   pkiSyncQueue,
-  certificateAuthorityService
+  certificateAuthorityService,
+  resourceMetadataDAL
 }: TCertificateServiceFactoryDep) => {
   /**
    * Return details for certificate with serial number [serialNumber]
@@ -197,6 +199,9 @@ export const certificateServiceFactory = ({
       }
     }
 
+    const metadataRows = await resourceMetadataDAL.find({ certificateId: cert.id });
+    const certMetadata = metadataRows.map(({ key, value }) => ({ key, value: value || "" }));
+
     return {
       cert: {
         ...cert,
@@ -204,7 +209,8 @@ export const certificateServiceFactory = ({
         fingerprints,
         basicConstraints,
         caName,
-        profileName
+        profileName,
+        metadata: certMetadata
       }
     };
   };

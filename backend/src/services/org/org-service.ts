@@ -63,6 +63,7 @@ import {
   TGetOrgGroupsDTO,
   TGetOrgMembershipDTO,
   TListProjectMembershipsByOrgMembershipIdDTO,
+  TOrgWithSubOrgs,
   TResendOrgMemberInvitationDTO,
   TUpdateOrgDTO,
   TUpdateOrgMembershipDTO,
@@ -205,6 +206,10 @@ export const orgServiceFactory = ({
 
     // Filter out orgs where the membership object is an invitation
     return orgs.filter((org) => org.userStatus !== "invited");
+  };
+
+  const findAllAccessibleOrganizationsWithSubOrgs = async (userId: string): Promise<TOrgWithSubOrgs[]> => {
+    return orgDAL.listOrganizationsWithSubOrgs({ actorId: userId });
   };
 
   /*
@@ -1298,6 +1303,7 @@ export const orgServiceFactory = ({
     findAllWorkspaces,
     addGhostUser,
     updateOrgMembership,
+    findAllAccessibleOrganizationsWithSubOrgs,
     // incident contacts
     findIncidentContacts,
     createIncidentContact,

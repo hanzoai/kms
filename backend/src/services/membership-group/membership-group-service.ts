@@ -61,7 +61,8 @@ export const membershipGroupServiceFactory = ({
     [AccessScope.Project]: newProjectMembershipGroupFactory({
       membershipGroupDAL,
       orgDAL,
-      permissionService
+      permissionService,
+      groupDAL
     })
   };
 

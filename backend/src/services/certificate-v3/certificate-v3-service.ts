@@ -93,6 +93,12 @@ import { TCertificateSyncDALFactory } from "../certificate-sync/certificate-sync
 import { TPkiSyncDALFactory } from "../pki-sync/pki-sync-dal";
 import { TPkiSyncQueueFactory } from "../pki-sync/pki-sync-queue";
 import { addRenewedCertificateToSyncs, triggerAutoSyncForCertificate } from "../pki-sync/pki-sync-utils";
+import { TResourceMetadataDALFactory } from "../resource-metadata/resource-metadata-dal";
+import {
+  copyMetadataFromCertificate,
+  insertMetadataForCertificate,
+  insertMetadataForCertificateRequest
+} from "../resource-metadata/resource-metadata-fns";
 import { applyProfileDefaults, resolveEffectiveTtl } from "./certificate-v3-fns";
 import {
   TCertificateIssuanceResponse,
@@ -103,6 +109,7 @@ import {
   TRenewalConfigResponse,
   TRenewCertificateDTO,
   TSignCertificateFromProfileDTO,
+  TUpdateCertificateDTO,
   TUpdateRenewalConfigDTO
 } from "./certificate-v3-types";
 
@@ -143,6 +150,7 @@ type TCertificateV3ServiceFactoryDep = {
   userDAL: Pick<TUserDALFactory, "findById">;
   identityDAL: Pick<TIdentityDALFactory, "findById">;
   approvalPolicyService: Pick<TApprovalPolicyServiceFactory, "createRequestFromPolicy">;
+  resourceMetadataDAL: Pick<TResourceMetadataDALFactory, "insertMany" | "delete" | "find">;
 };
 
 export type TCertificateV3ServiceFactory = ReturnType<typeof certificateV3ServiceFactory>;
@@ -623,7 +631,8 @@ export const certificateV3ServiceFactory = ({
   certificateRequestDAL,
   userDAL,
   identityDAL,
-  approvalPolicyService
+  approvalPolicyService,
+  resourceMetadataDAL
 }: TCertificateV3ServiceFactoryDep) => {
   /**
    * Resolves requester name and email based on actor type
@@ -668,6 +677,7 @@ export const certificateV3ServiceFactory = ({
   const issueCertificateFromProfile = async ({
     profileId,
     certificateRequest,
+    metadata,
     actor,
     actorId,
     actorAuthMethod,
@@ -739,6 +749,9 @@ export const certificateV3ServiceFactory = ({
       });
 
       const { certRequestId, approvalRequestId } = await certificateRequestDAL.transaction(async (tx) => {
+        // Explicitly set createdAt to ensure millisecond precision matches when used in composite FK references
+        // (resource_metadata references the partitioned certificate_requests table via [id, createdAt]).
+        const certRequestCreatedAt = new Date();
         const certRequest = await certificateRequestDAL.create(
           {
             projectId: profile.projectId,
@@ -760,10 +773,21 @@ export const certificateV3ServiceFactory = ({
             locality: certificateRequest.locality || null,
             basicConstraints: certificateRequest.basicConstraints
               ? JSON.stringify(certificateRequest.basicConstraints)
-              : null
-          },
+              : null,
+            createdAt: certRequestCreatedAt
+          } as Parameters<typeof certificateRequestDAL.create>[0] & { createdAt: Date },
           tx
         );
+
+        if (metadata && metadata.length > 0) {
+          await insertMetadataForCertificateRequest(resourceMetadataDAL, {
+            metadata,
+            certificateRequestId: certRequest.id,
+            certificateRequestCreatedAt: certRequest.createdAt,
+            orgId: actorOrgId,
+            tx
+          });
+        }
 
         const requestData: TCertRequestRequestData = {
           profileId,
@@ -949,6 +973,22 @@ export const certificateV3ServiceFactory = ({
           locality: certificateRequest.locality
         });
 
+        if (metadata && metadata.length > 0) {
+          await insertMetadataForCertificate(resourceMetadataDAL, {
+            metadata,
+            certificateId: processResult.certificateData.id,
+            orgId: actorOrgId,
+            tx
+          });
+          await insertMetadataForCertificateRequest(resourceMetadataDAL, {
+            metadata,
+            certificateRequestId: certRequestResult.id,
+            certificateRequestCreatedAt: certRequestResult.createdAt,
+            orgId: actorOrgId,
+            tx
+          });
+        }
+
         const finalRenewBeforeDays = calculateFinalRenewBeforeDays(
           profile,
           resolvedTtl,
@@ -1130,6 +1170,22 @@ export const certificateV3ServiceFactory = ({
         locality: certificateRequest.locality
       });
 
+      if (metadata && metadata.length > 0) {
+        await insertMetadataForCertificate(resourceMetadataDAL, {
+          metadata,
+          certificateId: certResult.certificateId,
+          orgId: actorOrgId,
+          tx
+        });
+        await insertMetadataForCertificateRequest(resourceMetadataDAL, {
+          metadata,
+          certificateRequestId: certRequestResult.id,
+          certificateRequestCreatedAt: certRequestResult.createdAt,
+          orgId: actorOrgId,
+          tx
+        });
+      }
+
       return { ...certResult, cert: certificateRecord, certificateRequestId: certRequestResult.id };
     });
 
@@ -1181,6 +1237,7 @@ export const certificateV3ServiceFactory = ({
     actorAuthMethod,
     actorOrgId,
     enrollmentType,
+    metadata,
     removeRootsFromChain,
     basicConstraints
   }: TSignCertificateFromProfileDTO): Promise<TCertificateIssuanceResponse> => {
@@ -1283,6 +1340,8 @@ export const certificateV3ServiceFactory = ({
       const { requesterName, requesterEmail } = await resolveRequesterInfo(actor, actorId, enrollmentType);
 
       const { certRequestId, approvalRequestId } = await certificateRequestDAL.transaction(async (tx) => {
+        // Explicitly set createdAt to ensure millisecond precision matches when used in composite FK references
+        const certRequestCreatedAt = new Date();
         const certRequest = await certificateRequestDAL.create(
           {
             projectId: profile.projectId,
@@ -1301,10 +1360,21 @@ export const certificateV3ServiceFactory = ({
             ttl: validity.ttl,
             enrollmentType,
             status: CertificateRequestStatus.PENDING_APPROVAL,
-            basicConstraints: resolvedBasicConstraints ? JSON.stringify(resolvedBasicConstraints) : null
-          },
+            basicConstraints: resolvedBasicConstraints ? JSON.stringify(resolvedBasicConstraints) : null,
+            createdAt: certRequestCreatedAt
+          } as Parameters<typeof certificateRequestDAL.create>[0] & { createdAt: Date },
           tx
         );
+
+        if (metadata && metadata.length > 0) {
+          await insertMetadataForCertificateRequest(resourceMetadataDAL, {
+            metadata,
+            certificateRequestId: certRequest.id,
+            certificateRequestCreatedAt: certRequest.createdAt,
+            orgId: actorOrgId,
+            tx
+          });
+        }
 
         const requestData: TCertRequestRequestData = {
           profileId,
@@ -1482,6 +1552,22 @@ export const certificateV3ServiceFactory = ({
           enrollmentType: EnrollmentType.API
         });
 
+        if (metadata && metadata.length > 0) {
+          await insertMetadataForCertificate(resourceMetadataDAL, {
+            metadata,
+            certificateId: certResult.certificateId,
+            orgId: actorOrgId,
+            tx
+          });
+          await insertMetadataForCertificateRequest(resourceMetadataDAL, {
+            metadata,
+            certificateRequestId: certRequestResult.id,
+            certificateRequestCreatedAt: certRequestResult.createdAt,
+            orgId: actorOrgId,
+            tx
+          });
+        }
+
         return { ...certResult, cert: signedCertRecord, certificateRequestId: certRequestResult.id };
       });
 
@@ -1508,6 +1594,7 @@ export const certificateV3ServiceFactory = ({
   const orderCertificateFromProfile = async ({
     profileId,
     certificateOrder,
+    metadata,
     actor,
     actorId,
     actorAuthMethod,
@@ -1606,6 +1693,8 @@ export const certificateV3ServiceFactory = ({
       const { requesterName, requesterEmail } = await resolveRequesterInfo(actor, actorId, EnrollmentType.API);
 
       const { certRequestId, approvalRequestId } = await certificateRequestDAL.transaction(async (tx) => {
+        // Explicitly set createdAt to ensure millisecond precision matches when used in composite FK references
+        const certRequestCreatedAt = new Date();
         const certRequest = await certificateRequestDAL.create(
           {
             projectId: profile.projectId,
@@ -1626,10 +1715,21 @@ export const certificateV3ServiceFactory = ({
             country: certificateRequest.country || null,
             state: certificateRequest.state || null,
             locality: certificateRequest.locality || null,
-            status: CertificateRequestStatus.PENDING_APPROVAL
-          },
+            status: CertificateRequestStatus.PENDING_APPROVAL,
+            createdAt: certRequestCreatedAt
+          } as Parameters<typeof certificateRequestDAL.create>[0] & { createdAt: Date },
           tx
         );
+
+        if (metadata && metadata.length > 0) {
+          await insertMetadataForCertificateRequest(resourceMetadataDAL, {
+            metadata,
+            certificateRequestId: certRequest.id,
+            certificateRequestCreatedAt: certRequest.createdAt,
+            orgId: actorOrgId,
+            tx
+          });
+        }
 
         const requestData: TCertRequestRequestData = {
           profileId,
@@ -1747,6 +1847,15 @@ export const certificateV3ServiceFactory = ({
         state: certificateRequest.state,
         locality: certificateRequest.locality
       });
+
+      if (metadata && metadata.length > 0) {
+        await insertMetadataForCertificateRequest(resourceMetadataDAL, {
+          metadata,
+          certificateRequestId: certRequest.id,
+          certificateRequestCreatedAt: certRequest.createdAt,
+          orgId: actorOrgId
+        });
+      }
 
       await certificateIssuanceQueue.queueCertificateIssuance({
         certificateId: orderId,
@@ -2150,6 +2259,16 @@ export const certificateV3ServiceFactory = ({
         enrollmentType: EnrollmentType.API
       });
 
+      // Copy metadata from original cert to new cert and cert request
+      await copyMetadataFromCertificate(resourceMetadataDAL, {
+        sourceCertificateId: originalCert.id,
+        targetCertificateId: newCert.id,
+        targetCertificateRequestId: certRequestResult.id,
+        targetCertificateRequestCreatedAt: certRequestResult.createdAt,
+        orgId: actorOrgId,
+        tx
+      });
+
       return {
         certificate,
         certificateChain,
@@ -2195,6 +2314,14 @@ export const certificateV3ServiceFactory = ({
       });
 
       certificateRequestId = certificateRequest.id;
+
+      // Copy metadata from original cert to new cert request
+      await copyMetadataFromCertificate(resourceMetadataDAL, {
+        sourceCertificateId: originalCert.id,
+        targetCertificateRequestId: certificateRequest.id,
+        targetCertificateRequestCreatedAt: certificateRequest.createdAt,
+        orgId: actorOrgId
+      });
 
       await certificateIssuanceQueue.queueCertificateIssuance({
         certificateId: renewalOrderId,
@@ -2437,12 +2564,62 @@ export const certificateV3ServiceFactory = ({
     };
   };
 
+  const updateCertificate = async ({
+    certificateId,
+    metadata,
+    actor,
+    actorId,
+    actorAuthMethod,
+    actorOrgId
+  }: TUpdateCertificateDTO) => {
+    const certificate = await certificateDAL.findById(certificateId);
+    if (!certificate) {
+      throw new NotFoundError({ message: "Certificate not found" });
+    }
+
+    const { permission } = await permissionService.getProjectPermission({
+      actor,
+      actorId,
+      projectId: certificate.projectId,
+      actorAuthMethod,
+      actorOrgId,
+      actionProjectType: ActionProjectType.CertificateManager
+    });
+
+    ForbiddenError.from(permission).throwUnlessCan(
+      ProjectPermissionCertificateActions.Edit,
+      subject(ProjectPermissionSub.Certificates, {
+        commonName: certificate.commonName,
+        altNames: certificate.altNames ?? undefined,
+        serialNumber: certificate.serialNumber
+      })
+    );
+
+    let updatedMetadata: Array<{ key: string; value: string }> = [];
+
+    if (metadata) {
+      await certificateDAL.transaction(async (tx) => {
+        await resourceMetadataDAL.delete({ certificateId }, tx);
+        await insertMetadataForCertificate(resourceMetadataDAL, {
+          metadata,
+          certificateId,
+          orgId: actorOrgId,
+          tx
+        });
+      });
+      updatedMetadata = metadata;
+    }
+
+    return { metadata: updatedMetadata, projectId: certificate.projectId, commonName: certificate.commonName };
+  };
+
   return {
     issueCertificateFromProfile,
     signCertificateFromProfile,
     orderCertificateFromProfile,
     renewCertificate,
     updateRenewalConfig,
-    disableRenewalConfig
+    disableRenewalConfig,
+    updateCertificate
   };
 };
