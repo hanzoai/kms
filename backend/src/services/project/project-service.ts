@@ -1125,7 +1125,7 @@ export const projectServiceFactory = ({
       actorOrgId,
       actionProjectType: ActionProjectType.Any
     });
-    throwIfMissingSecretReadValueOrDescribePermission(permission, ProjectPermissionSecretActions.DescribeSecret);
+    throwIfMissingSecretReadValueOrDescribePermission(permission, ProjectPermissionSub.Secrets);
 
     const project = await projectDAL.findProjectById(projectId);
 
