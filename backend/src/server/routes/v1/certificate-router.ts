@@ -24,6 +24,7 @@ import { CertificateRequestStatus } from "@app/services/certificate-request/cert
 import { validateTemplateRegexField } from "@app/services/certificate-template/certificate-template-validators";
 import { TCertificateIssuanceResponse } from "@app/services/certificate-v3/certificate-v3-types";
 import { ProjectFilterType } from "@app/services/project/project-types";
+import { ResourceMetadataNonEncryptionSchema } from "@app/services/resource-metadata/resource-metadata-schema";
 import { booleanSchema } from "../sanitizedSchemas";
 /* eslint-disable @typescript-eslint/no-floating-promises */
 
