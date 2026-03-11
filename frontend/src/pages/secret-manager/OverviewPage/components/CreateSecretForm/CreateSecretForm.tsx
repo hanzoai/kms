@@ -287,60 +287,6 @@ export const CreateSecretForm = ({ secretPath = "/", defaultSelectedEnvs, onClos
             </Field>
           )}
         />
-      </FormControl>
-      <Controller
-        control={control}
-        name="value"
-        render={({ field }) => (
-          <FormControl
-            tooltipText={
-              <div>
-                You can add references to other secrets using the format{" "}
-                <code className="rounded-sm bg-mineshaft-600 px-1 py-0.5">
-                  &#36;{"{"}secret_name{"}"}
-                </code>
-                <br />
-                <br />
-                You can go to the referenced secret by holding the{" "}
-                <code className="rounded-sm bg-mineshaft-600 px-1 py-0.5">Cmd</code> (Mac) or{" "}
-                <code className="rounded-sm bg-mineshaft-600 px-1 py-0.5">Ctrl</code>{" "}
-                (Windows/Linux) key and clicking on the secret name.
-              </div>
-            }
-            tooltipClassName="max-w-md"
-            label="Value"
-            isError={Boolean(errors?.value)}
-            errorText={errors?.value?.message}
-          >
-            <div className="flex items-center gap-2">
-              <KmsSecretInput
-                {...field}
-                containerClassName="text-bunker-300 hover:border-primary-400/50 border border-mineshaft-600 bg-mineshaft-900 px-2 py-1.5"
-              />
-              <PasswordGenerator onUsePassword={field.onChange} />
-            </div>
-          </FormControl>
-        )}
-      />
-      <Controller
-        control={control}
-        name="tags"
-        render={({ field }) => (
-          <FormControl
-            label="Tags"
-            isError={Boolean(errors?.value)}
-            errorText={errors?.value?.message}
-            helperText={
-              !canReadTags ? (
-                <div className="flex items-center space-x-2">
-                  <FontAwesomeIcon icon={faTriangleExclamation} className="text-yellow-400" />
-                  <span>You do not have permission to read tags.</span>
-                </div>
-                <FieldError errors={[error]} />
-              </FieldContent>
-            </Field>
-          )}
-        />
 
         <Controller
           control={control}
