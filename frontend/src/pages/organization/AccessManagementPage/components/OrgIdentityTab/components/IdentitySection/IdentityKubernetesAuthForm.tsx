@@ -579,7 +579,7 @@ export const IdentityKubernetesAuthForm = ({
               >
                 <Input
                   {...field}
-                  placeholder="namespaceA, namespaceB"
+                  placeholder="namespaceA, namespaceB, dev-*"
                   type="text"
                   autoComplete="off"
                 />
@@ -599,7 +599,7 @@ export const IdentityKubernetesAuthForm = ({
               >
                 <Input
                   {...field}
-                  placeholder="service-account-1-name, service-account-1-name"
+                  placeholder="service-account-1-name, sa-*, app-*-prod"
                   autoComplete="off"
                 />
               </FormControl>

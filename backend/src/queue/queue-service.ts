@@ -91,7 +91,8 @@ export enum QueueName {
   PamAccountRotation = "pam-account-rotation",
   PamSessionExpiration = "pam-session-expiration",
   PkiAcmeChallengeValidation = "pki-acme-challenge-validation",
-  PkiDiscoveryScan = "pki-discovery-scan"
+  PkiDiscoveryScan = "pki-discovery-scan",
+  PamDiscoveryScan = "pam-discovery-scan"
 }
 
 export enum QueueJobs {
@@ -154,7 +155,9 @@ export enum QueueJobs {
   PamSessionExpiration = "pam-session-expiration",
   PkiAcmeChallengeValidation = "pki-acme-challenge-validation",
   PkiDiscoveryRunScan = "pki-discovery-run-scan",
-  PkiDiscoveryScheduledScan = "pki-discovery-scheduled-scan"
+  PkiDiscoveryScheduledScan = "pki-discovery-scheduled-scan",
+  PamDiscoverySourceRunScan = "pam-discovery-run-scan",
+  PamDiscoveryScheduledScan = "pam-discovery-scheduled-scan"
 }
 
 export type TQueueOptions = {
@@ -483,6 +486,15 @@ export type TQueueJobTypes = {
       }
     | {
         name: QueueJobs.PkiDiscoveryScheduledScan;
+        payload: undefined;
+      };
+  [QueueName.PamDiscoveryScan]:
+    | {
+        name: QueueJobs.PamDiscoverySourceRunScan;
+        payload: { discoverySourceId: string; triggeredBy: PamDiscoverySourceRunTrigger };
+      }
+    | {
+        name: QueueJobs.PamDiscoveryScheduledScan;
         payload: undefined;
       };
 };
@@ -817,11 +829,13 @@ export const queueServiceFactory = (
     // Initialize internal recovery queue (@hanzo/mq for distributed coordination)
     queueContainer[QueueName.QueueInternalRecovery] = new Queue(QueueName.QueueInternalRecovery, {
       prefix: isClusterMode ? `{${QueueName.QueueInternalRecovery}}` : undefined,
+      ...fipsSettings,
       connection
     });
 
     // Initialize internal reconciliation queue
     queueContainer[QueueName.QueueInternalReconciliation] = new Queue(QueueName.QueueInternalReconciliation, {
+      ...fipsSettings,
       prefix: isClusterMode ? `{${QueueName.QueueInternalReconciliation}}` : undefined,
       connection
     });
@@ -834,6 +848,7 @@ export const queueServiceFactory = (
           await startupRecovery();
         },
         {
+          ...fipsSettings,
           prefix: isClusterMode ? `{${QueueName.QueueInternalRecovery}}` : undefined,
           connection
         }
@@ -846,6 +861,7 @@ export const queueServiceFactory = (
           await runReconciliation();
         },
         {
+          ...fipsSettings,
           prefix: isClusterMode ? `{${QueueName.QueueInternalReconciliation}}` : undefined,
           connection
         }
@@ -916,15 +932,8 @@ export const queueServiceFactory = (
 
     workerContainer[name] = new Worker(name, wrappedJobFn, {
       prefix: isClusterMode ? `{${name}}` : undefined,
+      ...fipsSettings,
       ...restQueueSettings,
-      ...(crypto.isFipsModeEnabled()
-        ? {
-            settings: {
-              ...restQueueSettings?.settings,
-              repeatKeyHashAlgorithm: "sha256"
-            }
-          }
-        : {}),
       connection
     });
 
@@ -1002,7 +1011,8 @@ export const queueServiceFactory = (
       removeOnFail: true,
       removeOnComplete: true,
       ...opts,
-      repeat: repeat ? { ...repeat, utc: true } : undefined
+      repeat: repeat ? { ...repeat, utc: true } : undefined,
+      jobId
     };
 
     if (persistantQueues.has(name)) {
@@ -1021,12 +1031,12 @@ export const queueServiceFactory = (
           tx
         );
         // if this fails transaction rollback happens
-        await q.add(job, data, { ...opts, jobId });
+        await q.add(job, data, finalOptions);
       });
       return;
     }
 
-    await q.add(job, data, { ...opts, jobId });
+    await q.add(job, data, finalOptions);
   };
 
   const stopRepeatableJob: TQueueServiceFactory["stopRepeatableJob"] = async (name, job, repeatOpt, jobId) => {
