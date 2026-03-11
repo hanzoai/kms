@@ -825,6 +825,7 @@ export const queueServiceFactory = (
 
   const initialize = async () => {
     const appCfg = getConfig();
+    const fipsSettings = crypto.isFipsModeEnabled() ? { settings: { repeatKeyHashAlgorithm: "sha256" as const } } : {};
 
     // Initialize internal recovery queue (@hanzo/mq for distributed coordination)
     queueContainer[QueueName.QueueInternalRecovery] = new Queue(QueueName.QueueInternalRecovery, {
