@@ -781,8 +781,11 @@ export const projectServiceFactory = ({
         return delProject;
       });
 
-    await keyStore.deleteItem(`kms-cloud-plan-${actorOrgId}`);
-    return deletedProject;
+      await keyStore.deleteItem(`kms-cloud-plan-${actorOrgId}`);
+      return deletedProject;
+    } finally {
+      await lock.release();
+    }
   };
 
   const getProjects = async ({ actorId, actor, includeRoles, actorAuthMethod, actorOrgId, type }: TListProjectsDTO) => {
