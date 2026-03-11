@@ -3,14 +3,13 @@
 // SPDX-License-Identifier: MIT
 //
 // Permission DAL: raw DB queries for membership role lookups needed by the
-// permission service. After the 20260107 migration, old per-type membership
-// tables were dropped. Now project_memberships and org_memberships are the
-// single source of truth for both users and identities.
+// permission service. Uses the unified Membership + MembershipRole + Role
+// tables introduced in 20251005152640_simplify-membership.
 
 import { Knex } from "knex";
 
 import { TDbClient } from "@app/db";
-import { TableName } from "@app/db/schemas";
+import { AccessScope, TableName } from "@app/db/schemas";
 import { DatabaseError } from "@app/lib/errors";
 
 export type TPermissionDALFactory = ReturnType<typeof permissionDALFactory>;
@@ -36,7 +35,7 @@ export const permissionDALFactory = (db: TDbClient) => {
 
   /**
    * Returns all role permission rows for a user in a given project.
-   * Uses the unified project_memberships table with optional role join.
+   * Queries: memberships → membership_roles → roles (custom only).
    */
   const getProjectPermission = async (
     userId: string,
@@ -45,18 +44,24 @@ export const permissionDALFactory = (db: TDbClient) => {
   ): Promise<TProjectRolePermissionRow[]> => {
     try {
       const qb = tx ?? db.replicaNode();
-      const rows = await qb(TableName.ProjectMembership)
-        .where(`${TableName.ProjectMembership}.userId`, userId)
-        .where(`${TableName.ProjectMembership}.projectId`, projectId)
-        .leftJoin(TableName.ProjectRoles, function joinRoles() {
-          this.on(
-            `${TableName.ProjectRoles}.id`,
-            `${TableName.ProjectMembership}.roleId`
-          ).andOn(db.raw(`${TableName.ProjectRoles}."projectId" = ?`, [projectId]));
-        })
+      const rows = await qb(TableName.Membership)
+        .where(`${TableName.Membership}.actorUserId`, userId)
+        .where(`${TableName.Membership}.scopeProjectId`, projectId)
+        .where(`${TableName.Membership}.scope`, AccessScope.Project)
+        .join(
+          TableName.MembershipRole,
+          `${TableName.MembershipRole}.membershipId`,
+          `${TableName.Membership}.id`
+        )
+        .leftJoin(TableName.Role, `${TableName.MembershipRole}.customRoleId`, `${TableName.Role}.id`)
         .select(
-          db.ref("role").withSchema(TableName.ProjectMembership).as("roleSlug"),
-          db.ref("permissions").withSchema(TableName.ProjectRoles).as("permissions")
+          db.ref("role").withSchema(TableName.MembershipRole).as("roleSlug"),
+          db.ref("permissions").withSchema(TableName.Role).as("permissions"),
+          db.ref("isTemporary").withSchema(TableName.MembershipRole),
+          db.ref("temporaryMode").withSchema(TableName.MembershipRole),
+          db.ref("temporaryRange").withSchema(TableName.MembershipRole),
+          db.ref("temporaryAccessStartTime").withSchema(TableName.MembershipRole),
+          db.ref("temporaryAccessEndTime").withSchema(TableName.MembershipRole)
         );
       return rows as TProjectRolePermissionRow[];
     } catch (error) {
@@ -66,8 +71,7 @@ export const permissionDALFactory = (db: TDbClient) => {
 
   /**
    * Returns all role permission rows for an identity in a given project.
-   * After the membership unification, identities use the same project_memberships
-   * table. If no membership exists, returns empty array (graceful degradation).
+   * Queries: memberships (actorIdentityId) → membership_roles → roles (custom only).
    */
   const getProjectIdentityPermission = async (
     identityId: string,
@@ -76,20 +80,24 @@ export const permissionDALFactory = (db: TDbClient) => {
   ): Promise<TProjectRolePermissionRow[]> => {
     try {
       const qb = tx ?? db.replicaNode();
-      // Identity permissions now go through the unified project_memberships table.
-      // The identityId is stored in userId column for machine identities.
-      const rows = await qb(TableName.ProjectMembership)
-        .where(`${TableName.ProjectMembership}.userId`, identityId)
-        .where(`${TableName.ProjectMembership}.projectId`, projectId)
-        .leftJoin(TableName.ProjectRoles, function joinRoles() {
-          this.on(
-            `${TableName.ProjectRoles}.id`,
-            `${TableName.ProjectMembership}.roleId`
-          ).andOn(db.raw(`${TableName.ProjectRoles}."projectId" = ?`, [projectId]));
-        })
+      const rows = await qb(TableName.Membership)
+        .where(`${TableName.Membership}.actorIdentityId`, identityId)
+        .where(`${TableName.Membership}.scopeProjectId`, projectId)
+        .where(`${TableName.Membership}.scope`, AccessScope.Project)
+        .join(
+          TableName.MembershipRole,
+          `${TableName.MembershipRole}.membershipId`,
+          `${TableName.Membership}.id`
+        )
+        .leftJoin(TableName.Role, `${TableName.MembershipRole}.customRoleId`, `${TableName.Role}.id`)
         .select(
-          db.ref("role").withSchema(TableName.ProjectMembership).as("roleSlug"),
-          db.ref("permissions").withSchema(TableName.ProjectRoles).as("permissions")
+          db.ref("role").withSchema(TableName.MembershipRole).as("roleSlug"),
+          db.ref("permissions").withSchema(TableName.Role).as("permissions"),
+          db.ref("isTemporary").withSchema(TableName.MembershipRole),
+          db.ref("temporaryMode").withSchema(TableName.MembershipRole),
+          db.ref("temporaryRange").withSchema(TableName.MembershipRole),
+          db.ref("temporaryAccessStartTime").withSchema(TableName.MembershipRole),
+          db.ref("temporaryAccessEndTime").withSchema(TableName.MembershipRole)
         );
       return rows as TProjectRolePermissionRow[];
     } catch (error) {
@@ -101,6 +109,7 @@ export const permissionDALFactory = (db: TDbClient) => {
 
   /**
    * Returns all role permission rows for a user in a given org.
+   * Queries: memberships (actorUserId, scope=organization) → membership_roles → roles.
    */
   const getOrgPermission = async (
     userId: string,
@@ -109,18 +118,19 @@ export const permissionDALFactory = (db: TDbClient) => {
   ): Promise<TOrgRolePermissionRow[]> => {
     try {
       const qb = tx ?? db.replicaNode();
-      const rows = await qb(TableName.OrgMembership)
-        .where(`${TableName.OrgMembership}.userId`, userId)
-        .where(`${TableName.OrgMembership}.orgId`, orgId)
-        .leftJoin(TableName.OrgRoles, function joinOrgRoles() {
-          this.on(
-            `${TableName.OrgRoles}.id`,
-            `${TableName.OrgMembership}.roleId`
-          ).andOn(db.raw(`${TableName.OrgRoles}."orgId" = ?`, [orgId]));
-        })
+      const rows = await qb(TableName.Membership)
+        .where(`${TableName.Membership}.actorUserId`, userId)
+        .where(`${TableName.Membership}.scopeOrgId`, orgId)
+        .where(`${TableName.Membership}.scope`, AccessScope.Organization)
+        .join(
+          TableName.MembershipRole,
+          `${TableName.MembershipRole}.membershipId`,
+          `${TableName.Membership}.id`
+        )
+        .leftJoin(TableName.Role, `${TableName.MembershipRole}.customRoleId`, `${TableName.Role}.id`)
         .select(
-          db.ref("role").withSchema(TableName.OrgMembership).as("roleSlug"),
-          db.ref("permissions").withSchema(TableName.OrgRoles).as("permissions")
+          db.ref("role").withSchema(TableName.MembershipRole).as("roleSlug"),
+          db.ref("permissions").withSchema(TableName.Role).as("permissions")
         );
       return rows as TOrgRolePermissionRow[];
     } catch (error) {
@@ -130,7 +140,7 @@ export const permissionDALFactory = (db: TDbClient) => {
 
   /**
    * Returns all role permission rows for an identity in a given org.
-   * After membership unification, identities use org_memberships directly.
+   * Queries: memberships (actorIdentityId, scope=organization) → membership_roles → roles.
    */
   const getOrgIdentityPermission = async (
     identityId: string,
@@ -139,19 +149,19 @@ export const permissionDALFactory = (db: TDbClient) => {
   ): Promise<TOrgRolePermissionRow[]> => {
     try {
       const qb = tx ?? db.replicaNode();
-      // Identity org permissions now go through unified org_memberships table.
-      const rows = await qb(TableName.OrgMembership)
-        .where(`${TableName.OrgMembership}.userId`, identityId)
-        .where(`${TableName.OrgMembership}.orgId`, orgId)
-        .leftJoin(TableName.OrgRoles, function joinOrgRoles() {
-          this.on(
-            `${TableName.OrgRoles}.id`,
-            `${TableName.OrgMembership}.roleId`
-          ).andOn(db.raw(`${TableName.OrgRoles}."orgId" = ?`, [orgId]));
-        })
+      const rows = await qb(TableName.Membership)
+        .where(`${TableName.Membership}.actorIdentityId`, identityId)
+        .where(`${TableName.Membership}.scopeOrgId`, orgId)
+        .where(`${TableName.Membership}.scope`, AccessScope.Organization)
+        .join(
+          TableName.MembershipRole,
+          `${TableName.MembershipRole}.membershipId`,
+          `${TableName.Membership}.id`
+        )
+        .leftJoin(TableName.Role, `${TableName.MembershipRole}.customRoleId`, `${TableName.Role}.id`)
         .select(
-          db.ref("role").withSchema(TableName.OrgMembership).as("roleSlug"),
-          db.ref("permissions").withSchema(TableName.OrgRoles).as("permissions")
+          db.ref("role").withSchema(TableName.MembershipRole).as("roleSlug"),
+          db.ref("permissions").withSchema(TableName.Role).as("permissions")
         );
       return rows as TOrgRolePermissionRow[];
     } catch (error) {

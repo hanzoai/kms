@@ -46,19 +46,7 @@ export const hasSecretReadValueOrDescribePermission = (
     const canReadOld = ability.can(ProjectPermissionSecretActions.DescribeAndReadValue, sub);
     const canDescribe = ability.can(ProjectPermissionSecretActions.DescribeSecret, sub);
     const canReadVal = ability.can(ProjectPermissionSecretActions.ReadValue, sub);
-    const result = canReadOld || (canDescribe && canReadVal);
-    if (!result) {
-      // eslint-disable-next-line no-console
-      console.error("[permission-debug] FAILED 2-arg check:", {
-        sub,
-        canReadOld,
-        canDescribe,
-        canReadVal,
-        rulesCount: ability.rules.length,
-        secretRules: ability.rules.filter((r: any) => r.subject === "secrets" || (Array.isArray(r.subject) && r.subject.includes("secrets"))).map((r: any) => ({ action: r.action, subject: r.subject, conditions: r.conditions, inverted: r.inverted }))
-      });
-    }
-    return result;
+    return canReadOld || (canDescribe && canReadVal);
   }
 
   // Three-arg call: (ability, action, subject/conditions)
