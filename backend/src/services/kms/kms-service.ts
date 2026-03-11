@@ -229,7 +229,7 @@ export const kmsServiceFactory = ({
   };
 
   const getOrgKmsKeyId = async (orgId: string, trx?: Knex) => {
-    const org = await orgDAL.findById(orgId, trx);
+    let org = await orgDAL.findById(orgId, trx);
 
     if (!org) {
       throw new NotFoundError({ message: `Organization with ID '${orgId}' not found` });
