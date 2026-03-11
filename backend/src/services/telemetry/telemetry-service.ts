@@ -28,6 +28,7 @@ type SingleEventData = {
   event: string;
   properties: unknown;
   organizationId: string;
+  organizationName?: string;
 };
 
 export type TTelemetryServiceFactory = ReturnType<typeof telemetryServiceFactory>;
@@ -110,7 +111,8 @@ To opt into telemetry, you can set "TELEMETRY_ENABLED=true" within the environme
               distinctId: event.distinctId,
               event: event.event,
               properties: event.properties,
-              organizationId: event.organizationId
+              organizationId: event.organizationId,
+              ...(resolvedOrgName ? { organizationName: resolvedOrgName } : {})
             })
           );
         } else {
@@ -299,6 +301,27 @@ To opt into telemetry, you can set "TELEMETRY_ENABLED=true" within the environme
       }
 
       logger.info(`Completed processing ${totalProcessed} total events for ${eventType}`);
+    }
+  };
+
+  const identifyUser = (
+    distinctId: string,
+    properties: {
+      email?: string;
+      username?: string;
+      userId?: string;
+      firstName?: string;
+      lastName?: string;
+      isMfaEnabled?: boolean;
+      isEmailVerified?: boolean;
+      superAdmin?: boolean;
+    }
+  ) => {
+    if (postHog && distinctId) {
+      const instanceType = licenseService.getInstanceType();
+      if (instanceType === InstanceType.Cloud) {
+        postHog.identify({ distinctId, properties });
+      }
     }
   };
 

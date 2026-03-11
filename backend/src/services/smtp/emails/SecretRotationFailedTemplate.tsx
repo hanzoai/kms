@@ -10,6 +10,7 @@ interface SecretRotationFailedTemplateProps extends Omit<BaseEmailWrapperProps, 
   rotationUrl: string;
   projectName: string;
   environment: string;
+  environmentSlug: string;
   secretPath: string;
   content: string;
 }
@@ -21,6 +22,7 @@ export const SecretRotationFailedTemplate = ({
   projectName,
   siteUrl,
   environment,
+  environmentSlug,
   secretPath,
   content
 }: SecretRotationFailedTemplateProps) => {
@@ -61,6 +63,7 @@ SecretRotationFailedTemplate.PreviewProps = {
   projectName: "Example Project",
   secretPath: "/api/secrets",
   environment: "Production",
+  environmentSlug: "production",
   rotationName: "my-auth0-rotation",
   siteUrl: "https://kms.hanzo.ai"
 } as SecretRotationFailedTemplateProps;

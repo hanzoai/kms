@@ -74,6 +74,21 @@ export const ProjectsPage = () => {
     return <Outlet />;
   }
 
+  const projectViewProps = {
+    onAddNewProject: () => handlePopUpOpen("addNewWs"),
+    onUpgradePlan: () => handlePopUpOpen("upgradePlan"),
+    isAddingProjectsAllowed,
+    projectListView,
+    onProjectListViewChange: handleSetProjectListView
+  };
+
+  const projectView =
+    projectListView === ProjectListView.MyProjects ? (
+      <MyProjectView {...projectViewProps} />
+    ) : (
+      <AllProjectView {...projectViewProps} />
+    );
+
   return (
     <div className="mx-auto flex max-w-8xl flex-col justify-start bg-bunker-800">
       <Helmet>
@@ -85,23 +100,7 @@ export const ProjectsPage = () => {
         title={`${isSubOrganization ? "Sub-Organization" : "Organization"} Overview`}
         description="Your team's complete security toolkit - organized and ready when you need them."
       />
-      {projectListView === ProjectListView.MyProjects ? (
-        <MyProjectView
-          onAddNewProject={() => handlePopUpOpen("addNewWs")}
-          onUpgradePlan={() => handlePopUpOpen("upgradePlan")}
-          isAddingProjectsAllowed={isAddingProjectsAllowed}
-          projectListView={projectListView}
-          onProjectListViewChange={handleSetProjectListView}
-        />
-      ) : (
-        <AllProjectView
-          onAddNewProject={() => handlePopUpOpen("addNewWs")}
-          onUpgradePlan={() => handlePopUpOpen("upgradePlan")}
-          isAddingProjectsAllowed={isAddingProjectsAllowed}
-          projectListView={projectListView}
-          onProjectListViewChange={handleSetProjectListView}
-        />
-      )}
+      {projectView}
       <NewProjectModal
         isOpen={popUp.addNewWs.isOpen}
         onOpenChange={(isOpen) => handlePopUpToggle("addNewWs", isOpen)}
