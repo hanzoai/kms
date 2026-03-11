@@ -749,7 +749,7 @@ export const registerSsoRouter = async (server: FastifyZodProvider) => {
         });
       }
 
-      if ([AuthMethod.GOOGLE, AuthMethod.GITHUB, AuthMethod.GITLAB].includes(data.decodedProviderToken.authMethod)) {
+      if ([AuthMethod.GOOGLE, AuthMethod.GITHUB, AuthMethod.GITLAB, AuthMethod.OIDC].includes(data.decodedProviderToken.authMethod)) {
         void res.setCookie("jid", data.token.refresh, {
           httpOnly: true,
           path: "/",
