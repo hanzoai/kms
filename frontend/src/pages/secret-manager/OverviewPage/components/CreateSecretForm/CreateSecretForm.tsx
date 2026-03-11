@@ -9,7 +9,6 @@ import { z } from "zod";
 import { createNotification } from "@app/components/notifications";
 import {
   Button,
-  InfisicalSecretInput,
   PasswordGenerator,
   Tooltip
 } from "@app/components/v2";
@@ -309,7 +308,7 @@ export const CreateSecretForm = ({ secretPath = "/", defaultSelectedEnvs, onClos
               </FieldLabel>
               <FieldContent>
                 <div className="flex items-start gap-2">
-                  <InfisicalSecretInput
+                  <KmsSecretInput
                     value={field.value ?? ""}
                     onChange={field.onChange}
                     placeholder="Enter secret value..."
