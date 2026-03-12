@@ -26,6 +26,14 @@ import { TSecretVersionTagDALFactory } from "@app/services/secret/secret-version
 import { TSecretBlindIndexDALFactory } from "@app/services/secret-blind-index/secret-blind-index-dal";
 import { TSecretSyncQueueFactory } from "@app/services/secret-sync/secret-sync-queue";
 import { TSecretTagDALFactory } from "@app/services/secret-tag/secret-tag-dal";
+// Stub: ProjectEvents enum — EE feature for SSE project event streaming, not yet ported.
+enum ProjectEvents {
+  SecretCreate = "secret.create",
+  SecretUpdate = "secret.update",
+  SecretDelete = "secret.delete",
+  SecretImportMutation = "secret-import.mutation"
+}
+
 import { ActorType } from "../auth/auth-type";
 import { TFolderCommitServiceFactory } from "../folder-commit/folder-commit-service";
 import { TIntegrationDALFactory } from "../integration/integration-dal";

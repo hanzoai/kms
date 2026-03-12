@@ -35,6 +35,14 @@ import { recordSecretReadMetric } from "@app/lib/telemetry/metrics";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const scanSecretPolicyViolations = async (_projectId: string, _secretPath: string, _secrets: { secretKey: string; secretValue: string }[], _ignoreValues: string[]) => {};
 
+// Stub: ProjectEvents enum — EE feature for SSE project event streaming, not yet ported.
+enum ProjectEvents {
+  SecretCreate = "secret.create",
+  SecretUpdate = "secret.update",
+  SecretDelete = "secret.delete",
+  SecretImportMutation = "secret-import.mutation"
+}
+
 import { ActorType } from "../auth/auth-type";
 import { TCommitResourceChangeDTO, TFolderCommitServiceFactory } from "../folder-commit/folder-commit-service";
 import { TKmsServiceFactory } from "../kms/kms-service";
