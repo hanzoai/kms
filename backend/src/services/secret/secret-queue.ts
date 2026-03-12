@@ -572,9 +572,9 @@ export const secretQueueFactory = ({
 
     const plan = await licenseService.getPlan(dto.orgId);
 
-    if (event && plan.eventSubscriptions) {
+    if (event && plan.eventSubscriptions && projectEventsService) {
       for await (const singleEvent of event) {
-        await projectEventsService.publish(singleEvent);
+        await (projectEventsService as { publish: (e: unknown) => Promise<void> }).publish(singleEvent);
       }
     }
 
