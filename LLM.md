@@ -126,6 +126,121 @@ encrypted with a distinct root key rather than the shared `ROOT_ENCRYPTION_KEY`.
 - Per-org K8s secrets (`kms-lux-casdoor-credentials`, etc.) each have their `ROOT_ENCRYPTION_KEY`
   for future standalone org-specific KMS deployments.
 
+## Vault-Ported Features (2026-03-11)
+
+Eight major subsystems ported from HashiCorp Vault (MPL-2.0) to TypeScript.
+29 files, ~3,400 lines total. All in `backend/src/services/` and `backend/src/lib/crypto/`.
+
+### 1. Shamir Secret Sharing (`lib/crypto/shamir/`)
+- **Source**: Vault `shamir/shamir.go`
+- GF(2^8) Galois Field arithmetic (mult, div, inverse via Fermat's little theorem)
+- `split(secret, parts, threshold)` → Buffer[] shares
+- `combine(parts)` → Buffer original secret
+- Fisher-Yates shuffle for random x-coordinates
+- Zero external deps, pure Node.js crypto
+
+### 2. Transit Engine - Encryption as a Service (`services/transit/`)
+- **Source**: Vault `builtin/logical/transit/`
+- Key types: AES-256-GCM, AES-128-GCM, ChaCha20-Poly1305, Ed25519, ECDSA-P256/P384, RSA-2048/3072/4096, HMAC
+- Operations: encrypt, decrypt, **rewrap** (re-encrypt without plaintext exposure), sign, verify, HMAC, hash, data key generation, random bytes
+- Key versioning with `hanzo:v{N}:{base64}` format
+- HKDF-based key derivation with user context (convergent encryption support)
+- Batch operations for all endpoints
+- Auto-rotation via configurable period (min 1 hour)
+- Export/import with `exportable` flag (one-way)
+
+### 3. Lease Manager (`services/lease/`)
+- **Source**: Vault `vault/expiration.go`
+- TTL tracking with automatic revocation
+- Exponential backoff retry (up to 6 attempts)
+- Fair-share revocation queue (max 200 concurrent)
+- Irrevocable lease tracking for failed revocations
+- Event emission: issued, renewed, expired, revoked, revoke_failed
+
+### 4. Seal/Unseal + Barrier (`services/seal/`)
+- **Source**: Vault `vault/seal.go`, `vault/barrier_aes_gcm.go`
+- AES-256-GCM encryption barrier with keyring (versioned key terms)
+- Shamir seal: root key → split into N shares → T required to unseal
+- Auto-unseal: root key encrypted by AWS KMS / GCP KMS
+- Recovery key Shamir backup for KMS failure
+- Key rotation via `barrier.rotate()` (new term, old keys for decrypt)
+- Health check interval for KMS connectivity
+
+### 5. ACL Policy Engine (`services/policy/`)
+- **Source**: Vault `vault/policy.go`, `vault/acl.go`
+- Capabilities: deny, create, read, update, delete, list, sudo, patch
+- Path matching: exact, glob (`*`), segment wildcard (`+`)
+- Template variables: `{{identity.org_id}}`, `{{identity.project_id}}`
+- Deny takes absolute priority (longest-prefix match)
+- LRU cache (1024 policies)
+- Built-in `default` policy for self-service
+
+### 6. Token System (`services/token/`)
+- **Source**: Vault `vault/token_store.go`
+- Token types: Service (`hkms_s.`), Batch (`hkms_b.`), Recovery (`hkms_r.`)
+- HMAC-SHA256 signed for integrity
+- Salted storage (never store raw token IDs)
+- Parent-child hierarchy (revoking parent revokes children)
+- Periodic tokens (renewable without TTL ceiling)
+- Batch tokens (stateless, JWT-like, HMAC-verified)
+- Num-uses tracking (decrement per use, revoke at 0)
+- Accessor indirection (lookup metadata without token exposure)
+
+### 7. Dynamic Secret Providers (`services/dynamic-secret/providers/`)
+- **Source**: Vault `builtin/logical/database/`
+- PostgreSQL/MySQL: temp users with `CREATE ROLE`, auto `DROP ROLE` on lease expiry
+- Redis: ACL SETUSER/DELUSER for temporary access
+- MongoDB: createUser/dropUser with role-based permissions
+- SQL template variables: `{{name}}`, `{{password}}`, `{{expiration}}`
+- Cryptographic password generation (configurable charset/length)
+- Provider factory: `createProvider(config)` dispatches by type
+
+### 8. TFHE-KMS Bridge (`services/tfhe/`)
+- Bridges KMS key management with MPC TFHE subsystem (`luxfi/fhe v1.7.6`)
+- Key types: TFHE_UINT{8,16,32,64,128,256}, TFHE_BOOL, TFHE_ADDRESS
+- Operations: Add, Sub, Mul, Div, Lt/Gt/Lte/Gte/Eq/Ne, And/Or/Xor/Not, Select, Cast
+- Threshold keygen via MPC cluster (NATS JetStream trigger)
+- Threshold decryption (t-of-n shares via Lagrange interpolation)
+- Private policy evaluation on encrypted transaction data
+- Encrypted policy state: cumulative daily/monthly, last tx time, vesting
+- T-Chain integration points (precompile at `0x0700...0080`)
+
+### Integration Architecture
+
+```
+                    Hanzo KMS (TypeScript/Fastify)
+                    ├── Secrets Store (PostgreSQL)
+                    ├── External KMS (AWS, GCP)
+                    ├── AI Access Control (per-secret policies)
+                    ├── K8s Operator (KMSSecret CRDs)
+                    │
+  NEW ──────────────├── Transit Engine (EaaS)
+  (Vault ports)     │   └── encrypt/decrypt/sign/verify/rewrap/datakey
+                    ├── Seal Manager + Barrier
+                    │   └── Shamir unseal / auto-unseal (AWS/GCP KMS)
+                    ├── Lease Manager
+                    │   └── TTL tracking, auto-revoke, retry queue
+                    ├── ACL Policy Engine
+                    │   └── path-based capabilities with templates
+                    ├── Token System
+                    │   └── HMAC-signed, salted, parent-child hierarchy
+                    ├── Dynamic Secrets (PostgreSQL, Redis, MongoDB)
+                    │   └── temp credentials with auto-revocation
+                    └── TFHE Bridge
+                        └── KMS ↔ MPC(luxfi/fhe) ↔ T-Chain
+```
+
+### HashiCorp Dependency Status
+
+| Tool | Usage | Notes |
+|------|-------|-------|
+| Consul | In-use (MPC service discovery + wallet KV) | Keep |
+| golang-lru | In-use (Lux node ZK proof cache) | Keep |
+| Vault | **Ported** - 8 subsystems now native in KMS | Not needed as runtime dep |
+| Terraform | Not used | Helm + Kustomize for deploys |
+| Raft | Not needed | Lux Quasar (leaderless, post-quantum) |
+| Serf/memberlist | Not needed | Lux P2P + mDNS + DHT |
+
 ## Rules for AI Assistants
 
 1. **ALWAYS** update LLM.md with significant discoveries
