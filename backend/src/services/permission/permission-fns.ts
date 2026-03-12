@@ -4,7 +4,7 @@
 //
 // Shared permission helper functions.
 
-import { MongoAbility } from "@casl/ability";
+import { MongoAbility, subject } from "@casl/ability";
 import { ForbiddenRequestError } from "@app/lib/errors";
 import { AuthMethod } from "@app/services/auth/auth-type";
 
@@ -51,8 +51,15 @@ export const hasSecretReadValueOrDescribePermission = (
 
   // Three-arg call: (ability, action, subject/conditions)
   const action = actionOrSubject as ProjectPermissionSecretActions;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return ability.can(action, subjectOrConditions as any);
+
+  // When subjectOrConditions is a conditions object (not a string), wrap it
+  // with CASL's subject() helper so that ability.can() can match it against
+  // rules that use a string subject like "secrets".
+  if (typeof subjectOrConditions === "object") {
+    return ability.can(action, subject(ProjectPermissionSub.Secrets, subjectOrConditions as Record<string, unknown>));
+  }
+
+  return ability.can(action, subjectOrConditions as string);
 };
 
 /**

@@ -31,6 +31,10 @@ import { logger } from "@app/lib/logger";
 import { alphaNumericNanoId } from "@app/lib/nanoid";
 import { recordSecretReadMetric } from "@app/lib/telemetry/metrics";
 
+// Stub: scanSecretPolicyViolations is an upstream enterprise feature not yet ported.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const scanSecretPolicyViolations = async (_projectId: string, _secretPath: string, _secrets: { secretKey: string; secretValue: string }[], _ignoreValues: string[]) => {};
+
 import { ActorType } from "../auth/auth-type";
 import { TCommitResourceChangeDTO, TFolderCommitServiceFactory } from "../folder-commit/folder-commit-service";
 import { TKmsServiceFactory } from "../kms/kms-service";
@@ -397,7 +401,7 @@ export const secretV2BridgeServiceFactory = ({
     }
 
     if (inputSecret.type === SecretType.Shared) {
-      await snapshotService!.performSnapshot(folderId);
+      await snapshotService?.performSnapshot(folderId);
       await secretQueueService.syncSecrets({
         secretPath,
         orgId: actorOrgId,
@@ -685,7 +689,7 @@ export const secretV2BridgeServiceFactory = ({
     }
 
     if (inputSecret.type === SecretType.Shared) {
-      await snapshotService!.performSnapshot(folderId);
+      await snapshotService?.performSnapshot(folderId);
       await secretQueueService.syncSecrets({
         secretPath,
         actorId,
@@ -810,7 +814,7 @@ export const secretV2BridgeServiceFactory = ({
       });
 
       if (inputSecret.type === SecretType.Shared) {
-        await snapshotService!.performSnapshot(folderId);
+        await snapshotService?.performSnapshot(folderId);
         await secretQueueService.syncSecrets({
           secretPath,
           actorId,
@@ -1912,7 +1916,7 @@ export const secretV2BridgeServiceFactory = ({
       ? await executeBulkInsert(providedTx)
       : await secretDAL.transaction(executeBulkInsert);
 
-    await snapshotService!.performSnapshot(folderId);
+    await snapshotService?.performSnapshot(folderId);
     await secretQueueService.syncSecrets({
       actor,
       actorId,
@@ -2341,7 +2345,7 @@ export const secretV2BridgeServiceFactory = ({
       ? await executeBulkUpdate(providedTx)
       : await secretDAL.transaction(executeBulkUpdate);
 
-    await Promise.allSettled(folders.map((el) => (el?.id ? snapshotService!.performSnapshot(el.id) : undefined)));
+    await Promise.allSettled(folders.map((el) => (el?.id ? snapshotService?.performSnapshot(el.id) : undefined)));
     await Promise.allSettled(
       folders.map((el) =>
         el
@@ -2475,7 +2479,7 @@ export const secretV2BridgeServiceFactory = ({
         ? await executeBulkDelete(providedTx)
         : await secretDAL.transaction(executeBulkDelete);
 
-      await snapshotService!.performSnapshot(folderId);
+      await snapshotService?.performSnapshot(folderId);
       await secretQueueService.syncSecrets({
         actor,
         actorId,
@@ -3109,7 +3113,7 @@ export const secretV2BridgeServiceFactory = ({
       await secretDAL.invalidateSecretCacheByProjectId(projectId);
     }
     if (isDestinationUpdated) {
-      await snapshotService!.performSnapshot(destinationFolder.id);
+      await snapshotService?.performSnapshot(destinationFolder.id);
       await secretQueueService.syncSecrets({
         projectId,
         orgId: actorOrgId,
@@ -3129,7 +3133,7 @@ export const secretV2BridgeServiceFactory = ({
     }
 
     if (isSourceUpdated) {
-      await snapshotService!.performSnapshot(sourceFolder.id);
+      await snapshotService?.performSnapshot(sourceFolder.id);
       await secretQueueService.syncSecrets({
         projectId,
         orgId: actorOrgId,
