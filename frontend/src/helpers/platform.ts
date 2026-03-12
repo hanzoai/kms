@@ -2,7 +2,10 @@ export const isHanzoCloud = () =>
   window.location.origin.includes("https://kms.hanzo.ai") ||
   window.location.origin.includes("https://us.kms.hanzo.ai") ||
   window.location.origin.includes("https://eu.kms.hanzo.ai") ||
-  window.location.origin.includes("https://gamma.kms.hanzo.ai");
+  window.location.origin.includes("https://gamma.kms.hanzo.ai") ||
+  window.location.origin.includes("kms.lux.network") ||
+  window.location.origin.includes("kms.pars.network") ||
+  window.location.origin.includes("kms.zoo.ngo");
 
 export type WhiteLabelBrand = "hanzo" | "lux" | "pars" | "zoo";
 
@@ -10,7 +13,7 @@ export const getWhiteLabelBrand = (): WhiteLabelBrand => {
   const host = window.location.hostname;
   if (host.includes("lux.network")) return "lux";
   if (host.includes("pars.network")) return "pars";
-  if (host.includes("zoo.network")) return "zoo";
+  if (host.includes("zoo.network") || host.includes("zoo.ngo")) return "zoo";
   return "hanzo";
 };
 
