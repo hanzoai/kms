@@ -83,7 +83,7 @@ export const permissionServiceFactory = ({
     actorAuthMethod: ActorAuthMethod;
     actorOrgId: string;
     actionProjectType?: ActionProjectType;
-  }): Promise<{ permission: ProjectAbility; memberships: unknown[] }> => {
+  }): Promise<{ permission: ProjectAbility; memberships: unknown[]; hasProjectEnforcement: (flag: string) => boolean }> => {
     // Admin bypass: if actorOrgId is set and actor is org admin, grant full access
     // (this is handled downstream by getOrgPermission checks)
 
@@ -96,7 +96,7 @@ export const permissionServiceFactory = ({
 
       if (rows.length === 0) {
         // No membership — return no-access ability
-        return { permission: buildProjectAbility([]), memberships: [] };
+        return { permission: buildProjectAbility([]), memberships: [], hasProjectEnforcement: () => false };
       }
 
       for (const row of rows) {
@@ -128,7 +128,7 @@ export const permissionServiceFactory = ({
       memberships = rows;
 
       if (rows.length === 0) {
-        return { permission: buildProjectAbility([]), memberships: [] };
+        return { permission: buildProjectAbility([]), memberships: [], hasProjectEnforcement: () => false };
       }
 
       for (const row of rows) {
@@ -158,15 +158,15 @@ export const permissionServiceFactory = ({
       // Fine-grained service token scope validation happens at the route level.
       const token = await serviceTokenDAL.findById(actorId);
       if (!token || token.projectId !== projectId) {
-        return { permission: buildProjectAbility([]), memberships: [] };
+        return { permission: buildProjectAbility([]), memberships: [], hasProjectEnforcement: () => false };
       }
       // Grant member-level access for service tokens
       combinedRules = getDefaultProjectRules(ProjectMembershipRole.Admin);
     } else {
-      return { permission: buildProjectAbility([]), memberships: [] };
+      return { permission: buildProjectAbility([]), memberships: [], hasProjectEnforcement: () => false };
     }
 
-    return { permission: buildProjectAbility(combinedRules), memberships };
+    return { permission: buildProjectAbility(combinedRules), memberships, hasProjectEnforcement: () => false };
   };
 
   /**
