@@ -26,6 +26,11 @@ import { TSecretQueueFactory } from "../secret/secret-queue";
 import { TSecretFolderDALFactory } from "../secret-folder/secret-folder-dal";
 import { TSecretV2BridgeDALFactory } from "../secret-v2-bridge/secret-v2-bridge-dal";
 import { recursivelyGetSecretPaths } from "../secret-v2-bridge/secret-v2-bridge-fns";
+// Stub: ProjectEvents enum — EE feature for SSE project event streaming, not yet ported.
+enum ProjectEvents {
+  SecretImportMutation = "secret-import.mutation"
+}
+
 import { TSecretImportDALFactory } from "./secret-import-dal";
 import { fnSecretsFromImports, fnSecretsV2FromImports } from "./secret-import-fns";
 import {
