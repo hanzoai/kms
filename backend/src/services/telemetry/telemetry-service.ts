@@ -317,10 +317,10 @@ To opt into telemetry, you can set "TELEMETRY_ENABLED=true" within the environme
       superAdmin?: boolean;
     }
   ) => {
-    if (postHog && distinctId) {
+    if (insights && distinctId) {
       const instanceType = licenseService.getInstanceType();
       if (instanceType === InstanceType.Cloud) {
-        postHog.identify({ distinctId, properties });
+        insights.identify({ distinctId, properties });
       }
     }
   };
@@ -334,6 +334,7 @@ To opt into telemetry, you can set "TELEMETRY_ENABLED=true" within the environme
   return {
     sendLoopsEvent,
     sendInsightsEvents,
+    identifyUser,
     processAggregatedEvents,
     flushAll,
     getBucketForDistinctId
