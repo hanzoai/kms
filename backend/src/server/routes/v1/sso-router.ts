@@ -19,6 +19,7 @@ import { addAuthOriginDomainCookie } from "@app/server/lib/cookie";
 import { AuthMethod } from "@app/services/auth/auth-type";
 import { OrgAuthMethod } from "@app/services/org/org-types";
 import { getServerCfg } from "@app/services/super-admin/super-admin-service";
+import { InsightsEventTypes } from "@app/services/telemetry/telemetry-types";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -148,8 +149,8 @@ export const registerOauthMiddlewares = (server: FastifyZodProvider) => {
             }
 
             if (!isUserCompleted && googleDistinctId) {
-              void server.services.telemetry.sendPostHogEvents({
-                event: PostHogEventTypes.UserSignedUp,
+              void server.services.telemetry.sendInsightsEvents({
+                event: InsightsEventTypes.UserSignedUp,
                 distinctId: googleDistinctId,
                 ...(orgId ? { organizationId: orgId } : {}),
                 ...(orgName ? { organizationName: orgName } : {}),
@@ -244,8 +245,8 @@ export const registerOauthMiddlewares = (server: FastifyZodProvider) => {
             }
 
             if (!isUserCompleted && githubDistinctId) {
-              void server.services.telemetry.sendPostHogEvents({
-                event: PostHogEventTypes.UserSignedUp,
+              void server.services.telemetry.sendInsightsEvents({
+                event: InsightsEventTypes.UserSignedUp,
                 distinctId: githubDistinctId,
                 ...(orgId ? { organizationId: orgId } : {}),
                 ...(orgName ? { organizationName: orgName } : {}),
@@ -332,8 +333,8 @@ export const registerOauthMiddlewares = (server: FastifyZodProvider) => {
             }
 
             if (!isUserCompleted && gitlabDistinctId) {
-              void server.services.telemetry.sendPostHogEvents({
-                event: PostHogEventTypes.UserSignedUp,
+              void server.services.telemetry.sendInsightsEvents({
+                event: InsightsEventTypes.UserSignedUp,
                 distinctId: gitlabDistinctId,
                 ...(orgId ? { organizationId: orgId } : {}),
                 ...(orgName ? { organizationName: orgName } : {}),
