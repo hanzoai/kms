@@ -1,4 +1,5 @@
 # syntax=docker/dockerfile:1
+ARG GITHUB_TOKEN
 ARG POSTHOG_HOST=https://app.posthog.com
 ARG POSTHOG_API_KEY=posthog-api-key
 ARG INTERCOM_ID=intercom-id
@@ -25,7 +26,7 @@ RUN node -e "\
     if(p[s])for(const[k,v]of Object.entries(p[s]))\
       if(typeof v==='string'&&v.startsWith('file:'))p[s][k]='*';\
   require('fs').writeFileSync('package.json',JSON.stringify(p,null,2))"
-RUN pnpm install --no-frozen-lockfile --ignore-scripts
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 # Rebuild the source code only when needed
 FROM base AS frontend-builder
@@ -201,11 +202,6 @@ RUN printf "[FreeTDS]\nDescription = FreeTDS Driver\nDriver = /usr/lib/x86_64-li
 RUN groupadd --system --gid 1001 nodejs \
   && useradd --system --uid 1001 --gid nodejs non-root-user
 
-# Give non-root-user permission to update SSL certs
-RUN chown -R non-root-user /etc/ssl/certs \
-  && chmod -R u+rwx /etc/ssl/certs \
-  && chown non-root-user /usr/sbin/update-ca-certificates \
-  && chmod u+rx /usr/sbin/update-ca-certificates
 
 ## set pre baked keys
 ARG POSTHOG_API_KEY
