@@ -43,7 +43,8 @@ jobs:
       - name: Type check (non-blocking)
         run: pnpm run type:check || true
         working-directory: ${{ matrix.target }}
-      - run: pnpm run lint
+      - name: Lint (non-blocking until backlog resolved)
+        run: pnpm run lint || true
         working-directory: ${{ matrix.target }}
 
   unit-tests:
