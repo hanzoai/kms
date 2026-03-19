@@ -36,14 +36,14 @@ export const registerAuthRoutes = async (server: FastifyZodProvider) => {
       void res.cookie("jid", "", {
         httpOnly: true,
         path: "/",
-        sameSite: "strict",
+        sameSite: "lax",
         secure: appCfg.HTTPS_ENABLED
       });
 
       void res.cookie("kms-project-assume-privileges", "", {
         httpOnly: true,
         path: "/",
-        sameSite: "strict",
+        sameSite: "lax",
         secure: appCfg.HTTPS_ENABLED,
         maxAge: 0
       });
