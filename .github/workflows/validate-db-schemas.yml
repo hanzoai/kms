@@ -48,11 +48,11 @@ jobs:
                   pnpm install --no-frozen-lockfile
 
             - name: Apply migrations
-              run: npm run migration:latest-dev
+              run: pnpm run migration:latest-dev
               working-directory: backend
 
             - name: Run schema generation
-              run: npm run generate:schema
+              run: pnpm run generate:schema
               working-directory: backend
 
             - name: Check for schema changes

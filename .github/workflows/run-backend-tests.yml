@@ -50,10 +50,10 @@ jobs:
       - name: Start Secret Rotation testing databases
         run: docker compose -f docker-compose.e2e-dbs.yml up -d --wait --wait-timeout 300
       - name: Run unit test
-        run: npm run test:unit
+        run: pnpm run test:unit
         working-directory: backend
       - name: Run integration test
-        run: npm run test:e2e
+        run: pnpm run test:e2e
         working-directory: backend
         env:
           E2E_TEST_ORACLE_DB_19_HOST: ${{ secrets.E2E_TEST_ORACLE_DB_19_HOST }}
