@@ -24,14 +24,13 @@ export const workflowIntegrationServiceFactory = ({
     actorOrgId,
     actorAuthMethod
   }: TGetWorkflowIntegrationsByOrg) => {
-    const { permission } = await permissionService.getOrgPermission({
-      actor,
+    const { permission } = await permissionService.getOrgPermission(
       actorId,
-      orgId: actorOrgId,
-      actorAuthMethod,
+      actor,
       actorOrgId,
-      scope: OrganizationActionScope.Any
-    });
+      actorAuthMethod,
+      actorOrgId
+    );
 
     ForbiddenError.from(permission).throwUnlessCan(OrgPermissionActions.Read, OrgPermissionSubjects.Settings);
 
