@@ -727,15 +727,26 @@ export const registerSsoRouter = async (server: FastifyZodProvider) => {
       operationId: "exchangeOAuthToken",
       body: z.object({
         providerAuthToken: z.string(),
-        email: z.string()
+        email: z.string().optional()
       })
     },
     handler: async (req, res) => {
       const userAgent = req.headers["user-agent"];
       if (!userAgent) throw new Error("user agent header is required");
 
+      // Extract email from provider token if not provided in body
+      let email = req.body.email;
+      if (!email) {
+        try {
+          const payload = JSON.parse(Buffer.from(req.body.providerAuthToken.split(".")[1], "base64").toString());
+          email = payload.email || payload.username;
+        } catch {
+          throw new Error("email is required");
+        }
+      }
+
       const data = await server.services.login.oauth2TokenExchange({
-        email: req.body.email,
+        email,
         ip: req.realIp,
         userAgent,
         providerAuthToken: req.body.providerAuthToken
