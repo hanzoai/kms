@@ -40,9 +40,9 @@ jobs:
             node -e "const p=JSON.parse(require('fs').readFileSync('package.json','utf8'));for(const s of['dependencies','devDependencies','optionalDependencies'])if(p[s])for(const[k,v]of Object.entries(p[s]))if(typeof v==='string'&&v.startsWith('file:'))p[s][k]='*';require('fs').writeFileSync('package.json',JSON.stringify(p,null,2))"
           fi
           pnpm install --no-frozen-lockfile
-      - run: npm run type:check
+      - run: pnpm run type:check
         working-directory: ${{ matrix.target }}
-      - run: npm run lint
+      - run: pnpm run lint
         working-directory: ${{ matrix.target }}
 
   unit-tests:
@@ -71,7 +71,7 @@ jobs:
             docker compose -f docker-compose.dev.yml exec -T db pg_isready -U hanzokms && break
             sleep 1
           done
-      - run: npm run test:unit
+      - run: pnpm run test:unit
         working-directory: backend
         env:
           REDIS_URL: redis://172.17.0.1:6379
