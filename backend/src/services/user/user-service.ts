@@ -466,14 +466,13 @@ export const userServiceFactory = ({
 
     // This makes it so the user can always read information about themselves, but no one else if they don't have the Members Read permission.
     if (user.id !== actorId) {
-      const { permission } = await permissionService.getOrgPermission({
-        actor,
+      const { permission } = await permissionService.getOrgPermission(
         actorId,
-        orgId: actorOrgId,
-        actorAuthMethod,
+        actor,
         actorOrgId,
-        scope: OrganizationActionScope.Any
-      });
+        actorAuthMethod,
+        actorOrgId
+      );
       ForbiddenError.from(permission).throwUnlessCan(OrgPermissionActions.Read, OrgPermissionSubjects.Member);
     }
 
