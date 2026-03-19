@@ -73,7 +73,7 @@ RUN apt-get update && apt-get install -y \
 RUN groupadd --system --gid 1001 nodejs \
     && useradd --system --uid 1001 --gid nodejs non-root-user
 
-COPY backend/package.json backend/package-lock.json ./
+COPY backend/package.json backend/pnpm-lock.yaml* ./
 # Strip file: deps (monorepo-local refs unavailable in Docker context)
 RUN node -e "\
   const p=JSON.parse(require('fs').readFileSync('package.json','utf8'));\
@@ -81,14 +81,14 @@ RUN node -e "\
     if(p[s])for(const[k,v]of Object.entries(p[s]))\
       if(typeof v==='string'&&v.startsWith('file:'))p[s][k]='*';\
   require('fs').writeFileSync('package.json',JSON.stringify(p,null,2))"
-RUN --mount=type=cache,target=/root/.npm \
-    npm ci
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
+    pnpm install --no-frozen-lockfile
 
 COPY /backend .
 COPY --chown=non-root-user:nodejs standalone-entrypoint.sh standalone-entrypoint.sh
-RUN npm install -g tsconfig-paths
+RUN pnpm add -g tsconfig-paths
 ENV NODE_OPTIONS="--max-old-space-size=8192"
-RUN npm run build
+RUN pnpm run build
 
 # ── Backend runner (prod deps only) ──────────────────────────
 FROM base AS backend-runner
@@ -104,8 +104,8 @@ RUN printf "[FreeTDS]\nDescription = FreeTDS Driver\nDriver = /usr/lib/x86_64-li
 
 COPY --from=backend-build /app .
 RUN rm -rf ./node_modules ./bdd ./e2e-test
-RUN --mount=type=cache,target=/root/.npm \
-    npm ci --omit=dev
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
+    pnpm install --prod --no-frozen-lockfile
 
 RUN mkdir frontend-build
 
