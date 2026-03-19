@@ -40,9 +40,11 @@ jobs:
           node-version: "22"
           cache: "pnpm"
           cache-dependency-path: backend/pnpm-lock.yaml
-      - name: Install dependencies
-        run: pnpm install
+      - name: Strip file: deps and install
         working-directory: backend
+        run: |
+          node -e "const p=JSON.parse(require('fs').readFileSync('package.json','utf8'));for(const s of['dependencies','devDependencies','optionalDependencies'])if(p[s])for(const[k,v]of Object.entries(p[s]))if(typeof v==='string'&&v.startsWith('file:'))p[s][k]='*';require('fs').writeFileSync('package.json',JSON.stringify(p,null,2))"
+          pnpm install --no-frozen-lockfile
       - name: Start postgres and redis
         run: touch .env && docker compose -f docker-compose.dev.yml up -d db redis
       - name: Start Secret Rotation testing databases
