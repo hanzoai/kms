@@ -25,12 +25,15 @@ jobs:
         target: [backend, frontend]
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'npm'
-          cache-dependency-path: ${{ matrix.target }}/package-lock.json
-      - run: npm ci
+          cache: 'pnpm'
+          cache-dependency-path: ${{ matrix.target }}/pnpm-lock.yaml
+      - run: pnpm install
         working-directory: ${{ matrix.target }}
       - run: npm run type:check
         working-directory: ${{ matrix.target }}
@@ -42,12 +45,15 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'npm'
-          cache-dependency-path: backend/package-lock.json
-      - run: npm ci
+          cache: 'pnpm'
+          cache-dependency-path: backend/pnpm-lock.yaml
+      - run: pnpm install
         working-directory: backend
       - name: Start postgres and redis
         run: touch .env && docker compose -f docker-compose.dev.yml up -d db redis
