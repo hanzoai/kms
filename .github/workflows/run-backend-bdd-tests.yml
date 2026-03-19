@@ -98,7 +98,7 @@ jobs:
           command: |
             curl -f -X GET http://localhost:8080/api/v1/admin/config
       - name: Run bdd tests
-        run: npm run test:bdd
+        run: pnpm run test:bdd
         working-directory: backend
         env:
           KMS_API_URL: http://localhost:8080
