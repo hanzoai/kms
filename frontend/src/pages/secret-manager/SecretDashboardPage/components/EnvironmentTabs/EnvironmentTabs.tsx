@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { faEllipsisH, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRightArrowLeft, faEllipsisH, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";

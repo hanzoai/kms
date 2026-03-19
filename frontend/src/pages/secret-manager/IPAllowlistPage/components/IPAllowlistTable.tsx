@@ -1,4 +1,4 @@
-import { faGlobe, faPencil, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faCircle, faGlobe, faPencil, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { UpgradePlanModal } from "@app/components/license/UpgradePlanModal";
