@@ -221,7 +221,7 @@ export const fnTriggerWebhook = async ({
           projectName
         },
         status: "success"
-      } as WebhookTriggeredEvent["metadata"]);
+      } as unknown as WebhookTriggeredEvent["metadata"]);
 
       return toBeTriggeredHooks[i].id;
     });
@@ -237,7 +237,7 @@ export const fnTriggerWebhook = async ({
           projectName
         },
         status: "failed"
-      } as WebhookTriggeredEvent["metadata"]);
+      } as unknown as WebhookTriggeredEvent["metadata"]);
 
       return {
         id: toBeTriggeredHooks[i].id,
