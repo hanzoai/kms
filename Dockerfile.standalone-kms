@@ -87,7 +87,7 @@ RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
 COPY /backend .
 COPY --chown=non-root-user:nodejs standalone-entrypoint.sh standalone-entrypoint.sh
 RUN pnpm add -g tsconfig-paths
-ENV NODE_OPTIONS="--max-old-space-size=4096"
+ENV NODE_OPTIONS="--max-old-space-size=8192"
 RUN pnpm run build
 
 # ── Backend runner (prod deps only) ──────────────────────────
@@ -104,6 +104,13 @@ RUN printf "[FreeTDS]\nDescription = FreeTDS Driver\nDriver = /usr/lib/x86_64-li
 
 COPY --from=backend-build /app .
 RUN rm -rf ./node_modules ./bdd ./e2e-test
+# Strip file: deps again (package.json from build stage still has them)
+RUN node -e "\
+  const p=JSON.parse(require('fs').readFileSync('package.json','utf8'));\
+  for(const s of['dependencies','devDependencies','optionalDependencies'])\
+    if(p[s])for(const[k,v]of Object.entries(p[s]))\
+      if(typeof v==='string'&&v.startsWith('file:'))p[s][k]='*';\
+  require('fs').writeFileSync('package.json',JSON.stringify(p,null,2))"
 RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
     pnpm install --prod --no-frozen-lockfile
 
