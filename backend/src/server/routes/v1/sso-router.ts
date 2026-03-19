@@ -632,7 +632,7 @@ export const registerSsoRouter = async (server: FastifyZodProvider) => {
         void res.cookie(KMS_PROVIDER_GITHUB_ACCESS_TOKEN, req.passportUser.externalProviderAccessToken, {
           httpOnly: true,
           path: "/",
-          sameSite: "strict",
+          sameSite: "lax",
           secure: appCfg.HTTPS_ENABLED,
           expires: new Date(Date.now() + ms(appCfg.JWT_PROVIDER_AUTH_LIFETIME))
         });
@@ -765,7 +765,7 @@ export const registerSsoRouter = async (server: FastifyZodProvider) => {
         void res.setCookie("jid", data.token.refresh, {
           httpOnly: true,
           path: "/",
-          sameSite: "strict",
+          sameSite: "lax",
           secure: appCfg.HTTPS_ENABLED
         });
       }
