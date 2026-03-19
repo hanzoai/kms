@@ -31,8 +31,8 @@ jobs:
         run: pnpm install
         working-directory: frontend
       - name: 🏗️ Run Type check
-        run: npm run type:check
+        run: pnpm run type:check
         working-directory: frontend
       - name: 🏗️ Run Lint check
-        run: npm run lint
+        run: pnpm run lint
         working-directory: frontend
