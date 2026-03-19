@@ -23,10 +23,15 @@ export const registerAuthRoutes = async (server: FastifyZodProvider) => {
       }
     },
     handler: async (req, res) => {
-      const { decodedToken } = await server.services.authToken.validateRefreshToken(req.cookies.jid);
       const appCfg = getConfig();
 
-      await server.services.login.logout(decodedToken.userId, decodedToken.tokenVersionId);
+      // Gracefully handle missing/invalid refresh tokens (e.g. stale cookies after SSO reconfiguration)
+      try {
+        const { decodedToken } = await server.services.authToken.validateRefreshToken(req.cookies.jid);
+        await server.services.login.logout(decodedToken.userId, decodedToken.tokenVersionId);
+      } catch {
+        // Token invalid or missing — still clear cookies to break redirect loops
+      }
 
       void res.cookie("jid", "", {
         httpOnly: true,
