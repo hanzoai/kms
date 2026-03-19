@@ -31,14 +31,17 @@ jobs:
         name: Install `docker compose` for local simulations
         with:
           version: "2.14.2"
-      - name: 🔧 Setup Node 20
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
+      - name: 🔧 Setup Node 22
         uses: actions/setup-node@v3
         with:
-          node-version: "20"
-          cache: "npm"
-          cache-dependency-path: backend/package-lock.json
+          node-version: "22"
+          cache: "pnpm"
+          cache-dependency-path: backend/pnpm-lock.yaml
       - name: Install dependencies
-        run: npm install
+        run: pnpm install
         working-directory: backend
       - name: Start postgres and redis
         run: touch .env && docker compose -f docker-compose.dev.yml up -d db redis
