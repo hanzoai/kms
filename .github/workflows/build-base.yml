@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   build-base:
-    runs-on: hanzo-build
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
