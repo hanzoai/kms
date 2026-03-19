@@ -173,6 +173,7 @@ export enum EventType {
   CREATE_WEBHOOK = "create-webhook",
   UPDATE_WEBHOOK = "update-webhook",
   DELETE_WEBHOOK = "delete-webhook",
+  WEBHOOK_TRIGGERED = "webhook-triggered",
 
   // PKI / certificates
   CREATE_CA = "create-ca",
