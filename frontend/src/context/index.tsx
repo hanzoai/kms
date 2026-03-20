@@ -7,6 +7,7 @@ export {
   OrgPermissionGroupActions,
   OrgPermissionIdentityActions,
   OrgPermissionSubjects,
+  OrgPermissionSubOrgActions,
   useOrgPermission
 } from "./OrgPermissionContext";
 export { useProject } from "./ProjectContext";
