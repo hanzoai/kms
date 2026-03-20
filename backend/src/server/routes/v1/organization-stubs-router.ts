@@ -173,6 +173,15 @@ export const registerEeStubRoutes = async (server: FastifyZodProvider) => {
     onRequest: verifyAuth([AuthMode.JWT, AuthMode.IDENTITY_ACCESS_TOKEN]),
     handler: async () => ({ scimTokens: [] })
   });
+
+  // --- Identity Templates (EE) ---
+  server.route({
+    method: "GET",
+    url: "/identity-templates/search",
+    config: { rateLimit: readLimit },
+    onRequest: verifyAuth([AuthMode.JWT, AuthMode.IDENTITY_ACCESS_TOKEN]),
+    handler: async () => ({ identityTemplates: [], totalCount: 0 })
+  });
 };
 
 /**
@@ -222,6 +231,15 @@ export const registerOrganizationsStubsRouter = async (server: FastifyZodProvide
     config: { rateLimit: readLimit },
     onRequest: verifyAuth([AuthMode.JWT, AuthMode.IDENTITY_ACCESS_TOKEN]),
     handler: async () => ({ tax_ids: { data: [] } })
+  });
+
+  // --- Customer Portal Session (EE/Cloud) ---
+  server.route({
+    method: "POST",
+    url: "/:organizationId/customer-portal-session",
+    config: { rateLimit: readLimit },
+    onRequest: verifyAuth([AuthMode.JWT, AuthMode.IDENTITY_ACCESS_TOKEN]),
+    handler: async () => ({ url: "" })
   });
 };
 
