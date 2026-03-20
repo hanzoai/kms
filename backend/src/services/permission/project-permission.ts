@@ -202,6 +202,7 @@ export enum ProjectPermissionSub {
   Commits = "commits",
   // Secret sync
   SecretSync = "secret-sync",
+  SecretSyncs = "secret-sync", // alias used by secret-sync-service
   // App connections
   AppConnections = "app-connections",
   // Approval requests
