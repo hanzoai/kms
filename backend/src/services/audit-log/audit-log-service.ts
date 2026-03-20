@@ -39,5 +39,11 @@ export const auditLogServiceFactory = (deps?: TAuditLogServiceFactoryDep) => {
     }
   };
 
-  return { createAuditLog };
+  // Stub: listAuditLogs returns empty results for self-hosted builds
+  // without the EE audit log persistence layer.
+  const listAuditLogs = async (_opts: Record<string, unknown>) => {
+    return [] as { event: unknown; actor: unknown; createdAt: string }[];
+  };
+
+  return { createAuditLog, listAuditLogs };
 };
