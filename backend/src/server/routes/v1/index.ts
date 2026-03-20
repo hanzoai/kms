@@ -58,6 +58,7 @@ import { registerOrgIdentityRouter } from "./org-identity-router";
 import { registerOrganizationMembershipsRouter } from "./organization-memberships-router";
 import { registerOrganizationPlanRouter } from "./organization-plan-router";
 import { registerOrgRouter } from "./organization-router";
+import { registerOrganizationStubsRouter } from "./organization-stubs-router";
 import { registerPasswordRouter } from "./password-router";
 import { registerPkiAlertRouter } from "./pki-alert-router";
 import { registerPkiCollectionRouter } from "./pki-collection-router";
@@ -111,6 +112,7 @@ export const registerV1Routes = async (server: FastifyZodProvider) => {
       await orgRouter.register(registerOrgIdentityRouter);
       await orgRouter.register(registerIdentityOrgMembershipRouter);
       await orgRouter.register(registerGroupOrgMembershipRouter);
+      await orgRouter.register(registerOrganizationStubsRouter);
     },
     { prefix: "/organization" }
   );
