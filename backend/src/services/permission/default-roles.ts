@@ -14,6 +14,7 @@ import {
   OrgPermissionGroupActions,
   OrgPermissionIdentityActions,
   OrgPermissionGatewayActions,
+  OrgPermissionSecretShareAction,
   OrgPermissionSubjects,
   OrgPermissionSet
 } from "./org-permission";
@@ -151,7 +152,8 @@ const ADMIN_ORG_RULES: OrgRule[] = [
   { action: [OrgPermissionActions.Read, OrgPermissionActions.Create, OrgPermissionActions.Edit, OrgPermissionActions.Delete], subject: OrgPermissionSubjects.Kms },
   { action: [OrgPermissionActions.Read, OrgPermissionActions.Create, OrgPermissionActions.Edit, OrgPermissionActions.Delete], subject: OrgPermissionSubjects.AuditLogs },
   { action: [OrgPermissionActions.Read, OrgPermissionActions.Create, OrgPermissionActions.Edit, OrgPermissionActions.Delete], subject: OrgPermissionSubjects.AppConnections },
-  { action: [OrgPermissionGatewayActions.ListGateways, OrgPermissionGatewayActions.CreateGateways, OrgPermissionGatewayActions.DeleteGateways, OrgPermissionGatewayActions.EditGateways, OrgPermissionGatewayActions.AttachGateways], subject: OrgPermissionSubjects.Gateway }
+  { action: [OrgPermissionGatewayActions.ListGateways, OrgPermissionGatewayActions.CreateGateways, OrgPermissionGatewayActions.DeleteGateways, OrgPermissionGatewayActions.EditGateways, OrgPermissionGatewayActions.AttachGateways], subject: OrgPermissionSubjects.Gateway },
+  { action: [OrgPermissionSecretShareAction.ManageSettings], subject: OrgPermissionSubjects.SecretShare }
 ];
 
 const MEMBER_ORG_RULES: OrgRule[] = [
