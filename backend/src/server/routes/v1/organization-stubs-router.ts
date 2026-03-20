@@ -336,9 +336,50 @@ export const registerProjectStubsRouter = async (server: FastifyZodProvider) => 
 };
 
 /**
- * Stub routes for project-level EE endpoints (secret snapshots, PIT)
+ * Stub routes for project-level EE endpoints (roles, KMS, snapshots, PIT, workflow integrations)
  */
 export const registerProjectEeStubRoutes = async (server: FastifyZodProvider) => {
+  // --- Project Roles (EE: custom roles) ---
+  server.route({
+    method: "GET",
+    url: "/:projectId/roles",
+    config: { rateLimit: readLimit },
+    onRequest: verifyAuth([AuthMode.JWT, AuthMode.IDENTITY_ACCESS_TOKEN]),
+    handler: async () => ({
+      roles: [
+        { id: "admin", name: "Admin", slug: "admin", description: "Full access" },
+        { id: "member", name: "Member", slug: "member", description: "Limited access" },
+        { id: "viewer", name: "Viewer", slug: "viewer", description: "Read-only access" },
+        { id: "no-access", name: "No Access", slug: "no-access", description: "No access" }
+      ]
+    })
+  });
+
+  // --- Project KMS Config (EE: external KMS) ---
+  server.route({
+    method: "GET",
+    url: "/:projectId/kms",
+    config: { rateLimit: readLimit },
+    onRequest: verifyAuth([AuthMode.JWT, AuthMode.IDENTITY_ACCESS_TOKEN]),
+    handler: async () => ({
+      secretManagerKmsKey: {
+        id: "internal",
+        name: "Default KMS",
+        isExternal: false
+      }
+    })
+  });
+
+  // --- Project KMS Backup (EE) ---
+  server.route({
+    method: "GET",
+    url: "/:projectId/kms/backup",
+    config: { rateLimit: readLimit },
+    onRequest: verifyAuth([AuthMode.JWT, AuthMode.IDENTITY_ACCESS_TOKEN]),
+    handler: async () => ({ secretManager: "" })
+  });
+
+
   // --- Secret Snapshots Count (EE) ---
   server.route({
     method: "GET",
