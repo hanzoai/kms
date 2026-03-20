@@ -25,6 +25,7 @@ import {
   ProjectPermissionIdentityActions,
   ProjectPermissionGroupActions,
   ProjectPermissionSecretActions,
+  ProjectPermissionSecretSyncActions,
   ProjectPermissionCertificateActions,
   ProjectPermissionCertificateAuthorityActions,
   ProjectPermissionPkiSubscriberActions,
@@ -81,6 +82,7 @@ const ADMIN_PROJECT_RULES: ProjectRule[] = [
   // Commits / sync / app connections
   { action: [ProjectPermissionActions.Read], subject: ProjectPermissionSub.Commits },
   { action: [ProjectPermissionActions.Read, ProjectPermissionActions.Create, ProjectPermissionActions.Edit, ProjectPermissionActions.Delete], subject: ProjectPermissionSub.SecretSync },
+  { action: [ProjectPermissionSecretSyncActions.Read, ProjectPermissionSecretSyncActions.Create, ProjectPermissionSecretSyncActions.Edit, ProjectPermissionSecretSyncActions.Delete, ProjectPermissionSecretSyncActions.SyncSecrets, ProjectPermissionSecretSyncActions.ImportSecrets, ProjectPermissionSecretSyncActions.RemoveSecrets], subject: ProjectPermissionSub.SecretSyncs },
   { action: [ProjectPermissionActions.Read, ProjectPermissionActions.Create, ProjectPermissionActions.Edit, ProjectPermissionActions.Delete], subject: ProjectPermissionSub.AppConnections }
 ];
 
