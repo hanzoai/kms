@@ -93,3 +93,23 @@ jobs:
       deploy-deployment: kms
       deploy-namespace: hanzo
     secrets: inherit
+
+  # ── Notify universe for unified deploy tracking ────────────
+  notify-universe:
+    needs: docker
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger universe deploy
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.UNIVERSE_DEPLOY_TOKEN }}
+          repository: hanzoai/universe
+          event-type: service-built
+          client-payload: >-
+            {
+              "service": "kms",
+              "image": "ghcr.io/hanzoai/kms:main",
+              "sha": "${{ github.sha }}",
+              "repo": "${{ github.repository }}"
+            }
