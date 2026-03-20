@@ -145,11 +145,15 @@ export const registerExternalMigrationRouter = async (server: FastifyZodProvider
     },
     onRequest: verifyAuth([AuthMode.JWT]),
     handler: async (req) => {
-      const configs = await server.services.migration.getVaultExternalMigrationConfigs({
-        actor: req.permission
-      });
-
-      return { configs };
+      try {
+        const configs = await server.services.migration.getVaultExternalMigrationConfigs({
+          actor: req.permission
+        });
+        return { configs };
+      } catch {
+        // Self-hosted builds may lack gateway services or permissions — return empty
+        return { configs: [] };
+      }
     }
   });
 

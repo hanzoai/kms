@@ -345,7 +345,7 @@ export const registerDashboardRouter = async (server: FastifyZodProvider) => {
           totalCount: (totalImportCount ?? 0) + (totalFolderCount ?? 0)
         };
 
-      if (includeDynamicSecrets) {
+      if (includeDynamicSecrets && server.services.dynamicSecret) {
         // this is the unique count, ie duplicate secrets across envs only count as 1
         totalDynamicSecretCount = await server.services.dynamicSecret.getCountMultiEnv({
           actor: req.permission.type,
@@ -401,7 +401,7 @@ export const registerDashboardRouter = async (server: FastifyZodProvider) => {
         }
       }
 
-      if (includeSecretRotations) {
+      if (includeSecretRotations && server.services.secretRotationV2) {
         totalSecretRotationCount = await server.services.secretRotationV2.getDashboardSecretRotationCount(
           {
             projectId,
@@ -888,7 +888,7 @@ export const registerDashboardRouter = async (server: FastifyZodProvider) => {
         }
       }
 
-      if (includeSecretRotations) {
+      if (includeSecretRotations && server.services.secretRotationV2) {
         totalSecretRotationCount = await server.services.secretRotationV2.getDashboardSecretRotationCount(
           {
             projectId,
@@ -959,7 +959,7 @@ export const registerDashboardRouter = async (server: FastifyZodProvider) => {
       }
 
       try {
-        if (includeDynamicSecrets) {
+        if (includeDynamicSecrets && server.services.dynamicSecret) {
           totalDynamicSecretCount = await server.services.dynamicSecret.getDynamicSecretCount({
             actor: req.permission.type,
             actorId: req.permission.id,
@@ -1252,7 +1252,7 @@ export const registerDashboardRouter = async (server: FastifyZodProvider) => {
         req.permission
       );
 
-      const dynamicSecrets = searchHasTags
+      const dynamicSecrets = searchHasTags || !server.services.dynamicSecret
         ? []
         : await server.services.dynamicSecret.listDynamicSecretsByFolderIds(
             {
@@ -1263,7 +1263,7 @@ export const registerDashboardRouter = async (server: FastifyZodProvider) => {
             req.permission
           );
 
-      const secretRotations = searchHasTags
+      const secretRotations = searchHasTags || !server.services.secretRotationV2
         ? []
         : await server.services.secretRotationV2.getQuickSearchSecretRotations(
             {
