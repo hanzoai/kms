@@ -130,13 +130,17 @@ export const SelectOrganizationSection = () => {
             }
           }
         } else if (organization.orgAuthMethod === AuthMethod.OIDC) {
-          url = `/api/v1/sso/oidc/login?orgSlug=${organization.slug}${
-            callbackPort ? `&callbackPort=${callbackPort}` : ""
-          }`;
+          if (authToken.authMethod !== AuthMethod.OIDC) {
+            url = `/api/v1/sso/oidc/login?orgSlug=${organization.slug}${
+              callbackPort ? `&callbackPort=${callbackPort}` : ""
+            }`;
+          }
         } else if (organization.orgAuthMethod === AuthMethod.SAML) {
-          url = `/api/v1/sso/redirect/saml2/organizations/${organization.slug}`;
-          if (callbackPort) {
-            url += `?callback_port=${callbackPort}`;
+          if (authToken.authMethod !== AuthMethod.SAML) {
+            url = `/api/v1/sso/redirect/saml2/organizations/${organization.slug}`;
+            if (callbackPort) {
+              url += `?callback_port=${callbackPort}`;
+            }
           }
         }
 
