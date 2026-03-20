@@ -1681,11 +1681,11 @@ export const secretServiceFactory = ({
 
     const policy =
       actor === ActorType.USER && type === SecretType.Shared
-        ? await secretApprovalPolicyService!.getSecretApprovalPolicy(projectId, environment, secretPath)
+        ? await secretApprovalPolicyService?.getSecretApprovalPolicy(projectId, environment, secretPath)
         : undefined;
     if (shouldUseSecretV2Bridge) {
       if (policy) {
-        const approval = await secretApprovalRequestService!.generateSecretApprovalRequestV2Bridge({
+        const approval = await secretApprovalRequestService?.generateSecretApprovalRequestV2Bridge({
           policy,
           secretPath,
           environment,
@@ -1759,7 +1759,7 @@ export const secretServiceFactory = ({
         keySize: SymmetricKeySize.Bits128
       });
     if (policy) {
-      const approval = await secretApprovalRequestService!.generateSecretApprovalRequest({
+      const approval = await secretApprovalRequestService?.generateSecretApprovalRequest({
         policy,
         secretPath,
         environment,
@@ -1861,11 +1861,11 @@ export const secretServiceFactory = ({
 
     const policy =
       actor === ActorType.USER && type === SecretType.Shared
-        ? await secretApprovalPolicyService!.getSecretApprovalPolicy(projectId, environment, secretPath)
+        ? await secretApprovalPolicyService?.getSecretApprovalPolicy(projectId, environment, secretPath)
         : undefined;
     if (shouldUseSecretV2Bridge) {
       if (policy) {
-        const approval = await secretApprovalRequestService!.generateSecretApprovalRequestV2Bridge({
+        const approval = await secretApprovalRequestService?.generateSecretApprovalRequestV2Bridge({
           policy,
           secretPath,
           environment,
@@ -1959,7 +1959,7 @@ export const secretServiceFactory = ({
       });
 
     if (policy) {
-      const approval = await secretApprovalRequestService!.generateSecretApprovalRequest({
+      const approval = await secretApprovalRequestService?.generateSecretApprovalRequest({
         policy,
         secretPath,
         environment,
@@ -2038,11 +2038,11 @@ export const secretServiceFactory = ({
     const { botKey, shouldUseSecretV2Bridge } = await projectBotService.getBotKey(projectId);
     const policy =
       actor === ActorType.USER && type === SecretType.Shared
-        ? await secretApprovalPolicyService!.getSecretApprovalPolicy(projectId, environment, secretPath)
+        ? await secretApprovalPolicyService?.getSecretApprovalPolicy(projectId, environment, secretPath)
         : undefined;
     if (shouldUseSecretV2Bridge) {
       if (policy) {
-        const approval = await secretApprovalRequestService!.generateSecretApprovalRequestV2Bridge({
+        const approval = await secretApprovalRequestService?.generateSecretApprovalRequestV2Bridge({
           policy,
           actorAuthMethod,
           actorOrgId,
@@ -2080,7 +2080,7 @@ export const secretServiceFactory = ({
         name: "bot_not_found_error"
       });
     if (policy) {
-      const approval = await secretApprovalRequestService!.generateSecretApprovalRequest({
+      const approval = await secretApprovalRequestService?.generateSecretApprovalRequest({
         policy,
         actorAuthMethod,
         actorOrgId,
@@ -2139,7 +2139,7 @@ export const secretServiceFactory = ({
     const { botKey, shouldUseSecretV2Bridge } = await projectBotService.getBotKey(projectId);
     const policy =
       actor === ActorType.USER
-        ? await secretApprovalPolicyService!.getSecretApprovalPolicy(projectId, environment, secretPath)
+        ? await secretApprovalPolicyService?.getSecretApprovalPolicy(projectId, environment, secretPath)
         : undefined;
 
     if (shouldUseSecretV2Bridge) {
@@ -2159,7 +2159,7 @@ export const secretServiceFactory = ({
       }
 
       if (policy) {
-        const approval = await secretApprovalRequestService!.generateSecretApprovalRequestV2Bridge({
+        const approval = await secretApprovalRequestService?.generateSecretApprovalRequestV2Bridge({
           policy,
           secretPath,
           environment,
@@ -2243,7 +2243,7 @@ export const secretServiceFactory = ({
       }
     );
     if (policy) {
-      const approval = await secretApprovalRequestService!.generateSecretApprovalRequest({
+      const approval = await secretApprovalRequestService?.generateSecretApprovalRequest({
         policy,
         secretPath,
         environment,
@@ -2303,7 +2303,7 @@ export const secretServiceFactory = ({
     const { botKey, shouldUseSecretV2Bridge } = await projectBotService.getBotKey(projectId);
     const policy =
       actor === ActorType.USER
-        ? await secretApprovalPolicyService!.getSecretApprovalPolicy(projectId, environment, secretPath)
+        ? await secretApprovalPolicyService?.getSecretApprovalPolicy(projectId, environment, secretPath)
         : undefined;
     if (shouldUseSecretV2Bridge) {
       const project = await projectDAL.findById(projectId);
@@ -2322,7 +2322,7 @@ export const secretServiceFactory = ({
       }
 
       if (policy) {
-        const approval = await secretApprovalRequestService!.generateSecretApprovalRequestV2Bridge({
+        const approval = await secretApprovalRequestService?.generateSecretApprovalRequestV2Bridge({
           policy,
           secretPath,
           environment,
@@ -2444,7 +2444,7 @@ export const secretServiceFactory = ({
       }
     );
     if (policy) {
-      const approval = await secretApprovalRequestService!.generateSecretApprovalRequest({
+      const approval = await secretApprovalRequestService?.generateSecretApprovalRequest({
         policy,
         secretPath,
         environment,
@@ -2503,11 +2503,11 @@ export const secretServiceFactory = ({
     const { botKey, shouldUseSecretV2Bridge } = await projectBotService.getBotKey(projectId);
     const policy =
       actor === ActorType.USER
-        ? await secretApprovalPolicyService!.getSecretApprovalPolicy(projectId, environment, secretPath)
+        ? await secretApprovalPolicyService?.getSecretApprovalPolicy(projectId, environment, secretPath)
         : undefined;
     if (shouldUseSecretV2Bridge) {
       if (policy) {
-        const approval = await secretApprovalRequestService!.generateSecretApprovalRequestV2Bridge({
+        const approval = await secretApprovalRequestService?.generateSecretApprovalRequestV2Bridge({
           policy,
           actorAuthMethod,
           actorOrgId,
@@ -2542,7 +2542,7 @@ export const secretServiceFactory = ({
       });
 
     if (policy) {
-      const approval = await secretApprovalRequestService!.generateSecretApprovalRequest({
+      const approval = await secretApprovalRequestService?.generateSecretApprovalRequest({
         policy,
         actorAuthMethod,
         actorOrgId,
@@ -3204,7 +3204,7 @@ export const secretServiceFactory = ({
           message: "Selected secrets already exist in the destination."
         });
       }
-      const destinationFolderPolicy = await secretApprovalPolicyService!.getSecretApprovalPolicy(
+      const destinationFolderPolicy = await secretApprovalPolicyService?.getSecretApprovalPolicy(
         projectId,
         destinationFolder.environment.slug,
         destinationFolder.path
@@ -3219,7 +3219,7 @@ export const secretServiceFactory = ({
           tx
         );
 
-        const approvalRequestDoc = await secretApprovalRequestDAL!.create(
+        const approvalRequestDoc = await secretApprovalRequestDAL?.create(
           {
             folderId: destinationFolder.id,
             slug: alphaNumericNanoId(),
@@ -3258,7 +3258,7 @@ export const secretServiceFactory = ({
               : {})
           };
         });
-        await secretApprovalRequestSecretDAL!.insertMany(commits, tx);
+        await secretApprovalRequestSecretDAL?.insertMany(commits, tx);
       } else {
         // apply changes directly
         if (locallyCreatedSecrets.length) {
@@ -3334,7 +3334,7 @@ export const secretServiceFactory = ({
       const sourceSecretsGroupByBlindIndex = groupBy(sourceSecrets, (i) => i.secretBlindIndex as string);
       const locallyDeletedSecrets = decryptedSourceSecrets.map((el) => ({ ...el, operation: SecretOperations.Delete }));
 
-      const sourceFolderPolicy = await secretApprovalPolicyService!.getSecretApprovalPolicy(
+      const sourceFolderPolicy = await secretApprovalPolicyService?.getSecretApprovalPolicy(
         projectId,
         sourceFolder.environment.slug,
         sourceFolder.path
@@ -3344,7 +3344,7 @@ export const secretServiceFactory = ({
         // if secret approval policy exists for source, we create the secret approval request
         const localSecretsIds = decryptedSourceSecrets.map(({ id }) => id);
         const latestSecretVersions = await secretVersionDAL.findLatestVersionMany(sourceFolder.id, localSecretsIds, tx);
-        const approvalRequestDoc = await secretApprovalRequestDAL!.create(
+        const approvalRequestDoc = await secretApprovalRequestDAL?.create(
           {
             folderId: sourceFolder.id,
             slug: alphaNumericNanoId(),
@@ -3382,7 +3382,7 @@ export const secretServiceFactory = ({
           };
         });
 
-        await secretApprovalRequestSecretDAL!.insertMany(commits, tx);
+        await secretApprovalRequestSecretDAL?.insertMany(commits, tx);
       } else {
         // if no secret approval policy is present, we delete directly.
         await secretDAL.delete(

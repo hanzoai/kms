@@ -227,6 +227,24 @@ export const registerEeStubRoutes = async (server: FastifyZodProvider) => {
     onRequest: verifyAuth([AuthMode.JWT, AuthMode.IDENTITY_ACCESS_TOKEN]),
     handler: async () => ({ secretRotations: [] })
   });
+
+  // --- PIT Commits Count (EE) ---
+  server.route({
+    method: "GET",
+    url: "/pit/commits/count",
+    config: { rateLimit: readLimit },
+    onRequest: verifyAuth([AuthMode.JWT, AuthMode.IDENTITY_ACCESS_TOKEN]),
+    handler: async () => ({ count: 0, folderId: "" })
+  });
+
+  // --- PIT Commits (EE) ---
+  server.route({
+    method: "GET",
+    url: "/pit/commits",
+    config: { rateLimit: readLimit },
+    onRequest: verifyAuth([AuthMode.JWT, AuthMode.IDENTITY_ACCESS_TOKEN]),
+    handler: async () => ({ commits: [], total: 0, hasMore: false })
+  });
 };
 
 /**
@@ -318,7 +336,39 @@ export const registerProjectStubsRouter = async (server: FastifyZodProvider) => 
 };
 
 /**
- * Stub routes for EE v2 endpoints (gateways)
+ * Stub routes for project-level EE endpoints (secret snapshots, PIT)
+ */
+export const registerProjectEeStubRoutes = async (server: FastifyZodProvider) => {
+  // --- Secret Snapshots Count (EE) ---
+  server.route({
+    method: "GET",
+    url: "/:projectId/secret-snapshots/count",
+    config: { rateLimit: readLimit },
+    onRequest: verifyAuth([AuthMode.JWT, AuthMode.IDENTITY_ACCESS_TOKEN]),
+    handler: async () => ({ count: 0 })
+  });
+
+  // --- PIT Commits Count (EE) ---
+  server.route({
+    method: "GET",
+    url: "/:projectId/pit/commits/count",
+    config: { rateLimit: readLimit },
+    onRequest: verifyAuth([AuthMode.JWT, AuthMode.IDENTITY_ACCESS_TOKEN]),
+    handler: async () => ({ count: 0 })
+  });
+
+  // --- PIT Commits (EE) ---
+  server.route({
+    method: "GET",
+    url: "/:projectId/pit/commits",
+    config: { rateLimit: readLimit },
+    onRequest: verifyAuth([AuthMode.JWT, AuthMode.IDENTITY_ACCESS_TOKEN]),
+    handler: async () => ({ commits: [] })
+  });
+};
+
+/**
+ * Stub routes for EE v2 endpoints (gateways, secret approvals)
  */
 export const registerV2EeStubRoutes = async (server: FastifyZodProvider) => {
   server.route({
@@ -327,5 +377,41 @@ export const registerV2EeStubRoutes = async (server: FastifyZodProvider) => {
     config: { rateLimit: readLimit },
     onRequest: verifyAuth([AuthMode.JWT, AuthMode.IDENTITY_ACCESS_TOKEN]),
     handler: async () => ({ gateways: [] })
+  });
+
+  // --- Secret Approval Policies (EE) ---
+  server.route({
+    method: "GET",
+    url: "/secret-approvals",
+    config: { rateLimit: readLimit },
+    onRequest: verifyAuth([AuthMode.JWT, AuthMode.IDENTITY_ACCESS_TOKEN]),
+    handler: async () => ({ approvals: [] })
+  });
+
+  // --- Secret Approvals Board (EE) ---
+  server.route({
+    method: "GET",
+    url: "/secret-approvals/board",
+    config: { rateLimit: readLimit },
+    onRequest: verifyAuth([AuthMode.JWT, AuthMode.IDENTITY_ACCESS_TOKEN]),
+    handler: async () => ({ policy: null })
+  });
+
+  // --- Secret Approval Requests (EE) ---
+  server.route({
+    method: "GET",
+    url: "/secret-approval-requests",
+    config: { rateLimit: readLimit },
+    onRequest: verifyAuth([AuthMode.JWT, AuthMode.IDENTITY_ACCESS_TOKEN]),
+    handler: async () => ({ approvals: [] })
+  });
+
+  // --- Secret Approval Requests Count (EE) ---
+  server.route({
+    method: "GET",
+    url: "/secret-approval-requests/count",
+    config: { rateLimit: readLimit },
+    onRequest: verifyAuth([AuthMode.JWT, AuthMode.IDENTITY_ACCESS_TOKEN]),
+    handler: async () => ({ approvals: { open: 0, closed: 0 } })
   });
 };

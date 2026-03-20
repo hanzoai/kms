@@ -12,6 +12,7 @@ import { ActionProjectType, OrgMembershipRole, ProjectMembershipRole } from "@ap
 import { conditionsMatcher } from "@app/lib/casl";
 import { logger } from "@app/lib/logger";
 import { ActorAuthMethod, ActorType } from "@app/services/auth/auth-type";
+import { TProjectDALFactory } from "@app/services/project/project-dal";
 import { TServiceTokenDALFactory } from "@app/services/service-token/service-token-dal";
 
 import { TPermissionDALFactory } from "./permission-dal";
