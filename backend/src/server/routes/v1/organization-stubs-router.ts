@@ -210,6 +210,15 @@ export const registerEeStubRoutes = async (server: FastifyZodProvider) => {
     handler: async () => ({ count: { open: 0, closed: 0 } })
   });
 
+  // --- Relays (EE) ---
+  server.route({
+    method: "GET",
+    url: "/relays",
+    config: { rateLimit: readLimit },
+    onRequest: verifyAuth([AuthMode.JWT, AuthMode.IDENTITY_ACCESS_TOKEN]),
+    handler: async () => ({ relays: [] })
+  });
+
   // --- Secret Rotations (EE) ---
   server.route({
     method: "GET",
