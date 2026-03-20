@@ -1,10 +1,6 @@
-import { packRules } from "@casl/ability/extra";
-
 import { readLimit } from "@app/server/config/rateLimiter";
 import { verifyAuth } from "@app/server/plugins/auth/verify-auth";
 import { AuthMode } from "@app/services/auth/auth-type";
-
-import type { FastifyZodProvider } from "@app/server/plugins/fastify-zod";
 
 /**
  * Stub routes for EE endpoints that the frontend calls but are missing
@@ -19,22 +15,22 @@ export const registerOrganizationStubsRouter = async (server: FastifyZodProvider
     url: "/permissions",
     config: { rateLimit: readLimit },
     onRequest: verifyAuth([AuthMode.JWT]),
-    handler: async (req) => {
-      // Pack the admin rule using CASL's packRules format
-      // packRules converts {action, subject, conditions, inverted} objects to tuple arrays
-      const packedPermissions = packRules([
-        { action: "manage", subject: "all" }
-      ]);
+    handler: async () => {
+      // CASL packRules format: each rule is a tuple [action, subject, conditions?, inverted?]
+      // "manage" + "all" grants full admin access
+      const packedPermissions = [["manage", "all"]];
 
       return {
         permissions: packedPermissions,
-        membership: {
-          id: "self-hosted-membership",
-          role: "admin",
-          roles: [{ role: "admin" }],
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
+        memberships: [
+          {
+            id: "self-hosted-membership",
+            role: "admin",
+            roles: [{ role: "admin" }],
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          }
+        ]
       };
     }
   });
