@@ -1047,7 +1047,11 @@ export const authLoginServiceFactory = ({
         isGhost: false
       });
 
-      if (authMethod === AuthMethod.GITHUB && serverCfg.defaultAuthOrgId && !appCfg.isCloud) {
+      if (
+        (authMethod === AuthMethod.GITHUB || authMethod === AuthMethod.OIDC) &&
+        serverCfg.defaultAuthOrgId &&
+        !appCfg.isCloud
+      ) {
         const defaultOrg = await orgDAL.findOrgById(serverCfg.defaultAuthOrgId);
         if (!defaultOrg) {
           throw new BadRequestError({
@@ -1098,6 +1102,51 @@ export const authLoginServiceFactory = ({
           firstName: !user.isAccepted ? firstName : undefined,
           lastName: !user.isAccepted ? lastName : undefined
         });
+      }
+
+      // For existing SSO/OIDC users, ensure they have org membership in the default org
+      if (
+        (authMethod === AuthMethod.OIDC || authMethod === AuthMethod.GITHUB) &&
+        serverCfg.defaultAuthOrgId &&
+        !appCfg.isCloud
+      ) {
+        const defaultOrg = await orgDAL.findOrgById(serverCfg.defaultAuthOrgId);
+        if (defaultOrg) {
+          const existingMembership = await orgDAL.findEffectiveOrgMembership({
+            actorType: ActorType.USER,
+            actorId: user.id,
+            orgId: defaultOrg.id,
+            acceptAnyStatus: true
+          });
+
+          if (!existingMembership) {
+            const { role, roleId } = await getDefaultOrgMembershipRole(defaultOrg.defaultMembershipRole);
+            orgId = defaultOrg.id;
+            orgName = defaultOrg.name;
+
+            await membershipUserDAL.transaction(async (tx) => {
+              const membership = await membershipUserDAL.create(
+                {
+                  actorUserId: user?.id,
+                  inviteEmail: email,
+                  scopeOrgId: orgId,
+                  scope: AccessScope.Organization,
+                  status: OrgMembershipStatus.Accepted,
+                  isActive: true
+                },
+                tx
+              );
+              await membershipRoleDAL.create(
+                {
+                  membershipId: membership.id,
+                  role,
+                  customRoleId: roleId
+                },
+                tx
+              );
+            });
+          }
+        }
       }
     }
 
