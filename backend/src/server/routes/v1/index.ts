@@ -61,7 +61,8 @@ import { registerOrgRouter } from "./organization-router";
 import {
   registerEeStubRoutes,
   registerOrganizationsStubsRouter,
-  registerOrganizationStubsRouter
+  registerOrganizationStubsRouter,
+  registerProjectStubsRouter
 } from "./organization-stubs-router";
 import { registerPasswordRouter } from "./password-router";
 import { registerPkiAlertRouter } from "./pki-alert-router";
@@ -163,6 +164,7 @@ export const registerV1Routes = async (server: FastifyZodProvider) => {
       await projectRouter.register(registerSecretTagRouter);
       await projectRouter.register(registerGroupProjectRouter);
       await projectRouter.register(registerDeprecatedIdentityProjectMembershipRouter);
+      await projectRouter.register(registerProjectStubsRouter);
     },
     { prefix: "/projects" }
   );

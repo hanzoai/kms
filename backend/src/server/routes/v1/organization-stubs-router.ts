@@ -244,6 +244,32 @@ export const registerOrganizationsStubsRouter = async (server: FastifyZodProvide
 };
 
 /**
+ * Stub routes for project-level EE endpoints (e.g. project permissions)
+ */
+export const registerProjectStubsRouter = async (server: FastifyZodProvider) => {
+  // GET /projects/:projectId/permissions — returns full admin permissions (CASL packed format)
+  server.route({
+    method: "GET",
+    url: "/:projectId/permissions",
+    config: { rateLimit: readLimit },
+    onRequest: verifyAuth([AuthMode.JWT, AuthMode.IDENTITY_ACCESS_TOKEN]),
+    handler: async () => {
+      const packedPermissions = [["manage", "all"]];
+      return {
+        permissions: packedPermissions,
+        membership: {
+          id: "self-hosted-membership",
+          role: "admin",
+          roles: [{ role: "admin" }],
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        }
+      };
+    }
+  });
+};
+
+/**
  * Stub routes for EE v2 endpoints (gateways)
  */
 export const registerV2EeStubRoutes = async (server: FastifyZodProvider) => {
