@@ -249,27 +249,56 @@ export const permissionServiceFactory = ({
 
   /**
    * Builds a CASL ability for the given actor in the given org.
+   * Accepts either an object with named fields (preferred) or positional parameters (legacy).
    */
   const getOrgPermission = async (
-    actorId: string,
-    actor: ActorType,
-    orgId: string,
-    _actorAuthMethod: ActorAuthMethod,
-    _actorOrgId: string
-  ): Promise<{ permission: OrgAbility; membership: unknown }> => {
+    actorIdOrOpts: string | {
+      actorId: string;
+      actor: ActorType;
+      orgId: string;
+      actorAuthMethod?: ActorAuthMethod;
+      actorOrgId?: string;
+      scope?: unknown;
+    },
+    actorOrUndefined?: ActorType,
+    orgIdOrUndefined?: string,
+    _actorAuthMethod?: ActorAuthMethod,
+    _actorOrgId?: string
+  ): Promise<{ permission: OrgAbility; membership: unknown; hasRole: (role: string) => boolean }> => {
+    // Normalize: support both object and positional calling conventions
+    let actorId: string;
+    let actor: ActorType;
+    let orgId: string;
+
+    if (typeof actorIdOrOpts === "object" && actorIdOrOpts !== null) {
+      actorId = actorIdOrOpts.actorId;
+      actor = actorIdOrOpts.actor;
+      orgId = actorIdOrOpts.orgId;
+    } else {
+      actorId = actorIdOrOpts;
+      actor = actorOrUndefined!;
+      orgId = orgIdOrUndefined!;
+    }
+
     let combinedRules: RawRuleOf<OrgAbility>[] = [];
     let membership: unknown = null;
+    const rolesSeen: string[] = [];
 
     if (actor === ActorType.USER) {
       const rows = await permissionDAL.getOrgPermission(actorId, orgId);
       membership = rows[0] ?? null;
 
       if (rows.length === 0) {
-        return { permission: buildOrgAbility([]), membership: null };
+        return {
+          permission: buildOrgAbility([]),
+          membership: null,
+          hasRole: () => false
+        };
       }
 
       for (const row of rows) {
         const roleSlug = row.roleSlug;
+        rolesSeen.push(roleSlug);
         if (roleSlug === OrgMembershipRole.Custom) {
           if (row.permissions) {
             try {
@@ -289,11 +318,16 @@ export const permissionServiceFactory = ({
       membership = rows[0] ?? null;
 
       if (rows.length === 0) {
-        return { permission: buildOrgAbility([]), membership: null };
+        return {
+          permission: buildOrgAbility([]),
+          membership: null,
+          hasRole: () => false
+        };
       }
 
       for (const row of rows) {
         const roleSlug = row.roleSlug;
+        rolesSeen.push(roleSlug);
         if (roleSlug === OrgMembershipRole.Custom) {
           if (row.permissions) {
             try {
@@ -310,7 +344,9 @@ export const permissionServiceFactory = ({
       }
     }
 
-    return { permission: buildOrgAbility(combinedRules), membership };
+    const hasRole = (role: string) => rolesSeen.includes(role);
+
+    return { permission: buildOrgAbility(combinedRules), membership, hasRole };
   };
 
   /**
