@@ -182,6 +182,42 @@ export const registerEeStubRoutes = async (server: FastifyZodProvider) => {
     onRequest: verifyAuth([AuthMode.JWT, AuthMode.IDENTITY_ACCESS_TOKEN]),
     handler: async () => ({ identityTemplates: [], totalCount: 0 })
   });
+
+  // --- Secret Approval Requests (EE) ---
+  server.route({
+    method: "GET",
+    url: "/secret-approval-requests/count",
+    config: { rateLimit: readLimit },
+    onRequest: verifyAuth([AuthMode.JWT, AuthMode.IDENTITY_ACCESS_TOKEN]),
+    handler: async () => ({ approvals: { open: 0, closed: 0 } })
+  });
+
+  // --- Access Approval Policies (EE) ---
+  server.route({
+    method: "GET",
+    url: "/access-approvals/policies",
+    config: { rateLimit: readLimit },
+    onRequest: verifyAuth([AuthMode.JWT, AuthMode.IDENTITY_ACCESS_TOKEN]),
+    handler: async () => ({ data: { policies: [] } })
+  });
+
+  // --- Access Approval Requests Count (EE) ---
+  server.route({
+    method: "GET",
+    url: "/access-approvals/requests/count",
+    config: { rateLimit: readLimit },
+    onRequest: verifyAuth([AuthMode.JWT, AuthMode.IDENTITY_ACCESS_TOKEN]),
+    handler: async () => ({ count: { open: 0, closed: 0 } })
+  });
+
+  // --- Secret Rotations (EE) ---
+  server.route({
+    method: "GET",
+    url: "/secret-rotations",
+    config: { rateLimit: readLimit },
+    onRequest: verifyAuth([AuthMode.JWT, AuthMode.IDENTITY_ACCESS_TOKEN]),
+    handler: async () => ({ secretRotations: [] })
+  });
 };
 
 /**
