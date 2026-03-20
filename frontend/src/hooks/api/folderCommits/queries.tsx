@@ -262,7 +262,7 @@ export const useGetFolderCommitHistory = ({
     enabled: Boolean(projectId && environment),
     select: (data) => {
       return (data?.pages ?? [])
-        ?.map((page) => page.commits)
+        ?.map((page) => page.commits ?? [])
         .flat()
         .reduce(
           (acc, commit) => {

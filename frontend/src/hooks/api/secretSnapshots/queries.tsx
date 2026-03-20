@@ -71,7 +71,7 @@ export const useGetSnapshotSecrets = ({ snapshotId }: TSnapshotDataProps) =>
     select: (data) => {
       const sharedSecrets: SecretV3RawSanitized[] = [];
       const personalSecrets: Record<string, { id: string; value: string }> = {};
-      data.secretVersions.forEach((secretVersion) => {
+      (data.secretVersions ?? []).forEach((secretVersion) => {
         const decryptedSecret = {
           id: secretVersion.secretId,
           env: data.environment.slug,
