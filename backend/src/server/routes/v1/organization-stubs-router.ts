@@ -92,7 +92,7 @@ export const registerEeStubRoutes = async (server: FastifyZodProvider) => {
     url: "/sub-organizations",
     config: { rateLimit: readLimit },
     onRequest: verifyAuth([AuthMode.JWT, AuthMode.IDENTITY_ACCESS_TOKEN]),
-    handler: async () => ({ subOrganizations: [] })
+    handler: async () => ({ organizations: [], totalCount: 0 })
   });
 
   // --- GitHub Org Sync Config (EE) ---
@@ -256,13 +256,16 @@ export const registerProjectStubsRouter = async (server: FastifyZodProvider) => 
     handler: async () => {
       const packedPermissions = [["manage", "all"]];
       return {
-        permissions: packedPermissions,
-        membership: {
-          id: "self-hosted-membership",
-          role: "admin",
-          roles: [{ role: "admin" }],
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
+        data: {
+          permissions: packedPermissions,
+          memberships: [
+            {
+              id: "self-hosted-membership",
+              roles: [{ role: "admin" }],
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
+            }
+          ]
         }
       };
     }
