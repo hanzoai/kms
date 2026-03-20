@@ -1,3 +1,4 @@
+import { registerV2EeStubRoutes } from "@app/server/routes/v1/organization-stubs-router";
 import { registerCaRouter } from "./certificate-authority-router";
 import { registerDeprecatedGroupProjectRouter } from "./deprecated-group-project-router";
 import { registerDeprecatedIdentityProjectRouter } from "./deprecated-identity-project-router";
@@ -39,6 +40,7 @@ export const registerV2Routes = async (server: FastifyZodProvider) => {
     { prefix: "/organizations" }
   );
 
+  await server.register(registerV2EeStubRoutes);
   await server.register(registerSecretFolderRouter, { prefix: "/folders" });
   await server.register(registerSecretImportRouter, { prefix: "/secret-imports" });
 
