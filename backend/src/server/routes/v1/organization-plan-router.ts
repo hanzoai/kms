@@ -140,6 +140,3 @@ export const registerOrganizationPlanRouter = async (server: FastifyZodProvider)
     }
   });
 };
-
-// Need the type import for the server parameter
-import type { FastifyZodProvider } from "@app/server/plugins/fastify-zod";
