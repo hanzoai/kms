@@ -68,6 +68,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     python3 make g++ \
     unixodbc freetds-bin unixodbc-dev libc-dev freetds-dev \
+    && ln -sf /usr/bin/python3 /usr/bin/python \
     && rm -rf /var/lib/apt/lists/*
 
 RUN groupadd --system --gid 1001 nodejs \
@@ -81,12 +82,12 @@ RUN node -e "\
     if(p[s])for(const[k,v]of Object.entries(p[s]))\
       if(typeof v==='string'&&v.startsWith('file:'))p[s][k]='*';\
   require('fs').writeFileSync('package.json',JSON.stringify(p,null,2))"
-RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
-    pnpm install --no-frozen-lockfile
+# Use npm for install (pnpm blocks native module build scripts)
+RUN --mount=type=cache,target=/root/.npm \
+    npm install
 
 COPY /backend .
 COPY --chown=non-root-user:nodejs standalone-entrypoint.sh standalone-entrypoint.sh
-RUN pnpm add -g tsconfig-paths
 ENV NODE_OPTIONS="--max-old-space-size=8192"
 RUN pnpm run build
 
@@ -103,16 +104,7 @@ RUN apt-get update && apt-get install -y \
 RUN printf "[FreeTDS]\nDescription = FreeTDS Driver\nDriver = /usr/lib/x86_64-linux-gnu/odbc/libtdsodbc.so\nSetup = /usr/lib/x86_64-linux-gnu/odbc/libtdsS.so\nFileUsage = 1\n" > /etc/odbcinst.ini
 
 COPY --from=backend-build /app .
-RUN rm -rf ./node_modules ./bdd ./e2e-test
-# Strip file: deps again (package.json from build stage still has them)
-RUN node -e "\
-  const p=JSON.parse(require('fs').readFileSync('package.json','utf8'));\
-  for(const s of['dependencies','devDependencies','optionalDependencies'])\
-    if(p[s])for(const[k,v]of Object.entries(p[s]))\
-      if(typeof v==='string'&&v.startsWith('file:'))p[s][k]='*';\
-  require('fs').writeFileSync('package.json',JSON.stringify(p,null,2))"
-RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
-    pnpm install --prod --no-frozen-lockfile
+RUN rm -rf ./bdd ./e2e-test
 
 RUN mkdir frontend-build
 
