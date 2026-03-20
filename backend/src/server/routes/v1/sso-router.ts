@@ -79,13 +79,15 @@ export const registerOauthMiddlewares = (server: FastifyZodProvider) => {
             const lastName = nameParts.slice(1).join(" ") || "";
 
             const callbackPort = req.session.get("callbackPort");
+            const orgSlug = req.session.get("orgSlug");
 
             const { isUserCompleted, providerAuthToken } = await server.services.login.oauth2Login({
               email,
               firstName,
               lastName,
               authMethod: AuthMethod.OIDC,
-              callbackPort
+              callbackPort,
+              orgSlug
             });
 
             done(null, { isUserCompleted, providerAuthToken });
@@ -435,10 +437,13 @@ export const registerSsoRouter = async (server: FastifyZodProvider) => {
     },
     preValidation: [
       async (req, res) => {
-        const { callbackPort } = req.query;
+        const { callbackPort, orgSlug } = req.query;
         await req.session.regenerate();
         if (callbackPort) {
           req.session.set("callbackPort", callbackPort);
+        }
+        if (orgSlug) {
+          req.session.set("orgSlug", orgSlug);
         }
         return (
           passport.authenticate("iam", {
