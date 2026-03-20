@@ -62,6 +62,7 @@ import {
   registerEeStubRoutes,
   registerOrganizationsStubsRouter,
   registerOrganizationStubsRouter,
+  registerProjectEeStubRoutes,
   registerProjectStubsRouter
 } from "./organization-stubs-router";
 import { registerPasswordRouter } from "./password-router";
@@ -165,6 +166,7 @@ export const registerV1Routes = async (server: FastifyZodProvider) => {
       await projectRouter.register(registerGroupProjectRouter);
       await projectRouter.register(registerDeprecatedIdentityProjectMembershipRouter);
       await projectRouter.register(registerProjectStubsRouter);
+      await projectRouter.register(registerProjectEeStubRoutes);
     },
     { prefix: "/projects" }
   );
