@@ -56,6 +56,7 @@ import { registerNotificationRouter } from "./notification-router";
 import { registerOrgAdminRouter } from "./org-admin-router";
 import { registerOrgIdentityRouter } from "./org-identity-router";
 import { registerOrganizationMembershipsRouter } from "./organization-memberships-router";
+import { registerOrganizationPlanRouter } from "./organization-plan-router";
 import { registerOrgRouter } from "./organization-router";
 import { registerPasswordRouter } from "./password-router";
 import { registerPkiAlertRouter } from "./pki-alert-router";
@@ -114,6 +115,7 @@ export const registerV1Routes = async (server: FastifyZodProvider) => {
     { prefix: "/organization" }
   );
   await server.register(registerOrganizationMembershipsRouter, { prefix: "/organizations" });
+  await server.register(registerOrganizationPlanRouter, { prefix: "/organizations" });
   await server.register(registerAdminRouter, { prefix: "/admin" });
   await server.register(registerOrgAdminRouter, { prefix: "/organization-admin" });
   await server.register(registerUserRouter, { prefix: "/user" });
