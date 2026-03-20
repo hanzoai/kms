@@ -192,6 +192,24 @@ export const registerEeStubRoutes = async (server: FastifyZodProvider) => {
     handler: async () => ({ approvals: { open: 0, closed: 0 } })
   });
 
+  // --- Secret Approval Requests List (EE) ---
+  server.route({
+    method: "GET",
+    url: "/secret-approval-requests",
+    config: { rateLimit: readLimit },
+    onRequest: verifyAuth([AuthMode.JWT, AuthMode.IDENTITY_ACCESS_TOKEN]),
+    handler: async () => ({ approvals: [], totalCount: 0 })
+  });
+
+  // --- Access Approval Requests List (EE) ---
+  server.route({
+    method: "GET",
+    url: "/access-approvals/requests",
+    config: { rateLimit: readLimit },
+    onRequest: verifyAuth([AuthMode.JWT, AuthMode.IDENTITY_ACCESS_TOKEN]),
+    handler: async () => ({ requests: [] })
+  });
+
   // --- Access Approval Policies (EE) ---
   server.route({
     method: "GET",
