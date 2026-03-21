@@ -400,23 +400,21 @@ export const Navbar = () => {
     if (currentOrg?.id === org.id) return;
 
     if (org.authEnforced) {
-      // org has an org-level auth method enabled (e.g. SAML)
-      // -> logout + redirect to SAML SSO
+      // org has an org-level auth method enabled (e.g. SAML/OIDC)
+      // -> logout + redirect to SSO login in the current window
 
       await logout.mutateAsync();
       if (org.orgAuthMethod === AuthMethod.OIDC) {
-        window.open(`/api/v1/sso/oidc/login?orgSlug=${org.slug}`);
+        window.location.href = `/api/v1/sso/oidc/login?orgSlug=${org.slug}`;
       } else {
-        window.open(`/api/v1/sso/redirect/saml2/organizations/${org.slug}`);
+        window.location.href = `/api/v1/sso/redirect/saml2/organizations/${org.slug}`;
       }
-      window.close();
       return;
     }
 
     if (org.googleSsoAuthEnforced) {
       await logout.mutateAsync();
-      window.open(`/api/v1/sso/redirect/google?org_slug=${org.slug}`);
-      window.close();
+      window.location.href = `/api/v1/sso/redirect/google?org_slug=${org.slug}`;
       return;
     }
 
