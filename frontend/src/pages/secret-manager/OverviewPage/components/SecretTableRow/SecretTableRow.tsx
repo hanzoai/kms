@@ -239,7 +239,7 @@ export const SecretTableRow = ({
           <SecretEditTableRow
             isSingleEnvView
             onSecretRename={handleSecretRename}
-            secretPath={secretPath}
+            secretPath={singleEnvSecret?.path || secretPath}
             isVisible={isSecretVisible || isSingleEnvSecretsVisible}
             secretName={secretKey}
             isEmpty={singleEnvSecret?.isEmpty || singleEnvImportedSecret?.secret?.isEmpty}
@@ -474,7 +474,7 @@ export const SecretTableRow = ({
                             className={twMerge("col-span-2", hasOverride && "border-b-border/50")}
                           >
                             <SecretEditTableRow
-                              secretPath={secretPath}
+                              secretPath={secret?.path || secretPath}
                               isVisible={isSecretVisible}
                               secretName={secretKey}
                               isEmpty={secret?.isEmpty || importedSecret?.secret?.isEmpty}
