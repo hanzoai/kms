@@ -522,6 +522,10 @@ export const useGetSecretValue = (
     queryKey: dashboardKeys.getSecretValue(params),
     queryFn: async () => fetchSecretValue(params),
     staleTime: 1000 * 60,
+    retry: (count, error) => {
+      if (error instanceof AxiosError && error.status === 404) return false;
+      return count <= 3;
+    },
     ...options
   });
 };
