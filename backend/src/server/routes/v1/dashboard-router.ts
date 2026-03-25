@@ -1567,19 +1567,47 @@ export const registerDashboardRouter = async (server: FastifyZodProvider) => {
     handler: async (req) => {
       const { secretPath, projectId, environment, secretKey, isOverride } = req.query;
 
-      const secret = await server.services.secret.getSecretByNameRaw({
-        actorId: req.permission.id,
-        actor: req.permission.type,
-        actorAuthMethod: req.permission.authMethod,
-        actorOrgId: req.permission.orgId,
-        viewSecretValue: true,
-        environment,
-        projectId,
-        path: secretPath,
-        secretName: secretKey,
-        includeImports: true,
-        type: isOverride ? SecretType.Personal : SecretType.Shared
-      });
+      let secret;
+      try {
+        secret = await server.services.secret.getSecretByNameRaw({
+          actorId: req.permission.id,
+          actor: req.permission.type,
+          actorAuthMethod: req.permission.authMethod,
+          actorOrgId: req.permission.orgId,
+          viewSecretValue: true,
+          environment,
+          projectId,
+          path: secretPath,
+          secretName: secretKey,
+          includeImports: true,
+          type: isOverride ? SecretType.Personal : SecretType.Shared
+        });
+      } catch (err) {
+        if (err instanceof NotFoundError && !isOverride) {
+          // Fallback: the overview endpoint queries without a type filter, so the secret
+          // may have been stored with a different type. Retry with SecretType.Personal
+          // to handle data-level type mismatches gracefully.
+          try {
+            secret = await server.services.secret.getSecretByNameRaw({
+              actorId: req.permission.id,
+              actor: req.permission.type,
+              actorAuthMethod: req.permission.authMethod,
+              actorOrgId: req.permission.orgId,
+              viewSecretValue: true,
+              environment,
+              projectId,
+              path: secretPath,
+              secretName: secretKey,
+              includeImports: true,
+              type: SecretType.Personal
+            });
+          } catch {
+            throw err;
+          }
+        } else {
+          throw err;
+        }
+      }
 
       if (isOverride) {
         return { valueOverride: secret.secretValue };
