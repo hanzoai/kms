@@ -3,7 +3,7 @@ version: "3.9"
 services:
   nginx:
     container_name: hanzokms-bdd-nginx
-    image: nginx
+    image: ghcr.io/hanzoai/static:latest
     restart: "always"
     ports:
       - 8080:80
