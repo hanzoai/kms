@@ -124,8 +124,8 @@ ingress:
   # -- Specifies the ingress class, useful for multi-ingress setups
   ingressClassName: hanzo
 
-  nginx:
-    # -- Enable NGINX-specific settings, if using NGINX ingress controller
+  hanzo:
+    # -- Enable Hanzo ingress controller settings
     enabled: true
 
   # -- Custom annotations for ingress resource
