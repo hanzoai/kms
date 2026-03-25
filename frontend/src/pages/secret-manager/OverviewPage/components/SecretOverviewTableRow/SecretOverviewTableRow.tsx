@@ -267,7 +267,7 @@ export const SecretOverviewTableRow = ({
                           </td>
                           <td className="col-span-2 h-8 w-full">
                             <SecretEditRow
-                              secretPath={secretPath}
+                              secretPath={secret?.path || secretPath}
                               isVisible={isSecretVisible}
                               secretName={secretKey}
                               isEmpty={secret?.isEmpty}
