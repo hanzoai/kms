@@ -122,7 +122,7 @@ ingress:
   # -- Hostname for ingress access, e.g., app.example.com
   hostName: ""
   # -- Specifies the ingress class, useful for multi-ingress setups
-  ingressClassName: nginx
+  ingressClassName: hanzo
 
   nginx:
     # -- Enable NGINX-specific settings, if using NGINX ingress controller

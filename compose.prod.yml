@@ -25,7 +25,8 @@ services:
     env_file: .env
     restart: always
     environment:
-      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_PASSWORD=${KMS_REDIS_PASSWORD}
+    command: ["redis-server", "--requirepass", "${KMS_REDIS_PASSWORD}"]
     networks:
       - hanzo-kms
     volumes:
