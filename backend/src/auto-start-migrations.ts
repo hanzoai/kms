@@ -387,6 +387,9 @@ export const runMigrations = async ({ applicationDb, auditLogDb, clickhouseClien
 
       // Use startup lock to ensure only one instance runs migrations at a time
       await withStartupLock(auditLogDb, logger, async () => {
+        // Force-free the Knex migration lock in case a previous crashed instance left it locked.
+        // This is safe because the startup lock already guarantees single-instance execution.
+        await auditLogDb.migrate.forceFreeMigrationsLock(migrationConfig);
         await auditLogDb.migrate.latest(migrationConfig);
       });
       logger.info("Finished audit log migrations.");
@@ -406,6 +409,9 @@ export const runMigrations = async ({ applicationDb, auditLogDb, clickhouseClien
     // Use startup lock to ensure only one instance runs migrations at a time
     await withStartupLock(applicationDb, logger, async () => {
       if (generateSanitizedSchema) await dropSanitizedSchema({ db: applicationDb, logger });
+      // Force-free the Knex migration lock in case a previous crashed instance left it locked.
+      // This is safe because the startup lock already guarantees single-instance execution.
+      await applicationDb.migrate.forceFreeMigrationsLock(migrationConfig);
       await applicationDb.migrate.latest(migrationConfig);
     });
     logger.info("Finished application migrations.");
