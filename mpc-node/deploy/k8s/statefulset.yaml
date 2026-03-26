@@ -1,0 +1,91 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kms-mpc
+  namespace: hanzo
+  labels:
+    app: kms-mpc
+spec:
+  clusterIP: None
+  selector:
+    app: kms-mpc
+  ports:
+    - name: grpc
+      port: 9651
+      targetPort: 9651
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: kms-mpc
+  namespace: hanzo
+  labels:
+    app: kms-mpc
+spec:
+  serviceName: kms-mpc
+  replicas: 3
+  selector:
+    matchLabels:
+      app: kms-mpc
+  template:
+    metadata:
+      labels:
+        app: kms-mpc
+    spec:
+      terminationGracePeriodSeconds: 30
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: mpc-node
+          image: ghcr.io/hanzoai/kms-mpc:latest
+          args:
+            - serve
+            - --addr=:9651
+            - --peers=kms-mpc-0.kms-mpc.hanzo.svc.cluster.local:9651,kms-mpc-1.kms-mpc.hanzo.svc.cluster.local:9651,kms-mpc-2.kms-mpc.hanzo.svc.cluster.local:9651
+          env:
+            - name: MPC_NODE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MPC_DATA_DIR
+              value: /data/kms-mpc
+            - name: MPC_ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: kms-mpc-encryption-key
+                  key: encryption-key
+            - name: MPC_LISTEN_ADDR
+              value: ":9651"
+          ports:
+            - name: grpc
+              containerPort: 9651
+          volumeMounts:
+            - name: data
+              mountPath: /data/kms-mpc
+          resources:
+            requests:
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              cpu: "2"
+              memory: 2Gi
+          readinessProbe:
+            grpc:
+              port: 9651
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            grpc:
+              port: 9651
+            initialDelaySeconds: 15
+            periodSeconds: 20
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 10Gi
