@@ -42,29 +42,44 @@ func (h *Handler) GetShard(_ context.Context, orgSlug string) ([]byte, error) {
 }
 
 // PutSecret handles the PutSecret RPC.
-func (h *Handler) PutSecret(_ context.Context, orgSlug, key string, encryptedBlob []byte) error {
+func (h *Handler) PutSecret(_ context.Context, orgSlug, key string, encryptedBlob []byte, actorID string) error {
 	if orgSlug == "" {
 		return errors.New("org_slug is required")
 	}
 	if key == "" {
 		return errors.New("key is required")
 	}
-	return h.node.Store.PutSecret(orgSlug, key, encryptedBlob)
+	if err := h.node.Compliance.EnforceOnAccess(orgSlug, key, actorID, ""); err != nil {
+		return err
+	}
+	if err := h.node.Store.PutSecret(orgSlug, key, encryptedBlob); err != nil {
+		return err
+	}
+	if err := h.node.Compliance.RecordAccess(orgSlug, key, actorID, "write", "", "", ""); err != nil {
+		return err
+	}
+	return nil
 }
 
 // GetSecret handles the GetSecret RPC.
-func (h *Handler) GetSecret(_ context.Context, orgSlug, key string) ([]byte, error) {
+func (h *Handler) GetSecret(_ context.Context, orgSlug, key, actorID string) ([]byte, error) {
 	if orgSlug == "" {
 		return nil, errors.New("org_slug is required")
 	}
 	if key == "" {
 		return nil, errors.New("key is required")
 	}
+	if err := h.node.Compliance.EnforceOnAccess(orgSlug, key, actorID, ""); err != nil {
+		return nil, err
+	}
 	blob, err := h.node.Store.GetSecret(orgSlug, key)
 	if err != nil {
 		if errors.Is(err, store.ErrNotFound) {
 			return nil, errors.New("secret not found")
 		}
+		return nil, err
+	}
+	if err := h.node.Compliance.RecordAccess(orgSlug, key, actorID, "read", "", "", ""); err != nil {
 		return nil, err
 	}
 	return blob, nil

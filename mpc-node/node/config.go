@@ -6,8 +6,10 @@ package node
 import (
 	"errors"
 	"fmt"
+	"net"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/hanzoai/kms/mpc-node/compliance"
 )
@@ -38,6 +40,40 @@ type Config struct {
 	// Compliance configures the regulatory compliance module.
 	// When Mode is ModeNone, compliance enforcement is disabled.
 	Compliance compliance.Config
+
+	// Enterprise configures enterprise features (multi-region, HSM, KMIP, etc.).
+	// All fields are optional; zero values disable the respective feature.
+	Enterprise EnterpriseConfig
+}
+
+// EnterpriseConfig holds enterprise-tier feature configuration.
+// All fields are optional. Zero values disable the feature.
+type EnterpriseConfig struct {
+	// Multi-region replication
+	Regions       []string `json:"regions,omitempty"`        // e.g., ["us-east-1", "eu-west-1", "ap-southeast-1"]
+	PrimaryRegion string   `json:"primary_region,omitempty"` // Write primary; reads fan out to nearest
+
+	// Key rotation policy
+	AutoRotateInterval time.Duration `json:"auto_rotate_interval,omitempty"` // e.g., 90 days (2160h)
+	RotationNotifyDays int           `json:"rotation_notify_days,omitempty"` // Notify n days before forced rotation
+
+	// Access policies
+	IPAllowList    []string      `json:"ip_allow_list,omitempty"`    // CIDR ranges allowed
+	MFARequired    bool          `json:"mfa_required,omitempty"`     // Require MFA for secret access
+	SessionTimeout time.Duration `json:"session_timeout,omitempty"` // Auto-lock CEK after inactivity
+
+	// Audit sinks (external log destinations in addition to local ZapDB)
+	AuditSinks []compliance.LogSinkConfig `json:"audit_sinks,omitempty"`
+
+	// HSM integration
+	HSMEnabled  bool   `json:"hsm_enabled,omitempty"`
+	HSMProvider string `json:"hsm_provider,omitempty"` // "cloudhsm", "pkcs11", "yubihsm"
+	HSMSlotID   int    `json:"hsm_slot_id,omitempty"`
+
+	// KMIP (Key Management Interoperability Protocol)
+	KMIPEnabled  bool   `json:"kmip_enabled,omitempty"`
+	KMIPEndpoint string `json:"kmip_endpoint,omitempty"`
+	KMIPCertFile string `json:"kmip_cert_file,omitempty"`
 }
 
 // Validate checks the configuration for errors.
@@ -62,6 +98,70 @@ func (c *Config) Validate() error {
 	}
 	if c.ListenAddr == "" {
 		return errors.New("config: listen_addr is required")
+	}
+	if err := c.Compliance.Validate(); err != nil {
+		return fmt.Errorf("config: %w", err)
+	}
+	if err := c.Enterprise.Validate(); err != nil {
+		return fmt.Errorf("config: %w", err)
+	}
+	return nil
+}
+
+// Validate checks the enterprise configuration for consistency.
+func (e *EnterpriseConfig) Validate() error {
+	if len(e.Regions) > 0 && e.PrimaryRegion == "" {
+		return errors.New("enterprise: primary_region required when regions are configured")
+	}
+	if e.PrimaryRegion != "" {
+		found := false
+		for _, r := range e.Regions {
+			if r == e.PrimaryRegion {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("enterprise: primary_region %q must be in regions list", e.PrimaryRegion)
+		}
+	}
+	if e.AutoRotateInterval > 0 && e.AutoRotateInterval < 24*time.Hour {
+		return errors.New("enterprise: auto_rotate_interval must be >= 24h")
+	}
+	if e.RotationNotifyDays < 0 {
+		return errors.New("enterprise: rotation_notify_days must be >= 0")
+	}
+	for _, cidr := range e.IPAllowList {
+		if _, _, err := net.ParseCIDR(cidr); err != nil {
+			return fmt.Errorf("enterprise: invalid CIDR in ip_allow_list: %q: %w", cidr, err)
+		}
+	}
+	if e.SessionTimeout > 0 && e.SessionTimeout < time.Minute {
+		return errors.New("enterprise: session_timeout must be >= 1m")
+	}
+	for i := range e.AuditSinks {
+		if err := e.AuditSinks[i].Validate(); err != nil {
+			return fmt.Errorf("enterprise: audit_sinks[%d]: %w", i, err)
+		}
+	}
+	if e.HSMEnabled && e.HSMProvider == "" {
+		return errors.New("enterprise: hsm_provider required when hsm_enabled is true")
+	}
+	if e.HSMProvider != "" {
+		switch e.HSMProvider {
+		case "cloudhsm", "pkcs11", "yubihsm":
+			// valid
+		default:
+			return fmt.Errorf("enterprise: unsupported hsm_provider %q (must be cloudhsm, pkcs11, or yubihsm)", e.HSMProvider)
+		}
+	}
+	if e.KMIPEnabled && e.KMIPEndpoint == "" {
+		return errors.New("enterprise: kmip_endpoint required when kmip_enabled is true")
+	}
+	if e.KMIPEnabled && e.KMIPCertFile != "" {
+		if _, err := os.Stat(e.KMIPCertFile); err != nil {
+			return fmt.Errorf("enterprise: kmip_cert_file not accessible: %w", err)
+		}
 	}
 	return nil
 }
