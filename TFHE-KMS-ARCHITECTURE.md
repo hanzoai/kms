@@ -1,4 +1,4 @@
-# Zero-Knowledge + FHE Architecture for Hanzo KMS
+# TFHE-KMS Architecture for Hanzo KMS
 
 **Status**: Architecture Decision Record
 **Date**: 2026-03-25
@@ -487,7 +487,7 @@ against quantum adversaries.
 ```
 backend/src/
 ├── services/
-│   └── zk/                           # ZK-KMS service module
+│   └── zk/                           # TFHE-KMS service module
 │       ├── index.ts                  # Service barrel export
 │       ├── zk-service.ts             # Core ZK service (blob CRUD, member mgmt)
 │       ├── zk-types.ts               # TypeScript types for ZK operations

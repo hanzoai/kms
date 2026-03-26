@@ -1,7 +1,7 @@
 // Copyright (C) 2020-2026, Hanzo AI Inc. All rights reserved.
 // See the file LICENSE for licensing terms.
 
-// Package kms provides a client SDK for the Hanzo ZK-KMS system.
+// Package kms provides a client SDK for the Hanzo TFHE-KMS system.
 //
 // The SDK implements zero-knowledge secret management: all encryption and
 // decryption happens client-side using a Customer Encryption Key (CEK) derived
@@ -28,7 +28,7 @@ import (
 	"time"
 )
 
-// Client connects to a ZK-KMS MPC node cluster and provides zero-knowledge
+// Client connects to a TFHE-KMS MPC node cluster and provides zero-knowledge
 // secret management. All secret data is encrypted client-side with the CEK;
 // the MPC nodes only store encrypted blobs.
 type Client struct {
@@ -40,7 +40,7 @@ type Client struct {
 	http      *http.Client
 }
 
-// Config configures a new ZK-KMS client.
+// Config configures a new TFHE-KMS client.
 type Config struct {
 	// Nodes is the list of MPC node addresses.
 	// Example: ["https://kms-mpc-0:9651", "https://kms-mpc-1:9651", "https://kms-mpc-2:9651"]
@@ -69,7 +69,7 @@ type NodeStatus struct {
 	Error   string `json:"error,omitempty"`
 }
 
-// NewClient creates a new ZK-KMS client. The client is initially locked;
+// NewClient creates a new TFHE-KMS client. The client is initially locked;
 // call Unlock or Bootstrap before performing secret operations.
 func NewClient(cfg Config) (*Client, error) {
 	if len(cfg.Nodes) == 0 {
