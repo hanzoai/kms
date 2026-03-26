@@ -6,6 +6,7 @@ package api
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/hanzoai/kms/mpc-node/node"
 	"github.com/hanzoai/kms/mpc-node/store"
@@ -42,6 +43,8 @@ func (h *Handler) GetShard(_ context.Context, orgSlug string) ([]byte, error) {
 }
 
 // PutSecret handles the PutSecret RPC.
+// All tiers support secret CRUD. MPC tier uses AES-256-GCM + Shamir threshold;
+// TFHE tier adds FHE CRDT merge and encrypted metadata evaluation.
 func (h *Handler) PutSecret(_ context.Context, orgSlug, key string, encryptedBlob []byte, actorID string) error {
 	if orgSlug == "" {
 		return errors.New("org_slug is required")
@@ -49,14 +52,18 @@ func (h *Handler) PutSecret(_ context.Context, orgSlug, key string, encryptedBlo
 	if key == "" {
 		return errors.New("key is required")
 	}
-	if err := h.node.Compliance.EnforceOnAccess(orgSlug, key, actorID, ""); err != nil {
-		return err
+	if h.node.Compliance != nil {
+		if err := h.node.Compliance.EnforceOnAccess(orgSlug, key, actorID, ""); err != nil {
+			return err
+		}
 	}
 	if err := h.node.Store.PutSecret(orgSlug, key, encryptedBlob); err != nil {
 		return err
 	}
-	if err := h.node.Compliance.RecordAccess(orgSlug, key, actorID, "write", "", "", ""); err != nil {
-		return err
+	if h.node.Compliance != nil {
+		if err := h.node.Compliance.RecordAccess(orgSlug, key, actorID, "write", "", "", ""); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -69,8 +76,10 @@ func (h *Handler) GetSecret(_ context.Context, orgSlug, key, actorID string) ([]
 	if key == "" {
 		return nil, errors.New("key is required")
 	}
-	if err := h.node.Compliance.EnforceOnAccess(orgSlug, key, actorID, ""); err != nil {
-		return nil, err
+	if h.node.Compliance != nil {
+		if err := h.node.Compliance.EnforceOnAccess(orgSlug, key, actorID, ""); err != nil {
+			return nil, err
+		}
 	}
 	blob, err := h.node.Store.GetSecret(orgSlug, key)
 	if err != nil {
@@ -79,8 +88,10 @@ func (h *Handler) GetSecret(_ context.Context, orgSlug, key, actorID string) ([]
 		}
 		return nil, err
 	}
-	if err := h.node.Compliance.RecordAccess(orgSlug, key, actorID, "read", "", "", ""); err != nil {
-		return nil, err
+	if h.node.Compliance != nil {
+		if err := h.node.Compliance.RecordAccess(orgSlug, key, actorID, "read", "", "", ""); err != nil {
+			return nil, err
+		}
 	}
 	return blob, nil
 }
@@ -93,8 +104,11 @@ func (h *Handler) ListSecrets(_ context.Context, orgSlug string) ([]string, erro
 	return h.node.Store.ListSecrets(orgSlug)
 }
 
-// SyncCRDT handles the SyncCRDT RPC.
+// SyncCRDT handles the SyncCRDT RPC. Requires TierTFHE or above.
 func (h *Handler) SyncCRDT(_ context.Context, orgSlug string, since uint64) ([][]byte, error) {
+	if !h.node.Config.Tier.RequiresFHE() {
+		return nil, fmt.Errorf("CRDT sync requires tfhe tier or above, got %s", h.node.Config.Tier)
+	}
 	if orgSlug == "" {
 		return nil, errors.New("org_slug is required")
 	}
@@ -102,6 +116,6 @@ func (h *Handler) SyncCRDT(_ context.Context, orgSlug string, since uint64) ([][
 }
 
 // Status handles the Status RPC.
-func (h *Handler) Status(_ context.Context) (nodeID string, threshold, totalNodes int, peers []string, ready bool) {
-	return h.node.ID, h.node.Config.Threshold, h.node.Config.TotalNodes, h.node.Peers, true
+func (h *Handler) Status(_ context.Context) (nodeID string, tier string, threshold, totalNodes int, peers []string, ready bool) {
+	return h.node.ID, h.node.Config.Tier.String(), h.node.Config.Threshold, h.node.Config.TotalNodes, h.node.Peers, true
 }

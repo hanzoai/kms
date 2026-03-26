@@ -14,6 +14,63 @@ import (
 	"github.com/hanzoai/kms/mpc-node/compliance"
 )
 
+// KMSTier identifies the security tier of the MPC node cluster.
+//
+//   - TierStandard:  Server-side AES-256-GCM encryption. No MPC threshold.
+//   - TierMPC:       Customer keys + Shamir threshold + multisig (no FHE).
+//   - TierTFHE:      MPC + FHE CRDT merge + ZK proofs.
+//   - TierSovereign: TFHE + SessionVM onion routing + post-quantum on-chain.
+type KMSTier int
+
+const (
+	TierStandard  KMSTier = iota // Server-side encryption, no MPC
+	TierMPC                      // Customer keys + MPC threshold + multisig (no FHE)
+	TierTFHE                     // MPC + FHE CRDT + ZK
+	TierSovereign                // TFHE + SessionVM onion routing + PQ on-chain
+)
+
+// String returns the canonical name for a KMS tier.
+func (t KMSTier) String() string {
+	switch t {
+	case TierStandard:
+		return "standard"
+	case TierMPC:
+		return "mpc"
+	case TierTFHE:
+		return "tfhe"
+	case TierSovereign:
+		return "sovereign"
+	default:
+		return fmt.Sprintf("unknown(%d)", int(t))
+	}
+}
+
+// ParseKMSTier converts a string to a KMSTier.
+func ParseKMSTier(s string) (KMSTier, error) {
+	switch s {
+	case "standard":
+		return TierStandard, nil
+	case "mpc":
+		return TierMPC, nil
+	case "tfhe":
+		return TierTFHE, nil
+	case "sovereign":
+		return TierSovereign, nil
+	default:
+		return 0, fmt.Errorf("config: unknown tier %q (must be standard, mpc, tfhe, or sovereign)", s)
+	}
+}
+
+// RequiresMPC returns true if the tier uses Shamir threshold sharing.
+func (t KMSTier) RequiresMPC() bool {
+	return t >= TierMPC
+}
+
+// RequiresFHE returns true if the tier uses FHE CRDT synchronization.
+func (t KMSTier) RequiresFHE() bool {
+	return t >= TierTFHE
+}
+
 // Config holds the MPC node configuration.
 type Config struct {
 	// NodeID is a unique identifier for this node (e.g., "kms-mpc-0").
@@ -25,10 +82,13 @@ type Config struct {
 	// EncryptionKey is the 32-byte key for ZapDB encryption at rest.
 	EncryptionKey []byte
 
-	// Threshold is the Shamir threshold (t).
+	// Tier is the KMS security tier. Determines which subsystems are initialized.
+	Tier KMSTier `json:"tier"`
+
+	// Threshold is the Shamir threshold (t). Required for TierMPC and above.
 	Threshold int
 
-	// TotalNodes is the total number of MPC nodes (n).
+	// TotalNodes is the total number of MPC nodes (n). Required for TierMPC and above.
 	TotalNodes int
 
 	// ListenAddr is the gRPC listen address (e.g., ":9651").
@@ -87,18 +147,44 @@ func (c *Config) Validate() error {
 	if len(c.EncryptionKey) != 32 {
 		return fmt.Errorf("config: encryption_key must be 32 bytes, got %d", len(c.EncryptionKey))
 	}
-	if c.Threshold < 2 {
-		return errors.New("config: threshold must be >= 2")
-	}
-	if c.TotalNodes < 3 {
-		return errors.New("config: total_nodes must be >= 3")
-	}
-	if c.Threshold >= c.TotalNodes {
-		return errors.New("config: threshold must be < total_nodes")
-	}
 	if c.ListenAddr == "" {
 		return errors.New("config: listen_addr is required")
 	}
+	if c.Tier < TierStandard || c.Tier > TierSovereign {
+		return fmt.Errorf("config: invalid tier %d", c.Tier)
+	}
+
+	// MPC threshold validation applies to TierMPC and above.
+	if c.Tier.RequiresMPC() {
+		if c.Threshold < 2 {
+			return errors.New("config: threshold must be >= 2 for mpc tier and above")
+		}
+		if c.TotalNodes < 3 {
+			return errors.New("config: total_nodes must be >= 3 for mpc tier and above")
+		}
+		if c.Threshold >= c.TotalNodes {
+			return errors.New("config: threshold must be < total_nodes")
+		}
+
+		// Higher tiers require stronger quorums.
+		switch c.Tier {
+		case TierTFHE:
+			if c.Threshold < 3 {
+				return errors.New("config: tfhe tier requires threshold >= 3")
+			}
+			if c.TotalNodes < 5 {
+				return errors.New("config: tfhe tier requires total_nodes >= 5")
+			}
+		case TierSovereign:
+			if c.Threshold < 5 {
+				return errors.New("config: sovereign tier requires threshold >= 5")
+			}
+			if c.TotalNodes < 7 {
+				return errors.New("config: sovereign tier requires total_nodes >= 7")
+			}
+		}
+	}
+
 	if err := c.Compliance.Validate(); err != nil {
 		return fmt.Errorf("config: %w", err)
 	}
