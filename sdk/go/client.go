@@ -175,6 +175,25 @@ func (c *Client) IsUnlocked() bool {
 	return c.cek != nil
 }
 
+// ExportCEK returns a copy of the CEK for client-side encryption operations.
+// The caller is responsible for zeroing the returned key when done.
+// Returns an error if the client is locked.
+func (c *Client) ExportCEK() ([]byte, error) {
+	return c.getCEK()
+}
+
+// SealAESGCM encrypts plaintext with AES-256-GCM using the provided key.
+// Returns nonce || ciphertext || tag.
+func SealAESGCM(key, plaintext, aad []byte) ([]byte, error) {
+	return sealAESGCM(key, plaintext, aad)
+}
+
+// OpenAESGCM decrypts an AES-256-GCM ciphertext with the provided key.
+// Expects nonce || ciphertext || tag as input.
+func OpenAESGCM(key, data, aad []byte) ([]byte, error) {
+	return openAESGCM(key, data, aad)
+}
+
 // getCEK returns a copy of the CEK or an error if the client is locked.
 func (c *Client) getCEK() ([]byte, error) {
 	c.mu.RLock()
