@@ -29,7 +29,7 @@ jobs:
         run: docker build --tag kms-api .
         working-directory: backend
       - name: Start postgres and redis
-        run: touch .env && docker compose -f docker-compose.dev.yml up -d db redis
+        run: touch .env && docker compose -f compose.dev.yml up -d db redis
       - name: Start the server
         run: |
           echo "SECRET_SCANNING_GIT_APP_ID=793712" >> .env
@@ -98,6 +98,6 @@ jobs:
       - name: cleanup
         if: always()
         run: |
-          docker compose -f "docker-compose.dev.yml" down
+          docker compose -f "compose.dev.yml" down
           docker stop kms-api || true
           docker rm kms-api || true

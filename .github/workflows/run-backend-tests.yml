@@ -46,9 +46,9 @@ jobs:
           node -e "const p=JSON.parse(require('fs').readFileSync('package.json','utf8'));for(const s of['dependencies','devDependencies','optionalDependencies'])if(p[s])for(const[k,v]of Object.entries(p[s]))if(typeof v==='string'&&v.startsWith('file:'))p[s][k]='*';require('fs').writeFileSync('package.json',JSON.stringify(p,null,2))"
           pnpm install --no-frozen-lockfile
       - name: Start postgres and redis
-        run: touch .env && docker compose -f docker-compose.dev.yml up -d db redis
+        run: touch .env && docker compose -f compose.dev.yml up -d db redis
       - name: Start Secret Rotation testing databases
-        run: docker compose -f docker-compose.e2e-dbs.yml up -d --wait --wait-timeout 300
+        run: docker compose -f compose.e2e-dbs.yml up -d --wait --wait-timeout 300
       - name: Run unit test
         run: pnpm run test:unit
         working-directory: backend
@@ -66,5 +66,5 @@ jobs:
           ENCRYPTION_KEY: 4bnfe4e407b8921c104518903515b218
       - name: cleanup
         run: |
-          docker compose -f "docker-compose.dev.yml" down
+          docker compose -f "compose.dev.yml" down
 
