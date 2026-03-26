@@ -55,6 +55,10 @@ type Config struct {
 	// HTTPClient is an optional custom HTTP client. If nil, a default client
 	// with 30-second timeout is used.
 	HTTPClient *http.Client
+
+	// Compliance configures regulatory compliance mode for this org.
+	// nil = standard ZK mode (no compliance features).
+	Compliance *ComplianceConfig
 }
 
 // NodeStatus represents the health status of an MPC node.

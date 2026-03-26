@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+
+	"github.com/hanzoai/kms/mpc-node/compliance"
 )
 
 // Config holds the MPC node configuration.
@@ -32,6 +34,10 @@ type Config struct {
 
 	// Peers is the list of peer addresses (e.g., ["node2:9651", "node3:9651"]).
 	Peers []string
+
+	// Compliance configures the regulatory compliance module.
+	// When Mode is ModeNone, compliance enforcement is disabled.
+	Compliance compliance.Config
 }
 
 // Validate checks the configuration for errors.
