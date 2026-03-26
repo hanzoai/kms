@@ -1,6 +1,6 @@
 # AI Assistant Knowledge Base - Hanzo KMS
 
-**Last Updated**: 2026-03-02
+**Last Updated**: 2026-03-25
 **Project**: Hanzo KMS
 **Organization**: Hanzo AI
 
@@ -240,6 +240,96 @@ Eight major subsystems ported from HashiCorp Vault (MPL-2.0) to TypeScript.
 | Terraform | Not used | Helm + Kustomize for deploys |
 | Raft | Not needed | Lux Quasar (leaderless, post-quantum) |
 | Serf/memberlist | Not needed | Lux P2P + mDNS + DHT |
+
+## ZK-KMS Architecture (2026-03-25)
+
+### Overview
+
+The ZK-KMS is a distributed zero-knowledge key management system. No single node ever holds the
+complete encryption key (CEK). The CEK is split via Shamir secret sharing across n MPC nodes, with
+t-of-n threshold for reconstruction. Data is encrypted with AES-256-GCM, keys are wrapped with
+HPKE (X25519 + HKDF-SHA256 + ChaCha20-Poly1305), and state is replicated via FHE CRDT sync across
+all nodes.
+
+### Components
+
+```
+mpc-node/                          # Go MPC node implementation
+├── api/                           # gRPC + REST handlers
+├── cmd/                           # Node binary entrypoint
+├── compliance/                    # Regulatory compliance engine
+│   ├── compliance.go              # Engine: modes (HIPAA/SEC/FINRA/SOX/GDPR), config, enforcement
+│   ├── audit.go                   # WORM hash-chained audit log (SHA-256 chain, tamper detection)
+│   ├── breakglass.go              # Emergency decryption tokens (HIPAA requirement)
+│   ├── escrow.go                  # Regulator escrow shard management (HPKE-wrapped)
+│   ├── retention.go               # Record retention policies (SEC 17a-4: 6yr, SOX: 7yr)
+│   └── logging.go                 # Cloud logging sinks (webhook, GCP*, AWS*, Azure* via build tags)
+├── crypto/                        # HPKE wrapping, key derivation
+├── fhe/                           # FHE CRDT operations (luxfi/fhe v1.7.7)
+├── node/                          # Node lifecycle, config
+│   └── config.go                  # Config + EnterpriseConfig (multi-region, HSM, KMIP, audit sinks)
+├── shard/                         # Shamir shard management, Lagrange interpolation
+├── store/                         # ZapDB encrypted key-value store (luxfi/zapdb/v4)
+└── deploy/                        # K8s deployment manifests
+
+sdk/go/                            # Go client SDK
+├── client.go                      # Set/Get/Delete/List, HPKE unlock/lock, CRDT sync
+├── crypto.go                      # AES-256-GCM seal/open, HKDF key derivation
+└── compliance_test.go             # Compliance integration tests
+```
+
+### Base Plugin
+
+The KMS integrates with Hanzo Base via `base/plugins/kms/`:
+- Transparent field-level encryption (AES-256-GCM) on configured collections
+- FHE-encrypted HMAC-SHA256 indexes for equality queries on encrypted data
+- REST API at `/api/kms/*` for secret CRUD, lock/unlock, invite, sync, status
+- Record hooks: encrypt before write, decrypt after read (invisible to app layer)
+
+### Compliance Module
+
+The compliance engine wraps secret access with enforcement checks and immutable audit:
+- **WORM Audit Log**: SHA-256 hash-chained entries, append-only, tamper-evident
+- **Escrow Manager**: Regulator escrow shard (HPKE-wrapped), cooperative or unilateral reconstruction
+- **Break-Glass**: Time-limited emergency decryption tokens (HIPAA), logged to audit trail
+- **Retention Manager**: Prevents deletion of retained records per regulatory requirements
+- **Cloud Logging Sinks**: Fan-out audit entries to external systems
+
+### Cloud Logging Sinks
+
+Audit entries can be replicated to external logging backends for enterprise compliance:
+- **Always**: Local ZapDB (primary, handled by AuditLog)
+- **Webhook**: POST JSON to any URL (always compiled)
+- **GCP**: Cloud Logging + GCS with WORM retention lock (build tag `gcp`)
+- **AWS**: CloudWatch Logs + S3 with Object Lock (build tag `aws`)
+- **Azure**: Monitor + Blob with immutable storage (build tag `azure`)
+
+Configured via `EnterpriseConfig.AuditSinks[]` in node config. The `SinkFanout` type writes to
+all configured sinks with best-effort delivery and retry buffering.
+
+### Enterprise Features (EnterpriseConfig)
+
+| Feature | Config Field | Description |
+|---------|-------------|-------------|
+| Multi-region | `Regions`, `PrimaryRegion` | Geographic replication |
+| Key rotation | `AutoRotateInterval`, `RotationNotifyDays` | Automatic CEK rotation policy |
+| IP allow-list | `IPAllowList` | CIDR-based access restriction |
+| MFA | `MFARequired` | Require MFA for secret access |
+| Session timeout | `SessionTimeout` | Auto-lock CEK after inactivity |
+| Audit sinks | `AuditSinks` | External log destinations |
+| HSM | `HSMEnabled`, `HSMProvider`, `HSMSlotID` | cloudhsm, pkcs11, yubihsm |
+| KMIP | `KMIPEnabled`, `KMIPEndpoint`, `KMIPCertFile` | Enterprise key lifecycle protocol |
+
+### White-Label / Chain-Agnostic Design
+
+The KMS is chain-agnostic. It connects via standard gRPC/REST API with no chain-specific configuration.
+Any deployment — Lux L1/L2, exchange platforms, or web services — uses the same API and key material.
+
+- Any chain can use KMS natively via the standard API
+- No chain-specific configuration or special integration required
+- Exchange platforms use KMS for: wallet keys, API keys, trading credentials, compliance records
+- The compliance module handles ATS/BD/TA requirements natively for regulated platforms
+- White-label deployments get full compliance, encryption, and audit features out of the box
 
 ## Rules for AI Assistants
 
