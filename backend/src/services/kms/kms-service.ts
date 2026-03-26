@@ -78,11 +78,28 @@ export const kmsServiceFactory = ({
    * global key continues to decrypt correctly.
    */
   const getOrgRootKey = (orgSlug: string): Buffer => {
-    const orgKey = (envConfig.orgEncryptionKeys || {})[orgSlug];
-    if (orgKey) {
-      return Buffer.from(orgKey, "base64");
+    if (!orgSlug) {
+      if (process.env.NODE_ENV === "production" && process.env.REQUIRE_ORG_KEYS === "true") {
+        throw new Error("CEK: orgSlug required for encryption — global key fallback disabled in production");
+      }
+      return ROOT_ENCRYPTION_KEY;
     }
-    return ROOT_ENCRYPTION_KEY;
+    const orgKey = (envConfig.orgEncryptionKeys || {})[orgSlug];
+    if (!orgKey) {
+      if (process.env.NODE_ENV === "production" && process.env.REQUIRE_ORG_KEYS === "true") {
+        throw new Error(`CEK: no encryption key configured for org "${orgSlug}"`);
+      }
+      return ROOT_ENCRYPTION_KEY;
+    }
+    return Buffer.from(orgKey, "base64");
+  };
+
+  const resolveOrgSlug = async (orgId: string, tx?: Knex): Promise<string> => {
+    const org = await orgDAL.findById(orgId, tx);
+    if (!org) {
+      throw new NotFoundError({ message: `Organization with ID '${orgId}' not found` });
+    }
+    return org.slug;
   };
 
   /*
@@ -125,8 +142,10 @@ export const kmsServiceFactory = ({
       });
     }
 
+    // Auto-resolve orgSlug from orgId when not provided, ensuring per-org key isolation
+    const resolvedOrgSlug = orgSlug || (await resolveOrgSlug(orgId, tx));
     const cipher = symmetricCipherService(SymmetricKeyAlgorithm.AES_GCM_256);
-    const rootKey = orgSlug ? getOrgRootKey(orgSlug) : ROOT_ENCRYPTION_KEY;
+    const rootKey = getOrgRootKey(resolvedOrgSlug);
     const encryptedKeyMaterial = cipher.encrypt(kmsKeyMaterial, rootKey);
     const sanitizedName = name ? slugify(name) : slugify(alphaNumericNanoId(8).toLowerCase());
     const dbQuery = async (db: Knex) => {
@@ -214,6 +233,7 @@ export const kmsServiceFactory = ({
     const key = await generateKmsKey({
       isReserved: true,
       orgId: org.id,
+      orgSlug: org.slug,
       tx
     });
 
@@ -308,6 +328,24 @@ export const kmsServiceFactory = ({
 
     return (cipherTextBuffer: Buffer) => {
       return cipher.decrypt(cipherTextBuffer, ROOT_ENCRYPTION_KEY);
+    };
+  };
+
+  const encryptWithOrgRootKey = (orgSlug: string) => {
+    const cipher = symmetricCipherService(SymmetricKeyAlgorithm.AES_GCM_256);
+    const rootKey = getOrgRootKey(orgSlug);
+
+    return (plainTextBuffer: Buffer) => {
+      return cipher.encrypt(plainTextBuffer, rootKey);
+    };
+  };
+
+  const decryptWithOrgRootKey = (orgSlug: string) => {
+    const cipher = symmetricCipherService(SymmetricKeyAlgorithm.AES_GCM_256);
+    const rootKey = getOrgRootKey(orgSlug);
+
+    return (cipherTextBuffer: Buffer) => {
+      return cipher.decrypt(cipherTextBuffer, rootKey);
     };
   };
 
@@ -436,14 +474,11 @@ export const kmsServiceFactory = ({
     // daniel: currently we only support imports for encrypt/decrypt keys
     verifyKeyTypeAndAlgorithm(keyUsage, algorithm, { forceType: KmsKeyUsage.ENCRYPT_DECRYPT });
 
-    // Resolve per-org root key: look up org slug to select the correct root key.
-    // importKeyMaterial only has orgId, so we fall back to ROOT_ENCRYPTION_KEY unless
-    // we fetch the org slug here. Since this is a write path and org slug is not
-    // passed in TImportKeyMaterialDTO, we use ROOT_ENCRYPTION_KEY. Callers that know
-    // the org slug should pass orgSlug in a future DTO update.
+    const orgSlug = await resolveOrgSlug(orgId, tx);
     const cipher = symmetricCipherService(SymmetricKeyAlgorithm.AES_GCM_256);
+    const rootKey = getOrgRootKey(orgSlug);
 
-    const encryptedKeyMaterial = cipher.encrypt(key, ROOT_ENCRYPTION_KEY);
+    const encryptedKeyMaterial = cipher.encrypt(key, rootKey);
     const sanitizedName = name ? slugify(name) : slugify(alphaNumericNanoId(8).toLowerCase());
     const dbQuery = async (db: Knex) => {
       const kmsDoc = await kmsDAL.create(
@@ -696,9 +731,11 @@ export const kmsServiceFactory = ({
       return project.kmsSecretManagerKeyId;
     }
 
+    const orgSlug = await resolveOrgSlug(project.orgId, tx);
     const key = await generateKmsKey({
       isReserved: true,
       orgId: project.orgId,
+      orgSlug,
       tx
     });
 
@@ -922,9 +959,11 @@ export const kmsServiceFactory = ({
       const project = await projectDAL.findById(projectId, tx);
       let kmsId;
       if (kms.type === KmsType.Internal) {
+        const orgSlug = await resolveOrgSlug(project.orgId, tx);
         const internalKms = await generateKmsKey({
           isReserved: true,
           orgId: project.orgId,
+          orgSlug,
           tx
         });
         kmsId = internalKms.id;
@@ -1011,9 +1050,11 @@ export const kmsServiceFactory = ({
     });
 
     const newKms = await kmsDAL.transaction(async (tx) => {
+      const orgSlug = await resolveOrgSlug(project.orgId, tx);
       const key = await generateKmsKey({
         isReserved: true,
         orgId: project.orgId,
+        orgSlug,
         tx
       });
 
@@ -1128,6 +1169,9 @@ export const kmsServiceFactory = ({
     decryptWithInputKey,
     encryptWithRootKey,
     decryptWithRootKey,
+    encryptWithOrgRootKey,
+    decryptWithOrgRootKey,
+    resolveOrgSlug,
     getOrgKmsKeyId,
     updateEncryptionStrategy,
     getProjectSecretManagerKmsKeyId,
