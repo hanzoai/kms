@@ -28,6 +28,7 @@ nodes. A state-level adversary with network-level surveillance can:
 
 - Lux Network (L1) provides PQ anchoring, consensus, cross-chain Warp messages.
 - Lux T-Chain coordinates TFHE CRDT operations between MPC nodes.
+- Lux Q-Chain handles post-quantum key exchange and lattice-based operations.
 - Pars (L2 subnet on Lux) provides post-quantum signature verification precompiles.
 - SessionVM swarm provides the onion-routing substrate (luxfi/session, luxtel fork).
 - MPC nodes use luxfi/threshold (Shamir) + luxfi/fhe (TFHE) + luxfi/frost (threshold sigs).
