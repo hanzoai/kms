@@ -12,7 +12,7 @@ import (
 	"fmt"
 	"log"
 
-	kms "github.com/hanzoai/kms-sdk-go"
+	kms "github.com/hanzoai/kms/sdk/go"
 )
 
 func main() {
