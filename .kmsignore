@@ -40,10 +40,10 @@ cli/detect/config/gitleaks.toml:gcp-api-key:578
 cli/detect/config/gitleaks.toml:gcp-api-key:579
 cli/detect/config/gitleaks.toml:gcp-api-key:581
 cli/detect/config/gitleaks.toml:gcp-api-key:582
-.github/workflows/run-helm-chart-tests-infisical-standalone-postgres.yml:generic-api-key:51
-.github/workflows/run-helm-chart-tests-infisical-standalone-postgres.yml:generic-api-key:50
-.github/workflows/helm-release-infisical-core.yml:generic-api-key:48
-.github/workflows/helm-release-infisical-core.yml:generic-api-key:47
+.github/workflows/run-helm-chart-tests-kms-standalone.yml:generic-api-key:51
+.github/workflows/run-helm-chart-tests-kms-standalone.yml:generic-api-key:50
+.github/workflows/helm-release-kms-core.yml:generic-api-key:48
+.github/workflows/helm-release-kms-core.yml:generic-api-key:47
 backend/src/services/smtp/smtp-service.ts:generic-api-key:79
 frontend/src/components/secret-syncs/forms/SecretSyncDestinationFields/CloudflarePagesSyncFields.tsx:cloudflare-api-key:7
 docs/integrations/app-connections/zabbix.mdx:generic-api-key:91
