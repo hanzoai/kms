@@ -26,10 +26,14 @@ nodes. A state-level adversary with network-level surveillance can:
 
 **Constraints**:
 
-- Lux Network (L1) provides PQ anchoring, consensus, cross-chain Warp messages.
-- Lux T-Chain coordinates TFHE CRDT operations between MPC nodes.
-- Lux Q-Chain handles post-quantum key exchange and lattice-based operations.
-- Pars (L2 subnet on Lux) provides post-quantum signature verification precompiles.
+- Lux Q-Chain (L1) — the unified post-quantum consensus chain. Every block uses
+  lattice signatures (ML-DSA-65). Absorbs P-Chain validator management. Provides:
+  • PQ anchoring at consensus level (every block is quantum-resistant)
+  • TFHE CRDT coordination as native consensus transactions
+  • ML-KEM-768 key exchange at protocol level
+  • Cross-chain Warp messages with PQ signatures by default
+- Pars (L2 subnet on Q-Chain) provides application-level PQ precompiles
+  (ML-DSA, SLH-DSA) for smart contract signature verification.
 - SessionVM swarm provides the onion-routing substrate (luxfi/session, luxtel fork).
 - MPC nodes use luxfi/threshold (Shamir) + luxfi/fhe (TFHE) + luxfi/frost (threshold sigs).
 - luxfi packages only. No external crypto libraries.
