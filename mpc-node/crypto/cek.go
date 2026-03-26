@@ -1,7 +1,7 @@
 // Copyright (C) 2026, Hanzo AI Inc. All rights reserved.
 // SPDX-License-Identifier: Proprietary
 
-// Package crypto provides key derivation, wrapping, and unwrapping for the ZK-KMS.
+// Package crypto provides key derivation, wrapping, and unwrapping for the TFHE-KMS.
 //
 // Key hierarchy:
 //
