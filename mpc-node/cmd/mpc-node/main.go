@@ -68,20 +68,22 @@ Common flags:
   --node-id     Node identifier (default: from MPC_NODE_ID env)
   --data-dir    ZapDB data directory (default: /data/kms-mpc)
   --enc-key     ZapDB encryption key (hex, from MPC_ENCRYPTION_KEY env)
+  --tier        KMS tier: standard, mpc, tfhe, sovereign (default: mpc)
 
 `)
 }
 
-func baseFlags(fs *flag.FlagSet) (nodeID, dataDir, encKeyHex *string, threshold, totalNodes *int) {
+func baseFlags(fs *flag.FlagSet) (nodeID, dataDir, encKeyHex, tierStr *string, threshold, totalNodes *int) {
 	nodeID = fs.String("node-id", envOr("MPC_NODE_ID", "kms-mpc-0"), "node identifier")
 	dataDir = fs.String("data-dir", envOr("MPC_DATA_DIR", "/data/kms-mpc"), "ZapDB data directory")
 	encKeyHex = fs.String("enc-key", envOr("MPC_ENCRYPTION_KEY", ""), "ZapDB encryption key (hex)")
+	tierStr = fs.String("tier", envOr("MPC_TIER", "mpc"), "KMS tier: standard, mpc, tfhe, sovereign")
 	threshold = fs.Int("threshold", 2, "Shamir threshold (t)")
 	totalNodes = fs.Int("nodes", 3, "total MPC nodes (n)")
 	return
 }
 
-func makeConfig(nodeID, dataDir, encKeyHex string, threshold, totalNodes int, listenAddr string, peers []string) (*node.Config, error) {
+func makeConfig(nodeID, dataDir, encKeyHex, tierStr string, threshold, totalNodes int, listenAddr string, peers []string) (*node.Config, error) {
 	if encKeyHex == "" {
 		return nil, fmt.Errorf("encryption key is required (--enc-key or MPC_ENCRYPTION_KEY)")
 	}
@@ -89,10 +91,15 @@ func makeConfig(nodeID, dataDir, encKeyHex string, threshold, totalNodes int, li
 	if err != nil {
 		return nil, fmt.Errorf("invalid encryption key hex: %w", err)
 	}
+	tier, err := node.ParseKMSTier(tierStr)
+	if err != nil {
+		return nil, err
+	}
 	return &node.Config{
 		NodeID:        nodeID,
 		DataDir:       dataDir,
 		EncryptionKey: encKey,
+		Tier:          tier,
 		Threshold:     threshold,
 		TotalNodes:    totalNodes,
 		ListenAddr:    listenAddr,
@@ -102,7 +109,7 @@ func makeConfig(nodeID, dataDir, encKeyHex string, threshold, totalNodes int, li
 
 func cmdBootstrap(args []string) {
 	fs := flag.NewFlagSet("bootstrap", flag.ExitOnError)
-	nodeID, dataDir, encKeyHex, threshold, totalNodes := baseFlags(fs)
+	nodeID, dataDir, encKeyHex, tierStr, threshold, totalNodes := baseFlags(fs)
 	org := fs.String("org", "", "org slug (required)")
 	passphrase := fs.String("passphrase", "", "admin passphrase (required)")
 	nodeIndex := fs.Int("index", 1, "this node's shard index (1-based)")
@@ -113,7 +120,7 @@ func cmdBootstrap(args []string) {
 		os.Exit(1)
 	}
 
-	cfg, err := makeConfig(*nodeID, *dataDir, *encKeyHex, *threshold, *totalNodes, ":9651", nil)
+	cfg, err := makeConfig(*nodeID, *dataDir, *encKeyHex, *tierStr, *threshold, *totalNodes, ":9651", nil)
 	if err != nil {
 		fatal(err)
 	}
@@ -128,7 +135,7 @@ func cmdBootstrap(args []string) {
 		fatal(err)
 	}
 
-	fmt.Printf("Bootstrap complete for org %q\n", *org)
+	fmt.Printf("Bootstrap complete for org %q (tier: %s)\n", *org, *tierStr)
 	fmt.Printf("  Threshold: %d-of-%d\n", *threshold, *totalNodes)
 	fmt.Printf("  Recovery hash: %x\n", result.RecoveryVerification)
 	fmt.Printf("  Shards generated: %d\n", len(result.Shards))
@@ -139,7 +146,7 @@ func cmdBootstrap(args []string) {
 
 func cmdJoin(args []string) {
 	fs := flag.NewFlagSet("join", flag.ExitOnError)
-	nodeID, dataDir, encKeyHex, threshold, totalNodes := baseFlags(fs)
+	nodeID, dataDir, encKeyHex, tierStr, threshold, totalNodes := baseFlags(fs)
 	org := fs.String("org", "", "org slug (required)")
 	shardFile := fs.String("shard-file", "", "path to shard file (hex-encoded)")
 	fs.Parse(args)
@@ -158,7 +165,7 @@ func cmdJoin(args []string) {
 		fatal(fmt.Errorf("decode shard hex: %w", err))
 	}
 
-	cfg, err := makeConfig(*nodeID, *dataDir, *encKeyHex, *threshold, *totalNodes, ":9651", nil)
+	cfg, err := makeConfig(*nodeID, *dataDir, *encKeyHex, *tierStr, *threshold, *totalNodes, ":9651", nil)
 	if err != nil {
 		fatal(err)
 	}
@@ -176,7 +183,7 @@ func cmdJoin(args []string) {
 
 func cmdServe(args []string) {
 	fs := flag.NewFlagSet("serve", flag.ExitOnError)
-	nodeID, dataDir, encKeyHex, threshold, totalNodes := baseFlags(fs)
+	nodeID, dataDir, encKeyHex, tierStr, threshold, totalNodes := baseFlags(fs)
 	addr := fs.String("addr", envOr("MPC_LISTEN_ADDR", ":9651"), "gRPC listen address")
 	peersStr := fs.String("peers", envOr("MPC_PEERS", ""), "comma-separated peer addresses")
 	fs.Parse(args)
@@ -186,7 +193,7 @@ func cmdServe(args []string) {
 		peers = strings.Split(*peersStr, ",")
 	}
 
-	cfg, err := makeConfig(*nodeID, *dataDir, *encKeyHex, *threshold, *totalNodes, *addr, peers)
+	cfg, err := makeConfig(*nodeID, *dataDir, *encKeyHex, *tierStr, *threshold, *totalNodes, *addr, peers)
 	if err != nil {
 		fatal(err)
 	}
@@ -217,7 +224,7 @@ func cmdServe(args []string) {
 
 func cmdSync(args []string) {
 	fs := flag.NewFlagSet("sync", flag.ExitOnError)
-	nodeID, dataDir, encKeyHex, threshold, totalNodes := baseFlags(fs)
+	nodeID, dataDir, encKeyHex, tierStr, threshold, totalNodes := baseFlags(fs)
 	org := fs.String("org", "", "org slug (required)")
 	fs.Parse(args)
 
@@ -226,7 +233,7 @@ func cmdSync(args []string) {
 		os.Exit(1)
 	}
 
-	cfg, err := makeConfig(*nodeID, *dataDir, *encKeyHex, *threshold, *totalNodes, ":9651", nil)
+	cfg, err := makeConfig(*nodeID, *dataDir, *encKeyHex, *tierStr, *threshold, *totalNodes, ":9651", nil)
 	if err != nil {
 		fatal(err)
 	}
@@ -245,10 +252,10 @@ func cmdSync(args []string) {
 
 func cmdStatus(args []string) {
 	fs := flag.NewFlagSet("status", flag.ExitOnError)
-	nodeID, dataDir, encKeyHex, threshold, totalNodes := baseFlags(fs)
+	nodeID, dataDir, encKeyHex, tierStr, threshold, totalNodes := baseFlags(fs)
 	fs.Parse(args)
 
-	cfg, err := makeConfig(*nodeID, *dataDir, *encKeyHex, *threshold, *totalNodes, ":9651", nil)
+	cfg, err := makeConfig(*nodeID, *dataDir, *encKeyHex, *tierStr, *threshold, *totalNodes, ":9651", nil)
 	if err != nil {
 		fatal(err)
 	}
@@ -259,10 +266,12 @@ func cmdStatus(args []string) {
 	defer n.Shutdown()
 
 	fmt.Printf("Node ID:     %s\n", n.ID)
+	fmt.Printf("Tier:        %s\n", n.Config.Tier)
 	fmt.Printf("Threshold:   %d-of-%d\n", n.Config.Threshold, n.Config.TotalNodes)
 	fmt.Printf("Data dir:    %s\n", n.Config.DataDir)
 	fmt.Printf("Listen addr: %s\n", n.Config.ListenAddr)
 	fmt.Printf("Peers:       %v\n", n.Peers)
+	fmt.Printf("FHE CRDT:    %v\n", n.Config.Tier.RequiresFHE())
 }
 
 func envOr(key, fallback string) string {
