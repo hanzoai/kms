@@ -1,2 +1,2 @@
-export { InfisicalSecretInput } from "./InfisicalSecretInput";
+export { KmsSecretInput } from "./KmsSecretInput";
 export { SecretInput } from "./SecretInput";

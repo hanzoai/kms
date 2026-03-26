@@ -58,10 +58,9 @@ yarn-error.log*
 
 # KMS init
 .kms.json
-.infisical.json
+.kms.json
 
 .kmsignore
-.infisicalignore
 
 # Editor specific
 .vscode/*

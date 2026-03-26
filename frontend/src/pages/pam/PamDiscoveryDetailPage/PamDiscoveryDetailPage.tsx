@@ -977,8 +977,8 @@ export const PamDiscoveryDetailPage = () => {
   return (
     <>
       <Helmet>
-        <title>Discovery Source | Infisical</title>
-        <link rel="icon" href="/infisical.ico" />
+        <title>Discovery Source | KMS</title>
+        <link rel="icon" href="/favicon.ico" />
       </Helmet>
       <PageContent />
     </>
