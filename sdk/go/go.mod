@@ -1,4 +1,4 @@
-module github.com/hanzoai/kms-sdk-go
+module github.com/hanzoai/kms/sdk/go
 
 go 1.26.1
 
