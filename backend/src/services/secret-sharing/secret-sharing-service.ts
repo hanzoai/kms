@@ -156,7 +156,8 @@ export const secretSharingServiceFactory = ({
       throw new BadRequestError({ message: "Secret max views parameter exceeds organization limit" });
     }
 
-    const encryptWithRoot = kmsService.encryptWithRootKey();
+    const orgSlug = await kmsService.resolveOrgSlug(orgId);
+    const encryptWithRoot = kmsService.encryptWithOrgRootKey(orgSlug);
 
     const orgEmails = [];
 
@@ -322,8 +323,9 @@ export const secretSharingServiceFactory = ({
       throw new BadRequestError({ message: "Secret request has no value set" });
     }
 
-    const decryptWithRoot = kmsService.decryptWithRootKey();
-    const decryptedSecret = decryptWithRoot(secretRequest.encryptedSecret);
+    const reqOrgSlug = secretRequest.orgId ? await kmsService.resolveOrgSlug(secretRequest.orgId) : "";
+    const decryptWithOrgKey = kmsService.decryptWithOrgRootKey(reqOrgSlug);
+    const decryptedSecret = decryptWithOrgKey(secretRequest.encryptedSecret);
 
     return { ...secretRequest, secretValue: decryptedSecret.toString() };
   };
@@ -441,8 +443,9 @@ export const secretSharingServiceFactory = ({
       });
     }
 
-    const encryptWithRoot = kmsService.encryptWithRootKey();
-    const encryptedSecret = encryptWithRoot(Buffer.from(secretValue));
+    const reqOrgSlug = secretRequest.orgId ? await kmsService.resolveOrgSlug(secretRequest.orgId) : "";
+    const encryptWithOrgKey = kmsService.encryptWithOrgRootKey(reqOrgSlug);
+    const encryptedSecret = encryptWithOrgKey(Buffer.from(secretValue));
 
     const request = await secretSharingDAL.transaction(async (tx) => {
       const updatedRequest = await secretSharingDAL.updateById(id, { encryptedSecret }, tx);
@@ -677,12 +680,12 @@ export const secretSharingServiceFactory = ({
         }
       }
 
-      const decryptWithRoot = kmsService.decryptWithRootKey();
-
       if (!sharedSecret.encryptedSecret) {
         throw new BadRequestError({ message: "Secret has no value specified" });
       }
-      const decryptedSecretValue = decryptWithRoot(sharedSecret.encryptedSecret);
+      const ssOrgSlug = sharedSecret.orgId ? await kmsService.resolveOrgSlug(sharedSecret.orgId) : "";
+      const decryptWithOrgKey = kmsService.decryptWithOrgRootKey(ssOrgSlug);
+      const decryptedSecretValue = decryptWithOrgKey(sharedSecret.encryptedSecret);
 
       let organization: TOrganizations | undefined;
 
