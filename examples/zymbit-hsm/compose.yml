@@ -1,0 +1,112 @@
+version: '3.8'
+
+services:
+  # KMS with Zymbit HSM support
+  kms:
+    image: kms/kms-fips:latest
+    container_name: kms-zymbit
+    restart: unless-stopped
+
+    # Required for Zymbit device access
+    privileged: true
+
+    # Device access
+    devices:
+      - /dev/zymkey:/dev/zymkey       # Zymbit device
+      - /dev/i2c-1:/dev/i2c-1          # I2C bus
+
+    # Volume mounts
+    volumes:
+      # Mount Zymbit PKCS#11 library (read-only)
+      - /usr/lib/libzk_pkcs11.so:/usr/lib/libzk_pkcs11.so:ro
+
+    # Environment configuration
+    environment:
+      # HSM Configuration
+      HSM_ENABLED: "true"
+      HSM_PROVIDER: "zymbit"
+      HSM_LIB_PATH: "/usr/lib/libzk_pkcs11.so"
+      HSM_SLOT: "0"
+      HSM_KEY_LABEL: "lux-kms-key"
+      ZYMBIT_DEVICE_PATH: "/dev/zymkey"
+      ZYMBIT_TAMPER_CHECK: "true"
+
+      # KMS Configuration
+      NODE_ENV: "production"
+      PORT: "8080"
+
+      # Database
+      DB_CONNECTION_URI: "postgresql://kms:password@postgres:5432/kms"
+
+      # Redis (optional)
+      REDIS_URL: "redis://redis:6379"
+
+    # Secrets (use Docker secrets in production)
+    env_file:
+      - .env.secrets  # Contains HSM_PIN, ENCRYPTION_KEY, AUTH_SECRET
+
+    # Network
+    ports:
+      - "80:8080"
+
+    # Dependencies
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/status/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # PostgreSQL Database
+  postgres:
+    image: ghcr.io/hanzoai/sql:latest
+    container_name: kms-postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: kms
+      POSTGRES_USER: kms
+      POSTGRES_PASSWORD: password  # Change in production
+
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kms"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: kms-redis
+    restart: unless-stopped
+
+    command: redis-server --appendonly yes
+
+    volumes:
+      - redis-data:/data
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres-data:
+    driver: local
+  redis-data:
+    driver: local
+
+networks:
+  default:
+    name: kms-network
