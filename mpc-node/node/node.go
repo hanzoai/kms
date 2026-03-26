@@ -29,8 +29,8 @@ type Node struct {
 	Compliance *compliance.Engine
 
 	Store  *store.Store
-	Shards *shard.ShardManager
-	CRDT   *mpcFHE.CRDTSync
+	Shards *shard.ShardManager   // nil for TierStandard
+	CRDT   *mpcFHE.CRDTSync     // nil unless TierTFHE or TierSovereign
 	Peers  []string
 
 	grpcServer *grpc.Server
@@ -40,7 +40,11 @@ type Node struct {
 }
 
 // NewNode creates a new MPC node from configuration.
-// It initializes the local ZapDB store and shard manager but does not start serving.
+// Subsystem initialization is tier-dependent:
+//   - TierStandard:  store only (server-side encryption, no MPC)
+//   - TierMPC:       store + shard manager (Shamir threshold)
+//   - TierTFHE:      store + shard manager + FHE CRDT
+//   - TierSovereign: store + shard manager + FHE CRDT (SessionVM stubbed)
 func NewNode(cfg *Config) (*Node, error) {
 	if err := cfg.Validate(); err != nil {
 		return nil, fmt.Errorf("node: invalid config: %w", err)
@@ -54,37 +58,53 @@ func NewNode(cfg *Config) (*Node, error) {
 		return nil, fmt.Errorf("node: open store: %w", err)
 	}
 
-	sm, err := shard.NewShardManager(s, cfg.NodeID, cfg.Threshold, cfg.TotalNodes)
-	if err != nil {
-		s.Close()
-		return nil, fmt.Errorf("node: shard manager: %w", err)
+	logger := slog.Default().With("node", cfg.NodeID, "tier", cfg.Tier.String())
+
+	n := &Node{
+		ID:     cfg.NodeID,
+		Config: cfg,
+		Store:  s,
+		Peers:  cfg.Peers,
+		logger: logger,
 	}
 
-	logger := slog.Default().With("node", cfg.NodeID)
+	// Shard manager for MPC tiers and above.
+	if cfg.Tier.RequiresMPC() {
+		sm, err := shard.NewShardManager(s, cfg.NodeID, cfg.Threshold, cfg.TotalNodes)
+		if err != nil {
+			s.Close()
+			return nil, fmt.Errorf("node: shard manager: %w", err)
+		}
+		n.Shards = sm
+	}
 
-	// Initialize compliance engine (nil for ModeNone).
+	// FHE CRDT only for TFHE and Sovereign tiers.
+	// Evaluator initialization requires FHE bootstrap keys which are provided
+	// at ceremony time — the CRDT field is set later via InitFHE().
+
+	// Compliance engine (nil for ModeNone).
 	ce, err := compliance.NewEngine(cfg.Compliance, s)
 	if err != nil {
 		s.Close()
 		return nil, fmt.Errorf("node: compliance engine: %w", err)
 	}
+	n.Compliance = ce
 
-	return &Node{
-		ID:         cfg.NodeID,
-		Config:     cfg,
-		Compliance: ce,
-		Store:      s,
-		Shards:     sm,
-		Peers:      cfg.Peers,
-		logger:     logger,
-	}, nil
+	logger.Info("node initialized", "tier", cfg.Tier.String())
+	return n, nil
 }
 
 // Bootstrap initializes a new org's key material on this node.
-// It derives a master key from the passphrase, splits it into shards,
-// and stores this node's shard locally.
+// For TierMPC and above, it derives a master key from the passphrase,
+// splits it into shards, and stores this node's shard locally.
+// For TierStandard, bootstrap is a no-op (server-side key management).
 func (n *Node) Bootstrap(orgSlug, passphrase string, nodeIndex int) (*shard.BootstrapResult, error) {
-	n.logger.Info("bootstrapping org", "org", orgSlug, "threshold", n.Config.Threshold, "nodes", n.Config.TotalNodes)
+	if !n.Config.Tier.RequiresMPC() {
+		return nil, errors.New("node: bootstrap requires mpc tier or above")
+	}
+
+	n.logger.Info("bootstrapping org", "org", orgSlug, "tier", n.Config.Tier.String(),
+		"threshold", n.Config.Threshold, "nodes", n.Config.TotalNodes)
 
 	masterKey, err := mpcCrypto.DeriveCEK(passphrase, []byte(orgSlug))
 	if err != nil {
@@ -102,8 +122,22 @@ func (n *Node) Bootstrap(orgSlug, passphrase string, nodeIndex int) (*shard.Boot
 
 // Join accepts a shard from a bootstrap or rotation ceremony and stores it locally.
 func (n *Node) Join(orgSlug string, shardData []byte) error {
+	if !n.Config.Tier.RequiresMPC() {
+		return errors.New("node: join requires mpc tier or above")
+	}
 	n.logger.Info("joining org", "org", orgSlug)
 	return n.Shards.InviteNode(orgSlug, shardData)
+}
+
+// InitFHE sets the FHE CRDT sync engine. Only valid for TierTFHE and TierSovereign.
+// Called after FHE bootstrap keys are available (post-ceremony).
+func (n *Node) InitFHE(crdt *mpcFHE.CRDTSync) error {
+	if !n.Config.Tier.RequiresFHE() {
+		return fmt.Errorf("node: FHE initialization requires tfhe tier or above, got %s", n.Config.Tier)
+	}
+	n.CRDT = crdt
+	n.logger.Info("FHE CRDT initialized")
+	return nil
 }
 
 // Serve starts the gRPC server on the configured listen address.
@@ -144,10 +178,14 @@ func (n *Node) Serve(ctx context.Context) error {
 }
 
 // Sync triggers CRDT synchronization with all peers.
+// Requires TierTFHE or above — MPC tier uses direct shard exchange, not CRDT.
 // This is a best-effort operation; failures are logged but do not stop the node.
 func (n *Node) Sync(orgSlug string) error {
+	if !n.Config.Tier.RequiresFHE() {
+		return fmt.Errorf("node: CRDT sync requires tfhe tier or above, got %s", n.Config.Tier)
+	}
 	if n.CRDT == nil {
-		return errors.New("node: CRDT sync not initialized")
+		return errors.New("node: CRDT sync not initialized (call InitFHE first)")
 	}
 	var syncErrors []error
 	for _, peer := range n.Peers {
