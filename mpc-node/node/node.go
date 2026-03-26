@@ -15,6 +15,7 @@ import (
 
 	"google.golang.org/grpc"
 
+	"github.com/hanzoai/kms/mpc-node/compliance"
 	mpcCrypto "github.com/hanzoai/kms/mpc-node/crypto"
 	mpcFHE "github.com/hanzoai/kms/mpc-node/fhe"
 	"github.com/hanzoai/kms/mpc-node/shard"
@@ -23,8 +24,9 @@ import (
 
 // Node is a single MPC node in the distributed KMS cluster.
 type Node struct {
-	ID     string
-	Config *Config
+	ID         string
+	Config     *Config
+	Compliance *compliance.Engine
 
 	Store  *store.Store
 	Shards *shard.ShardManager
@@ -60,13 +62,21 @@ func NewNode(cfg *Config) (*Node, error) {
 
 	logger := slog.Default().With("node", cfg.NodeID)
 
+	// Initialize compliance engine (nil for ModeNone).
+	ce, err := compliance.NewEngine(cfg.Compliance, s)
+	if err != nil {
+		s.Close()
+		return nil, fmt.Errorf("node: compliance engine: %w", err)
+	}
+
 	return &Node{
-		ID:     cfg.NodeID,
-		Config: cfg,
-		Store:  s,
-		Shards: sm,
-		Peers:  cfg.Peers,
-		logger: logger,
+		ID:         cfg.NodeID,
+		Config:     cfg,
+		Compliance: ce,
+		Store:      s,
+		Shards:     sm,
+		Peers:      cfg.Peers,
+		logger:     logger,
 	}, nil
 }
 
