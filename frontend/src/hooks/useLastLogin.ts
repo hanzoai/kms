@@ -4,7 +4,7 @@ import { LoginMethod } from "@app/hooks/api/admin/types";
 
 import { useLocalStorageState } from "./useLocalStorageState";
 
-const LAST_LOGIN_KEY = "infisical.lastLogin";
+const LAST_LOGIN_KEY = "kms.lastLogin";
 
 export type LastLogin = {
   method: LoginMethod;

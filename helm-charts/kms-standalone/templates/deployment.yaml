@@ -73,7 +73,7 @@ spec:
         - name: REDIS_URL
           value: {{ include "kms.redisConnectionString" . }}
         {{- end }}
-        {{- with $infisicalValues.extraEnv }}
+        {{- with $kmsValues.extraEnv }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
         envFrom:

@@ -61,7 +61,7 @@ RUN ARCH=$(dpkg --print-architecture) && \
     ldconfig && \
     rm -rf /var/lib/apt/lists/*
 
-# ── KMS CLI ───────────────────────────────────────────────────
+# ── KMS CLI (upstream binary, aliased as kms) ────────────────
 RUN curl -1sLf 'https://artifacts-cli.infisical.com/setup.deb.sh' | bash \
     && apt-get update && apt-get install -y infisical=0.43.47 \
     && rm -rf /var/lib/apt/lists/* \
