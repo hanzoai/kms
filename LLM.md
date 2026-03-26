@@ -241,11 +241,11 @@ Eight major subsystems ported from HashiCorp Vault (MPL-2.0) to TypeScript.
 | Raft | Not needed | Lux Quasar (leaderless, post-quantum) |
 | Serf/memberlist | Not needed | Lux P2P + mDNS + DHT |
 
-## ZK-KMS Architecture (2026-03-25)
+## TFHE-KMS Architecture (2026-03-25)
 
 ### Overview
 
-The ZK-KMS is a distributed zero-knowledge key management system. No single node ever holds the
+The TFHE-KMS is a distributed zero-knowledge key management system. No single node ever holds the
 complete encryption key (CEK). The CEK is split via Shamir secret sharing across n MPC nodes, with
 t-of-n threshold for reconstruction. Data is encrypted with AES-256-GCM, keys are wrapped with
 HPKE (X25519 + HKDF-SHA256 + ChaCha20-Poly1305), and state is replicated via FHE CRDT sync across

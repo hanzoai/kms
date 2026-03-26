@@ -1,7 +1,7 @@
 // Copyright (C) 2026, Hanzo AI Inc. All rights reserved.
 // SPDX-License-Identifier: Proprietary
 
-// Package compliance provides regulatory compliance enforcement for the ZK-KMS MPC node.
+// Package compliance provides regulatory compliance enforcement for the TFHE-KMS MPC node.
 //
 // Supported modes:
 //   - HIPAA: healthcare PHI protection, break-glass emergency access, BAA support
