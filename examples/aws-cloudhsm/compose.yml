@@ -1,0 +1,139 @@
+version: '3.8'
+
+services:
+  # Lux KMS with AWS CloudHSM
+  kms:
+    image: luxfi/kms:latest
+    container_name: lux-kms-cloudhsm
+    restart: unless-stopped
+
+    # Use host network for CloudHSM connectivity
+    # CloudHSM client requires direct network access to HSM IPs
+    network_mode: "host"
+
+    environment:
+      # AWS CloudHSM Configuration
+      AWS_CLOUDHSM_CLUSTER_ID: "${AWS_CLOUDHSM_CLUSTER_ID}"
+      AWS_CLOUDHSM_PIN: "${AWS_CLOUDHSM_PIN}"
+      AWS_CLOUDHSM_LIB_PATH: "/opt/cloudhsm/lib/libcloudhsm_pkcs11.so"
+      AWS_REGION: "${AWS_REGION:-us-east-1}"
+
+      # HSM Slot and Key Configuration
+      HSM_SLOT: "0"
+      HSM_KEY_LABEL: "${HSM_KEY_LABEL:-lux-kms-key}"
+
+      # Optional: Disable health check (not recommended for production)
+      # AWS_CLOUDHSM_HEALTH_CHECK: "false"
+
+      # AWS Credentials (use IAM instance role in production)
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+      # AWS_SESSION_TOKEN: "${AWS_SESSION_TOKEN}"  # If using temporary credentials
+
+      # KMS Application Configuration
+      NODE_ENV: "production"
+      PORT: "8080"
+      DB_CONNECTION_STRING: "postgresql://kms:password@postgres:5432/kms"
+
+      # Redis for session management
+      REDIS_URL: "redis://redis:6379"
+
+      # Logging
+      LOG_LEVEL: "info"
+
+    volumes:
+      # Mount CloudHSM client libraries and configuration
+      - /opt/cloudhsm:/opt/cloudhsm:ro
+
+      # Mount cluster certificate
+      - ./cluster.crt:/opt/cloudhsm/etc/cluster.crt:ro
+
+      # Mount client configuration
+      - ./cloudhsm_client.cfg:/opt/cloudhsm/etc/cloudhsm_client.cfg:ro
+
+      # Application data
+      - kms-data:/app/data
+
+    depends_on:
+      - postgres
+      - redis
+
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 2G
+
+  # PostgreSQL database
+  postgres:
+    image: ghcr.io/hanzoai/sql:latest
+    container_name: lux-kms-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: kms
+      POSTGRES_USER: kms
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - kms-internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kms"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis for caching and sessions
+  redis:
+    image: redis:7-alpine
+    container_name: lux-kms-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass "${REDIS_PASSWORD}"
+    volumes:
+      - redis-data:/data
+    networks:
+      - kms-internal
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # Optional: CloudHSM client sidecar (for initialization tasks)
+  cloudhsm-client:
+    image: amazonlinux:2
+    container_name: cloudhsm-client
+    network_mode: "host"
+    volumes:
+      - /opt/cloudhsm:/opt/cloudhsm
+    command: tail -f /dev/null
+    profiles:
+      - tools
+
+networks:
+  kms-internal:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  kms-data:
+    driver: local
+  postgres-data:
+    driver: local
+  redis-data:
+    driver: local

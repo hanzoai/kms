@@ -1,0 +1,185 @@
+version: '3.8'
+
+services:
+  lux-kms:
+    image: lux/kms:latest
+    container_name: lux-kms
+    restart: unless-stopped
+
+    environment:
+      # HSM Configuration
+      - HSM_ENABLED=true
+      - HSM_PROVIDER=google-cloud
+
+      # Google Cloud KMS Configuration
+      - GOOGLE_CLOUD_PROJECT_ID=${GOOGLE_CLOUD_PROJECT_ID}
+      - GOOGLE_CLOUD_LOCATION=${GOOGLE_CLOUD_LOCATION:-global}
+      - GOOGLE_CLOUD_KEY_RING=${GOOGLE_CLOUD_KEY_RING:-lux-kms-keyring}
+      - GOOGLE_CLOUD_CRYPTO_KEY=${GOOGLE_CLOUD_CRYPTO_KEY:-lux-kms-key}
+      - GOOGLE_APPLICATION_CREDENTIALS=/run/secrets/gcp-credentials
+      - GOOGLE_CLOUD_PROTECTION_LEVEL=${GOOGLE_CLOUD_PROTECTION_LEVEL:-HSM}
+      - GOOGLE_CLOUD_AUTO_ROTATE=${GOOGLE_CLOUD_AUTO_ROTATE:-true}
+      - GOOGLE_CLOUD_ROTATION_PERIOD=${GOOGLE_CLOUD_ROTATION_PERIOD:-7776000s}
+
+      # Application Configuration
+      - PORT=8080
+      - NODE_ENV=production
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_FORMAT=${LOG_FORMAT:-json}
+
+      # Database Configuration
+      - DB_CONNECTION_URI=${DB_CONNECTION_URI}
+
+      # Redis Configuration
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
+
+      # Monitoring
+      - ENABLE_METRICS=${ENABLE_METRICS:-true}
+      - METRICS_PORT=9090
+
+      # Security
+      - JWT_SECRET=${JWT_SECRET}
+      - RATE_LIMIT_ENABLED=${RATE_LIMIT_ENABLED:-true}
+      - RATE_LIMIT_MAX_REQUESTS=${RATE_LIMIT_MAX_REQUESTS:-100}
+      - RATE_LIMIT_WINDOW_MS=${RATE_LIMIT_WINDOW_MS:-60000}
+
+    secrets:
+      - gcp-credentials
+
+    ports:
+      - "8080:8080"
+      - "9090:9090"  # Prometheus metrics
+
+    volumes:
+      - lux-kms-data:/app/data
+      - lux-kms-logs:/app/logs
+
+    depends_on:
+      - postgres
+      - redis
+
+    networks:
+      - lux-kms-network
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  postgres:
+    image: ghcr.io/hanzoai/sql:latest
+    container_name: lux-kms-postgres
+    restart: unless-stopped
+
+    environment:
+      - POSTGRES_DB=lux_kms
+      - POSTGRES_USER=${POSTGRES_USER:-lux_kms}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+    networks:
+      - lux-kms-network
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-lux_kms}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: lux-kms-redis
+    restart: unless-stopped
+
+    command: redis-server --appendonly yes
+
+    volumes:
+      - redis-data:/data
+
+    networks:
+      - lux-kms-network
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # Optional: Prometheus for metrics collection
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: lux-kms-prometheus
+    restart: unless-stopped
+
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+
+    ports:
+      - "9091:9090"
+
+    networks:
+      - lux-kms-network
+
+    profiles:
+      - monitoring
+
+  # Optional: Grafana for metrics visualization
+  grafana:
+    image: grafana/grafana:latest
+    container_name: lux-kms-grafana
+    restart: unless-stopped
+
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+      - GF_INSTALL_PLUGINS=grafana-clock-panel
+
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./grafana/datasources:/etc/grafana/provisioning/datasources:ro
+
+    ports:
+      - "3000:3000"
+
+    depends_on:
+      - prometheus
+
+    networks:
+      - lux-kms-network
+
+    profiles:
+      - monitoring
+
+secrets:
+  gcp-credentials:
+    file: ${GOOGLE_APPLICATION_CREDENTIALS:-./lux-kms-credentials.json}
+
+volumes:
+  lux-kms-data:
+    driver: local
+  lux-kms-logs:
+    driver: local
+  postgres-data:
+    driver: local
+  redis-data:
+    driver: local
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
+
+networks:
+  lux-kms-network:
+    driver: bridge
