@@ -1,0 +1,91 @@
+// Copyright (C) 2026, Hanzo AI Inc. All rights reserved.
+// SPDX-License-Identifier: Proprietary
+
+syntax = "proto3";
+
+package mpc;
+
+option go_package = "github.com/hanzoai/kms/mpc-node/api/proto";
+
+// MPCNode is the service definition for node-to-node and client-to-node communication.
+service MPCNode {
+  // StoreShard stores a Shamir shard on this node (called during bootstrap/rotation).
+  rpc StoreShard(StoreShardRequest) returns (StoreShardResponse);
+
+  // GetShard retrieves this node's shard for an org (used during reconstruction).
+  rpc GetShard(GetShardRequest) returns (GetShardResponse);
+
+  // PutSecret stores an encrypted secret blob.
+  rpc PutSecret(PutSecretRequest) returns (PutSecretResponse);
+
+  // GetSecret retrieves an encrypted secret blob.
+  rpc GetSecret(GetSecretRequest) returns (GetSecretResponse);
+
+  // ListSecrets lists all secret keys for an org.
+  rpc ListSecrets(ListSecretsRequest) returns (ListSecretsResponse);
+
+  // SyncCRDT exchanges CRDT operations with a peer.
+  rpc SyncCRDT(SyncCRDTRequest) returns (SyncCRDTResponse);
+
+  // Status returns the node's health and metadata.
+  rpc Status(StatusRequest) returns (StatusResponse);
+}
+
+message StoreShardRequest {
+  string org_slug = 1;
+  bytes shard = 2;
+}
+
+message StoreShardResponse {}
+
+message GetShardRequest {
+  string org_slug = 1;
+}
+
+message GetShardResponse {
+  bytes shard = 1;
+}
+
+message PutSecretRequest {
+  string org_slug = 1;
+  string key = 2;
+  bytes encrypted_blob = 3;
+}
+
+message PutSecretResponse {}
+
+message GetSecretRequest {
+  string org_slug = 1;
+  string key = 2;
+}
+
+message GetSecretResponse {
+  bytes encrypted_blob = 1;
+}
+
+message ListSecretsRequest {
+  string org_slug = 1;
+}
+
+message ListSecretsResponse {
+  repeated string keys = 1;
+}
+
+message SyncCRDTRequest {
+  string org_slug = 1;
+  uint64 since = 2;  // sequence number to sync from
+}
+
+message SyncCRDTResponse {
+  repeated bytes ops = 1;  // FHE-encrypted CRDT operations
+}
+
+message StatusRequest {}
+
+message StatusResponse {
+  string node_id = 1;
+  int32 threshold = 2;
+  int32 total_nodes = 3;
+  repeated string peers = 4;
+  bool ready = 5;
+}
