@@ -19,14 +19,17 @@ nodes. A state-level adversary with network-level surveillance can:
 
 - **Network-level anonymity**: No participant's IP is visible to any other.
 - **Censorship resistance**: Key ceremonies complete even under active blocking.
-- **Post-quantum on-chain anchoring**: All key lifecycle events are verifiable on
-  Pars L1 using ML-DSA/SLH-DSA precompiles.
-- **FHE-encrypted state sync**: MPC node state replication without plaintext exposure.
+- **Post-quantum on-chain anchoring**: Lux L1 provides consensus-level PQ anchoring.
+  Pars L2 (subnet on Lux) provides ML-DSA/SLH-DSA precompiles for signature verification.
+- **FHE-encrypted state sync**: MPC node state replication via Lux T-Chain TFHE CRDT
+  coordination — FHE operations run on-chain, no plaintext exposure.
 
 **Constraints**:
 
+- Lux Network (L1) provides PQ anchoring, consensus, cross-chain Warp messages.
+- Lux T-Chain coordinates TFHE CRDT operations between MPC nodes.
+- Pars (L2 subnet on Lux) provides post-quantum signature verification precompiles.
 - SessionVM swarm provides the onion-routing substrate (luxfi/session, luxtel fork).
-- Pars L1 provides post-quantum signature verification via native precompiles.
 - MPC nodes use luxfi/threshold (Shamir) + luxfi/fhe (TFHE) + luxfi/frost (threshold sigs).
 - luxfi packages only. No external crypto libraries.
 - Go packages at v1.x.x.
@@ -72,10 +75,10 @@ nodes. A state-level adversary with network-level surveillance can:
 │                                                                     │
 │  Identical to base TFHE-KMS API, with two additions:                │
 │  1. Accepts connections only via SessionVM (no direct IP).           │
-│  2. Emits PQ-signed audit anchors to Pars L1.                       │
+│  2. Emits PQ-signed audit anchors to Pars L2.                       │
 │                                                                     │
 │  The API server itself runs as a SessionVM hidden service.           │
-│  Its session ID is published in the org's Pars L1 registry.         │
+│  Its session ID is published in the org's Pars L2 registry.         │
 │                                                                     │
 │  Still zero-knowledge: no CEK, no master key, no plaintext.         │
 └───────────────────────────┬─────────────────────────────────────────┘
@@ -118,7 +121,14 @@ nodes. A state-level adversary with network-level surveillance can:
                             │ (t-of-n MPC nodes co-sign)
                             ▼
 ┌─────────────────────────────────────────────────────────────────────┐
-│ Pars L1 (Post-Quantum Signature Anchoring)                          │
+│ Lux L1 → Pars L2 (Post-Quantum Signature Anchoring)                 │
+│                                                                     │
+│  Lux Network (L1):                                                  │
+│  - PQ anchoring via consensus (validators, Warp messages)           │
+│  - T-Chain: TFHE CRDT coordination (FHE operations)                 │
+│  - Cross-chain Warp for multi-subnet verification                   │
+│                                                                     │
+│  Pars (L2 subnet on Lux):                                           │
 │                                                                     │
 │  On-chain contracts verify:                                         │
 │  - Key ceremony completion (ML-DSA-65 signatures)                   │
@@ -151,8 +161,8 @@ nodes. A state-level adversary with network-level surveillance can:
    c. Result: Shamir shares of org master key, threshold t-of-n.
    d. Each node stores its share in local ZapDB (encrypted at rest).
 5. MPC nodes co-sign a FROST attestation of ceremony completion.
-6. FROST signature + org ML-DSA-65 public key submitted to Pars L1.
-7. Pars L1 KeyCeremony contract verifies:
+6. FROST signature + org ML-DSA-65 public key submitted to Pars L2.
+7. Pars L2 KeyCeremony contract verifies:
    a. FROST signature (0x0200..000C precompile).
    b. ML-DSA-65 org identity (0x0200..0006 precompile).
    c. Emits OrgRegistered event with on-chain timestamp.
@@ -171,7 +181,7 @@ nodes. A state-level adversary with network-level surveillance can:
    b. Evaluates FHE-encrypted policy gates (without seeing policy).
    c. Syncs state via FHE CRDT over SessionVM inter-node channels.
 7. MPC nodes co-sign storage attestation (FROST).
-8. FROST attestation anchored to Pars L1 (SLH-DSA-SHA2-128s for longevity).
+8. FROST attestation anchored to Pars L2 (SLH-DSA-SHA2-128s for longevity).
 ```
 
 ### 3. Secret Retrieval
@@ -198,7 +208,7 @@ nodes. A state-level adversary with network-level surveillance can:
    a. New Shamir shares generated without reconstructing master key.
    b. Old shares invalidated.
    c. Re-encryption of stored blobs under new shares.
-3. Rotation attestation co-signed (FROST) and anchored to Pars L1.
+3. Rotation attestation co-signed (FROST) and anchored to Pars L2.
 4. On-chain KeyRotated event with new epoch number.
 ```
 
@@ -223,7 +233,7 @@ Merge protocol:
 2. Node B applies FHE.add/FHE.max on encrypted deltas.
 3. No node sees any other node's plaintext state.
 4. Consistency verified by periodic FROST-signed state hashes
-   anchored to Pars L1.
+   anchored to Pars L2.
 ```
 
 ## Security Properties
@@ -253,7 +263,7 @@ Merge protocol:
 |--------|------------|
 | Network-level blocking of MPC nodes | Nodes on different SessionVM swarm nodes, no static IPs |
 | Selective ceremony disruption | DKG requires only t-of-n, tolerates n-t failures |
-| DNS poisoning | No DNS; session IDs published on Pars L1 (immutable) |
+| DNS poisoning | No DNS; session IDs published on Pars L2 (immutable) |
 | BGP hijacking | SessionVM routing is overlay, not dependent on IP routing |
 
 ### Separation of Concerns
@@ -263,7 +273,7 @@ Client:     Holds CEK. Can encrypt/decrypt. Cannot access without MPC quorum.
 KMS API:    Routes requests. Cannot decrypt. Cannot reconstruct master key.
 MPC Node:   Holds one Shamir share. Cannot decrypt alone. Cannot see other nodes' shares.
 SessionVM:  Routes packets. Cannot read payloads (onion-encrypted). Cannot correlate endpoints.
-Pars L1:    Verifies signatures. Cannot decrypt anything. Provides immutable audit trail.
+Pars L2:    Verifies signatures. Cannot decrypt anything. Provides immutable audit trail.
 ```
 
 ## Deployment Topology
@@ -314,7 +324,7 @@ Phase 1: Deploy SessionVM transport alongside existing gRPC.
          Clients can opt-in to SessionVM circuits.
          No on-chain anchoring yet.
 
-Phase 2: Deploy Pars L1 anchoring.
+Phase 2: Deploy Pars L2 anchoring.
          Key ceremonies emit FROST attestations to chain.
          Audit logs anchored via SLH-DSA signatures.
          Direct gRPC still available as fallback.
@@ -325,7 +335,7 @@ Phase 3: Deprecate direct gRPC.
          MPC nodes reachable only via session IDs.
 
 Phase 4: Full sovereign mode.
-         Org registry on Pars L1 (session IDs, PQ public keys).
+         Org registry on Pars L2 (session IDs, PQ public keys).
          No IP addresses in any configuration.
          All state sync via FHE CRDTs over SessionVM.
 ```
@@ -355,4 +365,4 @@ Phase 4: Full sovereign mode.
 | SessionVM swarm eclipse attack | Medium | Economic: staking cost for Sybil; guard node rotation |
 | FHE evaluation performance | Low | CKKS parameters tuned for policy gates, not general compute |
 | FROST liveness (< t nodes online) | Medium | Over-provision n; monitor via on-chain heartbeats |
-| Pars L1 chain halt | Low | Ceremonies complete without anchoring; anchor when chain resumes |
+| Pars L2 chain halt | Low | Ceremonies complete without anchoring; anchor when chain resumes |
