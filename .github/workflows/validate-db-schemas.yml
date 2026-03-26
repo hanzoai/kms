@@ -40,7 +40,7 @@ jobs:
                   cache-dependency-path: backend/pnpm-lock.yaml
 
             - name: Start PostgreSQL and Redis
-              run: touch .env && docker compose -f docker-compose.dev.yml up -d db redis
+              run: touch .env && docker compose -f compose.dev.yml up -d db redis
             - name: "Strip file: deps and install"
               working-directory: backend
               run: |
@@ -69,4 +69,4 @@ jobs:
             - name: Cleanup
               if: always()
               run: |
-                  docker compose -f "docker-compose.dev.yml" down
+                  docker compose -f "compose.dev.yml" down
