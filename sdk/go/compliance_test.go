@@ -27,67 +27,48 @@ func mockComplianceServer(t *testing.T) (*httptest.Server, *mockComplianceState)
 		state.mu.Lock()
 		defer state.mu.Unlock()
 
+		p := r.URL.Path
+		m := r.Method
+
+		// Route most-specific paths first to avoid prefix collisions.
 		switch {
-		// Enable compliance
-		case r.Method == http.MethodPost && matchPath(r.URL.Path, "/v1/orgs/", "/zk/compliance"):
-			var req enableComplianceRequest
-			if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-				http.Error(w, err.Error(), http.StatusBadRequest)
-				return
-			}
-			state.complianceEnabled = true
-			state.complianceMode = req.Mode
-			state.escrowPubKey = req.EscrowPubKey
-			w.WriteHeader(http.StatusOK)
 
-		// Disable compliance
-		case r.Method == http.MethodDelete && matchPath(r.URL.Path, "/v1/orgs/", "/zk/compliance"):
-			if state.hasActiveRetention() {
-				http.Error(w, "active retention prevents disabling compliance", http.StatusConflict)
-				return
-			}
-			state.complianceEnabled = false
-			w.WriteHeader(http.StatusOK)
+		// --- Audit: verify, export (before generic /audit) ---
 
-		// Request break-glass (POST)
-		case r.Method == http.MethodPost && matchPath(r.URL.Path, "/v1/orgs/", "/zk/compliance/break-glass"):
-			var req breakGlassRequest
-			if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-				http.Error(w, err.Error(), http.StatusBadRequest)
-				return
+		case m == http.MethodGet && pathEndsWith(p, "/zk/compliance/audit/verify"):
+			resp := struct {
+				Valid bool `json:"valid"`
+			}{
+				Valid: state.auditValid,
 			}
-			token := &BreakGlassToken{
-				Token:      "bg-token-" + time.Now().Format("150405"),
-				ExpiresAt:  time.Now().Add(time.Duration(req.DurationMs) * time.Millisecond),
-				SecretKeys: req.SecretKeys,
-			}
-			state.breakGlass[token.Token] = token
-			state.auditLog = append(state.auditLog, AuditEntry{
-				Timestamp: time.Now(),
-				ActorID:   "test-actor",
-				Action:    "break-glass-request",
-				Reason:    req.Reason,
-			})
-			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(resp)
 
-		// Get break-glass token (GET)
-		case r.Method == http.MethodGet && matchPath(r.URL.Path, "/v1/orgs/", "/zk/compliance/break-glass"):
-			// Return the most recently created token.
-			var latest *BreakGlassToken
-			for _, tok := range state.breakGlass {
-				if latest == nil || tok.ExpiresAt.After(latest.ExpiresAt) {
-					latest = tok
+		case m == http.MethodGet && pathContains(p, "/zk/compliance/audit/export"):
+			format := r.URL.Query().Get("format")
+			switch format {
+			case "json":
+				json.NewEncoder(w).Encode(state.auditLog)
+			case "csv":
+				w.Write([]byte("ts,actor,action,key,reason,ip\n"))
+				for _, e := range state.auditLog {
+					w.Write([]byte(e.Timestamp.Format(time.RFC3339) + "," + e.ActorID + "," + e.Action + "," + e.SecretKey + "," + e.Reason + "," + e.SourceIP + "\n"))
 				}
+			default:
+				http.Error(w, "unsupported format", http.StatusBadRequest)
 			}
-			if latest == nil {
-				http.Error(w, "no break-glass tokens", http.StatusNotFound)
-				return
-			}
-			json.NewEncoder(w).Encode(latest)
 
-		// Get with break-glass
-		case r.Method == http.MethodGet && containsPath(r.URL.Path, "/zk/compliance/break-glass/"):
-			// Extract token from path — simplified: check if any token matches.
+		case m == http.MethodGet && pathContains(p, "/zk/compliance/audit") && r.URL.Query().Get("since") != "":
+			resp := struct {
+				Entries []AuditEntry `json:"entries"`
+			}{
+				Entries: state.auditLog,
+			}
+			json.NewEncoder(w).Encode(resp)
+
+		// --- Break-glass: GET/DELETE with token (has extra path segments) before bare break-glass ---
+
+		case m == http.MethodGet && pathContains(p, "/zk/compliance/break-glass/") && !pathEndsWith(p, "/zk/compliance/break-glass/"):
+			// GET /v1/orgs/{org}/zk/compliance/break-glass/{token}/{key}
 			found := false
 			for _, tok := range state.breakGlass {
 				if time.Now().After(tok.ExpiresAt) {
@@ -108,9 +89,8 @@ func mockComplianceServer(t *testing.T) (*httptest.Server, *mockComplianceState)
 				return
 			}
 
-		// Revoke break-glass (DELETE with token in path)
-		case r.Method == http.MethodDelete && containsPath(r.URL.Path, "/zk/compliance/break-glass/"):
-			// Clear all break-glass tokens for simplicity in tests.
+		case m == http.MethodDelete && pathContains(p, "/zk/compliance/break-glass/"):
+			// DELETE /v1/orgs/{org}/zk/compliance/break-glass/{token}
 			state.breakGlass = make(map[string]*BreakGlassToken)
 			state.auditLog = append(state.auditLog, AuditEntry{
 				Timestamp: time.Now(),
@@ -119,41 +99,44 @@ func mockComplianceServer(t *testing.T) (*httptest.Server, *mockComplianceState)
 			})
 			w.WriteHeader(http.StatusOK)
 
-		// Audit log (GET)
-		case r.Method == http.MethodGet && matchPath(r.URL.Path, "/v1/orgs/", "/zk/compliance/audit") && r.URL.Query().Get("since") != "":
-			resp := struct {
-				Entries []AuditEntry `json:"entries"`
-			}{
-				Entries: state.auditLog,
-			}
-			json.NewEncoder(w).Encode(resp)
+		// --- Break-glass: bare endpoint (no token in path) ---
 
-		// Verify audit log
-		case r.Method == http.MethodGet && containsPath(r.URL.Path, "/zk/compliance/audit/verify"):
-			resp := struct {
-				Valid bool `json:"valid"`
-			}{
-				Valid: state.auditValid,
+		case m == http.MethodPost && pathEndsWith(p, "/zk/compliance/break-glass"):
+			var req breakGlassRequest
+			if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
 			}
-			json.NewEncoder(w).Encode(resp)
+			token := &BreakGlassToken{
+				Token:      "bg-token-" + time.Now().Format("150405.000"),
+				ExpiresAt:  time.Now().Add(time.Duration(req.DurationMs) * time.Millisecond),
+				SecretKeys: req.SecretKeys,
+			}
+			state.breakGlass[token.Token] = token
+			state.auditLog = append(state.auditLog, AuditEntry{
+				Timestamp: time.Now(),
+				ActorID:   "test-actor",
+				Action:    "break-glass-request",
+				Reason:    req.Reason,
+			})
+			w.WriteHeader(http.StatusOK)
 
-		// Export audit log
-		case r.Method == http.MethodGet && containsPath(r.URL.Path, "/zk/compliance/audit/export"):
-			format := r.URL.Query().Get("format")
-			switch format {
-			case "json":
-				json.NewEncoder(w).Encode(state.auditLog)
-			case "csv":
-				w.Write([]byte("ts,actor,action,key,reason,ip\n"))
-				for _, e := range state.auditLog {
-					w.Write([]byte(e.Timestamp.Format(time.RFC3339) + "," + e.ActorID + "," + e.Action + "," + e.SecretKey + "," + e.Reason + "," + e.SourceIP + "\n"))
+		case m == http.MethodGet && pathEndsWith(p, "/zk/compliance/break-glass"):
+			var latest *BreakGlassToken
+			for _, tok := range state.breakGlass {
+				if latest == nil || tok.ExpiresAt.After(latest.ExpiresAt) {
+					latest = tok
 				}
-			default:
-				http.Error(w, "unsupported format", http.StatusBadRequest)
 			}
+			if latest == nil {
+				http.Error(w, "no break-glass tokens", http.StatusNotFound)
+				return
+			}
+			json.NewEncoder(w).Encode(latest)
 
-		// Mark retained (POST)
-		case r.Method == http.MethodPost && matchPath(r.URL.Path, "/v1/orgs/", "/zk/compliance/retained"):
+		// --- Retained ---
+
+		case m == http.MethodPost && pathEndsWith(p, "/zk/compliance/retained"):
 			var req retainRequest
 			if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
@@ -164,13 +147,12 @@ func mockComplianceServer(t *testing.T) (*httptest.Server, *mockComplianceState)
 				state.retained[k] = RetainedRecord{
 					Key:        k,
 					RetainedAt: now,
-					ExpiresAt:  now.Add(7 * 365 * 24 * time.Hour), // 7 years default
+					ExpiresAt:  now.Add(7 * 365 * 24 * time.Hour),
 				}
 			}
 			w.WriteHeader(http.StatusOK)
 
-		// List retained (GET)
-		case r.Method == http.MethodGet && matchPath(r.URL.Path, "/v1/orgs/", "/zk/compliance/retained"):
+		case m == http.MethodGet && pathEndsWith(p, "/zk/compliance/retained"):
 			records := make([]RetainedRecord, 0, len(state.retained))
 			for _, rec := range state.retained {
 				records = append(records, rec)
@@ -182,8 +164,9 @@ func mockComplianceServer(t *testing.T) (*httptest.Server, *mockComplianceState)
 			}
 			json.NewEncoder(w).Encode(resp)
 
-		// Regulator export (POST)
-		case r.Method == http.MethodPost && matchPath(r.URL.Path, "/v1/orgs/", "/zk/compliance/export"):
+		// --- Regulator export ---
+
+		case m == http.MethodPost && pathEndsWith(p, "/zk/compliance/export"):
 			var req regulatorExportRequest
 			if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
@@ -192,8 +175,7 @@ func mockComplianceServer(t *testing.T) (*httptest.Server, *mockComplianceState)
 			state.lastExportKeys = req.SecretKeys
 			w.WriteHeader(http.StatusOK)
 
-		// Regulator export (GET)
-		case r.Method == http.MethodGet && matchPath(r.URL.Path, "/v1/orgs/", "/zk/compliance/export"):
+		case m == http.MethodGet && pathEndsWith(p, "/zk/compliance/export"):
 			pkg := RegulatorPackage{
 				EncryptedSecrets: []byte("encrypted-blob"),
 				EscrowMaterial:   []byte("escrow-wrapped-material"),
@@ -202,9 +184,30 @@ func mockComplianceServer(t *testing.T) (*httptest.Server, *mockComplianceState)
 			}
 			json.NewEncoder(w).Encode(pkg)
 
-		// Delete secret — check retention
-		case r.Method == http.MethodDelete && matchPath(r.URL.Path, "/v1/orgs/", "/zk/secrets/"):
-			// Check if the key is retained.
+		// --- Enable/Disable compliance (most general /zk/compliance — must be LAST) ---
+
+		case m == http.MethodPost && pathEndsWith(p, "/zk/compliance"):
+			var req enableComplianceRequest
+			if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+			state.complianceEnabled = true
+			state.complianceMode = req.Mode
+			state.escrowPubKey = req.EscrowPubKey
+			w.WriteHeader(http.StatusOK)
+
+		case m == http.MethodDelete && pathEndsWith(p, "/zk/compliance"):
+			if state.hasActiveRetention() {
+				http.Error(w, "active retention prevents disabling compliance", http.StatusConflict)
+				return
+			}
+			state.complianceEnabled = false
+			w.WriteHeader(http.StatusOK)
+
+		// --- Delete secret (check retention) ---
+
+		case m == http.MethodDelete && pathContains(p, "/zk/secrets/"):
 			for _, rec := range state.retained {
 				if time.Now().Before(rec.ExpiresAt) {
 					http.Error(w, "secret is under retention", http.StatusForbidden)
@@ -214,7 +217,7 @@ func mockComplianceServer(t *testing.T) (*httptest.Server, *mockComplianceState)
 			w.WriteHeader(http.StatusOK)
 
 		default:
-			http.Error(w, "not found: "+r.URL.Path, http.StatusNotFound)
+			http.Error(w, "not found: "+p, http.StatusNotFound)
 		}
 	}))
 
