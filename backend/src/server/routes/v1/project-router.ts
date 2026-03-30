@@ -43,8 +43,9 @@ import {
 } from "../sanitizedSchemas";
 import { sanitizedServiceTokenSchema } from "../v2/service-token-router";
 
+import { KmsProjectTemplate } from "@app/services/project/project-types";
+
 // Stubs for stripped EE features
-enum KmsProjectTemplate { Default = "default" }
 enum LoginMappingSource { HOST = "host", PRINCIPAL = "principal" }
 const loginMappingSchema = z.object({ loginUser: z.string(), source: z.nativeEnum(LoginMappingSource), sourceValue: z.string() });
 const sanitizedSshCertificate = z.object({ id: z.string(), status: z.string() });
