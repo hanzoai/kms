@@ -76,6 +76,7 @@ import { bootstrapSshProject } from "./project-fns";
 import { TProjectQueueFactory } from "./project-queue";
 import { TProjectSshConfigDALFactory } from "./project-ssh-config-dal";
 import {
+  KmsProjectTemplate,
   ProjectFilterType,
   TCreateProjectDTO,
   TDeleteProjectDTO,
