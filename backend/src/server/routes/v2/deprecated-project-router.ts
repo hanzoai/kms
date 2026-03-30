@@ -17,13 +17,12 @@ import { AuthMode } from "@app/services/auth/auth-type";
 import { CaStatus } from "@app/services/certificate-authority/certificate-authority-enums";
 import { sanitizedCertificateTemplate } from "@app/services/certificate-template/certificate-template-schema";
 import { sanitizedPkiSubscriber } from "@app/services/pki-subscriber/pki-subscriber-schema";
-import { ProjectFilterType } from "@app/services/project/project-types";
+import { KmsProjectTemplate, ProjectFilterType } from "@app/services/project/project-types";
 import { InsightsEventTypes } from "@app/services/telemetry/telemetry-types";
 
 import { InternalCertificateAuthorityResponseSchema, SanitizedProjectSchema } from "../sanitizedSchemas";
 
 // Stubs for stripped EE features
-enum KmsProjectTemplate { Default = "default" }
 enum LoginMappingSource { HOST = "host", PRINCIPAL = "principal" }
 const loginMappingSchema = z.object({ loginUser: z.string(), source: z.nativeEnum(LoginMappingSource), sourceValue: z.string() });
 const sanitizedSshCertificate = z.object({ id: z.string(), status: z.string() });

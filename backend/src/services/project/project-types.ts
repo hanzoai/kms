@@ -8,6 +8,10 @@ import { TProjectSshConfigDALFactory } from "@app/services/project/project-ssh-c
 import { ActorAuthMethod, ActorType } from "../auth/auth-type";
 import { WorkflowIntegration } from "../workflow-integration/workflow-integration-types";
 
+export enum KmsProjectTemplate {
+  Default = "default"
+}
+
 enum KmsType {
   External = "external",
   Internal = "internal"
