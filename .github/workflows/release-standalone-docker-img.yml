@@ -47,6 +47,8 @@ jobs:
             - name: Save commit hashes for tag
               id: commit
               uses: pr-mpt/actions-commit-hash@v2
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@v3
             - name: 🔧 Set up Docker Buildx
               uses: docker/setup-buildx-action@v2
             - name: 🐋 Login to GHCR
@@ -64,7 +66,7 @@ jobs:
                       ghcr.io/hanzoai/kms:latest
                       ghcr.io/hanzoai/kms:${{ steps.commit.outputs.short }}
                       ghcr.io/hanzoai/kms:${{ steps.extract_version.outputs.version }}
-                  platforms: linux/amd64
+                  platforms: linux/amd64,linux/arm64
                   file: Dockerfile.standalone-kms
                   build-args: |
                       INSIGHTS_API_KEY=${{ secrets.PUBLIC_INSIGHTS_API_KEY }}
@@ -116,6 +118,8 @@ jobs:
             - name: Save commit hashes for tag
               id: commit
               uses: pr-mpt/actions-commit-hash@v2
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@v3
             - name: 🔧 Set up Docker Buildx
               uses: docker/setup-buildx-action@v2
             - name: 🐋 Login to GHCR
@@ -133,7 +137,7 @@ jobs:
                       ghcr.io/hanzoai/kms-fips:latest
                       ghcr.io/hanzoai/kms-fips:${{ steps.commit.outputs.short }}
                       ghcr.io/hanzoai/kms-fips:${{ steps.extract_version.outputs.version }}
-                  platforms: linux/amd64
+                  platforms: linux/amd64,linux/arm64
                   file: Dockerfile.fips.standalone-kms
                   build-args: |
                       INSIGHTS_API_KEY=${{ secrets.PUBLIC_INSIGHTS_API_KEY }}
