@@ -1,0 +1,15 @@
+.git
+**/node_modules
+.nx
+cypress
+e2e
+docs
+company
+cloudformation
+*.log
+.env*
+frontend/dist
+backend/dist
+cli
+ct.yaml
+*.md
