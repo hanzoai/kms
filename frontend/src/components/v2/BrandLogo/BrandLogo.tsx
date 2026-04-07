@@ -39,6 +39,10 @@ const simpleBrands: Record<Exclude<WhiteLabelBrand, "hanzo">, { viewBox: string;
   pars: {
     viewBox: "0 0 32 32",
     d: "M8 4h10c4.4 0 8 3.6 8 8s-3.6 8-8 8h-5v8H8V4zm5 12h5c1.65 0 3-1.35 3-3s-1.35-3-3-3h-5v6z"
+  },
+  liquidity: {
+    viewBox: "0 0 32 32",
+    d: "M16 2C8.27 2 2 8.27 2 16s6.27 14 14 14 14-6.27 14-14S23.73 2 16 2zm0 4a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10S6 21.52 6 16 10.48 6 16 6zm-3 5v10h2v-4h4c2.21 0 4-1.79 4-4s-1.79-4-4-4h-6zm2 2h4c1.1 0 2 .9 2 2s-.9 2-2 2h-4v-4z"
   }
 };
 

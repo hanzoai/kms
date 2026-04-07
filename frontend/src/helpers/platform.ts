@@ -5,12 +5,15 @@ export const isHanzoCloud = () =>
   window.location.origin.includes("https://gamma.kms.hanzo.ai") ||
   window.location.origin.includes("kms.lux.network") ||
   window.location.origin.includes("kms.pars.network") ||
-  window.location.origin.includes("kms.zoo.ngo");
+  window.location.origin.includes("kms.zoo.ngo") ||
+  window.location.origin.includes("satschel.com") ||
+  window.location.origin.includes("liquidity.io");
 
-export type WhiteLabelBrand = "hanzo" | "lux" | "pars" | "zoo";
+export type WhiteLabelBrand = "hanzo" | "lux" | "pars" | "zoo" | "liquidity";
 
 export const getWhiteLabelBrand = (): WhiteLabelBrand => {
   const host = window.location.hostname;
+  if (host.includes("satschel.com") || host.includes("liquidity.io")) return "liquidity";
   if (host.includes("lux.network")) return "lux";
   if (host.includes("pars.network")) return "pars";
   if (host.includes("zoo.network") || host.includes("zoo.ngo")) return "zoo";
@@ -20,10 +23,11 @@ export const getWhiteLabelBrand = (): WhiteLabelBrand => {
 export const getWhiteLabelConfig = () => {
   const brand = getWhiteLabelBrand();
   const configs: Record<WhiteLabelBrand, { name: string; primaryColor: string; logo: string; favicon: string }> = {
-    hanzo: { name: "Hanzo KMS", primaryColor: "#ffffff", logo: "/images/hanzo-logo.svg", favicon: "/images/hanzo-favicon.svg" },
-    lux:   { name: "Lux KMS",   primaryColor: "#ffffff", logo: "/images/lux-logo.svg",   favicon: "/images/lux-favicon.svg" },
-    pars:  { name: "Pars KMS",  primaryColor: "#ffffff", logo: "/images/pars-logo.svg",  favicon: "/images/pars-favicon.svg" },
-    zoo:   { name: "Zoo KMS",   primaryColor: "#ffffff", logo: "/images/zoo-logo.svg",   favicon: "/images/zoo-favicon.svg" }
+    hanzo:     { name: "Hanzo KMS",     primaryColor: "#ffffff", logo: "/images/hanzo-logo.svg",     favicon: "/images/hanzo-favicon.svg" },
+    lux:       { name: "Lux KMS",       primaryColor: "#ffffff", logo: "/images/lux-logo.svg",       favicon: "/images/lux-favicon.svg" },
+    pars:      { name: "Pars KMS",      primaryColor: "#ffffff", logo: "/images/pars-logo.svg",      favicon: "/images/pars-favicon.svg" },
+    zoo:       { name: "Zoo KMS",       primaryColor: "#ffffff", logo: "/images/zoo-logo.svg",       favicon: "/images/zoo-favicon.svg" },
+    liquidity: { name: "Liquidity KMS", primaryColor: "#ffffff", logo: "/images/liquidity-logo.svg", favicon: "/images/liquidity-favicon.svg" }
   };
   return configs[brand];
 };
