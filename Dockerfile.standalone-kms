@@ -89,7 +89,10 @@ RUN --mount=type=cache,target=/root/.npm \
 COPY /backend .
 COPY --chown=non-root-user:nodejs standalone-entrypoint.sh standalone-entrypoint.sh
 ENV NODE_OPTIONS="--max-old-space-size=4096"
-RUN pnpm run build
+# Production image does not need source maps — skip them to reduce build time.
+# package.json "build" = "tsup --sourcemap"; disable both config and CLI flag.
+RUN sed -i 's/sourceMap: true/sourceMap: false/' tsup.config.js \
+    && npx tsup
 
 # ── Backend runner (prod deps only) ──────────────────────────
 FROM base AS backend-runner
