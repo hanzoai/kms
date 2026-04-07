@@ -21,7 +21,7 @@ import {
   getAppConnectionMethodDetails,
   useGetAppConnectionOauthReturnUrl
 } from "@app/helpers/appConnections";
-import { isHanzoCloud } from "@app/helpers/platform";
+import { isCloud } from "@app/helpers/platform";
 import { useGetAppConnectionOption } from "@app/hooks/api/appConnections";
 import { AppConnection } from "@app/hooks/api/appConnections/enums";
 import { GitLabAccessTokenType } from "@app/hooks/api/appConnections/gitlab";
@@ -222,7 +222,7 @@ export const GitLabConnectionForm = ({ appConnection, onSubmit: formSubmit, proj
               errorText={
                 !isLoading && isMissingConfig && selectedMethod === GitLabConnectionMethod.OAuth
                   ? `Environment variables have not been configured. ${
-                      isHanzoCloud()
+                      isCloud()
                         ? "Please contact Hanzo."
                         : `See Docs to configure GitLab ${methodDetails.name} Connections.`
                     }`

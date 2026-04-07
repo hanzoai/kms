@@ -1,6 +1,6 @@
 import { Tab, TabList, TabPanel, Tabs } from "@app/components/v2";
 import { OrgPermissionBillingActions, OrgPermissionSubjects } from "@app/context";
-import { isHanzoCloud } from "@app/helpers/platform";
+import { isCloud } from "@app/helpers/platform";
 import { withPermission } from "@app/hoc";
 
 import { BillingCloudTab } from "../BillingCloudTab";
@@ -17,7 +17,7 @@ const tabs = [
 
 export const BillingTabGroup = withPermission(
   () => {
-    if (!isHanzoCloud()) {
+    if (!isCloud()) {
       return <BillingCloudTab />;
     }
 

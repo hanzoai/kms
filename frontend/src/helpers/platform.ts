@@ -1,4 +1,4 @@
-// Brand detection from hostname. One way — no "white label" concept.
+// Brand detection from hostname. One way — domain-based branding.
 // Each deployment IS the brand based on its domain.
 
 export type Brand = "hanzo" | "lux" | "pars" | "zoo" | "liquidity";
@@ -34,8 +34,3 @@ export const initBranding = () => {
   document.title = config.name;
 };
 
-// Backward compat — remove these imports from callers over time
-export const getWhiteLabelBrand = getBrand;
-export const getWhiteLabelConfig = getBrandConfig;
-export type WhiteLabelBrand = Brand;
-export const isHanzoCloud = isCloud;

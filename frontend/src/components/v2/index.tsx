@@ -21,7 +21,7 @@ export * from "./FilterableSelect";
 export * from "./FontAwesomeSymbol";
 export * from "./FormControl";
 export * from "./GenericFieldLabel";
-export * from "./HanzoLogoLoader";
+export * from "./BrandLoader";
 export * from "./HoverCardv2";
 export * from "./IconButton";
 export * from "./Input";

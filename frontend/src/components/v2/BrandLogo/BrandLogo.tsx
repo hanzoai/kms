@@ -1,14 +1,14 @@
 import { twMerge } from "tailwind-merge";
 
-import { type WhiteLabelBrand, getWhiteLabelBrand } from "@app/helpers/platform";
+import { type Brand, getBrand } from "@app/helpers/platform";
 
 type Props = {
   className?: string;
-  brand?: WhiteLabelBrand;
+  brand?: Brand;
 };
 
 // Real geometric Hanzo H mark (from ~/work/hanzo/logo)
-const HanzoLogo = ({ className }: { className?: string }) => (
+const DefaultLogo = ({ className }: { className?: string }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 67 67"
@@ -27,7 +27,7 @@ const HanzoLogo = ({ className }: { className?: string }) => (
 );
 
 // Simple single-path logos for other brands
-const simpleBrands: Record<Exclude<WhiteLabelBrand, "hanzo">, { viewBox: string; d: string }> = {
+const simpleBrands: Record<Exclude<Brand, "hanzo">, { viewBox: string; d: string }> = {
   lux: {
     viewBox: "0 0 32 32",
     d: "M8 4h5v19h11v5H8V4z"
@@ -47,10 +47,10 @@ const simpleBrands: Record<Exclude<WhiteLabelBrand, "hanzo">, { viewBox: string;
 };
 
 export const BrandLogo = ({ className, brand }: Props) => {
-  const resolvedBrand = brand ?? getWhiteLabelBrand();
+  const resolvedBrand = brand ?? getBrand();
 
   if (resolvedBrand === "hanzo") {
-    return <HanzoLogo className={className} />;
+    return <DefaultLogo className={className} />;
   }
 
   const { viewBox, d } = simpleBrands[resolvedBrand];
