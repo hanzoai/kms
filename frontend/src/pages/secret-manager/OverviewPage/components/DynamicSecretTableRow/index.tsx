@@ -1,1 +1,0 @@
-export { DynamicSecretTableRow } from "./DynamicSecretTableRow";
