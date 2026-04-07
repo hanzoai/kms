@@ -49,7 +49,7 @@ ENV KMS_PLATFORM_VERSION=$KMS_PLATFORM_VERSION
 ENV VITE_KMS_PLATFORM_VERSION=$KMS_PLATFORM_VERSION
 ARG CAPTCHA_SITE_KEY
 ENV VITE_CAPTCHA_SITE_KEY=$CAPTCHA_SITE_KEY
-ENV NODE_OPTIONS="--max-old-space-size=8192"
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN pnpm run build
 
 FROM base AS frontend-runner
@@ -88,7 +88,7 @@ RUN --mount=type=cache,target=/root/.npm \
 
 COPY /backend .
 COPY --chown=non-root-user:nodejs standalone-entrypoint.sh standalone-entrypoint.sh
-ENV NODE_OPTIONS="--max-old-space-size=8192"
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN pnpm run build
 
 # ── Backend runner (prod deps only) ──────────────────────────
@@ -101,7 +101,8 @@ RUN apt-get update && apt-get install -y \
     unixodbc freetds-bin unixodbc-dev libc-dev freetds-dev \
     && rm -rf /var/lib/apt/lists/*
 
-RUN printf "[FreeTDS]\nDescription = FreeTDS Driver\nDriver = /usr/lib/x86_64-linux-gnu/odbc/libtdsodbc.so\nSetup = /usr/lib/x86_64-linux-gnu/odbc/libtdsS.so\nFileUsage = 1\n" > /etc/odbcinst.ini
+RUN ARCH_DIR="$(uname -m)-linux-gnu" \
+    && printf "[FreeTDS]\nDescription = FreeTDS Driver\nDriver = /usr/lib/%s/odbc/libtdsodbc.so\nSetup = /usr/lib/%s/odbc/libtdsS.so\nFileUsage = 1\n" "$ARCH_DIR" "$ARCH_DIR" > /etc/odbcinst.ini
 
 COPY --from=backend-build /app .
 RUN rm -rf ./bdd ./e2e-test

@@ -32,6 +32,8 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - uses: docker/setup-qemu-action@v3
+
       - uses: docker/build-push-action@v6
         with:
           context: .
@@ -40,7 +42,7 @@ jobs:
           tags: |
             ghcr.io/hanzoai/kms-base:latest
             ghcr.io/hanzoai/kms-base:${{ github.sha }}
-          platforms: linux/amd64
-          cache-from: type=registry,ref=ghcr.io/hanzoai/kms-base-cache:amd64
-          cache-to: type=registry,ref=ghcr.io/hanzoai/kms-base-cache:amd64,mode=max
+          platforms: linux/amd64,linux/arm64
+          cache-from: type=gha,scope=kms-base
+          cache-to: type=gha,scope=kms-base,mode=max
           provenance: false
