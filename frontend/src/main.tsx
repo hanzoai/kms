@@ -5,7 +5,7 @@ import lottieWasmUrl from "@lottiefiles/dotlottie-web/dist/dotlottie-player.wasm
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import NProgress from "nprogress";
 
-import { HanzoLogoLoader } from "./components/v2";
+import { BrandLogo } from "./components/v2";
 import { queryClient } from "./hooks/api/reactQuery";
 import { ErrorPage } from "./pages/public/ErrorPage/ErrorPage";
 import { NotFoundPage } from "./pages/public/NotFoundPage/NotFoundPage";
@@ -68,7 +68,7 @@ const router = createRouter({
   context: { serverConfig: null, queryClient },
   defaultPendingComponent: () => (
     <div className="flex h-screen w-screen items-center justify-center bg-bunker-800">
-      <HanzoLogoLoader size="lg" />
+      <BrandLogo className="h-16 w-16 animate-pulse text-white" />
     </div>
   ),
   defaultNotFoundComponent: NotFoundPage,
