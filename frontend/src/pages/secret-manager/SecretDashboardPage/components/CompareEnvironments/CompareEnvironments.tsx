@@ -25,7 +25,7 @@ import {
   EmptyState,
   FilterableSelect,
   FormLabel,
-  HanzoLogoLoader,
+  BrandLoader,
   IconButton,
   Input,
   Pagination,
@@ -314,7 +314,7 @@ export const CompareEnvironments = ({ secretPath }: Props) => {
           {/* eslint-disable-next-line no-nested-ternary */}
           {isOverviewLoading ? (
             <div className="flex h-full flex-col items-center justify-center">
-              <HanzoLogoLoader size="sm" />
+              <BrandLoader size="sm" />
             </div>
           ) : isTableEmpty ? (
             <EmptyState

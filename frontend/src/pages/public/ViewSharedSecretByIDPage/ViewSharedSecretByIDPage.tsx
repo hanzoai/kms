@@ -8,7 +8,7 @@ import { addSeconds, formatISO } from "date-fns";
 import { twMerge } from "tailwind-merge";
 
 import { createNotification } from "@app/components/notifications";
-import { BrandLogo, HanzoLogoLoader } from "@app/components/v2";
+import { BrandLogo, BrandLoader } from "@app/components/v2";
 import { SessionStorageKeys } from "@app/const";
 import { ROUTE_PATHS } from "@app/const/routes";
 import {
@@ -202,7 +202,7 @@ export const ViewSharedSecretByIDPage = () => {
   if (isLoading || isLoadingBrandingConfig) {
     return (
       <div className="flex h-screen w-screen items-center justify-center bg-bunker-800">
-        <HanzoLogoLoader size="lg" />
+        <BrandLoader size="lg" />
       </div>
     );
   }
