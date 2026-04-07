@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { twMerge } from "tailwind-merge";
 
-import { HanzoLogoLoader } from "../HanzoLogoLoader";
+import { BrandLoader } from "../BrandLoader";
 
 type Props = {
   text?: string | string[];
@@ -34,7 +34,7 @@ export const ContentLoader = ({ text, frequency = 2000, className }: Props) => {
         className
       )}
     >
-      <HanzoLogoLoader size="lg" />
+      <BrandLoader size="lg" />
       {text && isTextArray && (
         <AnimatePresence mode="wait">
           <motion.div

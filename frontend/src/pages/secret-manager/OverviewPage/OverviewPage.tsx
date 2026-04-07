@@ -32,7 +32,7 @@ import { EditSecretRotationV2Modal } from "@app/components/secret-rotations-v2/E
 import { ReconcileLocalAccountRotationModal } from "@app/components/secret-rotations-v2/ReconcileLocalAccountRotationModal";
 import { RotateSecretRotationV2Modal } from "@app/components/secret-rotations-v2/RotateSecretRotationV2Modal";
 import { ViewSecretRotationV2GeneratedCredentialsModal } from "@app/components/secret-rotations-v2/ViewSecretRotationV2GeneratedCredentials";
-import { Button as ButtonV2, DeleteActionModal, HanzoLogoLoader, Modal, ModalContent, PageHeader } from "@app/components/v2";
+import { Button as ButtonV2, DeleteActionModal, BrandLoader, Modal, ModalContent, PageHeader } from "@app/components/v2";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -1627,7 +1627,7 @@ export const OverviewPage = () => {
   if (isProjectV3 && visibleEnvs.length > 0 && isOverviewLoading) {
     return (
       <div className="container mx-auto flex h-screen w-full items-center justify-center px-8 text-mineshaft-50 dark:scheme-dark">
-        <HanzoLogoLoader size="lg" />
+        <BrandLoader size="lg" />
       </div>
     );
   }

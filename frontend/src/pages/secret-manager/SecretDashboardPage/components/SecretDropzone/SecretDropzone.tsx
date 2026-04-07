@@ -18,7 +18,7 @@ import {
 import {
   Button,
   FormLabel,
-  HanzoLogoLoader,
+  BrandLoader,
   Modal,
   ModalContent,
   Select,
@@ -417,7 +417,7 @@ export const SecretDropzone = ({
       >
         {isLoading ? (
           <div className="mb-16 flex items-center justify-center pt-16">
-            <HanzoLogoLoader size="lg" />
+            <BrandLoader size="lg" />
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center space-y-2">

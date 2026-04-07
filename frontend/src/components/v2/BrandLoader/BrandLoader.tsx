@@ -58,7 +58,7 @@ const diagonalVariants = {
   }
 };
 
-export const HanzoLogoLoader = ({ className, size = "lg" }: Props) => {
+export const BrandLoader = ({ className, size = "lg" }: Props) => {
   return (
     <div className={twMerge(sizeMap[size], className)}>
       <motion.div

@@ -1,7 +1,7 @@
-import { getWhiteLabelConfig } from "@app/helpers/platform";
+import { getBrandConfig } from "@app/helpers/platform";
 
 export const getBrand = () => {
-  const wl = getWhiteLabelConfig();
+  const wl = getBrandConfig();
   return {
     name: wl.name,
     logo: wl.logo,

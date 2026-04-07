@@ -57,7 +57,7 @@ import {
   useSubscription,
   useUser
 } from "@app/context";
-import { isHanzoCloud } from "@app/helpers/platform";
+import { isCloud } from "@app/helpers/platform";
 import { useToggle } from "@app/hooks";
 import {
   projectKeys,
@@ -740,10 +740,10 @@ export const Navbar = () => {
                   })
                 : getUrl();
 
-            if (url === "server-admins" && isHanzoCloud()) {
+            if (url === "server-admins" && isCloud()) {
               return null;
             }
-            if (url === "upgrade-path" && isHanzoCloud()) {
+            if (url === "upgrade-path" && isCloud()) {
               return null;
             }
             return (
