@@ -10,6 +10,7 @@ import { z } from "zod";
 import SecurityClient from "@app/components/utilities/SecurityClient";
 import { BrandLogo, Button, ContentLoader, FormControl, Input } from "@app/components/v2";
 import { useServerConfig } from "@app/context";
+import { getWhiteLabelConfig } from "@app/helpers/platform";
 import { useCreateAdminUser, useSelectOrganization } from "@app/hooks/api";
 
 const formSchema = z
@@ -91,7 +92,7 @@ export const SignUpPage = () => {
           >
             <div className="flex flex-col items-center space-y-2 text-center">
               <BrandLogo className="h-[90px] w-[120px] text-white" />
-              <div className="pt-4 text-4xl">Welcome to KMS</div>
+              <div className="pt-4 text-4xl">Welcome to {getWhiteLabelConfig().name}</div>
               <div className="pb-4 text-bunker-300">Create your first Super Admin Account</div>
             </div>
             <form onSubmit={handleSubmit(handleFormSubmit)}>
