@@ -1,42 +1,41 @@
-export const isHanzoCloud = () =>
-  window.location.origin.includes("https://kms.hanzo.ai") ||
-  window.location.origin.includes("https://us.kms.hanzo.ai") ||
-  window.location.origin.includes("https://eu.kms.hanzo.ai") ||
-  window.location.origin.includes("https://gamma.kms.hanzo.ai") ||
-  window.location.origin.includes("kms.lux.network") ||
-  window.location.origin.includes("kms.pars.network") ||
-  window.location.origin.includes("kms.zoo.ngo") ||
-  window.location.origin.includes("satschel.com") ||
-  window.location.origin.includes("liquidity.io");
+// Brand detection from hostname. One way — no "white label" concept.
+// Each deployment IS the brand based on its domain.
 
-export type WhiteLabelBrand = "hanzo" | "lux" | "pars" | "zoo" | "liquidity";
+export type Brand = "hanzo" | "lux" | "pars" | "zoo" | "liquidity";
 
-export const getWhiteLabelBrand = (): WhiteLabelBrand => {
+export const getBrand = (): Brand => {
   const host = window.location.hostname;
   if (host.includes("satschel.com") || host.includes("liquidity.io")) return "liquidity";
-  if (host.includes("lux.network")) return "lux";
-  if (host.includes("pars.network")) return "pars";
-  if (host.includes("zoo.network") || host.includes("zoo.ngo")) return "zoo";
+  if (host.includes("lux.network") || host.includes("lux.exchange")) return "lux";
+  if (host.includes("pars.network") || host.includes("pars.market")) return "pars";
+  if (host.includes("zoo.network") || host.includes("zoo.ngo") || host.includes("zoo.exchange")) return "zoo";
   return "hanzo";
 };
 
-export const getWhiteLabelConfig = () => {
-  const brand = getWhiteLabelBrand();
-  const configs: Record<WhiteLabelBrand, { name: string; primaryColor: string; logo: string; favicon: string }> = {
-    hanzo:     { name: "Hanzo KMS",     primaryColor: "#ffffff", logo: "/images/hanzo-logo.svg",     favicon: "/images/hanzo-favicon.svg" },
-    lux:       { name: "Lux KMS",       primaryColor: "#ffffff", logo: "/images/lux-logo.svg",       favicon: "/images/lux-favicon.svg" },
-    pars:      { name: "Pars KMS",      primaryColor: "#ffffff", logo: "/images/pars-logo.svg",      favicon: "/images/pars-favicon.svg" },
-    zoo:       { name: "Zoo KMS",       primaryColor: "#ffffff", logo: "/images/zoo-logo.svg",       favicon: "/images/zoo-favicon.svg" },
-    liquidity: { name: "Liquidity KMS", primaryColor: "#ffffff", logo: "/images/liquidity-logo.svg", favicon: "/images/liquidity-favicon.svg" }
-  };
-  return configs[brand];
+export const isCloud = () => {
+  const host = window.location.hostname;
+  return host.includes("hanzo.ai") || host.includes("lux.network") ||
+    host.includes("pars.network") || host.includes("zoo.ngo") ||
+    host.includes("satschel.com") || host.includes("liquidity.io");
 };
 
-export const initBranding = () => {
-  const config = getWhiteLabelConfig();
-  document.title = config.name;
-  const link = document.querySelector<HTMLLinkElement>("link[rel='icon']");
-  if (link) {
-    link.href = config.favicon;
-  }
+const brandConfig: Record<Brand, { name: string; primaryColor: string }> = {
+  hanzo:     { name: "Hanzo KMS",     primaryColor: "#ffffff" },
+  lux:       { name: "Lux KMS",       primaryColor: "#ffffff" },
+  pars:      { name: "Pars KMS",      primaryColor: "#ffffff" },
+  zoo:       { name: "Zoo KMS",       primaryColor: "#ffffff" },
+  liquidity: { name: "Liquidity KMS", primaryColor: "#ffffff" },
 };
+
+export const getBrandConfig = () => brandConfig[getBrand()];
+
+export const initBranding = () => {
+  const config = getBrandConfig();
+  document.title = config.name;
+};
+
+// Backward compat — remove these imports from callers over time
+export const getWhiteLabelBrand = getBrand;
+export const getWhiteLabelConfig = getBrandConfig;
+export type WhiteLabelBrand = Brand;
+export const isHanzoCloud = isCloud;
