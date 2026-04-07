@@ -29,7 +29,7 @@ import "./translation";
 // Configure Lottie player to use local WASM file
 setWasmUrl(lottieWasmUrl);
 
-// Set dynamic title and favicon based on white-label domain
+// Set dynamic title and favicon based on brand domain
 initBranding();
 
 // Create a new router instance

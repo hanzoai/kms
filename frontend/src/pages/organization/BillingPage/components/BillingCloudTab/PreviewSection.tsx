@@ -11,7 +11,7 @@ import {
   useOrganization,
   useSubscription
 } from "@app/context";
-import { isHanzoCloud } from "@app/helpers/platform";
+import { isCloud } from "@app/helpers/platform";
 import {
   useCreateCustomerPortalSession,
   useGetOrgPlanBillingInfo,
@@ -71,7 +71,7 @@ export const PreviewSection = () => {
     try {
       if (!subscription || !currentOrg) return;
 
-      if (!isHanzoCloud()) {
+      if (!isCloud()) {
         window.open("https://hanzo.ai/pricing", "_blank");
         return;
       }
@@ -94,7 +94,7 @@ export const PreviewSection = () => {
   };
 
   const getUpgradePlanLabel = () => {
-    if (!isHanzoCloud()) {
+    if (!isCloud()) {
       return (
         <div>
           Go to Pricing
@@ -171,7 +171,7 @@ export const PreviewSection = () => {
                 subscription.status === "trialing" ? "(Trial)" : ""
               }`}
             </p>
-            {isHanzoCloud() && (
+            {isCloud() && (
               <OrgPermissionCan
                 I={OrgPermissionBillingActions.ManageBilling}
                 a={OrgPermissionSubjects.Billing}

@@ -20,7 +20,7 @@ import { LoginMethod } from "@app/hooks/api/admin/types";
 import { AuthMethod } from "@app/hooks/api/users/types";
 import { useLastLogin } from "@app/hooks/useLastLogin";
 
-import { getWhiteLabelBrand, getWhiteLabelConfig } from "@app/helpers/platform";
+import { getBrand, getBrandConfig } from "@app/helpers/platform";
 
 import { useNavigateToSelectOrganization } from "../../Login.utils";
 import { OrgLoginButton } from "../OrgLoginButton";
@@ -44,8 +44,8 @@ export const InitialStep = ({
   isAdmin
 }: Props) => {
   const navigate = useNavigate();
-  const brandConfig = getWhiteLabelConfig();
-  const brand = getWhiteLabelBrand();
+  const brandConfig = getBrandConfig();
+  const brand = getBrand();
 
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);

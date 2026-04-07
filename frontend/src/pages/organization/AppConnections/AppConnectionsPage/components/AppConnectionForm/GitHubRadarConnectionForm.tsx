@@ -11,7 +11,7 @@ import {
   getAppConnectionMethodDetails,
   useGetAppConnectionOauthReturnUrl
 } from "@app/helpers/appConnections";
-import { isHanzoCloud } from "@app/helpers/platform";
+import { isCloud } from "@app/helpers/platform";
 import {
   GitHubRadarConnectionMethod,
   TGitHubRadarConnection,
@@ -119,7 +119,7 @@ export const GitHubRadarConnectionForm = ({ appConnection, projectId }: Props) =
               errorText={
                 !isLoading && isMissingConfig
                   ? `Environment variables have not been configured. ${
-                      isHanzoCloud()
+                      isCloud()
                         ? "Please contact Hanzo."
                         : `See Docs to configure GitHub Radar ${methodDetails.name} Connections.`
                     }`
