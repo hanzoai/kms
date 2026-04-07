@@ -27,7 +27,9 @@ const DefaultLogo = ({ className }: { className?: string }) => (
 );
 
 // Simple single-path logos for other brands
-const simpleBrands: Record<Exclude<Brand, "hanzo">, { viewBox: string; d: string }> = {
+type SimpleBrand = { viewBox: string; d: string };
+type MultiBrand = { viewBox: string; paths: JSX.Element };
+const simpleBrands: Record<Exclude<Brand, "hanzo">, SimpleBrand | MultiBrand> = {
   lux: {
     viewBox: "0 0 32 32",
     d: "M8 4h5v19h11v5H8V4z"
@@ -41,8 +43,14 @@ const simpleBrands: Record<Exclude<Brand, "hanzo">, { viewBox: string; d: string
     d: "M8 4h10c4.4 0 8 3.6 8 8s-3.6 8-8 8h-5v8H8V4zm5 12h5c1.65 0 3-1.35 3-3s-1.35-3-3-3h-5v6z"
   },
   liquidity: {
-    viewBox: "0 0 32 32",
-    d: "M16 2C8.27 2 2 8.27 2 16s6.27 14 14 14 14-6.27 14-14S23.73 2 16 2zm0 4a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10S6 21.52 6 16 10.48 6 16 6zm-3 5v10h2v-4h4c2.21 0 4-1.79 4-4s-1.79-4-4-4h-6zm2 2h4c1.1 0 2 .9 2 2s-.9 2-2 2h-4v-4z"
+    viewBox: "0 0 1024 1024",
+    paths: (
+      <>
+        <path d="M 220 220 L 220 720 L 680 720 L 680 620 L 330 620 L 330 220 Z" fill="currentColor" />
+        <path d="M 400 500 Q 500 420 600 500 Q 700 580 800 500" stroke="currentColor" strokeWidth="12" fill="none" strokeLinecap="round" opacity="0.5" />
+        <path d="M 400 560 Q 500 480 600 560 Q 700 640 800 560" stroke="currentColor" strokeWidth="8" fill="none" strokeLinecap="round" opacity="0.3" />
+      </>
+    )
   }
 };
 
@@ -53,17 +61,17 @@ export const BrandLogo = ({ className, brand }: Props) => {
     return <DefaultLogo className={className} />;
   }
 
-  const { viewBox, d } = simpleBrands[resolvedBrand];
+  const entry = simpleBrands[resolvedBrand];
 
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox={viewBox}
+      viewBox={entry.viewBox}
       fill="none"
       className={twMerge("inline-block", className)}
       aria-label={`${resolvedBrand} logo`}
     >
-      <path d={d} fill="currentColor" />
+      {"d" in entry ? <path d={entry.d} fill="currentColor" /> : entry.paths}
     </svg>
   );
 };

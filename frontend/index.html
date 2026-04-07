@@ -20,7 +20,25 @@
     font-src 'self' https://fonts.intercomcdn.com/ https://fonts.gstatic.com;
   "
     />
-    <title>Hanzo KMS</title>
+    <title>KMS</title>
+    <script>
+    (function(){
+      var h = location.hostname;
+      var b = h.includes('satschel.com') || h.includes('liquidity.io') ? 'liquidity'
+        : h.includes('lux.network') || h.includes('lux.exchange') ? 'lux'
+        : h.includes('pars.network') ? 'pars'
+        : h.includes('zoo.network') || h.includes('zoo.ngo') ? 'zoo'
+        : 'hanzo';
+      var names = {hanzo:'Hanzo KMS',lux:'Lux KMS',pars:'Pars KMS',zoo:'Zoo KMS',liquidity:'Liquidity KMS'};
+      document.title = names[b] || 'KMS';
+      var favicons = document.querySelectorAll('link[rel="icon"]');
+      favicons.forEach(function(el){
+        if (el.href.includes('hanzo-favicon')) {
+          el.href = el.href.replace('hanzo-favicon', b + '-favicon');
+        }
+      });
+    })();
+    </script>
     <script src="/runtime-ui-env.js"></script>
   </head>
   <body style="background-color: #111419; margin: 0;">
