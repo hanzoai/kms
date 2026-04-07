@@ -1,1 +1,0 @@
-export { SecretImportTableRow } from "./SecretImportTableRow";

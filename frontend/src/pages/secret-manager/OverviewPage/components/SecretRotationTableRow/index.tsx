@@ -1,1 +1,0 @@
-export { SecretRotationTableRow } from "./SecretRotationTableRow";
