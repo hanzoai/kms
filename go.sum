@@ -58,6 +58,8 @@ github.com/grpc-ecosystem/grpc-gateway/v2 v2.28.0 h1:HWRh5R2+9EifMyIHV7ZV+MIZqgz
 github.com/grpc-ecosystem/grpc-gateway/v2 v2.28.0/go.mod h1:JfhWUomR1baixubs02l85lZYYOm7LV6om4ceouMv45c=
 github.com/hanzoai/base v0.39.1 h1:UEXbz5m0VF85QOb++ShHt4FKSCChqtwCigw6oItyNeI=
 github.com/hanzoai/base v0.39.1/go.mod h1:gGQrufNjkkX4/4NDPpl2aizAJLTYJ3VcyV4TDE4MANc=
+github.com/hanzoai/base v0.39.2-0.20260408212027-19b64d11e3d5 h1:irjby16w248Gv0aLxcSdfTnwG6X3xI2SOoWrHU+Xis4=
+github.com/hanzoai/base v0.39.2-0.20260408212027-19b64d11e3d5/go.mod h1:gGQrufNjkkX4/4NDPpl2aizAJLTYJ3VcyV4TDE4MANc=
 github.com/hanzoai/dbx v1.13.0 h1:IVCfz4NMKJ1EfAOEo3Nyfs67qj8v5Kx6aIjAja/9ANA=
 github.com/hanzoai/dbx v1.13.0/go.mod h1:WIRkg1f2Mc+vXo2gpWk+hgPsJPFZBNUFCkSFJ4M5s4k=
 github.com/hashicorp/golang-lru/v2 v2.0.7 h1:a+bsQ5rvGLjzHuww6tVxozPZFVghXaHOwFs4luLUK2k=
