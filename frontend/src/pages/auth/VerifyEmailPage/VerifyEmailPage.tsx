@@ -48,10 +48,10 @@ export const VerifyEmailPage = () => {
         <title>Reset Password</title>
         <link rel="icon" href="/hanzo.ico" />
         <meta property="og:image" content="/images/message.png" />
-        <meta property="og:title" content="Verify your email in Hanzo KMS" />
+        <meta property="og:title" content="Verify your email in KMS" />
         <meta
           name="og:description"
-          content="Hanzo KMS is a simple end-to-end encrypted platform that enables teams to sync and manage their secrets."
+          content="KMS is a simple end-to-end encrypted platform that enables teams to sync and manage their secrets."
         />
       </Helmet>
       <Link to="/">
@@ -62,7 +62,7 @@ export const VerifyEmailPage = () => {
               height: "90px",
               width: "120px"
             }}
-            alt="Hanzo KMS Logo"
+            alt="KMS Logo"
           />
         </div>
       </Link>

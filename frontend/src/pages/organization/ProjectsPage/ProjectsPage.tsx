@@ -23,7 +23,7 @@ import { ProjectListView } from "./components/ProjectListToggle";
 //     return "Centralize the management of keys for cryptographic operations, such as encryption and decryption.";
 //   if (type === ProjectType.SecretScanning)
 //     return "Connect and monitor data sources to prevent secret leaks.";
-//   return "Hanzo KMS SSH lets you issue SSH credentials to users for short-lived, secure SSH access to infrastructure.";
+//   return "KMS SSH lets you issue SSH credentials to users for short-lived, secure SSH access to infrastructure.";
 // };
 
 export const ProjectsPage = () => {
@@ -109,7 +109,7 @@ export const ProjectsPage = () => {
       <UpgradePlanModal
         isOpen={popUp.upgradePlan.isOpen}
         onOpenChange={(isOpen) => handlePopUpToggle("upgradePlan", isOpen)}
-        text="You have reached the maximum number of projects allowed on your current plan. Upgrade to Hanzo KMS Pro plan to add more projects."
+        text="You have reached the maximum number of projects allowed on your current plan. Upgrade to KMS Pro plan to add more projects."
       />
     </div>
   );

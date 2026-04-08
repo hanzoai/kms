@@ -131,7 +131,7 @@ export const AzureProviderAuditLogStreamForm = ({ auditLogStream, onSubmit }: Pr
               isError={Boolean(error?.message)}
               label="Custom Log Table Name"
             >
-              <Input {...field} placeholder="HanzoKMSLogs" />
+              <Input {...field} placeholder="KMSLogs" />
             </FormControl>
           )}
         />

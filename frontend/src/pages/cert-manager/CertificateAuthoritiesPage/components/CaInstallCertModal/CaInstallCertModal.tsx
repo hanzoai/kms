@@ -58,7 +58,7 @@ export const CaInstallCertModal = ({ popUp, handlePopUpToggle }: Props) => {
               value={ParentCaType.Internal}
               key={`parent-ca-type-${ParentCaType.Internal}`}
             >
-              Hanzo KMS CA
+              KMS CA
             </SelectItem>
             <SelectItem
               value={ParentCaType.External}

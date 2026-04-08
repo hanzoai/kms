@@ -34,7 +34,7 @@ export const SelectIntegrationAuthPage = () => {
   const { mutateAsync: duplicateIntegrationAuth, isPending: isIntegrationAuthSelectLoading } =
     useDuplicateIntegrationAuth();
 
-  // for Github, we want to reuse the same connection across the Hanzo KMS organization
+  // for Github, we want to reuse the same connection across the KMS organization
   // when we do need to reuse this page for other integrations, add handling to fetch workspace integration auths instead
   const {
     data: integrationAuths,

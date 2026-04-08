@@ -323,7 +323,7 @@ export const PkiTemplateListPage = () => {
       <UpgradePlanModal
         isOpen={popUp.estUpgradePlan.isOpen}
         onOpenChange={(isOpen) => handlePopUpToggle("estUpgradePlan", isOpen)}
-        text="Your current plan does not include access to configuring template enrollment methods. To unlock this feature, please upgrade to Hanzo KMS Enterprise plan."
+        text="Your current plan does not include access to configuring template enrollment methods. To unlock this feature, please upgrade to KMS Enterprise plan."
         isEnterpriseFeature={popUp.estUpgradePlan.data?.isEnterpriseFeature}
       />
     </>

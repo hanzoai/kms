@@ -44,9 +44,9 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-// Hanzo KMS AWS account IDs for trust policy
-const HANZO_KMS_AWS_ACCOUNT_US = "381492033652";
-const HANZO_KMS_AWS_ACCOUNT_EU = "345594589636";
+// KMS AWS account IDs for trust policy
+const KMS_AWS_ACCOUNT_US = "381492033652";
+const KMS_AWS_ACCOUNT_EU = "345594589636";
 
 export const AwsIamResourceForm = ({ resource, onSubmit }: Props) => {
   const isUpdate = Boolean(resource);
@@ -66,7 +66,7 @@ export const AwsIamResourceForm = ({ resource, onSubmit }: Props) => {
   "Statement": [{
     "Effect": "Allow",
     "Principal": {
-      "AWS": "arn:aws:iam::<HANZO_KMS_AWS_ACCOUNT_ID>:root"
+      "AWS": "arn:aws:iam::<KMS_AWS_ACCOUNT_ID>:root"
     },
     "Action": "sts:AssumeRole",
     "Condition": {
@@ -116,13 +116,13 @@ export const AwsIamResourceForm = ({ resource, onSubmit }: Props) => {
           control={control}
           render={({ field, fieldState: { error } }) => (
             <FormControl
-              helperText="The ARN of the Hanzo KMS Resource Role that can assume target roles"
+              helperText="The ARN of the KMS Resource Role that can assume target roles"
               errorText={error?.message}
               isError={Boolean(error?.message)}
               label="Resource Role ARN"
             >
               <Input
-                placeholder="arn:aws:iam::123456789012:role/HanzoKMSResourceRole"
+                placeholder="arn:aws:iam::123456789012:role/KMSResourceRole"
                 {...field}
               />
             </FormControl>
@@ -144,7 +144,7 @@ export const AwsIamResourceForm = ({ resource, onSubmit }: Props) => {
             <AccordionContent className="px-4 pb-2.5">
               <p className="mb-3 text-sm text-mineshaft-300">
                 Before creating this resource, you need to set up an IAM role in your AWS account
-                that Hanzo KMS can assume. Follow these steps:
+                that KMS can assume. Follow these steps:
               </p>
 
               <p className="mb-2 text-sm font-medium text-mineshaft-200">
@@ -156,7 +156,7 @@ export const AwsIamResourceForm = ({ resource, onSubmit }: Props) => {
                 replace <code className="rounded bg-mineshaft-700 px-1 text-xs">*</code> with a
                 specific pattern like{" "}
                 <code className="rounded bg-mineshaft-700 px-1 text-xs">/pam-*</code> or{" "}
-                <code className="rounded bg-mineshaft-700 px-1 text-xs">/hanzo-kms-*</code>.
+                <code className="rounded bg-mineshaft-700 px-1 text-xs">/kms-*</code>.
               </p>
               <div className="relative mb-4">
                 <div className="absolute top-1 right-1">
@@ -172,7 +172,7 @@ export const AwsIamResourceForm = ({ resource, onSubmit }: Props) => {
               </p>
               <p className="mb-3 text-sm text-mineshaft-300">
                 Create an IAM role (e.g.,{" "}
-                <code className="rounded bg-mineshaft-700 px-1 text-xs">HanzoKMSResourceRole</code>
+                <code className="rounded bg-mineshaft-700 px-1 text-xs">KMSResourceRole</code>
                 ) with the permissions policy above and the following trust policy:
               </p>
               <div className="relative mb-4">
@@ -186,14 +186,14 @@ export const AwsIamResourceForm = ({ resource, onSubmit }: Props) => {
               <p className="text-xs text-mineshaft-400">
                 <strong>Note:</strong> Use{" "}
                 <code className="rounded bg-mineshaft-700 px-1 font-bold">
-                  {HANZO_KMS_AWS_ACCOUNT_US}
+                  {KMS_AWS_ACCOUNT_US}
                 </code>{" "}
                 for US region or{" "}
                 <code className="rounded bg-mineshaft-700 px-1 font-bold">
-                  {HANZO_KMS_AWS_ACCOUNT_EU}
+                  {KMS_AWS_ACCOUNT_EU}
                 </code>{" "}
-                for EU region. For dedicated instances, contact Hanzo support. For self-hosted
-                instances, use your Hanzo KMS deployment&apos;s AWS account ID. The External ID{" "}
+                for EU region. For dedicated instances, contact support. For self-hosted
+                instances, use your KMS deployment&apos;s AWS account ID. The External ID{" "}
                 <code className="rounded bg-mineshaft-700 px-1 font-bold">{projectId}</code> is your
                 current project ID.
               </p>

@@ -18,7 +18,7 @@ export const EncryptionPage = () => {
           <PageHeader
             scope="instance"
             title="Encryption"
-            description="Manage encryption settings for your Hanzo KMS instance."
+            description="Manage encryption settings for your KMS instance."
           />
           <EncryptionPageForm />
         </div>

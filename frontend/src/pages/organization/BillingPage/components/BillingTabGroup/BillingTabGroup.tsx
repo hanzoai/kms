@@ -1,6 +1,6 @@
 import { Tab, TabList, TabPanel, Tabs } from "@app/components/v2";
 import { OrgPermissionBillingActions, OrgPermissionSubjects } from "@app/context";
-import { isHanzoCloud } from "@app/helpers/platform";
+import { isCloudDeployment } from "@app/helpers/platform";
 import { withPermission } from "@app/hoc";
 
 import { BillingCloudTab } from "../BillingCloudTab";
@@ -9,15 +9,15 @@ import { BillingReceiptsTab } from "../BillingReceiptsTab";
 import { BillingSelfHostedTab } from "../BillingSelfHostedTab";
 
 const tabs = [
-  { name: "Hanzo KMS Cloud", key: "tab-infisical-cloud" },
-  { name: "Hanzo KMS Self-Hosted", key: "tab-infisical-self-hosted" },
+  { name: "KMS Cloud", key: "tab-infisical-cloud" },
+  { name: "KMS Self-Hosted", key: "tab-infisical-self-hosted" },
   { name: "Receipts", key: "tab-receipts" },
   { name: "Billing details", key: "tab-billing-details" }
 ];
 
 export const BillingTabGroup = withPermission(
   () => {
-    if (!isHanzoCloud()) {
+    if (!isCloudDeployment()) {
       return <BillingCloudTab />;
     }
 

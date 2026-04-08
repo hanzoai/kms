@@ -944,34 +944,34 @@ export const OverviewPage = () => {
                 Inject your secrets using
                 <a
                   className="ml-1 text-mineshaft-200 underline decoration-mineshaft-400/65 underline-offset-3 duration-200 hover:text-mineshaft-100 hover:decoration-primary-600"
-                  href="https://hanzo.ai/docs/cli/overview"
+                  href="/docs/cli/overview"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Hanzo KMS CLI
+                  KMS CLI
                 </a>
                 ,
                 <a
                   className="ml-1 text-mineshaft-200 underline decoration-mineshaft-400/65 underline-offset-3 duration-200 hover:text-mineshaft-100 hover:decoration-primary-600"
-                  href="https://hanzo.ai/docs/documentation/getting-started/api"
+                  href="/docs/documentation/getting-started/api"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Hanzo KMS API
+                  KMS API
                 </a>
                 ,
                 <a
                   className="ml-1 text-mineshaft-200 underline decoration-mineshaft-400/65 underline-offset-3 duration-200 hover:text-mineshaft-100 hover:decoration-primary-600"
-                  href="https://hanzo.ai/docs/sdks/overview"
+                  href="/docs/sdks/overview"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Hanzo KMS SDKs
+                  KMS SDKs
                 </a>
                 , and
                 <a
                   className="ml-1 text-mineshaft-200 underline decoration-mineshaft-400/65 underline-offset-3 duration-200 hover:text-mineshaft-100 hover:decoration-primary-600"
-                  href="https://hanzo.ai/docs/documentation/getting-started/introduction"
+                  href="/docs/documentation/getting-started/introduction"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -1179,7 +1179,7 @@ export const OverviewPage = () => {
                             }
                             handlePopUpOpen("upgradePlan", {
                               isEnterpriseFeature: true,
-                              text: "Adding dynamic secrets can be unlocked if you upgrade to Hanzo KMS Enterprise plan."
+                              text: "Adding dynamic secrets can be unlocked if you upgrade to KMS Enterprise plan."
                             });
                           }}
                           isDisabled={userAvailableDynamicSecretEnvs.length === 0}
@@ -1204,7 +1204,7 @@ export const OverviewPage = () => {
                               return;
                             }
                             handlePopUpOpen("upgradePlan", {
-                              text: "Adding secret rotations can be unlocked if you upgrade to Hanzo KMS Pro plan."
+                              text: "Adding secret rotations can be unlocked if you upgrade to KMS Pro plan."
                             });
                           }}
                           isDisabled={userAvailableSecretRotationEnvs.length === 0}

@@ -112,7 +112,7 @@ export const CertificatesSection = ({ externalFilter }: CertificatesSectionProps
       <div className="mb-4 flex justify-between">
         <div className="flex items-center gap-x-2">
           <p className="text-xl font-medium text-mineshaft-100">Certificates</p>
-          <DocumentationLinkBadge href="https://hanzo.ai/docs/documentation/platform/pki/certificates/overview" />
+          <DocumentationLinkBadge href="/docs/documentation/platform/pki/certificates/overview" />
         </div>
         <div className="flex gap-2">
           <ProjectPermissionCan

@@ -145,7 +145,7 @@ export const OrgLDAPSection = (): JSX.Element => {
             </OrgPermissionCan>
           </div>
           <p className="text-sm text-mineshaft-300">
-            Allow members to authenticate into Hanzo KMS with LDAP
+            Allow members to authenticate into KMS with LDAP
           </p>
         </div>
       )}
@@ -166,7 +166,7 @@ export const OrgLDAPSection = (): JSX.Element => {
           </OrgPermissionCan>
         </div>
         <p className="text-sm text-mineshaft-300">
-          Manage how LDAP groups are mapped to internal groups in Hanzo KMS
+          Manage how LDAP groups are mapped to internal groups in KMS
         </p>
       </div>
 
@@ -183,7 +183,7 @@ export const OrgLDAPSection = (): JSX.Element => {
       <UpgradePlanModal
         isOpen={popUp.upgradePlan.isOpen}
         onOpenChange={(isOpen) => handlePopUpToggle("upgradePlan", isOpen)}
-        text="Your current plan does not include access to LDAP authentication. To unlock this feature, please upgrade to Hanzo KMS Enterprise plan."
+        text="Your current plan does not include access to LDAP authentication. To unlock this feature, please upgrade to KMS Enterprise plan."
         isEnterpriseFeature={popUp.upgradePlan.data?.isEnterpriseFeature}
       />
     </div>
