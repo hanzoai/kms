@@ -82,5 +82,5 @@ CLAUDE.md
 QWEN.md
 GEMINI.md
 .AGENTS.md
-kmsd
-kms-cli
+/kmsd
+/kms-cli
