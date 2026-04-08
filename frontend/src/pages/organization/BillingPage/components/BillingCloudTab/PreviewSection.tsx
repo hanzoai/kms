@@ -11,7 +11,7 @@ import {
   useOrganization,
   useSubscription
 } from "@app/context";
-import { isHanzoCloud } from "@app/helpers/platform";
+import { isCloudDeployment } from "@app/helpers/platform";
 import {
   useCreateCustomerPortalSession,
   useGetOrgPlanBillingInfo,
@@ -71,8 +71,8 @@ export const PreviewSection = () => {
     try {
       if (!subscription || !currentOrg) return;
 
-      if (!isHanzoCloud()) {
-        window.open("https://hanzo.ai/pricing", "_blank");
+      if (!isCloudDeployment()) {
+        window.open("/pricing", "_blank");
         return;
       }
 
@@ -94,7 +94,7 @@ export const PreviewSection = () => {
   };
 
   const getUpgradePlanLabel = () => {
-    if (!isHanzoCloud()) {
+    if (!isCloudDeployment()) {
       return (
         <div>
           Go to Pricing
@@ -118,7 +118,7 @@ export const PreviewSection = () => {
                 <h2 className="text-xl font-medium text-mineshaft-100">
                   Unleash the full power of{" "}
                   <span className="bg-linear-to-r from-primary-500 to-yellow bg-clip-text font-medium text-transparent">
-                    Hanzo KMS
+                    KMS
                   </span>
                 </h2>
                 <p className="mt-4 text-gray-400">
@@ -146,7 +146,7 @@ export const PreviewSection = () => {
               </div>
               <div className="flex w-full justify-center">
                 <a
-                  href="https://hanzo.ai/contact"
+                  href="/contact"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -171,7 +171,7 @@ export const PreviewSection = () => {
                 subscription.status === "trialing" ? "(Trial)" : ""
               }`}
             </p>
-            {isHanzoCloud() && (
+            {isCloudDeployment() && (
               <OrgPermissionCan
                 I={OrgPermissionBillingActions.ManageBilling}
                 a={OrgPermissionSubjects.Billing}

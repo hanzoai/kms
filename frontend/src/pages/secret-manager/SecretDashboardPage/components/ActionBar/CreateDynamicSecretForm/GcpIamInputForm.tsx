@@ -173,7 +173,7 @@ export const GcpIamInputForm = ({
                       <span>
                         Don&apos;t know where to get this value?{" "}
                         <a
-                          href="https://hanzo.ai/docs/documentation/platform/dynamic-secrets/gcp-iam#param-service-account-email"
+                          href="/docs/documentation/platform/dynamic-secrets/gcp-iam#param-service-account-email"
                           target="_blank"
                           className="underline"
                           rel="noreferrer"

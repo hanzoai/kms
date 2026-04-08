@@ -26,13 +26,13 @@ export const ErrorPage = ({ error }: ErrorComponentProps) => {
             className="inline cursor-pointer text-mineshaft-100 underline decoration-primary-500 underline-offset-4 opacity-80 duration-200 hover:opacity-100"
             target="_blank"
             rel="noopener noreferrer"
-            href="mailto:support@hanzo.ai"
+            href="/support"
           >
-            support@hanzo.ai
+            support
           </a>
           , or{" "}
           <a
-            href="https://hanzo.ai/discord"
+            href="/discord"
             className="inline cursor-pointer text-mineshaft-100 underline decoration-primary-500 underline-offset-4 opacity-80 duration-200 hover:opacity-100"
             target="_blank"
             rel="noopener noreferrer"

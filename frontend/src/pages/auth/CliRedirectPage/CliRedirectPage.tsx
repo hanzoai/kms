@@ -37,7 +37,7 @@ export const CliRedirectPage = () => {
   return (
     <div className="flex flex-col justify-between bg-bunker-800 md:h-screen">
       <Helmet>
-        <title>Hanzo KMS CLI | Login Successful!</title>
+        <title>KMS CLI | Login Successful!</title>
         <link rel="icon" href="/hanzo.ico" />
       </Helmet>
       <div className="flex h-screen w-screen flex-col items-center justify-center space-y-4 text-gray-200">
@@ -48,7 +48,7 @@ export const CliRedirectPage = () => {
               height: "90px",
               width: "120px"
             }}
-            alt="Hanzo KMS Logo"
+            alt="KMS Logo"
           />
         </div>
         {cliToken ? (
@@ -58,7 +58,7 @@ export const CliRedirectPage = () => {
                 Unable to reach CLI
               </p>
               <p className="text-light mb-1 text-center text-lg text-mineshaft-400">
-                Your login was successful but, Hanzo KMS couldn&apos;t automatically push your login
+                Your login was successful but, KMS couldn&apos;t automatically push your login
                 token to the CLI.
               </p>
               <p className="text-light mb-1 text-center text-lg text-mineshaft-400">
@@ -87,7 +87,7 @@ export const CliRedirectPage = () => {
               Head back to your terminal
             </p>
             <p className="text-light mb-1 text-lg text-mineshaft-400">
-              You&apos;ve successfully logged in to the Hanzo KMS CLI
+              You&apos;ve successfully logged in to the KMS CLI
             </p>
           </>
         )}

@@ -18,7 +18,7 @@ export const AuthenticationPage = () => {
           <PageHeader
             scope="instance"
             title="Authentication"
-            description="Manage authentication settings for your Hanzo KMS instance."
+            description="Manage authentication settings for your KMS instance."
           />
           <AuthenticationPageForm />
         </div>

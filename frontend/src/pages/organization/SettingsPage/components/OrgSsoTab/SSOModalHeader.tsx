@@ -12,7 +12,7 @@ type Props = {
   isConnected: boolean;
 };
 
-const docsBaseUrl = "https://hanzo.ai/docs/documentation/platform/sso";
+const docsBaseUrl = "/docs/documentation/platform/sso";
 
 export const SSOModalHeader = ({ providerDetails, isConnected }: Props) => {
   return (

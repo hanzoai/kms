@@ -37,7 +37,7 @@ const MAPPING_TYPE_MENU_ITEMS = [
     label: "Key Vaults",
     tooltip: (
       <div>
-        When using key vaults for mapping, each key vault within Vault will be created in Hanzo KMS
+        When using key vaults for mapping, each key vault within Vault will be created in KMS
         as a project. Each secret path inside the key vault, will be created as an environment
         inside the corresponding project. When using Key Vaults as the project mapping type, a
         default environment called &quot;Production&quot; will be created for each project, which
@@ -57,7 +57,7 @@ const MAPPING_TYPE_MENU_ITEMS = [
     label: "Namespaces",
     tooltip: (
       <div>
-        When using namespaces for mapping, each namespace within Vault will be created in Hanzo KMS
+        When using namespaces for mapping, each namespace within Vault will be created in KMS
         as a project. Each key vault (KV) inside the namespace, will be created as an environment
         inside the corresponding project.
         <div className="mt-4 flex flex-col gap-1 text-sm">

@@ -6,6 +6,7 @@ import { Link } from "@tanstack/react-router";
 
 import { WishForm } from "@app/components/features/WishForm";
 import { PageHeader } from "@app/components/v2";
+import { isCloudDeployment } from "@app/helpers/platform";
 
 import { PersonalTabGroup } from "./components/PersonalTabGroup";
 
@@ -30,8 +31,7 @@ export const PersonalSettingsPage = () => {
             description="Configure settings for your account"
           >
             <div>
-              {window.location.origin.includes("https://app.hanzo.ai") ||
-                window.location.origin.includes("https://kms.hanzo.ai") || <WishForm />}
+              {isCloudDeployment() || <WishForm />}
             </div>
           </PageHeader>
           <PersonalTabGroup />

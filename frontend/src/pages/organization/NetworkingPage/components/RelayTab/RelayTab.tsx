@@ -117,7 +117,7 @@ export const RelayTab = withPermission(
         <div className="mb-2 flex items-center justify-between">
           <div className="flex grow items-center gap-x-2">
             <h3 className="text-lg font-medium text-mineshaft-100">Relays</h3>
-            <DocumentationLinkBadge href="https://hanzo.ai/docs/documentation/platform/gateways/relay-deployment" />
+            <DocumentationLinkBadge href="/docs/documentation/platform/gateways/relay-deployment" />
             <div className="flex grow" />
             <Button
               variant="outline_bg"
@@ -129,7 +129,7 @@ export const RelayTab = withPermission(
           </div>
         </div>
         <p className="mb-4 text-sm text-mineshaft-400">
-          Create and configure relays to securely access private network resources from Hanzo KMS
+          Create and configure relays to securely access private network resources from KMS
         </p>
         <div>
           <div className="flex gap-2">
@@ -171,7 +171,7 @@ export const RelayTab = withPermission(
                       <div className="flex items-center gap-2">
                         <span>{el.name}</span>
                         {!el.orgId && (
-                          <Tooltip content="This is a managed relay provided by Hanzo KMS">
+                          <Tooltip content="This is a managed relay provided by KMS">
                             <span className="rounded-sm bg-mineshaft-700 px-1.5 py-0.5 text-xs text-mineshaft-400">
                               Managed
                             </span>
