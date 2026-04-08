@@ -5,7 +5,7 @@ go 1.26.1
 require (
 	github.com/go-chi/chi/v5 v5.2.1
 	github.com/golang-jwt/jwt/v5 v5.3.1
-	github.com/hanzoai/base v0.39.2-0.20260408223553-eeb023d6906d
+	github.com/hanzoai/base v0.39.3
 	github.com/luxfi/zap v0.2.0
 )
 
