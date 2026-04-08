@@ -114,7 +114,8 @@ func main() {
 		e.Router.DELETE("/v1/{path...}", chiHandler)
 
 		// Serve frontend at / if KMS_FRONTEND_DIR is set.
-		// Otherwise serve a minimal JSON landing page.
+		// Base admin UI at /_/ always available.
+		// Without frontend, Base default redirects / → /_/.
 		if frontendDir != "" {
 			frontendFS := os.DirFS(frontendDir)
 			e.Router.GET("/{path...}", func(re *core.RequestEvent) error {
@@ -132,17 +133,6 @@ func main() {
 				return nil
 			})
 			log.Printf("kmsd: serving frontend from %s at /", frontendDir)
-		} else {
-			appName := envOr("APP_NAME", "KMS")
-			e.Router.GET("/", func(re *core.RequestEvent) error {
-				re.Response.Header().Set("Content-Type", "application/json")
-				return re.JSON(200, map[string]any{
-					"name":   appName,
-					"status": "ok",
-					"api":    "/v1/",
-					"admin":  "/_/",
-				})
-			})
 		}
 
 		return e.Next()
