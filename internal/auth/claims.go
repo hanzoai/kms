@@ -1,9 +1,9 @@
-// Package auth provides IAM JWT validation for the Hanzo KMS server.
+// Package auth provides IAM JWT validation for the KMS server.
 package auth
 
 import "context"
 
-// Claims holds the validated fields from a Hanzo IAM JWT.
+// Claims holds the validated fields from an IAM JWT.
 type Claims struct {
 	Sub   string   `json:"sub"`
 	Email string   `json:"email"`

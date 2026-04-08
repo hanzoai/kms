@@ -16,10 +16,11 @@ import (
 
 // Config holds all dependencies for the server.
 type Config struct {
-	App     core.App
-	MPC     *mpc.ZapClient
-	JWKS    *auth.JWKSValidator
-	VaultID string
+	App      core.App
+	MPC      *mpc.ZapClient
+	JWKS     *auth.JWKSValidator
+	VaultID  string
+	AuthMode string // "iam" or "none"
 }
 
 // NewRouter creates and configures the chi router with all KMS routes.
@@ -43,7 +44,7 @@ func NewRouter(cfg Config) *chi.Mux {
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Recoverer)
 
-	RegisterRoutes(r, cfg.JWKS, secretsH, keysH, membersH, complianceH, transitH, statusH)
+	RegisterRoutes(r, cfg.JWKS, cfg.AuthMode, secretsH, keysH, membersH, complianceH, transitH, statusH)
 
 	return r
 }

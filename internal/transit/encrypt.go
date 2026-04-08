@@ -15,12 +15,12 @@ type EncryptRequest struct {
 
 // EncryptResponse is the output of transit encrypt.
 type EncryptResponse struct {
-	Ciphertext string `json:"ciphertext"` // format: hanzo:v{N}:{base64}
+	Ciphertext string `json:"ciphertext"` // format: kms:v{N}:{base64}
 }
 
 // DecryptRequest is the input for transit decrypt.
 type DecryptRequest struct {
-	Ciphertext string `json:"ciphertext"` // format: hanzo:v{N}:{base64}
+	Ciphertext string `json:"ciphertext"` // format: kms:v{N}:{base64}
 }
 
 // DecryptResponse is the output of transit decrypt.
@@ -62,7 +62,7 @@ func (e *Engine) Encrypt(name string, req EncryptRequest) (*EncryptResponse, err
 	encoded := base64.StdEncoding.EncodeToString(sealed)
 
 	return &EncryptResponse{
-		Ciphertext: fmt.Sprintf("hanzo:v%d:%s", rec.LatestVersion, encoded),
+		Ciphertext: fmt.Sprintf("kms:v%d:%s", rec.LatestVersion, encoded),
 	}, nil
 }
 
@@ -118,9 +118,9 @@ func (e *Engine) Decrypt(name string, req DecryptRequest) (*DecryptResponse, err
 func parseCiphertext(s string) (int, string, error) {
 	var version int
 	var b64 string
-	n, err := fmt.Sscanf(s, "hanzo:v%d:%s", &version, &b64)
+	n, err := fmt.Sscanf(s, "kms:v%d:%s", &version, &b64)
 	if err != nil || n != 2 {
-		return 0, "", fmt.Errorf("transit: invalid ciphertext format (expected hanzo:v{N}:{base64})")
+		return 0, "", fmt.Errorf("transit: invalid ciphertext format (expected kms:v{N}:{base64})")
 	}
 	return version, b64, nil
 }
