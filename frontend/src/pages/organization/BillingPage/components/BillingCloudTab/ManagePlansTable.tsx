@@ -119,7 +119,7 @@ export const ManagePlansTable = ({ billingCycle }: Props) => {
                           return;
                         }
 
-                        window.location.href = "https://hanzo.ai/contact";
+                        window.location.href = "/contact";
                       }}
                       color="mineshaft"
                       className="w-full"

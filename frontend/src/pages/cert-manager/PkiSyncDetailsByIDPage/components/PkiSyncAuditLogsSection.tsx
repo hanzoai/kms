@@ -65,7 +65,7 @@ export const PkiSyncAuditLogsSection = ({ pkiSync }: Props) => {
                 </Link>
               ) : (
                 <a
-                  href="https://hanzo.ai/contact"
+                  href="/contact"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="cursor-pointer underline transition-all hover:text-white"

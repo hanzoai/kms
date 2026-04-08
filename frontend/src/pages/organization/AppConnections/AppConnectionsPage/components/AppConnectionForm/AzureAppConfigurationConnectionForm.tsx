@@ -11,7 +11,7 @@ import {
   getAppConnectionMethodDetails,
   useGetAppConnectionOauthReturnUrl
 } from "@app/helpers/appConnections";
-import { isHanzoCloud } from "@app/helpers/platform";
+import { isCloudDeployment } from "@app/helpers/platform";
 import {
   AzureAppConfigurationConnectionMethod,
   TAzureAppConfigurationConnection,
@@ -189,8 +189,8 @@ export const AzureAppConfigurationConnectionForm = ({
               errorText={
                 !isLoading && isMissingConfig
                   ? `Environment variables have not been configured. ${
-                      isHanzoCloud()
-                        ? "Please contact Hanzo."
+                      isCloudDeployment()
+                        ? "Please contact support."
                         : `See documentation to configure Azure ${methodDetails.name} Connections.`
                     }`
                   : error?.message

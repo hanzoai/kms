@@ -377,7 +377,7 @@ export const McpEndpointFinalizePage = () => {
 
       <div className="w-full max-w-md rounded-lg border border-mineshaft-600 bg-mineshaft-800 p-8 shadow-lg">
         <Link to="/" className="mb-6 block">
-          <img src="/images/gradientLogo.svg" className="mx-auto h-16" alt="Hanzo KMS logo" />
+          <img src="/images/gradientLogo.svg" className="mx-auto h-16" alt="KMS logo" />
         </Link>
 
         <div className="mb-6 text-center">

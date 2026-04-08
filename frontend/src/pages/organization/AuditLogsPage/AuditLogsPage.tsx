@@ -13,7 +13,7 @@ export const AuditLogsPage = () => {
   return (
     <div className="h-full bg-bunker-800">
       <Helmet>
-        <title>Hanzo KMS | Audit Logs</title>
+        <title>KMS | Audit Logs</title>
         <link rel="icon" href="/hanzo.ico" />
         <meta property="og:image" content="/images/message.png" />
       </Helmet>

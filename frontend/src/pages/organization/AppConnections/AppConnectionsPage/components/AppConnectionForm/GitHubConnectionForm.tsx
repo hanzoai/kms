@@ -31,7 +31,7 @@ import {
   getAppConnectionMethodDetails,
   useGetAppConnectionOauthReturnUrl
 } from "@app/helpers/appConnections";
-import { isHanzoCloud } from "@app/helpers/platform";
+import { isCloudDeployment } from "@app/helpers/platform";
 import { gatewaysQueryKeys } from "@app/hooks/api";
 import {
   GitHubConnectionMethod,
@@ -219,8 +219,8 @@ export const GitHubConnectionForm = ({ appConnection, projectId, onSubmit }: Pro
               errorText={
                 !isLoading && isMissingConfig
                   ? `Credentials have not been configured. ${
-                      isHanzoCloud()
-                        ? "Please contact Hanzo."
+                      isCloudDeployment()
+                        ? "Please contact support."
                         : `See Docs to configure Github ${methodDetails.name} Connections.`
                     }`
                   : error?.message

@@ -54,7 +54,7 @@ export const EmailDuplicationConfirmation = ({ onRemoveDuplicateLater }: Props) 
                 height: "90px",
                 width: "120px"
               }}
-              alt="Hanzo KMS logo"
+              alt="KMS logo"
             />
           </div>
         </Link>

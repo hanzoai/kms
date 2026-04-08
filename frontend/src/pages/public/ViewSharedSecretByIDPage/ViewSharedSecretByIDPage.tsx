@@ -230,7 +230,7 @@ export const ViewSharedSecretByIDPage = () => {
   return (
     <>
       <Helmet>
-        <title>Securely Share Secrets{hasCustomBranding ? "" : " | Hanzo KMS"}</title>
+        <title>Securely Share Secrets{hasCustomBranding ? "" : " | KMS"}</title>
         <meta property="og:image" content="/images/message.png" />
         <meta property="og:title" content="" />
         <meta name="og:description" content="" />
@@ -255,12 +255,12 @@ export const ViewSharedSecretByIDPage = () => {
                   className="max-h-24 w-auto object-contain"
                 />
               ) : (
-                <a target="_blank" rel="noopener noreferrer" href="https://hanzo.ai">
+                <a target="_blank" rel="noopener noreferrer" href="/">
                   <img
                     src={logoUrl}
                     height={90}
                     width={120}
-                    alt="Hanzo KMS logo"
+                    alt="KMS logo"
                     className="cursor-pointer"
                   />
                 </a>
@@ -280,12 +280,12 @@ export const ViewSharedSecretByIDPage = () => {
               <p className="text-md">
                 Powered by{" "}
                 <a
-                  href="https://hanzo.ai"
+                  href="/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-bold bg-linear-to-tr from-yellow-500 to-primary-500 bg-clip-text text-transparent"
                 >
-                  Hanzo KMS &rarr;
+                  KMS &rarr;
                 </a>
               </p>
             )}
@@ -330,20 +330,20 @@ export const ViewSharedSecretByIDPage = () => {
                 <div className="flex flex-col items-start sm:flex-row sm:items-center">
                   <p className="md:text-md text-md mr-4">
                     <a
-                      href="https://hanzo.ai"
+                      href="/"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-bold bg-linear-to-tr from-yellow-500 to-primary-500 bg-clip-text text-transparent"
                     >
-                      Hanzo KMS
+                      KMS
                     </a>{" "}
                     is the all-in-one secret management platform to securely manage secrets,
                     configs, and certificates across your team and infrastructure.
                   </p>
                   <div className="mt-4 cursor-pointer sm:mt-0">
-                    <a target="_blank" rel="noopener noreferrer" href="https://hanzo.ai">
+                    <a target="_blank" rel="noopener noreferrer" href="/">
                       <div className="flex items-center justify-between rounded-md border border-mineshaft-400/40 bg-mineshaft-600 px-3 py-2 duration-200 hover:border-primary/60 hover:bg-primary/20 hover:text-white">
-                        <p className="mr-4 whitespace-nowrap">Try Hanzo KMS</p>
+                        <p className="mr-4 whitespace-nowrap">Try KMS</p>
                         <FontAwesomeIcon icon={faArrowRight} />
                       </div>
                     </a>
@@ -358,9 +358,9 @@ export const ViewSharedSecretByIDPage = () => {
         ) : (
           <div className="w-full bg-mineshaft-600 p-2">
             <p className="text-center text-sm text-mineshaft-300">
-              Made with love by{" "}
-              <a className="text-primary" href="https://hanzo.ai">
-                Hanzo
+              Powered by{" "}
+              <a className="text-primary" href="/">
+                KMS
               </a>
             </p>
           </div>

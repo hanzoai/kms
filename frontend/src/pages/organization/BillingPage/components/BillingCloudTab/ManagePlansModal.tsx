@@ -19,7 +19,7 @@ export const ManagePlansModal = ({ popUp, handlePopUpToggle }: Props) => {
         handlePopUpToggle("managePlan", isOpen);
       }}
     >
-      <ModalContent className="max-w-(--breakpoint-lg)" title="Hanzo KMS Cloud Plans">
+      <ModalContent className="max-w-(--breakpoint-lg)" title="KMS Cloud Plans">
         <Tab.Group>
           <Tab.List className="max-w-(--breakpoint-lg) border-b-2 border-mineshaft-600">
             <Tab as={Fragment}>

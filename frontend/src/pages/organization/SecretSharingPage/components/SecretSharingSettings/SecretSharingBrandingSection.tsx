@@ -299,7 +299,7 @@ export const SecretSharingBrandingSection = () => {
             size="xs"
             variant="org"
             as="a"
-            href="https://hanzo.ai/contact"
+            href="/contact"
             target="_blank"
           >
             Talk to Us

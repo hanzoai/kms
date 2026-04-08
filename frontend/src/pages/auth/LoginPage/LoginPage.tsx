@@ -80,7 +80,7 @@ export const LoginPage = ({ isAdmin }: { isAdmin?: boolean }) => {
               height: "90px",
               width: "120px"
             }}
-            alt="Hanzo KMS logo"
+            alt="KMS logo"
           />
         </div>
       </Link>

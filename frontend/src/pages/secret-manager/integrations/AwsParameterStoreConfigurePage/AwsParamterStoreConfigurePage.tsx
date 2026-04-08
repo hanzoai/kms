@@ -178,7 +178,7 @@ export const AWSParameterStoreConfigurePage = () => {
       <Card className="max-w-lg rounded-md border border-mineshaft-600">
         <CardTitle
           className="px-6 text-left text-xl"
-          subTitle="Choose which environment in Hanzo KMS you want to sync to secerts in AWS Parameter Store."
+          subTitle="Choose which environment in KMS you want to sync to secerts in AWS Parameter Store."
         >
           <div className="flex flex-row items-center">
             <div className="flex items-center">
@@ -191,7 +191,7 @@ export const AWSParameterStoreConfigurePage = () => {
             </div>
             <span className="ml-1.5">AWS Parameter Store Integration </span>
             <a
-              href="https://hanzo.ai/docs/integrations/cloud/aws-parameter-store"
+              href="/docs/integrations/cloud/aws-parameter-store"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -358,7 +358,7 @@ export const AWSParameterStoreConfigurePage = () => {
         <span className="mt-4 text-sm text-mineshaft-300">
           After creating an integration, your secrets will start syncing immediately. This might
           cause an unexpected override of current secrets in AWS Parameter Store with secrets from
-          Hanzo KMS.
+          KMS.
         </span>
       </div>
     </div>
@@ -383,9 +383,9 @@ export const AWSParameterStoreConfigurePage = () => {
               className="inline cursor-pointer text-mineshaft-100 underline decoration-primary-500 underline-offset-4 opacity-80 duration-200 hover:opacity-100"
               target="_blank"
               rel="noopener noreferrer"
-              href="mailto:support@hanzo.ai"
+              href="/support"
             >
-              support@hanzo.ai
+              support
             </a>{" "}
             if the issue persists.
           </p>
