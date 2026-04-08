@@ -11,7 +11,7 @@ export const useCreatePkiAlert = () => {
   const queryClient = useQueryClient();
   return useMutation<TPkiAlert, object, TCreatePkiAlertDTO>({
     mutationFn: async (body) => {
-      const { data: alert } = await apiRequest.post<TPkiAlert>("/api/v1/pki/alerts", body);
+      const { data: alert } = await apiRequest.post<TPkiAlert>("/v1/pki/alerts", body);
       return alert;
     },
     onSuccess: (_, { projectId }) => {

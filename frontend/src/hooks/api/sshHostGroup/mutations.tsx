@@ -15,7 +15,7 @@ export const useCreateSshHostGroup = () => {
   const queryClient = useQueryClient();
   return useMutation<TSshHostGroup, object, TCreateSshHostGroupDTO>({
     mutationFn: async (body) => {
-      const { data: hostGroup } = await apiRequest.post("/api/v1/ssh/host-groups", body);
+      const { data: hostGroup } = await apiRequest.post("/v1/ssh/host-groups", body);
       return hostGroup;
     },
     onSuccess: ({ projectId, id }) => {

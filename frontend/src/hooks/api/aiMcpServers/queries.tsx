@@ -30,7 +30,7 @@ export const useListAiMcpServers = ({
       const { data } = await apiRequest.get<{
         servers: TAiMcpServer[];
         totalCount: number;
-      }>("/api/v1/ai/mcp/servers", {
+      }>("/v1/ai/mcp/servers", {
         params: { projectId, limit, offset }
       });
       return data;

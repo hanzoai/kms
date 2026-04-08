@@ -19,7 +19,7 @@ export const useCreatePkiCollection = () => {
   return useMutation<TPkiCollection, object, TCreatePkiCollectionDTO>({
     mutationFn: async (body) => {
       const { data: pkiCollection } = await apiRequest.post<TPkiCollection>(
-        "/api/v1/pki/collections",
+        "/v1/pki/collections",
         body
       );
       return pkiCollection;

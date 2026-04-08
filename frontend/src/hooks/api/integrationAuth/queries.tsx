@@ -958,7 +958,7 @@ export const useAuthorizeIntegration = () => {
     }) => {
       const {
         data: { integrationAuth }
-      } = await apiRequest.post("/api/v1/integration-auth/oauth-token", {
+      } = await apiRequest.post("/v1/integration-auth/oauth-token", {
         workspaceId,
         code,
         integration,
@@ -1001,7 +1001,7 @@ export const useSaveIntegrationAccessToken = () => {
     }) => {
       const {
         data: { integrationAuth }
-      } = await apiRequest.post("/api/v1/integration-auth/access-token", {
+      } = await apiRequest.post("/v1/integration-auth/access-token", {
         workspaceId,
         integration,
         refreshToken,

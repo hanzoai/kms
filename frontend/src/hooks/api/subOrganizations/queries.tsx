@@ -13,7 +13,7 @@ export const subOrganizationsQuery = {
       queryKey: subOrganizationsQuery.listKey(params),
       queryFn: async () => {
         const { data } = await apiRequest.get<{ organizations: TSubOrganization[] }>(
-          "/api/v1/sub-organizations",
+          "/v1/sub-organizations",
           {
             params: {
               limit: params.limit,

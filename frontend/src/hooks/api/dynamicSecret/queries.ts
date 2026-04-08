@@ -31,7 +31,7 @@ export const useGetDynamicSecrets = ({
     enabled: Boolean(projectSlug && environmentSlug && path),
     queryFn: async () => {
       const { data } = await apiRequest.get<{ dynamicSecrets: TDynamicSecret[] }>(
-        "/api/v1/dynamic-secrets",
+        "/v1/dynamic-secrets",
         {
           params: {
             projectSlug,
@@ -86,7 +86,7 @@ export const useGetDynamicSecretProviderData = ({
     queryKey: ["users"],
     queryFn: async () => {
       const { data } = await apiRequest.post<{ id: string; email: string; name: string }[]>(
-        "/api/v1/dynamic-secrets/entra-id/users",
+        "/v1/dynamic-secrets/entra-id/users",
         {
           tenantId,
           applicationId,
@@ -110,7 +110,7 @@ export const useGetDynamicSecretsOfAllEnv = ({
       enabled: Boolean(projectSlug && environment && path),
       queryFn: async () => {
         const { data } = await apiRequest.get<{ dynamicSecrets: TDynamicSecret[] }>(
-          "/api/v1/dynamic-secrets",
+          "/v1/dynamic-secrets",
           {
             params: {
               projectSlug,

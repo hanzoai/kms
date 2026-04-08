@@ -22,8 +22,8 @@ func RegisterRoutes(
 	// Unauthenticated.
 	r.Get("/healthz", status.Healthz)
 
-	// Infisical-compatible endpoints (frontend expects /api/v1/*).
-	r.Get("/api/v1/admin/config", status.ServerConfig)
+	// Server config (frontend boot).
+	r.Get("/v1/admin/config", status.ServerConfig)
 
 	// Authenticated routes.
 	r.Group(func(r chi.Router) {

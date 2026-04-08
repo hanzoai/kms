@@ -20,7 +20,7 @@ export const useCreateGroup = () => {
       organizationId: string;
       role?: string;
     }) => {
-      const { data: group } = await apiRequest.post<TGroup>("/api/v1/groups", {
+      const { data: group } = await apiRequest.post<TGroup>("/v1/groups", {
         name,
         slug,
         role

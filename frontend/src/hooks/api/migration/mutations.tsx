@@ -19,7 +19,7 @@ export const useImportEnvKey = () => {
       formData.append("file", file);
 
       try {
-        const response = await apiRequest.post("/api/v3/external-migration/env-key/", formData, {
+        const response = await apiRequest.post("/v1/external-migration/env-key/", formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           },
@@ -59,7 +59,7 @@ export const useImportVault = () => {
       mappingType: string;
       gatewayId?: string;
     }) => {
-      await apiRequest.post("/api/v3/external-migration/vault/", {
+      await apiRequest.post("/v1/external-migration/vault/", {
         vaultAccessToken,
         vaultNamespace,
         vaultUrl,
@@ -76,7 +76,7 @@ export const useImportVaultSecrets = () => {
   return useMutation<{ status: VaultImportStatus }, object, TImportVaultSecretsDTO>({
     mutationFn: async (dto) => {
       const { data } = await apiRequest.post<{ status: VaultImportStatus }>(
-        "/api/v3/external-migration/vault/import-secrets",
+        "/v1/external-migration/vault/import-secrets",
         dto
       );
       return data;
@@ -104,7 +104,7 @@ export const useCreateVaultExternalMigrationConfig = () => {
   >({
     mutationFn: async ({ connectionId, namespace }) => {
       const { data } = await apiRequest.post<{ config: TVaultExternalMigrationConfig }>(
-        "/api/v3/external-migration/vault/configs",
+        "/v1/external-migration/vault/configs",
         {
           connectionId,
           namespace

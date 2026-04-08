@@ -26,7 +26,7 @@ export const useCreateAdminUser = () => {
     TCreateAdminUserDTO
   >({
     mutationFn: async (opt) => {
-      const { data } = await apiRequest.post("/api/v1/admin/signup", opt);
+      const { data } = await apiRequest.post("/v1/admin/signup", opt);
       return data;
     },
     onSuccess: () => {
@@ -41,7 +41,7 @@ export const useUpdateServerConfig = () => {
   return useMutation<TServerConfig, object, TUpdateServerConfigDTO>({
     mutationFn: async (opt) => {
       const { data } = await apiRequest.patch<{ config: TServerConfig }>(
-        "/api/v1/admin/config",
+        "/v1/admin/config",
         opt
       );
       return data.config;
@@ -76,7 +76,7 @@ export const useAdminBulkDeleteUsers = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (userIds: string[]) => {
-      await apiRequest.delete("/api/v1/admin/user-management/users", {
+      await apiRequest.delete("/v1/admin/user-management/users", {
         data: { userIds }
       });
 
@@ -178,7 +178,7 @@ export const useUpdateServerEncryptionStrategy = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (strategy: RootKeyEncryptionStrategy) => {
-      await apiRequest.patch("/api/v1/admin/encryption-strategies", { strategy });
+      await apiRequest.patch("/v1/admin/encryption-strategies", { strategy });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: adminQueryKeys.getServerEncryptionStrategies() });
@@ -190,7 +190,7 @@ export const useInvalidateCache = () => {
   const queryClient = useQueryClient();
   return useMutation<void, object, TInvalidateCacheDTO>({
     mutationFn: async (dto) => {
-      await apiRequest.post("/api/v1/admin/invalidate-cache", dto);
+      await apiRequest.post("/v1/admin/invalidate-cache", dto);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: adminQueryKeys.getInvalidateCache() });
@@ -204,7 +204,7 @@ export const useServerAdminCreateOrganization = () => {
   return useMutation({
     mutationFn: async (opt: TCreateOrganizationDTO) => {
       const { data } = await apiRequest.post<{ organization: Organization }>(
-        "/api/v1/admin/organization-management/organizations",
+        "/v1/admin/organization-management/organizations",
         opt
       );
       return data;
@@ -246,7 +246,7 @@ export const useGenerateUsageReport = () => {
   return useMutation<TUsageReportResponse, object, void>({
     mutationFn: async () => {
       const { data } = await apiRequest.post<TUsageReportResponse>(
-        "/api/v1/admin/usage-report/generate"
+        "/v1/admin/usage-report/generate"
       );
       return data;
     }

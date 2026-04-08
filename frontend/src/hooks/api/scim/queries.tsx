@@ -36,7 +36,7 @@ export const useGetScimEvents = ({ since, limit = 10, offset, disabled }: GetSci
     queryFn: async ({ pageParam }) => {
       const {
         data: { scimEvents }
-      } = await apiRequest.get<{ scimEvents: ScimEventData[] }>("/api/v1/scim/scim-events", {
+      } = await apiRequest.get<{ scimEvents: ScimEventData[] }>("/v1/scim/scim-events", {
         params: {
           since,
           limit,

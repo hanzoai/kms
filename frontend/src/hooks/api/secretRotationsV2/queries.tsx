@@ -34,7 +34,7 @@ export const useSecretRotationV2Options = (
     queryKey: secretRotationV2Keys.options(),
     queryFn: async () => {
       const { data } = await apiRequest.get<TListSecretRotationV2Options>(
-        "/api/v2/secret-rotations/options"
+        "/v1/secret-rotations/options"
       );
 
       return data.secretRotationOptions;

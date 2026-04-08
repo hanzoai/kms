@@ -22,14 +22,14 @@ export const useCreateDynamicSecretLease = () => {
     mutationFn: async (dto) => {
       if (dto.provider === DynamicSecretProviders.Kubernetes) {
         const { data } = await apiRequest.post<{ lease: TDynamicSecretLease; data: unknown }>(
-          "/api/v1/dynamic-secrets/leases/kubernetes",
+          "/v1/dynamic-secrets/leases/kubernetes",
           dto
         );
         return data;
       }
 
       const { data } = await apiRequest.post<{ lease: TDynamicSecretLease; data: unknown }>(
-        "/api/v1/dynamic-secrets/leases",
+        "/v1/dynamic-secrets/leases",
         dto
       );
       return data;

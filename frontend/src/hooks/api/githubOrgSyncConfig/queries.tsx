@@ -12,7 +12,7 @@ export const githubOrgSyncConfigQueryKeys = {
       queryKey: githubOrgSyncConfigQueryKeys.getKey(),
       queryFn: async () => {
         const { data } = await apiRequest.get<{ githubOrgSyncConfig: TGithubOrgSyncConfig }>(
-          "/api/v1/github-org-sync-config"
+          "/v1/github-org-sync-config"
         );
         return data.githubOrgSyncConfig;
       }

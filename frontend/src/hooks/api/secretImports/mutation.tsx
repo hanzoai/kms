@@ -16,7 +16,7 @@ export const useCreateSecretImport = () => {
 
   return useMutation<object, object, TCreateSecretImportDTO>({
     mutationFn: async ({ import: secretImport, environment, isReplication, projectId, path }) => {
-      const { data } = await apiRequest.post("/api/v2/secret-imports", {
+      const { data } = await apiRequest.post("/v1/secret-imports", {
         import: secretImport,
         environment,
         projectId,

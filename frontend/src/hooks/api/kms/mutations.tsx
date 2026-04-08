@@ -144,7 +144,7 @@ export const useExternalKmsFetchGcpKeys = (orgId: string) => {
             kmsId
           };
 
-      const { data } = await apiRequest.post("/api/v1/external-kms/gcp/keys", requestBody);
+      const { data } = await apiRequest.post("/v1/external-kms/gcp/keys", requestBody);
 
       return data;
     },

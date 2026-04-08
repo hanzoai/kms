@@ -18,7 +18,7 @@ export const integrationQueryKeys = {
 
 const fetchIntegrations = async () => {
   const { data } = await apiRequest.get<{ integrationOptions: TCloudIntegration[] }>(
-    "/api/v1/integration-auth/integration-options"
+    "/v1/integration-auth/integration-options"
   );
 
   return data.integrationOptions;
@@ -98,7 +98,7 @@ export const useCreateIntegration = () => {
     }) => {
       const {
         data: { integration }
-      } = await apiRequest.post("/api/v1/integration", {
+      } = await apiRequest.post("/v1/integration", {
         integrationAuthId,
         isActive,
         app,

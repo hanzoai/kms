@@ -10,7 +10,7 @@ export const useUpdateRateLimit = () => {
 
   return useMutation<TRateLimit, object, TRateLimit>({
     mutationFn: async (opt) => {
-      const { data } = await apiRequest.put<{ rateLimit: TRateLimit }>("/api/v1/rate-limit", opt);
+      const { data } = await apiRequest.put<{ rateLimit: TRateLimit }>("/v1/rate-limit", opt);
       return data.rateLimit;
     },
     onSuccess: (data) => {

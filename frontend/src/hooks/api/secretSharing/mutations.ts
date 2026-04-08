@@ -20,7 +20,7 @@ export const useCreateSharedSecret = () => {
   return useMutation({
     mutationFn: async (inputData: TCreateSharedSecretRequest) => {
       const { data } = await apiRequest.post<TCreatedSharedSecret>(
-        "/api/v1/secret-sharing/shared",
+        "/v1/secret-sharing/shared",
         inputData
       );
       return data;
@@ -35,7 +35,7 @@ export const useCreatePublicSharedSecret = () => {
   return useMutation({
     mutationFn: async (inputData: TCreateSharedSecretRequest) => {
       const { data } = await apiRequest.post<TCreatedSharedSecret>(
-        "/api/v1/secret-sharing/shared/public",
+        "/v1/secret-sharing/shared/public",
         inputData
       );
       return data;
@@ -50,7 +50,7 @@ export const useCreateSecretRequest = () => {
   return useMutation({
     mutationFn: async (inputData: TCreateSecretRequestRequestDTO) => {
       const { data } = await apiRequest.post<TCreatedSharedSecret>(
-        "/api/v1/secret-sharing/requests",
+        "/v1/secret-sharing/requests",
         inputData
       );
       return data;

@@ -21,7 +21,7 @@ export const useCreateCmek = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (payload: TCreateCmek) => {
-      const { data } = await apiRequest.post("/api/v1/kms/keys", payload);
+      const { data } = await apiRequest.post("/v1/kms/keys", payload);
 
       return data;
     },

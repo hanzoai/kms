@@ -32,7 +32,7 @@ export const useCreateLDAPConfig = () => {
       groupSearchFilter: string;
       caCert?: string;
     }) => {
-      const { data } = await apiRequest.post("/api/v1/ldap/config", {
+      const { data } = await apiRequest.post("/v1/ldap/config", {
         organizationId,
         isActive,
         url,
@@ -82,7 +82,7 @@ export const useUpdateLDAPConfig = () => {
       groupSearchFilter?: string;
       caCert?: string;
     }) => {
-      const { data } = await apiRequest.patch("/api/v1/ldap/config", {
+      const { data } = await apiRequest.patch("/v1/ldap/config", {
         organizationId,
         isActive,
         url,
@@ -162,7 +162,7 @@ export const useTestLDAPConnection = () => {
       bindPass: string;
       caCert: string;
     }) => {
-      const { data } = await apiRequest.post<boolean>("/api/v1/ldap/config/test-connection", {
+      const { data } = await apiRequest.post<boolean>("/v1/ldap/config/test-connection", {
         url,
         bindDN,
         bindPass,

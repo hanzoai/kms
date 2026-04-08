@@ -20,7 +20,7 @@ export const useGetMyNotifications = () => {
       const {
         data: { notifications }
       } = await apiRequest.get<{ notifications: TUserNotification[] }>(
-        "/api/v1/notifications/user"
+        "/v1/notifications/user"
       );
       return notifications;
     },

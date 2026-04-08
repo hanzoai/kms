@@ -71,7 +71,7 @@ export const useListCertificateProfiles = ({
       const { data } = await apiRequest.get<{
         certificateProfiles: TCertificateProfile[];
         totalCount: number;
-      }>("/api/v1/cert-manager/certificate-profiles", {
+      }>("/v1/cert-manager/certificate-profiles", {
         params: {
           projectId,
           limit,

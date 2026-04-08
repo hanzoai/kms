@@ -37,7 +37,7 @@ export const adminQueryKeys = {
 };
 
 export const fetchServerConfig = async () => {
-  const { data } = await apiRequest.get<{ config: TServerConfig }>("/api/v1/admin/config");
+  const { data } = await apiRequest.get<{ config: TServerConfig }>("/v1/admin/config");
   return data.config;
 };
 
@@ -46,7 +46,7 @@ export const useAdminGetOrganizations = (filters: AdminGetOrganizationsFilters) 
     queryKey: adminQueryKeys.getOrganizations(filters),
     queryFn: async () => {
       const { data } = await apiRequest.get<TGetOrganizationsResponse>(
-        "/api/v1/admin/organization-management/organizations",
+        "/v1/admin/organization-management/organizations",
         {
           params: {
             ...filters
@@ -85,7 +85,7 @@ export const useAdminGetUsers = (filters: AdminGetUsersFilters) => {
     queryKey: adminQueryKeys.getUsers(filters),
     queryFn: async () => {
       const { data } = await apiRequest.get<TGetUsersResponse>(
-        "/api/v1/admin/user-management/users",
+        "/v1/admin/user-management/users",
         {
           params: {
             ...filters
@@ -104,7 +104,7 @@ export const useAdminGetIdentities = (filters: AdminGetIdentitiesFilters) => {
     queryKey: adminQueryKeys.getIdentities(filters),
     queryFn: async () => {
       const { data } = await apiRequest.get<TGetIdentitiesResponse>(
-        "/api/v1/admin/identity-management/identities",
+        "/v1/admin/identity-management/identities",
         {
           params: {
             ...filters
@@ -122,7 +122,7 @@ export const useGetAdminIntegrationsConfig = () => {
   return useQuery({
     queryKey: adminQueryKeys.getAdminIntegrationsConfig(),
     queryFn: async () => {
-      const { data } = await apiRequest.get<AdminIntegrationsConfig>("/api/v1/admin/integrations");
+      const { data } = await apiRequest.get<AdminIntegrationsConfig>("/v1/admin/integrations");
 
       return data;
     }
@@ -134,7 +134,7 @@ export const useGetServerRootKmsEncryptionDetails = () => {
     queryKey: adminQueryKeys.getServerEncryptionStrategies(),
     queryFn: async () => {
       const { data } = await apiRequest.get<TGetServerRootKmsEncryptionDetails>(
-        "/api/v1/admin/encryption-strategies"
+        "/v1/admin/encryption-strategies"
       );
 
       return data;
@@ -147,7 +147,7 @@ export const useGetInvalidatingCacheStatus = (enabled = true) => {
     queryKey: adminQueryKeys.getInvalidateCache(),
     queryFn: async () => {
       const { data } = await apiRequest.get<TGetInvalidatingCacheStatus>(
-        "/api/v1/admin/invalidating-cache-status"
+        "/v1/admin/invalidating-cache-status"
       );
 
       return data.invalidating;
@@ -161,7 +161,7 @@ export const useGetEnvOverrides = () => {
   return useQuery({
     queryKey: adminQueryKeys.getEnvOverrides(),
     queryFn: async () => {
-      const { data } = await apiRequest.get<TGetEnvOverrides>("/api/v1/admin/env-overrides");
+      const { data } = await apiRequest.get<TGetEnvOverrides>("/v1/admin/env-overrides");
       return data;
     }
   });
