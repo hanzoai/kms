@@ -14,7 +14,7 @@ export const useCreateProjectTemplate = () => {
   return useMutation({
     mutationFn: async (payload: TCreateProjectTemplateDTO) => {
       const { data } = await apiRequest.post<TProjectTemplateResponse>(
-        "/api/v1/project-templates",
+        "/v1/project-templates",
         payload
       );
 

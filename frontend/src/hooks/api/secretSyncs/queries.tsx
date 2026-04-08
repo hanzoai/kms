@@ -39,7 +39,7 @@ export const useSecretSyncOptions = (
   return useQuery({
     queryKey: secretSyncKeys.options(),
     queryFn: async () => {
-      const { data } = await apiRequest.get<TListSecretSyncOptions>("/api/v1/secret-syncs/options");
+      const { data } = await apiRequest.get<TListSecretSyncOptions>("/v1/secret-syncs/options");
 
       return data.secretSyncOptions;
     },
@@ -55,7 +55,7 @@ export const useSecretSyncOption = (destination: SecretSync) => {
 };
 
 export const fetchSecretSyncsByProjectId = async (projectId: string) => {
-  const { data } = await apiRequest.get<TListSecretSyncs>("/api/v1/secret-syncs", {
+  const { data } = await apiRequest.get<TListSecretSyncs>("/v1/secret-syncs", {
     params: { projectId }
   });
 

@@ -93,7 +93,7 @@ export const useGetUpgradeProjectStatus = ({
 };
 
 const fetchUserWorkspaces = async (includeRoles?: boolean, type?: ProjectType | "all") => {
-  const { data } = await apiRequest.get<{ projects: Project[] }>("/api/v1/projects", {
+  const { data } = await apiRequest.get<{ projects: Project[] }>("/v1/projects", {
     params: {
       includeRoles,
       type
@@ -142,7 +142,7 @@ export const useSearchProjects = ({ options, ...dto }: TSearchProjectsDTO) =>
       const { data } = await apiRequest.post<{
         projects: (Project & { isMember: boolean })[];
         totalCount: number;
-      }>("/api/v1/projects/search", dto);
+      }>("/v1/projects/search", dto);
 
       return data;
     },
@@ -205,7 +205,7 @@ export const useGetWorkspaceIntegrations = (
 export const createWorkspace = (
   dto: CreateWorkspaceDTO
 ): Promise<{ data: { project: Project } }> => {
-  return apiRequest.post("/api/v1/projects", dto);
+  return apiRequest.post("/v1/projects", dto);
 };
 
 export const useCreateWorkspace = () => {

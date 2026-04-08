@@ -17,7 +17,7 @@ export const useCreateOrgIdentity = () => {
     mutationFn: async (body) => {
       const {
         data: { identity }
-      } = await apiRequest.post("/api/v1/identities/", body);
+      } = await apiRequest.post("/v1/identities/", body);
       return identity;
     },
     onSuccess: (_, { organizationId }) => {
@@ -62,7 +62,7 @@ export const useUpdateOrgIdentity = () => {
 //   return useMutation({
 //     mutationFn: async (dto: TCreateOrgIdentityDTO) => {
 //       const { data } = await apiRequest.post<{ identity: TOrgIdentity }>(
-//         "/api/v1/organization/identities",
+//         "/v1/organization/identities",
 //         dto
 //       );
 //       return data;

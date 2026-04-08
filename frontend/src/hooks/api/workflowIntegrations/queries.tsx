@@ -34,7 +34,7 @@ export const fetchSlackInstallUrl = async ({
   slug: string;
   description?: string;
 }) => {
-  const { data } = await apiRequest.get<string>("/api/v1/workflow-integrations/slack/install", {
+  const { data } = await apiRequest.get<string>("/v1/workflow-integrations/slack/install", {
     params: {
       slug,
       description
@@ -45,7 +45,7 @@ export const fetchSlackInstallUrl = async ({
 };
 
 export const fetchSlackReinstallUrl = async ({ id }: { id: string }) => {
-  const { data } = await apiRequest.get<string>("/api/v1/workflow-integrations/slack/reinstall", {
+  const { data } = await apiRequest.get<string>("/v1/workflow-integrations/slack/reinstall", {
     params: {
       id
     }
@@ -55,7 +55,7 @@ export const fetchSlackReinstallUrl = async ({ id }: { id: string }) => {
 };
 
 export const fetchSlackIntegrations = async () => {
-  const { data } = await apiRequest.get<SlackIntegration[]>("/api/v1/workflow-integrations/slack");
+  const { data } = await apiRequest.get<SlackIntegration[]>("/v1/workflow-integrations/slack");
 
   return data;
 };
@@ -77,14 +77,14 @@ export const fetchSlackIntegrationChannels = async (id?: string) => {
 };
 
 export const fetchWorkflowIntegrations = async () => {
-  const { data } = await apiRequest.get<WorkflowIntegration[]>("/api/v1/workflow-integrations");
+  const { data } = await apiRequest.get<WorkflowIntegration[]>("/v1/workflow-integrations");
 
   return data;
 };
 
 export const fetchMicrosoftTeamsIntegrations = async () => {
   const { data } = await apiRequest.get<MicrosoftTeamsIntegration[]>(
-    "/api/v1/workflow-integrations/microsoft-teams"
+    "/v1/workflow-integrations/microsoft-teams"
   );
 
   return data;
@@ -107,7 +107,7 @@ export const fetchMicrosoftTeamsIntegrationTeams = async (id?: string) => {
 
 export const fetchMicrosoftTeamsClientId = async () => {
   const { data } = await apiRequest.get<{ clientId: string }>(
-    "/api/v1/workflow-integrations/microsoft-teams/client-id"
+    "/v1/workflow-integrations/microsoft-teams/client-id"
   );
 
   return data;

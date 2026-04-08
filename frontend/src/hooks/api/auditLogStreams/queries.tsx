@@ -29,7 +29,7 @@ export const useGetAuditLogStreamOptions = (
     queryKey: auditLogStreamKeys.options(),
     queryFn: async () => {
       const { data } = await apiRequest.get<{ providerOptions: TAuditLogStreamProviderOption[] }>(
-        "/api/v1/audit-log-streams/options"
+        "/v1/audit-log-streams/options"
       );
 
       return data.providerOptions;
@@ -53,7 +53,7 @@ export const useListAuditLogStreams = (
     queryKey: auditLogStreamKeys.list(),
     queryFn: async () => {
       const { data } = await apiRequest.get<{ auditLogStreams: TAuditLogStream[] }>(
-        "/api/v1/audit-log-streams"
+        "/v1/audit-log-streams"
       );
 
       return data.auditLogStreams;

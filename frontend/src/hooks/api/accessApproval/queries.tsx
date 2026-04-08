@@ -34,7 +34,7 @@ export const fetchPolicyApprovalCount = async ({
   envSlug
 }: TGetAccessPolicyApprovalCountDTO) => {
   const { data } = await apiRequest.get<{ count: number }>(
-    "/api/v1/access-approvals/policies/count",
+    "/v1/access-approvals/policies/count",
     {
       params: { projectSlug, envSlug }
     }
@@ -56,7 +56,7 @@ export const useGetAccessPolicyApprovalCount = ({
 
 const fetchApprovalPolicies = async ({ projectSlug }: TGetAccessApprovalRequestsDTO) => {
   const { data } = await apiRequest.get<{ approvals: TAccessApprovalPolicy[] }>(
-    "/api/v1/access-approvals/policies",
+    "/v1/access-approvals/policies",
     { params: { projectSlug } }
   );
   return data.approvals;
@@ -68,7 +68,7 @@ const fetchApprovalRequests = async ({
   authorUserId
 }: TGetAccessApprovalRequestsDTO) => {
   const { data } = await apiRequest.get<{ requests: TAccessApprovalRequest[] }>(
-    "/api/v1/access-approvals/requests",
+    "/v1/access-approvals/requests",
     { params: { projectSlug, envSlug, authorUserId } }
   );
 
@@ -89,7 +89,7 @@ const fetchApprovalRequests = async ({
 
 const fetchAccessRequestsCount = async (projectSlug: string, policyId?: string) => {
   const { data } = await apiRequest.get<TAccessRequestCount>(
-    "/api/v1/access-approvals/requests/count",
+    "/v1/access-approvals/requests/count",
     { params: { projectSlug, policyId } }
   );
   return data;

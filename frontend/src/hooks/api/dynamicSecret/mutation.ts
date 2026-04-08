@@ -17,7 +17,7 @@ export const useCreateDynamicSecret = () => {
   return useMutation<object, object, TCreateDynamicSecretDTO>({
     mutationFn: async (dto) => {
       const { data } = await apiRequest.post<{ dynamicSecret: TDynamicSecret }>(
-        "/api/v1/dynamic-secrets",
+        "/v1/dynamic-secrets",
         dto
       );
       return data.dynamicSecret;

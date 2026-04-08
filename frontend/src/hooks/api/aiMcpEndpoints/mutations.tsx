@@ -25,7 +25,7 @@ export const useCreateAiMcpEndpoint = () => {
   return useMutation({
     mutationFn: async (dto: TCreateAiMcpEndpointDTO) => {
       const { data } = await apiRequest.post<{ endpoint: TAiMcpEndpoint }>(
-        "/api/v1/ai/mcp/endpoints",
+        "/v1/ai/mcp/endpoints",
         dto
       );
       return data.endpoint;

@@ -10,7 +10,7 @@ export const useCreateWebhook = () => {
 
   return useMutation<object, object, TCreateWebhookDto>({
     mutationFn: async (dto) => {
-      const { data } = await apiRequest.post("/api/v1/webhooks", dto);
+      const { data } = await apiRequest.post("/v1/webhooks", dto);
       return data;
     },
     onSuccess: (_, { projectId }) => {

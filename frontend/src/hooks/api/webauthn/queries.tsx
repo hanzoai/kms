@@ -15,7 +15,7 @@ export const useGetWebAuthnCredentials = () =>
     queryKey: webAuthnKeys.credentials,
     queryFn: async () => {
       const { data } = await apiRequest.get<{ credentials: TWebAuthnCredential[] }>(
-        "/api/v1/user/me/webauthn"
+        "/v1/user/me/webauthn"
       );
       return data.credentials;
     }

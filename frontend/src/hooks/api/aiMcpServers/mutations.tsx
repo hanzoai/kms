@@ -21,7 +21,7 @@ export const useCreateAiMcpServer = () => {
     mutationFn: async (data) => {
       const { data: response } = await apiRequest.post<{
         server: TAiMcpServer;
-      }>("/api/v1/ai/mcp/servers", data);
+      }>("/v1/ai/mcp/servers", data);
       return response.server;
     },
     onSuccess: (_, { projectId }) => {
@@ -78,7 +78,7 @@ export const useInitiateOAuth = () => {
   return useMutation<TInitiateOAuthResponse, object, TInitiateOAuthDTO>({
     mutationFn: async (data) => {
       const { data: response } = await apiRequest.post<TInitiateOAuthResponse>(
-        "/api/v1/ai/mcp/servers/oauth/initiate",
+        "/v1/ai/mcp/servers/oauth/initiate",
         data
       );
       return response;

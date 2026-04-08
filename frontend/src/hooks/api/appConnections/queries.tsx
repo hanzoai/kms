@@ -49,7 +49,7 @@ export const useAppConnectionOptions = (
     queryKey: appConnectionKeys.options(projectType),
     queryFn: async () => {
       const { data } = await apiRequest.get<TAppConnectionOptions>(
-        "/api/v1/app-connections/options",
+        "/v1/app-connections/options",
         { params: { projectType } }
       );
 
@@ -87,7 +87,7 @@ export const useListAppConnections = (
     queryKey: appConnectionKeys.list(projectId),
     queryFn: async () => {
       const { data } = await apiRequest.get<TListAppConnections<TAppConnection>>(
-        "/api/v1/app-connections",
+        "/v1/app-connections",
         { params: { projectId } }
       );
 

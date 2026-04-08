@@ -15,7 +15,7 @@ export const useCreateAPIKeyV2 = () => {
   const queryClient = useQueryClient();
   return useMutation<CreateServiceTokenDataV3Res, object, CreateAPIKeyDataV2DTO>({
     mutationFn: async ({ name }) => {
-      const { data } = await apiRequest.post("/api/v3/api-key", {
+      const { data } = await apiRequest.post("/v1/api-key", {
         name
       });
 

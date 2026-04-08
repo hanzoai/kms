@@ -15,7 +15,7 @@ export const useCreateSshCertTemplate = () => {
   return useMutation<TSshCertificateTemplate, object, TCreateSshCertificateTemplateDTO>({
     mutationFn: async (data) => {
       const { data: certificateTemplate } = await apiRequest.post<TSshCertificateTemplate>(
-        "/api/v1/ssh/certificate-templates",
+        "/v1/ssh/certificate-templates",
         data
       );
       return certificateTemplate;

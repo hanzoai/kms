@@ -92,7 +92,7 @@ export const fetchProjectSecretsOverview = async ({
   ...params
 }: TGetDashboardProjectSecretsOverviewDTO) => {
   const { data } = await apiRequest.get<DashboardProjectSecretsOverviewResponse>(
-    "/api/v1/dashboard/secrets-overview",
+    "/v1/dashboard/secrets-overview",
     {
       params: {
         ...params,
@@ -109,7 +109,7 @@ export const fetchProjectSecretsDetails = async ({
   ...params
 }: TGetDashboardProjectSecretsDetailsDTO) => {
   const { data } = await apiRequest.get<DashboardProjectSecretsDetailsResponse>(
-    "/api/v1/dashboard/secrets-details",
+    "/v1/dashboard/secrets-details",
     {
       params: {
         ...params,
@@ -132,7 +132,7 @@ export const fetchDashboardProjectSecretsByKeys = async ({
   ...params
 }: TGetDashboardProjectSecretsByKeys) => {
   const { data } = await apiRequest.get<DashboardProjectSecretsByKeys>(
-    "/api/v1/dashboard/secrets-by-keys",
+    "/v1/dashboard/secrets-by-keys",
     {
       params: {
         ...params,
@@ -362,7 +362,7 @@ export const fetchProjectSecretsQuickSearch = async ({
   ...params
 }: TGetDashboardProjectSecretsQuickSearchDTO) => {
   const { data } = await apiRequest.get<TDashboardProjectSecretsQuickSearchResponse>(
-    "/api/v1/dashboard/secrets-deep-search",
+    "/v1/dashboard/secrets-deep-search",
     {
       params: {
         ...params,
@@ -389,7 +389,7 @@ const fetchAccessibleSecrets = async ({
   recursive = false
 }: TGetAccessibleSecretsDTO) => {
   const { data } = await apiRequest.get<{ secrets: SecretV3Raw[] }>(
-    "/api/v1/dashboard/accessible-secrets",
+    "/v1/dashboard/accessible-secrets",
     {
       params: { projectId, secretPath, environment, filterByAction, recursive }
     }
@@ -499,7 +499,7 @@ export const useGetAccessibleSecrets = ({
 };
 
 export const fetchSecretValue = async (params: TGetSecretValueDTO) => {
-  const { data } = await apiRequest.get<DashboardSecretValue>("/api/v1/dashboard/secret-value", {
+  const { data } = await apiRequest.get<DashboardSecretValue>("/v1/dashboard/secret-value", {
     params
   });
 

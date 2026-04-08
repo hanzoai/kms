@@ -47,7 +47,7 @@ const fetchSecretApprovalRequestList = async ({
   const { data } = await apiRequest.get<{
     approvals: TSecretApprovalRequest[];
     totalCount: number;
-  }>("/api/v1/secret-approval-requests", {
+  }>("/v1/secret-approval-requests", {
     params: {
       projectId,
       environment,
@@ -131,7 +131,7 @@ const fetchSecretApprovalRequestCount = async ({
   policyId
 }: TGetSecretApprovalRequestCount) => {
   const { data } = await apiRequest.get<{ approvals: TSecretApprovalRequestCount }>(
-    "/api/v1/secret-approval-requests/count",
+    "/v1/secret-approval-requests/count",
     { params: { projectId, policyId } }
   );
 

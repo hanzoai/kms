@@ -82,7 +82,7 @@ export const useImportCertificate = () => {
   return useMutation<TImportCertificateResponse, object, TImportCertificateDTO>({
     mutationFn: async (body) => {
       const { data } = await apiRequest.post<TImportCertificateResponse>(
-        "/api/v1/cert-manager/certificates/import-certificate",
+        "/v1/cert-manager/certificates/import-certificate",
         body
       );
       return data;
@@ -194,7 +194,7 @@ export const useUnifiedCertificateIssuance = () => {
     mutationFn: async (body) => {
       const { projectSlug, ...requestData } = body;
       const { data } = await apiRequest.post<TUnifiedCertificateIssuanceResponse>(
-        "/api/v1/cert-manager/certificates",
+        "/v1/cert-manager/certificates",
         requestData
       );
       return data;

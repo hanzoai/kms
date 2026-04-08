@@ -9,7 +9,7 @@ export const useCreateSshHost = () => {
   const queryClient = useQueryClient();
   return useMutation<TSshHost, object, TCreateSshHostDTO>({
     mutationFn: async (body) => {
-      const { data: host } = await apiRequest.post("/api/v1/ssh/hosts", body);
+      const { data: host } = await apiRequest.post("/v1/ssh/hosts", body);
       return host;
     },
     onSuccess: ({ projectId }) => {

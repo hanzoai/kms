@@ -145,7 +145,7 @@ export const useAccessPamAccount = () => {
   return useMutation({
     mutationFn: async ({ accountId, accountPath, projectId, duration }: TAccessPamAccountDTO) => {
       const { data } = await apiRequest.post<TAccessPamAccountResponse>(
-        "/api/v1/pam/accounts/access",
+        "/v1/pam/accounts/access",
         {
           accountId,
           accountPath,
@@ -164,7 +164,7 @@ export const useCreatePamFolder = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (params: TCreatePamFolderDTO) => {
-      const { data } = await apiRequest.post<{ folder: TPamFolder }>("/api/v1/pam/folders", params);
+      const { data } = await apiRequest.post<{ folder: TPamFolder }>("/v1/pam/folders", params);
 
       return data.folder;
     },

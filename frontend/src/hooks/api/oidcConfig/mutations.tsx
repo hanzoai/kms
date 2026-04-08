@@ -40,7 +40,7 @@ export const useUpdateOIDCConfig = () => {
       manageGroupMemberships?: boolean;
       jwtSignatureAlgorithm?: OIDCJWTSignatureAlgorithm;
     }) => {
-      const { data } = await apiRequest.patch("/api/v1/sso/oidc/config", {
+      const { data } = await apiRequest.patch("/v1/sso/oidc/config", {
         issuer,
         allowedEmailDomains,
         authorizationEndpoint,
@@ -100,7 +100,7 @@ export const useCreateOIDCConfig = () => {
       manageGroupMemberships?: boolean;
       jwtSignatureAlgorithm?: OIDCJWTSignatureAlgorithm;
     }) => {
-      const { data } = await apiRequest.post("/api/v1/sso/oidc/config", {
+      const { data } = await apiRequest.post("/v1/sso/oidc/config", {
         issuer,
         configurationType,
         discoveryURL,

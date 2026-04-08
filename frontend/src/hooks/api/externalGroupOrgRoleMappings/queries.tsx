@@ -23,7 +23,7 @@ export const useGetExternalGroupOrgRoleMappings = (
     queryKey: externalGroupOrgRoleMappingKeys.list(),
     queryFn: async () => {
       const { data } = await apiRequest.get<TExternalGroupOrgRoleMappingList>(
-        "/api/v1/scim/group-org-role-mappings"
+        "/v1/scim/group-org-role-mappings"
       );
 
       return data;

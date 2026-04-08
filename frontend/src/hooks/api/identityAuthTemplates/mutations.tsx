@@ -18,7 +18,7 @@ export const useCreateIdentityAuthTemplate = () => {
   return useMutation({
     mutationFn: async (dto: CreateIdentityAuthTemplateDTO) => {
       const { data } = await apiRequest.post<{ template: IdentityAuthTemplate }>(
-        "/api/v1/identity-templates",
+        "/v1/identity-templates",
         dto
       );
       return data.template;

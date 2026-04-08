@@ -16,7 +16,7 @@ export const useCreateKmipClient = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (payload: TCreateKmipClient) => {
-      const { data } = await apiRequest.post("/api/v1/kmip/clients", payload);
+      const { data } = await apiRequest.post("/v1/kmip/clients", payload);
 
       return data;
     },
@@ -81,7 +81,7 @@ export const useSetupOrgKmip = (orgId: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (payload: TSetupOrgKmipDTO) => {
-      await apiRequest.post("/api/v1/kmip", payload);
+      await apiRequest.post("/v1/kmip", payload);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: kmipKeys.getOrgKmip(orgId) });

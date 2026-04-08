@@ -27,7 +27,7 @@ export const useAddUserToWsNonE2EE = () => {
 };
 
 export const sendEmailVerificationCode = async (token: string) => {
-  return apiRequest.post("/api/v2/users/me/emails/code", {
+  return apiRequest.post("/v1/users/me/emails/code", {
     token
   });
 };
@@ -44,7 +44,7 @@ export const useSendEmailVerificationCode = () => {
 export const useVerifyEmailVerificationCode = () => {
   return useMutation({
     mutationFn: async ({ username, code }: { username: string; code: string }) => {
-      await apiRequest.post("/api/v2/users/me/emails/verify", {
+      await apiRequest.post("/v1/users/me/emails/verify", {
         username,
         code
       });
@@ -63,7 +63,7 @@ export const useUpdateUserProjectFavorites = () => {
       orgId: string;
       projectFavorites: string[];
     }) => {
-      await apiRequest.put("/api/v1/user/me/project-favorites", {
+      await apiRequest.put("/v1/user/me/project-favorites", {
         orgId,
         projectFavorites
       });
@@ -80,7 +80,7 @@ export const useVerifyUserTotpRegistration = () => {
   return useMutation<{ recoveryCodes: string[] }, unknown, { totp: string }>({
     mutationFn: async ({ totp }: { totp: string }) => {
       const { data } = await apiRequest.post<{ recoveryCodes: string[] }>(
-        "/api/v1/user/me/totp/verify",
+        "/v1/user/me/totp/verify",
         {
           totp
         }
@@ -95,7 +95,7 @@ export const useDeleteUserTotpConfiguration = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async () => {
-      await apiRequest.delete("/api/v1/user/me/totp");
+      await apiRequest.delete("/v1/user/me/totp");
 
       return {};
     },
@@ -109,7 +109,7 @@ export const useCreateNewTotpRecoveryCodes = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async () => {
-      await apiRequest.post("/api/v1/user/me/totp/recovery-codes");
+      await apiRequest.post("/v1/user/me/totp/recovery-codes");
 
       return {};
     },
@@ -127,7 +127,7 @@ export const useResendOrgMemberInvitation = () => {
           email: string;
           link: string;
         };
-      }>("/api/v1/invite-org/signup-resend", dto);
+      }>("/v1/invite-org/signup-resend", dto);
 
       return data.signupToken;
     }
@@ -150,7 +150,7 @@ export const useRevokeMySessionById = () => {
 export const useRemoveMyDuplicateAccounts = () => {
   return useMutation({
     mutationFn: async () => {
-      const { data } = await apiRequest.post("/api/v1/user/remove-duplicate-accounts");
+      const { data } = await apiRequest.post("/v1/user/remove-duplicate-accounts");
       return data;
     }
   });
@@ -159,7 +159,7 @@ export const useRemoveMyDuplicateAccounts = () => {
 export const useRequestEmailChangeOTP = () => {
   return useMutation({
     mutationFn: async ({ newEmail }: { newEmail: string }) => {
-      const { data } = await apiRequest.post("/api/v2/users/me/email-change/otp", {
+      const { data } = await apiRequest.post("/v1/users/me/email-change/otp", {
         newEmail
       });
       return data;
@@ -171,7 +171,7 @@ export const useUpdateUserEmail = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ newEmail, otpCode }: { newEmail: string; otpCode: string }) => {
-      const { data } = await apiRequest.patch("/api/v2/users/me/email", {
+      const { data } = await apiRequest.patch("/v1/users/me/email", {
         newEmail,
         otpCode
       });

@@ -26,7 +26,7 @@ export const useListAiMcpEndpoints = ({ projectId }: TListAiMcpEndpointsDTO) => 
       const { data } = await apiRequest.get<{
         endpoints: TAiMcpEndpoint[];
         totalCount: number;
-      }>("/api/v1/ai/mcp/endpoints", {
+      }>("/v1/ai/mcp/endpoints", {
         params: { projectId }
       });
       return data;

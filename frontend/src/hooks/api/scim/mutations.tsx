@@ -9,7 +9,7 @@ export const useCreateScimToken = () => {
   const queryClient = useQueryClient();
   return useMutation<CreateScimTokenRes, object, CreateScimTokenDTO>({
     mutationFn: async ({ organizationId, description, ttlDays }) => {
-      const { data } = await apiRequest.post("/api/v1/scim/scim-tokens", {
+      const { data } = await apiRequest.post("/v1/scim/scim-tokens", {
         organizationId,
         description,
         ttlDays

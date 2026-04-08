@@ -23,7 +23,7 @@ export const useCreateCertTemplate = () => {
   return useMutation<TCertificateTemplate, object, TCreateCertificateTemplateDTO>({
     mutationFn: async (data) => {
       const { data: certificateTemplate } = await apiRequest.post<TCertificateTemplate>(
-        "/api/v1/pki/certificate-templates",
+        "/v1/pki/certificate-templates",
         data
       );
       return certificateTemplate;
@@ -85,7 +85,7 @@ export const useCreateCertTemplateV2 = () => {
     mutationFn: async (dto) => {
       const { data } = await apiRequest.post<{
         certificateTemplate: TCertificateTemplate;
-      }>("/api/v2/pki/certificate-templates", dto);
+      }>("/v1/pki/certificate-templates", dto);
       return data.certificateTemplate;
     },
     onSuccess: (_, { projectId }) => {

@@ -42,7 +42,7 @@ export const useListProjectUserPrivileges = (projectMembershipId: string) => {
             isLinkedToAccessApproval: boolean;
           }
         >;
-      }>("/api/v1/user-project-additional-privilege", { params: { projectMembershipId } });
+      }>("/v1/user-project-additional-privilege", { params: { projectMembershipId } });
       return privileges.map((el) => ({
         ...el,
         permissions: el.permissions as TProjectPermission[]

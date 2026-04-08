@@ -14,7 +14,7 @@ export const useCreateNewInstallationSession = () => {
     {
       mutationFn: async (opt) => {
         const { data } = await apiRequest.post(
-          "/api/v1/secret-scanning/create-installation-session/organization",
+          "/v1/secret-scanning/create-installation-session/organization",
           opt
         );
         return data;
@@ -43,7 +43,7 @@ export const useLinkGitAppInstallationWithOrg = () => {
   return useMutation<TGitAppOrg, object, { sessionId: string; installationId: string }>({
     mutationFn: async (opt) => {
       const { data } = await apiRequest.post<TGitAppOrg>(
-        "/api/v1/secret-scanning/link-installation",
+        "/v1/secret-scanning/link-installation",
         opt
       );
       return data;

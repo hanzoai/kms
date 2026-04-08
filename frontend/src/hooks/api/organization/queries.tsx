@@ -50,7 +50,7 @@ export const organizationKeys = {
 export const fetchOrganizations = async () => {
   const {
     data: { organizations }
-  } = await apiRequest.get<{ organizations: Organization[] }>("/api/v1/organization");
+  } = await apiRequest.get<{ organizations: Organization[] }>("/v1/organization");
   return organizations;
 };
 
@@ -88,7 +88,7 @@ export const useCreateOrg = (options: { invalidate: boolean } = { invalidate: tr
     mutationFn: async ({ name }: { name: string }) => {
       const {
         data: { organization }
-      } = await apiRequest.post("/api/v2/organizations", {
+      } = await apiRequest.post("/v1/organizations", {
         name
       });
 
@@ -163,7 +163,7 @@ export const useUpgradePrivilegeSystem = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: () => {
-      return apiRequest.post("/api/v2/organizations/privilege-system-upgrade");
+      return apiRequest.post("/v1/organizations/privilege-system-upgrade");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: organizationKeys.getUserOrganizations });
@@ -587,7 +587,7 @@ export const useGetAvailableOrgUsers = (enabled = true) =>
     queryFn: async () => {
       const { data } = await apiRequest.get<{
         users: { username: string; id: string; firstName: string; lastName: string }[];
-      }>("/api/v1/organization/users/available");
+      }>("/v1/organization/users/available");
 
       return data.users;
     },

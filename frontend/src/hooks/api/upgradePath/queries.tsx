@@ -54,7 +54,7 @@ export const useGetUpgradePathVersions = (
     queryKey: upgradePathKeys.versions(),
     queryFn: async () => {
       const { data } = await apiRequest.get<{ versions: GitHubVersion[] }>(
-        "/api/v1/upgrade-path/versions"
+        "/v1/upgrade-path/versions"
       );
       return data;
     },
@@ -66,7 +66,7 @@ export const useCalculateUpgradePath = () => {
   return useMutation({
     mutationFn: async (params: CalculateUpgradePathParams): Promise<UpgradePathResult> => {
       const { data } = await apiRequest.post<UpgradePathResult>(
-        "/api/v1/upgrade-path/calculate",
+        "/v1/upgrade-path/calculate",
         params
       );
       return data;

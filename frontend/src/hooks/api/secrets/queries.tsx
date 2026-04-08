@@ -57,7 +57,7 @@ export const fetchProjectSecrets = async ({
   expandSecretReferences,
   viewSecretValue
 }: TGetProjectSecretsKey) => {
-  const { data } = await apiRequest.get<SecretV3RawResponse>("/api/v4/secrets", {
+  const { data } = await apiRequest.get<SecretV3RawResponse>("/v1/secrets", {
     params: {
       environment,
       projectId,

@@ -11,7 +11,7 @@ export const useCreatePkiAlertV2 = () => {
   return useMutation<TPkiAlertV2, unknown, TCreatePkiAlertV2>({
     mutationFn: async (data) => {
       const { data: response } = await apiRequest.post<{ alert: TPkiAlertV2 }>(
-        "/api/v1/cert-manager/alerts",
+        "/v1/cert-manager/alerts",
         data
       );
       return response.alert;

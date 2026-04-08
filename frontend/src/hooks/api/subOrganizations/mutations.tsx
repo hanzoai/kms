@@ -10,7 +10,7 @@ export const useCreateSubOrganization = () => {
   return useMutation({
     mutationFn: async (dto: TCreateSubOrganizationDTO) => {
       const { data } = await apiRequest.post<{ organization: TSubOrganization }>(
-        "/api/v1/sub-organizations",
+        "/v1/sub-organizations",
         dto
       );
       return data;

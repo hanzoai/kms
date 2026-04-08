@@ -28,7 +28,7 @@ export const useListCertificatePolicies = ({
       const { data } = await apiRequest.get<{
         certificatePolicies: TCertificatePolicy[];
         totalCount: number;
-      }>("/api/v1/cert-manager/certificate-policies", {
+      }>("/v1/cert-manager/certificate-policies", {
         params: {
           projectId,
           limit,
