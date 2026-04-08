@@ -157,7 +157,7 @@ export const AppConnectionRow = ({
       <Td>
         <div className="flex items-center justify-end gap-2">
           {isPlatformManagedCredentials && (
-            <Tooltip side="left" content="This connection's credentials are managed by Hanzo KMS.">
+            <Tooltip side="left" content="This connection's credentials are managed by KMS.">
               <div>
                 <Badge variant="info">
                   <ServerIcon />

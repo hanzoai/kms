@@ -69,7 +69,7 @@ export const SecretSyncAuditLogsSection = ({ secretSync }: Props) => {
                 </Link>
               ) : (
                 <a
-                  href="https://hanzo.ai/contact"
+                  href="/contact"
                   target="_blank"
                   rel="noopener noreferrer"
                 >

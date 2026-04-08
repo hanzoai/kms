@@ -9,7 +9,8 @@ import TotpRegistration from "@app/components/mfa/TotpRegistration";
 import { createNotification } from "@app/components/notifications";
 import SecurityClient from "@app/components/utilities/SecurityClient";
 import { Button, Input, Tooltip } from "@app/components/v2";
-import { isHanzoCloud } from "@app/helpers/platform";
+import { SUPPORT_EMAIL } from "@app/helpers/brand";
+import { isCloudDeployment } from "@app/helpers/platform";
 import { useLogoutUser, useSendMfaToken } from "@app/hooks/api";
 import {
   checkUserTotpMfa,
@@ -380,7 +381,7 @@ export const Mfa = ({ successCallback, closeMfa, hideLogo, email, method }: Prop
       {!hideLogo && (
         <Link to="/">
           <div className="mb-4 flex justify-center">
-            <img src="/images/gradientLogo.svg" height={90} width={120} alt="Hanzo KMS logo" />
+            <img src="/images/gradientLogo.svg" height={90} width={120} alt="KMS logo" />
           </div>
         </Link>
       )}
@@ -524,13 +525,13 @@ export const Mfa = ({ successCallback, closeMfa, hideLogo, email, method }: Prop
               position="bottom"
               content={
                 <div className="max-w-xs text-center text-xs">
-                  {isHanzoCloud() ? (
+                  {isCloudDeployment() && SUPPORT_EMAIL ? (
                     <>
                       <div className="mb-2">Account Recovery Required</div>
                       <div className="mb-2 text-gray-300">
                         Contact support with valid proof of account ownership to initiate recovery
                       </div>
-                      <div className="mt-1">support@infisical.com</div>
+                      <div className="mt-1">{SUPPORT_EMAIL}</div>
                     </>
                   ) : (
                     <>

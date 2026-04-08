@@ -27,7 +27,7 @@ export const PamResourceHeader = ({ resourceType, onBack }: Props) => {
           {details.name}
           {docsPath && (
             <DocumentationLinkBadge
-              href={`https://hanzo.ai/docs/documentation/platform/pam/resources/${docsPath}`}
+              href={`/docs/documentation/platform/pam/resources/${docsPath}`}
             />
           )}
         </div>

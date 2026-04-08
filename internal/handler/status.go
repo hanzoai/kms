@@ -2,9 +2,17 @@ package handler
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/hanzoai/kms/internal/mpc"
 )
+
+func envOrDefault(key, fallback string) string {
+	if v := os.Getenv(key); v != "" {
+		return v
+	}
+	return fallback
+}
 
 // Status handles health and status endpoints.
 type Status struct {
@@ -43,6 +51,10 @@ func (h *Status) ServerConfig(w http.ResponseWriter, r *http.Request) {
 			"fipsEnabled":                           false,
 			"paramsFolderSecretDetectionEnabled":     false,
 			"isOfflineUsageReportsEnabled":           false,
+			"siteName":                              envOrDefault("SITE_NAME", "KMS"),
+			"supportEmail":                          envOrDefault("SUPPORT_EMAIL", "support@example.com"),
+			"docsUrl":                               envOrDefault("DOCS_URL", ""),
+			"slackUrl":                              envOrDefault("SLACK_URL", ""),
 		},
 	})
 }

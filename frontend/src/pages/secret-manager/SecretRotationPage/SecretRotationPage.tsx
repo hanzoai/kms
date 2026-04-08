@@ -141,7 +141,7 @@ const Page = () => {
         <a
           target="_blank"
           rel="noopener noreferrer"
-          href="https://hanzo.ai/docs/documentation/platform/secret-rotation/overview"
+          href="/docs/documentation/platform/secret-rotation/overview"
         >
           <span className="flex w-max cursor-pointer items-center rounded-md border border-mineshaft-500 bg-mineshaft-600 px-4 py-2 text-mineshaft-200 duration-200 hover:border-primary/40 hover:bg-primary/10 hover:text-white">
             Documentation
@@ -154,7 +154,7 @@ const Page = () => {
       </PageHeader>
       <NoticeBannerV2 title="Secret Rotations Update">
         <p className="text-sm text-bunker-200">
-          Hanzo KMS is revamping its Secret Rotation experience.
+          KMS is revamping its Secret Rotation experience.
         </p>
         <p className="mt-2 text-sm text-bunker-200">
           PostgreSQL and Microsoft SQL Server Rotations can now be created from the{" "}
@@ -307,7 +307,7 @@ const Page = () => {
         </div>
       </div>
       <div className="mt-12 mb-2 text-xl font-medium text-gray-200">
-        Hanzo KMS Rotation Providers
+        KMS Rotation Providers
       </div>
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 2xl:grid-cols-4">
         {isRotationProviderLoading &&
@@ -383,7 +383,7 @@ const Page = () => {
       <UpgradePlanModal
         isOpen={popUp.upgradePlan.isOpen}
         onOpenChange={(isOpen) => handlePopUpToggle("upgradePlan", isOpen)}
-        text="Adding secret rotations can be unlocked if you upgrade to Hanzo KMS Pro plan."
+        text="Adding secret rotations can be unlocked if you upgrade to KMS Pro plan."
       />
       <Modal
         isOpen={popUp.secretRotationV2.isOpen}
@@ -392,7 +392,7 @@ const Page = () => {
         <ModalContent className="max-w-5xl" title="Secret Rotation Update">
           <div className="flex flex-col gap-2">
             <p className="text-mineshaft-200">
-              Hanzo KMS is revamping its Secret Rotation experience. Navigate to the{" "}
+              KMS is revamping its Secret Rotation experience. Navigate to the{" "}
               <Link
                 className="text-mineshaft-100 underline decoration-primary underline-offset-2 hover:text-mineshaft-200"
                 to="/organizations/$orgId/projects/secret-management/$projectId/overview"

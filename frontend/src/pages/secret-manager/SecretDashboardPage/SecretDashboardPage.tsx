@@ -859,34 +859,34 @@ const Page = () => {
             Inject your secrets using
             <a
               className="ml-1 text-mineshaft-300 underline decoration-primary-800 underline-offset-4 duration-200 hover:text-mineshaft-100 hover:decoration-primary-600"
-              href="https://hanzo.ai/docs/cli/overview"
+              href="/docs/cli/overview"
               target="_blank"
               rel="noopener noreferrer"
             >
-              Hanzo KMS CLI
+              KMS CLI
             </a>
             ,
             <a
               className="ml-1 text-mineshaft-300 underline decoration-primary-800 underline-offset-4 duration-200 hover:text-mineshaft-100 hover:decoration-primary-600"
-              href="https://hanzo.ai/docs/documentation/getting-started/api"
+              href="/docs/documentation/getting-started/api"
               target="_blank"
               rel="noopener noreferrer"
             >
-              Hanzo KMS API
+              KMS API
             </a>
             ,
             <a
               className="ml-1 text-mineshaft-300 underline decoration-primary-800 underline-offset-4 duration-200 hover:text-mineshaft-100 hover:decoration-primary-600"
-              href="https://hanzo.ai/docs/sdks/overview"
+              href="/docs/sdks/overview"
               target="_blank"
               rel="noopener noreferrer"
             >
-              Hanzo KMS SDKs
+              KMS SDKs
             </a>
             , and
             <a
               className="ml-1 text-mineshaft-300 underline decoration-primary-800 underline-offset-4 duration-200 hover:text-mineshaft-100 hover:decoration-primary-600"
-              href="https://hanzo.ai/docs/documentation/getting-started/introduction"
+              href="/docs/documentation/getting-started/introduction"
               target="_blank"
               rel="noopener noreferrer"
             >

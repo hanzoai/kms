@@ -111,7 +111,7 @@ export const LogStreamProviderSelect = ({ onSelect }: Props) => {
       <UpgradePlanModal
         isOpen={popUp.upgradePlan.isOpen}
         onOpenChange={(isOpen) => handlePopUpToggle("upgradePlan", isOpen)}
-        text="Your current plan does not include access to this audit log stream provider. To unlock this feature, please upgrade to Hanzo KMS Enterprise plan."
+        text="Your current plan does not include access to this audit log stream provider. To unlock this feature, please upgrade to KMS Enterprise plan."
         isEnterpriseFeature={popUp.upgradePlan.data?.isEnterpriseFeature}
       />
     </div>

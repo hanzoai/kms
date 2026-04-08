@@ -144,7 +144,7 @@ export const SecretApprovalRequest = () => {
         <div>
           <div className="flex items-center gap-x-2">
             <p className="text-xl font-medium text-mineshaft-100">Change Requests</p>
-            <DocumentationLinkBadge href="https://hanzo.ai/docs/documentation/platform/pr-workflows" />
+            <DocumentationLinkBadge href="/docs/documentation/platform/pr-workflows" />
           </div>
           <p className="text-sm text-bunker-300">Review pending and closed change requests</p>
         </div>

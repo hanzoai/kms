@@ -22,15 +22,15 @@ const getCustomSlackAppCreationUrl = () =>
   `https://api.slack.com/apps?new_app=1&manifest_json=${encodeURIComponent(
     JSON.stringify({
       display_information: {
-        name: "Hanzo KMS",
-        description: "Get real-time Hanzo KMS updates in Slack",
+        name: "KMS",
+        description: "Get real-time KMS updates in Slack",
         background_color: "#c2d62b",
-        long_description: `This Slack application is designed specifically for use with your self-hosted Hanzo KMS instance, allowing seamless integration between your Hanzo KMS projects and your Slack workspace. With this integration, your team can stay up-to-date with the latest events, changes, and notifications directly inside Slack.
-        - Notifications: Receive real-time updates and alerts about critical events in your Hanzo KMS projects. Whether it's a new project being created, updates to secrets, or changes to your team's configuration, you will be promptly notified within the designated Slack channels of your choice.
+        long_description: `This Slack application is designed specifically for use with your self-hosted KMS instance, allowing seamless integration between your KMS projects and your Slack workspace. With this integration, your team can stay up-to-date with the latest events, changes, and notifications directly inside Slack.
+        - Notifications: Receive real-time updates and alerts about critical events in your KMS projects. Whether it's a new project being created, updates to secrets, or changes to your team's configuration, you will be promptly notified within the designated Slack channels of your choice.
         - Customization: Tailor the notifications to your team's specific needs by configuring which types of events trigger alerts and in which channels they are sent.
-        - Collaboration: Keep your entire team in the loop with notifications that help facilitate more efficient collaboration by ensuring that everyone is aware of important developments in your Hanzo KMS projects.
+        - Collaboration: Keep your entire team in the loop with notifications that help facilitate more efficient collaboration by ensuring that everyone is aware of important developments in your KMS projects.
 
-        By integrating Hanzo KMS with Slack, you can enhance your workflow by combining the power of secure secrets management with the communication capabilities of Slack.`
+        By integrating KMS with Slack, you can enhance your workflow by combining the power of secure secrets management with the communication capabilities of Slack.`
       },
       features: {
         app_home: {
@@ -39,7 +39,7 @@ const getCustomSlackAppCreationUrl = () =>
           messages_tab_read_only_enabled: true
         },
         bot_user: {
-          display_name: "Hanzo KMS",
+          display_name: "KMS",
           always_online: true
         }
       },
@@ -114,7 +114,7 @@ export const SlackIntegrationForm = ({ adminIntegrationsConfig }: Props) => {
           <AccordionContent childrenClassName="px-0 py-0">
             <div className="flex w-full flex-col justify-start rounded-md rounded-t-none border border-t-0 border-mineshaft-500 bg-mineshaft-700 px-4 py-4">
               <div className="mb-4 max-w-lg text-sm text-mineshaft-300">
-                Step 1: Create your Hanzo KMS Slack App
+                Step 1: Create your KMS Slack App
               </div>
               <div className="mb-6">
                 <Button
