@@ -113,6 +113,12 @@ func main() {
 		e.Router.PUT("/v1/{path...}", chiHandler)
 		e.Router.PATCH("/v1/{path...}", chiHandler)
 		e.Router.DELETE("/v1/{path...}", chiHandler)
+		// Infisical frontend uses /api/v1/* prefix.
+		e.Router.GET("/api/v1/{path...}", chiHandler)
+		e.Router.POST("/api/v1/{path...}", chiHandler)
+		e.Router.PUT("/api/v1/{path...}", chiHandler)
+		e.Router.PATCH("/api/v1/{path...}", chiHandler)
+		e.Router.DELETE("/api/v1/{path...}", chiHandler)
 
 		// Serve secrets UI at / (Base admin stays at /_/).
 		if info, err := os.Stat(frontendDir); err == nil && info.IsDir() {
