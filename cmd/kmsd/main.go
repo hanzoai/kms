@@ -16,7 +16,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"time"
 
@@ -98,23 +97,18 @@ func main() {
 			AuthMode: authMode,
 		})
 
-		// Mount the chi router onto the Base router.
-		e.Router.GET("/healthz", func(re *core.RequestEvent) error {
+		// Mount chi router for /healthz and /v1/* on the Base router.
+		chiHandler := func(re *core.RequestEvent) error {
 			chiRouter.ServeHTTP(re.Response, re.Request)
 			return nil
-		})
+		}
 
-		// Mount all /v1/* routes through chi.
-		e.Router.Any("/v1/{path...}", func(re *core.RequestEvent) error {
-			chiRouter.ServeHTTP(re.Response, re.Request)
-			return nil
-		})
-
-		// Redirect root to healthz.
-		e.Router.GET("/", func(re *core.RequestEvent) error {
-			http.Redirect(re.Response, re.Request, "/healthz", http.StatusTemporaryRedirect)
-			return nil
-		})
+		e.Router.GET("/healthz", chiHandler)
+		e.Router.GET("/v1/{path...}", chiHandler)
+		e.Router.POST("/v1/{path...}", chiHandler)
+		e.Router.PUT("/v1/{path...}", chiHandler)
+		e.Router.PATCH("/v1/{path...}", chiHandler)
+		e.Router.DELETE("/v1/{path...}", chiHandler)
 
 		return e.Next()
 	})
