@@ -1,7 +1,6 @@
 // Command kmsd starts the KMS server on Base.
 //
-// The Base admin UI at /_/ is the KMS frontend — manages secrets, keys,
-// audit, transit, members. All in one Go binary, no Node.js.
+// Serves the secrets management UI at / and the Base admin at /_/.
 //
 // Configuration (env vars):
 //
@@ -13,6 +12,7 @@
 //	APP_NAME          - Display name in UI (default "KMS")
 //	APP_URL           - Public URL (optional)
 //	LOGO_URL          - Logo URL (optional, blank = no logo)
+//	KMS_FRONTEND_DIR  - Path to secrets UI dist (default /app/frontend)
 package main
 
 import (
@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/hanzoai/base"
@@ -37,6 +38,7 @@ func main() {
 	nodeID := envOr("KMS_NODE_ID", "kms-0")
 	jwksURL := envOr("IAM_JWKS_URL", "")
 	authMode := envOr("KMS_AUTH_MODE", "iam")
+	frontendDir := envOr("KMS_FRONTEND_DIR", "/app/frontend")
 
 	var zapClient *mpc.ZapClient
 	if vaultID != "" {
@@ -111,6 +113,23 @@ func main() {
 		e.Router.PUT("/v1/{path...}", chiHandler)
 		e.Router.PATCH("/v1/{path...}", chiHandler)
 		e.Router.DELETE("/v1/{path...}", chiHandler)
+
+		// Serve secrets UI at / (Base admin stays at /_/).
+		if info, err := os.Stat(frontendDir); err == nil && info.IsDir() {
+			frontendFS := os.DirFS(frontendDir)
+			e.Router.GET("/{path...}", func(re *core.RequestEvent) error {
+				p := strings.TrimPrefix(re.Request.URL.Path, "/")
+				if p == "" {
+					p = "index.html"
+				}
+				if err := re.FileFS(frontendFS, p); err == nil {
+					return nil
+				}
+				// SPA fallback.
+				return re.FileFS(frontendFS, "index.html")
+			})
+			log.Printf("kmsd: secrets UI at /, admin at /_/")
+		}
 
 		return e.Next()
 	})
