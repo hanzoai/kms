@@ -7,9 +7,10 @@
 //	KMS_NODE_ID    - ZAP node ID (default "kms-0")
 //	IAM_JWKS_URL   - JWKS endpoint for JWT validation (required when IAM auth enabled)
 //	KMS_AUTH_MODE  - "iam" (default, requires IAM_JWKS_URL) or "none" (dev only)
-//	APP_NAME       - Display name in admin UI (default "KMS")
-//	APP_URL        - Public URL for admin UI links (optional)
-//	LOGO_URL       - Logo URL for admin UI (optional, no default — blank = no logo)
+//	APP_NAME         - Display name in admin UI (default "KMS")
+//	APP_URL          - Public URL for admin UI links (optional)
+//	LOGO_URL         - Logo URL for admin UI (optional, no default — blank = no logo)
+//	KMS_FRONTEND_DIR - Path to Infisical React frontend dist (optional; serves at /)
 package main
 
 import (
@@ -17,6 +18,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/hanzoai/base"
@@ -34,6 +36,7 @@ func main() {
 	nodeID := envOr("KMS_NODE_ID", "kms-0")
 	jwksURL := envOr("IAM_JWKS_URL", "")
 	authMode := envOr("KMS_AUTH_MODE", "iam")
+	frontendDir := envOr("KMS_FRONTEND_DIR", "")
 
 	var zapClient *mpc.ZapClient
 	if vaultID != "" {
@@ -109,6 +112,29 @@ func main() {
 		e.Router.PUT("/v1/{path...}", chiHandler)
 		e.Router.PATCH("/v1/{path...}", chiHandler)
 		e.Router.DELETE("/v1/{path...}", chiHandler)
+
+		// Serve Infisical React frontend at / if KMS_FRONTEND_DIR is set.
+		// Base admin UI at /_/ and API routes at /v1/* take priority.
+		if frontendDir != "" {
+			frontendFS := os.DirFS(frontendDir)
+			e.Router.GET("/{path...}", func(re *core.RequestEvent) error {
+				p := strings.TrimPrefix(re.Request.URL.Path, "/")
+				if p == "" {
+					p = "index.html"
+				}
+				// Try serving the exact file.
+				err := re.FileFS(frontendFS, p)
+				if err == nil {
+					return nil
+				}
+				// SPA fallback: serve index.html for paths that don't match a static file.
+				if fallbackErr := re.FileFS(frontendFS, "index.html"); fallbackErr != nil {
+					return err // return original error if index.html also missing
+				}
+				return nil
+			})
+			log.Printf("kmsd: serving frontend from %s at /", frontendDir)
+		}
 
 		return e.Next()
 	})
