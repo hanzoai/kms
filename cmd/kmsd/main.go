@@ -113,8 +113,8 @@ func main() {
 		e.Router.PATCH("/v1/{path...}", chiHandler)
 		e.Router.DELETE("/v1/{path...}", chiHandler)
 
-		// Serve Infisical React frontend at / if KMS_FRONTEND_DIR is set.
-		// Base admin UI at /_/ and API routes at /v1/* take priority.
+		// Serve frontend at / if KMS_FRONTEND_DIR is set.
+		// Otherwise serve a minimal JSON landing page.
 		if frontendDir != "" {
 			frontendFS := os.DirFS(frontendDir)
 			e.Router.GET("/{path...}", func(re *core.RequestEvent) error {
@@ -122,18 +122,27 @@ func main() {
 				if p == "" {
 					p = "index.html"
 				}
-				// Try serving the exact file.
 				err := re.FileFS(frontendFS, p)
 				if err == nil {
 					return nil
 				}
-				// SPA fallback: serve index.html for paths that don't match a static file.
 				if fallbackErr := re.FileFS(frontendFS, "index.html"); fallbackErr != nil {
-					return err // return original error if index.html also missing
+					return err
 				}
 				return nil
 			})
 			log.Printf("kmsd: serving frontend from %s at /", frontendDir)
+		} else {
+			appName := envOr("APP_NAME", "KMS")
+			e.Router.GET("/", func(re *core.RequestEvent) error {
+				re.Response.Header().Set("Content-Type", "application/json")
+				return re.JSON(200, map[string]any{
+					"name":   appName,
+					"status": "ok",
+					"api":    "/v1/",
+					"admin":  "/_/",
+				})
+			})
 		}
 
 		return e.Next()
