@@ -3,7 +3,7 @@ WORKDIR /src/frontend
 COPY frontend/package.json frontend/package-lock.json* frontend/pnpm-lock.yaml* ./
 RUN corepack enable pnpm && (pnpm install --frozen-lockfile 2>/dev/null || pnpm install)
 COPY frontend/ .
-RUN pnpm build
+RUN pnpm vite build
 
 FROM golang:1.26-bookworm AS build
 
