@@ -1,15 +1,17 @@
-// Command kmsd starts the Hanzo KMS server on Hanzo Base.
+// Command kmsd starts the KMS server on Base.
 //
 // Configuration (env vars):
 //
 //	MPC_ADDR       - ZAP address (host:port); empty = mDNS discovery (dev only)
 //	MPC_VAULT_ID   - MPC vault ID for validator keys (required)
 //	KMS_NODE_ID    - ZAP node ID (default "kms-0")
-//	IAM_JWKS_URL   - JWKS endpoint (default https://hanzo.id/.well-known/jwks.json)
+//	IAM_JWKS_URL   - JWKS endpoint for JWT validation (required when IAM auth enabled)
+//	KMS_AUTH_MODE  - "iam" (default, requires IAM_JWKS_URL) or "none" (dev only)
 package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -28,7 +30,8 @@ func main() {
 	mpcAddr := envOr("MPC_ADDR", "")
 	vaultID := envOr("MPC_VAULT_ID", "")
 	nodeID := envOr("KMS_NODE_ID", "kms-0")
-	jwksURL := envOr("IAM_JWKS_URL", "https://hanzo.id/.well-known/jwks.json")
+	jwksURL := envOr("IAM_JWKS_URL", "")
+	authMode := envOr("KMS_AUTH_MODE", "iam")
 
 	if vaultID == "" {
 		log.Fatal("kmsd: MPC_VAULT_ID is required")
@@ -58,15 +61,24 @@ func main() {
 		}
 		checkCancel()
 
-		// Initialize JWKS validator.
-		jwks := auth.NewJWKSValidator(jwksURL)
+		// Initialize auth.
+		var jwks *auth.JWKSValidator
+		if authMode == "iam" {
+			if jwksURL == "" {
+				return fmt.Errorf("kmsd: IAM_JWKS_URL is required when KMS_AUTH_MODE=iam")
+			}
+			jwks = auth.NewJWKSValidator(jwksURL)
+		} else {
+			log.Printf("kmsd: WARNING: auth disabled (KMS_AUTH_MODE=%s) -- dev only", authMode)
+		}
 
 		// Build chi router with all handlers.
 		chiRouter := server.NewRouter(server.Config{
-			App:     e.App,
-			MPC:     zapClient,
-			JWKS:    jwks,
-			VaultID: vaultID,
+			App:      e.App,
+			MPC:      zapClient,
+			JWKS:     jwks,
+			VaultID:  vaultID,
+			AuthMode: authMode,
 		})
 
 		// Mount the chi router onto the Base router.

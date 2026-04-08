@@ -1,4 +1,4 @@
-// Command kms-cli is the admin CLI for Hanzo KMS.
+// Command kms-cli is the admin CLI for KMS.
 //
 // Usage:
 //
