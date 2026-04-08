@@ -1,3 +1,6 @@
+import { Buffer } from "buffer";
+globalThis.Buffer = globalThis.Buffer ?? Buffer;
+
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { setWasmUrl } from "@lottiefiles/dotlottie-react";
