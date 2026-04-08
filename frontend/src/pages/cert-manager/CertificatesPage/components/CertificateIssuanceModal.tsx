@@ -1,0 +1,705 @@
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+
+import { createNotification } from "@app/components/notifications";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+  Button,
+  Checkbox,
+  FormControl,
+  FormLabel,
+  Input,
+  Modal,
+  ModalContent,
+  Select,
+  SelectItem,
+  Tooltip
+} from "@app/components/v2";
+import { useProject } from "@app/context";
+import { useGetCert } from "@app/hooks/api";
+import { useGetCertificatePolicyById } from "@app/hooks/api/certificatePolicies";
+import { EnrollmentType, useListCertificateProfiles } from "@app/hooks/api/certificateProfiles";
+import { CertExtendedKeyUsage, CertKeyUsage } from "@app/hooks/api/certificates/enums";
+import { useUnifiedCertificateIssuance } from "@app/hooks/api/certificates/mutations";
+import { UsePopUpState } from "@app/hooks/usePopUp";
+import {
+  CertSubjectAlternativeNameType,
+  CertSubjectAttributeType
+} from "@app/pages/cert-manager/PoliciesPage/components/CertificatePoliciesTab/shared/certificate-constants";
+
+import { AlgorithmSelectors } from "./AlgorithmSelectors";
+import { CertificateContent } from "./CertificateContent";
+import { filterUsages, formatSubjectAltNames } from "./certificateUtils";
+import { KeyUsageSection } from "./KeyUsageSection";
+import { SubjectAltNamesField } from "./SubjectAltNamesField";
+import { SubjectAttributesField } from "./SubjectAttributesField";
+import { useCertificatePolicy } from "./useCertificatePolicy";
+
+const createSchema = (shouldShowSubjectSection: boolean) => {
+  return z.object({
+    profileId: z.string().min(1, "Profile is required"),
+    subjectAttributes: shouldShowSubjectSection
+      ? z
+          .array(
+            z.object({
+              type: z.nativeEnum(CertSubjectAttributeType),
+              value: z.string().min(1, "Value is required")
+            })
+          )
+          .min(1, "At least one subject attribute is required")
+      : z
+          .array(
+            z.object({
+              type: z.nativeEnum(CertSubjectAttributeType),
+              value: z.string().min(1, "Value is required")
+            })
+          )
+          .optional(),
+    subjectAltNames: z
+      .array(
+        z.object({
+          type: z.nativeEnum(CertSubjectAlternativeNameType),
+          value: z.string().min(1, "Value is required")
+        })
+      )
+      .default([]),
+    basicConstraints: z
+      .object({
+        isCA: z.boolean().default(false),
+        pathLength: z.number().min(0).nullable().optional()
+      })
+      .optional(),
+    ttl: z.string().trim().min(1, "TTL is required"),
+    signatureAlgorithm: z.string().min(1, "Signature algorithm is required"),
+    keyAlgorithm: z.string().min(1, "Key algorithm is required"),
+    keyUsages: z
+      .object({
+        [CertKeyUsage.DIGITAL_SIGNATURE]: z.boolean().optional(),
+        [CertKeyUsage.KEY_ENCIPHERMENT]: z.boolean().optional(),
+        [CertKeyUsage.NON_REPUDIATION]: z.boolean().optional(),
+        [CertKeyUsage.DATA_ENCIPHERMENT]: z.boolean().optional(),
+        [CertKeyUsage.KEY_AGREEMENT]: z.boolean().optional(),
+        [CertKeyUsage.KEY_CERT_SIGN]: z.boolean().optional(),
+        [CertKeyUsage.CRL_SIGN]: z.boolean().optional(),
+        [CertKeyUsage.ENCIPHER_ONLY]: z.boolean().optional(),
+        [CertKeyUsage.DECIPHER_ONLY]: z.boolean().optional()
+      })
+      .default({}),
+    extendedKeyUsages: z
+      .object({
+        [CertExtendedKeyUsage.CLIENT_AUTH]: z.boolean().optional(),
+        [CertExtendedKeyUsage.CODE_SIGNING]: z.boolean().optional(),
+        [CertExtendedKeyUsage.EMAIL_PROTECTION]: z.boolean().optional(),
+        [CertExtendedKeyUsage.OCSP_SIGNING]: z.boolean().optional(),
+        [CertExtendedKeyUsage.SERVER_AUTH]: z.boolean().optional(),
+        [CertExtendedKeyUsage.TIMESTAMPING]: z.boolean().optional()
+      })
+      .default({})
+  });
+};
+
+export type FormData = z.infer<ReturnType<typeof createSchema>>;
+
+type Props = {
+  popUp: UsePopUpState<["issueCertificate"]>;
+  handlePopUpToggle: (
+    popUpName: keyof UsePopUpState<["issueCertificate"]>,
+    state?: boolean
+  ) => void;
+  profileId?: string;
+};
+
+type TCertificateDetails = {
+  serialNumber?: string;
+  certificate?: string;
+  certificateChain?: string;
+  privateKey?: string;
+  issuingCaCertificate?: string;
+};
+
+export const CertificateIssuanceModal = ({ popUp, handlePopUpToggle, profileId }: Props) => {
+  const [certificateDetails, setCertificateDetails] = useState<TCertificateDetails | null>(null);
+  const [shouldShowSubjectSection, setShouldShowSubjectSection] = useState(true);
+  const { currentProject } = useProject();
+
+  const inputSerialNumber =
+    (popUp?.issueCertificate?.data as { serialNumber: string })?.serialNumber || "";
+  const sanitizedSerialNumber = inputSerialNumber.replace(/[^a-fA-F0-9:]/g, "");
+
+  const { data: cert } = useGetCert(sanitizedSerialNumber);
+
+  const { data: profilesData } = useListCertificateProfiles({
+    projectId: currentProject?.id || "",
+    enrollmentType: EnrollmentType.API,
+    includeConfigs: true
+  });
+
+  const { mutateAsync: issueCertificate } = useUnifiedCertificateIssuance();
+
+  const formResolver = useMemo(() => {
+    return zodResolver(createSchema(shouldShowSubjectSection));
+  }, [shouldShowSubjectSection]);
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    watch,
+    setValue,
+    formState,
+    formState: { isSubmitting }
+  } = useForm<FormData>({
+    resolver: formResolver,
+    defaultValues: {
+      profileId: profileId || "",
+      subjectAttributes: [],
+      subjectAltNames: [],
+      basicConstraints: {
+        isCA: false,
+        pathLength: undefined
+      },
+      ttl: "30d",
+      signatureAlgorithm: "",
+      keyAlgorithm: "",
+      keyUsages: {},
+      extendedKeyUsages: {}
+    }
+  });
+
+  const actualSelectedProfileId = watch("profileId");
+  const watchedIsCA = watch("basicConstraints.isCA") || false;
+  const actualSelectedProfile = useMemo(
+    () => profilesData?.certificateProfiles?.find((p) => p.id === actualSelectedProfileId),
+    [profilesData?.certificateProfiles, actualSelectedProfileId]
+  );
+
+  const { data: policyData } = useGetCertificatePolicyById({
+    policyId: actualSelectedProfile?.certificatePolicyId || ""
+  });
+
+  useEffect(() => {
+    if (policyData !== undefined) {
+      setShouldShowSubjectSection((policyData?.subject?.length || 0) > 0);
+    }
+  }, [policyData]);
+
+  const {
+    constraints,
+    filteredKeyUsages,
+    filteredExtendedKeyUsages,
+    availableSignatureAlgorithms,
+    availableKeyAlgorithms,
+    resetConstraints
+  } = useCertificatePolicy(
+    policyData,
+    actualSelectedProfile,
+    popUp?.issueCertificate?.isOpen || false,
+    setValue,
+    watch
+  );
+
+  const resetAllState = useCallback(() => {
+    setCertificateDetails(null);
+    setShouldShowSubjectSection(true);
+    resetConstraints();
+    reset();
+  }, [reset, resetConstraints]);
+
+  useEffect(() => {
+    if (cert) {
+      const subjectAttrs: Array<{ type: CertSubjectAttributeType; value: string }> = [];
+      if (cert.commonName)
+        subjectAttrs.push({ type: CertSubjectAttributeType.COMMON_NAME, value: cert.commonName });
+
+      reset({
+        profileId: "",
+        subjectAttributes:
+          subjectAttrs.length > 0
+            ? subjectAttrs
+            : [{ type: CertSubjectAttributeType.COMMON_NAME, value: "" }],
+        subjectAltNames: cert.subjectAltNames
+          ? cert.subjectAltNames.split(",").map((name) => {
+              const trimmed = name.trim();
+              if (trimmed.includes("@"))
+                return { type: CertSubjectAlternativeNameType.EMAIL, value: trimmed };
+              if (trimmed.match(/^\d+\.\d+\.\d+\.\d+$/))
+                return { type: CertSubjectAlternativeNameType.IP_ADDRESS, value: trimmed };
+              if (trimmed.startsWith("http"))
+                return { type: CertSubjectAlternativeNameType.URI, value: trimmed };
+              return { type: CertSubjectAlternativeNameType.DNS_NAME, value: trimmed };
+            })
+          : [],
+        ttl: "",
+        signatureAlgorithm: "",
+        keyAlgorithm: "",
+        keyUsages: Object.fromEntries((cert.keyUsages || []).map((name) => [name, true])),
+        extendedKeyUsages: Object.fromEntries(
+          (cert.extendedKeyUsages || []).map((name) => [name, true])
+        )
+      });
+    }
+  }, [cert, reset]);
+
+  useEffect(() => {
+    if (popUp?.issueCertificate?.isOpen && profileId && !cert) {
+      setValue("profileId", profileId);
+    }
+  }, [popUp?.issueCertificate?.isOpen, profileId, cert, setValue]);
+
+  const onFormSubmit = useCallback(
+    async ({
+      profileId: formProfileId,
+      subjectAttributes,
+      subjectAltNames,
+      basicConstraints,
+      ttl,
+      signatureAlgorithm,
+      keyAlgorithm,
+      keyUsages,
+      extendedKeyUsages
+    }: FormData) => {
+      if (!currentProject?.slug || !currentProject?.id) {
+        createNotification({
+          text: "Project not found. Please refresh and try again.",
+          type: "error"
+        });
+        return;
+      }
+
+      if (!formProfileId) {
+        createNotification({
+          text: "Please select a certificate profile.",
+          type: "error"
+        });
+        return;
+      }
+
+      try {
+        // Prepare unified request
+        const request: any = {
+          profileId: formProfileId,
+          projectSlug: currentProject.slug,
+          projectId: currentProject.id,
+          attributes: {
+            ttl,
+            signatureAlgorithm: signatureAlgorithm || "",
+            keyAlgorithm: keyAlgorithm || "",
+            keyUsages: filterUsages(keyUsages) as CertKeyUsage[],
+            extendedKeyUsages: filterUsages(extendedKeyUsages) as CertExtendedKeyUsage[]
+          }
+        };
+
+        if (
+          constraints.shouldShowSubjectSection &&
+          subjectAttributes &&
+          subjectAttributes.length > 0
+        ) {
+          const cnAttr = subjectAttributes.find(
+            (attr) => attr.type === CertSubjectAttributeType.COMMON_NAME
+          );
+          if (cnAttr?.value) {
+            request.attributes.commonName = cnAttr.value;
+          }
+
+          const orgAttr = subjectAttributes.find(
+            (attr) => attr.type === CertSubjectAttributeType.ORGANIZATION
+          );
+          if (orgAttr?.value) {
+            request.attributes.organization = orgAttr.value;
+          }
+
+          const ouAttr = subjectAttributes.find(
+            (attr) => attr.type === CertSubjectAttributeType.ORGANIZATIONAL_UNIT
+          );
+          if (ouAttr?.value) {
+            request.attributes.organizationalUnit = ouAttr.value;
+          }
+
+          const countryAttr = subjectAttributes.find(
+            (attr) => attr.type === CertSubjectAttributeType.COUNTRY
+          );
+          if (countryAttr?.value) {
+            request.attributes.country = countryAttr.value;
+          }
+
+          const stateAttr = subjectAttributes.find(
+            (attr) => attr.type === CertSubjectAttributeType.STATE
+          );
+          if (stateAttr?.value) {
+            request.attributes.state = stateAttr.value;
+          }
+
+          const localityAttr = subjectAttributes.find(
+            (attr) => attr.type === CertSubjectAttributeType.LOCALITY
+          );
+          if (localityAttr?.value) {
+            request.attributes.locality = localityAttr.value;
+          }
+        }
+
+        if (constraints.shouldShowSanSection && subjectAltNames && subjectAltNames.length > 0) {
+          const formattedSans = formatSubjectAltNames(subjectAltNames);
+          if (formattedSans && formattedSans.length > 0) {
+            request.attributes.altNames = formattedSans;
+          }
+        }
+
+        if (
+          (constraints.templateAllowsCA && basicConstraints?.isCA) ||
+          constraints.templateRequiresCA
+        ) {
+          request.attributes.basicConstraints = {
+            isCA: true,
+            pathLength: basicConstraints?.pathLength ?? undefined
+          };
+        }
+
+        const response = await issueCertificate(request);
+
+        // Handle certificate issuance response
+
+        if ("certificate" in response && response.certificate) {
+          const certData = response.certificate;
+          const certificateDetailsToSet = {
+            serialNumber: certData.serialNumber || "",
+            certificate: certData.certificate || "",
+            certificateChain: certData.certificateChain || "",
+            privateKey: certData.privateKey || "",
+            issuingCaCertificate: certData.issuingCaCertificate || ""
+          };
+
+          setCertificateDetails(certificateDetailsToSet);
+
+          createNotification({
+            text: "Successfully created certificate",
+            type: "success"
+          });
+        } else {
+          // Certificate request - async processing
+          createNotification({
+            text: `Certificate request submitted successfully. This may take a few minutes to process. Certificate Request ID: ${response.certificateRequestId}`,
+            type: "success"
+          });
+          handlePopUpToggle("issueCertificate", false);
+        }
+      } catch (error) {
+        createNotification({
+          text: `Failed to request certificate: ${(error as Error)?.message || "Unknown error"}`,
+          type: "error"
+        });
+      }
+    },
+    [
+      currentProject?.slug,
+      currentProject?.id,
+      issueCertificate,
+      constraints.shouldShowSubjectSection,
+      constraints.shouldShowSanSection,
+      constraints.templateAllowsCA,
+      handlePopUpToggle
+    ]
+  );
+
+  const getModalTitle = () => {
+    if (certificateDetails) return "Certificate Created Successfully";
+    if (cert) return "Certificate Details";
+    return "Request New Certificate";
+  };
+
+  const getModalSubTitle = () => {
+    if (certificateDetails) return "Certificate has been successfully created and is ready for use";
+    if (cert) return "View certificate information";
+    return "Request a new certificate using a certificate profile";
+  };
+
+  return (
+    <Modal
+      isOpen={popUp?.issueCertificate?.isOpen}
+      onOpenChange={(isOpen) => {
+        handlePopUpToggle("issueCertificate", isOpen);
+        if (!isOpen) {
+          resetAllState();
+        }
+      }}
+    >
+      <ModalContent title={getModalTitle()} subTitle={getModalSubTitle()}>
+        {certificateDetails && (
+          <CertificateContent
+            serialNumber={certificateDetails.serialNumber!}
+            certificate={certificateDetails.certificate!}
+            certificateChain={certificateDetails.certificateChain!}
+            privateKey={certificateDetails.privateKey!}
+          />
+        )}
+        {cert && (
+          <div className="space-y-4">
+            <div>
+              <h4 className="text-sm font-medium text-mineshaft-300">Certificate Details</h4>
+              <p className="text-sm text-mineshaft-400">Serial Number: {cert.serialNumber}</p>
+              <p className="text-sm text-mineshaft-400">Certificate Id: {cert.id}</p>
+              <p className="text-sm text-mineshaft-400">Common Name: {cert.commonName}</p>
+              <p className="text-sm text-mineshaft-400">Status: {cert.status}</p>
+            </div>
+          </div>
+        )}
+        {!cert && !certificateDetails && (
+          <form onSubmit={handleSubmit(onFormSubmit)}>
+            {!profileId && (
+              <Controller
+                control={control}
+                name="profileId"
+                render={({ field: { onChange, ...field }, fieldState: { error } }) => (
+                  <FormControl
+                    label={
+                      <div>
+                        <FormLabel
+                          isRequired
+                          label="Certificate Profile"
+                          icon={
+                            <Tooltip
+                              className="text-center"
+                              content={
+                                <span>
+                                  Certificate profiles define the policies and enrollment methods
+                                  for certificate issuance. The selected profile will enforce
+                                  validation rules and determine the CA used for signing.
+                                </span>
+                              }
+                            >
+                              <FontAwesomeIcon icon={faQuestionCircle} size="sm" />
+                            </Tooltip>
+                          }
+                        />
+                      </div>
+                    }
+                    errorText={error?.message}
+                    isError={Boolean(error)}
+                    isRequired
+                  >
+                    <Select
+                      defaultValue=""
+                      {...field}
+                      onValueChange={(e) => onChange(e)}
+                      className="w-full"
+                      placeholder="Select a certificate profile"
+                      position="popper"
+                    >
+                      {profilesData?.certificateProfiles?.map((profile) => (
+                        <SelectItem key={profile.id} value={profile.id}>
+                          {profile.slug}
+                        </SelectItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                )}
+              />
+            )}
+
+            {(actualSelectedProfile || profileId) && (
+              <>
+                {constraints.shouldShowSubjectSection && (
+                  <SubjectAttributesField
+                    control={control}
+                    allowedAttributeTypes={constraints.allowedSubjectAttributeTypes}
+                    error={formState.errors.subjectAttributes?.message}
+                  />
+                )}
+
+                {constraints.shouldShowSanSection && (
+                  <SubjectAltNamesField
+                    control={control}
+                    allowedSanTypes={constraints.allowedSanTypes}
+                    error={formState.errors.subjectAltNames?.message}
+                  />
+                )}
+
+                <Controller
+                  control={control}
+                  name="ttl"
+                  render={({ field, fieldState: { error } }) => (
+                    <FormControl
+                      label="Time to Live (TTL)"
+                      isRequired
+                      errorText={error?.message}
+                      isError={Boolean(error)}
+                    >
+                      <Input {...field} placeholder="30d, 1y, 8760h" />
+                    </FormControl>
+                  )}
+                />
+
+                <AlgorithmSelectors
+                  control={control}
+                  availableSignatureAlgorithms={availableSignatureAlgorithms}
+                  availableKeyAlgorithms={availableKeyAlgorithms}
+                  signatureError={formState.errors.signatureAlgorithm?.message}
+                  keyError={formState.errors.keyAlgorithm?.message}
+                />
+
+                <Accordion type="single" collapsible className="w-full">
+                  <KeyUsageSection
+                    control={control}
+                    title="Key Usages"
+                    accordionValue="key-usages"
+                    namePrefix="keyUsages"
+                    options={filteredKeyUsages}
+                    requiredUsages={constraints.requiredKeyUsages}
+                  />
+                  <KeyUsageSection
+                    control={control}
+                    title="Extended Key Usages"
+                    accordionValue="extended-key-usages"
+                    namePrefix="extendedKeyUsages"
+                    options={filteredExtendedKeyUsages}
+                    requiredUsages={constraints.requiredExtendedKeyUsages}
+                  />
+                  {constraints.templateAllowsCA && (
+                    <AccordionItem value="basic-constraints">
+                      <AccordionTrigger>Basic Constraints</AccordionTrigger>
+                      <AccordionContent>
+                        <div className="space-y-4 pl-2">
+                          <Controller
+                            control={control}
+                            name="basicConstraints.isCA"
+                            render={({ field: { value, onChange } }) => (
+                              <div className="flex items-center gap-3">
+                                <Checkbox
+                                  id="isCA"
+                                  isChecked={constraints.templateRequiresCA || value || false}
+                                  isDisabled={constraints.templateRequiresCA}
+                                  onCheckedChange={(checked) => {
+                                    if (!constraints.templateRequiresCA) {
+                                      onChange(checked);
+                                      if (!checked) {
+                                        setValue("basicConstraints.pathLength", undefined);
+                                      }
+                                    }
+                                  }}
+                                />
+                                <div className="space-y-1">
+                                  <FormLabel
+                                    id="isCA"
+                                    className="cursor-pointer text-sm font-medium text-mineshaft-100"
+                                    label="Issue as Certificate Authority"
+                                  />
+                                  <p className="text-xs text-bunker-300">
+                                    This certificate will be issued with the CA:TRUE extension
+                                  </p>
+                                </div>
+                              </div>
+                            )}
+                          />
+
+                          {watchedIsCA && (
+                            <Controller
+                              control={control}
+                              name="basicConstraints.pathLength"
+                              render={({ field, fieldState: { error } }) => {
+                                const isPathLengthRequired =
+                                  typeof constraints.maxPathLength === "number" &&
+                                  constraints.maxPathLength !== -1;
+                                return (
+                                  <FormControl
+                                    label={
+                                      <div>
+                                        <FormLabel
+                                          isRequired={isPathLengthRequired}
+                                          label="Path Length"
+                                          icon={
+                                            <Tooltip
+                                              content={
+                                                <div className="max-w-xs">
+                                                  <p className="font-medium">Values:</p>
+                                                  <ul className="mt-1 list-disc pl-4 text-xs">
+                                                    <li>
+                                                      <strong>Empty</strong> = Unlimited depth
+                                                    </li>
+                                                    <li>
+                                                      <strong>0</strong> = Can only sign end-entity
+                                                      certs
+                                                    </li>
+                                                    <li>
+                                                      <strong>1+</strong> = CA levels allowed
+                                                      beneath
+                                                    </li>
+                                                  </ul>
+                                                </div>
+                                              }
+                                            >
+                                              <FontAwesomeIcon icon={faQuestionCircle} size="sm" />
+                                            </Tooltip>
+                                          }
+                                        />
+                                      </div>
+                                    }
+                                    isError={Boolean(error)}
+                                    errorText={error?.message}
+                                    helperText="Sets the pathLen for this CA certificate. Controls how many levels of sub-CAs can exist below."
+                                  >
+                                    <Input
+                                      {...field}
+                                      type="number"
+                                      min={0}
+                                      placeholder={
+                                        isPathLengthRequired
+                                          ? "Enter path length (required)"
+                                          : "Leave empty for no constraint"
+                                      }
+                                      className="w-full"
+                                      value={field.value ?? ""}
+                                      onChange={(e) => {
+                                        const val = e.target.value;
+                                        if (val === "") {
+                                          field.onChange(undefined);
+                                        } else {
+                                          const numVal = parseInt(val, 10);
+                                          field.onChange(Number.isNaN(numVal) ? undefined : numVal);
+                                        }
+                                      }}
+                                    />
+                                  </FormControl>
+                                );
+                              }}
+                            />
+                          )}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  )}
+                </Accordion>
+              </>
+            )}
+
+            <div className="mt-7 flex items-center">
+              <Button
+                className="mr-4"
+                size="sm"
+                type="submit"
+                isLoading={isSubmitting}
+                isDisabled={isSubmitting || (!actualSelectedProfile && !profileId)}
+              >
+                {cert ? "Update" : "Request Certificate"}
+              </Button>
+              <Button
+                colorSchema="secondary"
+                variant="plain"
+                onClick={() => {
+                  handlePopUpToggle("issueCertificate", false);
+                }}
+              >
+                Cancel
+              </Button>
+            </div>
+          </form>
+        )}
+      </ModalContent>
+    </Modal>
+  );
+};

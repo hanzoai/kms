@@ -66,15 +66,17 @@ func main() {
 			return err
 		}
 
-		// Verify MPC reachability.
-		checkCtx, checkCancel := context.WithTimeout(context.Background(), 5*time.Second)
-		if status, err := zapClient.Status(checkCtx); err != nil {
-			log.Printf("kmsd: WARNING: mpc unreachable via ZAP: %v", err)
-		} else {
-			log.Printf("kmsd: mpc ready=%v peers=%d/%d mode=%s",
-				status.Ready, status.ConnectedPeers, status.ExpectedPeers, status.Mode)
+		// Verify MPC reachability (only if MPC backend is configured).
+		if zapClient != nil {
+			checkCtx, checkCancel := context.WithTimeout(context.Background(), 5*time.Second)
+			if mpcStatus, err := zapClient.Status(checkCtx); err != nil {
+				log.Printf("kmsd: WARNING: mpc unreachable via ZAP: %v", err)
+			} else {
+				log.Printf("kmsd: mpc ready=%v peers=%d/%d mode=%s",
+					mpcStatus.Ready, mpcStatus.ConnectedPeers, mpcStatus.ExpectedPeers, mpcStatus.Mode)
+			}
+			checkCancel()
 		}
-		checkCancel()
 
 		// Initialize auth.
 		var jwks *auth.JWKSValidator
