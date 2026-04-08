@@ -39,6 +39,7 @@ COPY --from=build /kms-cli /usr/local/bin/kms-cli
 COPY --from=frontend /src/frontend/dist /app/frontend
 
 ENV KMS_FRONTEND_DIR=/app/frontend
+ENV BASE_SKIP_ROOT_REDIRECT=1
 
 EXPOSE 8090
 HEALTHCHECK --interval=10s --timeout=3s --start-period=5s --retries=3 \
