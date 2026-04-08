@@ -31,7 +31,7 @@ export const useCreateAccessApprovalPolicy = () => {
       approvalsRequired,
       maxTimePeriod
     }) => {
-      const { data } = await apiRequest.post("/api/v1/access-approvals/policies", {
+      const { data } = await apiRequest.post("/v1/access-approvals/policies", {
         environments,
         projectSlug,
         approvals,
@@ -114,7 +114,7 @@ export const useCreateAccessRequest = () => {
   return useMutation<object, object, TCreateAccessRequestDTO>({
     mutationFn: async ({ projectSlug, ...request }) => {
       const { data } = await apiRequest.post<TAccessApproval>(
-        "/api/v1/access-approvals/requests",
+        "/v1/access-approvals/requests",
         {
           ...request,
           permissions: request.permissions ? packRules(request.permissions) : undefined

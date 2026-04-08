@@ -196,7 +196,7 @@ export const useCreateSecretBatch = ({
 
   return useMutation<object, object, TCreateSecretBatchDTO>({
     mutationFn: async ({ secretPath = "/", projectId, environment, secrets }) => {
-      const { data } = await apiRequest.post("/api/v4/secrets/batch", {
+      const { data } = await apiRequest.post("/v1/secrets/batch", {
         projectId,
         environment,
         secretPath,
@@ -238,7 +238,7 @@ export const useUpdateSecretBatch = ({
 
   return useMutation<object, object, TUpdateSecretBatchDTO>({
     mutationFn: async ({ secretPath = "/", projectId, environment, secrets }) => {
-      const { data } = await apiRequest.patch("/api/v4/secrets/batch", {
+      const { data } = await apiRequest.patch("/v1/secrets/batch", {
         projectId,
         environment,
         secretPath,
@@ -280,7 +280,7 @@ export const useDeleteSecretBatch = ({
 
   return useMutation<object, object, TDeleteSecretBatchDTO>({
     mutationFn: async ({ secretPath = "/", projectId, environment, secrets }) => {
-      const { data } = await apiRequest.delete("/api/v4/secrets/batch", {
+      const { data } = await apiRequest.delete("/v1/secrets/batch", {
         data: {
           projectId,
           environment,
@@ -343,7 +343,7 @@ export const useMoveSecrets = ({
       const { data } = await apiRequest.post<{
         isSourceUpdated: boolean;
         isDestinationUpdated: boolean;
-      }>("/api/v4/secrets/move", {
+      }>("/v1/secrets/move", {
         sourceEnvironment,
         sourceSecretPath,
         destinationEnvironment,
@@ -414,7 +414,7 @@ export const createSecret = async (dto: TCreateSecretsV3DTO) => {
 export const useBackfillSecretReference = () =>
   useMutation<{ message: string }, object, { projectId: string }>({
     mutationFn: async ({ projectId }) => {
-      const { data } = await apiRequest.post("/api/v4/secrets/backfill-secret-references", {
+      const { data } = await apiRequest.post("/v1/secrets/backfill-secret-references", {
         projectId
       });
       return data.message;
@@ -435,7 +435,7 @@ export const useCreateCommit = () => {
     }
   >({
     mutationFn: async ({ projectId, environment, secretPath, pendingChanges, message }) => {
-      const { data } = await apiRequest.post("/api/v1/pit/batch/commit", {
+      const { data } = await apiRequest.post("/v1/pit/batch/commit", {
         projectId,
         environment,
         secretPath,

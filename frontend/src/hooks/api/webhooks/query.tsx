@@ -9,7 +9,7 @@ export const queryKeys = {
 };
 
 const fetchWebhooks = async (projectId: string) => {
-  const { data } = await apiRequest.get<{ webhooks: TWebhook[] }>("/api/v1/webhooks", {
+  const { data } = await apiRequest.get<{ webhooks: TWebhook[] }>("/v1/webhooks", {
     params: {
       projectId
     }

@@ -61,7 +61,7 @@ export const useCreateMicrosoftTeamsIntegration = () => {
 
   return useMutation<object, object, TCreateMicrosoftTeamsIntegrationDTO>({
     mutationFn: async (dto) => {
-      const { data } = await apiRequest.post("/api/v1/workflow-integrations/microsoft-teams", dto);
+      const { data } = await apiRequest.post("/v1/workflow-integrations/microsoft-teams", dto);
 
       return data;
     },

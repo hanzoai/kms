@@ -20,7 +20,7 @@ export const useCreateSecretApprovalPolicy = () => {
       enforcementLevel,
       allowedSelfApprovals
     }) => {
-      const { data } = await apiRequest.post("/api/v2/secret-approvals", {
+      const { data } = await apiRequest.post("/v1/secret-approvals", {
         environments,
         projectId,
         approvals,

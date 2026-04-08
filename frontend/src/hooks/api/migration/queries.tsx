@@ -67,7 +67,7 @@ export const useGetVaultExternalMigrationConfigs = () => {
     queryKey: externalMigrationQueryKeys.vaultConfigs(),
     queryFn: async () => {
       const { data } = await apiRequest.get<{ configs: TVaultExternalMigrationConfig[] }>(
-        "/api/v3/external-migration/vault/configs"
+        "/v1/external-migration/vault/configs"
       );
       return data.configs;
     }
@@ -80,7 +80,7 @@ export const useGetVaultNamespaces = () => {
     queryFn: async () => {
       const { data } = await apiRequest.get<{
         namespaces: Array<{ id: string; name: string }>;
-      }>("/api/v3/external-migration/vault/namespaces");
+      }>("/v1/external-migration/vault/namespaces");
       return data.namespaces;
     }
   });
@@ -92,7 +92,7 @@ export const useGetVaultPolicies = (enabled = true, namespace?: string) => {
     queryFn: async () => {
       const { data } = await apiRequest.get<{
         policies: Array<{ name: string; rules: string }>;
-      }>("/api/v3/external-migration/vault/policies", {
+      }>("/v1/external-migration/vault/policies", {
         params: {
           namespace
         }
@@ -110,7 +110,7 @@ export const useGetVaultMounts = (enabled = true, namespace?: string) => {
     queryFn: async () => {
       const { data } = await apiRequest.get<{
         mounts: Array<{ path: string; type: string; version: string | null }>;
-      }>("/api/v3/external-migration/vault/mounts", {
+      }>("/v1/external-migration/vault/mounts", {
         params: {
           namespace
         }
@@ -132,7 +132,7 @@ export const useGetVaultSecretPaths = (enabled = true, namespace?: string, mount
 
       const { data } = await apiRequest.get<{
         secretPaths: string[];
-      }>("/api/v3/external-migration/vault/secret-paths", {
+      }>("/v1/external-migration/vault/secret-paths", {
         params: {
           namespace,
           mountPath
@@ -151,7 +151,7 @@ export const useGetVaultAuthMounts = (enabled = true, namespace?: string, authTy
     queryFn: async () => {
       const { data } = await apiRequest.get<{
         mounts: Array<{ path: string; type: string }>;
-      }>("/api/v3/external-migration/vault/auth-mounts", {
+      }>("/v1/external-migration/vault/auth-mounts", {
         params: {
           namespace,
           ...(authType && { authType })
@@ -178,7 +178,7 @@ export const useGetVaultKubernetesAuthRoles = (
 
       const { data } = await apiRequest.get<{
         roles: VaultKubernetesAuthRole[];
-      }>("/api/v3/external-migration/vault/auth-roles/kubernetes", {
+      }>("/v1/external-migration/vault/auth-roles/kubernetes", {
         params: {
           namespace,
           mountPath
@@ -205,7 +205,7 @@ export const useGetVaultKubernetesRoles = (
 
       const { data } = await apiRequest.get<{
         roles: VaultKubernetesRole[];
-      }>("/api/v3/external-migration/vault/kubernetes-roles", {
+      }>("/v1/external-migration/vault/kubernetes-roles", {
         params: {
           namespace,
           mountPath
@@ -232,7 +232,7 @@ export const useGetVaultDatabaseRoles = (
 
       const { data } = await apiRequest.get<{
         roles: VaultDatabaseRole[];
-      }>("/api/v3/external-migration/vault/database-roles", {
+      }>("/v1/external-migration/vault/database-roles", {
         params: {
           namespace,
           mountPath
@@ -255,7 +255,7 @@ export const useGetVaultLdapRoles = (enabled = true, namespace?: string, mountPa
 
       const { data } = await apiRequest.get<{
         roles: VaultLdapRole[];
-      }>("/api/v3/external-migration/vault/ldap-roles", {
+      }>("/v1/external-migration/vault/ldap-roles", {
         params: {
           namespace,
           mountPath

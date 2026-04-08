@@ -40,7 +40,7 @@ export const useGetSharedSecrets = ({
       });
 
       const { data } = await apiRequest.get<{ secrets: TSharedSecret[]; totalCount: number }>(
-        "/api/v1/secret-sharing/shared",
+        "/v1/secret-sharing/shared",
         {
           params
         }
@@ -61,7 +61,7 @@ export const useGetSecretRequests = ({
     queryKey: secretSharingKeys.specificSecretRequests({ offset, limit }),
     queryFn: async () => {
       const { data } = await apiRequest.get<{ secrets: TSharedSecret[]; totalCount: number }>(
-        "/api/v1/secret-sharing/requests",
+        "/v1/secret-sharing/requests",
         {
           params: {
             offset: String(offset),
@@ -121,7 +121,7 @@ export const useGetBrandingConfig = () => {
     queryKey: secretSharingKeys.brandingAssets(),
     queryFn: async () => {
       const { data } = await apiRequest.get<TBrandingConfig>(
-        "/api/v1/secret-sharing/shared/branding"
+        "/v1/secret-sharing/shared/branding"
       );
       return data;
     }

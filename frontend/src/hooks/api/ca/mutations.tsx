@@ -134,7 +134,7 @@ export const useCreateCertificate = () => {
   return useMutation<TCreateCertificateResponse, object, TCreateCertificateDTO>({
     mutationFn: async (body) => {
       const { data } = await apiRequest.post<TCreateCertificateResponse>(
-        "/api/v1/pki/certificates/issue-certificate",
+        "/v1/pki/certificates/issue-certificate",
         body
       );
       return data;
@@ -152,7 +152,7 @@ export const useCreateCertificateV3 = (options?: { projectId?: string }) => {
   return useMutation<TCreateCertificateV3Response, object, TCreateCertificateV3DTO>({
     mutationFn: async (body) => {
       const { data } = await apiRequest.post<TCreateCertificateV3Response>(
-        "/api/v1/cert-manager/certificates/issue-certificate",
+        "/v1/cert-manager/certificates/issue-certificate",
         body
       );
       return data;
@@ -180,7 +180,7 @@ export const useOrderCertificateWithProfile = () => {
   return useMutation<TOrderCertificateResponse, object, TOrderCertificateDTO>({
     mutationFn: async (body) => {
       const { data } = await apiRequest.post<TOrderCertificateResponse>(
-        "/api/v1/cert-manager/certificates/order-certificate",
+        "/v1/cert-manager/certificates/order-certificate",
         body
       );
       return data;

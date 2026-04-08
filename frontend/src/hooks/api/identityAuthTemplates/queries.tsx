@@ -29,7 +29,7 @@ export const useGetIdentityAuthTemplates = (dto: GetIdentityAuthTemplatesDTO) =>
       const { data } = await apiRequest.get<{
         templates: IdentityAuthTemplate[];
         totalCount: number;
-      }>("/api/v1/identity-templates/search", {
+      }>("/v1/identity-templates/search", {
         params: {
           organizationId: dto.organizationId,
           limit: dto.limit || 50,
@@ -63,7 +63,7 @@ export const useGetAvailableTemplates = (authMethod: MachineIdentityAuthMethod) 
   return useQuery({
     queryKey: identityAuthTemplatesKeys.getAvailableTemplates(authMethod),
     queryFn: async () => {
-      const { data } = await apiRequest.get<IdentityAuthTemplate[]>("/api/v1/identity-templates", {
+      const { data } = await apiRequest.get<IdentityAuthTemplate[]>("/v1/identity-templates", {
         params: { authMethod }
       });
       return data;

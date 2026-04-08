@@ -89,7 +89,7 @@ export const useListCertificateRequests = (params: TListCertificateRequestsParam
       const daysInMs = DATE_RANGE_DAYS * 24 * 60 * 60 * 1000;
 
       const { data } = await apiRequest.get<TListCertificateRequestsResponse>(
-        "/api/v1/cert-manager/certificates/certificate-requests",
+        "/v1/cert-manager/certificates/certificate-requests",
         {
           params: {
             projectSlug: params.projectSlug,

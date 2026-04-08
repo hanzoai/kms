@@ -16,7 +16,7 @@ export const useGenerateRegistrationOptions = () =>
   useMutation({
     mutationFn: async () => {
       const { data } = await apiRequest.post<TGenerateRegistrationOptionsResponse>(
-        "/api/v1/user/me/webauthn/register"
+        "/v1/user/me/webauthn/register"
       );
       return data;
     }
@@ -28,7 +28,7 @@ export const useVerifyRegistration = () => {
   return useMutation({
     mutationFn: async (dto: TVerifyRegistrationDTO) => {
       const { data } = await apiRequest.post<{ credentialId: string; name?: string | null }>(
-        "/api/v1/user/me/webauthn/register/verify",
+        "/v1/user/me/webauthn/register/verify",
         dto
       );
       return data;
@@ -43,7 +43,7 @@ export const useGenerateAuthenticationOptions = () =>
   useMutation({
     mutationFn: async () => {
       const { data } = await apiRequest.post<TGenerateAuthenticationOptionsResponse>(
-        "/api/v1/user/me/webauthn/authenticate"
+        "/v1/user/me/webauthn/authenticate"
       );
       return data;
     }
@@ -56,7 +56,7 @@ export const useVerifyAuthentication = () =>
         verified: boolean;
         credentialId: string;
         sessionToken: string;
-      }>("/api/v1/user/me/webauthn/authenticate/verify", dto);
+      }>("/v1/user/me/webauthn/authenticate/verify", dto);
       return data;
     }
   });

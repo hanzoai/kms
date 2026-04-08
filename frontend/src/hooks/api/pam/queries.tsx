@@ -57,7 +57,7 @@ export const useListPamResourceOptions = (
     queryKey: pamKeys.listResourceOptions(),
     queryFn: async () => {
       const { data } = await apiRequest.get<{ resourceOptions: TPamResourceOption[] }>(
-        "/api/v1/pam/resources/options"
+        "/v1/pam/resources/options"
       );
 
       return data.resourceOptions;
@@ -86,7 +86,7 @@ export const useListPamResources = (
   return useQuery({
     queryKey: pamKeys.listResources(params),
     queryFn: async () => {
-      const { data } = await apiRequest.get<TListPamResourcesResponse>("/api/v1/pam/resources", {
+      const { data } = await apiRequest.get<TListPamResourcesResponse>("/v1/pam/resources", {
         params
       });
 
@@ -143,7 +143,7 @@ export const useListPamAccounts = (
   return useQuery({
     queryKey: pamKeys.listAccounts(params),
     queryFn: async () => {
-      const { data } = await apiRequest.get<TListPamAccountsResponse>("/api/v1/pam/accounts", {
+      const { data } = await apiRequest.get<TListPamAccountsResponse>("/v1/pam/accounts", {
         params
       });
 
@@ -186,7 +186,7 @@ export const useListPamSessions = (
   return useQuery({
     queryKey: pamKeys.listSessions(projectId),
     queryFn: async () => {
-      const { data } = await apiRequest.get<{ sessions: TPamSession[] }>("/api/v1/pam/sessions", {
+      const { data } = await apiRequest.get<{ sessions: TPamSession[] }>("/v1/pam/sessions", {
         params: { projectId }
       });
 

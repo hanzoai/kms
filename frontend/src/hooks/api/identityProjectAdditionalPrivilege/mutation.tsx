@@ -15,7 +15,7 @@ export const useCreateIdentityProjectAdditionalPrivilege = () => {
 
   return useMutation<TIdentityProjectPrivilege, object, TCreateIdentityProjectPrivilegeDTO>({
     mutationFn: async (dto) => {
-      const { data } = await apiRequest.post("/api/v2/identity-project-additional-privilege", dto);
+      const { data } = await apiRequest.post("/v1/identity-project-additional-privilege", dto);
       return data.privilege;
     },
     onSuccess: (_, { projectId, identityId }) => {

@@ -54,7 +54,7 @@ const fetchFolderCommitsCount = async ({
   directory?: string;
 }) => {
   const res = await apiRequest.get<{ count: number; folderId: string }>(
-    "/api/v1/pit/commits/count",
+    "/v1/pit/commits/count",
     {
       params: {
         environment,
@@ -83,7 +83,7 @@ const fetchFolderCommitHistory = async (
     commits: CommitHistoryItem[];
     total: number;
     hasMore: boolean;
-  }>("/api/v1/pit/commits", {
+  }>("/v1/pit/commits", {
     params: {
       environment,
       path: directory,

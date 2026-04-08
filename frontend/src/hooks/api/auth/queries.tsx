@@ -40,22 +40,22 @@ export const authKeys = {
 };
 
 export const login1 = async (loginDetails: Login1DTO) => {
-  const { data } = await apiRequest.post<Login1Res>("/api/v3/auth/login1", loginDetails);
+  const { data } = await apiRequest.post<Login1Res>("/v1/auth/login1", loginDetails);
   return data;
 };
 
 export const login2 = async (loginDetails: Login2DTO) => {
-  const { data } = await apiRequest.post<Login2Res>("/api/v3/auth/login2", loginDetails);
+  const { data } = await apiRequest.post<Login2Res>("/v1/auth/login2", loginDetails);
   return data;
 };
 
 export const loginV3 = async (loginDetails: LoginV3DTO) => {
-  const { data } = await apiRequest.post<LoginV3Res>("/api/v3/auth/login", loginDetails);
+  const { data } = await apiRequest.post<LoginV3Res>("/v1/auth/login", loginDetails);
   return data;
 };
 
 export const loginLDAPRedirect = async (loginLDAPDetails: LoginLDAPDTO) => {
-  const { data } = await apiRequest.post<LoginLDAPRes>("/api/v1/ldap/login", loginLDAPDetails); // return if account is complete or not + provider auth token
+  const { data } = await apiRequest.post<LoginLDAPRes>("/v1/ldap/login", loginLDAPDetails); // return if account is complete or not + provider auth token
   return data;
 };
 
@@ -69,7 +69,7 @@ export const selectOrganization = async (data: SelectOrganizationParams) => {
     token: string;
     isMfaEnabled: boolean;
     mfaMethod?: MfaMethod;
-  }>("/api/v3/auth/select-organization", data);
+  }>("/v1/auth/select-organization", data);
   return res;
 };
 
@@ -124,7 +124,7 @@ export const useLogin2 = () => {
 };
 
 export const oauthTokenExchange = async (details: TOauthTokenExchangeDTO) => {
-  const { data } = await apiRequest.post<Login2Res>("/api/v1/sso/token-exchange", details);
+  const { data } = await apiRequest.post<Login2Res>("/v1/sso/token-exchange", details);
   return data;
 };
 
@@ -138,19 +138,19 @@ export const useOauthTokenExchange = () => {
 };
 
 export const completeAccountSignup = async (details: CompleteAccountSignupDTO) => {
-  const { data } = await apiRequest.post("/api/v3/signup/complete-account/signup", details);
+  const { data } = await apiRequest.post("/v1/signup/complete-account/signup", details);
   return data;
 };
 
 export const completeAccountSignupInvite = async (details: CompleteAccountDTO) => {
-  const { data } = await apiRequest.post("/api/v3/signup/complete-account/invite", details);
+  const { data } = await apiRequest.post("/v1/signup/complete-account/invite", details);
   return data;
 };
 
 export const useSendMfaToken = () => {
   return useMutation<object, object, SendMfaTokenDTO>({
     mutationFn: async ({ email }) => {
-      const { data } = await apiRequest.post("/api/v2/auth/mfa/send", { email });
+      const { data } = await apiRequest.post("/v1/auth/mfa/send", { email });
       return data;
     }
   });
@@ -165,7 +165,7 @@ export const verifyMfaToken = async ({
   mfaCode: string;
   mfaMethod?: string;
 }) => {
-  const { data } = await apiRequest.post("/api/v2/auth/mfa/verify", {
+  const { data } = await apiRequest.post("/v1/auth/mfa/verify", {
     email,
     mfaToken: mfaCode,
     mfaMethod
@@ -187,21 +187,21 @@ export const useVerifyMfaToken = () => {
 };
 
 export const verifyRecoveryCode = async (recoveryCode: string) => {
-  const { data } = await apiRequest.post("/api/v2/auth/mfa/verify/recovery-code", {
+  const { data } = await apiRequest.post("/v1/auth/mfa/verify/recovery-code", {
     recoveryCode
   });
   return data;
 };
 
 export const verifySignupInvite = async (details: VerifySignupInviteDTO) => {
-  const { data } = await apiRequest.post("/api/v1/invite-org/verify", details);
+  const { data } = await apiRequest.post("/v1/invite-org/verify", details);
   return data;
 };
 
 export const useSendVerificationEmail = () => {
   return useMutation({
     mutationFn: async ({ email }: { email: string }) => {
-      const { data } = await apiRequest.post("/api/v3/signup/email/signup", {
+      const { data } = await apiRequest.post("/v1/signup/email/signup", {
         email
       });
 
@@ -213,7 +213,7 @@ export const useSendVerificationEmail = () => {
 export const useVerifySignupEmailVerificationCode = () => {
   return useMutation({
     mutationFn: async ({ email, code }: { email: string; code: string }) => {
-      const { data } = await apiRequest.post("/api/v3/signup/email/verify", {
+      const { data } = await apiRequest.post("/v1/signup/email/verify", {
         email,
         code
       });
@@ -226,7 +226,7 @@ export const useVerifySignupEmailVerificationCode = () => {
 export const useSendPasswordResetEmail = () => {
   return useMutation({
     mutationFn: async ({ email }: { email: string }) => {
-      const { data } = await apiRequest.post("/api/v1/password/email/password-reset", {
+      const { data } = await apiRequest.post("/v1/password/email/password-reset", {
         email
       });
 
@@ -241,7 +241,7 @@ export const useVerifyPasswordResetCode = () => {
       const { data } = await apiRequest.post<{
         token: string;
         userEncryptionVersion: UserEncryptionVersion;
-      }>("/api/v1/password/email/password-reset-verify", {
+      }>("/v1/password/email/password-reset-verify", {
         email,
         code
       });
@@ -254,7 +254,7 @@ export const useVerifyPasswordResetCode = () => {
 export const getBackupEncryptedPrivateKey = async ({
   verificationToken
 }: GetBackupEncryptedPrivateKeyDTO) => {
-  const { data } = await apiRequest.get("/api/v1/password/backup-private-key", {
+  const { data } = await apiRequest.get("/v1/password/backup-private-key", {
     headers: {
       Authorization: `Bearer ${verificationToken}`
     }
@@ -267,7 +267,7 @@ export const useResetPassword = () => {
   return useMutation({
     mutationFn: async (details: ResetPasswordDTO) => {
       const { data } = await apiRequest.post(
-        "/api/v1/password/password-reset",
+        "/v1/password/password-reset",
         {
           protectedKey: details.protectedKey,
           protectedKeyIV: details.protectedKeyIV,
@@ -294,7 +294,7 @@ export const useResetPassword = () => {
 export const useResetPasswordV2 = () => {
   return useMutation({
     mutationFn: async (details: ResetPasswordV2DTO) => {
-      await apiRequest.post("/api/v2/password/password-reset", details, {
+      await apiRequest.post("/v1/password/password-reset", details, {
         headers: {
           Authorization: `Bearer ${details.verificationToken}`
         }
@@ -306,7 +306,7 @@ export const useResetPasswordV2 = () => {
 export const useResetUserPasswordV2 = () => {
   return useMutation({
     mutationFn: async (details: ResetUserPasswordV2DTO) => {
-      await apiRequest.post("/api/v2/password/user/password-reset", details);
+      await apiRequest.post("/v1/password/user/password-reset", details);
     }
   });
 };
@@ -314,7 +314,7 @@ export const useResetUserPasswordV2 = () => {
 // Refresh token is set as cookie when logged in
 // Using that we fetch the auth bearer token needed for auth calls
 export const fetchAuthToken = async () => {
-  const { data } = await apiRequest.post<GetAuthTokenAPI>("/api/v1/auth/token", undefined, {
+  const { data } = await apiRequest.post<GetAuthTokenAPI>("/v1/auth/token", undefined, {
     withCredentials: true
   });
   setAuthToken(data.token);
@@ -329,14 +329,14 @@ export const useGetAuthToken = () =>
   });
 
 export const checkUserTotpMfa = async () => {
-  const { data } = await apiRequest.get<{ isVerified: boolean }>("/api/v2/auth/mfa/check/totp");
+  const { data } = await apiRequest.get<{ isVerified: boolean }>("/v1/auth/mfa/check/totp");
 
   return data.isVerified;
 };
 
 export const checkUserWebAuthnMfa = async () => {
   const { data } = await apiRequest.get<{ hasPasskeys: boolean }>(
-    "/api/v2/auth/mfa/check/webauthn"
+    "/v1/auth/mfa/check/webauthn"
   );
 
   return data.hasPasskeys;
@@ -346,7 +346,7 @@ export const useMfaGenerateAuthenticationOptions = () =>
   useMutation({
     mutationFn: async () => {
       const { data } = await apiRequest.post<TGenerateAuthenticationOptionsResponse>(
-        "/api/v2/auth/mfa/webauthn/authenticate"
+        "/v1/auth/mfa/webauthn/authenticate"
       );
       return data;
     }
@@ -359,7 +359,7 @@ export const useMfaVerifyAuthentication = () =>
         verified: boolean;
         credentialId: string;
         sessionToken: string;
-      }>("/api/v2/auth/mfa/webauthn/verify", dto);
+      }>("/v1/auth/mfa/webauthn/verify", dto);
       return data;
     }
   });
@@ -367,7 +367,7 @@ export const useMfaVerifyAuthentication = () =>
 export const useSendPasswordSetupEmail = () => {
   return useMutation({
     mutationFn: async () => {
-      const { data } = await apiRequest.post("/api/v1/password/email/password-setup");
+      const { data } = await apiRequest.post("/v1/password/email/password-setup");
 
       return data;
     }
@@ -377,7 +377,7 @@ export const useSendPasswordSetupEmail = () => {
 export const useSetupPassword = () => {
   return useMutation({
     mutationFn: async (payload: SetupPasswordDTO) => {
-      const { data } = await apiRequest.post("/api/v1/password/password-setup", payload);
+      const { data } = await apiRequest.post("/v1/password/password-setup", payload);
 
       return data;
     }

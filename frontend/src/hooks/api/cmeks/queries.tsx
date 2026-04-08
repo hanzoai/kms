@@ -48,7 +48,7 @@ export const useGetCmeksByProjectId = (
       search
     }),
     queryFn: async () => {
-      const { data } = await apiRequest.get<TProjectCmeksList>("/api/v1/kms/keys", {
+      const { data } = await apiRequest.get<TProjectCmeksList>("/v1/kms/keys", {
         params: { projectId, offset, limit, search, orderBy, orderDirection }
       });
 

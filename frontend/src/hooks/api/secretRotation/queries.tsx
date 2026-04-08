@@ -50,7 +50,7 @@ const fetchSecretRotations = async ({
   workspaceId
 }: Omit<TGetSecretRotationListDTO, "decryptFileKey">) => {
   const { data } = await apiRequest.get<{ secretRotations: TSecretRotation[] }>(
-    "/api/v1/secret-rotations",
+    "/v1/secret-rotations",
     { params: { workspaceId } }
   );
   return data.secretRotations;

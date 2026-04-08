@@ -10,7 +10,7 @@ const serverStatusKeys = {
 };
 
 const fetchServerStatus = async () => {
-  const { data } = await apiRequest.get<ServerStatus>("/api/status");
+  const { data } = await apiRequest.get<ServerStatus>("/v1/status");
   return data;
 };
 

@@ -31,7 +31,7 @@ export const folderQueryKeys = {
 };
 
 const fetchProjectFolders = async (projectId: string, environment: string, path = "/") => {
-  const { data } = await apiRequest.get<{ folders: TSecretFolder[] }>("/api/v2/folders", {
+  const { data } = await apiRequest.get<{ folders: TSecretFolder[] }>("/v1/folders", {
     params: {
       projectId,
       environment,
@@ -146,7 +146,7 @@ export const useGetOrCreateFolder = () => {
   return useMutation<TSecretFolder, object, TCreateFolderDTO>({
     mutationFn: async (dto) => {
       const { data: existingFolder } = await apiRequest.get<{ folders: TSecretFolder[] }>(
-        "/api/v2/folders",
+        "/v1/folders",
         {
           params: {
             projectId: dto.projectId,
@@ -160,7 +160,7 @@ export const useGetOrCreateFolder = () => {
 
       if (folder) return folder;
 
-      const { data } = await apiRequest.post("/api/v2/folders", {
+      const { data } = await apiRequest.post("/v1/folders", {
         ...dto,
         projectId: dto.projectId
       });
@@ -198,7 +198,7 @@ export const useCreateFolder = () => {
 
   return useMutation<object, object, TCreateFolderDTO>({
     mutationFn: async (dto) => {
-      const { data } = await apiRequest.post("/api/v2/folders", {
+      const { data } = await apiRequest.post("/v1/folders", {
         ...dto,
         projectId: dto.projectId
       });
@@ -316,7 +316,7 @@ export const useUpdateFolderBatch = () => {
 
   return useMutation<object, object, TUpdateFolderBatchDTO>({
     mutationFn: async ({ projectId, folders }) => {
-      const { data } = await apiRequest.patch("/api/v2/folders/batch", {
+      const { data } = await apiRequest.patch("/v1/folders/batch", {
         projectId,
         folders
       });

@@ -9,7 +9,7 @@ export const rateLimitQueryKeys = {
 };
 
 const fetchRateLimit = async () => {
-  const { data } = await apiRequest.get<{ rateLimit: TRateLimit }>("/api/v1/rate-limit");
+  const { data } = await apiRequest.get<{ rateLimit: TRateLimit }>("/v1/rate-limit");
   return data.rateLimit;
 };
 

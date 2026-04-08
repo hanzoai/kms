@@ -24,7 +24,7 @@ export const useGetAuditLogs = (
     queryFn: async ({ pageParam }) => {
       try {
         const { data } = await apiRequest.get<{ auditLogs: AuditLog[] }>(
-          "/api/v1/organization/audit-logs",
+          "/v1/organization/audit-logs",
           {
             params: {
               ...filters,

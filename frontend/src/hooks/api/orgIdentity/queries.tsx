@@ -27,7 +27,7 @@ export const orgIdentityQuery = {
         const { data } = await apiRequest.get<{
           identities: TOrgIdentity[];
           totalCount: number;
-        }>("/api/v1/organization/identities", {
+        }>("/v1/organization/identities", {
           params: {
             offset: params.offset,
             limit: params.limit,
