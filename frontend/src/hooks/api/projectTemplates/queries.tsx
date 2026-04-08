@@ -27,7 +27,7 @@ export const useListProjectTemplates = (
   return useQuery({
     queryKey: projectTemplateKeys.list(),
     queryFn: async () => {
-      const { data } = await apiRequest.get<TListProjectTemplates>("/api/v1/project-templates");
+      const { data } = await apiRequest.get<TListProjectTemplates>("/v1/project-templates");
 
       return data.projectTemplates;
     },

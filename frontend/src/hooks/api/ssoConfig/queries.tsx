@@ -45,7 +45,7 @@ export const useCreateSSOConfig = () => {
       cert: string;
       enableGroupSync?: boolean;
     }) => {
-      const { data } = await apiRequest.post("/api/v1/sso/config", {
+      const { data } = await apiRequest.post("/v1/sso/config", {
         organizationId,
         authProvider,
         isActive,
@@ -83,7 +83,7 @@ export const useUpdateSSOConfig = () => {
       cert?: string;
       enableGroupSync?: boolean;
     }) => {
-      const { data } = await apiRequest.patch("/api/v1/sso/config", {
+      const { data } = await apiRequest.patch("/v1/sso/config", {
         organizationId,
         ...(authProvider !== undefined ? { authProvider } : {}),
         ...(isActive !== undefined ? { isActive } : {}),

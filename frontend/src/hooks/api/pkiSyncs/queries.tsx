@@ -38,7 +38,7 @@ export const usePkiSyncOptions = (
     queryKey: pkiSyncKeys.options(),
     queryFn: async () => {
       const { data } = await apiRequest.get<TListPkiSyncOptions>(
-        "/api/v1/cert-manager/syncs/options"
+        "/v1/cert-manager/syncs/options"
       );
 
       return data.pkiSyncOptions;
@@ -60,7 +60,7 @@ export const fetchPkiSyncsByProjectId = async (projectId: string, certificateId?
     params.certificateId = certificateId;
   }
 
-  const { data } = await apiRequest.get<TListPkiSyncs>("/api/v1/cert-manager/syncs", {
+  const { data } = await apiRequest.get<TListPkiSyncs>("/v1/cert-manager/syncs", {
     params
   });
 

@@ -17,7 +17,7 @@ export const useGetExternalKmsList = (orgId: string, { enabled }: { enabled?: bo
     queryFn: async () => {
       const {
         data: { externalKmsList }
-      } = await apiRequest.get<{ externalKmsList: KmsListEntry[] }>("/api/v1/external-kms");
+      } = await apiRequest.get<{ externalKmsList: KmsListEntry[] }>("/v1/external-kms");
       return externalKmsList;
     }
   });

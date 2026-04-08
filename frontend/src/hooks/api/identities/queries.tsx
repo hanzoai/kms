@@ -75,7 +75,7 @@ export const useSearchOrgIdentityMemberships = (dto: TSearchIdentitiesDTO) => {
       const { data } = await apiRequest.post<{
         identities: IdentityMembershipOrg[];
         totalCount: number;
-      }>("/api/v1/identities/search", {
+      }>("/v1/identities/search", {
         limit,
         offset,
         orderBy,

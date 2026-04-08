@@ -28,7 +28,7 @@ import {
 } from "./types";
 
 export const fetchUserDetails = async () => {
-  const { data } = await apiRequest.get<{ user: User & UserEnc }>("/api/v1/user");
+  const { data } = await apiRequest.get<{ user: User & UserEnc }>("/v1/user");
   return data.user;
 };
 
@@ -50,7 +50,7 @@ export const fetchUserDuplicateAccounts = async () => {
         }[];
       }
     >;
-  }>("/api/v1/user/duplicate-accounts");
+  }>("/v1/user/duplicate-accounts");
   return data.users;
 };
 
@@ -72,7 +72,7 @@ export const useDeleteMe = () => {
     mutationFn: async () => {
       const {
         data: { user }
-      } = await apiRequest.delete<{ user: User }>("/api/v2/users/me");
+      } = await apiRequest.delete<{ user: User }>("/v1/users/me");
       return user;
     },
     onSuccess: () => {
@@ -94,7 +94,7 @@ export const useDeleteMe = () => {
 };
 
 export const fetchUserAction = async (action: string) => {
-  const { data } = await apiRequest.get<{ userAction: string }>("/api/v1/user-action", {
+  const { data } = await apiRequest.get<{ userAction: string }>("/v1/user-action", {
     params: {
       action
     }
@@ -115,7 +115,7 @@ export const useRenameUser = () => {
 
   return useMutation<object, object, RenameUserDTO>({
     mutationFn: ({ newName }) =>
-      apiRequest.patch("/api/v2/users/me/name", {
+      apiRequest.patch("/v1/users/me/name", {
         firstName: newName?.split(" ")[0],
         lastName: newName?.split(" ").slice(1).join(" ")
       }),
@@ -132,7 +132,7 @@ export const useUpdateUserAuthMethods = () => {
     mutationFn: async ({ authMethods }: { authMethods: AuthMethod[] }) => {
       const {
         data: { user }
-      } = await apiRequest.put("/api/v2/users/me/auth-methods", {
+      } = await apiRequest.put("/v1/users/me/auth-methods", {
         authMethods
       });
 
@@ -187,7 +187,7 @@ export const useAddUsersToOrg = () => {
 
   return useMutation<Response, object, AddUserToOrgDTO>({
     mutationFn: (dto) => {
-      return apiRequest.post("/api/v1/invite-org/signup", dto);
+      return apiRequest.post("/v1/invite-org/signup", dto);
     },
     onSuccess: (_, { organizationId }) => {
       queryClient.invalidateQueries({ queryKey: userKeys.getOrgUsers(organizationId) });
@@ -312,7 +312,7 @@ export const useUpdateOrgMembership = () => {
 export const useRegisterUserAction = () => {
   const queryClient = useQueryClient();
   return useMutation<object, object, string>({
-    mutationFn: (action) => apiRequest.post("/api/v1/user-action", { action }),
+    mutationFn: (action) => apiRequest.post("/v1/user-action", { action }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: userKeys.userAction });
     }
@@ -320,7 +320,7 @@ export const useRegisterUserAction = () => {
 };
 
 export const logoutUser = async () => {
-  await apiRequest.post("/api/v1/auth/logout");
+  await apiRequest.post("/v1/auth/logout");
 };
 
 // Utility function to clear session storage and query cache
@@ -353,7 +353,7 @@ export const useGetMyIp = () => {
   return useQuery({
     queryKey: userKeys.myIp,
     queryFn: async () => {
-      const { data } = await apiRequest.get<{ ip: string }>("/api/v1/users/me/ip");
+      const { data } = await apiRequest.get<{ ip: string }>("/v1/users/me/ip");
       return data.ip;
     },
     enabled: true
@@ -365,7 +365,7 @@ export const useGetMyAPIKeys = () => {
   return useQuery({
     queryKey: userKeys.myAPIKeys,
     queryFn: async () => {
-      const { data } = await apiRequest.get<APIKeyData[]>("/api/v2/users/me/api-keys");
+      const { data } = await apiRequest.get<APIKeyData[]>("/v1/users/me/api-keys");
       return data;
     },
     enabled: true
@@ -378,7 +378,7 @@ export const useGetMyAPIKeysV2 = () => {
     queryFn: async () => {
       const {
         data: { apiKeyData }
-      } = await apiRequest.get<{ apiKeyData: APIKeyDataV2[] }>("/api/v3/users/me/api-keys");
+      } = await apiRequest.get<{ apiKeyData: APIKeyDataV2[] }>("/v1/users/me/api-keys");
       return apiKeyData;
     },
     enabled: true
@@ -390,7 +390,7 @@ export const useCreateAPIKey = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ name, expiresIn }: { name: string; expiresIn: number }) => {
-      const { data } = await apiRequest.post<CreateAPIKeyRes>("/api/v2/users/me/api-keys", {
+      const { data } = await apiRequest.post<CreateAPIKeyRes>("/v1/users/me/api-keys", {
         name,
         expiresIn
       });
@@ -422,7 +422,7 @@ export const useGetMySessions = () => {
   return useQuery({
     queryKey: userKeys.mySessions,
     queryFn: async () => {
-      const { data } = await apiRequest.get<TokenVersion[]>("/api/v2/users/me/sessions");
+      const { data } = await apiRequest.get<TokenVersion[]>("/v1/users/me/sessions");
 
       return data;
     },
@@ -434,7 +434,7 @@ export const useRevokeMySessions = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async () => {
-      const { data } = await apiRequest.delete("/api/v2/users/me/sessions");
+      const { data } = await apiRequest.delete("/v1/users/me/sessions");
 
       return data;
     },
@@ -456,7 +456,7 @@ export const useUpdateUserMfa = () => {
     }) => {
       const {
         data: { user }
-      } = await apiRequest.patch("/api/v2/users/me/mfa", {
+      } = await apiRequest.patch("/v1/users/me/mfa", {
         isMfaEnabled,
         selectedMfaMethod
       });
@@ -505,7 +505,7 @@ export const useGetUserTotpRegistration = (options?: { enabled?: boolean }) => {
     queryKey: userKeys.totpRegistration,
     queryFn: async () => {
       const { data } = await apiRequest.post<{ otpUrl: string; recoveryCodes: string[] }>(
-        "/api/v1/user/me/totp/register"
+        "/v1/user/me/totp/register"
       );
 
       return data;
@@ -520,7 +520,7 @@ export const useGetUserTotpConfiguration = () => {
     queryFn: async () => {
       try {
         const { data } = await apiRequest.get<{ isVerified: boolean; recoveryCodes: string[] }>(
-          "/api/v1/user/me/totp"
+          "/v1/user/me/totp"
         );
 
         return data;

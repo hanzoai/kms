@@ -19,7 +19,7 @@ export const secretApprovalKeys = {
 
 const fetchApprovalPolicies = async (projectId: string) => {
   const { data } = await apiRequest.get<{ approvals: TSecretApprovalPolicy[] }>(
-    "/api/v2/secret-approvals",
+    "/v1/secret-approvals",
     { params: { projectId } }
   );
   return data.approvals;
@@ -42,7 +42,7 @@ const fetchApprovalPolicyOfABoard = async (
   secretPath: string
 ) => {
   const { data } = await apiRequest.get<{ policy: TSecretApprovalPolicy }>(
-    "/api/v2/secret-approvals/board",
+    "/v1/secret-approvals/board",
     { params: { projectId, environment, secretPath } }
   );
   return data.policy || "";

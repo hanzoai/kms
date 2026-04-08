@@ -42,7 +42,7 @@ export const initProjectHelper = async ({ projectName }: { projectName: string }
   });
 
   try {
-    const { data } = await apiRequest.post("/api/v4/secrets/batch", {
+    const { data } = await apiRequest.post("/v1/secrets/batch", {
       projectId: project.id,
       environment: "dev",
       secretPath: "/",

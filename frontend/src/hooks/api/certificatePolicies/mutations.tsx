@@ -16,7 +16,7 @@ export const useCreateCertificatePolicy = () => {
     mutationFn: async (data) => {
       const { data: response } = await apiRequest.post<{
         certificatePolicy: TCertificatePolicy;
-      }>("/api/v1/cert-manager/certificate-policies", data);
+      }>("/v1/cert-manager/certificate-policies", data);
       return response.certificatePolicy;
     },
     onSuccess: (_, { projectId }) => {

@@ -24,7 +24,7 @@ export const useCreateSshCa = () => {
     mutationFn: async (body) => {
       const {
         data: { ca }
-      } = await apiRequest.post<{ ca: TSshCertificateAuthority }>("/api/v1/ssh/ca/", body);
+      } = await apiRequest.post<{ ca: TSshCertificateAuthority }>("/v1/ssh/ca/", body);
       return ca;
     },
     onSuccess: ({ projectId }) => {
@@ -69,7 +69,7 @@ export const useSignSshKey = () => {
   return useMutation<TSignSshKeyResponse, object, TSignSshKeyDTO>({
     mutationFn: async (body) => {
       const { data } = await apiRequest.post<TSignSshKeyResponse>(
-        "/api/v1/ssh/certificates/sign",
+        "/v1/ssh/certificates/sign",
         body
       );
       return data;
@@ -87,7 +87,7 @@ export const useIssueSshCreds = () => {
   return useMutation<TIssueSshCredsResponse, object, TIssueSshCredsDTO>({
     mutationFn: async (body) => {
       const { data } = await apiRequest.post<TIssueSshCredsResponse>(
-        "/api/v1/ssh/certificates/issue",
+        "/v1/ssh/certificates/issue",
         body
       );
       return data;

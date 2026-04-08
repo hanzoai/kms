@@ -45,7 +45,7 @@ export const useGetKmipClientsByProjectId = (
       search
     }),
     queryFn: async () => {
-      const { data } = await apiRequest.get<TProjectKmipClientList>("/api/v1/kmip/clients", {
+      const { data } = await apiRequest.get<TProjectKmipClientList>("/v1/kmip/clients", {
         params: { projectId, offset, limit, search, orderBy, orderDirection }
       });
 
@@ -61,7 +61,7 @@ export const useGetOrgKmipConfig = (orgId: string) => {
   return useQuery({
     queryKey: kmipKeys.getOrgKmip(orgId),
     queryFn: async () => {
-      const { data } = await apiRequest.get<OrgKmipConfig>("/api/v1/kmip");
+      const { data } = await apiRequest.get<OrgKmipConfig>("/v1/kmip");
 
       return data;
     }

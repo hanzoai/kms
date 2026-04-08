@@ -33,7 +33,7 @@ export default function InitialSignupStep({
             colorSchema="primary"
             variant="solid"
             onClick={() => {
-              window.open("/api/v1/sso/redirect/google");
+              window.open("/v1/sso/redirect/google");
               window.close();
             }}
             leftIcon={<FontAwesomeIcon icon={faGoogle} className="mr-2" />}
@@ -49,7 +49,7 @@ export default function InitialSignupStep({
             colorSchema="primary"
             variant="outline_bg"
             onClick={() => {
-              window.open("/api/v1/sso/redirect/github");
+              window.open("/v1/sso/redirect/github");
               window.close();
             }}
             leftIcon={<FontAwesomeIcon icon={faGithub} className="mr-2" />}
@@ -65,7 +65,7 @@ export default function InitialSignupStep({
             colorSchema="primary"
             variant="outline_bg"
             onClick={() => {
-              window.open("/api/v1/sso/redirect/gitlab");
+              window.open("/v1/sso/redirect/gitlab");
               window.close();
             }}
             leftIcon={<FontAwesomeIcon icon={faGitlab} className="mr-2" />}

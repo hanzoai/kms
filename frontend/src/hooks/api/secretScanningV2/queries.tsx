@@ -64,7 +64,7 @@ export const useSecretScanningDataSourceOptions = (
     queryKey: secretScanningV2Keys.dataSourceOptions(),
     queryFn: async () => {
       const { data } = await apiRequest.get<TListSecretScanningDataSourceOptions>(
-        "/api/v2/secret-scanning/data-sources/options"
+        "/v1/secret-scanning/data-sources/options"
       );
 
       return data.dataSourceOptions;
@@ -89,7 +89,7 @@ export const useListSecretScanningDataSources = (
     queryKey: secretScanningV2Keys.listDataSources(projectId),
     queryFn: async () => {
       const { data } = await apiRequest.get<TListSecretScanningDataSources>(
-        "/api/v2/secret-scanning/data-sources-dashboard",
+        "/v1/secret-scanning/data-sources-dashboard",
         { params: { projectId } }
       );
 
@@ -185,7 +185,7 @@ export const useGetSecretScanningUnresolvedFindingCount = (
     queryKey: secretScanningV2Keys.findingCount(projectId),
     queryFn: async () => {
       const { data } = await apiRequest.get<TGetSecretScanningUnresolvedFindingsResponse>(
-        "/api/v2/secret-scanning/unresolved-findings-count",
+        "/v1/secret-scanning/unresolved-findings-count",
         { params: { projectId } }
       );
 
@@ -211,7 +211,7 @@ export const useListSecretScanningFindings = (
     queryKey: secretScanningV2Keys.listFindings(projectId),
     queryFn: async () => {
       const { data } = await apiRequest.get<TListSecretScanningFindingsResponse>(
-        "/api/v2/secret-scanning/findings",
+        "/v1/secret-scanning/findings",
         { params: { projectId } }
       );
 
@@ -237,7 +237,7 @@ export const useGetSecretScanningConfig = (
     queryKey: secretScanningV2Keys.configByProjectId(projectId),
     queryFn: async () => {
       const { data } = await apiRequest.get<TGetSecretScanningConfigResponse>(
-        "/api/v2/secret-scanning/configs",
+        "/v1/secret-scanning/configs",
         { params: { projectId } }
       );
 

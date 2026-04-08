@@ -9,7 +9,7 @@ export const relayQueryKeys = {
 };
 
 const fetchRelays = async (): Promise<TRelay[]> => {
-  const { data } = await apiRequest.get<TRelay[]>("/api/v1/relays");
+  const { data } = await apiRequest.get<TRelay[]>("/v1/relays");
   return data;
 };
 

@@ -17,7 +17,7 @@ export const useCreatePkiSubscriber = () => {
   const queryClient = useQueryClient();
   return useMutation<TPkiSubscriber, object, TCreatePkiSubscriberDTO>({
     mutationFn: async (body) => {
-      const { data: subscriber } = await apiRequest.post("/api/v1/pki/subscribers", body);
+      const { data: subscriber } = await apiRequest.post("/v1/pki/subscribers", body);
       return subscriber;
     },
     onSuccess: ({ projectId, name }) => {

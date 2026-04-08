@@ -17,7 +17,7 @@ export const useCreateCertificateProfile = () => {
     mutationFn: async (data) => {
       const { data: response } = await apiRequest.post<{
         certificateProfile: TCertificateProfile;
-      }>("/api/v1/cert-manager/certificate-profiles", data);
+      }>("/v1/cert-manager/certificate-profiles", data);
       return response.certificateProfile;
     },
     onSuccess: (_, { projectId }) => {
