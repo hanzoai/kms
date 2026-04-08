@@ -1,0 +1,25 @@
+name: Build kmsd
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'cmd/**'
+      - 'internal/**'
+      - 'go.mod'
+      - 'go.sum'
+      - 'Dockerfile.kmsd'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    uses: hanzoai/.github/.github/workflows/docker-build.yml@main
+    with:
+      dockerfile: Dockerfile.kmsd
+      image: ghcr.io/hanzoai/kmsd
+      platforms: linux/amd64,linux/arm64
+    secrets: inherit
