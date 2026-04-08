@@ -11,6 +11,7 @@ import (
 func RegisterRoutes(
 	r *chi.Mux,
 	jwks *auth.JWKSValidator,
+	authMode string,
 	secrets *handler.Secrets,
 	keys *handler.Keys,
 	members *handler.Members,
@@ -23,7 +24,9 @@ func RegisterRoutes(
 
 	// Authenticated routes.
 	r.Group(func(r chi.Router) {
-		r.Use(auth.Middleware(jwks))
+		if authMode == "iam" && jwks != nil {
+			r.Use(auth.Middleware(jwks))
+		}
 
 		// Status.
 		r.Get("/v1/status", status.StatusCheck)

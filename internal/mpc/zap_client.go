@@ -90,7 +90,7 @@ func NewZapClient(nodeID, mpcAddr string) (*ZapClient, error) {
 
 	node := zap.NewNode(zap.NodeConfig{
 		NodeID:      nodeID,
-		ServiceType: "_hanzo-kms._tcp",
+		ServiceType: "_kms._tcp",
 		NoDiscovery: !useMDNS,
 		Logger:      slog.Default(),
 	})

@@ -7,7 +7,7 @@ import (
 )
 
 func TestParseCiphertext(t *testing.T) {
-	version, b64, err := parseCiphertext("hanzo:v1:dGVzdA==")
+	version, b64, err := parseCiphertext("kms:v1:dGVzdA==")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -43,7 +43,7 @@ func TestEncryptDecryptRoundTrip(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.HasPrefix(encResp.Ciphertext, "hanzo:v1:") {
+	if !strings.HasPrefix(encResp.Ciphertext, "kms:v1:") {
 		t.Errorf("ciphertext prefix: got %q", encResp.Ciphertext)
 	}
 
@@ -89,7 +89,7 @@ func TestEncryptDecryptAfterRotation(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.HasPrefix(enc2.Ciphertext, "hanzo:v2:") {
+	if !strings.HasPrefix(enc2.Ciphertext, "kms:v2:") {
 		t.Errorf("expected v2 prefix, got %q", enc2.Ciphertext)
 	}
 
