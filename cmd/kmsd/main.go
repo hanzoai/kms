@@ -7,6 +7,9 @@
 //	KMS_NODE_ID    - ZAP node ID (default "kms-0")
 //	IAM_JWKS_URL   - JWKS endpoint for JWT validation (required when IAM auth enabled)
 //	KMS_AUTH_MODE  - "iam" (default, requires IAM_JWKS_URL) or "none" (dev only)
+//	APP_NAME       - Display name in admin UI (default "KMS")
+//	APP_URL        - Public URL for admin UI links (optional)
+//	LOGO_URL       - Logo URL for admin UI (optional, no default — blank = no logo)
 package main
 
 import (
@@ -33,19 +36,31 @@ func main() {
 	jwksURL := envOr("IAM_JWKS_URL", "")
 	authMode := envOr("KMS_AUTH_MODE", "iam")
 
-	if vaultID == "" {
-		log.Fatal("kmsd: MPC_VAULT_ID is required")
+	var zapClient *mpc.ZapClient
+	if vaultID != "" {
+		var err error
+		zapClient, err = mpc.NewZapClient(nodeID, mpcAddr)
+		if err != nil {
+			log.Fatalf("kmsd: zap client: %v", err)
+		}
+		defer zapClient.Close()
+	} else {
+		log.Printf("kmsd: MPC_VAULT_ID not set — running without MPC backend (secrets-only mode)")
 	}
-
-	zapClient, err := mpc.NewZapClient(nodeID, mpcAddr)
-	if err != nil {
-		log.Fatalf("kmsd: zap client: %v", err)
-	}
-	defer zapClient.Close()
 
 	app := base.New()
 
+	// Apply branding from env — no hardcoded brand.
 	app.OnServe().BindFunc(func(e *core.ServeEvent) error {
+		s := e.App.Settings()
+		s.Meta.AppName = envOr("APP_NAME", "KMS")
+		s.Meta.AppURL = envOr("APP_URL", "")
+		s.Meta.LogoURL = envOr("LOGO_URL", "")
+		s.Meta.HideControls = envOr("HIDE_ADMIN_CONTROLS", "") == "true"
+		if err := e.App.Save(s); err != nil {
+			log.Printf("kmsd: WARNING: could not save settings: %v", err)
+		}
+
 		// Bootstrap all KMS collections.
 		if err := store.Bootstrap(e.App); err != nil {
 			return err
