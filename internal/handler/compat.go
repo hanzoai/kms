@@ -19,13 +19,14 @@ func NewCompat() *Compat { return &Compat{} }
 // AuthToken handles POST /v1/auth/token.
 // Returns a confirmation that the session is valid (does NOT echo the raw JWT).
 func (h *Compat) AuthToken(w http.ResponseWriter, r *http.Request) {
-	// This endpoint is unauthenticated — the frontend calls it to check
-	// for an existing session before showing the login form.
-	// If no valid auth header, return empty token (no session).
+	// Frontend calls this to check for existing sessions.
+	// Must return 401 (not 200) when no session — the frontend's
+	// .catch(() => null) depends on the HTTP error status.
 	claims := auth.FromContext(r.Context())
 	if claims == nil {
-		writeJSON(w, http.StatusOK, map[string]any{
-			"token": "",
+		writeJSON(w, http.StatusUnauthorized, map[string]any{
+			"statusCode": 401,
+			"message":    "Token has expired",
 		})
 		return
 	}
@@ -92,9 +93,9 @@ func (h *Compat) ListOrgs(w http.ResponseWriter, r *http.Request) {
 func (h *Compat) SelectOrg(w http.ResponseWriter, r *http.Request) {
 	claims := auth.FromContext(r.Context())
 	if claims == nil {
-		writeJSON(w, http.StatusOK, map[string]any{
-			"token":        "",
-			"isMfaEnabled": false,
+		writeJSON(w, http.StatusUnauthorized, map[string]any{
+			"statusCode": 401,
+			"message":    "Token has expired",
 		})
 		return
 	}
