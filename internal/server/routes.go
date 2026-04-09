@@ -28,6 +28,9 @@ func RegisterRoutes(
 	r.Post("/v1/auth/login2", compat.SRPLogin2)
 
 	// Machine identity auth (CI/CD, make login, SDKs).
+	// v2/v4 = canonical KMS paths. v1/v3 = legacy Infisical compat.
+	r.Post("/v2/kms/auth/login", compat.UniversalAuthLogin)
+	r.Get("/v4/kms/secrets/{name}", compat.GetSecretRaw)
 	r.Post("/v1/auth/universal-auth/login", compat.UniversalAuthLogin)
 	r.Get("/v3/secrets/raw/{name}", compat.GetSecretRaw)
 
