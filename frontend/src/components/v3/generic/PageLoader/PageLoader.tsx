@@ -1,9 +1,7 @@
-import { Lottie } from "@app/components/v2";
-
 export function UnstablePageLoader() {
   return (
     <div className="flex h-full w-full items-center justify-center">
-      <Lottie icon="hanzo_loading" isAutoPlay className="w-24" />
+      <div className="h-8 w-8 animate-spin rounded-full border-4 border-mineshaft-500 border-t-primary" />
     </div>
   );
 }

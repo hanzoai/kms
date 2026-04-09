@@ -3,12 +3,9 @@ globalThis.Buffer = globalThis.Buffer ?? Buffer;
 
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
-import { setWasmUrl } from "@lottiefiles/dotlottie-react";
-import lottieWasmUrl from "@lottiefiles/dotlottie-web/dist/dotlottie-player.wasm?url";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import NProgress from "nprogress";
 
-import { Lottie } from "./components/v2";
 import { queryClient } from "./hooks/api/reactQuery";
 import { ErrorPage } from "./pages/public/ErrorPage/ErrorPage";
 import { NotFoundPage } from "./pages/public/NotFoundPage/NotFoundPage";
@@ -25,12 +22,6 @@ import "react-day-picker/dist/style.css";
 import "./index.css";
 
 import "./translation";
-// don't want to use this?
-// have a look at the Quick start guide
-// for passing in lng and translations on init/
-
-// Configure Lottie player to use local WASM file
-setWasmUrl(lottieWasmUrl);
 
 // Create a new router instance
 NProgress.configure({ showSpinner: false });
@@ -68,7 +59,7 @@ const router = createRouter({
   context: { serverConfig: null, queryClient },
   defaultPendingComponent: () => (
     <div className="flex h-screen w-screen items-center justify-center bg-bunker-800">
-      <Lottie isAutoPlay icon="hanzo_loading" className="h-32 w-32" />
+      <div className="h-10 w-10 animate-spin rounded-full border-4 border-mineshaft-500 border-t-primary" />
     </div>
   ),
   defaultNotFoundComponent: NotFoundPage,
