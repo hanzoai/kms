@@ -1,4 +1,4 @@
-name: Build kmsd
+name: Build kms
 
 on:
   push:
@@ -20,6 +20,6 @@ jobs:
     uses: hanzoai/.github/.github/workflows/docker-build.yml@main
     with:
       dockerfile: Dockerfile
-      image: ghcr.io/hanzoai/kmsd
+      image: ghcr.io/hanzoai/kms
       platforms: linux/amd64,linux/arm64
     secrets: inherit
