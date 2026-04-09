@@ -51,13 +51,16 @@ func Middleware(v *JWKSValidator) func(http.Handler) http.Handler {
 				return
 			}
 
-			// Now verify the signature.
+			// Verify signature with issuer + expiration validation.
 			token, err := jwt.Parse(tokenStr, func(t *jwt.Token) (any, error) {
 				if _, ok := t.Method.(*jwt.SigningMethodRSA); !ok {
 					return nil, jwt.ErrSignatureInvalid
 				}
 				return pubKey, nil
-			})
+			},
+				jwt.WithIssuer(v.Issuer()),
+				jwt.WithExpirationRequired(),
+			)
 			if err != nil || !token.Valid {
 				http.Error(w, `{"error":"invalid token"}`, http.StatusUnauthorized)
 				return

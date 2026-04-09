@@ -9,6 +9,7 @@ import (
 	"math/big"
 	"net/http"
 	"sync"
+	"strings"
 	"time"
 )
 
@@ -120,4 +121,15 @@ func parseRSAPublicKey(k jwk) (*rsa.PublicKey, error) {
 	e := int(new(big.Int).SetBytes(eb).Int64())
 
 	return &rsa.PublicKey{N: n, E: e}, nil
+}
+
+// Issuer derives the issuer URL from the JWKS URL.
+// e.g. https://iam.dev.satschel.com/.well-known/jwks → https://iam.dev.satschel.com
+func (v *JWKSValidator) Issuer() string {
+	// Strip the well-known path to get the issuer base.
+	u := v.url
+	for _, suffix := range []string{"/.well-known/jwks.json", "/.well-known/jwks", "/.well-known/openid-configuration"} {
+		u = strings.TrimSuffix(u, suffix)
+	}
+	return u
 }
