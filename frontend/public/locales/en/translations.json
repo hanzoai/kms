@@ -73,8 +73,8 @@
   },
   "dashboard": {
     "title": "Secrets",
-    "og-title": "Manage your .env files in seconds",
-    "og-description": "KMS is a simple end-to-end encrypted platform that enables teams to sync and manage their .env files.",
+    "og-title": "Manage your secrets in seconds",
+    "og-description": "KMS is an end-to-end encrypted platform that enables teams to manage secrets, API keys, and certificates.",
     "search-keys": "Search keys...",
     "add-key": "Add Key",
     "personal": "Personal",
@@ -109,7 +109,7 @@
   "approval": {
     "title": "Admin Panel",
     "og-title": "Manage your secret change management",
-    "og-description": "KMS is a simple end-to-end encrypted platform that enables teams to sync and manage their .env files."
+    "og-description": "KMS is an end-to-end encrypted platform that enables teams to manage secrets, API keys, and certificates."
   },
   "integrations": {
     "title": "Project Integrations",
@@ -130,7 +130,7 @@
   "login": {
     "title": "Login",
     "og-title": "Log In to KMS",
-    "og-description": "KMS is a simple end-to-end encrypted platform that enables teams to sync and manage their .env files.",
+    "og-description": "KMS is an end-to-end encrypted platform that enables teams to manage secrets, API keys, and certificates.",
     "login": "Log In",
     "need-account": "Need a KMS account?",
     "create-account": "Create an account",
@@ -142,7 +142,7 @@
   },
   "mfa": {
     "title": "Sign Up",
-    "og-title": "Replace .env files with 1 line of code. Sign Up for KMS in 3 minutes.",
+    "og-title": "Secure secrets management. Sign up for KMS in 3 minutes.",
     "og-description": "KMS is a simple end-to-end encrypted platform that enables teams to sync and manage API-keys and environmental variables. Works with Node.js, Next.js, Gatsby, Nest.js...",
     "signup": "Sign Up",
     "already-have-account": "Have an account? Log in",
@@ -306,7 +306,7 @@
   },
   "signup": {
     "title": "Sign Up",
-    "og-title": "Replace .env files with 1 line of code. Sign Up for KMS in 3 minutes.",
+    "og-title": "Secure secrets management. Sign up for KMS in 3 minutes.",
     "og-description": "KMS is a simple end-to-end encrypted platform that enables teams to sync and manage API-keys and environmental variables. Works with Node.js, Next.js, Gatsby, Nest.js...",
     "signup": "Sign Up",
     "already-have-account": "Have an account? Log in",
