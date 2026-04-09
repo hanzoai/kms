@@ -38,6 +38,12 @@ func main() {
 	nodeID := envOr("KMS_NODE_ID", "kms-0")
 	jwksURL := envOr("IAM_JWKS_URL", "")
 	authMode := envOr("KMS_AUTH_MODE", "iam")
+	devMode := envOr("KMS_DEV_MODE", "") == "true"
+
+	// F2: Refuse to start without auth unless KMS_DEV_MODE=true.
+	if authMode != "iam" && !devMode {
+		log.Fatal("kmsd: KMS_AUTH_MODE must be 'iam' in production. Set KMS_DEV_MODE=true for insecure dev mode.")
+	}
 	frontendDir := envOr("KMS_FRONTEND_DIR", "/app/frontend")
 
 	var zapClient *mpc.ZapClient

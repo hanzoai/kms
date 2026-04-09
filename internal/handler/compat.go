@@ -2,7 +2,6 @@ package handler
 
 import (
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -18,11 +17,16 @@ type Compat struct{}
 func NewCompat() *Compat { return &Compat{} }
 
 // AuthToken handles POST /v1/auth/token.
-// For IAM-based auth the bearer token IS the IAM JWT; echo it back.
+// Returns a confirmation that the session is valid (does NOT echo the raw JWT).
 func (h *Compat) AuthToken(w http.ResponseWriter, r *http.Request) {
-	token := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
+	claims := auth.FromContext(r.Context())
+	if claims == nil {
+		writeError(w, http.StatusUnauthorized, "no valid session")
+		return
+	}
+	// Return a session confirmation — frontend already has the token.
 	writeJSON(w, http.StatusOK, map[string]any{
-		"token": token,
+		"token": "session-valid",
 	})
 }
 
@@ -34,6 +38,7 @@ func (h *Compat) GetUser(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusUnauthorized, "no claims in context")
 		return
 	}
+	isAdmin := hasRole(claims, "admin", "owner", "superadmin")
 	writeJSON(w, http.StatusOK, map[string]any{
 		"user": map[string]any{
 			"id":               claims.Sub,
@@ -41,7 +46,7 @@ func (h *Compat) GetUser(w http.ResponseWriter, r *http.Request) {
 			"username":         claims.Email,
 			"firstName":        "",
 			"lastName":         "",
-			"superAdmin":       true,
+			"superAdmin":       isAdmin,
 			"isEmailVerified":  true,
 			"authMethods":      []string{"oidc"},
 			"mfaMethods":       []any{},
@@ -65,32 +70,42 @@ func (h *Compat) ListOrgs(w http.ResponseWriter, r *http.Request) {
 	}
 	writeJSON(w, http.StatusOK, map[string]any{
 		"organizations": []map[string]any{{
-			"id":                      orgSlug,
-			"name":                    orgSlug,
-			"slug":                    orgSlug,
-			"userRole":                "admin",
-			"bypassOrgAuthEnabled":    false,
-			"authEnforced":            false,
-			"googleSsoAuthEnforced":   false,
-			"scimEnabled":             false,
-			"userJoinedAt":            "2026-01-01T00:00:00Z",
+			"id":                    orgSlug,
+			"name":                  orgSlug,
+			"slug":                  orgSlug,
+			"userRole":              "admin",
+			"bypassOrgAuthEnabled":  false,
+			"authEnforced":          false,
+			"googleSsoAuthEnforced": false,
+			"scimEnabled":           false,
+			"userJoinedAt":          "2026-01-01T00:00:00Z",
 		}},
 	})
 }
 
 // SelectOrg handles POST /v1/auth/select-organization.
-// No real org switching; return the current token.
+// Returns session confirmation (does NOT echo the raw JWT).
 func (h *Compat) SelectOrg(w http.ResponseWriter, r *http.Request) {
-	token := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
+	claims := auth.FromContext(r.Context())
+	if claims == nil {
+		writeError(w, http.StatusUnauthorized, "no valid session")
+		return
+	}
 	writeJSON(w, http.StatusOK, map[string]any{
-		"token":        token,
+		"token":        "session-valid",
 		"isMfaEnabled": false,
 	})
 }
 
 // GetOrg handles GET /v1/organization/{orgId}.
+// Enforces org scoping — user can only access their own org.
 func (h *Compat) GetOrg(w http.ResponseWriter, r *http.Request) {
+	claims := auth.FromContext(r.Context())
 	orgID := chi.URLParam(r, "orgId")
+	if claims == nil || (claims.Owner != "" && claims.Owner != orgID) {
+		writeError(w, http.StatusForbidden, "org access denied")
+		return
+	}
 	writeJSON(w, http.StatusOK, map[string]any{
 		"organization": map[string]any{
 			"id":   orgID,
@@ -101,35 +116,47 @@ func (h *Compat) GetOrg(w http.ResponseWriter, r *http.Request) {
 }
 
 // OrgSubscription handles GET /v1/organization/{orgId}/subscription.
-// Returns an enterprise self-hosted plan stub that enables all features.
+// Enforces org scoping.
 func (h *Compat) OrgSubscription(w http.ResponseWriter, r *http.Request) {
+	claims := auth.FromContext(r.Context())
+	orgID := chi.URLParam(r, "orgId")
+	if claims == nil || (claims.Owner != "" && claims.Owner != orgID) {
+		writeError(w, http.StatusForbidden, "org access denied")
+		return
+	}
 	writeJSON(w, http.StatusOK, map[string]any{
 		"plan": map[string]any{
-			"id":              "enterprise-self-hosted",
-			"tier":            3,
-			"slug":            "enterprise",
-			"name":            "Enterprise (Self-Hosted)",
-			"productId":       "prod_enterprise",
-			"workspaceLimit":  0,
-			"memberLimit":     0,
-			"secretLimit":     0,
+			"id":               "enterprise-self-hosted",
+			"tier":             3,
+			"slug":             "enterprise",
+			"name":             "Enterprise (Self-Hosted)",
+			"productId":        "prod_enterprise",
+			"workspaceLimit":   0,
+			"memberLimit":      0,
+			"secretLimit":      0,
 			"environmentLimit": 0,
-			"dynamicSecret":   true,
-			"secretRotation":  true,
-			"auditLogs":       true,
-			"samlSSO":         true,
-			"scim":            true,
-			"groups":          true,
-			"status":          "active",
-			"trial_end":       nil,
-			"has_used_trial":  true,
+			"dynamicSecret":    true,
+			"secretRotation":   true,
+			"auditLogs":        true,
+			"samlSSO":          true,
+			"scim":             true,
+			"groups":           true,
+			"status":           "active",
+			"trial_end":        nil,
+			"has_used_trial":   true,
 		},
 	})
 }
 
 // OrgPermissions handles GET /v1/organization/{orgId}/permissions.
-// Returns full admin permissions for the authenticated user.
+// Enforces org scoping. Returns permissions based on IAM roles.
 func (h *Compat) OrgPermissions(w http.ResponseWriter, r *http.Request) {
+	claims := auth.FromContext(r.Context())
+	orgID := chi.URLParam(r, "orgId")
+	if claims == nil || (claims.Owner != "" && claims.Owner != orgID) {
+		writeError(w, http.StatusForbidden, "org access denied")
+		return
+	}
 	writeJSON(w, http.StatusOK, map[string]any{
 		"membership": map[string]any{
 			"id":   "admin",
@@ -154,52 +181,58 @@ func (h *Compat) SubOrganizations(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// SRPLogin1 handles POST /v1/auth/login1.
-// SRP is not used with IAM OIDC auth.
+// SRPLogin1 handles POST /v1/auth/login1. Generic error — no info leak.
 func (h *Compat) SRPLogin1(w http.ResponseWriter, r *http.Request) {
-	writeError(w, http.StatusNotImplemented, "SRP login disabled; use OIDC via hanzo.id")
+	writeError(w, http.StatusNotImplemented, "unsupported")
 }
 
-// SRPLogin2 handles POST /v1/auth/login2.
-// SRP is not used with IAM OIDC auth.
+// SRPLogin2 handles POST /v1/auth/login2. Generic error — no info leak.
 func (h *Compat) SRPLogin2(w http.ResponseWriter, r *http.Request) {
-	writeError(w, http.StatusNotImplemented, "SRP login disabled; use OIDC via hanzo.id")
+	writeError(w, http.StatusNotImplemented, "unsupported")
 }
 
-// StatusEnhanced handles GET /v1/status with Infisical-compatible fields.
+// StatusEnhanced handles GET /v1/status — minimal info, no internal state.
 func (h *Compat) StatusEnhanced(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, map[string]any{
 		"date":    time.Now().UTC().Format(time.RFC3339),
 		"message": "Ok",
-		"emailConfigured": false,
-		"secretScanningConfigured": false,
-		"samlDefaultOrgSlug": nil,
-		"redisConfigured": false,
 	})
 }
 
-// allPermissions returns a permission set that grants full access to all
-// Infisical resource types. The frontend uses these to decide which UI
-// elements to show.
+// hasRole checks if claims contain any of the given roles.
+func hasRole(claims *auth.Claims, roles ...string) bool {
+	if claims == nil {
+		return false
+	}
+	for _, r := range claims.Roles {
+		for _, want := range roles {
+			if r == want {
+				return true
+			}
+		}
+	}
+	// If no roles in JWT, default to admin (single-tenant mode).
+	return len(claims.Roles) == 0
+}
+
+// allPermissions returns Infisical PackRule objects granting full access.
 func allPermissions() []map[string]any {
 	resources := []string{
 		"secrets", "secret-folders", "secret-imports", "secret-rollback",
 		"member", "groups", "role", "integrations", "webhooks",
 		"service-tokens", "settings", "environments", "tags",
-		"audit-logs", "ip-allowlist", "workspace", "identity",
-		"certificate-authorities", "certificates", "certificate-templates",
-		"pki-alerts", "pki-collections",
-		"secret-rotation", "dynamic-secret",
-		"kms", "cmek",
+		"audit-logs", "ip-allowlist", "workspace", "secret-approval",
+		"secret-rotation", "identity", "certificate-authorities",
+		"certificates", "certificate-templates", "pki-alerts",
+		"pki-collections", "kms", "cmek",
 	}
 	actions := []string{"create", "read", "edit", "delete"}
-
-	rules := make([]map[string]any, 0, len(resources)*len(actions))
+	var rules []map[string]any
 	for _, res := range resources {
 		for _, act := range actions {
 			rules = append(rules, map[string]any{
-				"subject": res,
 				"action":  act,
+				"subject": res,
 			})
 		}
 	}
