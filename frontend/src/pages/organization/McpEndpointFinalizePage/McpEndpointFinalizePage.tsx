@@ -372,7 +372,7 @@ export const McpEndpointFinalizePage = () => {
     <div className="flex min-h-screen flex-col items-center justify-center bg-bunker-800">
       <Helmet>
         <title>Authorize MCP Endpoint</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
       </Helmet>
 
       <div className="w-full max-w-md rounded-lg border border-mineshaft-600 bg-mineshaft-800 p-8 shadow-lg">

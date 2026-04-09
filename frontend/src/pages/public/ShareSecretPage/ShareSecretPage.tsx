@@ -9,7 +9,7 @@ export const ShareSecretPage = () => {
     <>
       <Helmet>
         <title>Securely Share Secrets | KMS</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <meta property="og:image" content="/images/message.png" />
         <meta property="og:title" content="" />
         <meta name="og:description" content="" />

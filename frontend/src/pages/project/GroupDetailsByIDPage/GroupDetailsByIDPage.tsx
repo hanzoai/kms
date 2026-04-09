@@ -168,7 +168,7 @@ export const GroupDetailsByIDPage = () => {
     <>
       <Helmet>
         <title>{t("common.head-title", { title: "Project Group" })}</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
       </Helmet>
       <ProjectPermissionCan
         I={ProjectPermissionActions.Read}

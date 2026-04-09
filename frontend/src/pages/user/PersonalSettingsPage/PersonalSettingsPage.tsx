@@ -17,7 +17,7 @@ export const PersonalSettingsPage = () => {
     <div className="h-full bg-bunker-800 pt-10 text-white">
       <Helmet>
         <title>{t("common.head-title", { title: t("settings.personal.title") })}</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
       </Helmet>
       <div className="flex w-full justify-center px-6 text-white">
         <div className="w-full max-w-8xl">
