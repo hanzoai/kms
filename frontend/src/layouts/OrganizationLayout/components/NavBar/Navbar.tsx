@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { faGithub, faSlack } from "@fortawesome/free-brands-svg-icons";
+import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import { faCircleQuestion, faUserCircle } from "@fortawesome/free-regular-svg-icons";
 import {
   faArrowUpRightFromSquare,
@@ -53,7 +53,7 @@ import {
   useSubscription,
   useUser
 } from "@app/context";
-import { DOCS_BASE_URL, SITE_NAME, SLACK_URL, SUPPORT_EMAIL } from "@app/helpers/brand";
+import { DOCS_BASE_URL, SITE_NAME, SUPPORT_EMAIL } from "@app/helpers/brand";
 import { isCloudDeployment } from "@app/helpers/platform";
 import { useToggle } from "@app/hooks";
 import {
@@ -109,11 +109,6 @@ Thank you,
 };
 
 export const SUPPORT_OPTIONS = [
-  [
-    <FontAwesomeIcon key={1} className="pr-4 text-sm" icon={faSlack} />,
-    "Support Forum",
-    () => SLACK_URL || "/slack"
-  ],
   [
     <FontAwesomeIcon key={2} className="pr-4 text-sm" icon={faBook} />,
     "Read Docs",
@@ -788,20 +783,6 @@ export const Navbar = () => {
           >
             <DropdownMenuItem>
               Documentation
-              <FontAwesomeIcon
-                icon={faArrowUpRightFromSquare}
-                className="text-xxs mb-[0.06rem] pl-1.5"
-              />
-            </DropdownMenuItem>
-          </a>
-          <a
-            href={SLACK_URL || "/slack"}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-3 w-full text-sm leading-[1.2rem] font-normal text-mineshaft-300 hover:text-mineshaft-100"
-          >
-            <DropdownMenuItem>
-              Join Slack Community
               <FontAwesomeIcon
                 icon={faArrowUpRightFromSquare}
                 className="text-xxs mb-[0.06rem] pl-1.5"

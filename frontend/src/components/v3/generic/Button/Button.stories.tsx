@@ -291,7 +291,7 @@ export const AsExternalLink: Story = {
   args: {
     variant: "info",
     as: "a",
-    href: "https://www.infisical.com",
+    href: "https://example.com",
     children: (
       <>
         Link <ExternalLinkIcon />

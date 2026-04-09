@@ -77,7 +77,7 @@ function createPdfContent(doc: jsPDF, personalEmail: string, generatedKey: strin
   doc.text(`${siteURL}/login`, 180, 420);
   doc.text(personalEmail, 180, 465);
   doc.text(generatedKey, 180, 510);
-  doc.text("Need help? Contact us at support@infisical.com", 32, 575);
+  doc.text("Need help? Contact your KMS administrator.", 32, 575);
 }
 
 /**
