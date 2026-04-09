@@ -299,7 +299,7 @@ export const AsExternalLink: Story = {
     variant: "info",
     asChild: true,
     children: (
-      <a target="_blank" rel="noopener noreferrer" href="https://infisical.com/">
+      <a target="_blank" rel="noopener noreferrer" href="https://example.com/">
         Link <ExternalLinkIcon />
       </a>
     )
