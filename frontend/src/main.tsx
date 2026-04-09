@@ -1,5 +1,9 @@
 import { Buffer } from "buffer";
 globalThis.Buffer = globalThis.Buffer ?? Buffer;
+// jsrp (SRP library) requires a global `process` object in the browser.
+if (typeof globalThis.process === "undefined") {
+  (globalThis as any).process = { env: {}, version: "v22.0.0", browser: true, nextTick: (fn: Function, ...args: any[]) => setTimeout(() => fn(...args), 0) };
+}
 
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
@@ -27,16 +31,14 @@ import "./translation";
 NProgress.configure({ showSpinner: false });
 
 window.addEventListener("vite:preloadError", async (event) => {
-  event.preventDefault();
-  // Get current count from session storage or initialize to 0
   const reloadCount = parseInt(sessionStorage.getItem("vitePreloadErrorCount") || "0", 10);
 
-  // Check if we've already tried 3 times
   if (reloadCount >= 2) {
+    // Don't preventDefault — let the error propagate so the app shows a real error.
     console.warn("Vite preload has failed multiple times. Stopping automatic reload.");
-    // Optionally show a user-facing message here
     return;
   }
+  event.preventDefault();
 
   try {
     if ("caches" in window) {
