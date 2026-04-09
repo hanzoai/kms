@@ -13,6 +13,7 @@
 //	APP_URL           - Public URL (optional)
 //	LOGO_URL          - Logo URL (optional, blank = no logo)
 //	KMS_FRONTEND_DIR  - Path to secrets UI dist (default /app/frontend)
+//	DISABLE_ADMIN_UI  - Set to "true" to disable Base admin at /_/
 package main
 
 import (
@@ -45,6 +46,7 @@ func main() {
 		log.Fatal("kmsd: KMS_AUTH_MODE must be 'iam' in production. Set KMS_DEV_MODE=true for insecure dev mode.")
 	}
 	frontendDir := envOr("KMS_FRONTEND_DIR", "/app/frontend")
+	disableAdmin := envOr("DISABLE_ADMIN_UI", "") == "true"
 
 	var zapClient *mpc.ZapClient
 	if vaultID != "" {
@@ -120,10 +122,15 @@ func main() {
 		e.Router.PATCH("/v1/{path...}", chiHandler)
 		e.Router.DELETE("/v1/{path...}", chiHandler)
 
-		// Serve secrets UI at / (Base admin stays at /_/).
+		// Serve secrets UI at /.
 		if info, err := os.Stat(frontendDir); err == nil && info.IsDir() {
 			frontendFS := os.DirFS(frontendDir)
 			e.Router.GET("/{path...}", func(re *core.RequestEvent) error {
+				// Block /_/ admin if disabled.
+				if disableAdmin && strings.HasPrefix(re.Request.URL.Path, "/_/") {
+					re.Response.WriteHeader(404)
+					return nil
+				}
 				p := strings.TrimPrefix(re.Request.URL.Path, "/")
 				if p == "" {
 					p = "index.html"
@@ -134,7 +141,11 @@ func main() {
 				// SPA fallback.
 				return re.FileFS(frontendFS, "index.html")
 			})
-			log.Printf("kmsd: secrets UI at /, admin at /_/")
+			if disableAdmin {
+				log.Printf("kmsd: secrets UI at /, admin disabled")
+			} else {
+				log.Printf("kmsd: secrets UI at /, admin at /_/")
+			}
 		}
 
 		return e.Next()
