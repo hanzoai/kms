@@ -91,18 +91,18 @@ export const SelectOrganizationSection = () => {
         let url = "";
         if (organization.googleSsoAuthEnforced) {
           if (authToken.authMethod !== AuthMethod.GOOGLE) {
-            url = `/api/v1/sso/redirect/google?org_slug=${organization.slug}`;
+            url = `/v1/sso/redirect/google?org_slug=${organization.slug}`;
 
             if (callbackPort) {
               url += `&callback_port=${callbackPort}`;
             }
           }
         } else if (organization.orgAuthMethod === AuthMethod.OIDC) {
-          url = `/api/v1/sso/oidc/login?orgSlug=${organization.slug}${
+          url = `/v1/sso/oidc/login?orgSlug=${organization.slug}${
             callbackPort ? `&callbackPort=${callbackPort}` : ""
           }`;
         } else if (organization.orgAuthMethod === AuthMethod.SAML) {
-          url = `/api/v1/sso/redirect/saml2/organizations/${organization.slug}`;
+          url = `/v1/sso/redirect/saml2/organizations/${organization.slug}`;
 
           if (callbackPort) {
             url += `?callback_port=${callbackPort}`;
@@ -270,7 +270,7 @@ export const SelectOrganizationSection = () => {
     <div className="flex max-h-screen min-h-screen flex-col justify-center overflow-y-auto bg-linear-to-tr from-mineshaft-600 via-mineshaft-800 to-bunker-700">
       <Helmet>
         <title>{t("common.head-title", { title: t("login.title") })}</title>
-        <link rel="icon" href="/hanzo.ico" />
+        <link rel="icon" href="/favicon.ico" />
         <meta property="og:image" content="/images/message.png" />
         <meta property="og:title" content={t("login.og-title") ?? ""} />
         <meta name="og:description" content={t("login.og-description") ?? ""} />
@@ -286,7 +286,7 @@ export const SelectOrganizationSection = () => {
           <Link to="/">
             <div className="mb-4 flex justify-center">
               <img
-                src="/images/gradientLogo.svg"
+                src="/images/logo.svg"
                 style={{
                   height: "90px",
                   width: "120px"

@@ -9,7 +9,7 @@ export const ShareSecretPage = () => {
     <>
       <Helmet>
         <title>Securely Share Secrets | KMS</title>
-        <link rel="icon" href="/hanzo.ico" />
+        <link rel="icon" href="/favicon.ico" />
         <meta property="og:image" content="/images/message.png" />
         <meta property="og:title" content="" />
         <meta name="og:description" content="" />
@@ -22,7 +22,7 @@ export const ShareSecretPage = () => {
               <div className="mb-4 flex justify-center pt-8">
                 <a target="_blank" rel="noopener noreferrer" href="/">
                   <img
-                    src="/images/gradientLogo.svg"
+                    src="/images/logo.svg"
                     height={90}
                     width={120}
                     alt="KMS logo"

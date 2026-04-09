@@ -316,9 +316,9 @@ export const Navbar = () => {
 
       await logout.mutateAsync();
       if (org.orgAuthMethod === AuthMethod.OIDC) {
-        window.open(`/api/v1/sso/oidc/login?orgSlug=${org.slug}`);
+        window.open(`/v1/sso/oidc/login?orgSlug=${org.slug}`);
       } else {
-        window.open(`/api/v1/sso/redirect/saml2/organizations/${org.slug}`);
+        window.open(`/v1/sso/redirect/saml2/organizations/${org.slug}`);
       }
       window.close();
       return;
@@ -326,7 +326,7 @@ export const Navbar = () => {
 
     if (org.googleSsoAuthEnforced) {
       await logout.mutateAsync();
-      window.open(`/api/v1/sso/redirect/google?org_slug=${org.slug}`);
+      window.open(`/v1/sso/redirect/google?org_slug=${org.slug}`);
       window.close();
       return;
     }

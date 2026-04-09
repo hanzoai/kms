@@ -46,7 +46,7 @@ export const VerifyEmailPage = () => {
     <div className="flex min-h-screen flex-col justify-center bg-linear-to-tr from-mineshaft-600 via-mineshaft-800 to-bunker-700 px-6 pb-28">
       <Helmet>
         <title>Reset Password</title>
-        <link rel="icon" href="/hanzo.ico" />
+        <link rel="icon" href="/favicon.ico" />
         <meta property="og:image" content="/images/message.png" />
         <meta property="og:title" content="Verify your email in KMS" />
         <meta
@@ -57,7 +57,7 @@ export const VerifyEmailPage = () => {
       <Link to="/">
         <div className="mt-20 mb-4 flex justify-center">
           <img
-            src="/images/gradientLogo.svg"
+            src="/images/logo.svg"
             style={{
               height: "90px",
               width: "120px"

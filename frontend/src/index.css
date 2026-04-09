@@ -62,18 +62,18 @@
   --color-org-v1: #30b3ff;
   --color-namespace-v1: #96ff59;
 
-  /* Primary */
-  --color-primary-50: #fffff5;
-  --color-primary-100: #fcfce8;
-  --color-primary-200: #f8faca;
-  --color-primary-300: #f4f7ab;
-  --color-primary-400: #ecf26d;
-  --color-primary-500: #e0ed34;
-  --color-primary-600: #c2d62b;
-  --color-primary-700: #97b31d;
-  --color-primary-800: #708f13;
-  --color-primary-900: #4d6b0b;
-  --color-primary: #e0ed34;
+  /* Primary — monochrome white/gray */
+  --color-primary-50: #fafafa;
+  --color-primary-100: #f5f5f5;
+  --color-primary-200: #e5e5e5;
+  --color-primary-300: #d4d4d4;
+  --color-primary-400: #a3a3a3;
+  --color-primary-500: #ffffff;
+  --color-primary-600: #e5e5e5;
+  --color-primary-700: #a3a3a3;
+  --color-primary-800: #737373;
+  --color-primary-900: #525252;
+  --color-primary: #ffffff;
 
   /* Grey + Misc */
   --color-grey: #0d1117;
