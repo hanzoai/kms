@@ -32,6 +32,8 @@ func RegisterRoutes(
 	// Returns 200 with empty token when no valid session.
 	r.Post("/v1/auth/token", compat.AuthToken)
 	r.Post("/v1/auth/select-organization", compat.SelectOrg)
+	r.Get("/v1/sso/oidc/login", compat.OIDCLogin)
+	r.Get("/v1/sso/oidc/callback", compat.OIDCCallback)
 
 	// Authenticated routes.
 	r.Group(func(r chi.Router) {

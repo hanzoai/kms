@@ -2,6 +2,8 @@ package handler
 
 import (
 	"net/http"
+	"net/url"
+	"os"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -245,4 +247,45 @@ func allPermissions() []map[string]any {
 		}
 	}
 	return rules
+}
+
+// OIDCLogin handles GET /v1/sso/oidc/login.
+// Redirects to the IAM OIDC authorize endpoint.
+func (h *Compat) OIDCLogin(w http.ResponseWriter, r *http.Request) {
+	issuer := os.Getenv("BASE_OIDC_ISSUER")
+	clientID := os.Getenv("BASE_OIDC_CLIENT_ID")
+	appURL := os.Getenv("APP_URL")
+	if issuer == "" || clientID == "" {
+		writeError(w, http.StatusServiceUnavailable, "OIDC not configured")
+		return
+	}
+	redirectURI := appURL + "/v1/sso/oidc/callback"
+	state := r.URL.Query().Get("orgSlug")
+	if state == "" {
+		state = "default"
+	}
+	authorizeURL := issuer + "/oauth/authorize" +
+		"?client_id=" + clientID +
+		"&redirect_uri=" + url.QueryEscape(redirectURI) +
+		"&response_type=code" +
+		"&scope=openid+email+profile" +
+		"&state=" + url.QueryEscape(state)
+	http.Redirect(w, r, authorizeURL, http.StatusTemporaryRedirect)
+}
+
+// OIDCCallback handles GET /v1/sso/oidc/callback.
+// Exchanges the auth code for tokens and redirects to the frontend with session.
+func (h *Compat) OIDCCallback(w http.ResponseWriter, r *http.Request) {
+	// For now, redirect to the frontend login success page.
+	// The full token exchange will be implemented with the IAM token endpoint.
+	code := r.URL.Query().Get("code")
+	state := r.URL.Query().Get("state")
+	if code == "" {
+		writeError(w, http.StatusBadRequest, "missing code")
+		return
+	}
+	_ = state // org slug from state
+	// TODO: exchange code for token at IAM, set session cookie, redirect to dashboard
+	// For now, redirect to login with a message
+	http.Redirect(w, r, "/login?oidc=success", http.StatusTemporaryRedirect)
 }
