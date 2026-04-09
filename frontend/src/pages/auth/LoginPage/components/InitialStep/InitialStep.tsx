@@ -53,7 +53,7 @@ export const InitialStep = ({
 
   const redirectToSaml = (orgSlug: string) => {
     const callbackPort = queryParams.get("callback_port");
-    const redirectUrl = `/api/v1/sso/redirect/saml2/organizations/${orgSlug}${
+    const redirectUrl = `/v1/sso/redirect/saml2/organizations/${orgSlug}${
       callbackPort ? `?callback_port=${callbackPort}` : ""
     }`;
 
@@ -62,7 +62,7 @@ export const InitialStep = ({
 
   const redirectToOidc = (orgSlug: string) => {
     const callbackPort = queryParams.get("callback_port");
-    const redirectUrl = `/api/v1/sso/oidc/login?orgSlug=${orgSlug}${
+    const redirectUrl = `/v1/sso/oidc/login?orgSlug=${orgSlug}${
       callbackPort ? `&callbackPort=${callbackPort}` : ""
     }`;
 
@@ -202,7 +202,7 @@ export const InitialStep = ({
               leftIcon={<FontAwesomeIcon icon={faLock} className="mr-2" />}
               className="mx-0 h-10 w-full"
             >
-              Continue with OIDC
+              Login with Liquid ID
             </Button>
           </div>
         )}
@@ -241,7 +241,7 @@ export const InitialStep = ({
             leftIcon={<FontAwesomeIcon icon={faLock} className="mr-2" />}
             className="mx-0 h-10 w-full"
           >
-            Continue with OIDC
+            Login with Liquid ID
           </Button>
         </div>
       )}
@@ -281,7 +281,7 @@ export const InitialStep = ({
 
                 const queryString = searchParams.toString();
 
-                window.open(`/api/v1/sso/redirect/google${queryString ? `?${queryString}` : ""}`);
+                window.open(`/v1/sso/redirect/google${queryString ? `?${queryString}` : ""}`);
                 window.close();
               }}
               className="h-10 w-full bg-mineshaft-600"
@@ -310,7 +310,7 @@ export const InitialStep = ({
 
                 const queryString = searchParams.toString();
 
-                window.open(`/api/v1/sso/redirect/github${queryString ? `?${queryString}` : ""}`);
+                window.open(`/v1/sso/redirect/github${queryString ? `?${queryString}` : ""}`);
                 window.close();
               }}
               className="h-10 w-full bg-mineshaft-600"
@@ -339,7 +339,7 @@ export const InitialStep = ({
 
                 const queryString = searchParams.toString();
 
-                window.open(`/api/v1/sso/redirect/gitlab${queryString ? `?${queryString}` : ""}`);
+                window.open(`/v1/sso/redirect/gitlab${queryString ? `?${queryString}` : ""}`);
                 window.close();
               }}
               className="h-10 w-full bg-mineshaft-600"

@@ -16,7 +16,7 @@ export const useGetOIDCConfig = (orgId: string) => {
     queryFn: async () => {
       try {
         const { data } = await apiRequest.get<OIDCConfigData>(
-          `/api/v1/sso/oidc/config?organizationId=${orgId}`
+          `/v1/sso/oidc/config?organizationId=${orgId}`
         );
 
         return data;
@@ -33,7 +33,7 @@ export const useOidcManageGroupMembershipsEnabled = (orgId: string) => {
     queryKey: oidcConfigKeys.getOIDCManageGroupMembershipsEnabled(orgId),
     queryFn: async () => {
       const { data } = await apiRequest.get<{ isEnabled: boolean }>(
-        `/api/v1/sso/oidc/manage-group-memberships?orgId=${orgId}`
+        `/v1/sso/oidc/manage-group-memberships?orgId=${orgId}`
       );
 
       return data.isEnabled;

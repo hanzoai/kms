@@ -13,7 +13,7 @@ export const useGetSSOConfig = (organizationId: string) => {
     queryFn: async () => {
       try {
         const { data } = await apiRequest.get(
-          `/api/v1/sso/config?organizationId=${organizationId}`
+          `/v1/sso/config?organizationId=${organizationId}`
         );
 
         return data;

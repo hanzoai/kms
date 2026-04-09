@@ -83,7 +83,7 @@ export const EmailConfirmationStep = ({
 
     switch (authType) {
       case UserAliasType.SAML: {
-        window.open(`/api/v1/sso/redirect/saml2/organizations/${organizationSlug}`);
+        window.open(`/v1/sso/redirect/saml2/organizations/${organizationSlug}`);
         window.close();
         break;
       }
@@ -92,7 +92,7 @@ export const EmailConfirmationStep = ({
         break;
       }
       case UserAliasType.OIDC: {
-        window.open(`/api/v1/sso/oidc/login?orgSlug=${organizationSlug}`);
+        window.open(`/v1/sso/oidc/login?orgSlug=${organizationSlug}`);
         window.close();
         break;
       }

@@ -68,7 +68,7 @@ export const ApprovalsPage = () => {
   return (
     <>
       <Helmet>
-        <link rel="icon" href="/hanzo.ico" />
+        <link rel="icon" href="/favicon.ico" />
       </Helmet>
       <Page />
     </>
