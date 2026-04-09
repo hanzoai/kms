@@ -286,7 +286,7 @@ export const SelectOrganizationSection = () => {
           <Link to="/">
             <div className="mb-4 flex justify-center">
               <img
-                src="/images/logo.svg"
+                src="/images/logo.png"
                 style={{
                   height: "90px",
                   width: "120px"
