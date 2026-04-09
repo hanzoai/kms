@@ -4,7 +4,7 @@ COPY frontend/package.json frontend/pnpm-lock.yaml ./
 RUN corepack enable pnpm && pnpm install --frozen-lockfile
 COPY frontend/src/ ./src/
 COPY frontend/public/ ./public/
-COPY frontend/index.html frontend/vite.config.ts frontend/tsconfig*.json ./
+COPY frontend/index.html frontend/vite.config.ts frontend/postcss.config.js frontend/tsconfig*.json ./
 RUN pnpm vite build && ls dist/runtime-ui-env.js dist/favicon.svg dist/images/logo.svg
 
 FROM golang:1.26-bookworm AS build
