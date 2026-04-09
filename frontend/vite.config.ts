@@ -29,6 +29,11 @@ export default defineConfig(({ mode }) => {
   ).replaceAll(".", "-");
 
   return {
+    define: {
+      "process.env": "{}",
+      "process.version": '"v22.0.0"',
+      "process.browser": "true",
+    },
     server: {
       allowedHosts,
       host: true,
