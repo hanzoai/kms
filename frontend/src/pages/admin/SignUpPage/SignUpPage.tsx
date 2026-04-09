@@ -90,7 +90,7 @@ export const SignUpPage = () => {
             exit={{ opacity: 0, translateX: 30 }}
           >
             <div className="flex flex-col items-center space-y-2 text-center">
-              <img src="/images/logo.svg" height={90} width={120} alt="KMS logo" />
+              <img src="/images/logo.png" height={90} width={120} alt="KMS logo" />
               <div className="pt-4 text-4xl">Welcome to KMS</div>
               <div className="pb-4 text-bunker-300">Create your first Super Admin Account</div>
             </div>

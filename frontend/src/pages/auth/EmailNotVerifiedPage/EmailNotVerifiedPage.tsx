@@ -10,7 +10,7 @@ export const EmailNotVerifiedPage = () => {
       </Helmet>
       <Link to="/">
         <div className="mt-20 mb-4 flex justify-center">
-          <img src="/images/logo.svg" className="h-[90px] w-[120px]" alt="KMS Logo" />
+          <img src="/images/logo.png" className="h-[90px] w-[120px]" alt="KMS Logo" />
         </div>
       </Link>
       <div className="mx-auto flex w-full flex-col items-center justify-center">

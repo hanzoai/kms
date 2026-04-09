@@ -280,7 +280,7 @@ export const SignupInvitePage = () => {
         <>
           <Link to="/">
             <div className="mt-20 mb-4 flex justify-center">
-              <img src="/images/logo.svg" height={90} width={120} alt="KMS Logo" />
+              <img src="/images/logo.png" height={90} width={120} alt="KMS Logo" />
             </div>
           </Link>
           {step === 1 && stepConfirmEmail}
