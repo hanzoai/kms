@@ -40,7 +40,7 @@ export const PkiSyncOptionsFields = ({ destination }: Props) => {
                   content={
                     <>
                       <p>
-                        When enabled, Infisical will automatically import certificates from the PKI
+                        When enabled, KMS will automatically import certificates from the PKI
                         subscriber to the destination during sync operations.
                       </p>
                       <p className="mt-4">
@@ -77,12 +77,12 @@ export const PkiSyncOptionsFields = ({ destination }: Props) => {
                   content={
                     <>
                       <p>
-                        When enabled, Infisical will remove certificates from the destination during
-                        a sync if they are no longer active in Infisical.
+                        When enabled, KMS will remove certificates from the destination during
+                        a sync if they are no longer active in KMS.
                       </p>
                       <p className="mt-4">
                         Disable this option if you intend to manage some certificates manually
-                        outside of Infisical.
+                        outside of KMS.
                       </p>
                     </>
                   }
@@ -157,7 +157,7 @@ export const PkiSyncOptionsFields = ({ destination }: Props) => {
                     content={
                       <>
                         <p>
-                          When enabled, Infisical will replace the contents of existing certificates
+                          When enabled, KMS will replace the contents of existing certificates
                           while preserving the same ARN during certificate renewal syncs.
                         </p>
                         <p className="mt-4">
@@ -200,7 +200,7 @@ export const PkiSyncOptionsFields = ({ destination }: Props) => {
                     content={
                       <>
                         <p>
-                          When enabled, Infisical will create a new version of the existing
+                          When enabled, KMS will create a new version of the existing
                           certificate in Azure Key Vault during certificate renewal syncs,
                           preserving the original certificate name.
                         </p>
@@ -246,7 +246,7 @@ export const PkiSyncOptionsFields = ({ destination }: Props) => {
                       <>
                         <p>
                           <strong>Only applies to certificate renewals:</strong> When a certificate
-                          is renewed in Infisical, this option controls how the renewed certificate
+                          is renewed in KMS, this option controls how the renewed certificate
                           is handled in AWS Secrets Manager.
                         </p>
                         <p className="mt-4">
@@ -291,7 +291,7 @@ export const PkiSyncOptionsFields = ({ destination }: Props) => {
                       <>
                         <p>
                           <strong>Only applies to certificate renewals:</strong> When a certificate
-                          is renewed in Infisical, this option controls how the renewed certificate
+                          is renewed in KMS, this option controls how the renewed certificate
                           is handled in Chef.
                         </p>
                         <p className="mt-4">
@@ -354,7 +354,7 @@ export const PkiSyncOptionsFields = ({ destination }: Props) => {
             isOptional
             errorText={error?.message}
             label="Certificate Name Schema"
-            helperText="Infisical strongly advises setting a Certificate Name Schema to ensure that Infisical only manages the specific certificates you intend to manage, keeping everything else untouched."
+            helperText="KMS strongly advises setting a Certificate Name Schema to ensure that KMS only manages the specific certificates you intend to manage, keeping everything else untouched."
           >
             <Input
               value={value || ""}

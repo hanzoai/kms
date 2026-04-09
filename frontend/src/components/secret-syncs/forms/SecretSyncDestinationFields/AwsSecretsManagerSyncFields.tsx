@@ -36,18 +36,18 @@ export const AwsSecretsManagerSyncFields = () => {
             tooltipClassName="max-w-lg py-3"
             tooltipText={
               <div className="flex flex-col gap-3">
-                <p>Specify how Infisical should map secrets to AWS Secrets Manager:</p>
+                <p>Specify how KMS should map secrets to AWS Secrets Manager:</p>
                 <ul className="flex list-disc flex-col gap-3 pl-4">
                   <li>
                     <p className="text-mineshaft-300">
                       <span className="font-medium text-bunker-200">One-To-One</span>: Each
-                      Infisical secret will be mapped to a separate AWS Secrets Manager secret.
+                      KMS secret will be mapped to a separate AWS Secrets Manager secret.
                     </p>
                   </li>
                   <li>
                     <p className="text-mineshaft-300">
                       <span className="font-medium text-bunker-200">Many-To-One</span>: All
-                      Infisical secrets will be mapped to a single AWS Secrets Manager secret.
+                      KMS secrets will be mapped to a single AWS Secrets Manager secret.
                     </p>
                   </li>
                 </ul>
