@@ -4,8 +4,7 @@ COPY frontend/package.json frontend/pnpm-lock.yaml ./
 RUN corepack enable pnpm && pnpm install --frozen-lockfile
 COPY frontend/ .
 RUN pnpm vite build \
-    && grep -q "lqdtyGrad" dist/images/logo.svg \
-    && ls dist/favicon.svg dist/runtime-ui-env.js
+    && ls dist/images/logo.png dist/favicon.ico dist/runtime-ui-env.js
 
 FROM golang:1.26-bookworm AS build
 
