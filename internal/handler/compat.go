@@ -19,12 +19,16 @@ func NewCompat() *Compat { return &Compat{} }
 // AuthToken handles POST /v1/auth/token.
 // Returns a confirmation that the session is valid (does NOT echo the raw JWT).
 func (h *Compat) AuthToken(w http.ResponseWriter, r *http.Request) {
+	// This endpoint is unauthenticated — the frontend calls it to check
+	// for an existing session before showing the login form.
+	// If no valid auth header, return empty token (no session).
 	claims := auth.FromContext(r.Context())
 	if claims == nil {
-		writeError(w, http.StatusUnauthorized, "no valid session")
+		writeJSON(w, http.StatusOK, map[string]any{
+			"token": "",
+		})
 		return
 	}
-	// Return a session confirmation — frontend already has the token.
 	writeJSON(w, http.StatusOK, map[string]any{
 		"token": "session-valid",
 	})
@@ -88,7 +92,10 @@ func (h *Compat) ListOrgs(w http.ResponseWriter, r *http.Request) {
 func (h *Compat) SelectOrg(w http.ResponseWriter, r *http.Request) {
 	claims := auth.FromContext(r.Context())
 	if claims == nil {
-		writeError(w, http.StatusUnauthorized, "no valid session")
+		writeJSON(w, http.StatusOK, map[string]any{
+			"token":        "",
+			"isMfaEnabled": false,
+		})
 		return
 	}
 	writeJSON(w, http.StatusOK, map[string]any{
