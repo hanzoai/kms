@@ -138,7 +138,7 @@ importers:
         specifier: ^5.62.7
         version: 5.96.2(react@18.3.1)
       '@tanstack/react-router':
-        specifier: ^1.95.1
+        specifier: ^1.168.10
         version: 1.168.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tanstack/virtual-file-routes':
         specifier: ^1.87.6
@@ -319,7 +319,7 @@ importers:
         specifier: ^1.87.9
         version: 1.166.11(@tanstack/react-router@1.168.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@tanstack/router-core@1.168.9)(csstype@3.2.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tanstack/router-plugin':
-        specifier: ^1.95.1
+        specifier: ^1.167.12
         version: 1.167.12(@tanstack/react-router@1.168.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(vite@6.4.2(@types/node@25.5.2)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
       '@types/argon2-browser':
         specifier: ^1.18.4
