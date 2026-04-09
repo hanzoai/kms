@@ -211,7 +211,7 @@ func (h *Compat) SRPLogin2(w http.ResponseWriter, r *http.Request) {
 	writeError(w, http.StatusNotImplemented, "unsupported")
 }
 
-// UniversalAuthLogin handles POST /api/v1/auth/universal-auth/login.
+// UniversalAuthLogin handles POST /v2/kms/auth/login (legacy: /v1/auth/universal-auth/login).
 // Infisical-compatible machine identity authentication.
 // Accepts clientId + clientSecret, returns an accessToken (JWT signed by IAM).
 func (h *Compat) UniversalAuthLogin(w http.ResponseWriter, r *http.Request) {
@@ -296,7 +296,7 @@ func (h *Compat) UniversalAuthLogin(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// GetSecretRaw handles GET /api/v3/secrets/raw/{name}.
+// GetSecretRaw handles GET /v4/kms/secrets/{name} (legacy: /v3/secrets/raw/{name}).
 // Infisical-compatible raw secret fetch for CI/CD and machine identity flows.
 func (h *Compat) GetSecretRaw(w http.ResponseWriter, r *http.Request) {
 	name := chi.URLParam(r, "name")
