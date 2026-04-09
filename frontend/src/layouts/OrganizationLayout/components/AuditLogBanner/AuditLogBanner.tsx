@@ -1,4 +1,5 @@
 import { useFetchServerStatus, useListAuditLogStreams } from "@app/hooks/api";
+import { DOCS_BASE_URL } from "@app/helpers/brand";
 
 import { OrgAlertBanner } from "../OrgAlertBanner";
 
@@ -12,7 +13,7 @@ export const AuditLogBanner = () => {
     return (
       <OrgAlertBanner
         text="Attention: Audit logs storage is disabled but no audit log streams have been configured."
-        link="https://infisical.com/docs/documentation/platform/audit-log-streams/audit-log-streams"
+        link={`${DOCS_BASE_URL}/documentation/platform/audit-log-streams/audit-log-streams`}
       />
     );
   }

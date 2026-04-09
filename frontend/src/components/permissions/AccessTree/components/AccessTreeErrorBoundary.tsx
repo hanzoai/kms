@@ -47,9 +47,9 @@ const ErrorDisplay = ({
             className="inline cursor-pointer text-mineshaft-200 underline decoration-primary-500 underline-offset-4 duration-200 hover:text-mineshaft-100"
             target="_blank"
             rel="noopener noreferrer"
-            href="mailto:support@infisical.com"
+            href="mailto:support@example.com"
           >
-            support@infisical.com
+            support
           </a>{" "}
           with the following information.
         </p>
