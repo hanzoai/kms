@@ -1,35 +1,40 @@
-import { forwardRef, ReactNode, useRef } from "react";
-import { DotLottie, DotLottieReact, Mode } from "@lottiefiles/dotlottie-react";
+import { forwardRef, ReactNode } from "react";
 
 export type LottieProps = {
-  // Kudos to https://itnext.io/react-polymorphic-components-with-typescript-f7ce72ea7af2
   children?: ReactNode;
   icon?: string;
-  iconMode?: Mode;
+  iconMode?: string;
   className?: string;
   isAutoPlay?: boolean;
 };
 
+// Replaced dotlottie WASM component with a simple CSS spinner.
+// The WASM binary had version mismatches causing blank screens.
 export const Lottie = forwardRef<HTMLDivElement, LottieProps>(
-  ({ children, icon, iconMode, isAutoPlay, ...props }, ref): JSX.Element => {
-    const iconRef = useRef<DotLottie | null>(null);
+  ({ children, className, ...props }, ref): JSX.Element => {
     return (
-      <div
-        onMouseEnter={() => iconRef.current?.play()}
-        onMouseLeave={() => iconRef.current?.stop()}
-        {...props}
-        ref={ref}
-      >
-        <DotLottieReact
-          dotLottieRefCallback={(el) => {
-            iconRef.current = el;
+      <div {...props} ref={ref} className={className}>
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
-          mode={iconMode}
-          src={`/lotties/${icon}.json`}
-          loop
-          autoplay={isAutoPlay}
-          className="h-full w-full"
-        />
+        >
+          <div
+            style={{
+              width: "2rem",
+              height: "2rem",
+              border: "2px solid rgba(255,255,255,0.2)",
+              borderTopColor: "white",
+              borderRadius: "50%",
+              animation: "spin 0.8s linear infinite",
+            }}
+          />
+          <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
+        </div>
         {children}
       </div>
     );
