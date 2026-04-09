@@ -27,6 +27,10 @@ func RegisterRoutes(
 	r.Post("/v1/auth/login1", compat.SRPLogin1)
 	r.Post("/v1/auth/login2", compat.SRPLogin2)
 
+	// Infisical-compatible machine identity auth (CI/CD, make login, SDKs).
+	r.Post("/api/v1/auth/universal-auth/login", compat.UniversalAuthLogin)
+	r.Get("/api/v3/secrets/raw/{name}", compat.GetSecretRaw)
+
 	// Auth token check — must NOT 401 for unauthenticated users.
 	// The frontend calls this to check for existing sessions.
 	// Returns 200 with empty token when no valid session.
