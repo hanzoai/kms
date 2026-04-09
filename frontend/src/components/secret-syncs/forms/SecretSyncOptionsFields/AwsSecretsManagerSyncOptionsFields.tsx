@@ -232,7 +232,7 @@ export const AwsSecretsManagerSyncOptionsFields = () => {
                       <>
                         <p>
                           If enabled, metadata attached to secrets will be added as tags to secrets
-                          synced by Infisical.
+                          synced by KMS.
                         </p>
                         <p className="mt-4">
                           Manually configured tags from the field above will take precedence over

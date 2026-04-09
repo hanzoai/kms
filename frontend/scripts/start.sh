@@ -1,9 +1,5 @@
 #!/bin/sh
 
-scripts/replace-variable.sh "$BAKED_NEXT_PUBLIC_POSTHOG_API_KEY" "$NEXT_PUBLIC_POSTHOG_API_KEY"
-
-scripts/replace-variable.sh "$BAKED_NEXT_PUBLIC_INTERCOM_ID" "$NEXT_PUBLIC_INTERCOM_ID"
-
 scripts/replace-variable.sh "$BAKED_NEXT_SAML_ORG_SLUG" "$NEXT_PUBLIC_SAML_ORG_SLUG"
 
 scripts/replace-variable.sh "$BAKED_NEXT_PUBLIC_CAPTCHA_SITE_KEY" "$NEXT_PUBLIC_CAPTCHA_SITE_KEY"
