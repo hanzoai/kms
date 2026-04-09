@@ -39,7 +39,7 @@ export const PasswordResetPage = () => {
     <div className="flex min-h-screen flex-col justify-center bg-linear-to-tr from-mineshaft-600 via-mineshaft-800 to-bunker-700 px-6 pb-28">
       <Link to="/">
         <div className="mt-20 mb-4 flex justify-center">
-          <img src="/images/logo.svg" className="h-[90px] w-[120px]" alt="KMS Logo" />
+          <img src="/images/logo.png" className="h-[90px] w-[120px]" alt="KMS Logo" />
         </div>
       </Link>
       {step === Steps.ConfirmEmail && (
