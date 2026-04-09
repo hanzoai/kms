@@ -18,7 +18,7 @@ import {
   SecretErrorContainer
 } from "@app/pages/public/ViewSharedSecretByIDPage/components";
 
-export const DEFAULT_LOGO_URL = "/images/logo.svg";
+export const DEFAULT_LOGO_URL = "/images/logo.png";
 export const DEFAULT_FAVICON_URL = "/favicon.ico";
 
 // Returns true if the color is considered "light"

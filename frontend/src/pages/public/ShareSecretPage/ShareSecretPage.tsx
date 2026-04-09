@@ -22,7 +22,7 @@ export const ShareSecretPage = () => {
               <div className="mb-4 flex justify-center pt-8">
                 <a target="_blank" rel="noopener noreferrer" href="/">
                   <img
-                    src="/images/logo.svg"
+                    src="/images/logo.png"
                     height={90}
                     width={120}
                     alt="KMS logo"

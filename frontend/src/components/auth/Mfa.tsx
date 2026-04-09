@@ -381,7 +381,7 @@ export const Mfa = ({ successCallback, closeMfa, hideLogo, email, method }: Prop
       {!hideLogo && (
         <Link to="/">
           <div className="mb-4 flex justify-center">
-            <img src="/images/logo.svg" height={90} width={120} alt="KMS logo" />
+            <img src="/images/logo.png" height={90} width={120} alt="KMS logo" />
           </div>
         </Link>
       )}
