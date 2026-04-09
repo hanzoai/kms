@@ -80,7 +80,7 @@ export const OrgGeneralAuthSection = ({
         setEnforcementTypeInModal(null);
 
         await logout.mutateAsync();
-        window.open(`/api/v1/sso/redirect/saml2/organizations/${currentOrg.slug}`);
+        window.open(`/v1/sso/redirect/saml2/organizations/${currentOrg.slug}`);
         window.close();
       } else if (enforcementTypeInModal === EnforceAuthType.GOOGLE) {
         await mutateAsync({
@@ -98,7 +98,7 @@ export const OrgGeneralAuthSection = ({
         setEnforcementTypeInModal(null);
 
         await logout.mutateAsync();
-        window.open(`/api/v1/sso/redirect/google?org_slug=${currentOrg.slug}`);
+        window.open(`/v1/sso/redirect/google?org_slug=${currentOrg.slug}`);
         window.close();
       }
     } catch (err) {

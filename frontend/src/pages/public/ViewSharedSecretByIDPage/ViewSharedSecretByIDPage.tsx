@@ -18,8 +18,8 @@ import {
   SecretErrorContainer
 } from "@app/pages/public/ViewSharedSecretByIDPage/components";
 
-export const DEFAULT_LOGO_URL = "/images/gradientLogo.svg";
-export const DEFAULT_FAVICON_URL = "/hanzo.ico";
+export const DEFAULT_LOGO_URL = "/images/logo.svg";
+export const DEFAULT_FAVICON_URL = "/favicon.ico";
 
 // Returns true if the color is considered "light"
 export const isLightColor = (hexColor: string): boolean => {

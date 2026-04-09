@@ -128,13 +128,13 @@ export const SignUpPage = () => {
     <div className="flex max-h-screen min-h-screen flex-col justify-center overflow-y-auto bg-linear-to-tr from-mineshaft-600 via-mineshaft-800 to-bunker-700 px-6 pb-28">
       <Helmet>
         <title>{t("common.head-title", { title: t("signup.title") })}</title>
-        <link rel="icon" href="/hanzo.ico" />
+        <link rel="icon" href="/favicon.ico" />
         <meta property="og:image" content="/images/message.png" />
         <meta property="og:title" content={t("signup.og-title") as string} />
         <meta name="og:description" content={t("signup.og-description") as string} />
       </Helmet>
       <div className="mt-20 mb-4 flex justify-center">
-        <img src="/images/gradientLogo.svg" height={90} width={120} alt="KMS Logo" />
+        <img src="/images/logo.svg" height={90} width={120} alt="KMS Logo" />
       </div>
       <form onSubmit={(e) => e.preventDefault()}>{renderView(step)}</form>
     </div>
