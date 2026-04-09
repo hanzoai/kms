@@ -136,7 +136,7 @@ export const SecretSyncDetailsByIDPage = () => {
     <>
       <Helmet>
         <title>Secret Sync | KMS</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
       </Helmet>
       <ProjectPermissionCan
         renderGuardBanner

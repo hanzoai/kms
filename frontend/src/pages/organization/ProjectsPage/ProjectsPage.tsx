@@ -78,7 +78,7 @@ export const ProjectsPage = () => {
     <div className="mx-auto flex max-w-8xl flex-col justify-start bg-bunker-800">
       <Helmet>
         <title>{t("common.head-title", { title: t("settings.members.title") })}</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
       </Helmet>
       <PageHeader
         scope={isSubOrganization ? "namespace" : "org"}

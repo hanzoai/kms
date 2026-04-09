@@ -6,7 +6,7 @@ export const EmailNotVerifiedPage = () => {
     <div className="flex min-h-screen flex-col justify-center bg-linear-to-tr from-mineshaft-600 via-mineshaft-800 to-bunker-700 px-6 pb-28">
       <Helmet>
         <title>Request a New Invite</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
       </Helmet>
       <Link to="/">
         <div className="mt-20 mb-4 flex justify-center">
