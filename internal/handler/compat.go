@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/url"
 	"os"
@@ -19,21 +20,30 @@ type Compat struct{}
 func NewCompat() *Compat { return &Compat{} }
 
 // AuthToken handles POST /v1/auth/token.
-// Returns a confirmation that the session is valid (does NOT echo the raw JWT).
+// Returns the access token if a valid session cookie exists, or 401 otherwise.
 func (h *Compat) AuthToken(w http.ResponseWriter, r *http.Request) {
-	// Frontend calls this to check for existing sessions.
-	// Must return 401 (not 200) when no session — the frontend's
-	// .catch(() => null) depends on the HTTP error status.
-	claims := auth.FromContext(r.Context())
-	if claims == nil {
-		writeJSON(w, http.StatusUnauthorized, map[string]any{
-			"statusCode": 401,
-			"message":    "Token has expired",
+	// Check for session cookie set by OIDC callback.
+	cookie, err := r.Cookie("jid")
+	if err == nil && cookie.Value != "" {
+		writeJSON(w, http.StatusOK, map[string]any{
+			"token": cookie.Value,
 		})
 		return
 	}
-	writeJSON(w, http.StatusOK, map[string]any{
-		"token": "session-valid",
+
+	// Check claims from auth middleware (Bearer token path).
+	claims := auth.FromContext(r.Context())
+	if claims != nil {
+		writeJSON(w, http.StatusOK, map[string]any{
+			"token": "session-valid",
+		})
+		return
+	}
+
+	// No session.
+	writeJSON(w, http.StatusUnauthorized, map[string]any{
+		"statusCode": 401,
+		"message":    "Token has expired",
 	})
 }
 
@@ -274,18 +284,61 @@ func (h *Compat) OIDCLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 // OIDCCallback handles GET /v1/sso/oidc/callback.
-// Exchanges the auth code for tokens and redirects to the frontend with session.
+// Exchanges the auth code for tokens at IAM, sets a session cookie, and
+// redirects to the frontend org-selection page.
 func (h *Compat) OIDCCallback(w http.ResponseWriter, r *http.Request) {
-	// For now, redirect to the frontend login success page.
-	// The full token exchange will be implemented with the IAM token endpoint.
 	code := r.URL.Query().Get("code")
-	state := r.URL.Query().Get("state")
 	if code == "" {
 		writeError(w, http.StatusBadRequest, "missing code")
 		return
 	}
-	_ = state // org slug from state
-	// TODO: exchange code for token at IAM, set session cookie, redirect to dashboard
-	// For now, redirect to login with a message
-	http.Redirect(w, r, "/login?oidc=success", http.StatusTemporaryRedirect)
+	_ = r.URL.Query().Get("state") // org slug, reserved for future use
+
+	issuer := os.Getenv("BASE_OIDC_ISSUER")
+	clientID := os.Getenv("BASE_OIDC_CLIENT_ID")
+	clientSecret := os.Getenv("BASE_OIDC_CLIENT_SECRET")
+	appURL := os.Getenv("APP_URL")
+	if issuer == "" || clientID == "" || clientSecret == "" || appURL == "" {
+		writeError(w, http.StatusServiceUnavailable, "OIDC not configured")
+		return
+	}
+	redirectURI := appURL + "/v1/sso/oidc/callback"
+
+	// Exchange authorization code for tokens at IAM.
+	tokenURL := issuer + "/oauth/token"
+	resp, err := http.PostForm(tokenURL, url.Values{
+		"grant_type":    {"authorization_code"},
+		"code":          {code},
+		"redirect_uri":  {redirectURI},
+		"client_id":     {clientID},
+		"client_secret": {clientSecret},
+	})
+	if err != nil {
+		writeError(w, http.StatusBadGateway, "token exchange failed")
+		return
+	}
+	defer resp.Body.Close()
+
+	var tokenResp struct {
+		AccessToken string `json:"access_token"`
+		IDToken     string `json:"id_token"`
+		TokenType   string `json:"token_type"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&tokenResp); err != nil || tokenResp.AccessToken == "" {
+		writeError(w, http.StatusBadGateway, "invalid token response")
+		return
+	}
+
+	// Set session cookie so AuthToken can return it to the frontend.
+	http.SetCookie(w, &http.Cookie{
+		Name:     "jid",
+		Value:    tokenResp.AccessToken,
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteLaxMode,
+		MaxAge:   86400,
+	})
+
+	http.Redirect(w, r, "/login/select-organization", http.StatusTemporaryRedirect)
 }
