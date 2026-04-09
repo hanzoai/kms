@@ -3,9 +3,7 @@ WORKDIR /src/frontend
 COPY frontend/package.json frontend/pnpm-lock.yaml ./
 RUN corepack enable pnpm && pnpm install --frozen-lockfile
 COPY frontend/ .
-# Cache-bust: hash of src/ changes forces rebuild
-RUN sha256sum src/index.css src/pages/auth/LoginPage/components/InitialStep/InitialStep.tsx > /tmp/src-hash
-RUN pnpm vite build && ls dist/runtime-ui-env.js
+RUN pnpm vite build && ls dist/runtime-ui-env.js dist/favicon.svg dist/images/logo.svg
 
 FROM golang:1.26-bookworm AS build
 
