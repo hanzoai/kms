@@ -264,7 +264,7 @@ func (h *Compat) OIDCLogin(w http.ResponseWriter, r *http.Request) {
 	if state == "" {
 		state = "default"
 	}
-	authorizeURL := issuer + "/oauth/authorize" +
+	authorizeURL := issuer + "/login/oauth/authorize" +
 		"?client_id=" + clientID +
 		"&redirect_uri=" + url.QueryEscape(redirectURI) +
 		"&response_type=code" +
