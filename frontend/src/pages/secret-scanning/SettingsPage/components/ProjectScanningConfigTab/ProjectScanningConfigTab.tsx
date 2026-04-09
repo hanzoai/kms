@@ -21,8 +21,7 @@ export const ProjectScanningConfigTab = () => {
           body={
             <>
               Your current plan doesn&apos;t support Secret Scanning.
-              <br /> Please contact support or reach out through our Slack channel for
-              assistance.
+              <br /> Please contact support for assistance.
             </>
           }
         />

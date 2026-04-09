@@ -40,7 +40,7 @@ const Content = ({ secretRotation, onComplete }: ContentProps) => {
   return (
     <div>
       <p className="mb-4 text-sm text-mineshaft-200">
-        Reconciliation ensures the password stored in Infisical matches the actual password on the
+        Reconciliation ensures the password stored in KMS matches the actual password on the
         SSH server.
       </p>
       <p className="mb-8 text-sm text-mineshaft-200">
@@ -77,7 +77,7 @@ export const ReconcileUnixLinuxLocalAccountRotationModal = ({
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent
         title="Reconcile Unix/Linux Local Account"
-        subTitle="Sync the Unix/Linux Local Account password between Infisical and the server."
+        subTitle="Sync the Unix/Linux Local Account password between KMS and the server."
       >
         <Content
           secretRotation={secretRotation as TUnixLinuxLocalAccountRotation}
