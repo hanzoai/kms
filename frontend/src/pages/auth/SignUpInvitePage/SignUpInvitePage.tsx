@@ -267,7 +267,7 @@ export const SignupInvitePage = () => {
     <div className="flex h-screen flex-col items-center justify-center bg-linear-to-tr from-mineshaft-600 via-mineshaft-800 to-bunker-700">
       <Helmet>
         <title>Sign Up</title>
-        <link rel="icon" href="/hanzo.ico" />
+        <link rel="icon" href="/favicon.ico" />
       </Helmet>
       {shouldShowMfa ? (
         <Mfa
@@ -280,7 +280,7 @@ export const SignupInvitePage = () => {
         <>
           <Link to="/">
             <div className="mt-20 mb-4 flex justify-center">
-              <img src="/images/gradientLogo.svg" height={90} width={120} alt="KMS Logo" />
+              <img src="/images/logo.svg" height={90} width={120} alt="KMS Logo" />
             </div>
           </Link>
           {step === 1 && stepConfirmEmail}

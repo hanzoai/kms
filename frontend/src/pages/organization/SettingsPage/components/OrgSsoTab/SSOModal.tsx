@@ -270,7 +270,7 @@ export const SSOModal = ({ popUp, handlePopUpClose, handlePopUpToggle, hideDelet
                   <h3 className="text-sm text-mineshaft-400">
                     {renderLabels(authProvider).acsUrl}
                   </h3>
-                  <p className="text-md break-all text-gray-400">{`${window.origin}/api/v1/sso/saml2/${data.id}`}</p>
+                  <p className="text-md break-all text-gray-400">{`${window.origin}/v1/sso/saml2/${data.id}`}</p>
                 </div>
                 <div className="mb-4">
                   <h3 className="text-sm text-mineshaft-400">

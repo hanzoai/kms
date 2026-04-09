@@ -38,12 +38,12 @@ export const CliRedirectPage = () => {
     <div className="flex flex-col justify-between bg-bunker-800 md:h-screen">
       <Helmet>
         <title>KMS CLI | Login Successful!</title>
-        <link rel="icon" href="/hanzo.ico" />
+        <link rel="icon" href="/favicon.ico" />
       </Helmet>
       <div className="flex h-screen w-screen flex-col items-center justify-center space-y-4 text-gray-200">
         <div className="mb-4 flex justify-center">
           <img
-            src="/images/gradientLogo.svg"
+            src="/images/logo.svg"
             style={{
               height: "90px",
               width: "120px"

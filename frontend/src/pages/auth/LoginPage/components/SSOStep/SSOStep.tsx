@@ -19,13 +19,13 @@ export const SSOStep = ({ setStep, type }: Props) => {
     const callbackPort = queryParams.get("callback_port");
     if (type === "SAML") {
       window.open(
-        `/api/v1/sso/redirect/saml2/organizations/${ssoIdentifier}${
+        `/v1/sso/redirect/saml2/organizations/${ssoIdentifier}${
           callbackPort ? `?callback_port=${callbackPort}` : ""
         }`
       );
     } else {
       window.open(
-        `/api/v1/sso/oidc/login?orgSlug=${ssoIdentifier}${
+        `/v1/sso/oidc/login?orgSlug=${ssoIdentifier}${
           callbackPort ? `&callbackPort=${callbackPort}` : ""
         }`
       );

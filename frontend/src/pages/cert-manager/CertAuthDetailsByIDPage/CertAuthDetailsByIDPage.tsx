@@ -187,7 +187,7 @@ export const CertAuthDetailsByIDPage = () => {
     <>
       <Helmet>
         <title>Certificate Authority</title>
-        <link rel="icon" href="/hanzo.ico" />
+        <link rel="icon" href="/favicon.ico" />
       </Helmet>
       <Page />
     </>
