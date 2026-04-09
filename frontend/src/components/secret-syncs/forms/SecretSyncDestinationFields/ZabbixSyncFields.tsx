@@ -50,7 +50,7 @@ export const ZabbixSyncFields = () => {
             tooltipText={
               <div className="flex flex-col gap-3">
                 <p>
-                  Specify how Infisical should manage secrets from Zabbix. The following options are
+                  Specify how KMS should manage secrets from Zabbix. The following options are
                   available:
                 </p>
                 <ul className="flex list-disc flex-col gap-3 pl-4">
