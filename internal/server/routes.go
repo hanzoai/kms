@@ -18,6 +18,7 @@ func RegisterRoutes(
 	compliance *handler.Compliance,
 	transit *handler.Transit,
 	status *handler.Status,
+	compat *handler.Compat,
 ) {
 	// Unauthenticated.
 	r.Get("/healthz", status.Healthz)
@@ -25,14 +26,30 @@ func RegisterRoutes(
 	// Server config (frontend boot).
 	r.Get("/v1/admin/config", status.ServerConfig)
 
+	// Infisical-compat: unauthenticated endpoints the frontend hits before login.
+	r.Get("/v1/status", compat.StatusEnhanced)
+	r.Post("/v1/auth/login1", compat.SRPLogin1)
+	r.Post("/v1/auth/login2", compat.SRPLogin2)
+
 	// Authenticated routes.
 	r.Group(func(r chi.Router) {
 		if authMode == "iam" && jwks != nil {
 			r.Use(auth.Middleware(jwks))
 		}
 
-		// Status.
-		r.Get("/v1/status", status.StatusCheck)
+		// KMS status (authenticated, includes MPC health).
+		r.Get("/v1/kms/status", status.StatusCheck)
+
+		// Infisical-compat: authenticated endpoints for the frontend dashboard.
+		r.Post("/v1/auth/token", compat.AuthToken)
+		r.Post("/v1/auth/select-organization", compat.SelectOrg)
+		r.Get("/v1/user", compat.GetUser)
+		r.Get("/v1/user/duplicate-accounts", compat.DuplicateAccounts)
+		r.Get("/v1/organization", compat.ListOrgs)
+		r.Get("/v1/organization/{orgId}", compat.GetOrg)
+		r.Get("/v1/organization/{orgId}/subscription", compat.OrgSubscription)
+		r.Get("/v1/organization/{orgId}/permissions", compat.OrgPermissions)
+		r.Get("/v1/sub-organizations", compat.SubOrganizations)
 
 		// ZK Secrets (per-org).
 		r.Post("/v1/orgs/{org}/zk/secrets", secrets.Create)

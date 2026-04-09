@@ -39,12 +39,13 @@ func NewRouter(cfg Config) *chi.Mux {
 	complianceH := handler.NewCompliance(auditStore)
 	transitH := handler.NewTransit(transitEngine)
 	statusH := handler.NewStatus(cfg.MPC)
+	compatH := handler.NewCompat()
 
 	r := chi.NewRouter()
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Recoverer)
 
-	RegisterRoutes(r, cfg.JWKS, cfg.AuthMode, secretsH, keysH, membersH, complianceH, transitH, statusH)
+	RegisterRoutes(r, cfg.JWKS, cfg.AuthMode, secretsH, keysH, membersH, complianceH, transitH, statusH, compatH)
 
 	return r
 }
