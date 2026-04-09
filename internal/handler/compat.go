@@ -211,6 +211,125 @@ func (h *Compat) SRPLogin2(w http.ResponseWriter, r *http.Request) {
 	writeError(w, http.StatusNotImplemented, "unsupported")
 }
 
+// UniversalAuthLogin handles POST /api/v1/auth/universal-auth/login.
+// Infisical-compatible machine identity authentication.
+// Accepts clientId + clientSecret, returns an accessToken (JWT signed by IAM).
+func (h *Compat) UniversalAuthLogin(w http.ResponseWriter, r *http.Request) {
+	var req struct {
+		ClientID     string `json:"clientId"`
+		ClientSecret string `json:"clientSecret"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeJSON(w, http.StatusBadRequest, map[string]any{
+			"statusCode": 400,
+			"message":    "invalid request body",
+			"error":      "Bad Request",
+		})
+		return
+	}
+	if req.ClientID == "" || req.ClientSecret == "" {
+		writeJSON(w, http.StatusBadRequest, map[string]any{
+			"statusCode": 400,
+			"message":    "clientId and clientSecret are required",
+			"error":      "Bad Request",
+		})
+		return
+	}
+
+	// Validate against IAM client_credentials grant
+	iamEndpoint := os.Getenv("IAM_JWKS_URL")
+	if iamEndpoint == "" {
+		iamEndpoint = os.Getenv("IAM_ENDPOINT")
+	}
+	if iamEndpoint == "" {
+		iamEndpoint = "https://hanzo.id"
+	}
+	// Strip path to get base URL
+	if u, err := url.Parse(iamEndpoint); err == nil {
+		iamEndpoint = u.Scheme + "://" + u.Host
+	}
+
+	// Exchange client credentials for token via IAM
+	tokenURL := iamEndpoint + "/api/login/oauth/access_token"
+	form := url.Values{
+		"grant_type":    {"client_credentials"},
+		"client_id":     {req.ClientID},
+		"client_secret": {req.ClientSecret},
+	}
+
+	resp, err := http.PostForm(tokenURL, form)
+	if err != nil {
+		writeJSON(w, http.StatusBadGateway, map[string]any{
+			"statusCode": 502,
+			"message":    "failed to reach identity provider",
+			"error":      "Bad Gateway",
+		})
+		return
+	}
+	defer resp.Body.Close()
+
+	var tokenResp map[string]any
+	if err := json.NewDecoder(resp.Body).Decode(&tokenResp); err != nil || resp.StatusCode != 200 {
+		writeJSON(w, http.StatusUnauthorized, map[string]any{
+			"statusCode": 401,
+			"message":    "invalid client credentials",
+			"error":      "Unauthorized",
+		})
+		return
+	}
+
+	accessToken, _ := tokenResp["access_token"].(string)
+	if accessToken == "" {
+		writeJSON(w, http.StatusUnauthorized, map[string]any{
+			"statusCode": 401,
+			"message":    "invalid client credentials",
+			"error":      "Unauthorized",
+		})
+		return
+	}
+
+	writeJSON(w, http.StatusOK, map[string]any{
+		"accessToken":          accessToken,
+		"expiresIn":            86400,
+		"accessTokenMaxTTL":    86400,
+		"tokenType":            "Bearer",
+	})
+}
+
+// GetSecretRaw handles GET /api/v3/secrets/raw/{name}.
+// Infisical-compatible raw secret fetch for CI/CD and machine identity flows.
+func (h *Compat) GetSecretRaw(w http.ResponseWriter, r *http.Request) {
+	name := chi.URLParam(r, "name")
+	if name == "" {
+		writeJSON(w, http.StatusBadRequest, map[string]any{
+			"statusCode": 400,
+			"message":    "secret name is required",
+			"error":      "Bad Request",
+		})
+		return
+	}
+
+	// For now, return the secret from env vars or a static map.
+	// This enables make login / CI to fetch GAR_SA_KEY, KUBECONFIG, etc.
+	// TODO: wire to the real secrets store (Base collections).
+	val := os.Getenv(name)
+	if val == "" {
+		writeJSON(w, http.StatusNotFound, map[string]any{
+			"statusCode": 404,
+			"message":    "secret not found",
+			"error":      "Not Found",
+		})
+		return
+	}
+
+	writeJSON(w, http.StatusOK, map[string]any{
+		"secret": map[string]any{
+			"secretKey":   name,
+			"secretValue": val,
+		},
+	})
+}
+
 // StatusEnhanced handles GET /v1/status — minimal info, no internal state.
 func (h *Compat) StatusEnhanced(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, map[string]any{
