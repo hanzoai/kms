@@ -267,7 +267,7 @@ export const SignupInvitePage = () => {
     <div className="flex h-screen flex-col items-center justify-center bg-linear-to-tr from-mineshaft-600 via-mineshaft-800 to-bunker-700">
       <Helmet>
         <title>Sign Up</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
       </Helmet>
       {shouldShowMfa ? (
         <Mfa

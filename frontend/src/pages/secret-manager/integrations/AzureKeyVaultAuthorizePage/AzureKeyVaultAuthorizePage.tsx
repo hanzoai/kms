@@ -38,7 +38,7 @@ export function AzureKeyVaultAuthorizePage() {
     <div className="flex h-full w-full items-center justify-center">
       <Helmet>
         <title>Authorize Azure Key Vault Integration</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
       </Helmet>
       <Card className="mb-12 max-w-lg rounded-md border border-mineshaft-600">
         <CardTitle
