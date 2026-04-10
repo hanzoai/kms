@@ -110,17 +110,17 @@ func main() {
 			AuthMode: authMode,
 		})
 
-		chiHandler := func(re *core.RequestEvent) error {
+		// Mount chi router on Base — chi handles its own auth (JWKS or none).
+		kmsHandler := func(re *core.RequestEvent) error {
 			chiRouter.ServeHTTP(re.Response, re.Request)
 			return nil
 		}
-
-		e.Router.GET("/healthz", chiHandler)
-		e.Router.GET("/v1/kms/{path...}", chiHandler)
-		e.Router.POST("/v1/kms/{path...}", chiHandler)
-		e.Router.PUT("/v1/kms/{path...}", chiHandler)
-		e.Router.PATCH("/v1/kms/{path...}", chiHandler)
-		e.Router.DELETE("/v1/kms/{path...}", chiHandler)
+		e.Router.Any("/healthz", kmsHandler)
+		e.Router.GET("/v1/kms/{path...}", kmsHandler)
+		e.Router.POST("/v1/kms/{path...}", kmsHandler)
+		e.Router.PUT("/v1/kms/{path...}", kmsHandler)
+		e.Router.PATCH("/v1/kms/{path...}", kmsHandler)
+		e.Router.DELETE("/v1/kms/{path...}", kmsHandler)
 
 		// Serve secrets UI at /.
 		if info, err := os.Stat(frontendDir); err == nil && info.IsDir() {
