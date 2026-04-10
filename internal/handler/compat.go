@@ -299,7 +299,6 @@ func (h *Compat) UniversalAuthLogin(w http.ResponseWriter, r *http.Request) {
 // GetSecretRaw handles GET /v1/kms/secrets/{name} (legacy: /v3/secrets/raw/{name}).
 // Infisical-compatible raw secret fetch for CI/CD and machine identity flows.
 func (h *Compat) GetSecretRaw(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("[KMS] GetSecretRaw called: path=%s\n", r.URL.Path)
 	name := chi.URLParam(r, "name")
 	if name == "" {
 		writeJSON(w, http.StatusBadRequest, map[string]any{
