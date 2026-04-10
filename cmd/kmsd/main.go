@@ -19,6 +19,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io/fs"
 	"log"
 	"os"
 	"strings"
@@ -110,51 +111,46 @@ func main() {
 			AuthMode: authMode,
 		})
 
-		// Mount chi router on Base — chi handles its own auth (JWKS or none).
-		kmsHandler := func(re *core.RequestEvent) error {
-			chiRouter.ServeHTTP(re.Response, re.Request)
-			return nil
-		}
-		e.Router.Any("/healthz", kmsHandler)
-
-		// Debug: test if Base auth blocks /v1/kms/ routes
-		e.Router.GET("/v1/kms/test", func(re *core.RequestEvent) error {
-			re.Response.Header().Set("Content-Type", "application/json")
-			re.Response.Write([]byte(`{"test":"ok","path":"` + re.Request.URL.Path + `"}`))
-			return nil
-		})
-
-		e.Router.GET("/v1/kms/{path...}", kmsHandler)
-		e.Router.POST("/v1/kms/{path...}", kmsHandler)
-		e.Router.PUT("/v1/kms/{path...}", kmsHandler)
-		e.Router.PATCH("/v1/kms/{path...}", kmsHandler)
-		e.Router.DELETE("/v1/kms/{path...}", kmsHandler)
-
-		// Serve secrets UI at /.
+		// Single catch-all: try chi first (KMS API), fall back to static.
+		var frontendFS fs.FS
 		if info, err := os.Stat(frontendDir); err == nil && info.IsDir() {
-			frontendFS := os.DirFS(frontendDir)
-			e.Router.GET("/{path...}", func(re *core.RequestEvent) error {
-				// Block /_/ admin if disabled.
-				if disableAdmin && strings.HasPrefix(re.Request.URL.Path, "/_/") {
-					re.Response.WriteHeader(404)
-					return nil
-				}
-				p := strings.TrimPrefix(re.Request.URL.Path, "/")
-				if p == "" {
-					p = "index.html"
-				}
-				if err := re.FileFS(frontendFS, p); err == nil {
-					return nil
-				}
-				// SPA fallback.
-				return re.FileFS(frontendFS, "index.html")
-			})
+			frontendFS = os.DirFS(frontendDir)
 			if disableAdmin {
 				log.Printf("kmsd: secrets UI at /, admin disabled")
 			} else {
 				log.Printf("kmsd: secrets UI at /, admin at /_/")
 			}
 		}
+
+		e.Router.Any("/{path...}", func(re *core.RequestEvent) error {
+			path := re.Request.URL.Path
+
+			// Block /_/ admin if disabled.
+			if disableAdmin && strings.HasPrefix(path, "/_/") {
+				re.Response.WriteHeader(404)
+				return nil
+			}
+
+			// KMS API routes — delegate to chi (bypasses Base auth).
+			if strings.HasPrefix(path, "/v1/kms/") || path == "/healthz" {
+				chiRouter.ServeHTTP(re.Response, re.Request)
+				return nil
+			}
+
+			// Static frontend.
+			if frontendFS != nil {
+				p := strings.TrimPrefix(path, "/")
+				if p == "" {
+					p = "index.html"
+				}
+				if err := re.FileFS(frontendFS, p); err == nil {
+					return nil
+				}
+				return re.FileFS(frontendFS, "index.html")
+			}
+
+			return re.Next()
+		})
 
 		return e.Next()
 	})
