@@ -116,11 +116,11 @@ func main() {
 		}
 
 		e.Router.GET("/healthz", chiHandler)
-		e.Router.GET("/v1/{path...}", chiHandler)
-		e.Router.POST("/v1/{path...}", chiHandler)
-		e.Router.PUT("/v1/{path...}", chiHandler)
-		e.Router.PATCH("/v1/{path...}", chiHandler)
-		e.Router.DELETE("/v1/{path...}", chiHandler)
+		e.Router.GET("/v1/kms/{path...}", chiHandler)
+		e.Router.POST("/v1/kms/{path...}", chiHandler)
+		e.Router.PUT("/v1/kms/{path...}", chiHandler)
+		e.Router.PATCH("/v1/kms/{path...}", chiHandler)
+		e.Router.DELETE("/v1/kms/{path...}", chiHandler)
 
 		// Serve secrets UI at /.
 		if info, err := os.Stat(frontendDir); err == nil && info.IsDir() {
