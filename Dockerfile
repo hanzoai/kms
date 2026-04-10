@@ -42,8 +42,10 @@ COPY --from=frontend /src/frontend/dist /app/frontend
 ENV KMS_FRONTEND_DIR=/app/frontend
 ENV BASE_SKIP_ROOT_REDIRECT=1
 
-EXPOSE 8090
-HEALTHCHECK --interval=10s --timeout=3s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8090/healthz || exit 1
+RUN mkdir -p /data/kms
 
-ENTRYPOINT ["kmsd", "serve", "--http=0.0.0.0:8090"]
+EXPOSE 8443
+HEALTHCHECK --interval=10s --timeout=3s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8443/healthz || exit 1
+
+ENTRYPOINT ["kmsd", "serve", "--dir=/data/kms", "--http=0.0.0.0:8443"]
