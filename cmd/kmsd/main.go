@@ -116,6 +116,14 @@ func main() {
 			return nil
 		}
 		e.Router.Any("/healthz", kmsHandler)
+
+		// Debug: test if Base auth blocks /v1/kms/ routes
+		e.Router.GET("/v1/kms/test", func(re *core.RequestEvent) error {
+			re.Response.Header().Set("Content-Type", "application/json")
+			re.Response.Write([]byte(`{"test":"ok","path":"` + re.Request.URL.Path + `"}`))
+			return nil
+		})
+
 		e.Router.GET("/v1/kms/{path...}", kmsHandler)
 		e.Router.POST("/v1/kms/{path...}", kmsHandler)
 		e.Router.PUT("/v1/kms/{path...}", kmsHandler)
