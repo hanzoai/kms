@@ -22,25 +22,23 @@ func RegisterRoutes(
 ) {
 	// Unauthenticated — frontend boot + auth flow.
 	r.Get("/healthz", status.Healthz)
-	r.Get("/v1/admin/config", status.ServerConfig)
-	r.Get("/v1/status", compat.StatusEnhanced)
-	r.Post("/v1/auth/login1", compat.SRPLogin1)
-	r.Post("/v1/auth/login2", compat.SRPLogin2)
+	r.Get("/v1/kms/admin/config", status.ServerConfig)
+	r.Get("/v1/kms/status", compat.StatusEnhanced)
+	r.Post("/v1/kms/auth/login1", compat.SRPLogin1)
+	r.Post("/v1/kms/auth/login2", compat.SRPLogin2)
 
 	// Machine identity auth (CI/CD, make login, SDKs).
 	// v2/v4 = canonical KMS paths. v1/v3 = legacy Infisical compat.
 	r.Post("/v1/kms/auth/login", compat.UniversalAuthLogin)
 	r.Get("/v1/kms/secrets/{name}", compat.GetSecretRaw)
-	r.Post("/v1/auth/universal-auth/login", compat.UniversalAuthLogin)
-	r.Get("/v3/secrets/raw/{name}", compat.GetSecretRaw)
 
 	// Auth token check — must NOT 401 for unauthenticated users.
 	// The frontend calls this to check for existing sessions.
 	// Returns 200 with empty token when no valid session.
-	r.Post("/v1/auth/token", compat.AuthToken)
-	r.Post("/v1/auth/select-organization", compat.SelectOrg)
-	r.Get("/v1/sso/oidc/login", compat.OIDCLogin)
-	r.Get("/v1/sso/oidc/callback", compat.OIDCCallback)
+	r.Post("/v1/kms/auth/token", compat.AuthToken)
+	r.Post("/v1/kms/auth/select-organization", compat.SelectOrg)
+	r.Get("/v1/kms/sso/oidc/login", compat.OIDCLogin)
+	r.Get("/v1/kms/sso/oidc/callback", compat.OIDCCallback)
 
 	// Authenticated routes.
 	r.Group(func(r chi.Router) {
@@ -51,40 +49,40 @@ func RegisterRoutes(
 		r.Get("/v1/kms/status", status.StatusCheck)
 
 		// User + org endpoints.
-		r.Get("/v1/user", compat.GetUser)
-		r.Get("/v1/user/duplicate-accounts", compat.DuplicateAccounts)
-		r.Get("/v1/organization", compat.ListOrgs)
-		r.Get("/v1/organization/{orgId}", compat.GetOrg)
-		r.Get("/v1/organization/{orgId}/subscription", compat.OrgSubscription)
-		r.Get("/v1/organization/{orgId}/permissions", compat.OrgPermissions)
-		r.Get("/v1/sub-organizations", compat.SubOrganizations)
+		r.Get("/v1/kms/user", compat.GetUser)
+		r.Get("/v1/kms/user/duplicate-accounts", compat.DuplicateAccounts)
+		r.Get("/v1/kms/organization", compat.ListOrgs)
+		r.Get("/v1/kms/organization/{orgId}", compat.GetOrg)
+		r.Get("/v1/kms/organization/{orgId}/subscription", compat.OrgSubscription)
+		r.Get("/v1/kms/organization/{orgId}/permissions", compat.OrgPermissions)
+		r.Get("/v1/kms/sub-organizations", compat.SubOrganizations)
 
 		// ZK Secrets.
-		r.Post("/v1/orgs/{org}/zk/secrets", secrets.Create)
-		r.Get("/v1/orgs/{org}/zk/secrets", secrets.List)
-		r.Get("/v1/orgs/{org}/zk/secrets/{path}/{name}", secrets.Get)
-		r.Delete("/v1/orgs/{org}/zk/secrets/{path}/{name}", secrets.Delete)
+		r.Post("/v1/kms/orgs/{org}/zk/secrets", secrets.Create)
+		r.Get("/v1/kms/orgs/{org}/zk/secrets", secrets.List)
+		r.Get("/v1/kms/orgs/{org}/zk/secrets/{path}/{name}", secrets.Get)
+		r.Delete("/v1/kms/orgs/{org}/zk/secrets/{path}/{name}", secrets.Delete)
 
 		// Validator keys.
-		r.Post("/v1/keys/generate", keys.Generate)
-		r.Get("/v1/keys", keys.List)
-		r.Get("/v1/keys/{id}", keys.Get)
-		r.Post("/v1/keys/{id}/sign", keys.Sign)
-		r.Post("/v1/keys/{id}/rotate", keys.Rotate)
+		r.Post("/v1/kms/keys/generate", keys.Generate)
+		r.Get("/v1/kms/keys", keys.List)
+		r.Get("/v1/kms/keys/{id}", keys.Get)
+		r.Post("/v1/kms/keys/{id}/sign", keys.Sign)
+		r.Post("/v1/kms/keys/{id}/rotate", keys.Rotate)
 
 		// Members.
-		r.Post("/v1/orgs/{org}/members", members.Create)
-		r.Get("/v1/orgs/{org}/members", members.List)
-		r.Delete("/v1/orgs/{org}/members/{memberID}", members.Delete)
+		r.Post("/v1/kms/orgs/{org}/members", members.Create)
+		r.Get("/v1/kms/orgs/{org}/members", members.List)
+		r.Delete("/v1/kms/orgs/{org}/members/{memberID}", members.Delete)
 
 		// Audit.
-		r.Get("/v1/orgs/{org}/audit", compliance.AuditLog)
+		r.Get("/v1/kms/orgs/{org}/audit", compliance.AuditLog)
 
 		// Transit engine.
-		r.Post("/v1/transit/keys", transit.CreateKey)
-		r.Post("/v1/transit/encrypt/{name}", transit.Encrypt)
-		r.Post("/v1/transit/decrypt/{name}", transit.Decrypt)
-		r.Post("/v1/transit/sign/{name}", transit.Sign)
-		r.Post("/v1/transit/verify/{name}", transit.Verify)
+		r.Post("/v1/kms/transit/keys", transit.CreateKey)
+		r.Post("/v1/kms/transit/encrypt/{name}", transit.Encrypt)
+		r.Post("/v1/kms/transit/decrypt/{name}", transit.Decrypt)
+		r.Post("/v1/kms/transit/sign/{name}", transit.Sign)
+		r.Post("/v1/kms/transit/verify/{name}", transit.Verify)
 	})
 }
