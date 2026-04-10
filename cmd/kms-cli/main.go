@@ -2,8 +2,8 @@
 //
 // Usage:
 //
-//	kms-cli status [--addr http://localhost:8090]
-//	kms-cli bootstrap --passphrase <pass> [--addr http://localhost:8090]
+//	kms-cli status [--addr http://localhost:8443]
+//	kms-cli bootstrap --passphrase <pass> [--addr http://localhost:8443]
 package main
 
 import (
@@ -21,7 +21,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	addr := envOr("KMS_ADDR", "http://localhost:8090")
+	addr := envOr("KMS_ADDR", "http://localhost:8443")
 
 	// Parse --addr flag from any position.
 	args := os.Args[1:]
@@ -109,7 +109,7 @@ Commands:
   bootstrap    Initialize org (--passphrase required)
 
 Flags:
-  --addr       KMS server address (default: $KMS_ADDR or http://localhost:8090)`)
+  --addr       KMS server address (default: $KMS_ADDR or http://localhost:8443)`)
 }
 
 func envOr(key, fallback string) string {
