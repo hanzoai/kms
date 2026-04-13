@@ -64,6 +64,18 @@ func Bootstrap(app core.App) error {
 			},
 		},
 		{
+			name: "kms_service_secrets",
+			fields: []*fieldDef{
+				{name: "org_id", kind: "text", required: true},
+				{name: "path", kind: "text", required: true},
+				{name: "name", kind: "text", required: true},
+				{name: "value", kind: "text", required: true},
+			},
+			indexes: []string{
+				"CREATE UNIQUE INDEX idx_kms_svc_secrets_org_path ON kms_service_secrets (org_id, path, name)",
+			},
+		},
+		{
 			name: "kms_transit_keys",
 			fields: []*fieldDef{
 				{name: "name", kind: "text", required: true},

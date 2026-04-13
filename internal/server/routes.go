@@ -13,6 +13,7 @@ func RegisterRoutes(
 	jwks *auth.JWKSValidator,
 	authMode string,
 	secrets *handler.Secrets,
+	serviceSecrets *handler.ServiceSecrets,
 	keys *handler.Keys,
 	members *handler.Members,
 	compliance *handler.Compliance,
@@ -57,11 +58,18 @@ func RegisterRoutes(
 		r.Get("/v1/kms/organization/{orgId}/permissions", compat.OrgPermissions)
 		r.Get("/v1/kms/sub-organizations", compat.SubOrganizations)
 
-		// ZK Secrets.
+		// ZK Secrets (client-side encrypted, for MPC mode).
 		r.Post("/v1/kms/orgs/{org}/zk/secrets", secrets.Create)
 		r.Get("/v1/kms/orgs/{org}/zk/secrets", secrets.List)
 		r.Get("/v1/kms/orgs/{org}/zk/secrets/{path}/{name}", secrets.Get)
 		r.Delete("/v1/kms/orgs/{org}/zk/secrets/{path}/{name}", secrets.Delete)
+
+		// Service secrets (server-side encrypted, for service-to-service).
+		// Services authenticate via IAM JWT and fetch plaintext values.
+		r.Put("/v1/kms/orgs/{org}/secrets/{path}/{name}", serviceSecrets.Put)
+		r.Get("/v1/kms/orgs/{org}/secrets/{path}/{name}", serviceSecrets.Get)
+		r.Delete("/v1/kms/orgs/{org}/secrets/{path}/{name}", serviceSecrets.Delete)
+		r.Get("/v1/kms/orgs/{org}/secrets", serviceSecrets.List)
 
 		// Validator keys.
 		r.Post("/v1/kms/keys/generate", keys.Generate)

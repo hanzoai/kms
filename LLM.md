@@ -78,6 +78,18 @@ frontend/          -- React secrets UI
 sdk/               -- Go client SDK
 ```
 
+## Replication
+
+In-process via Base plugin (`github.com/hanzoai/base/plugins/replicate`). No sidecar.
+Set `REPLICATE_S3_ENDPOINT` env var to enable. No-op if unset.
+
+Reads: `REPLICATE_S3_ENDPOINT`, `REPLICATE_S3_BUCKET`, `REPLICATE_S3_ACCESS_KEY`,
+`REPLICATE_S3_SECRET_KEY`, `REPLICATE_AGE_RECIPIENT`, `REPLICATE_AGE_IDENTITY`,
+`REPLICATE_SYNC_INTERVAL`.
+
+Base module: v0.40.3+ (replicate plugin added in v0.40.0).
+Local dev: `replace github.com/hanzoai/replicate => /Users/z/work/hanzo/replicate` in go.mod.
+
 ## MPC Node
 
 Separate binary at `mpc-node/`. Data dir: `/data/kms-mpc`. Uses ZapDB (luxfi/zap).
