@@ -64,6 +64,12 @@ func main() {
 	app := base.New()
 
 	app.OnServe().BindFunc(func(e *core.ServeEvent) error {
+		// H-3: Suppress installer token URL from stdout.
+		// KMS uses IAM for auth — the Base installer flow is never needed.
+		// Without this, every restart with an ephemeral DB prints a 30-min
+		// privilege-escalation JWT to pod logs.
+		e.InstallerFunc = nil
+
 		// Branding from env — no hardcoded brand.
 		s := e.App.Settings()
 		s.Meta.AppName = envOr("APP_NAME", "KMS")
