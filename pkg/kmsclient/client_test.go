@@ -1,0 +1,313 @@
+package kmsclient
+
+import (
+	"context"
+	"encoding/json"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+)
+
+func TestNew_Validation(t *testing.T) {
+	tests := []struct {
+		name string
+		cfg  Config
+	}{
+		{"no endpoint", Config{IAMEndpoint: "x", ClientID: "x", ClientSecret: "x", Org: "x"}},
+		{"no iam", Config{Endpoint: "x", ClientID: "x", ClientSecret: "x", Org: "x"}},
+		{"no client id", Config{Endpoint: "x", IAMEndpoint: "x", ClientSecret: "x", Org: "x"}},
+		{"no client secret", Config{Endpoint: "x", IAMEndpoint: "x", ClientID: "x", Org: "x"}},
+		{"no org", Config{Endpoint: "x", IAMEndpoint: "x", ClientID: "x", ClientSecret: "x"}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := New(tt.cfg)
+			if err == nil {
+				t.Fatal("expected error")
+			}
+		})
+	}
+}
+
+func TestNew_Valid(t *testing.T) {
+	c, err := New(Config{
+		Endpoint:     "http://kms:8443",
+		IAMEndpoint:  "http://iam:8000",
+		ClientID:     "id",
+		ClientSecret: "sec",
+		Org:          "test-org",
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if c.org != "test-org" {
+		t.Errorf("org = %q, want test-org", c.org)
+	}
+}
+
+func TestSplitPathName(t *testing.T) {
+	tests := []struct {
+		input    string
+		wantPath string
+		wantName string
+	}{
+		{"providers/alpaca/dev/api_key", "providers/alpaca/dev", "api_key"},
+		{"simple/key", "simple", "key"},
+		{"key", "", "key"},
+		{"a/b/c/d", "a/b/c", "d"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			pn := splitPathName(tt.input)
+			if pn.path != tt.wantPath {
+				t.Errorf("path = %q, want %q", pn.path, tt.wantPath)
+			}
+			if pn.name != tt.wantName {
+				t.Errorf("name = %q, want %q", pn.name, tt.wantName)
+			}
+		})
+	}
+}
+
+func TestGet_WithMockServer(t *testing.T) {
+	// Mock IAM token endpoint.
+	iam := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		json.NewEncoder(w).Encode(map[string]any{
+			"access_token": "test-token-123",
+			"expires_in":   3600,
+		})
+	}))
+	defer iam.Close()
+
+	// Mock KMS server.
+	kms := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Verify auth header.
+		if r.Header.Get("Authorization") != "Bearer test-token-123" {
+			http.Error(w, "unauthorized", http.StatusUnauthorized)
+			return
+		}
+		// Return secret.
+		json.NewEncoder(w).Encode(map[string]any{
+			"secret": map[string]any{
+				"path":  "providers/alpaca/dev",
+				"name":  "api_key",
+				"value": "CKEJOEAIF2RS6KLVJUSXVOPKLW",
+			},
+		})
+	}))
+	defer kms.Close()
+
+	c, err := New(Config{
+		Endpoint:     kms.URL,
+		IAMEndpoint:  iam.URL,
+		ClientID:     "test-id",
+		ClientSecret: "test-secret",
+		Org:          "liquidity",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	val, err := c.Get(context.Background(), "providers/alpaca/dev", "api_key")
+	if err != nil {
+		t.Fatalf("Get: %v", err)
+	}
+	if val != "CKEJOEAIF2RS6KLVJUSXVOPKLW" {
+		t.Errorf("value = %q, want CKEJOEAIF2RS6KLVJUSXVOPKLW", val)
+	}
+}
+
+func TestGet_NotFound(t *testing.T) {
+	iam := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		json.NewEncoder(w).Encode(map[string]any{
+			"access_token": "tok",
+			"expires_in":   3600,
+		})
+	}))
+	defer iam.Close()
+
+	kms := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, `{"error":"secret not found"}`, http.StatusNotFound)
+	}))
+	defer kms.Close()
+
+	c, _ := New(Config{
+		Endpoint:     kms.URL,
+		IAMEndpoint:  iam.URL,
+		ClientID:     "id",
+		ClientSecret: "sec",
+		Org:          "org",
+	})
+
+	_, err := c.Get(context.Background(), "no/such", "secret")
+	if err == nil {
+		t.Fatal("expected error for missing secret")
+	}
+}
+
+func TestGet_TokenCaching(t *testing.T) {
+	tokenCalls := 0
+	iam := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		tokenCalls++
+		json.NewEncoder(w).Encode(map[string]any{
+			"access_token": "cached-token",
+			"expires_in":   3600,
+		})
+	}))
+	defer iam.Close()
+
+	kms := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		json.NewEncoder(w).Encode(map[string]any{
+			"secret": map[string]any{"value": "v"},
+		})
+	}))
+	defer kms.Close()
+
+	c, _ := New(Config{
+		Endpoint:     kms.URL,
+		IAMEndpoint:  iam.URL,
+		ClientID:     "id",
+		ClientSecret: "sec",
+		Org:          "org",
+	})
+
+	ctx := context.Background()
+	c.Get(ctx, "a", "b")
+	c.Get(ctx, "a", "b")
+	c.Get(ctx, "a", "b")
+
+	if tokenCalls != 1 {
+		t.Errorf("expected 1 token call (cached), got %d", tokenCalls)
+	}
+}
+
+func TestFetchEnv(t *testing.T) {
+	iam := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		json.NewEncoder(w).Encode(map[string]any{
+			"access_token": "tok",
+			"expires_in":   3600,
+		})
+	}))
+	defer iam.Close()
+
+	secrets := map[string]string{
+		"providers/alpaca/dev/api_key":    "KEY123",
+		"providers/alpaca/dev/api_secret": "SEC456",
+	}
+
+	kms := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Extract path/name from URL: /v1/kms/orgs/org/secrets/{path}/{name}
+		// Simple: just return based on last two segments.
+		p := r.URL.Path
+		for fullPath, val := range secrets {
+			pn := splitPathName(fullPath)
+			if containsPath(p, pn.path, pn.name) {
+				json.NewEncoder(w).Encode(map[string]any{
+					"secret": map[string]any{"value": val},
+				})
+				return
+			}
+		}
+		http.Error(w, "not found", http.StatusNotFound)
+	}))
+	defer kms.Close()
+
+	// Override env helpers to avoid polluting real env.
+	envStore := map[string]string{}
+	lookupEnv = func(key string) (string, bool) {
+		v, ok := envStore[key]
+		return v, ok
+	}
+	setEnv = func(key, val string) error {
+		envStore[key] = val
+		return nil
+	}
+	defer func() {
+		lookupEnv = defaultLookupEnv
+		setEnv = defaultSetEnv
+	}()
+
+	c, _ := New(Config{
+		Endpoint:     kms.URL,
+		IAMEndpoint:  iam.URL,
+		ClientID:     "id",
+		ClientSecret: "sec",
+		Org:          "org",
+	})
+
+	n, err := c.FetchEnv(context.Background(), map[string]string{
+		"BROKER_API_KEY":    "providers/alpaca/dev/api_key",
+		"BROKER_API_SECRET": "providers/alpaca/dev/api_secret",
+	})
+	if err != nil {
+		t.Fatalf("FetchEnv: %v", err)
+	}
+	if n != 2 {
+		t.Errorf("fetched %d, want 2", n)
+	}
+	if envStore["BROKER_API_KEY"] != "KEY123" {
+		t.Errorf("BROKER_API_KEY = %q, want KEY123", envStore["BROKER_API_KEY"])
+	}
+	if envStore["BROKER_API_SECRET"] != "SEC456" {
+		t.Errorf("BROKER_API_SECRET = %q, want SEC456", envStore["BROKER_API_SECRET"])
+	}
+}
+
+func TestFetchEnv_NoOverrideExisting(t *testing.T) {
+	iam := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		json.NewEncoder(w).Encode(map[string]any{
+			"access_token": "tok",
+			"expires_in":   3600,
+		})
+	}))
+	defer iam.Close()
+
+	kms := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		json.NewEncoder(w).Encode(map[string]any{
+			"secret": map[string]any{"value": "from-kms"},
+		})
+	}))
+	defer kms.Close()
+
+	envStore := map[string]string{
+		"EXISTING_KEY": "from-env",
+	}
+	lookupEnv = func(key string) (string, bool) {
+		v, ok := envStore[key]
+		return v, ok
+	}
+	setEnv = func(key, val string) error {
+		envStore[key] = val
+		return nil
+	}
+	defer func() {
+		lookupEnv = defaultLookupEnv
+		setEnv = defaultSetEnv
+	}()
+
+	c, _ := New(Config{
+		Endpoint:     kms.URL,
+		IAMEndpoint:  iam.URL,
+		ClientID:     "id",
+		ClientSecret: "sec",
+		Org:          "org",
+	})
+
+	c.FetchEnv(context.Background(), map[string]string{
+		"EXISTING_KEY": "some/path/key",
+	})
+
+	if envStore["EXISTING_KEY"] != "from-env" {
+		t.Errorf("expected existing env to not be overridden, got %q", envStore["EXISTING_KEY"])
+	}
+}
+
+// containsPath checks if a URL path ends with /{path}/{name} (URL-encoded).
+func containsPath(urlPath, path, name string) bool {
+	suffix := "/" + path + "/" + name
+	return len(urlPath) >= len(suffix) && urlPath[len(urlPath)-len(suffix):] == suffix
+}
+
+// Save defaults so we can restore after test.
+var defaultLookupEnv = lookupEnv
+var defaultSetEnv = setEnv
