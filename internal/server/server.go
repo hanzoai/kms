@@ -26,6 +26,7 @@ type Config struct {
 // NewRouter creates and configures the chi router with all KMS routes.
 func NewRouter(cfg Config) *chi.Mux {
 	secretStore := store.NewSecretStore(cfg.App)
+	serviceSecretStore := store.NewServiceSecretStore(cfg.App)
 	keyStore := store.NewKeyStore(cfg.App)
 	memberStore := store.NewMemberStore(cfg.App)
 	auditStore := store.NewAuditStore(cfg.App)
@@ -34,6 +35,7 @@ func NewRouter(cfg Config) *chi.Mux {
 	transitEngine := transit.NewEngine(transitKeyStore)
 
 	secretsH := handler.NewSecrets(secretStore)
+	serviceSecretsH := handler.NewServiceSecrets(serviceSecretStore)
 	keysH := handler.NewKeys(keyStore, cfg.MPC, cfg.VaultID)
 	membersH := handler.NewMembers(memberStore)
 	complianceH := handler.NewCompliance(auditStore)
@@ -45,7 +47,7 @@ func NewRouter(cfg Config) *chi.Mux {
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Recoverer)
 
-	RegisterRoutes(r, cfg.JWKS, cfg.AuthMode, secretsH, keysH, membersH, complianceH, transitH, statusH, compatH)
+	RegisterRoutes(r, cfg.JWKS, cfg.AuthMode, secretsH, serviceSecretsH, keysH, membersH, complianceH, transitH, statusH, compatH)
 
 	return r
 }

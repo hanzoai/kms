@@ -27,6 +27,7 @@ import (
 
 	"github.com/hanzoai/base"
 	"github.com/hanzoai/base/core"
+	"github.com/hanzoai/base/plugins/replicate"
 
 	"github.com/hanzoai/kms/internal/auth"
 	"github.com/hanzoai/kms/internal/mpc"
@@ -62,6 +63,10 @@ func main() {
 	}
 
 	app := base.New()
+
+	// In-process WAL replication to S3 — no sidecar needed.
+	// No-op if REPLICATE_S3_ENDPOINT is not set.
+	replicate.MustRegister(app)
 
 	app.OnServe().BindFunc(func(e *core.ServeEvent) error {
 		// H-3: Suppress installer token URL from stdout.
