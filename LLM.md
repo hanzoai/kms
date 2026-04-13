@@ -66,17 +66,53 @@ Image: `ghcr.io/hanzoai/kmsd:main`
 
 ```
 cmd/kmsd/          -- server entrypoint
-cmd/kms-cli/       -- admin CLI (status, bootstrap)
+cmd/kms-cli/       -- admin CLI (status, put, get, list, rotate)
 internal/auth/     -- IAM JWT + JWKS validation
-internal/handler/  -- HTTP handlers (secrets, keys, transit, compat)
+internal/handler/  -- HTTP handlers (secrets, service_secrets, keys, transit, compat)
 internal/server/   -- chi router setup
-internal/store/    -- Base collection stores
+internal/store/    -- Base collection stores (kms_secrets, kms_service_secrets, etc.)
 internal/transit/  -- transit encryption engine
 internal/mpc/      -- ZAP client for MPC backend
+pkg/kmsclient/     -- Go client for service-to-service secret fetching (used by ATS/BD/TA)
 mpc-node/          -- standalone MPC node (CGGMP21/FROST, ZapDB)
 frontend/          -- React secrets UI
-sdk/               -- Go client SDK
+sdk/               -- Go ZK client SDK (client-side encrypted, for MPC mode)
 ```
+
+## Service Secrets API (2026-04-13)
+
+Server-side encrypted secrets for service-to-service use. Unlike ZK secrets
+(client-side encrypted via MPC), these are encrypted at rest by Base and
+decrypted by KMS on read. Services authenticate via IAM JWT (service account).
+
+**Routes (authenticated):**
+- `PUT /v1/kms/orgs/{org}/secrets/{path}/{name}` — create/update (admin only)
+- `GET /v1/kms/orgs/{org}/secrets/{path}/{name}` — fetch plaintext value
+- `DELETE /v1/kms/orgs/{org}/secrets/{path}/{name}` — delete (admin only)
+- `GET /v1/kms/orgs/{org}/secrets?prefix=...` — list names (no values)
+
+**Client library:** `github.com/hanzoai/kms/pkg/kmsclient`
+```go
+c, _ := kmsclient.New(kmsclient.Config{
+    Endpoint:     "http://kms:8443",
+    IAMEndpoint:  "http://iam:8000",
+    ClientID:     os.Getenv("IAM_CLIENT_ID"),
+    ClientSecret: os.Getenv("IAM_CLIENT_SECRET"),
+    Org:          "liquidity",
+})
+val, _ := c.Get(ctx, "providers/alpaca/dev", "api_key")
+c.Put(ctx, "providers/alpaca/dev", "api_key", "NEW_VALUE")
+```
+
+**CLI:**
+```bash
+kms-cli put providers/alpaca/dev/api_key VALUE --org liquidity
+kms-cli get providers/alpaca/dev/api_key --org liquidity
+kms-cli list providers --org liquidity
+kms-cli rotate providers/alpaca/dev/api_key NEW_VALUE --org liquidity
+```
+
+**Collection:** `kms_service_secrets` (org_id, path, name, value; unique on org+path+name).
 
 ## Replication
 
