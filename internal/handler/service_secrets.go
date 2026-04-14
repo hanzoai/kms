@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
+	"os"
 
 	"github.com/go-chi/chi/v5"
 
@@ -156,6 +157,8 @@ func hasAdminRole(claims *auth.Claims) bool {
 			return true
 		}
 	}
-	// Single-tenant mode: no roles = admin.
-	return len(claims.Roles) == 0
+	if os.Getenv("KMS_SINGLE_TENANT_ADMIN") == "true" {
+		return true
+	}
+	return false
 }
