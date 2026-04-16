@@ -112,4 +112,3 @@ require (
 	modernc.org/sqlite v1.48.1 // indirect
 )
 
-replace github.com/hanzoai/replicate => /Users/z/work/hanzo/replicate
