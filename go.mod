@@ -5,7 +5,7 @@ go 1.26.1
 require (
 	github.com/go-chi/chi/v5 v5.2.1
 	github.com/golang-jwt/jwt/v5 v5.3.1
-	github.com/hanzoai/base v0.40.3
+	github.com/hanzoai/base v0.41.2
 	github.com/luxfi/zap v0.2.0
 )
 
@@ -37,7 +37,7 @@ require (
 	github.com/hablullah/go-juliandays v1.0.0 // indirect
 	github.com/hanzoai/dbx v1.15.0 // indirect
 	github.com/hanzoai/pubsub-go v1.0.0 // indirect
-	github.com/hanzoai/replicate v0.4.0 // indirect
+	github.com/hanzoai/replicate v0.5.12 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
@@ -111,4 +111,3 @@ require (
 	modernc.org/memory v1.11.0 // indirect
 	modernc.org/sqlite v1.48.1 // indirect
 )
-
