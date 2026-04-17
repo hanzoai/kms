@@ -27,7 +27,7 @@ RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
     CGO_ENABLED=1 GOOS=linux GOARCH=${TARGETARCH} \
     go build -tags "sqlite_fts5 sqlcipher" -o /kmsd ./cmd/kmsd/ && \
-    go build -tags "sqlite_fts5 sqlcipher" -o /kms-cli ./cmd/kms-cli/
+    go build -tags "sqlite_fts5 sqlcipher" -o /kms ./cmd/kms/
 
 FROM debian:bookworm-slim
 
@@ -36,7 +36,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /kmsd /usr/local/bin/kmsd
-COPY --from=build /kms-cli /usr/local/bin/kms-cli
+COPY --from=build /kms /usr/local/bin/kms
 COPY --from=frontend /src/frontend/dist /app/frontend
 
 ENV KMS_FRONTEND_DIR=/app/frontend
