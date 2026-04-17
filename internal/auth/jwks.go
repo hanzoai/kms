@@ -124,7 +124,7 @@ func parseRSAPublicKey(k jwk) (*rsa.PublicKey, error) {
 }
 
 // Issuer derives the issuer URL from the JWKS URL.
-// e.g. https://iam.dev.satschel.com/.well-known/jwks → https://iam.dev.satschel.com
+// e.g. https://iam.example.com/.well-known/jwks → https://iam.example.com
 func (v *JWKSValidator) Issuer() string {
 	// Strip the well-known path to get the issuer base.
 	u := v.url
