@@ -1,12 +1,12 @@
-// Command kms-cli is the admin CLI for KMS.
+// Command kms is the admin CLI for KMS.
 //
 // Usage:
 //
-//	kms-cli status [--addr http://localhost:8443]
-//	kms-cli put <path/name> <value> [--org liquidity]
-//	kms-cli get <path/name> [--org liquidity]
-//	kms-cli list [prefix] [--org liquidity]
-//	kms-cli rotate <path/name> <new-value> [--org liquidity]
+//	kms status [--addr http://localhost:8443]
+//	kms put <path/name> <value> [--org liquidity]
+//	kms get <path/name> [--org liquidity]
+//	kms list [prefix] [--org liquidity]
+//	kms rotate <path/name> <new-value> [--org liquidity]
 package main
 
 import (
@@ -52,14 +52,14 @@ func main() {
 		cmdStatus(addr)
 	case "put":
 		if len(args) < 3 {
-			fmt.Fprintln(os.Stderr, "kms-cli: put requires <path/name> <value>")
+			fmt.Fprintln(os.Stderr, "kms: put requires <path/name> <value>")
 			os.Exit(1)
 		}
 		c := mustClient(addr, iamAddr, clientID, clientSecret, org)
 		cmdPut(c, args[1], args[2])
 	case "get":
 		if len(args) < 2 {
-			fmt.Fprintln(os.Stderr, "kms-cli: get requires <path/name>")
+			fmt.Fprintln(os.Stderr, "kms: get requires <path/name>")
 			os.Exit(1)
 		}
 		c := mustClient(addr, iamAddr, clientID, clientSecret, org)
@@ -73,13 +73,13 @@ func main() {
 		cmdList(c, prefix)
 	case "rotate":
 		if len(args) < 3 {
-			fmt.Fprintln(os.Stderr, "kms-cli: rotate requires <path/name> <new-value>")
+			fmt.Fprintln(os.Stderr, "kms: rotate requires <path/name> <new-value>")
 			os.Exit(1)
 		}
 		c := mustClient(addr, iamAddr, clientID, clientSecret, org)
 		cmdRotate(c, args[1], args[2])
 	default:
-		fmt.Fprintf(os.Stderr, "kms-cli: unknown command %q\n", args[0])
+		fmt.Fprintf(os.Stderr, "kms: unknown command %q\n", args[0])
 		usage()
 		os.Exit(1)
 	}
@@ -87,7 +87,7 @@ func main() {
 
 func mustClient(addr, iamAddr, clientID, clientSecret, org string) *kmsclient.Client {
 	if clientID == "" || clientSecret == "" {
-		fmt.Fprintln(os.Stderr, "kms-cli: KMS_CLIENT_ID and KMS_CLIENT_SECRET are required (or --client-id/--client-secret)")
+		fmt.Fprintln(os.Stderr, "kms: KMS_CLIENT_ID and KMS_CLIENT_SECRET are required (or --client-id/--client-secret)")
 		os.Exit(1)
 	}
 	c, err := kmsclient.New(kmsclient.Config{
@@ -98,7 +98,7 @@ func mustClient(addr, iamAddr, clientID, clientSecret, org string) *kmsclient.Cl
 		Org:          org,
 	})
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "kms-cli: %v\n", err)
+		fmt.Fprintf(os.Stderr, "kms: %v\n", err)
 		os.Exit(1)
 	}
 	return c
@@ -110,12 +110,12 @@ func cmdPut(c *kmsclient.Client, fullPath, value string) {
 
 	pn := splitPath(fullPath)
 	if pn.path == "" || pn.name == "" {
-		fmt.Fprintf(os.Stderr, "kms-cli: invalid path %q (must be path/name, e.g. providers/alpaca/dev/api_key)\n", fullPath)
+		fmt.Fprintf(os.Stderr, "kms: invalid path %q (must be path/name, e.g. providers/alpaca/dev/api_key)\n", fullPath)
 		os.Exit(1)
 	}
 
 	if err := c.Put(ctx, pn.path, pn.name, value); err != nil {
-		fmt.Fprintf(os.Stderr, "kms-cli: %v\n", err)
+		fmt.Fprintf(os.Stderr, "kms: %v\n", err)
 		os.Exit(1)
 	}
 	fmt.Printf("ok: %s/%s\n", pn.path, pn.name)
@@ -127,13 +127,13 @@ func cmdGet(c *kmsclient.Client, fullPath string) {
 
 	pn := splitPath(fullPath)
 	if pn.path == "" || pn.name == "" {
-		fmt.Fprintf(os.Stderr, "kms-cli: invalid path %q\n", fullPath)
+		fmt.Fprintf(os.Stderr, "kms: invalid path %q\n", fullPath)
 		os.Exit(1)
 	}
 
 	val, err := c.Get(ctx, pn.path, pn.name)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "kms-cli: %v\n", err)
+		fmt.Fprintf(os.Stderr, "kms: %v\n", err)
 		os.Exit(1)
 	}
 	fmt.Print(val)
@@ -145,7 +145,7 @@ func cmdList(c *kmsclient.Client, prefix string) {
 
 	names, err := c.List(ctx, prefix)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "kms-cli: %v\n", err)
+		fmt.Fprintf(os.Stderr, "kms: %v\n", err)
 		os.Exit(1)
 	}
 	for _, n := range names {
@@ -163,7 +163,7 @@ func cmdStatus(addr string) {
 
 	resp, err := client.Get(addr + "/healthz")
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "kms-cli: health check failed: %v\n", err)
+		fmt.Fprintf(os.Stderr, "kms: health check failed: %v\n", err)
 		os.Exit(1)
 	}
 	defer resp.Body.Close()
@@ -173,7 +173,7 @@ func cmdStatus(addr string) {
 
 	resp2, err := client.Get(addr + "/v1/kms/status")
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "kms-cli: status check failed: %v\n", err)
+		fmt.Fprintf(os.Stderr, "kms: status check failed: %v\n", err)
 		os.Exit(1)
 	}
 	defer resp2.Body.Close()
@@ -215,7 +215,7 @@ func extractFlag(dst *string, args []string, flag string) []string {
 }
 
 func usage() {
-	fmt.Fprintln(os.Stderr, `Usage: kms-cli <command> [flags]
+	fmt.Fprintln(os.Stderr, `Usage: kms <command> [flags]
 
 Commands:
   status       Check kmsd health and MPC status

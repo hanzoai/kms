@@ -3,8 +3,8 @@
 kmsd:
 	go build -o kmsd ./cmd/kmsd/
 
-kms-cli:
-	go build -o kms-cli ./cmd/kms-cli/
+kms:
+	go build -o kms ./cmd/kms/
 
 test:
 	go test ./internal/...
@@ -13,6 +13,6 @@ vet:
 	go vet ./...
 
 clean:
-	rm -f kmsd kms-cli
+	rm -f kmsd kms
 
-.PHONY: kmsd kms-cli test vet clean
+.PHONY: kmsd kms test vet clean
