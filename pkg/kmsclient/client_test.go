@@ -79,21 +79,34 @@ func TestGet_WithMockServer(t *testing.T) {
 	}))
 	defer iam.Close()
 
-	// Mock KMS server.
+	// Mock KMS server — implements canonical two-step resolve + fetch.
 	kms := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Verify auth header.
 		if r.Header.Get("Authorization") != "Bearer test-token-123" {
 			http.Error(w, "unauthorized", http.StatusUnauthorized)
 			return
 		}
-		// Return secret.
-		json.NewEncoder(w).Encode(map[string]any{
-			"secret": map[string]any{
-				"path":  "providers/alpaca/dev",
-				"name":  "api_key",
-				"value": "CKEJOEAIF2RS6KLVJUSXVOPKLW",
-			},
-		})
+		// Step 1: GET /v1/kms/tenants/{tenantId}/secrets?path=&name= → list items
+		if r.URL.Path == "/v1/kms/tenants/liquidity/secrets" {
+			json.NewEncoder(w).Encode(map[string]any{
+				"items": []map[string]any{{
+					"secretId": "sec_abc",
+					"path":     r.URL.Query().Get("path"),
+					"name":     r.URL.Query().Get("name"),
+				}},
+			})
+			return
+		}
+		// Step 2: GET /v1/kms/secrets/{secretId} → value
+		if r.URL.Path == "/v1/kms/secrets/sec_abc" {
+			json.NewEncoder(w).Encode(map[string]any{
+				"secretId": "sec_abc",
+				"path":     "providers/alpaca/dev",
+				"name":     "api_key",
+				"value":    "CKEJOEAIF2RS6KLVJUSXVOPKLW",
+			})
+			return
+		}
+		http.Error(w, "not found", http.StatusNotFound)
 	}))
 	defer kms.Close()
 
@@ -127,7 +140,8 @@ func TestGet_NotFound(t *testing.T) {
 	defer iam.Close()
 
 	kms := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		http.Error(w, `{"error":"secret not found"}`, http.StatusNotFound)
+		// Return empty items list — resolveSecretID will surface "not found".
+		json.NewEncoder(w).Encode(map[string]any{"items": []map[string]any{}})
 	}))
 	defer kms.Close()
 
@@ -157,9 +171,21 @@ func TestGet_TokenCaching(t *testing.T) {
 	defer iam.Close()
 
 	kms := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		json.NewEncoder(w).Encode(map[string]any{
-			"secret": map[string]any{"value": "v"},
-		})
+		if r.URL.Path == "/v1/kms/tenants/org/secrets" {
+			json.NewEncoder(w).Encode(map[string]any{
+				"items": []map[string]any{{
+					"secretId": "sec_x",
+					"path":     r.URL.Query().Get("path"),
+					"name":     r.URL.Query().Get("name"),
+				}},
+			})
+			return
+		}
+		if r.URL.Path == "/v1/kms/secrets/sec_x" {
+			json.NewEncoder(w).Encode(map[string]any{"secretId": "sec_x", "value": "v"})
+			return
+		}
+		http.Error(w, "nf", 404)
 	}))
 	defer kms.Close()
 
@@ -196,14 +222,32 @@ func TestFetchEnv(t *testing.T) {
 	}
 
 	kms := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Extract path/name from URL: /v1/kms/orgs/org/secrets/{path}/{name}
-		// Simple: just return based on last two segments.
 		p := r.URL.Path
-		for fullPath, val := range secrets {
-			pn := splitPathName(fullPath)
-			if containsPath(p, pn.path, pn.name) {
+		// Step 1: list resolver.
+		if p == "/v1/kms/tenants/org/secrets" {
+			path := r.URL.Query().Get("path")
+			name := r.URL.Query().Get("name")
+			full := path + "/" + name
+			if _, ok := secrets[full]; ok {
 				json.NewEncoder(w).Encode(map[string]any{
-					"secret": map[string]any{"value": val},
+					"items": []map[string]any{{
+						"secretId": "sec_" + name,
+						"path":     path,
+						"name":     name,
+					}},
+				})
+				return
+			}
+			json.NewEncoder(w).Encode(map[string]any{"items": []map[string]any{}})
+			return
+		}
+		// Step 2: read by id.
+		for full, val := range secrets {
+			pn := splitPathName(full)
+			if p == "/v1/kms/secrets/sec_"+pn.name {
+				json.NewEncoder(w).Encode(map[string]any{
+					"secretId": "sec_" + pn.name,
+					"value":    val,
 				})
 				return
 			}
@@ -263,9 +307,20 @@ func TestFetchEnv_NoOverrideExisting(t *testing.T) {
 	defer iam.Close()
 
 	kms := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		json.NewEncoder(w).Encode(map[string]any{
-			"secret": map[string]any{"value": "from-kms"},
-		})
+		// Resolver: return one item; read: return value. Not important here —
+		// the assertion is "existing env vars are not overridden", which short-
+		// circuits before the KMS call.
+		if r.URL.Path == "/v1/kms/tenants/org/secrets" {
+			json.NewEncoder(w).Encode(map[string]any{
+				"items": []map[string]any{{
+					"secretId": "sec_k",
+					"path":     r.URL.Query().Get("path"),
+					"name":     r.URL.Query().Get("name"),
+				}},
+			})
+			return
+		}
+		json.NewEncoder(w).Encode(map[string]any{"secretId": "sec_k", "value": "from-kms"})
 	}))
 	defer kms.Close()
 

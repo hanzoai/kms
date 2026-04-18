@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
-	"os"
 
 	"github.com/hanzoai/kms/internal/auth"
 )
@@ -56,29 +55,9 @@ func hasExactRole(claims *auth.Claims, role string) bool {
 }
 
 // isAdmin returns true if the caller has the kms.admin IAM role claim.
-//
-// F12: KMS_SINGLE_TENANT_ADMIN is a dev-only override. It is hard-gated on
-// KMS_DEV_MODE=true AND a best-effort check against obvious production
-// environments. In prod it MUST NOT short-circuit to admin — a misconfigured
-// deployment would otherwise become an admin escalation vector.
+// No env escape hatch — one way to become admin: the IAM role claim.
 func isAdmin(claims *auth.Claims) bool {
-	if hasExactRole(claims, AdminRoleClaim) {
-		return true
-	}
-	if os.Getenv("KMS_SINGLE_TENANT_ADMIN") != "true" {
-		return false
-	}
-	// Only honor the dev escape hatch when explicitly in dev mode and NOT
-	// running in a production environment.
-	if os.Getenv("KMS_DEV_MODE") != "true" {
-		return false
-	}
-	env := os.Getenv("KMS_ENV")
-	switch env {
-	case "production", "prod", "mainnet", "main":
-		return false
-	}
-	return true
+	return hasExactRole(claims, AdminRoleClaim)
 }
 
 // isSecretAdmin is the intra-tenant secret-admin check. Global admins pass

@@ -97,50 +97,60 @@ func New(cfg Config) (*Client, error) {
 	}, nil
 }
 
-// Get fetches a single secret value by path and name.
-// Returns the plaintext value or an error.
-func (c *Client) Get(ctx context.Context, path, name string) (string, error) {
+// resolveSecretID looks up a secret by (org, path, name) and returns its canonical id.
+// Uses the one canonical path: /v1/kms/tenants/{tenantId}/secrets?path=&name=.
+func (c *Client) resolveSecretID(ctx context.Context, path, name string) (string, error) {
 	token, err := c.getToken(ctx)
 	if err != nil {
 		return "", fmt.Errorf("kmsclient: auth: %w", err)
 	}
-
-	u := fmt.Sprintf("%s/v1/kms/orgs/%s/secrets/%s/%s",
+	u := fmt.Sprintf("%s/v1/kms/tenants/%s/secrets?path=%s&name=%s",
 		c.endpoint,
 		url.PathEscape(c.org),
-		url.PathEscape(path),
-		url.PathEscape(name),
+		url.QueryEscape(path),
+		url.QueryEscape(name),
 	)
-
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
 	if err != nil {
 		return "", fmt.Errorf("kmsclient: build request: %w", err)
 	}
 	req.Header.Set("Authorization", "Bearer "+token)
-
 	resp, err := c.http.Do(req)
 	if err != nil {
 		return "", fmt.Errorf("kmsclient: request: %w", err)
 	}
 	defer resp.Body.Close()
-
 	body, _ := io.ReadAll(resp.Body)
-	if resp.StatusCode == http.StatusNotFound {
-		return "", fmt.Errorf("kmsclient: secret %s/%s not found", path, name)
-	}
 	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf("kmsclient: status %d: %s", resp.StatusCode, body)
 	}
+	var wrap struct {
+		Items []struct {
+			SecretID string `json:"secretId"`
+			Path     string `json:"path"`
+			Name     string `json:"name"`
+		} `json:"items"`
+	}
+	if err := json.Unmarshal(body, &wrap); err != nil {
+		return "", fmt.Errorf("kmsclient: decode: %w", err)
+	}
+	for _, it := range wrap.Items {
+		if it.Path == path && it.Name == name && it.SecretID != "" {
+			return it.SecretID, nil
+		}
+	}
+	return "", fmt.Errorf("kmsclient: secret %s/%s not found", path, name)
+}
 
-	var result struct {
-		Secret struct {
-			Value string `json:"value"`
-		} `json:"secret"`
+// Get fetches a single secret value by path and name.
+// Resolves (path, name) to the canonical secretId, then reads via
+// /v1/kms/secrets/{secretId} — the one canonical read path.
+func (c *Client) Get(ctx context.Context, path, name string) (string, error) {
+	id, err := c.resolveSecretID(ctx, path, name)
+	if err != nil {
+		return "", err
 	}
-	if err := json.Unmarshal(body, &result); err != nil {
-		return "", fmt.Errorf("kmsclient: decode response: %w", err)
-	}
-	return result.Secret.Value, nil
+	return c.GetByID(ctx, id)
 }
 
 // GetJSON fetches a secret and unmarshals its value as JSON into dst.
@@ -155,119 +165,92 @@ func (c *Client) GetJSON(ctx context.Context, path, name string, dst any) error 
 	return nil
 }
 
-// List returns secret names (not values) under a path prefix.
-func (c *Client) List(ctx context.Context, prefix string) ([]string, error) {
+// List returns "path/name" strings for all secrets visible to the caller.
+// Uses the canonical tenant listing at /v1/kms/tenants/{tenantId}/secrets.
+func (c *Client) List(ctx context.Context, pathPrefix string) ([]string, error) {
 	token, err := c.getToken(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("kmsclient: auth: %w", err)
 	}
-
-	u := fmt.Sprintf("%s/v1/kms/orgs/%s/secrets?prefix=%s",
+	u := fmt.Sprintf("%s/v1/kms/tenants/%s/secrets",
 		c.endpoint,
 		url.PathEscape(c.org),
-		url.QueryEscape(prefix),
 	)
-
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
 	if err != nil {
 		return nil, fmt.Errorf("kmsclient: build request: %w", err)
 	}
 	req.Header.Set("Authorization", "Bearer "+token)
-
 	resp, err := c.http.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("kmsclient: request: %w", err)
 	}
 	defer resp.Body.Close()
-
 	body, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("kmsclient: status %d: %s", resp.StatusCode, body)
 	}
-
-	var result struct {
-		Secrets []struct {
+	var wrap struct {
+		Items []struct {
 			Path string `json:"path"`
 			Name string `json:"name"`
-		} `json:"secrets"`
+		} `json:"items"`
 	}
-	if err := json.Unmarshal(body, &result); err != nil {
-		return nil, fmt.Errorf("kmsclient: decode list: %w", err)
+	if err := json.Unmarshal(body, &wrap); err != nil {
+		return nil, fmt.Errorf("kmsclient: decode: %w", err)
 	}
-
-	names := make([]string, len(result.Secrets))
-	for i, s := range result.Secrets {
-		names[i] = s.Path + "/" + s.Name
+	out := make([]string, 0, len(wrap.Items))
+	for _, it := range wrap.Items {
+		if pathPrefix != "" && !strings.HasPrefix(it.Path, pathPrefix) {
+			continue
+		}
+		out = append(out, it.Path+"/"+it.Name)
 	}
-	return names, nil
+	return out, nil
 }
 
-// Put creates or updates a secret. Requires admin role in the IAM JWT.
+// Put creates or updates a secret via the canonical
+// POST /v1/kms/tenants/{tenantId}/secrets route (on create) or
+// PATCH /v1/kms/secrets/{secretId} (on update). Requires secret-admin role.
 func (c *Client) Put(ctx context.Context, path, name, value string) error {
+	if id, err := c.resolveSecretID(ctx, path, name); err == nil {
+		_, err := c.UpdateSecret(ctx, id, value, nil)
+		return err
+	}
 	token, err := c.getToken(ctx)
 	if err != nil {
 		return fmt.Errorf("kmsclient: auth: %w", err)
 	}
-
-	u := fmt.Sprintf("%s/v1/kms/orgs/%s/secrets/%s/%s",
+	u := fmt.Sprintf("%s/v1/kms/tenants/%s/secrets",
 		c.endpoint,
 		url.PathEscape(c.org),
-		url.PathEscape(path),
-		url.PathEscape(name),
 	)
-
-	body, _ := json.Marshal(map[string]string{"value": value})
-	req, err := http.NewRequestWithContext(ctx, http.MethodPut, u, strings.NewReader(string(body)))
+	payload, _ := json.Marshal(map[string]string{"path": path, "name": name, "value": value})
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, u, strings.NewReader(string(payload)))
 	if err != nil {
 		return fmt.Errorf("kmsclient: build request: %w", err)
 	}
 	req.Header.Set("Authorization", "Bearer "+token)
 	req.Header.Set("Content-Type", "application/json")
-
 	resp, err := c.http.Do(req)
 	if err != nil {
 		return fmt.Errorf("kmsclient: request: %w", err)
 	}
 	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
+	if resp.StatusCode != http.StatusCreated && resp.StatusCode != http.StatusOK {
 		respBody, _ := io.ReadAll(resp.Body)
 		return fmt.Errorf("kmsclient: put status %d: %s", resp.StatusCode, respBody)
 	}
 	return nil
 }
 
-// Delete removes a secret. Requires admin role.
+// Delete removes a secret by (path, name). Routes through DELETE /v1/kms/secrets/{secretId}.
 func (c *Client) Delete(ctx context.Context, path, name string) error {
-	token, err := c.getToken(ctx)
+	id, err := c.resolveSecretID(ctx, path, name)
 	if err != nil {
-		return fmt.Errorf("kmsclient: auth: %w", err)
+		return err
 	}
-
-	u := fmt.Sprintf("%s/v1/kms/orgs/%s/secrets/%s/%s",
-		c.endpoint,
-		url.PathEscape(c.org),
-		url.PathEscape(path),
-		url.PathEscape(name),
-	)
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodDelete, u, nil)
-	if err != nil {
-		return fmt.Errorf("kmsclient: build request: %w", err)
-	}
-	req.Header.Set("Authorization", "Bearer "+token)
-
-	resp, err := c.http.Do(req)
-	if err != nil {
-		return fmt.Errorf("kmsclient: request: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusNoContent && resp.StatusCode != http.StatusOK {
-		respBody, _ := io.ReadAll(resp.Body)
-		return fmt.Errorf("kmsclient: delete status %d: %s", resp.StatusCode, respBody)
-	}
-	return nil
+	return c.DeleteByID(ctx, id)
 }
 
 // FetchEnv fetches multiple secrets and sets them as environment variables.

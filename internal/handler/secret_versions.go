@@ -58,7 +58,7 @@ func (h *SecretsByID) ListAll(w http.ResponseWriter, r *http.Request) {
 		tenantID = claims.Owner
 	}
 
-	items, err := h.store.ListAll(tenantID, secretType)
+	items, err := h.store.ListAll(tenantID, secretType, "", "")
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "failed to list secrets")
 		return
