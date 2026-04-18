@@ -9,6 +9,8 @@ import (
 	"sync"
 
 	"github.com/hanzoai/base/core"
+	"github.com/hanzoai/base/tools/search"
+	"github.com/hanzoai/dbx"
 )
 
 const auditCollection = "kms_audit_log"
@@ -110,6 +112,13 @@ func (s *AuditStore) Append(orgID string, entry any) error {
 }
 
 // List returns audit entries for a specific org (tenant).
+//
+// F11: Verifies the prev-hash chain before returning results. If any entry's
+// stored hash or prev_hash does not match the recomputed chain, returns an
+// error — the caller must treat this as a potential tampering event. At the
+// app layer we forbid UPDATE/DELETE on audit entries; DB-layer hardening
+// (revoke UPDATE/DELETE on audit table for the service role, optional S3
+// WORM export) is documented in kms/SECURITY.md.
 func (s *AuditStore) List(orgID string) ([]*AuditEntry, error) {
 	records, err := s.app.FindRecordsByFilter(
 		auditCollection,
@@ -127,7 +136,32 @@ func (s *AuditStore) List(orgID string) ([]*AuditEntry, error) {
 	for _, r := range records {
 		out = append(out, recordToAuditEntry(r))
 	}
+	if err := verifyHashChain(records); err != nil {
+		return out, fmt.Errorf("audit: tamper detected: %w", err)
+	}
 	return out, nil
+}
+
+// verifyHashChain recomputes the SHA-256 chain over records (assumed ordered
+// by seq ascending) and reports an error if any stored hash deviates from
+// the expected chain. Empty input is valid (no-op).
+func verifyHashChain(records []*core.Record) error {
+	prevHash := ""
+	for i, r := range records {
+		entryJSON := r.GetString("entry")
+		expected := sha256.Sum256(append([]byte(prevHash), []byte(entryJSON)...))
+		want := hex.EncodeToString(expected[:])
+		got := r.GetString("hash")
+		storedPrev := r.GetString("prev_hash")
+		if storedPrev != prevHash {
+			return fmt.Errorf("seq=%d prev_hash mismatch: want %q got %q", i+1, prevHash, storedPrev)
+		}
+		if got != want {
+			return fmt.Errorf("seq=%d hash mismatch", i+1)
+		}
+		prevHash = got
+	}
+	return nil
 }
 
 // Query performs a multi-filter search across tenants. Callers must gate
@@ -172,18 +206,48 @@ func (s *AuditStore) Query(q AuditQuery) ([]*AuditEntry, int, error) {
 	}
 	offset := (page - 1) * per
 
+	// F10: totalItems must reflect the full filtered result count, not the
+	// current page size. Count first (via filter → dbx.Expression), then
+	// fetch the page.
+	total, err := s.countByFilter(filter, params)
+	if err != nil {
+		return nil, 0, err
+	}
 	records, err := s.app.FindRecordsByFilter(auditCollection, filter, "-created", per, offset, params)
 	if err != nil {
 		if strings.Contains(err.Error(), "no rows") {
-			return nil, 0, nil
+			return nil, total, nil
 		}
-		return nil, 0, fmt.Errorf("audit: query: %w", err)
+		return nil, total, fmt.Errorf("audit: query: %w", err)
 	}
 	out := make([]*AuditEntry, 0, len(records))
 	for _, r := range records {
 		out = append(out, recordToAuditEntry(r))
 	}
-	return out, len(out), nil
+	return out, total, nil
+}
+
+// countByFilter runs CountRecords with the same Base filter language used by
+// FindRecordsByFilter. Empty filter counts everything.
+func (s *AuditStore) countByFilter(filter string, params map[string]any) (int, error) {
+	col, err := s.app.FindCollectionByNameOrId(auditCollection)
+	if err != nil {
+		return 0, fmt.Errorf("audit: count: %w", err)
+	}
+	var exprs []dbx.Expression
+	if filter != "" {
+		resolver := core.NewRecordFieldResolver(s.app, col, nil, true)
+		expr, err := search.FilterData(filter).BuildExpr(resolver, dbx.Params(params))
+		if err != nil {
+			return 0, fmt.Errorf("audit: count build expr: %w", err)
+		}
+		exprs = append(exprs, expr)
+	}
+	total, err := s.app.CountRecords(col, exprs...)
+	if err != nil {
+		return 0, fmt.Errorf("audit: count records: %w", err)
+	}
+	return int(total), nil
 }
 
 func recordToAuditEntry(r *core.Record) *AuditEntry {
