@@ -38,7 +38,6 @@ func NewRouter(cfg Config) *chi.Mux {
 	transitEngine := transit.NewEngine(transitKeyStore)
 
 	secretsH := handler.NewSecrets(secretStore)
-	serviceSecretsH := handler.NewServiceSecrets(serviceSecretStore)
 	keysH := handler.NewKeys(keyStore, cfg.MPC, cfg.VaultID)
 	membersH := handler.NewMembers(memberStore)
 	complianceH := handler.NewCompliance(auditStore)
@@ -57,7 +56,7 @@ func NewRouter(cfg Config) *chi.Mux {
 
 	RegisterRoutes(
 		r, cfg.JWKS, cfg.AuthMode,
-		secretsH, serviceSecretsH, keysH, membersH, complianceH,
+		secretsH, keysH, membersH, complianceH,
 		transitH, statusH, compatH,
 		tenantsH, tenantConfigH, tenantSecretsH, integrationsH, secretsByIDH,
 	)
