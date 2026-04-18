@@ -34,6 +34,7 @@ func NewRouter(cfg Config) *chi.Mux {
 	tenantStore := store.NewTenantStore(cfg.App)
 	tenantConfigStore := store.NewTenantConfigStore(cfg.App)
 	integrationStore := store.NewIntegrationStore(cfg.App)
+	idempotencyStore := store.NewIdempotencyStore(cfg.App)
 
 	transitEngine := transit.NewEngine(transitKeyStore)
 
@@ -48,7 +49,7 @@ func NewRouter(cfg Config) *chi.Mux {
 	tenantConfigH := handler.NewTenantConfig(tenantConfigStore, auditStore)
 	tenantSecretsH := handler.NewTenantSecrets(serviceSecretStore, auditStore)
 	integrationsH := handler.NewIntegrations(integrationStore, auditStore)
-	secretsByIDH := handler.NewSecretsByID(serviceSecretStore, auditStore)
+	secretsByIDH := handler.NewSecretsByID(serviceSecretStore, auditStore, idempotencyStore)
 
 	r := chi.NewRouter()
 	r.Use(middleware.RealIP)
