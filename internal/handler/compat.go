@@ -55,7 +55,6 @@ func (h *Compat) GetUser(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusUnauthorized, "no claims in context")
 		return
 	}
-	isAdmin := hasRole(claims, "admin", "owner", "superadmin")
 	writeJSON(w, http.StatusOK, map[string]any{
 		"user": map[string]any{
 			"id":               claims.Sub,
@@ -63,7 +62,7 @@ func (h *Compat) GetUser(w http.ResponseWriter, r *http.Request) {
 			"username":         claims.Email,
 			"firstName":        "",
 			"lastName":         "",
-			"superAdmin":       isAdmin,
+			"superAdmin":       isAdmin(claims),
 			"isEmailVerified":  true,
 			"authMethods":      []string{"oidc"},
 			"mfaMethods":       []any{},
@@ -336,22 +335,6 @@ func (h *Compat) StatusEnhanced(w http.ResponseWriter, r *http.Request) {
 		"date":    time.Now().UTC().Format(time.RFC3339),
 		"message": "Ok",
 	})
-}
-
-// hasRole checks if claims contain any of the given roles.
-func hasRole(claims *auth.Claims, roles ...string) bool {
-	if claims == nil {
-		return false
-	}
-	for _, r := range claims.Roles {
-		for _, want := range roles {
-			if r == want {
-				return true
-			}
-		}
-	}
-	// If no roles in JWT, default to admin (single-tenant mode).
-	return len(claims.Roles) == 0
 }
 
 // allPermissions returns Infisical PackRule objects granting full access.
