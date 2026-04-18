@@ -261,6 +261,11 @@ func (s *ServiceSecretStore) List(orgID, pathPrefix string) ([]*ServiceSecret, e
 // ListAll returns secret metadata across all tenants, optionally filtered by
 // tenantId and/or secretType. Intended for admin listings — callers must
 // gate this on `kms.admin`.
+//
+// F13: When both filter arguments are empty, pass a tautology filter
+// ("id != ''") instead of an empty string — Base's FindRecordsByFilter
+// treats "" as "return nothing" on some backends, which would silently
+// omit all secrets.
 func (s *ServiceSecretStore) ListAll(tenantID, secretType string) ([]*ServiceSecret, error) {
 	var clauses []string
 	params := map[string]any{}
@@ -273,6 +278,9 @@ func (s *ServiceSecretStore) ListAll(tenantID, secretType string) ([]*ServiceSec
 		params["st"] = secretType
 	}
 	filter := strings.Join(clauses, " && ")
+	if filter == "" {
+		filter = "id != ''" // match-all sentinel
+	}
 
 	records, err := s.app.FindRecordsByFilter(serviceSecretsCollection, filter, "", 0, 0, params)
 	if err != nil {
