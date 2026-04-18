@@ -57,11 +57,14 @@ Image: `ghcr.io/hanzoai/kmsd:main`
 
 - `/healthz` -- health check (unauthenticated)
 - `/v1/kms/auth/login` -- machine identity auth (CI/CD)
-- `/v1/kms/orgs/{org}/zk/secrets` -- ZK CRUD secrets (authenticated)
-- `/v1/kms/orgs/{org}/secrets/{path}/{name}` -- compat service-secret path
+- `/v1/kms/orgs/{org}/zk/secrets` -- ZK CRUD secrets (authenticated, MPC mode)
 - `/v1/kms/keys/*` -- validator key management (authenticated)
 - `/v1/kms/transit/*` -- encrypt/decrypt/sign/verify (authenticated)
 - `/v1/kms/auth/*` -- Infisical-compat stubs for frontend
+
+Service-secret CRUD lives under `/v1/kms/tenants/{tenantId}/secrets` and
+`/v1/kms/secrets/{secretId}` — there is no `/v1/kms/orgs/{org}/secrets/*`
+surface. One way in, one way out.
 
 ### Spec surface (2026-04-18)
 
@@ -101,17 +104,23 @@ frontend/          -- React secrets UI
 sdk/               -- Go ZK client SDK (client-side encrypted, for MPC mode)
 ```
 
-## Service Secrets API (2026-04-13)
+## Service Secrets API (2026-04-18)
 
 Server-side encrypted secrets for service-to-service use. Unlike ZK secrets
 (client-side encrypted via MPC), these are encrypted at rest by Base and
 decrypted by KMS on read. Services authenticate via IAM JWT (service account).
 
-**Routes (authenticated):**
-- `PUT /v1/kms/orgs/{org}/secrets/{path}/{name}` — create/update (admin only)
-- `GET /v1/kms/orgs/{org}/secrets/{path}/{name}` — fetch plaintext value
-- `DELETE /v1/kms/orgs/{org}/secrets/{path}/{name}` — delete (admin only)
-- `GET /v1/kms/orgs/{org}/secrets?prefix=...` — list names (no values)
+**Routes (authenticated) — one way only:**
+- `POST /v1/kms/tenants/{tenantId}/secrets` — create (returns `secretId`)
+- `GET /v1/kms/tenants/{tenantId}/secrets?path=&name=` — list / resolve
+- `GET /v1/kms/secrets/{secretId}` — fetch plaintext value
+- `PATCH /v1/kms/secrets/{secretId}` — update value
+- `DELETE /v1/kms/secrets/{secretId}` — delete
+- `POST /v1/kms/secrets/{secretId}/rotate` — append new version
+
+The Go client `pkg/kmsclient` keeps the ergonomic `Get/Put/Delete/List(path,
+name)` signatures but internally routes through the tenant list resolver +
+canonical `secretId` endpoints.
 
 **Client library:** `github.com/hanzoai/kms/pkg/kmsclient`
 ```go

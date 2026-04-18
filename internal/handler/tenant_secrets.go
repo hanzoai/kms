@@ -11,9 +11,8 @@ import (
 )
 
 // TenantSecrets serves the spec-shaped, tenant-scoped secret surface at
-// /v1/kms/tenants/{tenantId}/secrets. Existing path+name-addressable routes at
-// /v1/kms/orgs/{org}/secrets/{path}/{name} remain the compat surface for
-// existing clients; this handler is the canonical shape that returns secretId.
+// /v1/kms/tenants/{tenantId}/secrets. This is the one and only write surface
+// for service secrets; reads/updates/deletes go through /v1/kms/secrets/{id}.
 type TenantSecrets struct {
 	store *store.ServiceSecretStore
 	audit *store.AuditStore
@@ -33,7 +32,8 @@ func (h *TenantSecrets) List(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusForbidden, "tenant mismatch")
 		return
 	}
-	items, err := h.store.ListAll(tenantID, r.URL.Query().Get("secretType"))
+	q := r.URL.Query()
+	items, err := h.store.ListAll(tenantID, q.Get("secretType"), q.Get("path"), q.Get("name"))
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "failed to list secrets")
 		return
@@ -54,7 +54,7 @@ func (h *TenantSecrets) Create(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusForbidden, "tenant mismatch")
 		return
 	}
-	if !isAdmin(claims) && !hasAdminRole(claims) {
+	if !isSecretAdmin(claims, tenantID) {
 		writeError(w, http.StatusForbidden, "admin role required for secret writes")
 		return
 	}
