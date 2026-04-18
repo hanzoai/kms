@@ -27,12 +27,16 @@ func NewSecretsByID(s *store.ServiceSecretStore, a *store.AuditStore) *SecretsBy
 	return &SecretsByID{store: s, versions: s.Versions(), audit: a}
 }
 
-// canAccess allows admins or the secret's owning tenant.
-func (h *SecretsByID) canAccess(claims *auth.Claims, tenantID string) bool {
-	if isAdmin(claims) {
-		return true
-	}
-	return claims != nil && claims.Owner == tenantID
+// canRead authorizes read access — global admin, tenant secret admin, or a
+// tenant member with kms.secret.read (F7).
+func (h *SecretsByID) canRead(claims *auth.Claims, tenantID string) bool {
+	return canReadSecret(claims, tenantID)
+}
+
+// canWrite authorizes mutation — global admin or tenant secret admin. Regular
+// tenant members, including those with kms.secret.read, may NOT mutate.
+func (h *SecretsByID) canWrite(claims *auth.Claims, tenantID string) bool {
+	return isSecretAdmin(claims, tenantID)
 }
 
 // ListAll is the admin listing — GET /v1/kms/secrets?tenantId=&secretType=.
@@ -75,8 +79,8 @@ func (h *SecretsByID) Read(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusNotFound, "secret not found")
 		return
 	}
-	if !h.canAccess(claims, sec.TenantID) {
-		writeError(w, http.StatusForbidden, "tenant mismatch")
+	if !h.canRead(claims, sec.TenantID) {
+		writeError(w, http.StatusForbidden, "insufficient permissions")
 		return
 	}
 
@@ -100,8 +104,8 @@ func (h *SecretsByID) Update(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusNotFound, "secret not found")
 		return
 	}
-	if !h.canAccess(claims, sec.TenantID) {
-		writeError(w, http.StatusForbidden, "tenant mismatch")
+	if !h.canWrite(claims, sec.TenantID) {
+		writeError(w, http.StatusForbidden, "insufficient permissions")
 		return
 	}
 
@@ -142,8 +146,8 @@ func (h *SecretsByID) Delete(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusNotFound, "secret not found")
 		return
 	}
-	if !h.canAccess(claims, sec.TenantID) {
-		writeError(w, http.StatusForbidden, "tenant mismatch")
+	if !h.canWrite(claims, sec.TenantID) {
+		writeError(w, http.StatusForbidden, "insufficient permissions")
 		return
 	}
 
@@ -170,8 +174,8 @@ func (h *SecretsByID) Versions(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusNotFound, "secret not found")
 		return
 	}
-	if !h.canAccess(claims, sec.TenantID) {
-		writeError(w, http.StatusForbidden, "tenant mismatch")
+	if !h.canRead(claims, sec.TenantID) {
+		writeError(w, http.StatusForbidden, "insufficient permissions")
 		return
 	}
 
@@ -202,14 +206,29 @@ func (h *SecretsByID) Rotate(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusNotFound, "secret not found")
 		return
 	}
-	if !h.canAccess(claims, sec.TenantID) {
-		writeError(w, http.StatusForbidden, "tenant mismatch")
+	if !h.canWrite(claims, sec.TenantID) {
+		writeError(w, http.StatusForbidden, "insufficient permissions")
 		return
 	}
 
-	idem := r.Header.Get("Idempotency-Key")
-	if idem != "" {
-		if seen, _ := idempotencyLoad(idem); seen {
+	// F8+F9: idempotency key is scoped by (tenantID, secretID, rawKey) and
+	// claimed atomically. Concurrent requests with the same scoped key:
+	// only one claims, the rest get the already-rotated current version.
+	rawKey := r.Header.Get("Idempotency-Key")
+	scopedKey := buildIdempotencyKey(sec.TenantID, id, rawKey)
+	if rawKey != "" {
+		if seen, _ := idempotencyLoad(scopedKey); seen {
+			cur, _ := h.versions.Current(id)
+			writeJSON(w, http.StatusOK, map[string]any{
+				"secretId": id,
+				"version":  cur.Version,
+				"rotated":  false,
+			})
+			return
+		}
+		// Atomic "claim this key or lose". If we lose, another request is
+		// mid-rotation for the same scoped key — treat as idempotent no-op.
+		if !idempotencyClaim(scopedKey) {
 			cur, _ := h.versions.Current(id)
 			writeJSON(w, http.StatusOK, map[string]any{
 				"secretId": id,
@@ -242,9 +261,6 @@ func (h *SecretsByID) Rotate(w http.ResponseWriter, r *http.Request) {
 		}
 		writeError(w, http.StatusInternalServerError, "failed to rotate secret")
 		return
-	}
-	if idem != "" {
-		idempotencyStore(idem)
 	}
 	_ = h.audit.Append(sec.TenantID, map[string]any{
 		"actor_id":     claimSub(claims),
