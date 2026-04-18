@@ -57,10 +57,32 @@ Image: `ghcr.io/hanzoai/kmsd:main`
 
 - `/healthz` -- health check (unauthenticated)
 - `/v1/kms/auth/login` -- machine identity auth (CI/CD)
-- `/v1/orgs/{org}/zk/secrets` -- CRUD secrets (authenticated)
-- `/v1/keys/*` -- validator key management (authenticated)
-- `/v1/transit/*` -- encrypt/decrypt/sign/verify (authenticated)
-- `/v1/auth/*` -- Infisical-compat stubs for frontend
+- `/v1/kms/orgs/{org}/zk/secrets` -- ZK CRUD secrets (authenticated)
+- `/v1/kms/orgs/{org}/secrets/{path}/{name}` -- compat service-secret path
+- `/v1/kms/keys/*` -- validator key management (authenticated)
+- `/v1/kms/transit/*` -- encrypt/decrypt/sign/verify (authenticated)
+- `/v1/kms/auth/*` -- Infisical-compat stubs for frontend
+
+### Spec surface (2026-04-18)
+
+Canonical Liquidity KMS spec frozen in `~/work/liquidity/openapi/kms.yaml`.
+`tenantId === IAM owner`; JWT required everywhere. Admin ops gated by the
+`kms.admin` role claim. New routes:
+
+- `GET|POST /v1/kms/tenants` — list + create tenants (admin only for create)
+- `GET|PATCH|DELETE /v1/kms/tenants/{tenantId}` — tenant CRUD
+- `GET|PUT /v1/kms/tenants/{tenantId}/config` — bindings + feature flags
+- `GET|POST /v1/kms/tenants/{tenantId}/secrets` — spec-shape tenant secrets
+  (returns `secretId`; metadata-only listings)
+- `GET|POST /v1/kms/tenants/{tenantId}/integrations` — provider bindings
+- `GET /v1/kms/secrets?tenantId=&secretType=` — admin listing across tenants
+- `GET|PATCH|DELETE /v1/kms/secrets/{secretId}` — cross-tenant addressable
+- `GET /v1/kms/secrets/{secretId}/versions` — version history (values redacted)
+- `POST /v1/kms/secrets/{secretId}/rotate` — append new version; idempotent
+  on the `Idempotency-Key` header
+- `GET /v1/kms/audit?tenantId=&actorId=&subjectId=&action=&since=&until=` —
+  canonical audit query (moved from `/v1/kms/orgs/{org}/audit`; legacy route
+  kept for backwards reads only)
 
 ## Packages
 
