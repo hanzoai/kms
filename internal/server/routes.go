@@ -20,6 +20,11 @@ func RegisterRoutes(
 	transit *handler.Transit,
 	status *handler.Status,
 	compat *handler.Compat,
+	tenants *handler.Tenants,
+	tenantConfig *handler.TenantConfig,
+	tenantSecrets *handler.TenantSecrets,
+	integrations *handler.Integrations,
+	secretsByID *handler.SecretsByID,
 ) {
 	// Unauthenticated — frontend boot + auth flow.
 	r.Get("/healthz", status.Healthz)
@@ -83,8 +88,38 @@ func RegisterRoutes(
 		r.Get("/v1/kms/orgs/{org}/members", members.List)
 		r.Delete("/v1/kms/orgs/{org}/members/{memberID}", members.Delete)
 
-		// Audit.
+		// Audit (legacy org-scoped). New callers should use /v1/kms/audit.
 		r.Get("/v1/kms/orgs/{org}/audit", compliance.AuditLog)
+
+		// Canonical audit surface: /v1/kms/audit?tenantId=...
+		r.Get("/v1/kms/audit", compliance.Query)
+
+		// Tenants CRUD.
+		r.Get("/v1/kms/tenants", tenants.List)
+		r.Post("/v1/kms/tenants", tenants.Create)
+		r.Get("/v1/kms/tenants/{tenantId}", tenants.Get)
+		r.Patch("/v1/kms/tenants/{tenantId}", tenants.Update)
+		r.Delete("/v1/kms/tenants/{tenantId}", tenants.Delete)
+
+		// Tenant config (bindings + feature flags).
+		r.Get("/v1/kms/tenants/{tenantId}/config", tenantConfig.Get)
+		r.Put("/v1/kms/tenants/{tenantId}/config", tenantConfig.Put)
+
+		// Tenant-scoped secrets (spec shape — returns secretId).
+		r.Get("/v1/kms/tenants/{tenantId}/secrets", tenantSecrets.List)
+		r.Post("/v1/kms/tenants/{tenantId}/secrets", tenantSecrets.Create)
+
+		// Tenant integrations.
+		r.Get("/v1/kms/tenants/{tenantId}/integrations", integrations.List)
+		r.Post("/v1/kms/tenants/{tenantId}/integrations", integrations.Create)
+
+		// Secrets by id (cross-tenant addressable).
+		r.Get("/v1/kms/secrets", secretsByID.ListAll)
+		r.Get("/v1/kms/secrets/{secretId}", secretsByID.Read)
+		r.Patch("/v1/kms/secrets/{secretId}", secretsByID.Update)
+		r.Delete("/v1/kms/secrets/{secretId}", secretsByID.Delete)
+		r.Get("/v1/kms/secrets/{secretId}/versions", secretsByID.Versions)
+		r.Post("/v1/kms/secrets/{secretId}/rotate", secretsByID.Rotate)
 
 		// Transit engine.
 		r.Post("/v1/kms/transit/keys", transit.CreateKey)
