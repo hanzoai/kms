@@ -9,37 +9,16 @@ import (
 
 // Bootstrap creates all KMS collections if they don't already exist.
 func Bootstrap(app core.App) error {
+	// R3-3: kms_secrets and kms_members collections removed alongside the
+	// legacy /v1/kms/orgs/{org}/... routes. Client-side encrypted secrets
+	// live under /v1/kms/tenants/{tenantId}/secrets (kms_service_secrets)
+	// and /v1/kms/secrets/{secretId}. Existing deployments keep the old
+	// tables on disk — they are just no longer bootstrapped or served.
 	collections := []struct {
 		name    string
 		fields  []*fieldDef
 		indexes []string
 	}{
-		{
-			name: "kms_secrets",
-			fields: []*fieldDef{
-				{name: "org_id", kind: "text", required: true},
-				{name: "path", kind: "text", required: true},
-				{name: "name", kind: "text", required: true},
-				{name: "env", kind: "text", required: false},
-				{name: "ciphertext", kind: "text", required: true},
-				{name: "wrapped_dek", kind: "text", required: true},
-			},
-			indexes: []string{
-				"CREATE UNIQUE INDEX idx_kms_secrets_org_path ON kms_secrets (org_id, path, name)",
-			},
-		},
-		{
-			name: "kms_members",
-			fields: []*fieldDef{
-				{name: "org_id", kind: "text", required: true},
-				{name: "member_id", kind: "text", required: true},
-				{name: "pub_key", kind: "text", required: true},
-				{name: "wrapped_cek", kind: "text", required: true},
-			},
-			indexes: []string{
-				"CREATE UNIQUE INDEX idx_kms_members_org_mid ON kms_members (org_id, member_id)",
-			},
-		},
 		{
 			name: "kms_validator_keys",
 			fields: []*fieldDef{

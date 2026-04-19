@@ -8,13 +8,16 @@ import (
 )
 
 // RegisterRoutes wires all handlers onto the chi router.
+//
+// R3-3: legacy /v1/kms/orgs/{org}/* surface deleted. The only canonical
+// paths now are /v1/kms/tenants/{tenantId}/... for per-tenant CRUD and
+// /v1/kms/secrets/{secretId}, /v1/kms/audit for cross-tenant addressable
+// endpoints. One route per operation. No aliases. Forward perfection.
 func RegisterRoutes(
 	r *chi.Mux,
 	jwks *auth.JWKSValidator,
 	authMode string,
-	secrets *handler.Secrets,
 	keys *handler.Keys,
-	members *handler.Members,
 	compliance *handler.Compliance,
 	transit *handler.Transit,
 	status *handler.Status,
@@ -62,29 +65,12 @@ func RegisterRoutes(
 		r.Get("/v1/kms/organization/{orgId}/permissions", compat.OrgPermissions)
 		r.Get("/v1/kms/sub-organizations", compat.SubOrganizations)
 
-		// ZK Secrets (client-side encrypted, for MPC mode).
-		r.Post("/v1/kms/orgs/{org}/zk/secrets", secrets.Create)
-		r.Get("/v1/kms/orgs/{org}/zk/secrets", secrets.List)
-		r.Get("/v1/kms/orgs/{org}/zk/secrets/{path}/{name}", secrets.Get)
-		r.Delete("/v1/kms/orgs/{org}/zk/secrets/{path}/{name}", secrets.Delete)
-
-		// Service secrets canonical surface lives under /v1/kms/tenants/{tenantId}/secrets
-		// and /v1/kms/secrets/{secretId}. No legacy (org, path, name) routes.
-
 		// Validator keys.
 		r.Post("/v1/kms/keys/generate", keys.Generate)
 		r.Get("/v1/kms/keys", keys.List)
 		r.Get("/v1/kms/keys/{id}", keys.Get)
 		r.Post("/v1/kms/keys/{id}/sign", keys.Sign)
 		r.Post("/v1/kms/keys/{id}/rotate", keys.Rotate)
-
-		// Members.
-		r.Post("/v1/kms/orgs/{org}/members", members.Create)
-		r.Get("/v1/kms/orgs/{org}/members", members.List)
-		r.Delete("/v1/kms/orgs/{org}/members/{memberID}", members.Delete)
-
-		// Audit (legacy org-scoped). New callers should use /v1/kms/audit.
-		r.Get("/v1/kms/orgs/{org}/audit", compliance.AuditLog)
 
 		// Canonical audit surface: /v1/kms/audit?tenantId=...
 		r.Get("/v1/kms/audit", compliance.Query)

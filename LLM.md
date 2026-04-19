@@ -57,14 +57,29 @@ Image: `ghcr.io/hanzoai/kmsd:main`
 
 - `/healthz` -- health check (unauthenticated)
 - `/v1/kms/auth/login` -- machine identity auth (CI/CD)
-- `/v1/kms/orgs/{org}/zk/secrets` -- ZK CRUD secrets (authenticated, MPC mode)
 - `/v1/kms/keys/*` -- validator key management (authenticated)
 - `/v1/kms/transit/*` -- encrypt/decrypt/sign/verify (authenticated)
+- `/v1/kms/tenants/{tenantId}/secrets` -- tenant secret CRUD (returns secretId)
+- `/v1/kms/tenants/{tenantId}/config` -- bindings + feature flags
+- `/v1/kms/tenants/{tenantId}/integrations` -- provider bindings
+- `/v1/kms/secrets/{secretId}` -- cross-tenant addressable read/update/delete
+- `/v1/kms/audit` -- canonical audit query (filters via query params)
 - `/v1/kms/auth/*` -- Infisical-compat stubs for frontend
 
-Service-secret CRUD lives under `/v1/kms/tenants/{tenantId}/secrets` and
-`/v1/kms/secrets/{secretId}` — there is no `/v1/kms/orgs/{org}/secrets/*`
-surface. One way in, one way out.
+One canonical path per operation. No org-scoped aliases. Forward perfection.
+
+### R3-3: legacy /v1/kms/orgs/* DELETED (2026-04-18)
+
+The following routes are gone. Requests return 404:
+
+- `POST|GET /v1/kms/orgs/{org}/zk/secrets`
+- `GET|DELETE /v1/kms/orgs/{org}/zk/secrets/{path}/{name}`
+- `POST|GET|DELETE /v1/kms/orgs/{org}/members`
+- `GET /v1/kms/orgs/{org}/audit`
+
+Callers (none in ~/work) must migrate to `/v1/kms/tenants/{tenantId}/…`
+and `/v1/kms/audit?tenantId=…`. The `kms_secrets` and `kms_members`
+collections are no longer bootstrapped (existing data left untouched).
 
 ### Spec surface (2026-04-18)
 
