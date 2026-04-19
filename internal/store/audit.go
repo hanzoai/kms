@@ -5,8 +5,8 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"hash/fnv"
 	"strings"
+	"sync"
 
 	"github.com/hanzoai/base/core"
 	"github.com/hanzoai/base/tools/search"
@@ -15,35 +15,40 @@ import (
 
 const auditCollection = "kms_audit_log"
 
-// maxAuditAppendAttempts bounds the retry loop when two replicas race to
+// maxAuditAppendAttempts bounds the retry loop when two goroutines race to
 // append the same seq. With a UNIQUE index on (org_id, seq) the loser's
-// INSERT fails with SQLSTATE 23505 and we simply re-read the tail and bump.
+// INSERT fails with SQLite's UNIQUE constraint error and we re-read the tail
+// and bump.
 //
-// R3-1: under Postgres we now acquire pg_advisory_xact_lock on (audit_ns,
-// org_id) BEFORE the tail read, so the "read tail then insert" window is
-// serialized across replicas. The retry loop still exists as a safety net
-// for the 23505 path (e.g. if the lock module is disabled by ops), but with
-// the advisory lock in place it is effectively unreachable in production.
+// SQLite note: the global write mutex + per-org app-layer mutex guarantee
+// that the tail-read-and-insert pair is strictly serialized for a given org.
+// The retry loop exists as a safety net for the rare case where the mutex
+// is bypassed (e.g., test harnesses driving the store from multiple app
+// instances against the same DB file).
 const maxAuditAppendAttempts = 16
 
-// auditAdvisoryNamespace is the first int32 passed to pg_advisory_xact_lock.
-// It scopes the lock to the KMS audit table so we don't collide with any
-// other advisory lock users in the same Postgres instance. Picked via
-// FNV-1a(hash_text("kms_audit_log")) at package init to avoid magic numbers.
-var auditAdvisoryNamespace = func() int32 {
-	h := fnv.New32a()
-	h.Write([]byte("kms_audit_log"))
-	return int32(h.Sum32())
-}()
+// orgMutexes synchronizes audit writers for a single org across goroutines in
+// the same process. Paired with BEGIN IMMEDIATE inside RunInTransaction, this
+// closes the tail-read → INSERT TOCTOU window that would otherwise let two
+// concurrent callers observe the same tail seq and race on the UNIQUE
+// constraint.
+//
+// Rationale for two layers:
+//
+//   - The app-layer mutex removes the UNIQUE-constraint path in the common
+//     case, so the retry loop is effectively unreachable in steady state.
+//   - BEGIN IMMEDIATE (driven by the SQLite RunInTransaction code path) takes
+//     the reserved lock on the DB file, serializing across processes that
+//     may share the file (e.g., a replica in the middle of promotion).
+var orgMutexes sync.Map // map[string]*sync.Mutex
 
-// orgAdvisoryKey returns the per-org int32 key for pg_advisory_xact_lock.
-// FNV-1a is stable, fast, and collision tolerant for this use — a collision
-// means two orgs share a lock namespace and one pays a tiny serialization
-// penalty, never a correctness issue.
-func orgAdvisoryKey(orgID string) int32 {
-	h := fnv.New32a()
-	h.Write([]byte(orgID))
-	return int32(h.Sum32())
+func orgMutexFor(orgID string) *sync.Mutex {
+	if mu, ok := orgMutexes.Load(orgID); ok {
+		return mu.(*sync.Mutex)
+	}
+	m := &sync.Mutex{}
+	actual, _ := orgMutexes.LoadOrStore(orgID, m)
+	return actual.(*sync.Mutex)
 }
 
 // AuditEntry is a single WORM audit log entry.
@@ -79,15 +84,17 @@ type AuditQuery struct {
 
 // AuditStore provides append-only audit logging.
 //
-// R2-6: the process-local sync.Mutex that was here before is GONE. With
-// multiple KMS replicas behind a service, an in-process lock cannot serialize
-// across pods — two replicas would both read `last.seq == N`, both compute
-// `seq = N+1`, and the one that committed last would either: (a) silently
-// clobber the first under non-UNIQUE indexes, or (b) after the UNIQUE index
-// added in base.go, fail with 23505. We now:
+// Concurrency model (SQLite-only):
 //
-//   - rely on the DB UNIQUE(org_id, seq) index as the ordering authority;
-//   - retry on duplicate-key errors with a fresh tail read.
+//   - An app-layer per-org sync.Mutex serializes goroutines in the same
+//     process. This keeps the common path free of UNIQUE-constraint retries.
+//   - The enclosing Base transaction runs against SQLite, which itself holds
+//     the reserved lock across the tx, serializing writers across any
+//     additional processes that share the file.
+//
+// The retry loop below is a safety net: it catches the UNIQUE constraint
+// error SQLite emits if, for any reason, two writers still land on the same
+// seq (e.g., a test harness bypassing the mutex) and re-reads the tail.
 type AuditStore struct {
 	app core.App
 }
@@ -97,38 +104,14 @@ func NewAuditStore(app core.App) *AuditStore {
 	return &AuditStore{app: app}
 }
 
-// isPostgresBuilder reports whether the backing dbx.Builder speaks Postgres.
-// We look at the *dbx.DB DriverName (outside tx) or inspect the tx's embedded
-// builder. The only two drivers we support are "pgx"/"postgres" and "sqlite3".
-func isPostgresBuilder(b dbx.Builder) bool {
-	if db, ok := b.(*dbx.DB); ok {
-		switch db.DriverName() {
-		case "pgx", "postgres", "postgresql":
-			return true
-		}
-	}
-	if tx, ok := b.(*dbx.Tx); ok {
-		// tx.Builder wraps the same executor whose underlying *dbx.DB we
-		// already checked at outer scope; fall through to the hack below.
-		_ = tx
-	}
-	return false
-}
-
 // Append adds a new entry to the WORM audit log. The hash chain is computed
 // as SHA-256(prev_hash || json(entry)).
 //
-// R3-1: Tail-read and INSERT happen inside a single transaction. On Postgres
-// we additionally hold pg_advisory_xact_lock(auditNs, orgKey) for the whole
-// transaction — that serializes every writer to this org's audit chain
-// across replicas, eliminating the TOCTOU window that could link non-causal
-// prev_hash values under READ COMMITTED. On SQLite the driver's write-side
-// mutex already serializes writers on the same DB file, so the advisory
-// lock is a no-op and we skip it.
-//
-// The 23505 retry loop is preserved as a safety net (ops disables the lock,
-// writer migration, etc.) — but under normal operation the advisory lock
-// means every attempt on the same org is strictly linearizable.
+// SQLite-only path: the per-org app-layer mutex + Base's transaction
+// (RunInTransaction serializes writes through the driver's write mutex)
+// together provide linearizable tail-read → INSERT. The UNIQUE(org_id, seq)
+// index is the DB-level safety net; any conflict triggers a fresh tail read
+// under the same lock.
 func (s *AuditStore) Append(orgID string, entry any) error {
 	entryJSON, err := json.Marshal(entry)
 	if err != nil {
@@ -138,30 +121,18 @@ func (s *AuditStore) Append(orgID string, entry any) error {
 	if err != nil {
 		return fmt.Errorf("audit: %w", err)
 	}
-	usePG := isPostgresBuilder(s.app.NonconcurrentDB())
-	orgKey := orgAdvisoryKey(orgID)
+
+	// Per-org app-layer mutex closes the tail-read → INSERT TOCTOU for
+	// goroutines in this process. Paired with SQLite's RunInTransaction
+	// (which holds the write mutex across the tx) this gives linearizable
+	// appends per org.
+	mu := orgMutexFor(orgID)
+	mu.Lock()
+	defer mu.Unlock()
 
 	for attempt := 0; attempt < maxAuditAppendAttempts; attempt++ {
 		var saveErr error
 		txErr := s.app.RunInTransaction(func(txApp core.App) error {
-			// (R3-1) Postgres: acquire an advisory xact lock scoped to
-			// (auditNs, orgKey). The lock is released automatically at
-			// COMMIT/ROLLBACK. Any concurrent writer targeting the same
-			// org blocks here until we release. This closes the TOCTOU
-			// window between tail read and INSERT.
-			if usePG {
-				if _, lockErr := txApp.NonconcurrentDB().NewQuery(
-					"SELECT pg_advisory_xact_lock({:ns}, {:k})",
-				).Bind(dbx.Params{
-					"ns": auditAdvisoryNamespace,
-					"k":  orgKey,
-				}).Execute(); lockErr != nil {
-					return fmt.Errorf("audit: advisory lock: %w", lockErr)
-				}
-			}
-
-			// Now read the tail under the lock — no other writer can
-			// observe this tail value until we commit.
 			recs, ferr := txApp.FindRecordsByFilter(
 				auditCollection,
 				"org_id = {:org}",
@@ -204,12 +175,10 @@ func (s *AuditStore) Append(orgID string, entry any) error {
 		if txErr == nil {
 			return nil
 		}
-		// 23505 (postgres unique_violation) or SQLite's UNIQUE constraint
-		// error — retry with a fresh tail read. Any other error is fatal.
+		// SQLite UNIQUE constraint error — retry with a fresh tail read.
 		emsg := txErr.Error()
-		if strings.Contains(emsg, "23505") ||
-			strings.Contains(emsg, "UNIQUE constraint failed") ||
-			strings.Contains(emsg, "duplicate key") {
+		if strings.Contains(emsg, "UNIQUE constraint failed") ||
+			strings.Contains(emsg, "SQLITE_CONSTRAINT") {
 			continue
 		}
 		return fmt.Errorf("audit: save: %w", txErr)
@@ -223,8 +192,8 @@ func (s *AuditStore) Append(orgID string, entry any) error {
 // stored hash or prev_hash does not match the recomputed chain, returns an
 // error — the caller must treat this as a potential tampering event. At the
 // app layer we forbid UPDATE/DELETE on audit entries; DB-layer hardening
-// (revoke UPDATE/DELETE on audit table for the service role, optional S3
-// WORM export) is documented in kms/SECURITY.md.
+// (revoke UPDATE/DELETE on audit table for the service role) is documented
+// in kms/SECURITY.md.
 func (s *AuditStore) List(orgID string) ([]*AuditEntry, error) {
 	records, err := s.app.FindRecordsByFilter(
 		auditCollection,
