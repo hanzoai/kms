@@ -12,19 +12,19 @@ import (
 )
 
 // SecretsByID handles the cross-tenant addressable secret surface at
-// /v1/kms/secrets/{secretId}. Unlike the (path,name) compat route, this is the
-// spec-canonical shape. Values are plaintext over TLS (the KMS decrypts on
-// read); callers still must present a valid JWT tied to the owning tenant
+// /v1/kms/secrets/{secretId}. Values are plaintext over TLS (the KMS decrypts
+// on read); callers still must present a valid JWT tied to the owning tenant
 // (or hold `kms.admin`).
 type SecretsByID struct {
 	store    *store.ServiceSecretStore
 	versions *store.SecretVersionStore
 	audit    *store.AuditStore
+	idem     *store.IdempotencyStore
 }
 
 // NewSecretsByID builds a handler.
-func NewSecretsByID(s *store.ServiceSecretStore, a *store.AuditStore) *SecretsByID {
-	return &SecretsByID{store: s, versions: s.Versions(), audit: a}
+func NewSecretsByID(s *store.ServiceSecretStore, a *store.AuditStore, i *store.IdempotencyStore) *SecretsByID {
+	return &SecretsByID{store: s, versions: s.Versions(), audit: a, idem: i}
 }
 
 // canRead authorizes read access — global admin, tenant secret admin, or a
@@ -211,24 +211,19 @@ func (h *SecretsByID) Rotate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// F8+F9: idempotency key is scoped by (tenantID, secretID, rawKey) and
-	// claimed atomically. Concurrent requests with the same scoped key:
-	// only one claims, the rest get the already-rotated current version.
+	// R2-7: idempotency key is scoped by (tenantID, secretID, rawKey) and
+	// claimed atomically via a DB UNIQUE index. Concurrent requests with the
+	// same scoped key: only one claims (possibly on a different replica), the
+	// rest get the already-rotated current version. TTL is 24h.
 	rawKey := r.Header.Get("Idempotency-Key")
-	scopedKey := buildIdempotencyKey(sec.TenantID, id, rawKey)
 	if rawKey != "" {
-		if seen, _ := idempotencyLoad(scopedKey); seen {
-			cur, _ := h.versions.Current(id)
-			writeJSON(w, http.StatusOK, map[string]any{
-				"secretId": id,
-				"version":  cur.Version,
-				"rotated":  false,
-			})
+		scopedKey := store.BuildScopedKey(sec.TenantID, id, rawKey)
+		first, err := h.idem.Claim(scopedKey)
+		if err != nil {
+			writeError(w, http.StatusInternalServerError, "idempotency claim failed")
 			return
 		}
-		// Atomic "claim this key or lose". If we lose, another request is
-		// mid-rotation for the same scoped key — treat as idempotent no-op.
-		if !idempotencyClaim(scopedKey) {
+		if !first {
 			cur, _ := h.versions.Current(id)
 			writeJSON(w, http.StatusOK, map[string]any{
 				"secretId": id,
