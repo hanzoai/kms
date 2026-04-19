@@ -2,13 +2,10 @@ package handler
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
 
 	"github.com/hanzoai/kms/internal/auth"
 )
-
-var errForbidden = errors.New("forbidden")
 
 // IAM role claims used by KMS authorization:
 //
