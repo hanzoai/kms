@@ -64,9 +64,24 @@ func Bootstrap(app core.App) error {
 				{name: "subject_id", kind: "text", required: false},
 			},
 			indexes: []string{
-				"CREATE INDEX idx_kms_audit_org_seq ON kms_audit_log (org_id, seq)",
+				// R2-6: UNIQUE on (org_id, seq) — DB is now the source of
+				// truth for seq ordering. Two replicas racing to append the
+				// same seq will get SQLSTATE 23505; Append retries.
+				"CREATE UNIQUE INDEX uq_kms_audit_org_seq ON kms_audit_log (org_id, seq)",
 				"CREATE INDEX idx_kms_audit_actor ON kms_audit_log (actor_id)",
 				"CREATE INDEX idx_kms_audit_action ON kms_audit_log (action)",
+			},
+		},
+		{
+			name: "kms_idempotency",
+			fields: []*fieldDef{
+				// R2-7: scoped_key = tenantID || NUL || secretID || NUL || headerKey
+				{name: "scoped_key", kind: "text", required: true},
+				{name: "expires_at", kind: "text", required: true},
+			},
+			indexes: []string{
+				"CREATE UNIQUE INDEX uq_kms_idem_key ON kms_idempotency (scoped_key)",
+				"CREATE INDEX idx_kms_idem_expires ON kms_idempotency (expires_at)",
 			},
 		},
 		{

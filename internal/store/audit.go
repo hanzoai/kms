@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
-	"sync"
 
 	"github.com/hanzoai/base/core"
 	"github.com/hanzoai/base/tools/search"
@@ -14,6 +13,11 @@ import (
 )
 
 const auditCollection = "kms_audit_log"
+
+// maxAuditAppendAttempts bounds the retry loop when two replicas race to
+// append the same seq. With a UNIQUE index on (org_id, seq) the loser's
+// INSERT fails with SQLSTATE 23505 and we simply re-read the tail and bump.
+const maxAuditAppendAttempts = 16
 
 // AuditEntry is a single WORM audit log entry.
 type AuditEntry struct {
@@ -47,9 +51,18 @@ type AuditQuery struct {
 }
 
 // AuditStore provides append-only audit logging.
+//
+// R2-6: the process-local sync.Mutex that was here before is GONE. With
+// multiple KMS replicas behind a service, an in-process lock cannot serialize
+// across pods — two replicas would both read `last.seq == N`, both compute
+// `seq = N+1`, and the one that committed last would either: (a) silently
+// clobber the first under non-UNIQUE indexes, or (b) after the UNIQUE index
+// added in base.go, fail with 23505. We now:
+//
+//   - rely on the DB UNIQUE(org_id, seq) index as the ordering authority;
+//   - retry on duplicate-key errors with a fresh tail read.
 type AuditStore struct {
 	app core.App
-	mu  sync.Mutex
 }
 
 // NewAuditStore creates an audit store backed by Base.
@@ -58,57 +71,72 @@ func NewAuditStore(app core.App) *AuditStore {
 }
 
 // Append adds a new entry to the WORM audit log. The hash chain is computed
-// as SHA-256(prev_hash || json(entry)).
+// as SHA-256(prev_hash || json(entry)). On unique-seq violation we retry.
 func (s *AuditStore) Append(orgID string, entry any) error {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
-	prevHash := ""
-	seq := 1
-
-	// Find the latest entry for this org.
-	last, err := s.app.FindFirstRecordByFilter(
-		auditCollection,
-		"org_id = {:org}",
-		map[string]any{"org": orgID},
-	)
-	if err == nil {
-		seq = int(last.GetFloat("seq")) + 1
-		prevHash = last.GetString("hash")
-	}
-
 	entryJSON, err := json.Marshal(entry)
 	if err != nil {
 		return fmt.Errorf("audit: marshal entry: %w", err)
 	}
-
-	h := sha256.Sum256(append([]byte(prevHash), entryJSON...))
-	hash := hex.EncodeToString(h[:])
-
-	col, colErr := s.app.FindCollectionByNameOrId(auditCollection)
-	if colErr != nil {
-		return fmt.Errorf("audit: %w", colErr)
+	col, err := s.app.FindCollectionByNameOrId(auditCollection)
+	if err != nil {
+		return fmt.Errorf("audit: %w", err)
 	}
 
-	rec := core.NewRecord(col)
-	rec.Set("org_id", orgID)
-	rec.Set("seq", seq)
-	rec.Set("entry", string(entryJSON))
-	rec.Set("hash", hash)
-	rec.Set("prev_hash", prevHash)
-	// Attempt to denormalize a few well-known top-level fields for query speed.
-	if m, ok := entry.(map[string]any); ok {
-		if v, ok := m["actor_id"].(string); ok {
-			rec.Set("actor_id", v)
+	for attempt := 0; attempt < maxAuditAppendAttempts; attempt++ {
+		// Read the CURRENT tail for this org — ordered descending by seq so
+		// FindRecordsByFilter returns the latest first. FindFirstRecordByFilter
+		// ignores sort on the older API; we spell it out to be unambiguous.
+		recs, ferr := s.app.FindRecordsByFilter(
+			auditCollection,
+			"org_id = {:org}",
+			"-seq", 1, 0,
+			map[string]any{"org": orgID},
+		)
+		if ferr != nil && !strings.Contains(ferr.Error(), "no rows") {
+			return fmt.Errorf("audit: read tail: %w", ferr)
 		}
-		if v, ok := m["action"].(string); ok {
-			rec.Set("action", v)
+		prevHash := ""
+		seq := 1
+		if len(recs) > 0 {
+			seq = int(recs[0].GetFloat("seq")) + 1
+			prevHash = recs[0].GetString("hash")
 		}
-		if v, ok := m["subject_id"].(string); ok {
-			rec.Set("subject_id", v)
+
+		h := sha256.Sum256(append([]byte(prevHash), entryJSON...))
+		hash := hex.EncodeToString(h[:])
+
+		rec := core.NewRecord(col)
+		rec.Set("org_id", orgID)
+		rec.Set("seq", seq)
+		rec.Set("entry", string(entryJSON))
+		rec.Set("hash", hash)
+		rec.Set("prev_hash", prevHash)
+		if m, ok := entry.(map[string]any); ok {
+			if v, ok := m["actor_id"].(string); ok {
+				rec.Set("actor_id", v)
+			}
+			if v, ok := m["action"].(string); ok {
+				rec.Set("action", v)
+			}
+			if v, ok := m["subject_id"].(string); ok {
+				rec.Set("subject_id", v)
+			}
 		}
+		saveErr := s.app.Save(rec)
+		if saveErr == nil {
+			return nil
+		}
+		// 23505 (postgres unique_violation) or SQLite's UNIQUE constraint
+		// error — retry with a fresh tail read.
+		emsg := saveErr.Error()
+		if strings.Contains(emsg, "23505") ||
+			strings.Contains(emsg, "UNIQUE constraint failed") ||
+			strings.Contains(emsg, "duplicate key") {
+			continue
+		}
+		return fmt.Errorf("audit: save: %w", saveErr)
 	}
-	return s.app.Save(rec)
+	return fmt.Errorf("audit: %d concurrent writers, giving up", maxAuditAppendAttempts)
 }
 
 // List returns audit entries for a specific org (tenant).

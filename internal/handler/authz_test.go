@@ -60,3 +60,40 @@ func TestIsAdmin_OnlyAdminRoleElevates(t *testing.T) {
 		t.Fatal("kms.admin role claim must always elevate")
 	}
 }
+
+// R2-5: regression — even if env escape hatch were re-introduced somehow
+// (KMS_SINGLE_TENANT_ADMIN=true, KMS_DEV_MODE=true, no KMS_ENV), the current
+// code must NOT elevate. Exercise all three env vars to prove isAdmin ignores
+// them entirely.
+func TestIsAdmin_IgnoresEnvEscapeHatch(t *testing.T) {
+	t.Setenv("KMS_SINGLE_TENANT_ADMIN", "true")
+	t.Setenv("KMS_DEV_MODE", "true")
+	// Empty KMS_ENV is the classic "I forgot to set it" foot-gun that was
+	// fail-open under the deny-list design.
+	t.Setenv("KMS_ENV", "")
+
+	deny := &auth.Claims{Roles: []string{"user"}}
+	if isAdmin(deny) {
+		t.Fatal("R2-5: env escape hatch must not elevate without kms.admin role")
+	}
+}
+
+// R2-4: regression — plain tenant membership (claims.Owner == tenant) without
+// any KMS role must NOT be enough to read tenant secrets, even for metadata.
+func TestCanReadSecret_DeniesBareTenantMember(t *testing.T) {
+	member := &auth.Claims{Owner: "tenant-A", Roles: []string{"user"}}
+	if canReadSecret(member, "tenant-A") {
+		t.Fatal("R2-4: plain tenant membership must not grant secret reads")
+	}
+
+	// Explicit read role must permit read.
+	reader := &auth.Claims{Owner: "tenant-A", Roles: []string{SecretReadRoleClaim}}
+	if !canReadSecret(reader, "tenant-A") {
+		t.Fatal("kms.secret.read must grant read on own tenant")
+	}
+
+	// But not on a different tenant.
+	if canReadSecret(reader, "tenant-B") {
+		t.Fatal("kms.secret.read must NOT grant cross-tenant reads")
+	}
+}
