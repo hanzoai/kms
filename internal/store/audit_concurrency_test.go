@@ -10,23 +10,19 @@ import (
 	"github.com/hanzoai/base/tests"
 )
 
-// R3-1: Multiple concurrent writers to the same org_id must produce a
-// strictly linearizable audit chain. A pre-fix writer would, under
-// READ COMMITTED, observe the same tail `seq=N, hash=H` as another writer,
-// each compute hash=SHA256(H||entry_i), and the 23505 retry loop was the
-// only thing preventing the second insert. Between retry and re-read a
-// third writer could interleave, producing ghost-link chains where
-// seq is monotonic but prev_hash values are non-causal.
+// Multiple concurrent writers to the same org_id must produce a strictly
+// linearizable audit chain. The pre-fix writer could observe the same tail
+// `seq=N, hash=H` as another writer, each compute hash=SHA256(H||entry_i),
+// and the UNIQUE-constraint retry loop was the only thing preventing the
+// second insert. Between retry and re-read a third writer could interleave,
+// producing ghost-link chains where seq is monotonic but prev_hash values
+// are non-causal.
 //
-// Post-fix (R3-1): Append holds a pg_advisory_xact_lock scoped to
-// (kms_audit_log, org_id) for the whole tx. On SQLite (what this test
-// exercises) the driver-level write mutex already serializes writers, so
-// this is really a regression guard — but if the serialization or retry
-// logic is ever weakened, this test fires.
-//
-// The Postgres-backed variant of this test lives under a TEST_PG_DSN
-// sidecar in CI (cmd/audit_pg_test.go) and exercises the advisory lock
-// path directly.
+// Post-fix: Append acquires a per-org app-layer sync.Mutex before entering
+// the transaction. Paired with SQLite's write mutex (held across the tx),
+// this gives linearizable tail-read → INSERT for every writer in the same
+// process. The UNIQUE constraint on (org_id, seq) is the DB-level safety
+// net if the mutex is ever bypassed.
 func TestAuditAppend_ConcurrentWritersSameOrg_ChainLinearizable(t *testing.T) {
 	app, cleanup := newAuditTestApp(t)
 	defer cleanup()
