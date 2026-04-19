@@ -24,11 +24,14 @@ type Config struct {
 }
 
 // NewRouter creates and configures the chi router with all KMS routes.
+//
+// R3-3: dropped Secret/Member handler wiring and the store constructors
+// that fed them — the legacy /v1/kms/orgs/{org}/* routes no longer exist
+// so those handlers and stores are unreachable. Everything tenant-scoped
+// now flows through TenantSecrets / SecretsByID.
 func NewRouter(cfg Config) *chi.Mux {
-	secretStore := store.NewSecretStore(cfg.App)
 	serviceSecretStore := store.NewServiceSecretStore(cfg.App)
 	keyStore := store.NewKeyStore(cfg.App)
-	memberStore := store.NewMemberStore(cfg.App)
 	auditStore := store.NewAuditStore(cfg.App)
 	transitKeyStore := store.NewTransitKeyStore(cfg.App)
 	tenantStore := store.NewTenantStore(cfg.App)
@@ -38,9 +41,7 @@ func NewRouter(cfg Config) *chi.Mux {
 
 	transitEngine := transit.NewEngine(transitKeyStore)
 
-	secretsH := handler.NewSecrets(secretStore)
 	keysH := handler.NewKeys(keyStore, cfg.MPC, cfg.VaultID)
-	membersH := handler.NewMembers(memberStore)
 	complianceH := handler.NewCompliance(auditStore)
 	transitH := handler.NewTransit(transitEngine)
 	statusH := handler.NewStatus(cfg.MPC)
@@ -57,7 +58,7 @@ func NewRouter(cfg Config) *chi.Mux {
 
 	RegisterRoutes(
 		r, cfg.JWKS, cfg.AuthMode,
-		secretsH, keysH, membersH, complianceH,
+		keysH, complianceH,
 		transitH, statusH, compatH,
 		tenantsH, tenantConfigH, tenantSecretsH, integrationsH, secretsByIDH,
 	)
