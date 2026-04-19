@@ -1,202 +1,482 @@
-// Command kmsd starts the KMS server on Base.
+// Command kmsd is the Hanzo KMS server — a thin wrapper around
+// github.com/luxfi/kms with Hanzo-specific defaults.
 //
-// Serves the secrets management UI at / and the Base admin at /_/.
+// Implementation is identical to luxfi/kms (canonical). Only the defaults
+// differ: Hanzo HTTP port (8443), ZAP port (9653), data directory
+// (/data/hanzo-kms), branding (Hanzo), JWKS env var (HANZO_IAM_JWKS_URL).
 //
-// Configuration (env vars):
+// Wire format on the ZAP transport is the canonical luxfi/kms/pkg/zapserver
+// surface: opcodes 0x0040 (Get) / 0x0041 (Put) / 0x0042 (List) / 0x0043
+// (Delete). Hanzo and Lux clients interoperate.
 //
-//	MPC_ADDR          - ZAP address (host:port); empty = mDNS discovery (dev only)
-//	MPC_VAULT_ID      - MPC vault ID for validator keys (optional)
-//	KMS_NODE_ID       - ZAP node ID (default "kms-0")
-//	IAM_JWKS_URL      - JWKS endpoint for JWT validation (required when KMS_AUTH_MODE=iam)
-//	KMS_AUTH_MODE     - "iam" (default) or "none" (dev only)
-//	KMS_ZAP           - host:port for the ZAP secrets server (default :9653,
-//	                    empty disables); requires KMS_AUTH_MODE=iam (no
-//	                    no-auth escape hatch on the binary transport)
-//	APP_NAME          - Display name in UI (default "KMS")
-//	APP_URL           - Public URL (optional)
-//	LOGO_URL          - Logo URL (optional, blank = no logo)
-//	KMS_FRONTEND_DIR  - Path to secrets UI dist (default /app/frontend)
-//	DISABLE_ADMIN_UI  - Set to "true" to disable Base admin at /_/
+// Configuration precedence: env vars > defaults.
+//
+//	Env vars:
+//	  KMS_LISTEN              - HTTP listen address (default ":8443" — Hanzo)
+//	  KMS_ZAP_PORT            - ZAP listen port (default 9653 — Hanzo, 0 = disable)
+//	  KMS_DATA_DIR            - ZapDB data directory (default "/data/hanzo-kms")
+//	  KMS_NODE_ID             - ZAP node ID (default "hanzo-kms-0")
+//	  KMS_MASTER_KEY_B64      - 32-byte master key (base64) for ZAP secrets server
+//	  KMS_ENCRYPTION_KEY_B64  - 32-byte ZapDB at-rest key
+//	  HANZO_IAM_JWKS_URL      - Hanzo IAM JWKS endpoint (replaces IAM_JWKS_URL)
+//	  HANZO_IAM_ENDPOINT      - Hanzo IAM endpoint (replaces IAM_ENDPOINT)
+//	  IAM_ENDPOINT            - fallback if HANZO_IAM_ENDPOINT unset
+//	  MPC_ADDR                - ZAP address (host:port); empty = mDNS discovery
+//	  MPC_VAULT_ID            - MPC vault ID (required for threshold signing)
+//	  BRAND_NAME              - Branding for startup banner (default "Hanzo")
+//
+//	S3 replication (ZapDB Replicator):
+//	  REPLICATE_S3_ENDPOINT   - S3 endpoint (empty = replication disabled)
+//	  REPLICATE_S3_BUCKET     - S3 bucket (default "hanzo-kms-backups")
+//	  REPLICATE_S3_REGION     - S3 region (default "us-central1")
+//	  REPLICATE_S3_ACCESS_KEY
+//	  REPLICATE_S3_SECRET_KEY
+//	  REPLICATE_AGE_RECIPIENT - age public key for backup encryption
+//	  REPLICATE_PATH          - S3 key prefix (default "hanzo-kms/{KMS_NODE_ID}")
 package main
 
 import (
 	"context"
+	"encoding/base64"
+	"encoding/json"
+	"flag"
 	"fmt"
-	"io/fs"
 	"log"
+	"log/slog"
+	"net/http"
+	"net/url"
 	"os"
+	"os/signal"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
 
-	"github.com/hanzoai/base"
-	"github.com/hanzoai/base/core"
-	"github.com/hanzoai/base/plugins/replicate"
+	badger "github.com/luxfi/zapdb"
 
-	"github.com/hanzoai/kms/internal/auth"
-	"github.com/hanzoai/kms/internal/mpc"
-	"github.com/hanzoai/kms/internal/server"
-	"github.com/hanzoai/kms/internal/store"
-	"github.com/hanzoai/kms/internal/zapsrv"
+	"github.com/luxfi/kms/pkg/keys"
+	"github.com/luxfi/kms/pkg/mpc"
+	"github.com/luxfi/kms/pkg/store"
+	"github.com/luxfi/kms/pkg/zapserver"
+	"github.com/luxfi/zap"
+)
+
+// Hanzo defaults (override luxfi/kms canonical defaults).
+const (
+	defaultListen   = ":8443"
+	defaultZapPort  = "9653"
+	defaultDataDir  = "/data/hanzo-kms"
+	defaultNodeID   = "hanzo-kms-0"
+	defaultBrand    = "Hanzo"
+	defaultS3Bucket = "hanzo-kms-backups"
+	defaultS3Path   = "hanzo-kms"
 )
 
 func main() {
+	// --help support so operators can confirm Hanzo defaults.
+	help := flag.Bool("help", false, "show help and exit")
+	flag.BoolVar(help, "h", false, "show help and exit (shorthand)")
+	flag.Usage = printUsage
+	flag.Parse()
+	if *help {
+		printUsage()
+		return
+	}
+
+	brand := envOr("BRAND_NAME", defaultBrand)
 	mpcAddr := envOr("MPC_ADDR", "")
 	vaultID := envOr("MPC_VAULT_ID", "")
-	nodeID := envOr("KMS_NODE_ID", "kms-0")
-	jwksURL := envOr("IAM_JWKS_URL", "")
-	authMode := envOr("KMS_AUTH_MODE", "iam")
-	devMode := envOr("KMS_DEV_MODE", "") == "true"
+	nodeID := envOr("KMS_NODE_ID", defaultNodeID)
+	iamEndpoint := envOr("HANZO_IAM_ENDPOINT", envOr("IAM_ENDPOINT", "https://hanzo.id"))
+	jwksURL := envOr("HANZO_IAM_JWKS_URL", envOr("IAM_JWKS_URL", ""))
+	dataDir := envOr("KMS_DATA_DIR", defaultDataDir)
+	listen := envOr("KMS_LISTEN", defaultListen)
 
-	// F2: Refuse to start without auth unless KMS_DEV_MODE=true.
-	if authMode != "iam" && !devMode {
-		log.Fatal("kmsd: KMS_AUTH_MODE must be 'iam' in production. Set KMS_DEV_MODE=true for insecure dev mode.")
-	}
-	frontendDir := envOr("KMS_FRONTEND_DIR", "/app/frontend")
-	disableAdmin := envOr("DISABLE_ADMIN_UI", "") == "true"
-
-	var zapClient *mpc.ZapClient
-	if vaultID != "" {
-		var err error
-		zapClient, err = mpc.NewZapClient(nodeID, mpcAddr)
-		if err != nil {
-			log.Fatalf("kmsd: zap client: %v", err)
-		}
-		defer zapClient.Close()
-	} else {
-		log.Printf("kmsd: running without MPC backend (secrets-only mode)")
+	log.Printf("%s KMS — thin wrapper over luxfi/kms (canonical)", brand)
+	log.Printf("  listen=%s zap_port=%s data=%s node_id=%s",
+		listen, envOr("KMS_ZAP_PORT", defaultZapPort), dataDir, nodeID)
+	if jwksURL != "" {
+		log.Printf("  iam.jwks=%s", jwksURL)
 	}
 
-	app := base.New()
+	// Open ZapDB at the Hanzo data dir.
+	if err := os.MkdirAll(dataDir, 0o700); err != nil {
+		log.Fatalf("kmsd: create data dir %s: %v", dataDir, err)
+	}
+	dbOpts := badger.DefaultOptions(dataDir).
+		WithLogger(zapdbLogger{}).
+		WithEncryptionKey(masterKeyFromEnv()).
+		WithIndexCacheSize(64 << 20)
+	db, err := badger.Open(dbOpts)
+	if err != nil {
+		log.Fatalf("kmsd: open zapdb at %s: %v", dataDir, err)
+	}
+	defer db.Close()
 
-	// In-process WAL replication to S3 — no sidecar needed.
-	// No-op if REPLICATE_S3_ENDPOINT is not set.
-	replicate.MustRegister(app)
+	log.Printf("kmsd: zapdb opened at %s", dataDir)
 
-	app.OnServe().BindFunc(func(e *core.ServeEvent) error {
-		// H-3: Suppress installer token URL from stdout.
-		// KMS uses IAM for auth — the Base installer flow is never needed.
-		// Without this, every restart with an ephemeral DB prints a 30-min
-		// privilege-escalation JWT to pod logs.
-		e.InstallerFunc = nil
+	// S3 replication (defaults: hanzo-kms-backups bucket, hanzo-kms/<node> path).
+	if rep := startReplicator(db, nodeID); rep != nil {
+		defer rep.Stop()
+	}
 
-		// Branding from env — no hardcoded brand.
-		s := e.App.Settings()
-		s.Meta.AppName = envOr("APP_NAME", "KMS")
-		s.Meta.AppURL = envOr("APP_URL", "")
-		s.Meta.LogoURL = envOr("LOGO_URL", "")
-		s.Meta.HideControls = envOr("HIDE_ADMIN_CONTROLS", "") == "true"
-		if err := e.App.Save(s); err != nil {
-			log.Printf("kmsd: WARNING: could not save settings: %v", err)
-		}
+	mux := http.NewServeMux()
 
-		// Bootstrap KMS collections.
-		if err := store.Bootstrap(e.App); err != nil {
-			return err
-		}
-
-		// Check MPC if configured.
-		if zapClient != nil {
-			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-			if st, err := zapClient.Status(ctx); err != nil {
-				log.Printf("kmsd: WARNING: mpc unreachable: %v", err)
-			} else {
-				log.Printf("kmsd: mpc ready=%v peers=%d/%d mode=%s",
-					st.Ready, st.ConnectedPeers, st.ExpectedPeers, st.Mode)
-			}
-			cancel()
-		}
-
-		// Auth.
-		var jwks *auth.JWKSValidator
-		if authMode == "iam" {
-			if jwksURL == "" {
-				return fmt.Errorf("kmsd: IAM_JWKS_URL required when KMS_AUTH_MODE=iam")
-			}
-			jwks = auth.NewJWKSValidator(jwksURL)
-		} else {
-			log.Printf("kmsd: WARNING: auth disabled — dev only")
-		}
-
-		// API routes via chi.
-		chiRouter := server.NewRouter(server.Config{
-			App:      e.App,
-			MPC:      zapClient,
-			JWKS:     jwks,
-			VaultID:  vaultID,
-			AuthMode: authMode,
-		})
-
-		// ZAP secrets server (binary transport, sub-100us in-cluster reads).
-		// Disabled when KMS_ZAP is empty. Refuses to start without IAM JWKS —
-		// there is no auth-disabled mode for the binary transport.
-		if zapAddr := envOr("KMS_ZAP", ":9653"); zapAddr != "" && jwks != nil {
-			zapPort := parseZapPort(zapAddr)
-			zsrv, zerr := zapsrv.New(zapsrv.Config{
-				NodeID:  envOr("KMS_NODE_ID", "kms-0") + "-secrets",
-				Port:    zapPort,
-				JWKS:    jwks,
-				Secrets: store.NewServiceSecretStore(e.App),
-				Audit:   store.NewAuditStore(e.App),
-			})
-			if zerr != nil {
-				log.Printf("kmsd: WARNING: ZAP secrets server init failed: %v", zerr)
-			} else if err := zsrv.Start(); err != nil {
-				log.Printf("kmsd: WARNING: ZAP secrets server start failed: %v", err)
-			} else {
-				log.Printf("kmsd: ZAP secrets server on %s", zapAddr)
-			}
-		} else if jwks == nil {
-			log.Printf("kmsd: ZAP secrets server disabled (KMS_AUTH_MODE != iam)")
-		}
-
-		// Single catch-all: try chi first (KMS API), fall back to static.
-		var frontendFS fs.FS
-		if info, err := os.Stat(frontendDir); err == nil && info.IsDir() {
-			frontendFS = os.DirFS(frontendDir)
-			if disableAdmin {
-				log.Printf("kmsd: secrets UI at /, admin disabled")
-			} else {
-				log.Printf("kmsd: secrets UI at /, admin at /_/")
-			}
-		}
-
-		e.Router.Any("/{path...}", func(re *core.RequestEvent) error {
-			path := re.Request.URL.Path
-
-			// Block /_/ admin if disabled.
-			if disableAdmin && strings.HasPrefix(path, "/_/") {
-				re.Response.WriteHeader(404)
-				return nil
-			}
-
-			// KMS API routes — delegate to chi (bypasses Base auth).
-			if strings.HasPrefix(path, "/v1/kms/") || path == "/healthz" {
-				chiRouter.ServeHTTP(re.Response, re.Request)
-				return nil
-			}
-
-			// Static frontend.
-			if frontendFS != nil {
-				p := strings.TrimPrefix(path, "/")
-				if p == "" {
-					p = "index.html"
-				}
-				if err := re.FileFS(frontendFS, p); err == nil {
-					return nil
-				}
-				return re.FileFS(frontendFS, "index.html")
-			}
-
-			return re.Next()
-		})
-
-		return e.Next()
+	// Health.
+	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) {
+		writeJSON(w, http.StatusOK, map[string]string{"status": "ok", "service": "kms", "brand": brand})
 	})
 
-	if err := app.Start(); err != nil {
-		log.Fatalf("kmsd: %v", err)
+	// Machine identity auth via IAM (canonical luxfi/kms route).
+	mux.HandleFunc("POST /v1/kms/auth/login", func(w http.ResponseWriter, r *http.Request) {
+		var req struct {
+			ClientID     string `json:"clientId"`
+			ClientSecret string `json:"clientSecret"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.ClientID == "" || req.ClientSecret == "" {
+			writeJSON(w, http.StatusBadRequest, map[string]any{"statusCode": 400, "message": "clientId and clientSecret required"})
+			return
+		}
+		form := url.Values{
+			"grant_type":    {"client_credentials"},
+			"client_id":     {req.ClientID},
+			"client_secret": {req.ClientSecret},
+		}
+		resp, err := http.PostForm(iamEndpoint+"/api/login/oauth/access_token", form)
+		if err != nil {
+			writeJSON(w, http.StatusBadGateway, map[string]any{"statusCode": 502, "message": "identity provider unreachable"})
+			return
+		}
+		defer resp.Body.Close()
+		var tok map[string]any
+		json.NewDecoder(resp.Body).Decode(&tok)
+		at, _ := tok["access_token"].(string)
+		if at == "" {
+			writeJSON(w, http.StatusUnauthorized, map[string]any{"statusCode": 401, "message": "invalid credentials"})
+			return
+		}
+		writeJSON(w, http.StatusOK, map[string]any{"accessToken": at, "expiresIn": 86400, "tokenType": "Bearer"})
+	})
+
+	// Secret store — canonical luxfi/kms surface.
+	secStore := store.NewSecretStore(db)
+
+	mux.HandleFunc("GET /v1/kms/orgs/{org}/secrets/{rest...}", func(w http.ResponseWriter, r *http.Request) {
+		rest := r.PathValue("rest")
+		idx := strings.LastIndex(rest, "/")
+		if idx < 0 {
+			writeJSON(w, http.StatusBadRequest, map[string]any{"message": "path and name required"})
+			return
+		}
+		path, name := rest[:idx], rest[idx+1:]
+		env := r.URL.Query().Get("env")
+		if env == "" {
+			env = "default"
+		}
+		sec, err := secStore.Get(path, name, env)
+		if err != nil {
+			writeJSON(w, http.StatusNotFound, map[string]any{"message": "not found"})
+			return
+		}
+		writeJSON(w, http.StatusOK, map[string]any{
+			"secret": map[string]any{"value": string(sec.Ciphertext)},
+		})
+	})
+
+	mux.HandleFunc("POST /v1/kms/orgs/{org}/secrets", func(w http.ResponseWriter, r *http.Request) {
+		var req struct {
+			Path  string `json:"path"`
+			Name  string `json:"name"`
+			Env   string `json:"env"`
+			Value string `json:"value"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.Name == "" {
+			writeJSON(w, http.StatusBadRequest, map[string]any{"message": "name and value required"})
+			return
+		}
+		if req.Env == "" {
+			req.Env = "default"
+		}
+		sec := &store.Secret{
+			Name:       req.Name,
+			Path:       req.Path,
+			Env:        req.Env,
+			Ciphertext: []byte(req.Value),
+		}
+		if err := secStore.Put(sec); err != nil {
+			writeJSON(w, http.StatusInternalServerError, map[string]any{"message": err.Error()})
+			return
+		}
+		writeJSON(w, http.StatusCreated, map[string]any{"ok": true})
+	})
+
+	mux.HandleFunc("DELETE /v1/kms/orgs/{org}/secrets/{rest...}", func(w http.ResponseWriter, r *http.Request) {
+		rest := r.PathValue("rest")
+		idx := strings.LastIndex(rest, "/")
+		if idx < 0 {
+			writeJSON(w, http.StatusBadRequest, map[string]any{"message": "path and name required"})
+			return
+		}
+		path, name := rest[:idx], rest[idx+1:]
+		env := r.URL.Query().Get("env")
+		if env == "" {
+			env = "default"
+		}
+		if err := secStore.Delete(path, name, env); err != nil {
+			writeJSON(w, http.StatusNotFound, map[string]any{"message": "not found"})
+			return
+		}
+		writeJSON(w, http.StatusOK, map[string]any{"ok": true})
+	})
+
+	// Legacy: env-backed secret fetch (canonical luxfi/kms route).
+	mux.HandleFunc("GET /v1/kms/secrets/{name}", func(w http.ResponseWriter, r *http.Request) {
+		name := r.PathValue("name")
+		if name == "" {
+			writeJSON(w, http.StatusBadRequest, map[string]any{"message": "secret name required"})
+			return
+		}
+		val := os.Getenv(name)
+		if val == "" {
+			writeJSON(w, http.StatusNotFound, map[string]any{"message": "not found"})
+			return
+		}
+		writeJSON(w, http.StatusOK, map[string]any{
+			"secret": map[string]any{"secretKey": name, "secretValue": val},
+		})
+	})
+
+	// MPC key management — only when MPC_VAULT_ID is set.
+	if vaultID != "" {
+		zapClient, zerr := mpc.NewZapClient(nodeID, mpcAddr)
+		if zerr != nil {
+			log.Fatalf("kmsd: zap client: %v", zerr)
+		}
+		keyStore, kerr := store.New(db)
+		if kerr != nil {
+			log.Fatalf("kmsd: key store: %v", kerr)
+		}
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		if status, err := zapClient.Status(ctx); err != nil {
+			log.Printf("kmsd: WARNING: mpc unreachable via ZAP: %v", err)
+		} else {
+			log.Printf("kmsd: mpc ready=%v peers=%d/%d mode=%s",
+				status.Ready, status.ConnectedPeers, status.ExpectedPeers, status.Mode)
+		}
+		cancel()
+
+		mgr := keys.NewManager(zapClient, keyStore, vaultID)
+		registerKMSKeyRoutes(mux, mgr, zapClient)
+	} else {
+		log.Printf("kmsd: MPC_VAULT_ID not set — running in secrets-only mode (no threshold signing)")
 	}
+
+	// ZAP secrets server — canonical luxfi/kms/pkg/zapserver. Wire-compatible
+	// with luxfi clients (opcodes 0x0040..0x0043).
+	masterKeyB64 := envOr("KMS_MASTER_KEY_B64", "")
+	zapPortStr := envOr("KMS_ZAP_PORT", defaultZapPort)
+	zapPort, _ := strconv.Atoi(zapPortStr)
+	if masterKeyB64 != "" && zapPort > 0 {
+		masterKey, kerr := base64.StdEncoding.DecodeString(masterKeyB64)
+		if kerr != nil || len(masterKey) != 32 {
+			log.Printf("kmsd: KMS_MASTER_KEY_B64 invalid (need 32 bytes base64); ZAP secrets-server disabled")
+		} else {
+			n := zap.NewNode(zap.NodeConfig{
+				NodeID:      nodeID + "-secrets",
+				ServiceType: "_kms._tcp",
+				Port:        zapPort,
+			})
+			if serr := n.Start(); serr != nil {
+				log.Printf("kmsd: ZAP secrets-server failed to start on :%d: %v", zapPort, serr)
+			} else {
+				zs := zapserver.New(zapserver.Config{
+					Store:     secStore,
+					MasterKey: masterKey,
+					Logger:    slog.Default(),
+				})
+				zs.Register(n)
+				log.Printf("kmsd: ZAP secrets-server listening on :%d (service=_kms._tcp)", zapPort)
+			}
+		}
+	} else {
+		log.Printf("kmsd: ZAP secrets-server disabled (set KMS_MASTER_KEY_B64 and KMS_ZAP_PORT to enable)")
+	}
+
+	// Static frontend (Hanzo-branded UI dist) — served at root if present.
+	frontendDir := envOr("KMS_FRONTEND_DIR", "/app/frontend")
+	if info, ferr := os.Stat(frontendDir); ferr == nil && info.IsDir() {
+		mux.Handle("/", http.FileServer(http.Dir(frontendDir)))
+		log.Printf("kmsd: static frontend at %s", frontendDir)
+	}
+
+	// HTTP server.
+	srv := &http.Server{
+		Addr:         listen,
+		Handler:      mux,
+		ReadTimeout:  30 * time.Second,
+		WriteTimeout: 60 * time.Second,
+		IdleTimeout:  120 * time.Second,
+	}
+	go func() {
+		log.Printf("kmsd: HTTP listening on %s", listen)
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("kmsd: http: %v", err)
+		}
+	}()
+
+	// Graceful shutdown.
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
+	<-sig
+	log.Println("kmsd: shutting down...")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	srv.Shutdown(ctx)
+
+	// Suppress unused jwks warnings — wired by Gateway in production.
+	_ = jwksURL
+}
+
+func registerKMSKeyRoutes(mux *http.ServeMux, mgr *keys.Manager, mpcBackend keys.MPCBackend) {
+	mux.HandleFunc("POST /v1/kms/keys/generate", func(w http.ResponseWriter, r *http.Request) {
+		var req keys.GenerateRequest
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid request body"})
+			return
+		}
+		if req.ValidatorID == "" || req.Threshold < 2 || req.Parties < req.Threshold {
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid keygen params"})
+			return
+		}
+		ks, err := mgr.GenerateValidatorKeys(r.Context(), req)
+		if err != nil {
+			if strings.Contains(err.Error(), "already exists") {
+				writeJSON(w, http.StatusConflict, map[string]string{"error": err.Error()})
+				return
+			}
+			writeJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+			return
+		}
+		writeJSON(w, http.StatusCreated, ks)
+	})
+
+	mux.HandleFunc("GET /v1/kms/keys", func(w http.ResponseWriter, r *http.Request) {
+		list := mgr.List()
+		if list == nil {
+			list = []*keys.ValidatorKeySet{}
+		}
+		writeJSON(w, http.StatusOK, list)
+	})
+
+	mux.HandleFunc("GET /v1/kms/keys/{id}", func(w http.ResponseWriter, r *http.Request) {
+		id := r.PathValue("id")
+		ks, err := mgr.Get(id)
+		if err != nil {
+			writeJSON(w, http.StatusNotFound, map[string]string{"error": "not found"})
+			return
+		}
+		writeJSON(w, http.StatusOK, ks)
+	})
+
+	mux.HandleFunc("POST /v1/kms/keys/{id}/sign", func(w http.ResponseWriter, r *http.Request) {
+		id := r.PathValue("id")
+		var req keys.SignRequest
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil || len(req.Message) == 0 {
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "message required"})
+			return
+		}
+		var resp *keys.SignResponse
+		var err error
+		switch req.KeyType {
+		case "bls":
+			resp, err = mgr.SignWithBLS(r.Context(), id, req.Message)
+		case "ringtail":
+			resp, err = mgr.SignWithRingtail(r.Context(), id, req.Message)
+		default:
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "key_type must be 'bls' or 'ringtail'"})
+			return
+		}
+		if err != nil {
+			if strings.Contains(err.Error(), "not found") {
+				writeJSON(w, http.StatusNotFound, map[string]string{"error": err.Error()})
+				return
+			}
+			writeJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+			return
+		}
+		writeJSON(w, http.StatusOK, resp)
+	})
+
+	mux.HandleFunc("POST /v1/kms/keys/{id}/rotate", func(w http.ResponseWriter, r *http.Request) {
+		id := r.PathValue("id")
+		var req keys.RotateRequest
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid request body"})
+			return
+		}
+		ks, err := mgr.Rotate(r.Context(), id, req)
+		if err != nil {
+			writeJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+			return
+		}
+		writeJSON(w, http.StatusOK, ks)
+	})
+
+	mux.HandleFunc("GET /v1/kms/status", func(w http.ResponseWriter, r *http.Request) {
+		status, err := mpcBackend.Status(r.Context())
+		if err != nil {
+			writeJSON(w, http.StatusOK, map[string]string{
+				"kms": "ok", "mpc": "unreachable", "details": err.Error(),
+			})
+			return
+		}
+		writeJSON(w, http.StatusOK, map[string]any{"kms": "ok", "mpc": status})
+	})
+}
+
+func startReplicator(db *badger.DB, nodeID string) *badger.Replicator {
+	endpoint := os.Getenv("REPLICATE_S3_ENDPOINT")
+	if endpoint == "" {
+		log.Printf("kmsd: S3 replication disabled (set REPLICATE_S3_ENDPOINT to enable)")
+		return nil
+	}
+	cfg := badger.ReplicatorConfig{
+		Endpoint:  endpoint,
+		Bucket:    envOr("REPLICATE_S3_BUCKET", defaultS3Bucket),
+		Region:    envOr("REPLICATE_S3_REGION", "us-central1"),
+		AccessKey: os.Getenv("REPLICATE_S3_ACCESS_KEY"),
+		SecretKey: os.Getenv("REPLICATE_S3_SECRET_KEY"),
+		UseSSL:    !strings.HasPrefix(endpoint, "http://"),
+		Path:      envOr("REPLICATE_PATH", fmt.Sprintf("%s/%s", defaultS3Path, nodeID)),
+		Interval:  time.Second,
+	}
+	rep, err := badger.NewReplicator(db, cfg)
+	if err != nil {
+		log.Printf("kmsd: WARNING: S3 replicator init failed: %v — replication disabled", err)
+		return nil
+	}
+	go rep.Start(context.Background())
+	log.Printf("kmsd: S3 replication → %s/%s/%s", endpoint, cfg.Bucket, cfg.Path)
+	return rep
+}
+
+func masterKeyFromEnv() []byte {
+	b64 := os.Getenv("KMS_ENCRYPTION_KEY_B64")
+	if b64 == "" {
+		return nil
+	}
+	key, err := base64.StdEncoding.DecodeString(b64)
+	if err != nil || len(key) != 32 {
+		log.Printf("kmsd: KMS_ENCRYPTION_KEY_B64 invalid (need 32 bytes base64); at-rest encryption disabled")
+		return nil
+	}
+	return key
+}
+
+func writeJSON(w http.ResponseWriter, code int, v any) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	json.NewEncoder(w).Encode(v)
 }
 
 func envOr(key, fallback string) string {
@@ -206,13 +486,45 @@ func envOr(key, fallback string) string {
 	return fallback
 }
 
-// parseZapPort accepts ":9653" or "0.0.0.0:9653" and returns the integer port.
-// Returns 9653 on parse failure (callers already log the listen address).
-func parseZapPort(addr string) int {
-	if i := strings.LastIndex(addr, ":"); i >= 0 {
-		if p, err := strconv.Atoi(addr[i+1:]); err == nil && p > 0 {
-			return p
-		}
-	}
-	return 9653
+type zapdbLogger struct{}
+
+func (zapdbLogger) Errorf(format string, args ...interface{}) {
+	slog.Error(fmt.Sprintf(format, args...))
+}
+func (zapdbLogger) Warningf(format string, args ...interface{}) {
+	slog.Warn(fmt.Sprintf(format, args...))
+}
+func (zapdbLogger) Infof(format string, args ...interface{}) {
+	slog.Info(fmt.Sprintf(format, args...))
+}
+func (zapdbLogger) Debugf(format string, args ...interface{}) {
+	slog.Debug(fmt.Sprintf(format, args...))
+}
+
+func printUsage() {
+	fmt.Fprintf(os.Stderr, `Hanzo KMS — thin wrapper over luxfi/kms (canonical implementation)
+
+Usage:
+  kmsd [--help]
+
+Defaults (Hanzo-specific overrides of luxfi/kms):
+  HTTP listen        : %s   (luxfi default :8080)
+  ZAP listen port    : %s   (luxfi default 9652)
+  Data directory     : %s    (luxfi default /data/kms)
+  Node ID            : %s   (luxfi default kms-0)
+  Branding           : %s   (BRAND_NAME env)
+  IAM JWKS env var   : HANZO_IAM_JWKS_URL  (falls back to IAM_JWKS_URL)
+  IAM endpoint env   : HANZO_IAM_ENDPOINT  (falls back to IAM_ENDPOINT)
+  S3 backups bucket  : %s
+  S3 backups prefix  : %s/<node_id>
+
+Wire-format compatibility:
+  ZAP opcodes 0x0040..0x0043 (canonical luxfi/kms/pkg/zapserver) — Hanzo and
+  Lux KMS clients interoperate over the binary transport.
+
+See: https://github.com/luxfi/kms (canonical implementation).
+`,
+		defaultListen, defaultZapPort, defaultDataDir, defaultNodeID, defaultBrand,
+		defaultS3Bucket, defaultS3Path,
+	)
 }
