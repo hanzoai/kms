@@ -25,11 +25,15 @@ func NewTenantSecrets(s *store.ServiceSecretStore, a *store.AuditStore) *TenantS
 
 // List returns metadata-only for a tenant's secrets.
 // GET /v1/kms/tenants/{tenantId}/secrets?secretType=
+//
+// R2-4: requires canReadSecret. Plain tenant membership is insufficient —
+// a tenant member without the kms.secret.read role could otherwise enumerate
+// every secret ID, which is itself sensitive metadata.
 func (h *TenantSecrets) List(w http.ResponseWriter, r *http.Request) {
 	tenantID := chi.URLParam(r, "tenantId")
 	claims := auth.FromContext(r.Context())
-	if !requireTenant(claims, tenantID) {
-		writeError(w, http.StatusForbidden, "tenant mismatch")
+	if !canReadSecret(claims, tenantID) {
+		writeError(w, http.StatusForbidden, "forbidden")
 		return
 	}
 	q := r.URL.Query()
