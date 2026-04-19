@@ -9,6 +9,9 @@
 //	KMS_NODE_ID       - ZAP node ID (default "kms-0")
 //	IAM_JWKS_URL      - JWKS endpoint for JWT validation (required when KMS_AUTH_MODE=iam)
 //	KMS_AUTH_MODE     - "iam" (default) or "none" (dev only)
+//	KMS_ZAP           - host:port for the ZAP secrets server (default :9653,
+//	                    empty disables); requires KMS_AUTH_MODE=iam (no
+//	                    no-auth escape hatch on the binary transport)
 //	APP_NAME          - Display name in UI (default "KMS")
 //	APP_URL           - Public URL (optional)
 //	LOGO_URL          - Logo URL (optional, blank = no logo)
@@ -22,6 +25,7 @@ import (
 	"io/fs"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -33,6 +37,7 @@ import (
 	"github.com/hanzoai/kms/internal/mpc"
 	"github.com/hanzoai/kms/internal/server"
 	"github.com/hanzoai/kms/internal/store"
+	"github.com/hanzoai/kms/internal/zapsrv"
 )
 
 func main() {
@@ -122,6 +127,29 @@ func main() {
 			AuthMode: authMode,
 		})
 
+		// ZAP secrets server (binary transport, sub-100us in-cluster reads).
+		// Disabled when KMS_ZAP is empty. Refuses to start without IAM JWKS —
+		// there is no auth-disabled mode for the binary transport.
+		if zapAddr := envOr("KMS_ZAP", ":9653"); zapAddr != "" && jwks != nil {
+			zapPort := parseZapPort(zapAddr)
+			zsrv, zerr := zapsrv.New(zapsrv.Config{
+				NodeID:  envOr("KMS_NODE_ID", "kms-0") + "-secrets",
+				Port:    zapPort,
+				JWKS:    jwks,
+				Secrets: store.NewServiceSecretStore(e.App),
+				Audit:   store.NewAuditStore(e.App),
+			})
+			if zerr != nil {
+				log.Printf("kmsd: WARNING: ZAP secrets server init failed: %v", zerr)
+			} else if err := zsrv.Start(); err != nil {
+				log.Printf("kmsd: WARNING: ZAP secrets server start failed: %v", err)
+			} else {
+				log.Printf("kmsd: ZAP secrets server on %s", zapAddr)
+			}
+		} else if jwks == nil {
+			log.Printf("kmsd: ZAP secrets server disabled (KMS_AUTH_MODE != iam)")
+		}
+
 		// Single catch-all: try chi first (KMS API), fall back to static.
 		var frontendFS fs.FS
 		if info, err := os.Stat(frontendDir); err == nil && info.IsDir() {
@@ -176,4 +204,15 @@ func envOr(key, fallback string) string {
 		return v
 	}
 	return fallback
+}
+
+// parseZapPort accepts ":9653" or "0.0.0.0:9653" and returns the integer port.
+// Returns 9653 on parse failure (callers already log the listen address).
+func parseZapPort(addr string) int {
+	if i := strings.LastIndex(addr, ":"); i >= 0 {
+		if p, err := strconv.Atoi(addr[i+1:]); err == nil && p > 0 {
+			return p
+		}
+	}
+	return 9653
 }
