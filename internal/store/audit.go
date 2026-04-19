@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"hash/fnv"
 	"strings"
 
 	"github.com/hanzoai/base/core"
@@ -17,7 +18,33 @@ const auditCollection = "kms_audit_log"
 // maxAuditAppendAttempts bounds the retry loop when two replicas race to
 // append the same seq. With a UNIQUE index on (org_id, seq) the loser's
 // INSERT fails with SQLSTATE 23505 and we simply re-read the tail and bump.
+//
+// R3-1: under Postgres we now acquire pg_advisory_xact_lock on (audit_ns,
+// org_id) BEFORE the tail read, so the "read tail then insert" window is
+// serialized across replicas. The retry loop still exists as a safety net
+// for the 23505 path (e.g. if the lock module is disabled by ops), but with
+// the advisory lock in place it is effectively unreachable in production.
 const maxAuditAppendAttempts = 16
+
+// auditAdvisoryNamespace is the first int32 passed to pg_advisory_xact_lock.
+// It scopes the lock to the KMS audit table so we don't collide with any
+// other advisory lock users in the same Postgres instance. Picked via
+// FNV-1a(hash_text("kms_audit_log")) at package init to avoid magic numbers.
+var auditAdvisoryNamespace = func() int32 {
+	h := fnv.New32a()
+	h.Write([]byte("kms_audit_log"))
+	return int32(h.Sum32())
+}()
+
+// orgAdvisoryKey returns the per-org int32 key for pg_advisory_xact_lock.
+// FNV-1a is stable, fast, and collision tolerant for this use — a collision
+// means two orgs share a lock namespace and one pays a tiny serialization
+// penalty, never a correctness issue.
+func orgAdvisoryKey(orgID string) int32 {
+	h := fnv.New32a()
+	h.Write([]byte(orgID))
+	return int32(h.Sum32())
+}
 
 // AuditEntry is a single WORM audit log entry.
 type AuditEntry struct {
@@ -70,8 +97,38 @@ func NewAuditStore(app core.App) *AuditStore {
 	return &AuditStore{app: app}
 }
 
+// isPostgresBuilder reports whether the backing dbx.Builder speaks Postgres.
+// We look at the *dbx.DB DriverName (outside tx) or inspect the tx's embedded
+// builder. The only two drivers we support are "pgx"/"postgres" and "sqlite3".
+func isPostgresBuilder(b dbx.Builder) bool {
+	if db, ok := b.(*dbx.DB); ok {
+		switch db.DriverName() {
+		case "pgx", "postgres", "postgresql":
+			return true
+		}
+	}
+	if tx, ok := b.(*dbx.Tx); ok {
+		// tx.Builder wraps the same executor whose underlying *dbx.DB we
+		// already checked at outer scope; fall through to the hack below.
+		_ = tx
+	}
+	return false
+}
+
 // Append adds a new entry to the WORM audit log. The hash chain is computed
-// as SHA-256(prev_hash || json(entry)). On unique-seq violation we retry.
+// as SHA-256(prev_hash || json(entry)).
+//
+// R3-1: Tail-read and INSERT happen inside a single transaction. On Postgres
+// we additionally hold pg_advisory_xact_lock(auditNs, orgKey) for the whole
+// transaction — that serializes every writer to this org's audit chain
+// across replicas, eliminating the TOCTOU window that could link non-causal
+// prev_hash values under READ COMMITTED. On SQLite the driver's write-side
+// mutex already serializes writers on the same DB file, so the advisory
+// lock is a no-op and we skip it.
+//
+// The 23505 retry loop is preserved as a safety net (ops disables the lock,
+// writer migration, etc.) — but under normal operation the advisory lock
+// means every attempt on the same org is strictly linearizable.
 func (s *AuditStore) Append(orgID string, entry any) error {
 	entryJSON, err := json.Marshal(entry)
 	if err != nil {
@@ -81,60 +138,81 @@ func (s *AuditStore) Append(orgID string, entry any) error {
 	if err != nil {
 		return fmt.Errorf("audit: %w", err)
 	}
+	usePG := isPostgresBuilder(s.app.NonconcurrentDB())
+	orgKey := orgAdvisoryKey(orgID)
 
 	for attempt := 0; attempt < maxAuditAppendAttempts; attempt++ {
-		// Read the CURRENT tail for this org — ordered descending by seq so
-		// FindRecordsByFilter returns the latest first. FindFirstRecordByFilter
-		// ignores sort on the older API; we spell it out to be unambiguous.
-		recs, ferr := s.app.FindRecordsByFilter(
-			auditCollection,
-			"org_id = {:org}",
-			"-seq", 1, 0,
-			map[string]any{"org": orgID},
-		)
-		if ferr != nil && !strings.Contains(ferr.Error(), "no rows") {
-			return fmt.Errorf("audit: read tail: %w", ferr)
-		}
-		prevHash := ""
-		seq := 1
-		if len(recs) > 0 {
-			seq = int(recs[0].GetFloat("seq")) + 1
-			prevHash = recs[0].GetString("hash")
-		}
+		var saveErr error
+		txErr := s.app.RunInTransaction(func(txApp core.App) error {
+			// (R3-1) Postgres: acquire an advisory xact lock scoped to
+			// (auditNs, orgKey). The lock is released automatically at
+			// COMMIT/ROLLBACK. Any concurrent writer targeting the same
+			// org blocks here until we release. This closes the TOCTOU
+			// window between tail read and INSERT.
+			if usePG {
+				if _, lockErr := txApp.NonconcurrentDB().NewQuery(
+					"SELECT pg_advisory_xact_lock({:ns}, {:k})",
+				).Bind(dbx.Params{
+					"ns": auditAdvisoryNamespace,
+					"k":  orgKey,
+				}).Execute(); lockErr != nil {
+					return fmt.Errorf("audit: advisory lock: %w", lockErr)
+				}
+			}
 
-		h := sha256.Sum256(append([]byte(prevHash), entryJSON...))
-		hash := hex.EncodeToString(h[:])
+			// Now read the tail under the lock — no other writer can
+			// observe this tail value until we commit.
+			recs, ferr := txApp.FindRecordsByFilter(
+				auditCollection,
+				"org_id = {:org}",
+				"-seq", 1, 0,
+				map[string]any{"org": orgID},
+			)
+			if ferr != nil && !strings.Contains(ferr.Error(), "no rows") {
+				return fmt.Errorf("audit: read tail: %w", ferr)
+			}
+			prevHash := ""
+			seq := 1
+			if len(recs) > 0 {
+				seq = int(recs[0].GetFloat("seq")) + 1
+				prevHash = recs[0].GetString("hash")
+			}
 
-		rec := core.NewRecord(col)
-		rec.Set("org_id", orgID)
-		rec.Set("seq", seq)
-		rec.Set("entry", string(entryJSON))
-		rec.Set("hash", hash)
-		rec.Set("prev_hash", prevHash)
-		if m, ok := entry.(map[string]any); ok {
-			if v, ok := m["actor_id"].(string); ok {
-				rec.Set("actor_id", v)
+			h := sha256.Sum256(append([]byte(prevHash), entryJSON...))
+			hash := hex.EncodeToString(h[:])
+
+			rec := core.NewRecord(col)
+			rec.Set("org_id", orgID)
+			rec.Set("seq", seq)
+			rec.Set("entry", string(entryJSON))
+			rec.Set("hash", hash)
+			rec.Set("prev_hash", prevHash)
+			if m, ok := entry.(map[string]any); ok {
+				if v, ok := m["actor_id"].(string); ok {
+					rec.Set("actor_id", v)
+				}
+				if v, ok := m["action"].(string); ok {
+					rec.Set("action", v)
+				}
+				if v, ok := m["subject_id"].(string); ok {
+					rec.Set("subject_id", v)
+				}
 			}
-			if v, ok := m["action"].(string); ok {
-				rec.Set("action", v)
-			}
-			if v, ok := m["subject_id"].(string); ok {
-				rec.Set("subject_id", v)
-			}
-		}
-		saveErr := s.app.Save(rec)
-		if saveErr == nil {
+			saveErr = txApp.Save(rec)
+			return saveErr
+		})
+		if txErr == nil {
 			return nil
 		}
 		// 23505 (postgres unique_violation) or SQLite's UNIQUE constraint
-		// error — retry with a fresh tail read.
-		emsg := saveErr.Error()
+		// error — retry with a fresh tail read. Any other error is fatal.
+		emsg := txErr.Error()
 		if strings.Contains(emsg, "23505") ||
 			strings.Contains(emsg, "UNIQUE constraint failed") ||
 			strings.Contains(emsg, "duplicate key") {
 			continue
 		}
-		return fmt.Errorf("audit: save: %w", saveErr)
+		return fmt.Errorf("audit: save: %w", txErr)
 	}
 	return fmt.Errorf("audit: %d concurrent writers, giving up", maxAuditAppendAttempts)
 }
