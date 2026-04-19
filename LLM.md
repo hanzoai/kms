@@ -81,6 +81,28 @@ Callers (none in ~/work) must migrate to `/v1/kms/tenants/{tenantId}/…`
 and `/v1/kms/audit?tenantId=…`. The `kms_secrets` and `kms_members`
 collections are no longer bootstrapped (existing data left untouched).
 
+### F1: Postgres-backed audit concurrency test (2026-04-18)
+
+`internal/store/audit_concurrency_pg_test.go` exercises the
+`pg_advisory_xact_lock` path in `AuditStore.Append` directly. SQLite
+serializes writes via the driver's write mutex, so the SQLite test never
+touches the lock — a regression that removed the lock would still pass on
+SQLite but break under concurrent Postgres load.
+
+The PG test drives 10 concurrent writers × 10 inserts each against a real
+Postgres 15 sidecar, using the exact advisory-lock SQL `audit.go` uses
+(`SELECT pg_advisory_xact_lock(auditAdvisoryNamespace, orgAdvisoryKey(org))`
+inside the tx before the tail read). Asserts:
+
+- 100 entries, `seq` strictly 1..N with no gaps/dupes
+- `prev_hash` chain is causal (`entry[i].prev_hash == entry[i-1].hash`)
+- Side-channel `pg_locks` probe observes advisory-lock rows during the run
+  (best-effort — documented fallback when the run is too fast for the probe)
+
+CI wires a Postgres 15 sidecar in `.github/workflows/ci.yml` and sets
+`TEST_PG_DSN=postgres://kms:kms@localhost:5432/kms_test?sslmode=disable`.
+Locally the test skips unless `TEST_PG_DSN` is set — no silent drift.
+
 ### Spec surface (2026-04-18)
 
 Canonical Liquidity KMS spec frozen in `~/work/liquidity/openapi/kms.yaml`.

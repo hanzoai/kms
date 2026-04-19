@@ -1,0 +1,71 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: ["*"]
+  pull_request:
+    branches: ["*"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      # F1 / R3-1: the Postgres-backed audit chain test in
+      # internal/store/audit_concurrency_pg_test.go only runs when
+      # TEST_PG_DSN is set. Without it we'd ship regressions in the
+      # pg_advisory_xact_lock path — SQLite serializes writes at the
+      # driver level, so the SQLite-backed test never exercises the
+      # advisory lock. This env var makes the PG variant actually run.
+      TEST_PG_DSN: postgres://kms:kms@localhost:5432/kms_test?sslmode=disable
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: kms
+          POSTGRES_PASSWORD: kms
+          POSTGRES_DB: kms_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U kms"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Verify TEST_PG_DSN is live (F1 coverage gate)
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends postgresql-client
+          PGPASSWORD=kms psql -h localhost -U kms -d kms_test -c 'SELECT 1;'
+          echo "TEST_PG_DSN=${TEST_PG_DSN}"
+
+      - name: Run unit tests
+        run: go test -v -race ./internal/...
+
+      - name: Build
+        run: |
+          CGO_ENABLED=0 go build -v ./cmd/kmsd
+          CGO_ENABLED=0 go build -v ./cmd/kms
