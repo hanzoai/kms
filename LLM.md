@@ -25,7 +25,37 @@ kmsd serve --dir=/data/kms --http=0.0.0.0:8443
 
 ### Port
 
-8443 (all environments). Matches K8s service port convention for KMS across the platform.
+8443 (HTTP). 9653 (ZAP binary, optional). Matches K8s service port convention for KMS across the platform.
+
+### ZAP Binary Transport (optional)
+
+Sub-100us in-cluster secret CRUD over the [`luxfi/zap`](https://github.com/luxfi/zap)
+binary protocol. Same authorization model as HTTP (IAM JWT validated against the
+same JWKS, identical role checks). No auth-disabled mode on the binary transport —
+the server refuses to start without a JWKS validator.
+
+```
+KMS_ZAP=":9653"   # bind addr; empty disables, default :9653
+```
+
+Opcodes (see `internal/zapsrv/zapsrv.go`):
+
+| Opcode | Operation       | Authz                              |
+|--------|-----------------|------------------------------------|
+| 0x0060 | secret resolve  | `canReadSecret(claims, tenantID)`  |
+| 0x0061 | secret get      | `canReadSecret(claims, tenantID)`  |
+| 0x0062 | secret create   | `isSecretAdmin(claims, tenantID)`  |
+| 0x0063 | secret update   | `isSecretAdmin(claims, tenantID)`  |
+| 0x0064 | secret delete   | `isSecretAdmin(claims, tenantID)`  |
+
+Wire format: single root object per request/response, fixed byte offsets,
+big-endian per zap library convention. Token is carried at field 0; tenant/secret
+identifiers and payloads occupy slots 8/16/24/32. Audit log entries get
+`transport: "zap"` so HTTP vs ZAP traffic can be distinguished after the fact.
+
+Go SDK: `pkg/kmsclient` ships a drop-in three-arg `New(...)` with optional
+`ZapAddr`. On any ZAP failure (decode, timeout, disconnect, non-200) the client
+falls back transparently to HTTP — same behavior as the `hanzo/tasks` SDK.
 
 ## Build
 
