@@ -57,7 +57,13 @@ func Bootstrap(app core.App) error {
 				{name: "seq", kind: "number", required: true},
 				{name: "entry", kind: "json", required: true},
 				{name: "hash", kind: "text", required: true},
-				{name: "prev_hash", kind: "text", required: true},
+				// R3-1: genesis entry (seq=1) has prev_hash="" by
+				// construction (no previous row to link to). Keeping
+				// required=true forced empty-string rejection on the
+				// very first Append for every fresh org. Relaxing to
+				// required=false; verifyHashChain still enforces the
+				// causal link against the actual prior hash.
+				{name: "prev_hash", kind: "text", required: false},
 				// Denormalized query fields for the /v1/kms/audit surface.
 				{name: "actor_id", kind: "text", required: false},
 				{name: "action", kind: "text", required: false},
