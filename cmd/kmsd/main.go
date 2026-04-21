@@ -12,18 +12,23 @@
 // Configuration precedence: env vars > defaults.
 //
 //	Env vars:
-//	  KMS_LISTEN              - HTTP listen address (default ":8443" — Hanzo)
-//	  KMS_ZAP_PORT            - ZAP listen port (default 9653 — Hanzo, 0 = disable)
-//	  KMS_DATA_DIR            - ZapDB data directory (default "/data/hanzo-kms")
-//	  KMS_NODE_ID             - ZAP node ID (default "hanzo-kms-0")
-//	  KMS_MASTER_KEY_B64      - 32-byte master key (base64) for ZAP secrets server
-//	  KMS_ENCRYPTION_KEY_B64  - 32-byte ZapDB at-rest key
-//	  HANZO_IAM_JWKS_URL      - Hanzo IAM JWKS endpoint (replaces IAM_JWKS_URL)
-//	  HANZO_IAM_ENDPOINT      - Hanzo IAM endpoint (replaces IAM_ENDPOINT)
-//	  IAM_ENDPOINT            - fallback if HANZO_IAM_ENDPOINT unset
-//	  MPC_ADDR                - ZAP address (host:port); empty = mDNS discovery
-//	  MPC_VAULT_ID            - MPC vault ID (required for threshold signing)
-//	  BRAND_NAME              - Branding for startup banner (default "Hanzo")
+//	  KMS_LISTEN                  - HTTP listen address (default ":8443" — Hanzo)
+//	  KMS_ZAP_PORT                - ZAP listen port (default 9653 — Hanzo, 0 = disable)
+//	  KMS_DATA_DIR                - ZapDB data directory (default "/data/hanzo-kms")
+//	  KMS_NODE_ID                 - ZAP node ID (default "hanzo-kms-0")
+//	  KMS_MASTER_KEY_B64          - 32-byte master key (base64) for ZAP secrets server
+//	  KMS_ENCRYPTION_KEY_B64      - 32-byte ZapDB at-rest key
+//	  HANZO_IAM_JWKS_URL          - Hanzo IAM JWKS endpoint (replaces IAM_JWKS_URL)
+//	  HANZO_IAM_ENDPOINT          - Hanzo IAM endpoint (replaces IAM_ENDPOINT)
+//	  HANZO_IAM_EXPECTED_ISSUER   - required iss claim (per-env, no cross-env trust)
+//	  HANZO_IAM_EXPECTED_AUDIENCE - required aud claim (default "kms")
+//	  HANZO_IAM_LEEWAY_SECONDS    - clock skew tolerance (0..5, default 0)
+//	  KMS_AUTH_MODE               - "iam" (default, required in prod) or "none" (dev only)
+//	  KMS_DEV_MODE                - "true" to allow KMS_AUTH_MODE=none
+//	  IAM_ENDPOINT                - fallback if HANZO_IAM_ENDPOINT unset
+//	  MPC_ADDR                    - ZAP address (host:port); empty = mDNS discovery
+//	  MPC_VAULT_ID                - MPC vault ID (required for threshold signing)
+//	  BRAND_NAME                  - Branding for startup banner (default "Hanzo")
 //
 //	S3 replication (ZapDB Replicator):
 //	  REPLICATE_S3_ENDPOINT   - S3 endpoint (empty = replication disabled)
@@ -54,6 +59,7 @@ import (
 
 	badger "github.com/luxfi/zapdb"
 
+	"github.com/hanzoai/kms/pkg/auth"
 	"github.com/luxfi/kms/pkg/keys"
 	"github.com/luxfi/kms/pkg/mpc"
 	"github.com/luxfi/kms/pkg/store"
@@ -89,6 +95,11 @@ func main() {
 	nodeID := envOr("KMS_NODE_ID", defaultNodeID)
 	iamEndpoint := envOr("HANZO_IAM_ENDPOINT", envOr("IAM_ENDPOINT", "https://hanzo.id"))
 	jwksURL := envOr("HANZO_IAM_JWKS_URL", envOr("IAM_JWKS_URL", ""))
+	expectedIss := envOr("HANZO_IAM_EXPECTED_ISSUER", "")
+	expectedAud := envOr("HANZO_IAM_EXPECTED_AUDIENCE", "kms")
+	leewaySec, _ := strconv.Atoi(envOr("HANZO_IAM_LEEWAY_SECONDS", "0"))
+	authMode := strings.ToLower(envOr("KMS_AUTH_MODE", "iam"))
+	devMode := strings.EqualFold(envOr("KMS_DEV_MODE", ""), "true")
 	dataDir := envOr("KMS_DATA_DIR", defaultDataDir)
 	listen := envOr("KMS_LISTEN", defaultListen)
 
@@ -96,8 +107,14 @@ func main() {
 	log.Printf("  listen=%s zap_port=%s data=%s node_id=%s",
 		listen, envOr("KMS_ZAP_PORT", defaultZapPort), dataDir, nodeID)
 	if jwksURL != "" {
-		log.Printf("  iam.jwks=%s", jwksURL)
+		log.Printf("  iam.jwks=%s iss=%s aud=%s leeway=%ds",
+			jwksURL, expectedIss, expectedAud, leewaySec)
 	}
+
+	// Build the JWT validator. Refuses to start without JWKS + iss + aud in
+	// production — per-env trust boundary is mandatory. Dev can set
+	// KMS_AUTH_MODE=none + KMS_DEV_MODE=true to bypass (local-only).
+	validator := mustBuildValidator(authMode, devMode, jwksURL, expectedIss, expectedAud, leewaySec)
 
 	// Open ZapDB at the Hanzo data dir.
 	if err := os.MkdirAll(dataDir, 0o700); err != nil {
@@ -122,12 +139,24 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	// Health.
+	// protect wraps a handler in the JWT validator (nil validator = pass-through
+	// for dev mode). ALL sensitive routes go through this — secrets, keys,
+	// status. /healthz and /v1/kms/auth/login are intentionally unauthenticated.
+	protect := func(h http.HandlerFunc) http.Handler {
+		if validator == nil {
+			return h
+		}
+		return validator.Middleware(h)
+	}
+
+	// Health — unauthenticated on purpose (liveness probe).
 	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusOK, map[string]string{"status": "ok", "service": "kms", "brand": brand})
 	})
 
 	// Machine identity auth via IAM (canonical luxfi/kms route).
+	// This endpoint exchanges client_credentials for an access_token — it
+	// MUST remain unauthenticated (you can't hold a token before you have it).
 	mux.HandleFunc("POST /v1/kms/auth/login", func(w http.ResponseWriter, r *http.Request) {
 		var req struct {
 			ClientID     string `json:"clientId"`
@@ -158,10 +187,11 @@ func main() {
 		writeJSON(w, http.StatusOK, map[string]any{"accessToken": at, "expiresIn": 86400, "tokenType": "Bearer"})
 	})
 
-	// Secret store — canonical luxfi/kms surface.
+	// Secret store — canonical luxfi/kms surface. All routes below require
+	// a valid per-env JWT (iss + aud + exp + kid pinned to this env's JWKS).
 	secStore := store.NewSecretStore(db)
 
-	mux.HandleFunc("GET /v1/kms/orgs/{org}/secrets/{rest...}", func(w http.ResponseWriter, r *http.Request) {
+	mux.Handle("GET /v1/kms/orgs/{org}/secrets/{rest...}", protect(func(w http.ResponseWriter, r *http.Request) {
 		rest := r.PathValue("rest")
 		idx := strings.LastIndex(rest, "/")
 		if idx < 0 {
@@ -181,9 +211,9 @@ func main() {
 		writeJSON(w, http.StatusOK, map[string]any{
 			"secret": map[string]any{"value": string(sec.Ciphertext)},
 		})
-	})
+	}))
 
-	mux.HandleFunc("POST /v1/kms/orgs/{org}/secrets", func(w http.ResponseWriter, r *http.Request) {
+	mux.Handle("POST /v1/kms/orgs/{org}/secrets", protect(func(w http.ResponseWriter, r *http.Request) {
 		var req struct {
 			Path  string `json:"path"`
 			Name  string `json:"name"`
@@ -208,9 +238,9 @@ func main() {
 			return
 		}
 		writeJSON(w, http.StatusCreated, map[string]any{"ok": true})
-	})
+	}))
 
-	mux.HandleFunc("DELETE /v1/kms/orgs/{org}/secrets/{rest...}", func(w http.ResponseWriter, r *http.Request) {
+	mux.Handle("DELETE /v1/kms/orgs/{org}/secrets/{rest...}", protect(func(w http.ResponseWriter, r *http.Request) {
 		rest := r.PathValue("rest")
 		idx := strings.LastIndex(rest, "/")
 		if idx < 0 {
@@ -227,10 +257,10 @@ func main() {
 			return
 		}
 		writeJSON(w, http.StatusOK, map[string]any{"ok": true})
-	})
+	}))
 
 	// Legacy: env-backed secret fetch (canonical luxfi/kms route).
-	mux.HandleFunc("GET /v1/kms/secrets/{name}", func(w http.ResponseWriter, r *http.Request) {
+	mux.Handle("GET /v1/kms/secrets/{name}", protect(func(w http.ResponseWriter, r *http.Request) {
 		name := r.PathValue("name")
 		if name == "" {
 			writeJSON(w, http.StatusBadRequest, map[string]any{"message": "secret name required"})
@@ -244,7 +274,7 @@ func main() {
 		writeJSON(w, http.StatusOK, map[string]any{
 			"secret": map[string]any{"secretKey": name, "secretValue": val},
 		})
-	})
+	}))
 
 	// MPC key management — only when MPC_VAULT_ID is set.
 	if vaultID != "" {
@@ -266,7 +296,7 @@ func main() {
 		cancel()
 
 		mgr := keys.NewManager(zapClient, keyStore, vaultID)
-		registerKMSKeyRoutes(mux, mgr, zapClient)
+		registerKMSKeyRoutes(mux, protect, mgr, zapClient)
 	} else {
 		log.Printf("kmsd: MPC_VAULT_ID not set — running in secrets-only mode (no threshold signing)")
 	}
@@ -332,13 +362,10 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	srv.Shutdown(ctx)
-
-	// Suppress unused jwks warnings — wired by Gateway in production.
-	_ = jwksURL
 }
 
-func registerKMSKeyRoutes(mux *http.ServeMux, mgr *keys.Manager, mpcBackend keys.MPCBackend) {
-	mux.HandleFunc("POST /v1/kms/keys/generate", func(w http.ResponseWriter, r *http.Request) {
+func registerKMSKeyRoutes(mux *http.ServeMux, protect func(http.HandlerFunc) http.Handler, mgr *keys.Manager, mpcBackend keys.MPCBackend) {
+	mux.Handle("POST /v1/kms/keys/generate", protect(func(w http.ResponseWriter, r *http.Request) {
 		var req keys.GenerateRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid request body"})
@@ -358,17 +385,17 @@ func registerKMSKeyRoutes(mux *http.ServeMux, mgr *keys.Manager, mpcBackend keys
 			return
 		}
 		writeJSON(w, http.StatusCreated, ks)
-	})
+	}))
 
-	mux.HandleFunc("GET /v1/kms/keys", func(w http.ResponseWriter, r *http.Request) {
+	mux.Handle("GET /v1/kms/keys", protect(func(w http.ResponseWriter, r *http.Request) {
 		list := mgr.List()
 		if list == nil {
 			list = []*keys.ValidatorKeySet{}
 		}
 		writeJSON(w, http.StatusOK, list)
-	})
+	}))
 
-	mux.HandleFunc("GET /v1/kms/keys/{id}", func(w http.ResponseWriter, r *http.Request) {
+	mux.Handle("GET /v1/kms/keys/{id}", protect(func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
 		ks, err := mgr.Get(id)
 		if err != nil {
@@ -376,9 +403,9 @@ func registerKMSKeyRoutes(mux *http.ServeMux, mgr *keys.Manager, mpcBackend keys
 			return
 		}
 		writeJSON(w, http.StatusOK, ks)
-	})
+	}))
 
-	mux.HandleFunc("POST /v1/kms/keys/{id}/sign", func(w http.ResponseWriter, r *http.Request) {
+	mux.Handle("POST /v1/kms/keys/{id}/sign", protect(func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
 		var req keys.SignRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil || len(req.Message) == 0 {
@@ -405,9 +432,9 @@ func registerKMSKeyRoutes(mux *http.ServeMux, mgr *keys.Manager, mpcBackend keys
 			return
 		}
 		writeJSON(w, http.StatusOK, resp)
-	})
+	}))
 
-	mux.HandleFunc("POST /v1/kms/keys/{id}/rotate", func(w http.ResponseWriter, r *http.Request) {
+	mux.Handle("POST /v1/kms/keys/{id}/rotate", protect(func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
 		var req keys.RotateRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -420,9 +447,9 @@ func registerKMSKeyRoutes(mux *http.ServeMux, mgr *keys.Manager, mpcBackend keys
 			return
 		}
 		writeJSON(w, http.StatusOK, ks)
-	})
+	}))
 
-	mux.HandleFunc("GET /v1/kms/status", func(w http.ResponseWriter, r *http.Request) {
+	mux.Handle("GET /v1/kms/status", protect(func(w http.ResponseWriter, r *http.Request) {
 		status, err := mpcBackend.Status(r.Context())
 		if err != nil {
 			writeJSON(w, http.StatusOK, map[string]string{
@@ -431,7 +458,7 @@ func registerKMSKeyRoutes(mux *http.ServeMux, mgr *keys.Manager, mpcBackend keys
 			return
 		}
 		writeJSON(w, http.StatusOK, map[string]any{"kms": "ok", "mpc": status})
-	})
+	}))
 }
 
 func startReplicator(db *badger.DB, nodeID string) *badger.Replicator {
@@ -458,6 +485,45 @@ func startReplicator(db *badger.DB, nodeID string) *badger.Replicator {
 	go rep.Start(context.Background())
 	log.Printf("kmsd: S3 replication → %s/%s/%s", endpoint, cfg.Bucket, cfg.Path)
 	return rep
+}
+
+// mustBuildValidator constructs the JWT validator from env config.
+//
+// Production (KMS_AUTH_MODE=iam, default): JWKS + iss + aud are REQUIRED.
+// Missing any → log.Fatalf. No fall-through to unauthenticated mode.
+//
+// Dev (KMS_AUTH_MODE=none + KMS_DEV_MODE=true): returns nil — caller
+// treats nil as pass-through. The KMS_DEV_MODE guard exists so a stray
+// KMS_AUTH_MODE=none in a prod env still refuses to start.
+func mustBuildValidator(authMode string, devMode bool, jwksURL, expectedIss, expectedAud string, leewaySec int) *auth.Validator {
+	if authMode == "none" {
+		if !devMode {
+			log.Fatalf("kmsd: KMS_AUTH_MODE=none requires KMS_DEV_MODE=true — refusing to start unauthenticated in prod")
+		}
+		log.Printf("kmsd: WARNING KMS_AUTH_MODE=none — unauthenticated (dev-only!)")
+		return nil
+	}
+	if jwksURL == "" {
+		log.Fatalf("kmsd: HANZO_IAM_JWKS_URL required (or set KMS_AUTH_MODE=none + KMS_DEV_MODE=true for local dev)")
+	}
+	if expectedIss == "" {
+		log.Fatalf("kmsd: HANZO_IAM_EXPECTED_ISSUER required — per-env trust boundary is mandatory")
+	}
+	if expectedAud == "" {
+		// Should never hit — defaulted to "kms" in main.
+		log.Fatalf("kmsd: HANZO_IAM_EXPECTED_AUDIENCE required")
+	}
+	v, err := auth.NewValidator(auth.Config{
+		JWKSURL:          jwksURL,
+		ExpectedIssuer:   expectedIss,
+		ExpectedAudience: expectedAud,
+		Leeway:           time.Duration(leewaySec) * time.Second,
+	})
+	if err != nil {
+		log.Fatalf("kmsd: JWT validator init: %v", err)
+	}
+	log.Printf("kmsd: JWT validator armed (iss=%s aud=%s leeway=%ds)", expectedIss, expectedAud, leewaySec)
+	return v
 }
 
 func masterKeyFromEnv() []byte {
