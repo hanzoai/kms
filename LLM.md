@@ -74,14 +74,50 @@ Image: `ghcr.io/hanzoai/kmsd:main`
 
 | Var | Required | Description |
 |-----|----------|-------------|
-| KMS_AUTH_MODE | yes | "iam" (prod) or "none" (dev only) |
-| IAM_JWKS_URL | yes (iam) | JWKS endpoint for JWT validation |
-| KMS_DEV_MODE | no | "true" to allow auth=none |
+| KMS_AUTH_MODE | yes | "iam" (prod, default) or "none" (dev only, requires KMS_DEV_MODE=true) |
+| HANZO_IAM_JWKS_URL | yes (iam) | JWKS endpoint for JWT validation (per-env) |
+| HANZO_IAM_EXPECTED_ISSUER | yes (iam) | Required `iss` claim value (per-env, no cross-env trust) |
+| HANZO_IAM_EXPECTED_AUDIENCE | no | Required `aud` claim value (default "kms") |
+| HANZO_IAM_LEEWAY_SECONDS | no | Clock skew tolerance, 0..5, default 0 |
+| KMS_DEV_MODE | no | "true" to allow KMS_AUTH_MODE=none (dev only) |
 | APP_NAME | no | UI display name (default "KMS") |
 | KMS_FRONTEND_DIR | no | Path to React frontend dist (default /app/frontend) |
 | DISABLE_ADMIN_UI | no | "true" to block /_/ admin |
 | MPC_ADDR | no | ZAP address for MPC backend |
 | MPC_VAULT_ID | no | MPC vault ID (empty = secrets-only mode) |
+
+### JWT validation — per-env trust boundary (2026-04-21)
+
+KMS enforces the following on every sensitive route:
+
+- `iss` MUST equal `HANZO_IAM_EXPECTED_ISSUER` exactly. No prefix matching,
+  no multi-issuer list. A dev-minted token CANNOT authenticate to test or
+  main, and vice versa.
+- `exp` MUST be in the future. Zero clock skew by default (configurable up
+  to 5s maximum). A 30s-expired token is rejected — short-lived tokens are
+  already ephemeral, NTP drift is not an auth policy.
+- `aud` MUST contain `HANZO_IAM_EXPECTED_AUDIENCE` (default "kms"). A token
+  minted for ATS cannot access KMS.
+- `kid` MUST resolve against the env-specific JWKS at `HANZO_IAM_JWKS_URL`.
+  No shared keyrings across envs. kid-shadowing (signing with key A,
+  claiming kid of key B) is rejected at signature verify.
+- `alg` MUST be one of RS256/RS384/RS512/ES256/ES384/ES512. `alg=none` and
+  HS* are rejected at parse time — no algorithm confusion.
+
+Per-env config:
+- dev:  `HANZO_IAM_EXPECTED_ISSUER=https://iam.dev.satschel.com`,  `aud=kms`
+- test: `HANZO_IAM_EXPECTED_ISSUER=https://iam.test.satschel.com`, `aud=kms`
+- main: `HANZO_IAM_EXPECTED_ISSUER=https://iam.main.satschel.com`, `aud=kms`
+
+Fail-safe: with `KMS_AUTH_MODE=iam` (default), a missing `HANZO_IAM_JWKS_URL`
+or `HANZO_IAM_EXPECTED_ISSUER` causes `log.Fatalf` at startup. KMS cannot
+silently degrade to unauthenticated.
+
+Implementation: `pkg/auth/jwt.go` (`Validator.Middleware`). Wired in
+`cmd/kmsd/main.go` via the `protect` closure around every sensitive route.
+Unauthenticated-on-purpose routes: `GET /healthz` (liveness probe),
+`POST /v1/kms/auth/login` (exchanges client_credentials for a token — you
+can't hold a token before you have one).
 
 ## API Routes
 
