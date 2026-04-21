@@ -4,9 +4,11 @@
 //
 //	kms status [--addr http://localhost:8443]
 //	kms put <path/name> <value> [--org liquidity]
+//	kms put <path/name> --stdin [--org liquidity]      # read value from stdin
 //	kms get <path/name> [--org liquidity]
 //	kms list [prefix] [--org liquidity]
 //	kms rotate <path/name> <new-value> [--org liquidity]
+//	kms rotate <path/name> --stdin [--org liquidity]   # read value from stdin
 package main
 
 import (
@@ -41,6 +43,8 @@ func main() {
 	args = extractFlag(&clientID, args, "--client-id")
 	args = extractFlag(&clientSecret, args, "--client-secret")
 	args = extractFlag(&org, args, "--org")
+	useStdin := false
+	args = extractBoolFlag(&useStdin, args, "--stdin")
 
 	if len(args) == 0 {
 		usage()
@@ -51,12 +55,13 @@ func main() {
 	case "status":
 		cmdStatus(addr)
 	case "put":
-		if len(args) < 3 {
-			fmt.Fprintln(os.Stderr, "kms: put requires <path/name> <value>")
+		value, err := resolvePutValue(args[1:], useStdin, "put", os.Stdin)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "kms: %v\n", err)
 			os.Exit(1)
 		}
 		c := mustClient(addr, iamAddr, clientID, clientSecret, org)
-		cmdPut(c, args[1], args[2])
+		cmdPut(c, args[1], value)
 	case "get":
 		if len(args) < 2 {
 			fmt.Fprintln(os.Stderr, "kms: get requires <path/name>")
@@ -72,17 +77,56 @@ func main() {
 		}
 		cmdList(c, prefix)
 	case "rotate":
-		if len(args) < 3 {
-			fmt.Fprintln(os.Stderr, "kms: rotate requires <path/name> <new-value>")
+		value, err := resolvePutValue(args[1:], useStdin, "rotate", os.Stdin)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "kms: %v\n", err)
 			os.Exit(1)
 		}
 		c := mustClient(addr, iamAddr, clientID, clientSecret, org)
-		cmdRotate(c, args[1], args[2])
+		cmdRotate(c, args[1], value)
 	default:
 		fmt.Fprintf(os.Stderr, "kms: unknown command %q\n", args[0])
 		usage()
 		os.Exit(1)
 	}
+}
+
+// resolvePutValue returns the secret value for `put` / `rotate`, either from the
+// positional argv (args[1]) or from stdin when --stdin is set. Rejects dual
+// sources (both positional value AND --stdin) to avoid ambiguity.
+//
+// `subArgs` is the slice starting at the subcommand's positional args (i.e.
+// index 0 is the path/name, index 1 would be the value).
+func resolvePutValue(subArgs []string, useStdin bool, cmd string, stdin io.Reader) (string, error) {
+	if len(subArgs) < 1 {
+		return "", fmt.Errorf("%s requires <path/name>", cmd)
+	}
+	hasPositional := len(subArgs) >= 2
+	if useStdin && hasPositional {
+		return "", fmt.Errorf("%s: cannot combine positional <value> with --stdin", cmd)
+	}
+	if useStdin {
+		b, err := io.ReadAll(stdin)
+		if err != nil {
+			return "", fmt.Errorf("%s: read stdin: %w", cmd, err)
+		}
+		// Trim exactly one trailing newline — typical for `echo -n` / terminal
+		// usage. Preserve inner whitespace so passphrases survive intact.
+		v := string(b)
+		if strings.HasSuffix(v, "\r\n") {
+			v = v[:len(v)-2]
+		} else if strings.HasSuffix(v, "\n") {
+			v = v[:len(v)-1]
+		}
+		if v == "" {
+			return "", fmt.Errorf("%s: --stdin produced empty value", cmd)
+		}
+		return v, nil
+	}
+	if !hasPositional {
+		return "", fmt.Errorf("%s requires <path/name> <value> (or --stdin)", cmd)
+	}
+	return subArgs[1], nil
 }
 
 func mustClient(addr, iamAddr, clientID, clientSecret, org string) *kmsclient.Client {
@@ -214,15 +258,29 @@ func extractFlag(dst *string, args []string, flag string) []string {
 	return args
 }
 
+// extractBoolFlag strips a bare boolean flag (e.g. --stdin) from args and sets
+// *dst = true if present. No value token follows.
+func extractBoolFlag(dst *bool, args []string, flag string) []string {
+	for i, a := range args {
+		if a == flag {
+			*dst = true
+			return append(args[:i], args[i+1:]...)
+		}
+	}
+	return args
+}
+
 func usage() {
 	fmt.Fprintln(os.Stderr, `Usage: kms <command> [flags]
 
 Commands:
   status       Check kmsd health and MPC status
-  put          Store a secret: kms-cli put <path/name> <value>
-  get          Fetch a secret: kms-cli get <path/name>
-  list         List secrets:   kms-cli list [prefix]
-  rotate       Rotate a secret: kms-cli rotate <path/name> <new-value>
+  put          Store a secret: kms put <path/name> <value>
+               (or read value from stdin: kms put <path/name> --stdin)
+  get          Fetch a secret: kms get <path/name>
+  list         List secrets:   kms list [prefix]
+  rotate       Rotate a secret: kms rotate <path/name> <new-value>
+               (or read value from stdin: kms rotate <path/name> --stdin)
 
 Global Flags:
   --addr            KMS server address (default: $KMS_ADDR or http://localhost:8443)
@@ -230,6 +288,9 @@ Global Flags:
   --client-id       IAM client ID (default: $KMS_CLIENT_ID)
   --client-secret   IAM client secret (default: $KMS_CLIENT_SECRET)
   --org             Organization slug (default: $KMS_ORG or liquidity)
+  --stdin           put/rotate: read value from stdin (keeps it off argv, shell
+                    history, ps, /proc/<pid>/cmdline). Cannot combine with a
+                    positional <value>.
 
 Environment Variables:
   KMS_ADDR          KMS server address
