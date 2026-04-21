@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -69,44 +70,35 @@ func TestSplitPathName(t *testing.T) {
 	}
 }
 
-func TestGet_WithMockServer(t *testing.T) {
-	// Mock IAM token endpoint.
-	iam := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		json.NewEncoder(w).Encode(map[string]any{
-			"access_token": "test-token-123",
+// mockIAM returns a test IAM that always mints the same bearer token.
+func mockIAM(t *testing.T, token string) *httptest.Server {
+	t.Helper()
+	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"access_token": token,
 			"expires_in":   3600,
 		})
 	}))
+}
+
+func TestGet_WithMockServer(t *testing.T) {
+	iam := mockIAM(t, "test-token-123")
 	defer iam.Close()
 
-	// Mock KMS server — implements canonical two-step resolve + fetch.
+	// Server: implements canonical GET /v1/kms/orgs/{org}/secrets/{path}/{name}.
+	const wantPath = "/v1/kms/orgs/liquidity/secrets/providers/alpaca/dev/api_key"
 	kms := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("Authorization") != "Bearer test-token-123" {
 			http.Error(w, "unauthorized", http.StatusUnauthorized)
 			return
 		}
-		// Step 1: GET /v1/kms/tenants/{tenantId}/secrets?path=&name= → list items
-		if r.URL.Path == "/v1/kms/tenants/liquidity/secrets" {
-			json.NewEncoder(w).Encode(map[string]any{
-				"items": []map[string]any{{
-					"secretId": "sec_abc",
-					"path":     r.URL.Query().Get("path"),
-					"name":     r.URL.Query().Get("name"),
-				}},
+		if r.Method == http.MethodGet && r.URL.Path == wantPath {
+			_ = json.NewEncoder(w).Encode(map[string]any{
+				"secret": map[string]any{"value": "CKEJOEAIF2RS6KLVJUSXVOPKLW"},
 			})
 			return
 		}
-		// Step 2: GET /v1/kms/secrets/{secretId} → value
-		if r.URL.Path == "/v1/kms/secrets/sec_abc" {
-			json.NewEncoder(w).Encode(map[string]any{
-				"secretId": "sec_abc",
-				"path":     "providers/alpaca/dev",
-				"name":     "api_key",
-				"value":    "CKEJOEAIF2RS6KLVJUSXVOPKLW",
-			})
-			return
-		}
-		http.Error(w, "not found", http.StatusNotFound)
+		http.Error(w, "not found: "+r.Method+" "+r.URL.Path, http.StatusNotFound)
 	}))
 	defer kms.Close()
 
@@ -130,18 +122,29 @@ func TestGet_WithMockServer(t *testing.T) {
 	}
 }
 
-func TestGet_NotFound(t *testing.T) {
-	iam := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		json.NewEncoder(w).Encode(map[string]any{
-			"access_token": "tok",
-			"expires_in":   3600,
-		})
+func TestGet_FlatValueShape(t *testing.T) {
+	iam := mockIAM(t, "tok")
+	defer iam.Close()
+	kms := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		_ = json.NewEncoder(w).Encode(map[string]any{"value": "bare"})
 	}))
+	defer kms.Close()
+	c, _ := New(Config{Endpoint: kms.URL, IAMEndpoint: iam.URL, ClientID: "i", ClientSecret: "s", Org: "org"})
+	v, err := c.Get(context.Background(), "a", "b")
+	if err != nil {
+		t.Fatalf("Get: %v", err)
+	}
+	if v != "bare" {
+		t.Errorf("value = %q, want bare", v)
+	}
+}
+
+func TestGet_NotFound(t *testing.T) {
+	iam := mockIAM(t, "tok")
 	defer iam.Close()
 
-	kms := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Return empty items list — resolveSecretID will surface "not found".
-		json.NewEncoder(w).Encode(map[string]any{"items": []map[string]any{}})
+	kms := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		http.Error(w, "not found", http.StatusNotFound)
 	}))
 	defer kms.Close()
 
@@ -157,35 +160,24 @@ func TestGet_NotFound(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected error for missing secret")
 	}
+	if !strings.Contains(err.Error(), "not found") {
+		t.Errorf("error = %q, want substring 'not found'", err)
+	}
 }
 
 func TestGet_TokenCaching(t *testing.T) {
 	tokenCalls := 0
-	iam := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	iam := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		tokenCalls++
-		json.NewEncoder(w).Encode(map[string]any{
+		_ = json.NewEncoder(w).Encode(map[string]any{
 			"access_token": "cached-token",
 			"expires_in":   3600,
 		})
 	}))
 	defer iam.Close()
 
-	kms := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/v1/kms/tenants/org/secrets" {
-			json.NewEncoder(w).Encode(map[string]any{
-				"items": []map[string]any{{
-					"secretId": "sec_x",
-					"path":     r.URL.Query().Get("path"),
-					"name":     r.URL.Query().Get("name"),
-				}},
-			})
-			return
-		}
-		if r.URL.Path == "/v1/kms/secrets/sec_x" {
-			json.NewEncoder(w).Encode(map[string]any{"secretId": "sec_x", "value": "v"})
-			return
-		}
-		http.Error(w, "nf", 404)
+	kms := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		_ = json.NewEncoder(w).Encode(map[string]any{"secret": map[string]any{"value": "v"}})
 	}))
 	defer kms.Close()
 
@@ -198,22 +190,109 @@ func TestGet_TokenCaching(t *testing.T) {
 	})
 
 	ctx := context.Background()
-	c.Get(ctx, "a", "b")
-	c.Get(ctx, "a", "b")
-	c.Get(ctx, "a", "b")
+	_, _ = c.Get(ctx, "a", "b")
+	_, _ = c.Get(ctx, "a", "b")
+	_, _ = c.Get(ctx, "a", "b")
 
 	if tokenCalls != 1 {
 		t.Errorf("expected 1 token call (cached), got %d", tokenCalls)
 	}
 }
 
-func TestFetchEnv(t *testing.T) {
-	iam := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		json.NewEncoder(w).Encode(map[string]any{
-			"access_token": "tok",
-			"expires_in":   3600,
+func TestPut_SendsCanonicalPayload(t *testing.T) {
+	iam := mockIAM(t, "tok")
+	defer iam.Close()
+
+	var gotPath string
+	var gotBody map[string]string
+	kms := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		gotPath = r.URL.Path
+		_ = json.NewDecoder(r.Body).Decode(&gotBody)
+		w.WriteHeader(http.StatusCreated)
+		_ = json.NewEncoder(w).Encode(map[string]any{"ok": true})
+	}))
+	defer kms.Close()
+
+	c, _ := New(Config{Endpoint: kms.URL, IAMEndpoint: iam.URL, ClientID: "i", ClientSecret: "s", Org: "liquidity"})
+	if err := c.Put(context.Background(), "providers/square/dev", "access_token", "sq_abc"); err != nil {
+		t.Fatalf("Put: %v", err)
+	}
+	if gotPath != "/v1/kms/orgs/liquidity/secrets" {
+		t.Errorf("path = %q, want /v1/kms/orgs/liquidity/secrets", gotPath)
+	}
+	if gotBody["path"] != "providers/square/dev" || gotBody["name"] != "access_token" || gotBody["value"] != "sq_abc" {
+		t.Errorf("body = %+v, want path=providers/square/dev name=access_token value=sq_abc", gotBody)
+	}
+}
+
+func TestList_UsesCanonicalPath(t *testing.T) {
+	iam := mockIAM(t, "tok")
+	defer iam.Close()
+
+	var gotPath, gotQuery string
+	kms := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		gotPath = r.URL.Path
+		gotQuery = r.URL.RawQuery
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"items": []map[string]any{
+				{"path": "providers/square/dev", "name": "access_token"},
+				{"path": "providers/alpaca/dev", "name": "api_key"},
+			},
 		})
 	}))
+	defer kms.Close()
+
+	c, _ := New(Config{Endpoint: kms.URL, IAMEndpoint: iam.URL, ClientID: "i", ClientSecret: "s", Org: "liquidity"})
+	got, err := c.List(context.Background(), "providers/square")
+	if err != nil {
+		t.Fatalf("List: %v", err)
+	}
+	if gotPath != "/v1/kms/orgs/liquidity/secrets" {
+		t.Errorf("path = %q, want /v1/kms/orgs/liquidity/secrets", gotPath)
+	}
+	if gotQuery != "prefix=providers%2Fsquare" {
+		t.Errorf("query = %q, want prefix=providers%%2Fsquare", gotQuery)
+	}
+	// Client-side filter must drop the alpaca entry even if the server returned it.
+	if len(got) != 1 || got[0] != "providers/square/dev/access_token" {
+		t.Errorf("items = %v, want [providers/square/dev/access_token]", got)
+	}
+}
+
+func TestDelete_UsesCanonicalPath(t *testing.T) {
+	iam := mockIAM(t, "tok")
+	defer iam.Close()
+	var gotPath, gotMethod string
+	kms := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		gotPath = r.URL.Path
+		gotMethod = r.Method
+		w.WriteHeader(http.StatusNoContent)
+	}))
+	defer kms.Close()
+	c, _ := New(Config{Endpoint: kms.URL, IAMEndpoint: iam.URL, ClientID: "i", ClientSecret: "s", Org: "liquidity"})
+	if err := c.Delete(context.Background(), "providers/square/dev", "access_token"); err != nil {
+		t.Fatalf("Delete: %v", err)
+	}
+	if gotMethod != http.MethodDelete {
+		t.Errorf("method = %q, want DELETE", gotMethod)
+	}
+	if gotPath != "/v1/kms/orgs/liquidity/secrets/providers/square/dev/access_token" {
+		t.Errorf("path = %q, want canonical orgs path", gotPath)
+	}
+}
+
+func TestSecretPath_EscapesSegments(t *testing.T) {
+	c := &Client{endpoint: "http://kms:8443", org: "liq/uid"}
+	got := c.secretPath("foo bar/baz", "k+q")
+	// Segments individually escaped; "/" preserved as separator. Org escaped once.
+	want := "http://kms:8443/v1/kms/orgs/liq%2Fuid/secrets/foo%20bar/baz/k+q"
+	if got != want {
+		t.Errorf("secretPath = %q, want %q", got, want)
+	}
+}
+
+func TestFetchEnv(t *testing.T) {
+	iam := mockIAM(t, "tok")
 	defer iam.Close()
 
 	secrets := map[string]string{
@@ -222,37 +301,18 @@ func TestFetchEnv(t *testing.T) {
 	}
 
 	kms := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		p := r.URL.Path
-		// Step 1: list resolver.
-		if p == "/v1/kms/tenants/org/secrets" {
-			path := r.URL.Query().Get("path")
-			name := r.URL.Query().Get("name")
-			full := path + "/" + name
-			if _, ok := secrets[full]; ok {
-				json.NewEncoder(w).Encode(map[string]any{
-					"items": []map[string]any{{
-						"secretId": "sec_" + name,
-						"path":     path,
-						"name":     name,
-					}},
-				})
-				return
-			}
-			json.NewEncoder(w).Encode(map[string]any{"items": []map[string]any{}})
+		// Path: /v1/kms/orgs/org/secrets/<path>/<name>
+		const prefix = "/v1/kms/orgs/org/secrets/"
+		if !strings.HasPrefix(r.URL.Path, prefix) {
+			http.Error(w, "nf", http.StatusNotFound)
 			return
 		}
-		// Step 2: read by id.
-		for full, val := range secrets {
-			pn := splitPathName(full)
-			if p == "/v1/kms/secrets/sec_"+pn.name {
-				json.NewEncoder(w).Encode(map[string]any{
-					"secretId": "sec_" + pn.name,
-					"value":    val,
-				})
-				return
-			}
+		rest := r.URL.Path[len(prefix):]
+		if v, ok := secrets[rest]; ok {
+			_ = json.NewEncoder(w).Encode(map[string]any{"secret": map[string]any{"value": v}})
+			return
 		}
-		http.Error(w, "not found", http.StatusNotFound)
+		http.Error(w, "nf", http.StatusNotFound)
 	}))
 	defer kms.Close()
 
@@ -298,29 +358,12 @@ func TestFetchEnv(t *testing.T) {
 }
 
 func TestFetchEnv_NoOverrideExisting(t *testing.T) {
-	iam := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		json.NewEncoder(w).Encode(map[string]any{
-			"access_token": "tok",
-			"expires_in":   3600,
-		})
-	}))
+	iam := mockIAM(t, "tok")
 	defer iam.Close()
 
-	kms := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Resolver: return one item; read: return value. Not important here —
-		// the assertion is "existing env vars are not overridden", which short-
-		// circuits before the KMS call.
-		if r.URL.Path == "/v1/kms/tenants/org/secrets" {
-			json.NewEncoder(w).Encode(map[string]any{
-				"items": []map[string]any{{
-					"secretId": "sec_k",
-					"path":     r.URL.Query().Get("path"),
-					"name":     r.URL.Query().Get("name"),
-				}},
-			})
-			return
-		}
-		json.NewEncoder(w).Encode(map[string]any{"secretId": "sec_k", "value": "from-kms"})
+	kms := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		// Should never be called; existing env short-circuits before network.
+		_ = json.NewEncoder(w).Encode(map[string]any{"secret": map[string]any{"value": "from-kms"}})
 	}))
 	defer kms.Close()
 
@@ -348,19 +391,13 @@ func TestFetchEnv_NoOverrideExisting(t *testing.T) {
 		Org:          "org",
 	})
 
-	c.FetchEnv(context.Background(), map[string]string{
+	_, _ = c.FetchEnv(context.Background(), map[string]string{
 		"EXISTING_KEY": "some/path/key",
 	})
 
 	if envStore["EXISTING_KEY"] != "from-env" {
 		t.Errorf("expected existing env to not be overridden, got %q", envStore["EXISTING_KEY"])
 	}
-}
-
-// containsPath checks if a URL path ends with /{path}/{name} (URL-encoded).
-func containsPath(urlPath, path, name string) bool {
-	suffix := "/" + path + "/" + name
-	return len(urlPath) >= len(suffix) && urlPath[len(urlPath)-len(suffix):] == suffix
 }
 
 // Save defaults so we can restore after test.
