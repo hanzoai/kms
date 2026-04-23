@@ -13,7 +13,8 @@ go 1.26.1
 
 require (
 	github.com/golang-jwt/jwt/v5 v5.3.1
-	github.com/luxfi/kms v1.5.1
+	github.com/luxfi/kms v1.5.2
+	github.com/luxfi/log v1.4.1
 	github.com/luxfi/zap v0.2.1
 	github.com/luxfi/zapdb v1.9.0
 	modernc.org/sqlite v1.49.1
@@ -36,6 +37,7 @@ require (
 	github.com/klauspost/crc32 v1.3.0 // indirect
 	github.com/luxfi/age v1.4.0 // indirect
 	github.com/luxfi/mdns v0.1.0 // indirect
+	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/miekg/dns v1.1.72 // indirect
 	github.com/minio/crc64nvme v1.1.1 // indirect
@@ -59,6 +61,7 @@ require (
 	golang.org/x/text v0.35.0 // indirect
 	golang.org/x/tools v0.43.0 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
+	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 	modernc.org/libc v1.72.0 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.11.0 // indirect
