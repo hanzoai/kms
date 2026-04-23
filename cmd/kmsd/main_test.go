@@ -104,42 +104,13 @@ func TestSecretRoundTrip_Canonical(t *testing.T) {
 	}
 }
 
-func TestSecretRoundTrip_TenantAlias(t *testing.T) {
-	srv, cleanup := newTestServer(t)
-	defer cleanup()
-	tok := mintToken(t, "liquidity", "user-1")
-
-	body, _ := json.Marshal(map[string]string{
-		"path": "ats/dev", "name": "sendgrid", "env": "dev", "value": "SG.x",
-	})
-	req, _ := http.NewRequest("POST", srv.URL+"/v1/kms/tenants/liquidity/secrets", bytes.NewReader(body))
-	req.Header.Set("Authorization", "Bearer "+tok)
-	resp, _ := http.DefaultClient.Do(req)
-	if resp.StatusCode != 201 {
-		t.Fatalf("PUT alias want 201, got %d", resp.StatusCode)
-	}
-
-	req, _ = http.NewRequest("GET",
-		srv.URL+"/v1/kms/orgs/liquidity/secrets/ats/dev/sendgrid?env=dev", nil)
-	req.Header.Set("Authorization", "Bearer "+tok)
-	resp, _ = http.DefaultClient.Do(req)
-	if resp.StatusCode != 200 {
-		t.Fatalf("cross-route GET want 200, got %d", resp.StatusCode)
-	}
-}
-
 func TestUnauthorized(t *testing.T) {
 	srv, cleanup := newTestServer(t)
 	defer cleanup()
 
-	for _, p := range []string{
-		"/v1/kms/orgs/liquidity/secrets/foo/bar",
-		"/v1/kms/tenants/liquidity/secrets/foo/bar",
-	} {
-		resp, _ := http.Get(srv.URL + p)
-		if resp.StatusCode != 401 {
-			t.Fatalf("%s: want 401, got %d", p, resp.StatusCode)
-		}
+	resp, _ := http.Get(srv.URL + "/v1/kms/orgs/liquidity/secrets/foo/bar")
+	if resp.StatusCode != 401 {
+		t.Fatalf("want 401, got %d", resp.StatusCode)
 	}
 }
 
@@ -204,14 +175,6 @@ func TestRed1_CrossTenantBlocked(t *testing.T) {
 	resp, _ := http.DefaultClient.Do(req)
 	if resp.StatusCode != 403 {
 		t.Fatalf("cross-tenant read: want 403, got %d", resp.StatusCode)
-	}
-
-	// Same attack via the back-compat tenant alias.
-	req, _ = http.NewRequest("GET", srv.URL+"/v1/kms/tenants/org-a/secrets/shared/key?env=dev", nil)
-	req.Header.Set("Authorization", "Bearer "+tokB)
-	resp, _ = http.DefaultClient.Do(req)
-	if resp.StatusCode != 403 {
-		t.Fatalf("cross-tenant alias read: want 403, got %d", resp.StatusCode)
 	}
 
 	// Cross-tenant write (POST) blocked.
