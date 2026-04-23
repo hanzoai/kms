@@ -22,8 +22,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
-	"log/slog"
 	"net/http"
 	"net/url"
 	"os"
@@ -39,6 +37,7 @@ import (
 	"github.com/luxfi/kms/pkg/mpc"
 	"github.com/luxfi/kms/pkg/store"
 	"github.com/luxfi/kms/pkg/zapserver"
+	"github.com/luxfi/log"
 	"github.com/luxfi/zap"
 )
 
@@ -58,14 +57,17 @@ func main() {
 	// JWT verification contract. Boot refuses missing envs in prod.
 	auth := loadAuthConfig()
 	if err := validateAuthConfigAtBoot(cfg.Env, auth.issuer, auth.audience, auth.jwksURL); err != nil {
-		log.Fatalf("kms: auth config: %v", err)
+		log.Crit("kms: auth config", "err", err)
 	}
 	applyAuthConfig(auth)
-	log.Printf("kms: auth iss=%q aud=%q jwks=%q env=%q",
-		auth.issuer, auth.audience, auth.jwksURL, cfg.Env)
+	log.Info("kms: auth configured",
+		"iss", auth.issuer,
+		"aud", auth.audience,
+		"jwks", auth.jwksURL,
+		"env", cfg.Env)
 
 	if err := os.MkdirAll(cfg.DataDir, 0o700); err != nil {
-		log.Fatalf("kms: create data dir %s: %v", cfg.DataDir, err)
+		log.Crit("kms: create data dir", "dir", cfg.DataDir, "err", err)
 	}
 
 	dbOpts := badger.DefaultOptions(cfg.DataDir).
@@ -74,10 +76,10 @@ func main() {
 		WithIndexCacheSize(64 << 20)
 	db, err := badger.Open(dbOpts)
 	if err != nil {
-		log.Fatalf("kms: open zapdb at %s: %v", cfg.DataDir, err)
+		log.Crit("kms: open zapdb", "dir", cfg.DataDir, "err", err)
 	}
 	defer db.Close()
-	log.Printf("kms: zapdb opened at %s (version=%s)", cfg.DataDir, version)
+	log.Info("kms: zapdb opened", "dir", cfg.DataDir, "version", version)
 
 	replicator := startReplicator(db, cfg.NodeID)
 	if replicator != nil {
@@ -98,7 +100,7 @@ func main() {
 	if cfg.MPCVaultID != "" {
 		registerKeyRoutes(mux, db, cfg)
 	} else {
-		log.Printf("kms: MPC_VAULT_ID empty — secrets-only mode (no threshold signing)")
+		log.Info("kms: MPC_VAULT_ID empty — secrets-only mode (no threshold signing)")
 	}
 
 	startZAPSecretServer(secStore, cfg)
@@ -113,16 +115,16 @@ func main() {
 	}
 
 	go func() {
-		log.Printf("kms: HTTP listening on %s", cfg.HTTPListen)
+		log.Info("kms: HTTP listening", "addr", cfg.HTTPListen)
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("kms: http: %v", err)
+			log.Crit("kms: http", "err", err)
 		}
 	}()
 
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 	<-sig
-	log.Println("kms: shutting down")
+	log.Info("kms: shutting down")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	srv.Shutdown(ctx)
@@ -346,7 +348,7 @@ func registerSecretRoutes(mux *http.ServeMux, secStore *store.SecretStore, db *b
 		// POST is upsert — do NOT enforce CAS. Bump version by passing -1.
 		newVer, verErr := bumpVersion(db, req.Path, req.Name, req.Env, -1)
 		if verErr != nil {
-			log.Printf("kms: version bump failed after put: %v", verErr)
+			log.Warn("kms: version bump failed after put", "err", verErr)
 		}
 		writeJSON(w, http.StatusCreated, map[string]any{"ok": true, "version": newVer})
 		recordAudit(claims, r, req.Path, req.Name, req.Env, http.StatusCreated, newVer)
@@ -576,20 +578,23 @@ func registerKeyRoutes(mux *http.ServeMux, db *badger.DB, cfg config) {
 	// routes will return 503 via zapClient.Status() checks downstream.
 	zapClient, err := mpc.NewZapClient(cfg.NodeID, cfg.MPCAddr)
 	if err != nil {
-		log.Printf("kms: WARNING: mpc zap client init failed (%v) — running in secrets-only mode, key routes disabled", err)
+		log.Warn("kms: mpc zap client init failed — secrets-only mode, key routes disabled", "err", err)
 		return
 	}
 	keyStore, err := store.New(db)
 	if err != nil {
-		log.Fatalf("kms: key store: %v", err)
+		log.Crit("kms: key store", "err", err)
 	}
 
 	checkCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	if status, err := zapClient.Status(checkCtx); err != nil {
-		log.Printf("kms: WARNING: mpc unreachable: %v", err)
+		log.Warn("kms: mpc unreachable", "err", err)
 	} else {
-		log.Printf("kms: mpc ready=%v peers=%d/%d mode=%s",
-			status.Ready, status.ConnectedPeers, status.ExpectedPeers, status.Mode)
+		log.Info("kms: mpc status",
+			"ready", status.Ready,
+			"peers", status.ConnectedPeers,
+			"expected", status.ExpectedPeers,
+			"mode", status.Mode)
 	}
 	cancel()
 
@@ -846,12 +851,12 @@ func safeEnvName(n string) bool {
 func startZAPSecretServer(secStore *store.SecretStore, cfg config) {
 	masterKeyB64 := envOr("KMS_MASTER_KEY_B64", "")
 	if masterKeyB64 == "" || cfg.ZAPPort <= 0 {
-		log.Printf("kms: ZAP secrets-server disabled (set KMS_MASTER_KEY_B64 + KMS_ZAP_PORT/KMS_ZAP)")
+		log.Info("kms: ZAP secrets-server disabled (set KMS_MASTER_KEY_B64 + KMS_ZAP_PORT/KMS_ZAP)")
 		return
 	}
 	masterKey, err := base64.StdEncoding.DecodeString(masterKeyB64)
 	if err != nil || len(masterKey) != 32 {
-		log.Printf("kms: KMS_MASTER_KEY_B64 invalid (need 32 raw bytes base64); ZAP server disabled")
+		log.Info("kms: KMS_MASTER_KEY_B64 invalid (need 32 raw bytes base64); ZAP server disabled")
 		return
 	}
 	n := zap.NewNode(zap.NodeConfig{
@@ -860,16 +865,16 @@ func startZAPSecretServer(secStore *store.SecretStore, cfg config) {
 		Port:        cfg.ZAPPort,
 	})
 	if err := n.Start(); err != nil {
-		log.Printf("kms: ZAP secrets-server start failed on :%d: %v", cfg.ZAPPort, err)
+		log.Error("kms: ZAP secrets-server start failed", "port", cfg.ZAPPort, "err", err)
 		return
 	}
 	zs := zapserver.New(zapserver.Config{
 		Store:     secStore,
 		MasterKey: masterKey,
-		Logger:    slog.Default(),
+		Logger:    log.Root(),
 	})
 	zs.Register(n)
-	log.Printf("kms: ZAP secrets-server listening on :%d (service=_kms._tcp)", cfg.ZAPPort)
+	log.Info("kms: ZAP secrets-server listening", "port", cfg.ZAPPort, "service", "_kms._tcp")
 }
 
 // --- Replicator ---
@@ -877,7 +882,7 @@ func startZAPSecretServer(secStore *store.SecretStore, cfg config) {
 func startReplicator(db *badger.DB, nodeID string) *badger.Replicator {
 	endpoint := os.Getenv("REPLICATE_S3_ENDPOINT")
 	if endpoint == "" {
-		log.Printf("kms: S3 replication disabled (set REPLICATE_S3_ENDPOINT to enable)")
+		log.Info("kms: S3 replication disabled (set REPLICATE_S3_ENDPOINT to enable)")
 		return nil
 	}
 	cfg := badger.ReplicatorConfig{
@@ -891,15 +896,18 @@ func startReplicator(db *badger.DB, nodeID string) *badger.Replicator {
 		Interval:  time.Second,
 	}
 	if os.Getenv("REPLICATE_AGE_RECIPIENT") != "" {
-		log.Printf("kms: S3 replication with age encryption enabled")
+		log.Info("kms: S3 replication with age encryption enabled")
 	}
 	r, err := badger.NewReplicator(db, cfg)
 	if err != nil {
-		log.Printf("kms: WARNING: S3 replicator init failed: %v — replication disabled", err)
+		log.Warn("kms: S3 replicator init failed — replication disabled", "err", err)
 		return nil
 	}
 	go r.Start(context.Background())
-	log.Printf("kms: S3 replication started → %s/%s/%s", endpoint, cfg.Bucket, cfg.Path)
+	log.Info("kms: S3 replication started",
+		"endpoint", endpoint,
+		"bucket", cfg.Bucket,
+		"path", cfg.Path)
 	return r
 }
 
@@ -912,7 +920,7 @@ func masterKeyFromEnv() []byte {
 	}
 	key, err := base64.StdEncoding.DecodeString(b64)
 	if err != nil || len(key) != 32 {
-		log.Printf("kms: KMS_ENCRYPTION_KEY_B64 invalid (need 32 bytes base64); at-rest encryption disabled")
+		log.Info("kms: KMS_ENCRYPTION_KEY_B64 invalid (need 32 bytes base64); at-rest encryption disabled")
 		return nil
 	}
 	return key
@@ -932,10 +940,22 @@ func envOr(key, fallback string) string {
 }
 
 // --- ZapDB logger adapter ---
+//
+// ZapDB expects an Errorf/Warningf/Infof/Debugf surface (badger's
+// Logger interface). luxfi/log is the Hanzo-wide logging library;
+// we adapt its variadic API to ZapDB's format-string API.
 
 type zapdbLogger struct{}
 
-func (zapdbLogger) Errorf(format string, args ...interface{})   { slog.Error(fmt.Sprintf(format, args...)) }
-func (zapdbLogger) Warningf(format string, args ...interface{}) { slog.Warn(fmt.Sprintf(format, args...)) }
-func (zapdbLogger) Infof(format string, args ...interface{})    { slog.Info(fmt.Sprintf(format, args...)) }
-func (zapdbLogger) Debugf(format string, args ...interface{})   { slog.Debug(fmt.Sprintf(format, args...)) }
+func (zapdbLogger) Errorf(format string, args ...interface{}) {
+	log.Error(fmt.Sprintf(format, args...))
+}
+func (zapdbLogger) Warningf(format string, args ...interface{}) {
+	log.Warn(fmt.Sprintf(format, args...))
+}
+func (zapdbLogger) Infof(format string, args ...interface{}) {
+	log.Info(fmt.Sprintf(format, args...))
+}
+func (zapdbLogger) Debugf(format string, args ...interface{}) {
+	log.Debug(fmt.Sprintf(format, args...))
+}

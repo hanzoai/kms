@@ -5,14 +5,14 @@
 //
 // Contract (by design, no hidden branches):
 //
-//   1. Authorization: Bearer <token>          — else 401
-//   2. JWT header.alg ∈ {RS256, ES256, EdDSA} — else 401 (no HS*, no none)
-//   3. Signature verifies against JWKS by kid — else 401
-//   4. iss == $KMS_EXPECTED_ISSUER            — else 401
-//   5. aud ∋ $KMS_EXPECTED_AUDIENCE           — else 401
-//   6. exp > now (no leeway)                  — else 401
-//   7. nbf ≤ now when present                  — else 401
-//   8. sub present                            — else 401
+//  1. Authorization: Bearer <token>          — else 401
+//  2. JWT header.alg ∈ {RS256, ES256, EdDSA} — else 401 (no HS*, no none)
+//  3. Signature verifies against JWKS by kid — else 401
+//  4. iss == $KMS_EXPECTED_ISSUER            — else 401
+//  5. aud ∋ $KMS_EXPECTED_AUDIENCE           — else 401
+//  6. exp > now (no leeway)                  — else 401
+//  7. nbf ≤ now when present                  — else 401
+//  8. sub present                            — else 401
 //
 // Any failure logs a structured audit line with the failure class
 // (alg_none, expired, wrong_iss, wrong_aud, jwks_miss, sig, missing_sub).
@@ -23,13 +23,13 @@ import (
 	"crypto/rsa"
 	"errors"
 	"fmt"
-	"log/slog"
 	"net/http"
 	"os"
 	"strings"
 	"sync/atomic"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/luxfi/log"
 )
 
 // authConfig is the per-process JWT verification contract. It is
@@ -102,18 +102,18 @@ func reloadAuthConfigForTest() {
 }
 
 var (
-	errAuthNoHeader    = errors.New("authorization header required")
-	errAuthNotBearer   = errors.New("bearer token required")
-	errAuthNoConfig    = errors.New("KMS auth misconfigured: JWKS URL or issuer missing")
-	errAuthBadAlg      = errors.New("jwt: unsupported signing algorithm")
-	errAuthBadSig      = errors.New("jwt: signature verification failed")
-	errAuthWrongIss    = errors.New("jwt: issuer mismatch")
-	errAuthWrongAud    = errors.New("jwt: audience mismatch")
-	errAuthExpired     = errors.New("jwt: token expired")
-	errAuthMissingSub  = errors.New("jwt: missing subject claim")
-	errAuthMissingAud  = errors.New("jwt: missing audience claim")
-	errAuthMissingExp  = errors.New("jwt: missing expiry claim")
-	errAuthMissingIss  = errors.New("jwt: missing issuer claim")
+	errAuthNoHeader   = errors.New("authorization header required")
+	errAuthNotBearer  = errors.New("bearer token required")
+	errAuthNoConfig   = errors.New("KMS auth misconfigured: JWKS URL or issuer missing")
+	errAuthBadAlg     = errors.New("jwt: unsupported signing algorithm")
+	errAuthBadSig     = errors.New("jwt: signature verification failed")
+	errAuthWrongIss   = errors.New("jwt: issuer mismatch")
+	errAuthWrongAud   = errors.New("jwt: audience mismatch")
+	errAuthExpired    = errors.New("jwt: token expired")
+	errAuthMissingSub = errors.New("jwt: missing subject claim")
+	errAuthMissingAud = errors.New("jwt: missing audience claim")
+	errAuthMissingExp = errors.New("jwt: missing expiry claim")
+	errAuthMissingIss = errors.New("jwt: missing issuer claim")
 )
 
 // verifyJWT is the single verified-parse entry point. Called by
@@ -343,8 +343,9 @@ func wrapAuthErr(err error) error {
 	return errAuthBadSig
 }
 
-// authz logger — structured, no payload leakage.
-var authLog = slog.New(slog.NewJSONHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelInfo}))
+// authz logger — scoped child of the package root so audit entries
+// get their own component tag. One logger, no parallel slog tree.
+var authLog = log.Root().New("component", "kms-auth")
 
 // authFailReason converts an auth error into a short tag suitable for
 // inclusion in the audit log.
