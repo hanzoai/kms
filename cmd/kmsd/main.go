@@ -8,10 +8,7 @@
 //	IAM endpoint       in-cluster IAM  (env override IAM_ENDPOINT)
 //	Org slug claim     "owner"         (Hanzo IAM convention)
 //
-// Routes mirror lux/kms exactly. We additionally expose the legacy
-// /v1/kms/tenants/{tenantId}/secrets/... aliases so existing callers
-// (ats/pkg/kmsclient at the time of v1.x) keep working without a
-// double implementation — the alias dispatches to the same handlers.
+// Routes mirror lux/kms exactly — one canonical path per operation.
 //
 // All threshold signing is delegated to the MPC daemon over ZAP
 // (env MPC_ADDR, MPC_VAULT_ID). All secret storage uses ZapDB at
@@ -257,10 +254,8 @@ func registerAuth(mux *http.ServeMux, iamEndpoint string) {
 	})
 }
 
-// registerSecretRoutes mounts the lux/kms HTTP secret CRUD at both the
-// canonical /v1/kms/orgs/{org}/secrets/... and the back-compat
-// /v1/kms/tenants/{tenantId}/secrets/... paths. Both routes call the same
-// handlers — the URL just maps "tenantId" to "org" semantically.
+// registerSecretRoutes mounts the canonical lux/kms HTTP secret CRUD at
+// /v1/kms/orgs/{org}/secrets/... — one path, one way.
 //
 // R-3 (replay protection): POST (create/upsert) always bumps the version.
 // PATCH (update) requires If-Match or body.version matching current; a
@@ -499,12 +494,6 @@ func registerSecretRoutes(mux *http.ServeMux, secStore *store.SecretStore, db *b
 	mux.HandleFunc("POST /v1/kms/orgs/{org}/secrets", put)
 	mux.HandleFunc("PATCH /v1/kms/orgs/{org}/secrets/{rest...}", patch)
 	mux.HandleFunc("DELETE /v1/kms/orgs/{org}/secrets/{rest...}", del)
-
-	// Legacy alias used by ats/pkg/kmsclient v1.x — same handlers.
-	mux.HandleFunc("GET /v1/kms/tenants/{org}/secrets/{rest...}", get)
-	mux.HandleFunc("POST /v1/kms/tenants/{org}/secrets", put)
-	mux.HandleFunc("PATCH /v1/kms/tenants/{org}/secrets/{rest...}", patch)
-	mux.HandleFunc("DELETE /v1/kms/tenants/{org}/secrets/{rest...}", del)
 
 	// Env-backed legacy fetch — admin-only. Reads any process env var, so it
 	// MUST NOT be available to a tenant-scoped JWT. Only callers carrying a

@@ -488,11 +488,6 @@ func TestJWT_F7_OwnerAdminCrossTenant_ReadRejected(t *testing.T) {
 		t.Fatalf("F7 owner=admin cross-tenant read: want 403, got %d", resp.StatusCode)
 	}
 
-	// Same token on the legacy tenant alias path.
-	resp = mustReq(t, "GET", e.srv.URL+"/v1/kms/tenants/org-a/secrets/shared/key?env=dev", tokAdminOwner, nil)
-	if resp.StatusCode != http.StatusForbidden {
-		t.Fatalf("F7 owner=admin tenant-alias read: want 403, got %d", resp.StatusCode)
-	}
 }
 
 func TestJWT_F7_OwnerAdminCrossTenant_WriteRejected(t *testing.T) {
