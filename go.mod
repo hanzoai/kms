@@ -13,7 +13,7 @@ go 1.26.1
 
 require (
 	github.com/golang-jwt/jwt/v5 v5.3.1
-	github.com/luxfi/kms v0.0.0-00010101000000-000000000000
+	github.com/luxfi/kms v1.5.1
 	github.com/luxfi/zap v0.2.1
 	github.com/luxfi/zapdb v1.9.0
 	modernc.org/sqlite v1.49.1
@@ -66,4 +66,3 @@ require (
 
 // Local development: point at sibling lux/kms checkout. CI overrides with
 // the published version via GOPROXY.
-replace github.com/luxfi/kms => ../../lux/kms
