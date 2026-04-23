@@ -1,45 +1,29 @@
-// Command kmsd is the Hanzo KMS server — a thin wrapper around
-// github.com/luxfi/kms with Hanzo-specific defaults.
+// Liquidity KMS — thin wrapper around github.com/luxfi/kms.
 //
-// Implementation is identical to luxfi/kms (canonical). Only the defaults
-// differ: Hanzo HTTP port (8443), ZAP port (9653), data directory
-// (/data/hanzo-kms), branding (Hanzo), JWKS env var (HANZO_IAM_JWKS_URL).
+// This binary embeds the canonical Lux KMS server with Liquidity defaults:
 //
-// Wire format on the ZAP transport is the canonical luxfi/kms/pkg/zapserver
-// surface: opcodes 0x0040 (Get) / 0x0041 (Put) / 0x0042 (List) / 0x0043
-// (Delete). Hanzo and Lux clients interoperate.
+//	HTTP listen        :8443           (lux default :8080)
+//	ZAP secrets server :9653           (lux default :9652)
+//	Data dir           /data/kms       (PVC-backed)
+//	IAM endpoint       in-cluster IAM  (env override IAM_ENDPOINT)
+//	Org slug claim     "owner"         (Hanzo IAM convention)
 //
-// Configuration precedence: env vars > defaults.
+// Routes mirror lux/kms exactly. We additionally expose the legacy
+// /v1/kms/tenants/{tenantId}/secrets/... aliases so existing callers
+// (ats/pkg/kmsclient at the time of v1.x) keep working without a
+// double implementation — the alias dispatches to the same handlers.
 //
-//	Env vars:
-//	  KMS_LISTEN              - HTTP listen address (default ":8443" — Hanzo)
-//	  KMS_ZAP_PORT            - ZAP listen port (default 9653 — Hanzo, 0 = disable)
-//	  KMS_DATA_DIR            - ZapDB data directory (default "/data/hanzo-kms")
-//	  KMS_NODE_ID             - ZAP node ID (default "hanzo-kms-0")
-//	  KMS_MASTER_KEY_B64      - 32-byte master key (base64) for ZAP secrets server
-//	  KMS_ENCRYPTION_KEY_B64  - 32-byte ZapDB at-rest key
-//	  HANZO_IAM_JWKS_URL      - Hanzo IAM JWKS endpoint (replaces IAM_JWKS_URL)
-//	  HANZO_IAM_ENDPOINT      - Hanzo IAM endpoint (replaces IAM_ENDPOINT)
-//	  IAM_ENDPOINT            - fallback if HANZO_IAM_ENDPOINT unset
-//	  MPC_ADDR                - ZAP address (host:port); empty = mDNS discovery
-//	  MPC_VAULT_ID            - MPC vault ID (required for threshold signing)
-//	  BRAND_NAME              - Branding for startup banner (default "Hanzo")
-//
-//	S3 replication (ZapDB Replicator):
-//	  REPLICATE_S3_ENDPOINT   - S3 endpoint (empty = replication disabled)
-//	  REPLICATE_S3_BUCKET     - S3 bucket (default "hanzo-kms-backups")
-//	  REPLICATE_S3_REGION     - S3 region (default "us-central1")
-//	  REPLICATE_S3_ACCESS_KEY
-//	  REPLICATE_S3_SECRET_KEY
-//	  REPLICATE_AGE_RECIPIENT - age public key for backup encryption
-//	  REPLICATE_PATH          - S3 key prefix (default "hanzo-kms/{KMS_NODE_ID}")
+// All threshold signing is delegated to the MPC daemon over ZAP
+// (env MPC_ADDR, MPC_VAULT_ID). All secret storage uses ZapDB at
+// $KMS_DATA_DIR with optional at-rest encryption (KMS_ENCRYPTION_KEY_B64)
+// and the in-process Replicator streaming encrypted backups to S3.
 package main
 
 import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
-	"flag"
+	"errors"
 	"fmt"
 	"log"
 	"log/slog"
@@ -61,74 +45,188 @@ import (
 	"github.com/luxfi/zap"
 )
 
-// Hanzo defaults (override luxfi/kms canonical defaults).
-const (
-	defaultListen   = ":8443"
-	defaultZapPort  = "9653"
-	defaultDataDir  = "/data/hanzo-kms"
-	defaultNodeID   = "hanzo-kms-0"
-	defaultBrand    = "Hanzo"
-	defaultS3Bucket = "hanzo-kms-backups"
-	defaultS3Path   = "hanzo-kms"
-)
+// version is overridden at build time via -ldflags "-X main.version=...".
+var version = "dev"
+
+// maxBodyBytes caps every POST body to prevent OOM via slowloris-style upload.
+const maxBodyBytes = 1 << 20 // 1 MiB
+
+// globalAuditor receives one entry per KMS request. Created in main(),
+// consumed by registerSecretRoutes. nil-safe (see auditor.record).
+var globalAuditor *auditor
 
 func main() {
-	// --help support so operators can confirm Hanzo defaults.
-	help := flag.Bool("help", false, "show help and exit")
-	flag.BoolVar(help, "h", false, "show help and exit (shorthand)")
-	flag.Usage = printUsage
-	flag.Parse()
-	if *help {
-		printUsage()
-		return
+	cfg := loadConfig()
+
+	// JWT verification contract. Boot refuses missing envs in prod.
+	auth := loadAuthConfig()
+	if err := validateAuthConfigAtBoot(cfg.Env, auth.issuer, auth.audience, auth.jwksURL); err != nil {
+		log.Fatalf("kms: auth config: %v", err)
+	}
+	applyAuthConfig(auth)
+	log.Printf("kms: auth iss=%q aud=%q jwks=%q env=%q",
+		auth.issuer, auth.audience, auth.jwksURL, cfg.Env)
+
+	if err := os.MkdirAll(cfg.DataDir, 0o700); err != nil {
+		log.Fatalf("kms: create data dir %s: %v", cfg.DataDir, err)
 	}
 
-	brand := envOr("BRAND_NAME", defaultBrand)
-	mpcAddr := envOr("MPC_ADDR", "")
-	vaultID := envOr("MPC_VAULT_ID", "")
-	nodeID := envOr("KMS_NODE_ID", defaultNodeID)
-	iamEndpoint := envOr("HANZO_IAM_ENDPOINT", envOr("IAM_ENDPOINT", "https://hanzo.id"))
-	jwksURL := envOr("HANZO_IAM_JWKS_URL", envOr("IAM_JWKS_URL", ""))
-	dataDir := envOr("KMS_DATA_DIR", defaultDataDir)
-	listen := envOr("KMS_LISTEN", defaultListen)
-
-	log.Printf("%s KMS — thin wrapper over luxfi/kms (canonical)", brand)
-	log.Printf("  listen=%s zap_port=%s data=%s node_id=%s",
-		listen, envOr("KMS_ZAP_PORT", defaultZapPort), dataDir, nodeID)
-	if jwksURL != "" {
-		log.Printf("  iam.jwks=%s", jwksURL)
-	}
-
-	// Open ZapDB at the Hanzo data dir.
-	if err := os.MkdirAll(dataDir, 0o700); err != nil {
-		log.Fatalf("kmsd: create data dir %s: %v", dataDir, err)
-	}
-	dbOpts := badger.DefaultOptions(dataDir).
+	dbOpts := badger.DefaultOptions(cfg.DataDir).
 		WithLogger(zapdbLogger{}).
 		WithEncryptionKey(masterKeyFromEnv()).
 		WithIndexCacheSize(64 << 20)
 	db, err := badger.Open(dbOpts)
 	if err != nil {
-		log.Fatalf("kmsd: open zapdb at %s: %v", dataDir, err)
+		log.Fatalf("kms: open zapdb at %s: %v", cfg.DataDir, err)
 	}
 	defer db.Close()
+	log.Printf("kms: zapdb opened at %s (version=%s)", cfg.DataDir, version)
 
-	log.Printf("kmsd: zapdb opened at %s", dataDir)
-
-	// S3 replication (defaults: hanzo-kms-backups bucket, hanzo-kms/<node> path).
-	if rep := startReplicator(db, nodeID); rep != nil {
-		defer rep.Stop()
+	replicator := startReplicator(db, cfg.NodeID)
+	if replicator != nil {
+		defer replicator.Stop()
 	}
 
+	auditCtx, auditCancel := context.WithCancel(context.Background())
+	defer auditCancel()
+	globalAuditor = newAuditor(auditCtx, envOr("KMS_AUDIT_DB", "/tmp/kms-aux.db"))
+
+	secStore := store.NewSecretStore(db)
+
 	mux := http.NewServeMux()
+	registerHealth(mux)
+	registerAuth(mux, cfg.IAMEndpoint)
+	registerSecretRoutes(mux, secStore, db)
 
-	// Health.
-	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) {
-		writeJSON(w, http.StatusOK, map[string]string{"status": "ok", "service": "kms", "brand": brand})
+	if cfg.MPCVaultID != "" {
+		registerKeyRoutes(mux, db, cfg)
+	} else {
+		log.Printf("kms: MPC_VAULT_ID empty — secrets-only mode (no threshold signing)")
+	}
+
+	startZAPSecretServer(secStore, cfg)
+
+	srv := &http.Server{
+		Addr:              cfg.HTTPListen,
+		Handler:           methodAllowlist(stripIdentityHeaders(mux)),
+		ReadTimeout:       30 * time.Second,
+		ReadHeaderTimeout: 10 * time.Second,
+		WriteTimeout:      60 * time.Second,
+		IdleTimeout:       120 * time.Second,
+	}
+
+	go func() {
+		log.Printf("kms: HTTP listening on %s", cfg.HTTPListen)
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("kms: http: %v", err)
+		}
+	}()
+
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
+	<-sig
+	log.Println("kms: shutting down")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	srv.Shutdown(ctx)
+}
+
+// --- Config ---
+
+type config struct {
+	HTTPListen  string
+	ZAPPort     int
+	DataDir     string
+	NodeID      string
+	IAMEndpoint string
+	MPCAddr     string
+	MPCVaultID  string
+	Env         string // KMS_ENV — "dev" | "test" | "main" | "prod"
+}
+
+func loadConfig() config {
+	zapPort, _ := strconv.Atoi(envOr("KMS_ZAP_PORT", strings.TrimPrefix(envOr("KMS_ZAP", ":9653"), ":")))
+	return config{
+		HTTPListen:  envOr("KMS_LISTEN", ":8443"),
+		ZAPPort:     zapPort,
+		DataDir:     envOr("KMS_DATA_DIR", "/data/kms"),
+		NodeID:      envOr("KMS_NODE_ID", "kms-0"),
+		IAMEndpoint: envOr("IAM_ENDPOINT", "http://iam.liquidity.svc.cluster.local:8000"),
+		MPCAddr:     envOr("MPC_ADDR", ""),
+		MPCVaultID:  envOr("MPC_VAULT_ID", ""),
+		Env:         envOr("KMS_ENV", "dev"),
+	}
+}
+
+// --- Header hygiene ---
+
+// stripIdentityHeaders removes every inbound identity header before mux
+// dispatch. The only headers honoured downstream are the canonical three —
+// X-User-Id, X-Org-Id, X-Roles — injected by the Hanzo Gateway after JWKS
+// verification. Every legacy variant (X-Hanzo-*, X-IAM-*, X-User-Role
+// singular, X-Tenant-Id, X-Is-Admin, …) is dropped outright so a spoofed
+// header cannot survive to a handler even if the cluster boundary is
+// bypassed.
+func stripIdentityHeaders(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		for _, h := range []string{
+			// Canonical 3 — dropped, re-injected by gateway from verified JWT.
+			"X-User-Id", "X-Org-Id", "X-Roles",
+			// Informational.
+			"X-User-Email",
+			// Legacy gateway pre-validation hints — killed.
+			"X-Gateway-Validated", "X-Gateway-User-Id", "X-Gateway-Org-Id", "X-Gateway-User-Email",
+			// Legacy hanzo-prefixed variants — killed.
+			"X-Hanzo-User-Id", "X-Hanzo-User-Email",
+			"X-Hanzo-User-Role", "X-Hanzo-User-Roles", "X-Hanzo-User-IsAdmin",
+			"X-Hanzo-Org", "X-Hanzo-Org-Id",
+			// Legacy IAM-prefixed variants — killed.
+			"X-IAM-User-Id", "X-IAM-Org", "X-IAM-Org-Id", "X-IAM-Roles",
+			// Legacy singular / alias role headers — killed.
+			"X-User-Role", "X-User-Roles",
+			// Tenant aliases — killed.
+			"X-Tenant-Id", "X-Tenant-ID", "X-Org",
+			// Is-admin boolean — killed.
+			"X-Is-Admin",
+		} {
+			r.Header.Del(h)
+		}
+		next.ServeHTTP(w, r)
 	})
+}
 
-	// Machine identity auth via IAM (canonical luxfi/kms route).
+// methodAllowlist rejects TRACE/CONNECT/OPTIONS at the edge.
+// Everything else is dispatched normally and handled per-route.
+func methodAllowlist(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodTrace, http.MethodConnect, http.MethodOptions:
+			w.Header().Set("Allow", "GET, POST, PATCH, DELETE")
+			writeJSON(w, http.StatusMethodNotAllowed, map[string]any{"message": "method not allowed"})
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
+// --- Routes ---
+
+func registerHealth(mux *http.ServeMux) {
+	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) {
+		writeJSON(w, http.StatusOK, map[string]any{
+			"status":  "ok",
+			"service": "kms",
+			"version": version,
+		})
+	})
+}
+
+func registerAuth(mux *http.ServeMux, iamEndpoint string) {
+	// Bounded HTTP client — prevents slow IAM responses from holding goroutines.
+	iamClient := &http.Client{Timeout: 10 * time.Second}
+
 	mux.HandleFunc("POST /v1/kms/auth/login", func(w http.ResponseWriter, r *http.Request) {
+		r.Body = http.MaxBytesReader(w, r.Body, maxBodyBytes)
 		var req struct {
 			ClientID     string `json:"clientId"`
 			ClientSecret string `json:"clientSecret"`
@@ -142,7 +240,7 @@ func main() {
 			"client_id":     {req.ClientID},
 			"client_secret": {req.ClientSecret},
 		}
-		resp, err := http.PostForm(iamEndpoint+"/api/login/oauth/access_token", form)
+		resp, err := iamClient.PostForm(iamEndpoint+"/api/login/oauth/access_token", form)
 		if err != nil {
 			writeJSON(w, http.StatusBadGateway, map[string]any{"statusCode": 502, "message": "identity provider unreachable"})
 			return
@@ -157,18 +255,38 @@ func main() {
 		}
 		writeJSON(w, http.StatusOK, map[string]any{"accessToken": at, "expiresIn": 86400, "tokenType": "Bearer"})
 	})
+}
 
-	// Secret store — canonical luxfi/kms surface.
-	secStore := store.NewSecretStore(db)
-
-	mux.HandleFunc("GET /v1/kms/orgs/{org}/secrets/{rest...}", func(w http.ResponseWriter, r *http.Request) {
-		rest := r.PathValue("rest")
-		idx := strings.LastIndex(rest, "/")
-		if idx < 0 {
-			writeJSON(w, http.StatusBadRequest, map[string]any{"message": "path and name required"})
+// registerSecretRoutes mounts the lux/kms HTTP secret CRUD at both the
+// canonical /v1/kms/orgs/{org}/secrets/... and the back-compat
+// /v1/kms/tenants/{tenantId}/secrets/... paths. Both routes call the same
+// handlers — the URL just maps "tenantId" to "org" semantically.
+//
+// R-3 (replay protection): POST (create/upsert) always bumps the version.
+// PATCH (update) requires If-Match or body.version matching current; a
+// replayed PATCH after rotation returns 409.
+//
+// R-12 (audit trail): every request emits one audit row with composite
+// actor_id "iss:sub". See audit.go for details.
+func registerSecretRoutes(mux *http.ServeMux, secStore *store.SecretStore, db *badger.DB) {
+	get := func(w http.ResponseWriter, r *http.Request) {
+		claims, ok := authorize(w, r)
+		if !ok {
+			recordAudit(claims, r, "", "", "", http.StatusUnauthorized, 0)
 			return
 		}
-		path, name := rest[:idx], rest[idx+1:]
+		orgURL := r.PathValue("org")
+		if !claims.canActOnOrg(orgURL) {
+			writeJSON(w, http.StatusForbidden, map[string]any{"message": "org claim does not match URL"})
+			recordAudit(claims, r, "", "", "", http.StatusForbidden, 0)
+			return
+		}
+		rest := r.PathValue("rest")
+		path, name, ok := splitSecretPath(w, rest)
+		if !ok {
+			recordAudit(claims, r, "", "", "", http.StatusBadRequest, 0)
+			return
+		}
 		env := r.URL.Query().Get("env")
 		if env == "" {
 			env = "default"
@@ -176,14 +294,30 @@ func main() {
 		sec, err := secStore.Get(path, name, env)
 		if err != nil {
 			writeJSON(w, http.StatusNotFound, map[string]any{"message": "not found"})
+			recordAudit(claims, r, path, name, env, http.StatusNotFound, 0)
 			return
 		}
+		curVer, _ := readVersion(db, path, name, env)
 		writeJSON(w, http.StatusOK, map[string]any{
-			"secret": map[string]any{"value": string(sec.Ciphertext)},
+			"secret":  map[string]any{"value": string(sec.Ciphertext)},
+			"version": curVer,
 		})
-	})
+		recordAudit(claims, r, path, name, env, http.StatusOK, 0)
+	}
 
-	mux.HandleFunc("POST /v1/kms/orgs/{org}/secrets", func(w http.ResponseWriter, r *http.Request) {
+	put := func(w http.ResponseWriter, r *http.Request) {
+		claims, ok := authorize(w, r)
+		if !ok {
+			recordAudit(claims, r, "", "", "", http.StatusUnauthorized, 0)
+			return
+		}
+		orgURL := r.PathValue("org")
+		if !claims.canActOnOrg(orgURL) {
+			writeJSON(w, http.StatusForbidden, map[string]any{"message": "org claim does not match URL"})
+			recordAudit(claims, r, "", "", "", http.StatusForbidden, 0)
+			return
+		}
+		r.Body = http.MaxBytesReader(w, r.Body, maxBodyBytes)
 		var req struct {
 			Path  string `json:"path"`
 			Name  string `json:"name"`
@@ -192,6 +326,12 @@ func main() {
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.Name == "" {
 			writeJSON(w, http.StatusBadRequest, map[string]any{"message": "name and value required"})
+			recordAudit(claims, r, req.Path, req.Name, req.Env, http.StatusBadRequest, 0)
+			return
+		}
+		if !safePath(req.Path) || !safePath(req.Name) {
+			writeJSON(w, http.StatusBadRequest, map[string]any{"message": "invalid path or name"})
+			recordAudit(claims, r, req.Path, req.Name, req.Env, http.StatusBadRequest, 0)
 			return
 		}
 		if req.Env == "" {
@@ -205,147 +345,298 @@ func main() {
 		}
 		if err := secStore.Put(sec); err != nil {
 			writeJSON(w, http.StatusInternalServerError, map[string]any{"message": err.Error()})
+			recordAudit(claims, r, req.Path, req.Name, req.Env, http.StatusInternalServerError, 0)
 			return
 		}
-		writeJSON(w, http.StatusCreated, map[string]any{"ok": true})
-	})
+		// POST is upsert — do NOT enforce CAS. Bump version by passing -1.
+		newVer, verErr := bumpVersion(db, req.Path, req.Name, req.Env, -1)
+		if verErr != nil {
+			log.Printf("kms: version bump failed after put: %v", verErr)
+		}
+		writeJSON(w, http.StatusCreated, map[string]any{"ok": true, "version": newVer})
+		recordAudit(claims, r, req.Path, req.Name, req.Env, http.StatusCreated, newVer)
+	}
 
-	mux.HandleFunc("DELETE /v1/kms/orgs/{org}/secrets/{rest...}", func(w http.ResponseWriter, r *http.Request) {
-		rest := r.PathValue("rest")
-		idx := strings.LastIndex(rest, "/")
-		if idx < 0 {
-			writeJSON(w, http.StatusBadRequest, map[string]any{"message": "path and name required"})
+	patch := func(w http.ResponseWriter, r *http.Request) {
+		claims, ok := authorize(w, r)
+		if !ok {
+			recordAudit(claims, r, "", "", "", http.StatusUnauthorized, 0)
 			return
 		}
-		path, name := rest[:idx], rest[idx+1:]
+		orgURL := r.PathValue("org")
+		if !claims.canActOnOrg(orgURL) {
+			writeJSON(w, http.StatusForbidden, map[string]any{"message": "org claim does not match URL"})
+			recordAudit(claims, r, "", "", "", http.StatusForbidden, 0)
+			return
+		}
+		rest := r.PathValue("rest")
+		path, name, ok := splitSecretPath(w, rest)
+		if !ok {
+			recordAudit(claims, r, "", "", "", http.StatusBadRequest, 0)
+			return
+		}
+		r.Body = http.MaxBytesReader(w, r.Body, maxBodyBytes)
+		var req struct {
+			Value   string `json:"value"`
+			Version *int64 `json:"version"` // pointer: distinguish 0 from "missing"
+			Env     string `json:"env"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			writeJSON(w, http.StatusBadRequest, map[string]any{"message": "value required"})
+			recordAudit(claims, r, path, name, req.Env, http.StatusBadRequest, 0)
+			return
+		}
+		env := req.Env
+		if env == "" {
+			env = r.URL.Query().Get("env")
+		}
+		if env == "" {
+			env = "default"
+		}
+		// Version CAS: require EITHER If-Match header OR body.version. If
+		// both are present they must agree. Missing both → 428 Precondition
+		// Required: PATCH is explicitly CAS; an unauthenticated rotation
+		// is exactly the replay vector.
+		var expected int64 = -1
+		if h := strings.TrimSpace(r.Header.Get("If-Match")); h != "" {
+			v, err := strconv.ParseInt(strings.Trim(h, `"`), 10, 64)
+			if err != nil {
+				writeJSON(w, http.StatusBadRequest, map[string]any{"message": "If-Match must be integer version"})
+				recordAudit(claims, r, path, name, env, http.StatusBadRequest, 0)
+				return
+			}
+			expected = v
+		}
+		if req.Version != nil {
+			if expected >= 0 && expected != *req.Version {
+				writeJSON(w, http.StatusBadRequest, map[string]any{"message": "If-Match and body.version disagree"})
+				recordAudit(claims, r, path, name, env, http.StatusBadRequest, 0)
+				return
+			}
+			expected = *req.Version
+		}
+		if expected < 0 {
+			writeJSON(w, http.StatusPreconditionRequired, map[string]any{
+				"message": "PATCH requires If-Match header or body.version",
+			})
+			recordAudit(claims, r, path, name, env, http.StatusPreconditionRequired, 0)
+			return
+		}
+		// Ensure the secret exists before attempting CAS — otherwise an
+		// attacker with a stale "version 1" envelope could CREATE a secret
+		// via PATCH. PATCH is update-only by contract.
+		if _, err := secStore.Get(path, name, env); err != nil {
+			writeJSON(w, http.StatusNotFound, map[string]any{"message": "not found"})
+			recordAudit(claims, r, path, name, env, http.StatusNotFound, 0)
+			return
+		}
+		newVer, verErr := bumpVersion(db, path, name, env, expected)
+		if errors.Is(verErr, ErrVersionMismatch) {
+			cur, _ := readVersion(db, path, name, env)
+			writeJSON(w, http.StatusConflict, map[string]any{
+				"message":         "version mismatch — replayed or stale update",
+				"currentVersion":  cur,
+				"expectedVersion": expected,
+			})
+			recordAudit(claims, r, path, name, env, http.StatusConflict, cur)
+			return
+		}
+		if verErr != nil {
+			writeJSON(w, http.StatusInternalServerError, map[string]any{"message": verErr.Error()})
+			recordAudit(claims, r, path, name, env, http.StatusInternalServerError, 0)
+			return
+		}
+		sec := &store.Secret{
+			Name:       name,
+			Path:       path,
+			Env:        env,
+			Ciphertext: []byte(req.Value),
+		}
+		if err := secStore.Put(sec); err != nil {
+			writeJSON(w, http.StatusInternalServerError, map[string]any{"message": err.Error()})
+			recordAudit(claims, r, path, name, env, http.StatusInternalServerError, 0)
+			return
+		}
+		writeJSON(w, http.StatusOK, map[string]any{"ok": true, "version": newVer})
+		recordAudit(claims, r, path, name, env, http.StatusOK, newVer)
+	}
+
+	del := func(w http.ResponseWriter, r *http.Request) {
+		claims, ok := authorize(w, r)
+		if !ok {
+			recordAudit(claims, r, "", "", "", http.StatusUnauthorized, 0)
+			return
+		}
+		orgURL := r.PathValue("org")
+		if !claims.canActOnOrg(orgURL) {
+			writeJSON(w, http.StatusForbidden, map[string]any{"message": "org claim does not match URL"})
+			recordAudit(claims, r, "", "", "", http.StatusForbidden, 0)
+			return
+		}
+		rest := r.PathValue("rest")
+		path, name, ok := splitSecretPath(w, rest)
+		if !ok {
+			recordAudit(claims, r, "", "", "", http.StatusBadRequest, 0)
+			return
+		}
 		env := r.URL.Query().Get("env")
 		if env == "" {
 			env = "default"
 		}
 		if err := secStore.Delete(path, name, env); err != nil {
 			writeJSON(w, http.StatusNotFound, map[string]any{"message": "not found"})
+			recordAudit(claims, r, path, name, env, http.StatusNotFound, 0)
 			return
 		}
+		// Clear version record so a re-create starts from 1 again.
+		_ = deleteVersion(db, path, name, env)
 		writeJSON(w, http.StatusOK, map[string]any{"ok": true})
-	})
+		recordAudit(claims, r, path, name, env, http.StatusOK, 0)
+	}
 
-	// Legacy: env-backed secret fetch (canonical luxfi/kms route).
+	// Canonical (lux native).
+	mux.HandleFunc("GET /v1/kms/orgs/{org}/secrets/{rest...}", get)
+	mux.HandleFunc("POST /v1/kms/orgs/{org}/secrets", put)
+	mux.HandleFunc("PATCH /v1/kms/orgs/{org}/secrets/{rest...}", patch)
+	mux.HandleFunc("DELETE /v1/kms/orgs/{org}/secrets/{rest...}", del)
+
+	// Legacy alias used by ats/pkg/kmsclient v1.x — same handlers.
+	mux.HandleFunc("GET /v1/kms/tenants/{org}/secrets/{rest...}", get)
+	mux.HandleFunc("POST /v1/kms/tenants/{org}/secrets", put)
+	mux.HandleFunc("PATCH /v1/kms/tenants/{org}/secrets/{rest...}", patch)
+	mux.HandleFunc("DELETE /v1/kms/tenants/{org}/secrets/{rest...}", del)
+
+	// Env-backed legacy fetch — admin-only. Reads any process env var, so it
+	// MUST NOT be available to a tenant-scoped JWT. Only callers carrying a
+	// role of "superadmin" or "kms-admin" may use it; everyone else gets 403.
 	mux.HandleFunc("GET /v1/kms/secrets/{name}", func(w http.ResponseWriter, r *http.Request) {
+		claims, ok := authorize(w, r)
+		if !ok {
+			recordAudit(claims, r, "", "", "", http.StatusUnauthorized, 0)
+			return
+		}
+		if !claims.isAdmin() {
+			writeJSON(w, http.StatusForbidden, map[string]any{"message": "admin role required"})
+			recordAudit(claims, r, "", "", "", http.StatusForbidden, 0)
+			return
+		}
 		name := r.PathValue("name")
-		if name == "" {
-			writeJSON(w, http.StatusBadRequest, map[string]any{"message": "secret name required"})
+		if !safeEnvName(name) {
+			writeJSON(w, http.StatusBadRequest, map[string]any{"message": "invalid name"})
+			recordAudit(claims, r, "", name, "", http.StatusBadRequest, 0)
 			return
 		}
 		val := os.Getenv(name)
 		if val == "" {
 			writeJSON(w, http.StatusNotFound, map[string]any{"message": "not found"})
+			recordAudit(claims, r, "", name, "", http.StatusNotFound, 0)
 			return
 		}
 		writeJSON(w, http.StatusOK, map[string]any{
 			"secret": map[string]any{"secretKey": name, "secretValue": val},
 		})
+		recordAudit(claims, r, "", name, "", http.StatusOK, 0)
 	})
 
-	// MPC key management — only when MPC_VAULT_ID is set.
-	if vaultID != "" {
-		zapClient, zerr := mpc.NewZapClient(nodeID, mpcAddr)
-		if zerr != nil {
-			log.Fatalf("kmsd: zap client: %v", zerr)
+	// Audit stats endpoint — admin only.
+	mux.HandleFunc("GET /v1/kms/audit/stats", func(w http.ResponseWriter, r *http.Request) {
+		claims, ok := authorize(w, r)
+		if !ok {
+			return
 		}
-		keyStore, kerr := store.New(db)
-		if kerr != nil {
-			log.Fatalf("kmsd: key store: %v", kerr)
+		if !claims.isAdmin() {
+			writeJSON(w, http.StatusForbidden, map[string]any{"message": "admin role required"})
+			return
 		}
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		if status, err := zapClient.Status(ctx); err != nil {
-			log.Printf("kmsd: WARNING: mpc unreachable via ZAP: %v", err)
-		} else {
-			log.Printf("kmsd: mpc ready=%v peers=%d/%d mode=%s",
-				status.Ready, status.ConnectedPeers, status.ExpectedPeers, status.Mode)
-		}
-		cancel()
-
-		mgr := keys.NewManager(zapClient, keyStore, vaultID)
-		registerKMSKeyRoutes(mux, mgr, zapClient)
-	} else {
-		log.Printf("kmsd: MPC_VAULT_ID not set — running in secrets-only mode (no threshold signing)")
-	}
-
-	// ZAP secrets server — canonical luxfi/kms/pkg/zapserver. Wire-compatible
-	// with luxfi clients (opcodes 0x0040..0x0043).
-	masterKeyB64 := envOr("KMS_MASTER_KEY_B64", "")
-	zapPortStr := envOr("KMS_ZAP_PORT", defaultZapPort)
-	zapPort, _ := strconv.Atoi(zapPortStr)
-	if masterKeyB64 != "" && zapPort > 0 {
-		masterKey, kerr := base64.StdEncoding.DecodeString(masterKeyB64)
-		if kerr != nil || len(masterKey) != 32 {
-			log.Printf("kmsd: KMS_MASTER_KEY_B64 invalid (need 32 bytes base64); ZAP secrets-server disabled")
-		} else {
-			n := zap.NewNode(zap.NodeConfig{
-				NodeID:      nodeID + "-secrets",
-				ServiceType: "_kms._tcp",
-				Port:        zapPort,
-			})
-			if serr := n.Start(); serr != nil {
-				log.Printf("kmsd: ZAP secrets-server failed to start on :%d: %v", zapPort, serr)
-			} else {
-				zs := zapserver.New(zapserver.Config{
-					Store:     secStore,
-					MasterKey: masterKey,
-					Logger:    slog.Default(),
-				})
-				zs.Register(n)
-				log.Printf("kmsd: ZAP secrets-server listening on :%d (service=_kms._tcp)", zapPort)
-			}
-		}
-	} else {
-		log.Printf("kmsd: ZAP secrets-server disabled (set KMS_MASTER_KEY_B64 and KMS_ZAP_PORT to enable)")
-	}
-
-	// Static frontend (Hanzo-branded UI dist) — served at root if present.
-	frontendDir := envOr("KMS_FRONTEND_DIR", "/app/frontend")
-	if info, ferr := os.Stat(frontendDir); ferr == nil && info.IsDir() {
-		mux.Handle("/", http.FileServer(http.Dir(frontendDir)))
-		log.Printf("kmsd: static frontend at %s", frontendDir)
-	}
-
-	// HTTP server.
-	srv := &http.Server{
-		Addr:         listen,
-		Handler:      mux,
-		ReadTimeout:  30 * time.Second,
-		WriteTimeout: 60 * time.Second,
-		IdleTimeout:  120 * time.Second,
-	}
-	go func() {
-		log.Printf("kmsd: HTTP listening on %s", listen)
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("kmsd: http: %v", err)
-		}
-	}()
-
-	// Graceful shutdown.
-	sig := make(chan os.Signal, 1)
-	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
-	<-sig
-	log.Println("kmsd: shutting down...")
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	srv.Shutdown(ctx)
-
-	// Suppress unused jwks warnings — wired by Gateway in production.
-	_ = jwksURL
+		written, dropped := globalAuditor.stats()
+		writeJSON(w, http.StatusOK, map[string]any{"written": written, "dropped": dropped})
+	})
 }
 
-func registerKMSKeyRoutes(mux *http.ServeMux, mgr *keys.Manager, mpcBackend keys.MPCBackend) {
-	mux.HandleFunc("POST /v1/kms/keys/generate", func(w http.ResponseWriter, r *http.Request) {
+// recordAudit is a small helper that emits one audit row per handler
+// call. Pulls method/path from the request, derives actor_id from the
+// JWT claims via composeActorID, and queues the entry to the background
+// writer. Safe to call with empty claims (unauthenticated requests).
+func recordAudit(claims jwtClaims, r *http.Request, secretPath, secretName, env string, status int, newVersion int64) {
+	if globalAuditor == nil {
+		return
+	}
+	globalAuditor.record(auditEntry{
+		TS:         time.Now().UTC(),
+		ActorID:    composeActorID(claims.Iss, claims.Sub),
+		Issuer:     claims.Iss,
+		Subject:    claims.Sub,
+		ActorRole:  firstRole(claims.Roles),
+		Owner:      claims.Owner,
+		Method:     r.Method,
+		Path:       r.URL.Path,
+		SecretPath: secretPath,
+		SecretName: secretName,
+		Env:        env,
+		Result:     status,
+		Version:    newVersion,
+	})
+}
+
+func registerKeyRoutes(mux *http.ServeMux, db *badger.DB, cfg config) {
+	// MPC connectivity is best-effort: if the MPC daemon is unreachable at
+	// boot (common on devnet when MPC restarts or ZAP service is not yet
+	// exposed), log a warning and run in secrets-only mode rather than
+	// crash-looping the pod. Readiness probe must keep passing so secrets
+	// routes (the majority of traffic) stay online. Threshold-signing key
+	// routes will return 503 via zapClient.Status() checks downstream.
+	zapClient, err := mpc.NewZapClient(cfg.NodeID, cfg.MPCAddr)
+	if err != nil {
+		log.Printf("kms: WARNING: mpc zap client init failed (%v) — running in secrets-only mode, key routes disabled", err)
+		return
+	}
+	keyStore, err := store.New(db)
+	if err != nil {
+		log.Fatalf("kms: key store: %v", err)
+	}
+
+	checkCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	if status, err := zapClient.Status(checkCtx); err != nil {
+		log.Printf("kms: WARNING: mpc unreachable: %v", err)
+	} else {
+		log.Printf("kms: mpc ready=%v peers=%d/%d mode=%s",
+			status.Ready, status.ConnectedPeers, status.ExpectedPeers, status.Mode)
+	}
+	cancel()
+
+	mgr := keys.NewManager(zapClient, keyStore, cfg.MPCVaultID)
+
+	// Admin gate for every key route: authorize() (full JWT verify) →
+	// isAdmin() (explicit role claim). No route is reachable without
+	// both checks passing. Red F5: registerKeyRoutes had NO auth at all
+	// prior to this patch.
+	adminOnly := func(next http.HandlerFunc) http.HandlerFunc {
+		return func(w http.ResponseWriter, r *http.Request) {
+			claims, ok := authorize(w, r)
+			if !ok {
+				return
+			}
+			if !claims.isAdmin() {
+				writeJSON(w, http.StatusForbidden, map[string]any{"message": "admin role required"})
+				return
+			}
+			next(w, r)
+		}
+	}
+
+	mux.HandleFunc("POST /v1/kms/keys/generate", adminOnly(func(w http.ResponseWriter, r *http.Request) {
+		r.Body = http.MaxBytesReader(w, r.Body, maxBodyBytes)
 		var req keys.GenerateRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid request body"})
 			return
 		}
-		if req.ValidatorID == "" || req.Threshold < 2 || req.Parties < req.Threshold {
-			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid keygen params"})
+		if req.ValidatorID == "" {
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "validator_id is required"})
+			return
+		}
+		if req.Threshold < 2 || req.Parties < req.Threshold {
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid threshold/parties"})
 			return
 		}
 		ks, err := mgr.GenerateValidatorKeys(r.Context(), req)
@@ -358,31 +649,31 @@ func registerKMSKeyRoutes(mux *http.ServeMux, mgr *keys.Manager, mpcBackend keys
 			return
 		}
 		writeJSON(w, http.StatusCreated, ks)
-	})
+	}))
 
-	mux.HandleFunc("GET /v1/kms/keys", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("GET /v1/kms/keys", adminOnly(func(w http.ResponseWriter, r *http.Request) {
 		list := mgr.List()
 		if list == nil {
 			list = []*keys.ValidatorKeySet{}
 		}
 		writeJSON(w, http.StatusOK, list)
-	})
+	}))
 
-	mux.HandleFunc("GET /v1/kms/keys/{id}", func(w http.ResponseWriter, r *http.Request) {
-		id := r.PathValue("id")
-		ks, err := mgr.Get(id)
+	mux.HandleFunc("GET /v1/kms/keys/{id}", adminOnly(func(w http.ResponseWriter, r *http.Request) {
+		ks, err := mgr.Get(r.PathValue("id"))
 		if err != nil {
 			writeJSON(w, http.StatusNotFound, map[string]string{"error": "not found"})
 			return
 		}
 		writeJSON(w, http.StatusOK, ks)
-	})
+	}))
 
-	mux.HandleFunc("POST /v1/kms/keys/{id}/sign", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("POST /v1/kms/keys/{id}/sign", adminOnly(func(w http.ResponseWriter, r *http.Request) {
+		r.Body = http.MaxBytesReader(w, r.Body, maxBodyBytes)
 		id := r.PathValue("id")
 		var req keys.SignRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil || len(req.Message) == 0 {
-			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "message required"})
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid request"})
 			return
 		}
 		var resp *keys.SignResponse
@@ -393,7 +684,7 @@ func registerKMSKeyRoutes(mux *http.ServeMux, mgr *keys.Manager, mpcBackend keys
 		case "ringtail":
 			resp, err = mgr.SignWithRingtail(r.Context(), id, req.Message)
 		default:
-			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "key_type must be 'bls' or 'ringtail'"})
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "key_type must be bls or ringtail"})
 			return
 		}
 		if err != nil {
@@ -405,13 +696,14 @@ func registerKMSKeyRoutes(mux *http.ServeMux, mgr *keys.Manager, mpcBackend keys
 			return
 		}
 		writeJSON(w, http.StatusOK, resp)
-	})
+	}))
 
-	mux.HandleFunc("POST /v1/kms/keys/{id}/rotate", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("POST /v1/kms/keys/{id}/rotate", adminOnly(func(w http.ResponseWriter, r *http.Request) {
+		r.Body = http.MaxBytesReader(w, r.Body, maxBodyBytes)
 		id := r.PathValue("id")
 		var req keys.RotateRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid request body"})
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid request"})
 			return
 		}
 		ks, err := mgr.Rotate(r.Context(), id, req)
@@ -420,45 +712,209 @@ func registerKMSKeyRoutes(mux *http.ServeMux, mgr *keys.Manager, mpcBackend keys
 			return
 		}
 		writeJSON(w, http.StatusOK, ks)
-	})
+	}))
 
-	mux.HandleFunc("GET /v1/kms/status", func(w http.ResponseWriter, r *http.Request) {
-		status, err := mpcBackend.Status(r.Context())
+	mux.HandleFunc("GET /v1/kms/status", adminOnly(func(w http.ResponseWriter, r *http.Request) {
+		st, err := zapClient.Status(r.Context())
 		if err != nil {
-			writeJSON(w, http.StatusOK, map[string]string{
-				"kms": "ok", "mpc": "unreachable", "details": err.Error(),
-			})
+			writeJSON(w, http.StatusOK, map[string]any{"kms": "ok", "mpc": "unreachable", "details": err.Error()})
 			return
 		}
-		writeJSON(w, http.StatusOK, map[string]any{"kms": "ok", "mpc": status})
-	})
+		writeJSON(w, http.StatusOK, map[string]any{"kms": "ok", "mpc": st})
+	}))
 }
+
+// --- Authorization ---
+
+// jwtClaims is the minimal set of unverified JWT claims we extract for
+// authorization. The signature has already been verified by the upstream
+// gateway (Hanzo Gateway via JWKS); we re-parse here only to bind the
+// `owner` claim to the URL `{org}` path segment so a token issued for org A
+// cannot be used to read secrets under org B's URL.
+type jwtClaims struct {
+	Iss   string   `json:"iss"`
+	Owner string   `json:"owner"`
+	Sub   string   `json:"sub"`
+	Roles []string `json:"roles"`
+}
+
+// canActOnOrg returns true if the bearer can act on the URL's org segment.
+// Exactly two paths grant access:
+//
+//  1. The bearer's verified `owner` claim equals the URL org segment.
+//  2. The bearer's verified `roles` claim contains "superadmin",
+//     "kms-admin", or "admin".
+//
+// There is no owner=="admin" shortcut. Casdoor emits owner="admin" for
+// every service account in its superuser-app namespace — treating that
+// string as a cross-tenant grant makes every IAM service account a root
+// key over every org. Red demonstrated this live on 2026-04-21.
+func (c jwtClaims) canActOnOrg(org string) bool {
+	if c.isAdmin() {
+		return true
+	}
+	return c.Owner != "" && org != "" && c.Owner == org
+}
+
+// isAdmin checks for an explicit superadmin role. The owner claim is a
+// scoping field, not a privilege flag — keep the two concepts separate.
+func (c jwtClaims) isAdmin() bool {
+	for _, r := range c.Roles {
+		switch strings.ToLower(strings.TrimSpace(r)) {
+		case "superadmin", "kms-admin", "admin":
+			return true
+		}
+	}
+	return false
+}
+
+// authorize extracts the bearer token and performs full RFC 7519
+// verification: signature (via JWKS), alg allowlist (asymmetric only —
+// no HS*, no none), iss, aud, exp. On any failure emits 401 with a
+// generic body and logs a structured audit line with the failure class.
+//
+// The function NEVER falls back to unsigned parsing. It NEVER accepts
+// alg=none. It NEVER honours an owner=="admin" shortcut. Upstream gateway
+// verification is belt-and-braces — we verify independently in case the
+// gateway is bypassed.
+func authorize(w http.ResponseWriter, r *http.Request) (jwtClaims, bool) {
+	claims, err := verifyJWT(r.Header.Get("Authorization"))
+	if err != nil {
+		authLog.Info("kms_auth_reject",
+			"reason", authFailReason(err),
+			"peer", peerIP(r),
+			"method", r.Method,
+			"path", r.URL.Path,
+		)
+		writeJSON(w, http.StatusUnauthorized, map[string]any{"message": "unauthorized"})
+		return jwtClaims{}, false
+	}
+	return claims, true
+}
+
+// splitSecretPath separates "rest" into (path, name) and rejects any
+// traversal/control-byte attempts. Returns ok=false after writing 400.
+func splitSecretPath(w http.ResponseWriter, rest string) (string, string, bool) {
+	if !safePath(rest) {
+		writeJSON(w, http.StatusBadRequest, map[string]any{"message": "invalid path"})
+		return "", "", false
+	}
+	idx := strings.LastIndex(rest, "/")
+	if idx < 0 {
+		writeJSON(w, http.StatusBadRequest, map[string]any{"message": "path and name required"})
+		return "", "", false
+	}
+	return rest[:idx], rest[idx+1:], true
+}
+
+// safePath rejects path-traversal, double-slash collapsing, and control bytes.
+// Allowed: ASCII alnum, '_', '-', '.', '/'. Disallowed segments: "" and "..".
+func safePath(p string) bool {
+	if p == "" {
+		return true // optional fields
+	}
+	if strings.Contains(p, "//") || strings.Contains(p, "\x00") {
+		return false
+	}
+	for _, seg := range strings.Split(p, "/") {
+		if seg == "" || seg == "." || seg == ".." {
+			return false
+		}
+		for _, ch := range seg {
+			switch {
+			case ch >= 'a' && ch <= 'z':
+			case ch >= 'A' && ch <= 'Z':
+			case ch >= '0' && ch <= '9':
+			case ch == '_' || ch == '-' || ch == '.':
+			default:
+				return false
+			}
+		}
+	}
+	return true
+}
+
+// safeEnvName matches POSIX env-var name rules: [A-Za-z_][A-Za-z0-9_]*.
+func safeEnvName(n string) bool {
+	if n == "" {
+		return false
+	}
+	for i, ch := range n {
+		switch {
+		case ch >= 'A' && ch <= 'Z':
+		case ch >= 'a' && ch <= 'z':
+		case ch == '_':
+		case i > 0 && ch >= '0' && ch <= '9':
+		default:
+			return false
+		}
+	}
+	return true
+}
+
+// --- ZAP secrets server ---
+
+func startZAPSecretServer(secStore *store.SecretStore, cfg config) {
+	masterKeyB64 := envOr("KMS_MASTER_KEY_B64", "")
+	if masterKeyB64 == "" || cfg.ZAPPort <= 0 {
+		log.Printf("kms: ZAP secrets-server disabled (set KMS_MASTER_KEY_B64 + KMS_ZAP_PORT/KMS_ZAP)")
+		return
+	}
+	masterKey, err := base64.StdEncoding.DecodeString(masterKeyB64)
+	if err != nil || len(masterKey) != 32 {
+		log.Printf("kms: KMS_MASTER_KEY_B64 invalid (need 32 raw bytes base64); ZAP server disabled")
+		return
+	}
+	n := zap.NewNode(zap.NodeConfig{
+		NodeID:      cfg.NodeID + "-secrets",
+		ServiceType: "_kms._tcp",
+		Port:        cfg.ZAPPort,
+	})
+	if err := n.Start(); err != nil {
+		log.Printf("kms: ZAP secrets-server start failed on :%d: %v", cfg.ZAPPort, err)
+		return
+	}
+	zs := zapserver.New(zapserver.Config{
+		Store:     secStore,
+		MasterKey: masterKey,
+		Logger:    slog.Default(),
+	})
+	zs.Register(n)
+	log.Printf("kms: ZAP secrets-server listening on :%d (service=_kms._tcp)", cfg.ZAPPort)
+}
+
+// --- Replicator ---
 
 func startReplicator(db *badger.DB, nodeID string) *badger.Replicator {
 	endpoint := os.Getenv("REPLICATE_S3_ENDPOINT")
 	if endpoint == "" {
-		log.Printf("kmsd: S3 replication disabled (set REPLICATE_S3_ENDPOINT to enable)")
+		log.Printf("kms: S3 replication disabled (set REPLICATE_S3_ENDPOINT to enable)")
 		return nil
 	}
 	cfg := badger.ReplicatorConfig{
 		Endpoint:  endpoint,
-		Bucket:    envOr("REPLICATE_S3_BUCKET", defaultS3Bucket),
+		Bucket:    envOr("REPLICATE_S3_BUCKET", "liquidity-kms-backups"),
 		Region:    envOr("REPLICATE_S3_REGION", "us-central1"),
 		AccessKey: os.Getenv("REPLICATE_S3_ACCESS_KEY"),
 		SecretKey: os.Getenv("REPLICATE_S3_SECRET_KEY"),
 		UseSSL:    !strings.HasPrefix(endpoint, "http://"),
-		Path:      envOr("REPLICATE_PATH", fmt.Sprintf("%s/%s", defaultS3Path, nodeID)),
+		Path:      envOr("REPLICATE_PATH", fmt.Sprintf("kms/%s", nodeID)),
 		Interval:  time.Second,
 	}
-	rep, err := badger.NewReplicator(db, cfg)
+	if os.Getenv("REPLICATE_AGE_RECIPIENT") != "" {
+		log.Printf("kms: S3 replication with age encryption enabled")
+	}
+	r, err := badger.NewReplicator(db, cfg)
 	if err != nil {
-		log.Printf("kmsd: WARNING: S3 replicator init failed: %v — replication disabled", err)
+		log.Printf("kms: WARNING: S3 replicator init failed: %v — replication disabled", err)
 		return nil
 	}
-	go rep.Start(context.Background())
-	log.Printf("kmsd: S3 replication → %s/%s/%s", endpoint, cfg.Bucket, cfg.Path)
-	return rep
+	go r.Start(context.Background())
+	log.Printf("kms: S3 replication started → %s/%s/%s", endpoint, cfg.Bucket, cfg.Path)
+	return r
 }
+
+// --- Helpers ---
 
 func masterKeyFromEnv() []byte {
 	b64 := os.Getenv("KMS_ENCRYPTION_KEY_B64")
@@ -467,7 +923,7 @@ func masterKeyFromEnv() []byte {
 	}
 	key, err := base64.StdEncoding.DecodeString(b64)
 	if err != nil || len(key) != 32 {
-		log.Printf("kmsd: KMS_ENCRYPTION_KEY_B64 invalid (need 32 bytes base64); at-rest encryption disabled")
+		log.Printf("kms: KMS_ENCRYPTION_KEY_B64 invalid (need 32 bytes base64); at-rest encryption disabled")
 		return nil
 	}
 	return key
@@ -486,45 +942,11 @@ func envOr(key, fallback string) string {
 	return fallback
 }
 
+// --- ZapDB logger adapter ---
+
 type zapdbLogger struct{}
 
-func (zapdbLogger) Errorf(format string, args ...interface{}) {
-	slog.Error(fmt.Sprintf(format, args...))
-}
-func (zapdbLogger) Warningf(format string, args ...interface{}) {
-	slog.Warn(fmt.Sprintf(format, args...))
-}
-func (zapdbLogger) Infof(format string, args ...interface{}) {
-	slog.Info(fmt.Sprintf(format, args...))
-}
-func (zapdbLogger) Debugf(format string, args ...interface{}) {
-	slog.Debug(fmt.Sprintf(format, args...))
-}
-
-func printUsage() {
-	fmt.Fprintf(os.Stderr, `Hanzo KMS — thin wrapper over luxfi/kms (canonical implementation)
-
-Usage:
-  kmsd [--help]
-
-Defaults (Hanzo-specific overrides of luxfi/kms):
-  HTTP listen        : %s   (luxfi default :8080)
-  ZAP listen port    : %s   (luxfi default 9652)
-  Data directory     : %s    (luxfi default /data/kms)
-  Node ID            : %s   (luxfi default kms-0)
-  Branding           : %s   (BRAND_NAME env)
-  IAM JWKS env var   : HANZO_IAM_JWKS_URL  (falls back to IAM_JWKS_URL)
-  IAM endpoint env   : HANZO_IAM_ENDPOINT  (falls back to IAM_ENDPOINT)
-  S3 backups bucket  : %s
-  S3 backups prefix  : %s/<node_id>
-
-Wire-format compatibility:
-  ZAP opcodes 0x0040..0x0043 (canonical luxfi/kms/pkg/zapserver) — Hanzo and
-  Lux KMS clients interoperate over the binary transport.
-
-See: https://github.com/luxfi/kms (canonical implementation).
-`,
-		defaultListen, defaultZapPort, defaultDataDir, defaultNodeID, defaultBrand,
-		defaultS3Bucket, defaultS3Path,
-	)
-}
+func (zapdbLogger) Errorf(format string, args ...interface{})   { slog.Error(fmt.Sprintf(format, args...)) }
+func (zapdbLogger) Warningf(format string, args ...interface{}) { slog.Warn(fmt.Sprintf(format, args...)) }
+func (zapdbLogger) Infof(format string, args ...interface{})    { slog.Info(fmt.Sprintf(format, args...)) }
+func (zapdbLogger) Debugf(format string, args ...interface{})   { slog.Debug(fmt.Sprintf(format, args...)) }
