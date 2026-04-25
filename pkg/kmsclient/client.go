@@ -5,8 +5,8 @@
 // Usage:
 //
 //	c, err := kmsclient.New(kmsclient.Config{
-//	    Endpoint:     "http://kms.internal.svc.cluster.local:8443",
-//	    IAMEndpoint:  "http://iam.internal.svc.cluster.local:8000",
+//	    Endpoint:     "http://kms.hanzo.svc.cluster.local:8443",
+//	    IAMEndpoint:  "http://iam.hanzo.svc.cluster.local:8000",
 //	    ClientID:     os.Getenv("IAM_CLIENT_ID"),
 //	    ClientSecret: os.Getenv("IAM_CLIENT_SECRET"),
 //	    Org:          "hanzo",
@@ -29,11 +29,11 @@ import (
 
 // Config configures the KMS client.
 type Config struct {
-	// Endpoint is the KMS server URL (e.g. "http://kms.internal.svc.cluster.local:8443").
+	// Endpoint is the KMS server URL (e.g. "http://kms.hanzo.svc.cluster.local:8443").
 	Endpoint string
 
 	// IAMEndpoint is the IAM server URL for token exchange
-	// (e.g. "http://iam.internal.svc.cluster.local:8000").
+	// (e.g. "http://iam.hanzo.svc.cluster.local:8000").
 	IAMEndpoint string
 
 	// ClientID is the IAM service account client ID.

@@ -1,7 +1,7 @@
 // Emergency JWT verification regression — Red Part 5 (2026-04-21).
 //
 // These tests lock down the exact attacks Red demonstrated on
-// kms.main.vendor.com:
+// kms.hanzo.ai:
 //
 //	F1 — cross-env JWT acceptance (dev-signed token on main)
 //	F2 — expired JWT accepted (exp=Sep 2001)
@@ -69,7 +69,7 @@ func newJWTTestEnv(t *testing.T) *jwtTestEnv {
 		w.Write(jwksJSON)
 	}))
 
-	issuer := "https://iam.test.vendor.com"
+	issuer := "https://iam.test.hanzo.id"
 	audience := "kms"
 
 	// Point the KMS authz layer at this JWKS + issuer + audience.
@@ -330,11 +330,11 @@ func TestJWT_F1_DevIssuerOnMain_Rejected(t *testing.T) {
 	defer e.cleanup()
 
 	// Configure KMS to expect MAIN issuer — but sign a token with DEV issuer.
-	t.Setenv("KMS_EXPECTED_ISSUER", "https://iam.main.vendor.com")
+	t.Setenv("KMS_EXPECTED_ISSUER", "https://iam.hanzo.id")
 	reloadAuthConfigForTest()
 
 	tok := e.mintSigned(jwt.MapClaims{
-		"iss":   "https://iam.dev.vendor.com",
+		"iss":   "https://iam.dev.hanzo.id",
 		"sub":   "user-x",
 		"owner": "hanzo",
 		"aud":   "kms",
@@ -432,10 +432,10 @@ func TestJWT_F4_MultiAudience_Accepted(t *testing.T) {
 	e := newJWTTestEnv(t)
 	defer e.cleanup()
 
-	t.Setenv("KMS_EXPECTED_AUDIENCE", "bd, app ,kms")
+	t.Setenv("KMS_EXPECTED_AUDIENCE", "hanzo-app, hanzo-app ,kms")
 	reloadAuthConfigForTest()
 
-	for _, aud := range []string{"bd", "app", "kms"} {
+	for _, aud := range []string{"hanzo-app", "hanzo-app", "kms"} {
 		tok := e.mintSigned(jwt.MapClaims{
 			"sub":   "user-x",
 			"owner": "hanzo",
@@ -452,11 +452,11 @@ func TestJWT_F4_MultiAudience_Accepted(t *testing.T) {
 	tok := e.mintSigned(jwt.MapClaims{
 		"sub":   "user-x",
 		"owner": "hanzo",
-		"aud":   "ats",
+		"aud":   "hanzo-ats",
 	})
 	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
-		t.Fatalf("aud=ats: want 401, got %d", resp.StatusCode)
+		t.Fatalf("aud=hanzo-ats: want 401, got %d", resp.StatusCode)
 	}
 }
 
