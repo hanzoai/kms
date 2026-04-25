@@ -17,7 +17,7 @@ import (
 
 func main() {
 	client, err := kms.NewClient(kms.Config{
-		Nodes:     []string{"https://kms-mpc-0:9651", "https://kms-mpc-1:9651", "https://kms-mpc-2:9651"},
+		Nodes:     []string{"https://kms-mpc-0:9999", "https://kms-mpc-1:9999", "https://kms-mpc-2:9999"},
 		OrgSlug:   "hanzo",
 		Threshold: 2,
 	})
