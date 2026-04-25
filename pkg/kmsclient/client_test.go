@@ -86,7 +86,7 @@ func TestGet_WithMockServer(t *testing.T) {
 	defer iam.Close()
 
 	// Server: implements canonical GET /v1/kms/orgs/{org}/secrets/{path}/{name}.
-	const wantPath = "/v1/kms/orgs/liquidity/secrets/providers/alpaca/dev/api_key"
+	const wantPath = "/v1/kms/orgs/hanzo/secrets/providers/alpaca/dev/api_key"
 	kms := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("Authorization") != "Bearer test-token-123" {
 			http.Error(w, "unauthorized", http.StatusUnauthorized)
@@ -107,7 +107,7 @@ func TestGet_WithMockServer(t *testing.T) {
 		IAMEndpoint:  iam.URL,
 		ClientID:     "test-id",
 		ClientSecret: "test-secret",
-		Org:          "liquidity",
+		Org:          "hanzo",
 	})
 	if err != nil {
 		t.Fatal(err)
@@ -213,12 +213,12 @@ func TestPut_SendsCanonicalPayload(t *testing.T) {
 	}))
 	defer kms.Close()
 
-	c, _ := New(Config{Endpoint: kms.URL, IAMEndpoint: iam.URL, ClientID: "i", ClientSecret: "s", Org: "liquidity"})
+	c, _ := New(Config{Endpoint: kms.URL, IAMEndpoint: iam.URL, ClientID: "i", ClientSecret: "s", Org: "hanzo"})
 	if err := c.Put(context.Background(), "providers/square/dev", "access_token", "sq_abc"); err != nil {
 		t.Fatalf("Put: %v", err)
 	}
-	if gotPath != "/v1/kms/orgs/liquidity/secrets" {
-		t.Errorf("path = %q, want /v1/kms/orgs/liquidity/secrets", gotPath)
+	if gotPath != "/v1/kms/orgs/hanzo/secrets" {
+		t.Errorf("path = %q, want /v1/kms/orgs/hanzo/secrets", gotPath)
 	}
 	if gotBody["path"] != "providers/square/dev" || gotBody["name"] != "access_token" || gotBody["value"] != "sq_abc" {
 		t.Errorf("body = %+v, want path=providers/square/dev name=access_token value=sq_abc", gotBody)
@@ -242,13 +242,13 @@ func TestList_UsesCanonicalPath(t *testing.T) {
 	}))
 	defer kms.Close()
 
-	c, _ := New(Config{Endpoint: kms.URL, IAMEndpoint: iam.URL, ClientID: "i", ClientSecret: "s", Org: "liquidity"})
+	c, _ := New(Config{Endpoint: kms.URL, IAMEndpoint: iam.URL, ClientID: "i", ClientSecret: "s", Org: "hanzo"})
 	got, err := c.List(context.Background(), "providers/square")
 	if err != nil {
 		t.Fatalf("List: %v", err)
 	}
-	if gotPath != "/v1/kms/orgs/liquidity/secrets" {
-		t.Errorf("path = %q, want /v1/kms/orgs/liquidity/secrets", gotPath)
+	if gotPath != "/v1/kms/orgs/hanzo/secrets" {
+		t.Errorf("path = %q, want /v1/kms/orgs/hanzo/secrets", gotPath)
 	}
 	if gotQuery != "prefix=providers%2Fsquare" {
 		t.Errorf("query = %q, want prefix=providers%%2Fsquare", gotQuery)
@@ -269,14 +269,14 @@ func TestDelete_UsesCanonicalPath(t *testing.T) {
 		w.WriteHeader(http.StatusNoContent)
 	}))
 	defer kms.Close()
-	c, _ := New(Config{Endpoint: kms.URL, IAMEndpoint: iam.URL, ClientID: "i", ClientSecret: "s", Org: "liquidity"})
+	c, _ := New(Config{Endpoint: kms.URL, IAMEndpoint: iam.URL, ClientID: "i", ClientSecret: "s", Org: "hanzo"})
 	if err := c.Delete(context.Background(), "providers/square/dev", "access_token"); err != nil {
 		t.Fatalf("Delete: %v", err)
 	}
 	if gotMethod != http.MethodDelete {
 		t.Errorf("method = %q, want DELETE", gotMethod)
 	}
-	if gotPath != "/v1/kms/orgs/liquidity/secrets/providers/square/dev/access_token" {
+	if gotPath != "/v1/kms/orgs/hanzo/secrets/providers/square/dev/access_token" {
 		t.Errorf("path = %q, want canonical orgs path", gotPath)
 	}
 }

@@ -5,11 +5,11 @@
 // Usage:
 //
 //	c, err := kmsclient.New(kmsclient.Config{
-//	    Endpoint:     "http://kms.liquidity.svc.cluster.local:8443",
-//	    IAMEndpoint:  "http://iam.liquidity.svc.cluster.local:8000",
+//	    Endpoint:     "http://kms.hanzo.svc.cluster.local:8443",
+//	    IAMEndpoint:  "http://iam.hanzo.svc.cluster.local:8000",
 //	    ClientID:     os.Getenv("IAM_CLIENT_ID"),
 //	    ClientSecret: os.Getenv("IAM_CLIENT_SECRET"),
-//	    Org:          "liquidity",
+//	    Org:          "hanzo",
 //	})
 //	val, err := c.Get(ctx, "providers/alpaca/dev", "api_key")
 package kmsclient
@@ -29,11 +29,11 @@ import (
 
 // Config configures the KMS client.
 type Config struct {
-	// Endpoint is the KMS server URL (e.g. "http://kms.liquidity.svc.cluster.local:8443").
+	// Endpoint is the KMS server URL (e.g. "http://kms.hanzo.svc.cluster.local:8443").
 	Endpoint string
 
 	// IAMEndpoint is the IAM server URL for token exchange
-	// (e.g. "http://iam.liquidity.svc.cluster.local:8000").
+	// (e.g. "http://iam.hanzo.svc.cluster.local:8000").
 	IAMEndpoint string
 
 	// ClientID is the IAM service account client ID.
@@ -42,7 +42,7 @@ type Config struct {
 	// ClientSecret is the IAM service account client secret.
 	ClientSecret string
 
-	// Org is the organization slug (e.g. "liquidity").
+	// Org is the organization slug (e.g. "hanzo").
 	Org string
 
 	// HTTPClient is an optional custom HTTP client. If nil, a default with

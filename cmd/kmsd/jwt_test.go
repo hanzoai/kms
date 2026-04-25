@@ -1,7 +1,7 @@
 // Emergency JWT verification regression — Red Part 5 (2026-04-21).
 //
 // These tests lock down the exact attacks Red demonstrated on
-// kms.main.satschel.com:
+// kms.hanzo.ai:
 //
 //	F1 — cross-env JWT acceptance (dev-signed token on main)
 //	F2 — expired JWT accepted (exp=Sep 2001)
@@ -69,7 +69,7 @@ func newJWTTestEnv(t *testing.T) *jwtTestEnv {
 		w.Write(jwksJSON)
 	}))
 
-	issuer := "https://iam.test.satschel.com"
+	issuer := "https://iam.test.hanzo.id"
 	audience := "kms"
 
 	// Point the KMS authz layer at this JWKS + issuer + audience.
@@ -214,19 +214,19 @@ func TestJWT_F3_AlgNone_EmptySignature_Rejected(t *testing.T) {
 	body, _ := json.Marshal(map[string]string{
 		"path": "pwn", "name": "k", "env": "dev", "value": "owned",
 	})
-	resp := mustReq(t, "POST", e.srv.URL+"/v1/kms/orgs/liquidity/secrets", tok, body)
+	resp := mustReq(t, "POST", e.srv.URL+"/v1/kms/orgs/hanzo/secrets", tok, body)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("F3 alg=none empty-sig POST: want 401, got %d", resp.StatusCode)
 	}
 
 	// Read attempt — must be 401.
-	resp = mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/liquidity/secrets/pwn/k?env=dev", tok, nil)
+	resp = mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/pwn/k?env=dev", tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("F3 alg=none empty-sig GET: want 401, got %d", resp.StatusCode)
 	}
 
 	// Delete attempt — must be 401.
-	resp = mustReq(t, "DELETE", e.srv.URL+"/v1/kms/orgs/liquidity/secrets/pwn/k?env=dev", tok, nil)
+	resp = mustReq(t, "DELETE", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/pwn/k?env=dev", tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("F3 alg=none empty-sig DELETE: want 401, got %d", resp.StatusCode)
 	}
@@ -237,11 +237,11 @@ func TestJWT_F3_AlgNone_GarbageSignature_Rejected(t *testing.T) {
 	defer e.cleanup()
 
 	tok := mintAlgNone(map[string]any{
-		"iss": e.issuer, "owner": "liquidity", "sub": "root",
+		"iss": e.issuer, "owner": "hanzo", "sub": "root",
 		"aud": e.audience, "exp": time.Now().Add(time.Hour).Unix(),
 	}, "deadbeefdeadbeef")
 
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/liquidity/secrets/a/b?env=dev", tok, nil)
+	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("F3 alg=none garbage-sig: want 401, got %d", resp.StatusCode)
 	}
@@ -255,11 +255,11 @@ func TestJWT_F3_HS256Forged_Rejected(t *testing.T) {
 	// is asymmetric-only (RS256/ES256/EdDSA). Even if an attacker guesses a
 	// weak shared secret there is no shared secret.
 	tok := mintHS256Forged(map[string]any{
-		"iss": e.issuer, "owner": "liquidity", "sub": "root",
+		"iss": e.issuer, "owner": "hanzo", "sub": "root",
 		"aud": e.audience, "exp": time.Now().Add(time.Hour).Unix(),
 	}, "forged-shared-secret-xyz")
 
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/liquidity/secrets/a/b?env=dev", tok, nil)
+	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("F3 HS256 forged: want 401, got %d", resp.StatusCode)
 	}
@@ -274,11 +274,11 @@ func TestJWT_F2_Expired_2001_Rejected(t *testing.T) {
 	// exp=1000000000 → 2001-09-09. Red's live-demo value.
 	tok := e.mintSigned(jwt.MapClaims{
 		"sub":   "user-x",
-		"owner": "liquidity",
+		"owner": "hanzo",
 		"exp":   int64(1000000000),
 	})
 
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/liquidity/secrets/a/b?env=dev", tok, nil)
+	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("F2 exp=2001: want 401, got %d", resp.StatusCode)
 	}
@@ -290,11 +290,11 @@ func TestJWT_F2_ExpiredOneSecondAgo_Rejected(t *testing.T) {
 
 	tok := e.mintSigned(jwt.MapClaims{
 		"sub":   "user-x",
-		"owner": "liquidity",
+		"owner": "hanzo",
 		"exp":   time.Now().Add(-time.Second).Unix(),
 	})
 
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/liquidity/secrets/a/b?env=dev", tok, nil)
+	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("F2 exp=-1s: want 401, got %d", resp.StatusCode)
 	}
@@ -310,14 +310,14 @@ func TestJWT_F2_MissingExp_Rejected(t *testing.T) {
 		"iss":   e.issuer,
 		"aud":   e.audience,
 		"sub":   "user-x",
-		"owner": "liquidity",
+		"owner": "hanzo",
 		"iat":   time.Now().Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
 	token.Header["kid"] = e.kid
 	tok, _ := token.SignedString(e.priv)
 
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/liquidity/secrets/a/b?env=dev", tok, nil)
+	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("F2 missing exp: want 401, got %d", resp.StatusCode)
 	}
@@ -330,17 +330,17 @@ func TestJWT_F1_DevIssuerOnMain_Rejected(t *testing.T) {
 	defer e.cleanup()
 
 	// Configure KMS to expect MAIN issuer — but sign a token with DEV issuer.
-	t.Setenv("KMS_EXPECTED_ISSUER", "https://iam.main.satschel.com")
+	t.Setenv("KMS_EXPECTED_ISSUER", "https://iam.hanzo.id")
 	reloadAuthConfigForTest()
 
 	tok := e.mintSigned(jwt.MapClaims{
-		"iss":   "https://iam.dev.satschel.com",
+		"iss":   "https://iam.dev.hanzo.id",
 		"sub":   "user-x",
-		"owner": "liquidity",
+		"owner": "hanzo",
 		"aud":   "kms",
 	})
 
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/liquidity/secrets/a/b?env=dev", tok, nil)
+	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("F1 dev iss on main: want 401, got %d", resp.StatusCode)
 	}
@@ -353,10 +353,10 @@ func TestJWT_F1_AttackerIssuer_Rejected(t *testing.T) {
 	tok := e.mintSigned(jwt.MapClaims{
 		"iss":   "https://attacker.evil",
 		"sub":   "root",
-		"owner": "liquidity",
+		"owner": "hanzo",
 	})
 
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/liquidity/secrets/a/b?env=dev", tok, nil)
+	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("F1 attacker iss: want 401, got %d", resp.StatusCode)
 	}
@@ -370,14 +370,14 @@ func TestJWT_F1_MissingIss_Rejected(t *testing.T) {
 	claims := jwt.MapClaims{
 		"aud":   e.audience,
 		"sub":   "user-x",
-		"owner": "liquidity",
+		"owner": "hanzo",
 		"exp":   time.Now().Add(time.Hour).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
 	token.Header["kid"] = e.kid
 	tok, _ := token.SignedString(e.priv)
 
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/liquidity/secrets/a/b?env=dev", tok, nil)
+	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("F1 missing iss: want 401, got %d", resp.StatusCode)
 	}
@@ -391,11 +391,11 @@ func TestJWT_F4_WrongAudience_Rejected(t *testing.T) {
 
 	tok := e.mintSigned(jwt.MapClaims{
 		"sub":   "user-x",
-		"owner": "liquidity",
+		"owner": "hanzo",
 		"aud":   "ats", // wrong — expected "kms"
 	})
 
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/liquidity/secrets/a/b?env=dev", tok, nil)
+	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("F4 wrong aud: want 401, got %d", resp.StatusCode)
 	}
@@ -409,14 +409,14 @@ func TestJWT_F4_MissingAudience_Rejected(t *testing.T) {
 	claims := jwt.MapClaims{
 		"iss":   e.issuer,
 		"sub":   "user-x",
-		"owner": "liquidity",
+		"owner": "hanzo",
 		"exp":   time.Now().Add(time.Hour).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
 	token.Header["kid"] = e.kid
 	tok, _ := token.SignedString(e.priv)
 
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/liquidity/secrets/a/b?env=dev", tok, nil)
+	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("F4 missing aud: want 401, got %d", resp.StatusCode)
 	}
@@ -432,16 +432,16 @@ func TestJWT_F4_MultiAudience_Accepted(t *testing.T) {
 	e := newJWTTestEnv(t)
 	defer e.cleanup()
 
-	t.Setenv("KMS_EXPECTED_AUDIENCE", "liquidity-bd, liquidity-app ,kms")
+	t.Setenv("KMS_EXPECTED_AUDIENCE", "hanzo-app, hanzo-app ,kms")
 	reloadAuthConfigForTest()
 
-	for _, aud := range []string{"liquidity-bd", "liquidity-app", "kms"} {
+	for _, aud := range []string{"hanzo-app", "hanzo-app", "kms"} {
 		tok := e.mintSigned(jwt.MapClaims{
 			"sub":   "user-x",
-			"owner": "liquidity",
+			"owner": "hanzo",
 			"aud":   aud,
 		})
-		resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/liquidity/secrets/a/b?env=dev", tok, nil)
+		resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
 		// Not-found or ok — auth passed. The key check is that 401 is not returned.
 		if resp.StatusCode == http.StatusUnauthorized {
 			t.Fatalf("aud=%q rejected but should be in expected list", aud)
@@ -451,12 +451,12 @@ func TestJWT_F4_MultiAudience_Accepted(t *testing.T) {
 	// Audience outside the list is still rejected.
 	tok := e.mintSigned(jwt.MapClaims{
 		"sub":   "user-x",
-		"owner": "liquidity",
-		"aud":   "liquidity-ats",
+		"owner": "hanzo",
+		"aud":   "hanzo-ats",
 	})
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/liquidity/secrets/a/b?env=dev", tok, nil)
+	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
-		t.Fatalf("aud=liquidity-ats: want 401, got %d", resp.StatusCode)
+		t.Fatalf("aud=hanzo-ats: want 401, got %d", resp.StatusCode)
 	}
 }
 
@@ -547,20 +547,20 @@ func TestJWT_ValidRS256_Accepted(t *testing.T) {
 
 	tok := e.mintSigned(jwt.MapClaims{
 		"sub":   "user-1",
-		"owner": "liquidity",
+		"owner": "hanzo",
 	})
 
 	body, _ := json.Marshal(map[string]string{
 		"path": "providers/alpaca/dev", "name": "api_key",
 		"env": "dev", "value": "PK_LIVE",
 	})
-	resp := mustReq(t, "POST", e.srv.URL+"/v1/kms/orgs/liquidity/secrets", tok, body)
+	resp := mustReq(t, "POST", e.srv.URL+"/v1/kms/orgs/hanzo/secrets", tok, body)
 	if resp.StatusCode != http.StatusCreated {
 		t.Fatalf("valid JWT POST: want 201, got %d", resp.StatusCode)
 	}
 
 	resp = mustReq(t, "GET",
-		e.srv.URL+"/v1/kms/orgs/liquidity/secrets/providers/alpaca/dev/api_key?env=dev",
+		e.srv.URL+"/v1/kms/orgs/hanzo/secrets/providers/alpaca/dev/api_key?env=dev",
 		tok, nil)
 	if resp.StatusCode != http.StatusOK {
 		t.Fatalf("valid JWT GET: want 200, got %d", resp.StatusCode)
@@ -596,14 +596,14 @@ func TestJWT_WrongSigningKey_Rejected(t *testing.T) {
 	wrongKey, _ := rsa.GenerateKey(rand.Reader, 2048)
 	claims := jwt.MapClaims{
 		"iss": e.issuer, "aud": e.audience,
-		"sub": "u", "owner": "liquidity",
+		"sub": "u", "owner": "hanzo",
 		"exp": time.Now().Add(time.Hour).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
 	token.Header["kid"] = e.kid
 	tok, _ := token.SignedString(wrongKey)
 
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/liquidity/secrets/a/b?env=dev", tok, nil)
+	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("wrong signing key: want 401, got %d", resp.StatusCode)
 	}
@@ -615,14 +615,14 @@ func TestJWT_UnknownKid_Rejected(t *testing.T) {
 
 	claims := jwt.MapClaims{
 		"iss": e.issuer, "aud": e.audience,
-		"sub": "u", "owner": "liquidity",
+		"sub": "u", "owner": "hanzo",
 		"exp": time.Now().Add(time.Hour).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
 	token.Header["kid"] = "unknown-kid-zzz" // not in JWKS
 	tok, _ := token.SignedString(e.priv)
 
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/liquidity/secrets/a/b?env=dev", tok, nil)
+	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("unknown kid: want 401, got %d", resp.StatusCode)
 	}
@@ -634,14 +634,14 @@ func TestJWT_MissingKid_Rejected(t *testing.T) {
 
 	claims := jwt.MapClaims{
 		"iss": e.issuer, "aud": e.audience,
-		"sub": "u", "owner": "liquidity",
+		"sub": "u", "owner": "hanzo",
 		"exp": time.Now().Add(time.Hour).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
 	// explicitly no kid
 	tok, _ := token.SignedString(e.priv)
 
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/liquidity/secrets/a/b?env=dev", tok, nil)
+	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("missing kid: want 401, got %d", resp.StatusCode)
 	}
@@ -702,7 +702,7 @@ func TestJWT_F5_KeyRoutes_RequireAuth(t *testing.T) {
 	}
 
 	// Regular tenant → 403 (needs admin role).
-	tenant := e.mintSigned(jwt.MapClaims{"sub": "usr", "owner": "liquidity"})
+	tenant := e.mintSigned(jwt.MapClaims{"sub": "usr", "owner": "hanzo"})
 	resp = mustReq(t, "GET", srv.URL+"/v1/kms/keys", tenant, nil)
 	if resp.StatusCode != http.StatusForbidden {
 		t.Fatalf("F5 keys tenant-role: want 403, got %d", resp.StatusCode)
@@ -718,7 +718,7 @@ func TestJWT_ErrorBodyContract(t *testing.T) {
 	evil := mintAlgNone(map[string]any{
 		"iss": "https://attacker.evil", "owner": "admin", "sub": "root",
 	}, "")
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/liquidity/secrets/a/b?env=dev", evil, nil)
+	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", evil, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("status: want 401, got %d", resp.StatusCode)
 	}

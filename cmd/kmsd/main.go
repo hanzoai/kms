@@ -1,11 +1,11 @@
-// Liquidity KMS — thin wrapper around github.com/luxfi/kms.
+// Hanzo KMS — thin wrapper around github.com/luxfi/kms.
 //
-// This binary embeds the canonical Lux KMS server with Liquidity defaults:
+// This binary embeds the canonical luxfi/kms server with Hanzo defaults:
 //
 //	HTTP listen        :8443           (lux default :8080)
 //	ZAP secrets server :9653           (lux default :9652)
-//	Data dir           /data/kms       (PVC-backed)
-//	IAM endpoint       in-cluster IAM  (env override IAM_ENDPOINT)
+//	Data dir           /data/hanzo-kms (PVC-backed)
+//	IAM endpoint       https://hanzo.id (env override IAM_ENDPOINT)
 //	Org slug claim     "owner"         (Hanzo IAM convention)
 //
 // Routes mirror lux/kms exactly — one canonical path per operation.
@@ -148,9 +148,9 @@ func loadConfig() config {
 	return config{
 		HTTPListen:  envOr("KMS_LISTEN", ":8443"),
 		ZAPPort:     zapPort,
-		DataDir:     envOr("KMS_DATA_DIR", "/data/kms"),
-		NodeID:      envOr("KMS_NODE_ID", "kms-0"),
-		IAMEndpoint: envOr("IAM_ENDPOINT", "http://iam.liquidity.svc.cluster.local:8000"),
+		DataDir:     envOr("KMS_DATA_DIR", "/data/hanzo-kms"),
+		NodeID:      envOr("KMS_NODE_ID", "hanzo-kms-0"),
+		IAMEndpoint: envOr("IAM_ENDPOINT", "https://hanzo.id"),
 		MPCAddr:     envOr("MPC_ADDR", ""),
 		MPCVaultID:  envOr("MPC_VAULT_ID", ""),
 		Env:         envOr("KMS_ENV", "dev"),
@@ -887,7 +887,7 @@ func startReplicator(db *badger.DB, nodeID string) *badger.Replicator {
 	}
 	cfg := badger.ReplicatorConfig{
 		Endpoint:  endpoint,
-		Bucket:    envOr("REPLICATE_S3_BUCKET", "liquidity-kms-backups"),
+		Bucket:    envOr("REPLICATE_S3_BUCKET", "hanzo-kms-backups"),
 		Region:    envOr("REPLICATE_S3_REGION", "us-central1"),
 		AccessKey: os.Getenv("REPLICATE_S3_ACCESS_KEY"),
 		SecretKey: os.Getenv("REPLICATE_S3_SECRET_KEY"),

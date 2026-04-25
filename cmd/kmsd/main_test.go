@@ -68,7 +68,7 @@ func TestSecretRoundTrip_Canonical(t *testing.T) {
 	srv, cleanup := newTestServer(t)
 	defer cleanup()
 
-	tok := mintToken(t, "liquidity", "user-1")
+	tok := mintToken(t, "hanzo", "user-1")
 
 	body, _ := json.Marshal(map[string]string{
 		"path":  "providers/alpaca/dev",
@@ -76,7 +76,7 @@ func TestSecretRoundTrip_Canonical(t *testing.T) {
 		"env":   "dev",
 		"value": "PK_LIVE",
 	})
-	req, _ := http.NewRequest("POST", srv.URL+"/v1/kms/orgs/liquidity/secrets", bytes.NewReader(body))
+	req, _ := http.NewRequest("POST", srv.URL+"/v1/kms/orgs/hanzo/secrets", bytes.NewReader(body))
 	req.Header.Set("Authorization", "Bearer "+tok)
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := http.DefaultClient.Do(req)
@@ -88,7 +88,7 @@ func TestSecretRoundTrip_Canonical(t *testing.T) {
 	}
 
 	req, _ = http.NewRequest("GET",
-		srv.URL+"/v1/kms/orgs/liquidity/secrets/providers/alpaca/dev/api_key?env=dev", nil)
+		srv.URL+"/v1/kms/orgs/hanzo/secrets/providers/alpaca/dev/api_key?env=dev", nil)
 	req.Header.Set("Authorization", "Bearer "+tok)
 	resp, err = http.DefaultClient.Do(req)
 	if err != nil {
@@ -108,7 +108,7 @@ func TestUnauthorized(t *testing.T) {
 	srv, cleanup := newTestServer(t)
 	defer cleanup()
 
-	resp, _ := http.Get(srv.URL + "/v1/kms/orgs/liquidity/secrets/foo/bar")
+	resp, _ := http.Get(srv.URL + "/v1/kms/orgs/hanzo/secrets/foo/bar")
 	if resp.StatusCode != 401 {
 		t.Fatalf("want 401, got %d", resp.StatusCode)
 	}
@@ -117,12 +117,12 @@ func TestUnauthorized(t *testing.T) {
 func TestStripIdentityHeaders(t *testing.T) {
 	srv, cleanup := newTestServer(t)
 	defer cleanup()
-	tok := mintToken(t, "liquidity", "user-1")
+	tok := mintToken(t, "hanzo", "user-1")
 
 	body, _ := json.Marshal(map[string]string{
 		"path": "x", "name": "y", "env": "dev", "value": "v",
 	})
-	req, _ := http.NewRequest("POST", srv.URL+"/v1/kms/orgs/liquidity/secrets", bytes.NewReader(body))
+	req, _ := http.NewRequest("POST", srv.URL+"/v1/kms/orgs/hanzo/secrets", bytes.NewReader(body))
 	req.Header.Set("Authorization", "Bearer "+tok)
 	// Canonical 3 — stripped.
 	req.Header.Set("X-User-Id", "attacker")
@@ -204,7 +204,7 @@ func TestRed2_EnvVarReadRequiresAdmin(t *testing.T) {
 	t.Setenv("KMS_TEST_DEPLOYER_KEY", "0xDEADBEEF")
 
 	// Tenant token — must be denied.
-	tok := mintToken(t, "liquidity", "user-1")
+	tok := mintToken(t, "hanzo", "user-1")
 	req, _ := http.NewRequest("GET", srv.URL+"/v1/kms/secrets/KMS_TEST_DEPLOYER_KEY", nil)
 	req.Header.Set("Authorization", "Bearer "+tok)
 	resp, _ := http.DefaultClient.Do(req)
@@ -241,13 +241,13 @@ func TestRed2_EnvVarReadRequiresAdmin(t *testing.T) {
 func TestRed3_PathTraversalBlocked(t *testing.T) {
 	srv, cleanup := newTestServer(t)
 	defer cleanup()
-	tok := mintToken(t, "liquidity", "user-1")
+	tok := mintToken(t, "hanzo", "user-1")
 
 	cases := []string{
-		"/v1/kms/orgs/liquidity/secrets/../etc/passwd",
-		"/v1/kms/orgs/liquidity/secrets/foo/..",
-		"/v1/kms/orgs/liquidity/secrets/foo//bar",
-		"/v1/kms/orgs/liquidity/secrets/foo/bar%00",
+		"/v1/kms/orgs/hanzo/secrets/../etc/passwd",
+		"/v1/kms/orgs/hanzo/secrets/foo/..",
+		"/v1/kms/orgs/hanzo/secrets/foo//bar",
+		"/v1/kms/orgs/hanzo/secrets/foo/bar%00",
 	}
 	for _, p := range cases {
 		req, _ := http.NewRequest("GET", srv.URL+p, nil)
@@ -268,10 +268,10 @@ func TestRed3_PathTraversalBlocked(t *testing.T) {
 func TestRed4_MethodAllowlist(t *testing.T) {
 	srv, cleanup := newTestServer(t)
 	defer cleanup()
-	tok := mintToken(t, "liquidity", "user-1")
+	tok := mintToken(t, "hanzo", "user-1")
 
 	for _, m := range []string{http.MethodTrace, http.MethodOptions} {
-		req, _ := http.NewRequest(m, srv.URL+"/v1/kms/orgs/liquidity/secrets/x/y", nil)
+		req, _ := http.NewRequest(m, srv.URL+"/v1/kms/orgs/hanzo/secrets/x/y", nil)
 		req.Header.Set("Authorization", "Bearer "+tok)
 		resp, _ := http.DefaultClient.Do(req)
 		if resp.StatusCode != http.StatusMethodNotAllowed {
@@ -284,11 +284,11 @@ func TestRed4_MethodAllowlist(t *testing.T) {
 func TestRed7_PostBodyCap(t *testing.T) {
 	srv, cleanup := newTestServer(t)
 	defer cleanup()
-	tok := mintToken(t, "liquidity", "user-1")
+	tok := mintToken(t, "hanzo", "user-1")
 
 	// 2 MiB body — exceeds 1 MiB cap.
 	huge := bytes.Repeat([]byte("A"), (maxBodyBytes*2)+8)
-	req, _ := http.NewRequest("POST", srv.URL+"/v1/kms/orgs/liquidity/secrets", bytes.NewReader(huge))
+	req, _ := http.NewRequest("POST", srv.URL+"/v1/kms/orgs/hanzo/secrets", bytes.NewReader(huge))
 	req.Header.Set("Authorization", "Bearer "+tok)
 	req.Header.Set("Content-Type", "application/json")
 	resp, _ := http.DefaultClient.Do(req)

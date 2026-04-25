@@ -3,12 +3,12 @@
 // Usage:
 //
 //	kms status [--addr http://localhost:8443]
-//	kms put <path/name> <value> [--org liquidity]
-//	kms put <path/name> --stdin [--org liquidity]      # read value from stdin
-//	kms get <path/name> [--org liquidity]
-//	kms list [prefix] [--org liquidity]
-//	kms rotate <path/name> <new-value> [--org liquidity]
-//	kms rotate <path/name> --stdin [--org liquidity]   # read value from stdin
+//	kms put <path/name> <value> [--org hanzo]
+//	kms put <path/name> --stdin [--org hanzo]      # read value from stdin
+//	kms get <path/name> [--org hanzo]
+//	kms list [prefix] [--org hanzo]
+//	kms rotate <path/name> <new-value> [--org hanzo]
+//	kms rotate <path/name> --stdin [--org hanzo]   # read value from stdin
 package main
 
 import (
@@ -34,7 +34,7 @@ func main() {
 	iamAddr := envOr("IAM_ADDR", "http://localhost:8000")
 	clientID := envOr("KMS_CLIENT_ID", "")
 	clientSecret := envOr("KMS_CLIENT_SECRET", "")
-	org := envOr("KMS_ORG", "liquidity")
+	org := envOr("KMS_ORG", "hanzo")
 
 	// Parse global flags from any position.
 	args := os.Args[1:]
@@ -287,7 +287,7 @@ Global Flags:
   --iam-addr        IAM server address (default: $IAM_ADDR or http://localhost:8000)
   --client-id       IAM client ID (default: $KMS_CLIENT_ID)
   --client-secret   IAM client secret (default: $KMS_CLIENT_SECRET)
-  --org             Organization slug (default: $KMS_ORG or liquidity)
+  --org             Organization slug (default: $KMS_ORG or hanzo)
   --stdin           put/rotate: read value from stdin (keeps it off argv, shell
                     history, ps, /proc/<pid>/cmdline). Cannot combine with a
                     positional <value>.

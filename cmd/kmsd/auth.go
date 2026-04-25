@@ -1,7 +1,7 @@
 // JWT verification — full RFC 7519 enforcement: signature, alg allowlist,
 // iss, aud, exp. Replaces the unverified-payload parsing that Red
 // demonstrated fully bypassed with a 3-line curl + alg=none token on
-// kms.main.satschel.com on 2026-04-21.
+// 2026-04-21.
 //
 // Contract (by design, no hidden branches):
 //
@@ -261,8 +261,8 @@ func verifyJWT(authHeader string) (jwtClaims, error) {
 // checkAudience enforces that at least one audience in the JWT `aud` claim
 // matches one of the expected audiences configured for this KMS instance.
 //
-// `expected` may be a single audience ("liquidity-bd") or a comma-separated
-// list ("liquidity-bd,liquidity-app,kms") so that one KMS can serve multiple
+// `expected` may be a single audience ("hanzo-app") or a comma-separated
+// list ("hanzo-app,console,paas,kms") so that one KMS can serve multiple
 // client services without re-patching the pod on every new consumer.
 func checkAudience(mc jwt.MapClaims, expected string) error {
 	raw, ok := mc["aud"]

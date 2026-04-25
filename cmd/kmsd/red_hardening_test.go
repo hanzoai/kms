@@ -84,13 +84,13 @@ func TestRed3_PatchVersionReplayProtection(t *testing.T) {
 	srv, _, cleanup := newTestServerWithAudit(t)
 	defer cleanup()
 
-	tok := mintTokenWithIss(t, sharedIssuer, "liquidity", "usr_zatsch")
+	tok := mintTokenWithIss(t, sharedIssuer, "hanzo", "usr_zatsch")
 
 	// Initial POST → version 1.
 	body, _ := json.Marshal(map[string]string{
 		"path": "test/replay", "name": "x", "env": "dev", "value": "v1",
 	})
-	req, _ := http.NewRequest("POST", srv.URL+"/v1/kms/orgs/liquidity/secrets", bytes.NewReader(body))
+	req, _ := http.NewRequest("POST", srv.URL+"/v1/kms/orgs/hanzo/secrets", bytes.NewReader(body))
 	req.Header.Set("Authorization", "Bearer "+tok)
 	resp, _ := http.DefaultClient.Do(req)
 	if resp.StatusCode != 201 {
@@ -105,7 +105,7 @@ func TestRed3_PatchVersionReplayProtection(t *testing.T) {
 	// PATCH without version → 428 Precondition Required.
 	patchBody, _ := json.Marshal(map[string]string{"value": "v2", "env": "dev"})
 	req, _ = http.NewRequest("PATCH",
-		srv.URL+"/v1/kms/orgs/liquidity/secrets/test/replay/x",
+		srv.URL+"/v1/kms/orgs/hanzo/secrets/test/replay/x",
 		bytes.NewReader(patchBody))
 	req.Header.Set("Authorization", "Bearer "+tok)
 	resp, _ = http.DefaultClient.Do(req)
@@ -116,7 +116,7 @@ func TestRed3_PatchVersionReplayProtection(t *testing.T) {
 	// PATCH with wrong version → 409 Conflict.
 	patchBody, _ = json.Marshal(map[string]any{"value": "v2", "version": 99, "env": "dev"})
 	req, _ = http.NewRequest("PATCH",
-		srv.URL+"/v1/kms/orgs/liquidity/secrets/test/replay/x",
+		srv.URL+"/v1/kms/orgs/hanzo/secrets/test/replay/x",
 		bytes.NewReader(patchBody))
 	req.Header.Set("Authorization", "Bearer "+tok)
 	resp, _ = http.DefaultClient.Do(req)
@@ -127,7 +127,7 @@ func TestRed3_PatchVersionReplayProtection(t *testing.T) {
 	// PATCH with correct version → 200, version becomes 2.
 	patchBody, _ = json.Marshal(map[string]any{"value": "v2", "version": 1, "env": "dev"})
 	req, _ = http.NewRequest("PATCH",
-		srv.URL+"/v1/kms/orgs/liquidity/secrets/test/replay/x",
+		srv.URL+"/v1/kms/orgs/hanzo/secrets/test/replay/x",
 		bytes.NewReader(patchBody))
 	req.Header.Set("Authorization", "Bearer "+tok)
 	resp, _ = http.DefaultClient.Do(req)
@@ -143,7 +143,7 @@ func TestRed3_PatchVersionReplayProtection(t *testing.T) {
 	// Replay original PATCH (version=1) AFTER rotation → 409.
 	patchBody, _ = json.Marshal(map[string]any{"value": "v2", "version": 1, "env": "dev"})
 	req, _ = http.NewRequest("PATCH",
-		srv.URL+"/v1/kms/orgs/liquidity/secrets/test/replay/x",
+		srv.URL+"/v1/kms/orgs/hanzo/secrets/test/replay/x",
 		bytes.NewReader(patchBody))
 	req.Header.Set("Authorization", "Bearer "+tok)
 	resp, _ = http.DefaultClient.Do(req)
@@ -154,7 +154,7 @@ func TestRed3_PatchVersionReplayProtection(t *testing.T) {
 	// If-Match header instead of body → also works.
 	patchBody, _ = json.Marshal(map[string]string{"value": "v3", "env": "dev"})
 	req, _ = http.NewRequest("PATCH",
-		srv.URL+"/v1/kms/orgs/liquidity/secrets/test/replay/x",
+		srv.URL+"/v1/kms/orgs/hanzo/secrets/test/replay/x",
 		bytes.NewReader(patchBody))
 	req.Header.Set("Authorization", "Bearer "+tok)
 	req.Header.Set("If-Match", "2")
@@ -166,7 +166,7 @@ func TestRed3_PatchVersionReplayProtection(t *testing.T) {
 	// If-Match and body.version disagree → 400.
 	patchBody, _ = json.Marshal(map[string]any{"value": "v4", "version": 3, "env": "dev"})
 	req, _ = http.NewRequest("PATCH",
-		srv.URL+"/v1/kms/orgs/liquidity/secrets/test/replay/x",
+		srv.URL+"/v1/kms/orgs/hanzo/secrets/test/replay/x",
 		bytes.NewReader(patchBody))
 	req.Header.Set("Authorization", "Bearer "+tok)
 	req.Header.Set("If-Match", "99")
@@ -181,10 +181,10 @@ func TestRed3_PatchRequiresExistingSecret(t *testing.T) {
 	srv, _, cleanup := newTestServerWithAudit(t)
 	defer cleanup()
 
-	tok := mintTokenWithIss(t, sharedIssuer, "liquidity", "usr_zatsch")
+	tok := mintTokenWithIss(t, sharedIssuer, "hanzo", "usr_zatsch")
 	body, _ := json.Marshal(map[string]any{"value": "created-via-patch", "version": 0, "env": "dev"})
 	req, _ := http.NewRequest("PATCH",
-		srv.URL+"/v1/kms/orgs/liquidity/secrets/nonexistent/key",
+		srv.URL+"/v1/kms/orgs/hanzo/secrets/nonexistent/key",
 		bytes.NewReader(body))
 	req.Header.Set("Authorization", "Bearer "+tok)
 	resp, _ := http.DefaultClient.Do(req)
@@ -199,12 +199,12 @@ func TestRed3_PostUpsertBumpsVersion(t *testing.T) {
 	srv, _, cleanup := newTestServerWithAudit(t)
 	defer cleanup()
 
-	tok := mintTokenWithIss(t, sharedIssuer, "liquidity", "usr_zatsch")
+	tok := mintTokenWithIss(t, sharedIssuer, "hanzo", "usr_zatsch")
 	for i := 1; i <= 3; i++ {
 		body, _ := json.Marshal(map[string]string{
 			"path": "seq", "name": "y", "env": "dev", "value": fmt.Sprintf("v%d", i),
 		})
-		req, _ := http.NewRequest("POST", srv.URL+"/v1/kms/orgs/liquidity/secrets", bytes.NewReader(body))
+		req, _ := http.NewRequest("POST", srv.URL+"/v1/kms/orgs/hanzo/secrets", bytes.NewReader(body))
 		req.Header.Set("Authorization", "Bearer "+tok)
 		resp, _ := http.DefaultClient.Do(req)
 		if resp.StatusCode != 201 {
@@ -252,11 +252,11 @@ func TestRed12_AuditTrail_CompositeActorID(t *testing.T) {
 	defer cleanup()
 
 	// Clean IAM token → 201 Created, audit row carries verified iss:sub.
-	tok := mintTokenWithIss(t, sharedIssuer, "liquidity", "usr_zatsch")
+	tok := mintTokenWithIss(t, sharedIssuer, "hanzo", "usr_zatsch")
 	body, _ := json.Marshal(map[string]string{
 		"path": "audit/test", "name": "k", "env": "dev", "value": "redacted",
 	})
-	req, _ := http.NewRequest("POST", srv.URL+"/v1/kms/orgs/liquidity/secrets", bytes.NewReader(body))
+	req, _ := http.NewRequest("POST", srv.URL+"/v1/kms/orgs/hanzo/secrets", bytes.NewReader(body))
 	req.Header.Set("Authorization", "Bearer "+tok)
 	http.DefaultClient.Do(req)
 
@@ -264,8 +264,8 @@ func TestRed12_AuditTrail_CompositeActorID(t *testing.T) {
 	// Red Part 5 F1: cross-env issuer MUST NOT produce a handler-level
 	// success. The handler-level audit stays empty (":anonymous") because
 	// authorize() returns zero claims on failure.
-	tokBad := mintTokenWithIss(t, "https://rogue.id", "liquidity", "admin")
-	req, _ = http.NewRequest("POST", srv.URL+"/v1/kms/orgs/liquidity/secrets", bytes.NewReader(body))
+	tokBad := mintTokenWithIss(t, "https://rogue.id", "hanzo", "admin")
+	req, _ = http.NewRequest("POST", srv.URL+"/v1/kms/orgs/hanzo/secrets", bytes.NewReader(body))
 	req.Header.Set("Authorization", "Bearer "+tokBad)
 	rogueResp, _ := http.DefaultClient.Do(req)
 	if rogueResp.StatusCode != http.StatusUnauthorized {
@@ -325,12 +325,12 @@ func TestRed12_AuditActorIDNotJustSub(t *testing.T) {
 	srv, auditPath, cleanup := newTestServerWithAudit(t)
 	defer cleanup()
 
-	tok := mintTokenWithIss(t, sharedIssuer, "liquidity", "usr_zatsch")
+	tok := mintTokenWithIss(t, sharedIssuer, "hanzo", "usr_zatsch")
 	for range []int{1, 2, 3} {
 		body, _ := json.Marshal(map[string]string{
 			"path": "audit/trail", "name": "w", "env": "dev", "value": "x",
 		})
-		req, _ := http.NewRequest("POST", srv.URL+"/v1/kms/orgs/liquidity/secrets", bytes.NewReader(body))
+		req, _ := http.NewRequest("POST", srv.URL+"/v1/kms/orgs/hanzo/secrets", bytes.NewReader(body))
 		req.Header.Set("Authorization", "Bearer "+tok)
 		http.DefaultClient.Do(req)
 	}

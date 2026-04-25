@@ -27,7 +27,7 @@ var (
 	sharedPriv     *rsa.PrivateKey
 	sharedKid      = "kms-shared-test-kid"
 	sharedJWKS     *httptest.Server
-	sharedIssuer   = "https://iam.test.satschel.com"
+	sharedIssuer   = "https://iam.test.hanzo.id"
 	sharedAudience = "kms"
 )
 

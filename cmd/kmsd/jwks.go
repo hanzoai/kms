@@ -1,8 +1,8 @@
 // JWKS cache — per-env RSA public key resolver for JWT verification.
 //
 // One cache per process. TTL 15min, serialized refresh, fail-closed on
-// empty/bad JWKS. Follows the same pattern as liquidity/ats/auth.go so
-// the two services behave identically when pointed at the same IAM.
+// empty/bad JWKS. Same primitives every Hanzo service uses to verify
+// IAM-issued tokens — keep behaviour identical across the platform.
 package main
 
 import (
