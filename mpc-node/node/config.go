@@ -91,10 +91,10 @@ type Config struct {
 	// TotalNodes is the total number of MPC nodes (n). Required for TierMPC and above.
 	TotalNodes int
 
-	// ListenAddr is the gRPC listen address (e.g., ":9651").
+	// ListenAddr is the gRPC listen address (e.g., ":9999").
 	ListenAddr string
 
-	// Peers is the list of peer addresses (e.g., ["node2:9651", "node3:9651"]).
+	// Peers is the list of peer addresses (e.g., ["node2:9999", "node3:9999"]).
 	Peers []string
 
 	// Compliance configures the regulatory compliance module.

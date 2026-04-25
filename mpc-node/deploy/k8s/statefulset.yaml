@@ -11,8 +11,8 @@ spec:
     app: kms-mpc
   ports:
     - name: grpc
-      port: 9651
-      targetPort: 9651
+      port: 9999
+      targetPort: 9999
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -42,8 +42,8 @@ spec:
           image: ghcr.io/hanzoai/kms-mpc:latest
           args:
             - serve
-            - --addr=:9651
-            - --peers=kms-mpc-0.kms-mpc.hanzo.svc.cluster.local:9651,kms-mpc-1.kms-mpc.hanzo.svc.cluster.local:9651,kms-mpc-2.kms-mpc.hanzo.svc.cluster.local:9651
+            - --addr=:9999
+            - --peers=kms-mpc-0.kms-mpc.hanzo.svc.cluster.local:9999,kms-mpc-1.kms-mpc.hanzo.svc.cluster.local:9999,kms-mpc-2.kms-mpc.hanzo.svc.cluster.local:9999
           env:
             - name: MPC_NODE_ID
               valueFrom:
@@ -57,10 +57,10 @@ spec:
                   name: kms-mpc-encryption-key
                   key: encryption-key
             - name: MPC_LISTEN_ADDR
-              value: ":9651"
+              value: ":9999"
           ports:
             - name: grpc
-              containerPort: 9651
+              containerPort: 9999
           volumeMounts:
             - name: data
               mountPath: /data/kms-mpc
@@ -73,12 +73,12 @@ spec:
               memory: 2Gi
           readinessProbe:
             grpc:
-              port: 9651
+              port: 9999
             initialDelaySeconds: 5
             periodSeconds: 10
           livenessProbe:
             grpc:
-              port: 9651
+              port: 9999
             initialDelaySeconds: 15
             periodSeconds: 20
   volumeClaimTemplates:

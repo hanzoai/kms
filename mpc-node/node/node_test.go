@@ -27,7 +27,7 @@ func testConfigWithTier(t *testing.T, tier KMSTier) *Config {
 		EncryptionKey: key,
 		Tier:          tier,
 		ListenAddr:    ":0",
-		Peers:         []string{"peer-1:9651", "peer-2:9651"},
+		Peers:         []string{"peer-1:9999", "peer-2:9999"},
 	}
 	// Set tier-appropriate defaults.
 	switch tier {
@@ -108,7 +108,7 @@ func TestConfigValidation(t *testing.T) {
 				Tier:          TierMPC,
 				Threshold:     2,
 				TotalNodes:    3,
-				ListenAddr:    ":9651",
+				ListenAddr:    ":9999",
 			}
 			tt.modify(cfg)
 			err := cfg.Validate()
