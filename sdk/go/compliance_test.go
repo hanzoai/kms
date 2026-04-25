@@ -762,7 +762,7 @@ func TestRevokeBreakGlass_ValidationErrors(t *testing.T) {
 
 func TestConfigWithCompliance(t *testing.T) {
 	cfg := Config{
-		Nodes:     []string{"https://node1:9651"},
+		Nodes:     []string{"https://node1:9999"},
 		OrgSlug:   "test-org",
 		Threshold: 1,
 		Compliance: &ComplianceConfig{
@@ -785,7 +785,7 @@ func TestConfigWithCompliance(t *testing.T) {
 
 func TestConfigWithoutCompliance(t *testing.T) {
 	cfg := Config{
-		Nodes:     []string{"https://node1:9651"},
+		Nodes:     []string{"https://node1:9999"},
 		OrgSlug:   "test-org",
 		Threshold: 1,
 	}

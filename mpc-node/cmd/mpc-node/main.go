@@ -7,7 +7,7 @@
 //
 //	mpc-node bootstrap --org <slug> --threshold 2 --nodes 3 --passphrase <pass>
 //	mpc-node join --org <slug> --shard-file <path>
-//	mpc-node serve --addr :9651 --peers node2:9651,node3:9651
+//	mpc-node serve --addr :9999 --peers node2:9999,node3:9999
 //	mpc-node sync --org <slug>
 //	mpc-node status
 package main
@@ -120,7 +120,7 @@ func cmdBootstrap(args []string) {
 		os.Exit(1)
 	}
 
-	cfg, err := makeConfig(*nodeID, *dataDir, *encKeyHex, *tierStr, *threshold, *totalNodes, ":9651", nil)
+	cfg, err := makeConfig(*nodeID, *dataDir, *encKeyHex, *tierStr, *threshold, *totalNodes, ":9999", nil)
 	if err != nil {
 		fatal(err)
 	}
@@ -165,7 +165,7 @@ func cmdJoin(args []string) {
 		fatal(fmt.Errorf("decode shard hex: %w", err))
 	}
 
-	cfg, err := makeConfig(*nodeID, *dataDir, *encKeyHex, *tierStr, *threshold, *totalNodes, ":9651", nil)
+	cfg, err := makeConfig(*nodeID, *dataDir, *encKeyHex, *tierStr, *threshold, *totalNodes, ":9999", nil)
 	if err != nil {
 		fatal(err)
 	}
@@ -184,7 +184,7 @@ func cmdJoin(args []string) {
 func cmdServe(args []string) {
 	fs := flag.NewFlagSet("serve", flag.ExitOnError)
 	nodeID, dataDir, encKeyHex, tierStr, threshold, totalNodes := baseFlags(fs)
-	addr := fs.String("addr", envOr("MPC_LISTEN_ADDR", ":9651"), "gRPC listen address")
+	addr := fs.String("addr", envOr("MPC_LISTEN_ADDR", ":9999"), "gRPC listen address")
 	peersStr := fs.String("peers", envOr("MPC_PEERS", ""), "comma-separated peer addresses")
 	fs.Parse(args)
 
@@ -233,7 +233,7 @@ func cmdSync(args []string) {
 		os.Exit(1)
 	}
 
-	cfg, err := makeConfig(*nodeID, *dataDir, *encKeyHex, *tierStr, *threshold, *totalNodes, ":9651", nil)
+	cfg, err := makeConfig(*nodeID, *dataDir, *encKeyHex, *tierStr, *threshold, *totalNodes, ":9999", nil)
 	if err != nil {
 		fatal(err)
 	}
@@ -255,7 +255,7 @@ func cmdStatus(args []string) {
 	nodeID, dataDir, encKeyHex, tierStr, threshold, totalNodes := baseFlags(fs)
 	fs.Parse(args)
 
-	cfg, err := makeConfig(*nodeID, *dataDir, *encKeyHex, *tierStr, *threshold, *totalNodes, ":9651", nil)
+	cfg, err := makeConfig(*nodeID, *dataDir, *encKeyHex, *tierStr, *threshold, *totalNodes, ":9999", nil)
 	if err != nil {
 		fatal(err)
 	}

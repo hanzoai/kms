@@ -36,7 +36,7 @@ assets shipped as static files; they do not affect the API surface.
         ┌───────────────────────────▼──────────────────────────┐
         │                        kmsd                          │
         │  HTTP :8443    (mux: /v1/kms/* only)                 │
-        │  ZAP  :9653    (binary, opcodes 0x0040..0x0043)      │
+        │  ZAP  :9999    (binary, opcodes 0x0040..0x0043)      │
         │                                                       │
         │  cmd/kmsd/main.go      ← wiring + routes              │
         │  cmd/kmsd/auth.go      ← JWT verify (RFC 7519)        │
@@ -164,7 +164,7 @@ per-secret 256-bit DEK, DEK wrapped under master key (AES-256-GCM).
 
 ## ZAP binary transport
 
-Sub-100µs in-cluster secret CRUD on port `KMS_ZAP_PORT` (default 9653).
+Sub-100µs in-cluster secret CRUD on port `KMS_ZAP_PORT` (default 9999).
 Disabled unless `KMS_MASTER_KEY_B64` is set (32 raw bytes b64). Same
 authorization model as HTTP — JWT via the same JWKS, identical role
 checks. Service discovery via mDNS (`_kms._tcp`).
@@ -174,7 +174,7 @@ checks. Service discovery via mDNS (`_kms._tcp`).
 | Var                          | Default                          | Required          |
 |------------------------------|----------------------------------|-------------------|
 | `KMS_LISTEN`                 | `:8443`                          | no                |
-| `KMS_ZAP_PORT` / `KMS_ZAP`   | `9653`                           | no                |
+| `KMS_ZAP_PORT` / `KMS_ZAP`   | `9999`                           | no                |
 | `KMS_DATA_DIR`               | `/data/hanzo-kms`                | no                |
 | `KMS_NODE_ID`                | `hanzo-kms-0`                    | no                |
 | `KMS_ENV`                    | `dev`                            | yes (`prod`/`main`) |

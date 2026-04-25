@@ -13,7 +13,7 @@ import (
 
 func TestNewClient_ValidConfig(t *testing.T) {
 	c, err := NewClient(Config{
-		Nodes:     []string{"https://node1:9651"},
+		Nodes:     []string{"https://node1:9999"},
 		OrgSlug:   "test-org",
 		Threshold: 1,
 	})
@@ -249,7 +249,7 @@ func TestAESGCM_EmptyPlaintext(t *testing.T) {
 
 func TestUnlockLock(t *testing.T) {
 	c, err := NewClient(Config{
-		Nodes:     []string{"https://node1:9651"},
+		Nodes:     []string{"https://node1:9999"},
 		OrgSlug:   "test-org",
 		Threshold: 1,
 	})
@@ -293,7 +293,7 @@ func TestUnlockLock(t *testing.T) {
 
 func TestUnlock_Deterministic(t *testing.T) {
 	cfg := Config{
-		Nodes:     []string{"https://node1:9651"},
+		Nodes:     []string{"https://node1:9999"},
 		OrgSlug:   "deterministic-org",
 		Threshold: 1,
 	}
@@ -331,7 +331,7 @@ func TestEndToEnd_EncryptDecrypt(t *testing.T) {
 	// derive CEK -> encrypt secret -> decrypt secret.
 
 	cfg := Config{
-		Nodes:     []string{"https://node1:9651"},
+		Nodes:     []string{"https://node1:9999"},
 		OrgSlug:   "e2e-org",
 		Threshold: 1,
 	}
