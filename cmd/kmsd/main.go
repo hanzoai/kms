@@ -3,7 +3,7 @@
 // This binary embeds the canonical luxfi/kms server with Hanzo defaults:
 //
 //	HTTP listen        :8443           (lux default :8080)
-//	ZAP secrets server :9653           (lux default :9652)
+//	ZAP secrets server :9999           (lux default :9999)
 //	Data dir           /data/hanzo-kms (PVC-backed)
 //	IAM endpoint       https://hanzo.id (env override IAM_ENDPOINT)
 //	Org slug claim     "owner"         (Hanzo IAM convention)
@@ -144,7 +144,7 @@ type config struct {
 }
 
 func loadConfig() config {
-	zapPort, _ := strconv.Atoi(envOr("KMS_ZAP_PORT", strings.TrimPrefix(envOr("KMS_ZAP", ":9653"), ":")))
+	zapPort, _ := strconv.Atoi(envOr("KMS_ZAP_PORT", strings.TrimPrefix(envOr("KMS_ZAP", ":9999"), ":")))
 	return config{
 		HTTPListen:  envOr("KMS_LISTEN", ":8443"),
 		ZAPPort:     zapPort,
