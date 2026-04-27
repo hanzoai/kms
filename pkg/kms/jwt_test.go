@@ -11,7 +11,7 @@
 //
 // Every case MUST return 401 from the KMS HTTP surface. A 200/201/403/404
 // is a regression and fails the test.
-package main
+package kms
 
 import (
 	"bytes"

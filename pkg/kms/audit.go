@@ -27,7 +27,7 @@
 // single-writer goroutine drains a bounded channel; burst traffic does
 // not back-pressure requests. Dropped entries increment an atomic counter
 // exposed via GET /v1/kms/audit/stats (admin only).
-package main
+package kms
 
 import (
 	"context"

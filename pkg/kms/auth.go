@@ -17,7 +17,7 @@
 // Any failure logs a structured audit line with the failure class
 // (alg_none, expired, wrong_iss, wrong_aud, jwks_miss, sig, missing_sub).
 // No JWT payload claim is echoed back to the caller or into logs.
-package main
+package kms
 
 import (
 	"crypto/rsa"
