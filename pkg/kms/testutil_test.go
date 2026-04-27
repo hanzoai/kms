@@ -5,7 +5,7 @@
 // This replaces the previous mintToken() unsigned-JWT helper. Post-patch
 // the KMS authz layer requires real RS256 signatures; an unsigned token
 // returns 401 (as Red F3 demands).
-package main
+package kms
 
 import (
 	"crypto/rand"

@@ -3,7 +3,7 @@
 //
 // These tests exercise the HTTP surface end-to-end — same wiring as
 // production: strip-identity-headers → method-allowlist → mux → handler.
-package main
+package kms
 
 import (
 	"bytes"
