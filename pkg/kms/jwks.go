@@ -3,7 +3,7 @@
 // One cache per process. TTL 15min, serialized refresh, fail-closed on
 // empty/bad JWKS. Same primitives every Hanzo service uses to verify
 // IAM-issued tokens — keep behaviour identical across the platform.
-package main
+package kms
 
 import (
 	"crypto/rsa"
