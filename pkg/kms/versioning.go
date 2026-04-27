@@ -16,7 +16,7 @@
 // version = 1 on insert and bumps version on upsert — idempotent semantics
 // preserved (no information leak; adversary cannot cause revert because
 // PATCH is the only mutate-with-prior path and it requires version).
-package main
+package kms
 
 import (
 	"encoding/binary"
