@@ -1077,19 +1077,30 @@ func startZAPSecretServer(secStore *store.SecretStore, cfg EmbedConfig) *zap.Nod
 // --- Replicator ---
 
 func startReplicator(db *badger.DB, nodeID string) *badger.Replicator {
-	endpoint := os.Getenv("REPLICATE_S3_ENDPOINT")
-	if endpoint == "" {
+	rawEndpoint := os.Getenv("REPLICATE_S3_ENDPOINT")
+	if rawEndpoint == "" {
 		log.Info("kms.Embed: S3 replication disabled (set REPLICATE_S3_ENDPOINT to enable)")
 		return nil
 	}
+	endpoint, useSSL := normalizeS3Endpoint(rawEndpoint)
+	access := firstNonEmpty(
+		os.Getenv("REPLICATE_S3_ACCESS_KEY_ID"),
+		os.Getenv("AWS_ACCESS_KEY_ID"),
+		os.Getenv("REPLICATE_S3_ACCESS_KEY"),
+	)
+	secret := firstNonEmpty(
+		os.Getenv("REPLICATE_S3_SECRET_ACCESS_KEY"),
+		os.Getenv("AWS_SECRET_ACCESS_KEY"),
+		os.Getenv("REPLICATE_S3_SECRET_KEY"),
+	)
 	cfg := badger.ReplicatorConfig{
 		Endpoint:  endpoint,
 		Bucket:    envOr("REPLICATE_S3_BUCKET", "hanzo-kms-backups"),
 		Region:    envOr("REPLICATE_S3_REGION", "us-central1"),
-		AccessKey: os.Getenv("REPLICATE_S3_ACCESS_KEY"),
-		SecretKey: os.Getenv("REPLICATE_S3_SECRET_KEY"),
-		UseSSL:    !strings.HasPrefix(endpoint, "http://"),
-		Path:      envOr("REPLICATE_PATH", fmt.Sprintf("kms/%s", nodeID)),
+		AccessKey: access,
+		SecretKey: secret,
+		UseSSL:    useSSL,
+		Path:      envOr("REPLICATE_S3_PATH", envOr("REPLICATE_PATH", fmt.Sprintf("kms/%s", nodeID))),
 		Interval:  time.Second,
 	}
 	if os.Getenv("REPLICATE_AGE_RECIPIENT") != "" {
@@ -1134,6 +1145,39 @@ func envOr(key, fallback string) string {
 		return v
 	}
 	return fallback
+}
+
+// firstNonEmpty returns the first argument with non-zero length, or "".
+func firstNonEmpty(values ...string) string {
+	for _, v := range values {
+		if v != "" {
+			return v
+		}
+	}
+	return ""
+}
+
+// normalizeS3Endpoint strips scheme + path from REPLICATE_S3_ENDPOINT so
+// minio.New receives the bare host:port it expects. Returns (host[:port],
+// useSSL). Logs a warning if the operator passed a path-bearing URL —
+// the historical failure mode was silent disablement of replication.
+func normalizeS3Endpoint(raw string) (host string, useSSL bool) {
+	useSSL = !strings.HasPrefix(raw, "http://")
+	if strings.Contains(raw, "://") {
+		u, err := url.Parse(raw)
+		if err != nil || u.Host == "" {
+			log.Warn("kms.Embed: REPLICATE_S3_ENDPOINT failed to parse — using as-is, replication may fail", "endpoint", raw)
+			return raw, useSSL
+		}
+		if u.Path != "" && u.Path != "/" {
+			log.Warn("kms.Embed: REPLICATE_S3_ENDPOINT has a path component — stripping; put the bucket in REPLICATE_S3_BUCKET", "endpoint", raw, "path", u.Path)
+		}
+		if u.RawQuery != "" {
+			log.Warn("kms.Embed: REPLICATE_S3_ENDPOINT has a query string — stripping", "endpoint", raw)
+		}
+		return u.Host, useSSL
+	}
+	return strings.TrimRight(raw, "/"), useSSL
 }
 
 // --- ZapDB logger adapter ---
