@@ -202,6 +202,15 @@ func Embed(ctx context.Context, cfg EmbedConfig) (*Embedded, error) {
 		log.Info("kms.Embed: MPC_VAULT_ID empty — secrets-only mode (no threshold signing)")
 	}
 
+	// Frontend SPA. The Dockerfile builds frontend/ → /app/frontend and
+	// sets KMS_FRONTEND_DIR. When the env var resolves to a directory
+	// containing index.html, register a catch-all handler at "/" that
+	// serves static assets directly and falls back to index.html for
+	// SPA client-side routes (/login, /dashboard, etc.). Anything that
+	// hits an API path (/healthz, /v1/kms/**) takes the more-specific
+	// route registered above; the SPA only fires on the catch-all.
+	registerFrontend(mux)
+
 	em.mux = mux
 	em.handler = methodAllowlist(stripIdentityHeaders(mux))
 
@@ -1199,4 +1208,73 @@ func (zapdbLogger) Infof(format string, args ...interface{}) {
 }
 func (zapdbLogger) Debugf(format string, args ...interface{}) {
 	log.Debug(fmt.Sprintf(format, args...))
+}
+
+// registerFrontend adds a catch-all `/` handler that serves the React
+// SPA from KMS_FRONTEND_DIR (set by the Dockerfile to /app/frontend).
+//
+// The mux is already populated with explicit API routes (/healthz,
+// /v1/kms/**, /v1/mpc/**) — those take precedence because Go's
+// ServeMux longest-match-wins rule fires the more-specific pattern
+// before this one.
+//
+// Static assets resolve directly from disk. Anything else (e.g.
+// /login, /dashboard) returns index.html so the React Router can
+// handle client-side routing without a server round-trip.
+//
+// If KMS_FRONTEND_DIR is unset OR doesn't contain index.html, the
+// handler returns a tiny JSON status object — preserves the
+// "no UI here, but the service is alive" signal we used to get
+// from the bare 404 without surprising operators.
+func registerFrontend(mux *http.ServeMux) {
+	dir := strings.TrimSpace(os.Getenv("KMS_FRONTEND_DIR"))
+	indexPath := ""
+	if dir != "" {
+		candidate := dir + "/index.html"
+		if _, err := os.Stat(candidate); err == nil {
+			indexPath = candidate
+		}
+	}
+
+	if indexPath == "" {
+		// Fallback: tiny JSON service banner for when the SPA isn't bundled.
+		mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
+			if r.URL.Path != "/" {
+				http.NotFound(w, r)
+				return
+			}
+			w.Header().Set("Content-Type", "application/json")
+			_ = json.NewEncoder(w).Encode(map[string]string{
+				"service": "kms",
+				"version": Version,
+				"status":  "ok",
+				"docs":    "/v1/kms",
+			})
+		})
+		return
+	}
+
+	fileServer := http.FileServer(http.Dir(dir))
+	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
+		// API paths starting with /v1/ or /healthz never reach here —
+		// ServeMux fires the more-specific handler first. Defense in
+		// depth: bail out if the path looks like an API route.
+		if strings.HasPrefix(r.URL.Path, "/v1/") || r.URL.Path == "/healthz" || r.URL.Path == "/health" {
+			http.NotFound(w, r)
+			return
+		}
+		// SPA fallback: serve index.html for any path that isn't a
+		// concrete file on disk. This is the standard React Router
+		// pattern (matches Vite's default dev-server behaviour).
+		clean := strings.TrimPrefix(r.URL.Path, "/")
+		if clean == "" {
+			http.ServeFile(w, r, indexPath)
+			return
+		}
+		if _, err := os.Stat(dir + "/" + clean); err != nil {
+			http.ServeFile(w, r, indexPath)
+			return
+		}
+		fileServer.ServeHTTP(w, r)
+	})
 }
