@@ -14,8 +14,11 @@ jobs:
     strategy:
       matrix:
         include:
-          - image: ghcr.io/hanzoai/kms
+          - image: ghcr.io/hanzokms/kms
             dockerfile: Dockerfile
+          # Note: was ghcr.io/hanzoai/kms but hanzokms's GITHUB_TOKEN cannot
+          # push to hanzoai-org packages cross-org. hanzoai/kms is archived
+          # 2026-04-26 anyway. Consumers must repoint to ghcr.io/hanzokms/kms.
     uses: hanzoai/.github/.github/workflows/docker-build.yml@main
     with:
       image: ${{ matrix.image }}
