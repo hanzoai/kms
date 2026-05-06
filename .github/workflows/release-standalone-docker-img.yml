@@ -15,10 +15,7 @@ jobs:
       matrix:
         include:
           - image: ghcr.io/hanzoai/kms
-            dockerfile: Dockerfile.standalone-kms
-          # kms-fips removed — Dockerfile.fips.standalone-kms has been broken
-          # for months and the FIPS variant has never shipped. Re-add only
-          # when there's a real consumer.
+            dockerfile: Dockerfile
     uses: hanzoai/.github/.github/workflows/docker-build.yml@main
     with:
       image: ${{ matrix.image }}
