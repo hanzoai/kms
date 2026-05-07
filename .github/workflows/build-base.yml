@@ -8,6 +8,11 @@ on:
     - cron: '0 0 * * 0'  # Weekly Sunday rebuild
   workflow_dispatch:
 
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
 jobs:
   docker:
     uses: hanzoai/.github/.github/workflows/docker-build.yml@main
