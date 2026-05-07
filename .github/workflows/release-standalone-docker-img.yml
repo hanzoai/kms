@@ -25,5 +25,4 @@ jobs:
       image: ${{ matrix.image }}
       dockerfile: ${{ matrix.dockerfile }}
       platforms: linux/amd64
-      runner-amd64: ubuntu-latest
     secrets: inherit
