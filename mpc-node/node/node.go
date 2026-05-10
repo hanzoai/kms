@@ -6,14 +6,10 @@
 package node
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"log/slog"
-	"net"
 	"sync"
-
-	"google.golang.org/grpc"
 
 	"github.com/hanzoai/kms/mpc-node/compliance"
 	mpcCrypto "github.com/hanzoai/kms/mpc-node/crypto"
@@ -29,14 +25,20 @@ type Node struct {
 	Compliance *compliance.Engine
 
 	Store  *store.Store
-	Shards *shard.ShardManager   // nil for TierStandard
-	CRDT   *mpcFHE.CRDTSync     // nil unless TierTFHE or TierSovereign
+	Shards *shard.ShardManager // nil for TierStandard
+	CRDT   *mpcFHE.CRDTSync    // nil unless TierTFHE or TierSovereign
 	Peers  []string
 
-	grpcServer *grpc.Server
-	mu         sync.Mutex
-	running    bool
-	logger     *slog.Logger
+	transport nodeTransport
+	mu        sync.Mutex
+	running   bool
+	logger    *slog.Logger
+}
+
+// nodeTransport abstracts the network transport (gRPC or ZAP-native) so that
+// the gRPC dependency lives behind a build tag.
+type nodeTransport interface {
+	stop()
 }
 
 // NewNode creates a new MPC node from configuration.
@@ -140,43 +142,6 @@ func (n *Node) InitFHE(crdt *mpcFHE.CRDTSync) error {
 	return nil
 }
 
-// Serve starts the gRPC server on the configured listen address.
-func (n *Node) Serve(ctx context.Context) error {
-	n.mu.Lock()
-	if n.running {
-		n.mu.Unlock()
-		return errors.New("node: already running")
-	}
-
-	lis, err := net.Listen("tcp", n.Config.ListenAddr)
-	if err != nil {
-		n.mu.Unlock()
-		return fmt.Errorf("node: listen %s: %w", n.Config.ListenAddr, err)
-	}
-
-	n.grpcServer = grpc.NewServer()
-	// gRPC service registration happens in api/grpc.go
-	n.running = true
-	n.mu.Unlock()
-
-	n.logger.Info("serving", "addr", n.Config.ListenAddr)
-
-	// Run server in a goroutine so we can handle context cancellation.
-	errCh := make(chan error, 1)
-	go func() {
-		errCh <- n.grpcServer.Serve(lis)
-	}()
-
-	select {
-	case <-ctx.Done():
-		n.logger.Info("shutting down gRPC server")
-		n.grpcServer.GracefulStop()
-		return nil
-	case err := <-errCh:
-		return err
-	}
-}
-
 // Sync triggers CRDT synchronization with all peers.
 // Requires TierTFHE or above — MPC tier uses direct shard exchange, not CRDT.
 // This is a best-effort operation; failures are logged but do not stop the node.
@@ -208,8 +173,8 @@ func (n *Node) Shutdown() error {
 
 	n.logger.Info("shutdown requested")
 
-	if n.grpcServer != nil {
-		n.grpcServer.GracefulStop()
+	if n.transport != nil {
+		n.transport.stop()
 	}
 	n.running = false
 
@@ -217,9 +182,4 @@ func (n *Node) Shutdown() error {
 		return n.Store.Close()
 	}
 	return nil
-}
-
-// GRPCServer returns the underlying gRPC server for service registration.
-func (n *Node) GRPCServer() *grpc.Server {
-	return n.grpcServer
 }
