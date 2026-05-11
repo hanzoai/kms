@@ -87,7 +87,7 @@ func (c *jwksCache) resolve(kid string) (*rsa.PublicKey, error) {
 
 func (c *jwksCache) refresh() error {
 	if c.url == "" {
-		return errors.New("jwks: KMS_JWKS_URL not configured")
+		return errors.New("jwks: IAM_KEYS_URL not configured")
 	}
 	resp, err := c.client.Get(c.url)
 	if err != nil {

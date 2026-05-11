@@ -76,9 +76,9 @@ func newJWTTestEnv(t *testing.T) *jwtTestEnv {
 	// t.Setenv restores the previous value when the test ends; we also
 	// restore authConfig itself because it is in-memory state and would
 	// otherwise keep pointing at a closed JWKS server when later tests run.
-	t.Setenv("KMS_EXPECTED_ISSUER", issuer)
-	t.Setenv("KMS_EXPECTED_AUDIENCE", audience)
-	t.Setenv("KMS_JWKS_URL", jwks.URL)
+	t.Setenv("IAM_ISSUER", issuer)
+	t.Setenv("IAM_AUDIENCE", audience)
+	t.Setenv("IAM_KEYS_URL", jwks.URL)
 	// KMS_ENV=dev so boot doesn't refuse missing prod gate — the envs above
 	// are still enforced by verifyJWT regardless of KMS_ENV.
 	t.Setenv("KMS_ENV", "dev")
@@ -330,7 +330,7 @@ func TestJWT_F1_DevIssuerOnMain_Rejected(t *testing.T) {
 	defer e.cleanup()
 
 	// Configure KMS to expect MAIN issuer — but sign a token with DEV issuer.
-	t.Setenv("KMS_EXPECTED_ISSUER", "https://iam.hanzo.id")
+	t.Setenv("IAM_ISSUER", "https://iam.hanzo.id")
 	reloadAuthConfigForTest()
 
 	tok := e.mintSigned(jwt.MapClaims{
@@ -424,7 +424,7 @@ func TestJWT_F4_MissingAudience_Rejected(t *testing.T) {
 
 // ── F4 — comma-separated expected audience list ────────────────────────
 
-// A comma-separated KMS_EXPECTED_AUDIENCE lets one KMS instance serve
+// A comma-separated IAM_AUDIENCE lets one KMS instance serve
 // multiple client services (e.g. BD + app) without re-patching the pod
 // on every new consumer. Each service mints its own single-aud token;
 // KMS accepts any value that is in the configured list.
@@ -432,7 +432,7 @@ func TestJWT_F4_MultiAudience_Accepted(t *testing.T) {
 	e := newJWTTestEnv(t)
 	defer e.cleanup()
 
-	t.Setenv("KMS_EXPECTED_AUDIENCE", "hanzo-app, hanzo-app ,kms")
+	t.Setenv("IAM_AUDIENCE", "hanzo-app, hanzo-app ,kms")
 	reloadAuthConfigForTest()
 
 	for _, aud := range []string{"hanzo-app", "hanzo-app", "kms"} {
@@ -738,32 +738,25 @@ func TestJWT_ErrorBodyContract(t *testing.T) {
 	}
 }
 
-// ── Startup refuses missing config in prod mode ─────────────────────────
+// ── Startup refuses missing config in every env ─────────────────────────
 
-func TestJWT_Startup_RefusesEmptyIssuerInProd(t *testing.T) {
+func TestJWT_Startup_RefusesEmptyConfig(t *testing.T) {
 	// We test the validator function directly — the real main() calls
 	// log.Fatalf which terminates the test binary, so we isolate the check.
-	for _, env := range []string{"prod", "main", "test"} {
-		err := validateAuthConfigAtBoot(env, "", "kms", "https://jwks")
-		if err == nil {
-			t.Errorf("KMS_ENV=%s empty issuer: want error", env)
+	// There is no dev escape hatch: every env (dev included) must supply
+	// IAM_ISSUER, IAM_AUDIENCE, IAM_KEYS_URL or boot fails.
+	for _, env := range []string{"prod", "main", "test", "dev", "devnet", "local"} {
+		if err := validateAuthConfigAtBoot(env, "", "kms", "https://jwks"); err == nil {
+			t.Errorf("env=%s empty issuer: want error", env)
 		}
-		err = validateAuthConfigAtBoot(env, "https://iam", "", "https://jwks")
-		if err == nil {
-			t.Errorf("KMS_ENV=%s empty audience: want error", env)
+		if err := validateAuthConfigAtBoot(env, "https://iam", "", "https://jwks"); err == nil {
+			t.Errorf("env=%s empty audience: want error", env)
 		}
-		err = validateAuthConfigAtBoot(env, "https://iam", "kms", "")
-		if err == nil {
-			t.Errorf("KMS_ENV=%s empty jwks: want error", env)
+		if err := validateAuthConfigAtBoot(env, "https://iam", "kms", ""); err == nil {
+			t.Errorf("env=%s empty jwks: want error", env)
 		}
-		err = validateAuthConfigAtBoot(env, "https://iam", "kms", "https://jwks")
-		if err != nil {
-			t.Errorf("KMS_ENV=%s full config: unexpected err: %v", env, err)
+		if err := validateAuthConfigAtBoot(env, "https://iam", "kms", "https://jwks"); err != nil {
+			t.Errorf("env=%s full config: unexpected err: %v", env, err)
 		}
-	}
-
-	// Dev mode: empty is tolerated with a warning.
-	if err := validateAuthConfigAtBoot("dev", "", "", ""); err != nil {
-		t.Errorf("KMS_ENV=dev empty: want nil, got %v", err)
 	}
 }

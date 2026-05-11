@@ -8,8 +8,8 @@
 //  1. Authorization: Bearer <token>          — else 401
 //  2. JWT header.alg ∈ {RS256, ES256, EdDSA} — else 401 (no HS*, no none)
 //  3. Signature verifies against JWKS by kid — else 401
-//  4. iss == $KMS_EXPECTED_ISSUER            — else 401
-//  5. aud ∋ $KMS_EXPECTED_AUDIENCE           — else 401
+//  4. iss == $IAM_ISSUER                     — else 401
+//  5. aud ∋ $IAM_AUDIENCE                    — else 401
 //  6. exp > now (no leeway)                  — else 401
 //  7. nbf ≤ now when present                  — else 401
 //  8. sub present                            — else 401
@@ -48,13 +48,13 @@ type authCfgValues struct {
 	jwksURL  string
 }
 
-// loadAuthConfig reads KMS_EXPECTED_ISSUER, KMS_EXPECTED_AUDIENCE, and
-// KMS_JWKS_URL from the environment. Called once at boot from main().
+// loadAuthConfig reads IAM_ISSUER, IAM_AUDIENCE, and IAM_KEYS_URL from
+// the environment. Called once at boot from main().
 func loadAuthConfig() authCfgValues {
 	return authCfgValues{
-		issuer:   strings.TrimSpace(os.Getenv("KMS_EXPECTED_ISSUER")),
-		audience: envOr("KMS_EXPECTED_AUDIENCE", "kms"),
-		jwksURL:  strings.TrimSpace(os.Getenv("KMS_JWKS_URL")),
+		issuer:   strings.TrimSpace(os.Getenv("IAM_ISSUER")),
+		audience: strings.TrimSpace(os.Getenv("IAM_AUDIENCE")),
+		jwksURL:  strings.TrimSpace(os.Getenv("IAM_KEYS_URL")),
 	}
 }
 
@@ -72,30 +72,24 @@ func applyAuthConfig(v authCfgValues) {
 	}
 }
 
-// validateAuthConfigAtBoot enforces that all three auth env vars are
-// populated in non-dev mode. In dev mode we tolerate missing config so
-// that local-only test harnesses don't crash on startup, but the
-// `verifyJWT` path still rejects every request when JWKS is nil.
+// validateAuthConfigAtBoot enforces that the three auth env vars are
+// populated in every env. No dev escape hatch — a missing config must
+// fail loud at boot, the same way it would at staging.
 func validateAuthConfigAtBoot(env, issuer, audience, jwksURL string) error {
-	// Dev-mode escape hatch — local harness, no IAM dependency.
-	switch strings.ToLower(env) {
-	case "", "dev", "devnet", "local":
-		return nil
-	}
 	if issuer == "" {
-		return fmt.Errorf("KMS_EXPECTED_ISSUER is required when KMS_ENV=%q", env)
+		return fmt.Errorf("IAM_ISSUER is required (env=%q)", env)
 	}
 	if audience == "" {
-		return fmt.Errorf("KMS_EXPECTED_AUDIENCE is required when KMS_ENV=%q", env)
+		return fmt.Errorf("IAM_AUDIENCE is required (env=%q)", env)
 	}
 	if jwksURL == "" {
-		return fmt.Errorf("KMS_JWKS_URL is required when KMS_ENV=%q", env)
+		return fmt.Errorf("IAM_KEYS_URL is required (env=%q)", env)
 	}
 	return nil
 }
 
 // reloadAuthConfigForTest is called by jwt_test.go after t.Setenv() to
-// re-read the three KMS_* vars and rebuild the JWKS cache against the
+// re-read the three IAM_* vars and rebuild the JWKS cache against the
 // current test server.
 func reloadAuthConfigForTest() {
 	applyAuthConfig(loadAuthConfig())
