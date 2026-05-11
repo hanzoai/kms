@@ -1,6 +1,7 @@
 // Package kms is the in-process Hanzo KMS server. It is a thin wrapper
 // over github.com/luxfi/kms with Hanzo-specific defaults (port 8443,
-// /data/hanzo-kms, IAM at https://hanzo.id), JWT verification (RFC 7519,
+// /data/hanzo-kms), explicit IAM/JWKS/issuer/audience config (no
+// defaults — refuses to boot if missing), JWT verification (RFC 7519,
 // no HS*, no alg=none), audit log with composite actor_id, version CAS
 // for replay-resistant updates, and identity-header hygiene.
 //
@@ -54,9 +55,11 @@ var globalAuditor *auditor
 
 // EmbedConfig configures the in-process Hanzo KMS server.
 //
-// Zero values resolve to the production defaults that match the
-// canonical kmsd container image (DataDir=/data/hanzo-kms,
-// HTTPAddr=:8443, IAMEndpoint=https://hanzo.id, ZAPPort=9999).
+// Process-shape fields (DataDir, HTTPAddr, ZAPPort) resolve to the
+// canonical defaults of the kmsd container image. Identity-coupled
+// fields (IAMEndpoint, JWKSURL, ExpectedIssuer, ExpectedAudience) have
+// no defaults — supply them via env or config or Embed refuses to
+// boot.
 type EmbedConfig struct {
 	// DataDir is the ZapDB persistence root.
 	// Empty → "/data/hanzo-kms" (production default).
@@ -67,13 +70,12 @@ type EmbedConfig struct {
 	HTTPAddr string
 
 	// IAMEndpoint is the Hanzo IAM origin used for the
-	// /v1/kms/auth/login client_credentials proxy.
-	// Empty → "https://hanzo.id".
+	// /v1/kms/auth/login client_credentials proxy. Required.
 	IAMEndpoint string
 
 	// JWKSURL is the JWKS endpoint for verifying inbound JWTs.
-	// Empty → IAMEndpoint + "/.well-known/jwks". Tests can point this
-	// at an httptest.Server.
+	// Required when JWTKeySource is empty. Tests can point this at an
+	// httptest.Server.
 	JWKSURL string
 
 	// JWTKeySource is an alias kept for parity with iam.EmbedConfig
@@ -148,9 +150,11 @@ type Embedded struct {
 func Embed(ctx context.Context, cfg EmbedConfig) (*Embedded, error) {
 	cfg = applyEmbedDefaults(cfg)
 
-	// Identity-coupled config — IAMEndpoint, ExpectedIssuer, JWKSURL —
-	// must be explicit in non-dev envs. Refuses the silent hanzo.id
-	// fallback that masked a real outage on 2026-05-07.
+	// Identity-coupled config — IAMEndpoint, ExpectedIssuer,
+	// ExpectedAudience, JWKSURL — has no defaults. Refuses to boot if
+	// missing, so a misconfig fails on the laptop instead of silently
+	// rejecting tokens at staging (the hanzo.id default outage of
+	// 2026-05-07).
 	if err := validateProdConfigAtBoot(cfg); err != nil {
 		return nil, fmt.Errorf("kms.Embed: %w", err)
 	}
@@ -309,17 +313,17 @@ func (e *Embedded) Stop(ctx context.Context) error {
 	return nil
 }
 
-// applyEmbedDefaults resolves zero-value EmbedConfig fields to the
-// canonical Hanzo defaults. Env vars override empty fields so the
-// standalone kmsd path keeps working unmodified.
+// applyEmbedDefaults resolves process-shape EmbedConfig fields
+// (DataDir, HTTPAddr, NodeID, ZAPPort, AuditDB, MPC*) to the canonical
+// kmsd container defaults. Env vars override empty fields.
 //
-// Identity-coupled fields — IAMEndpoint, JWKSURL, ExpectedIssuer — get
-// no hard-coded fallback when KMS_ENV resolves to something other than
-// dev/devnet/local; validateProdConfigAtBoot returns an error in that
-// case and Embed refuses to start. The historical
-// IAMEndpoint=https://hanzo.id default silently routed every Liquidity
-// service-account login to a foreign IAM and rejected every token,
-// masking real outages — that default is gone in non-dev mode.
+// Identity-coupled fields — IAMEndpoint, JWKSURL, ExpectedIssuer,
+// ExpectedAudience — are read from env only and never defaulted.
+// validateProdConfigAtBoot rejects boot if any are empty, in every
+// environment. The historical IAMEndpoint=https://hanzo.id default
+// silently routed every Liquidity service-account login to a foreign
+// IAM and rejected every token, masking real outages — no env (dev,
+// devnet, prod) gets a silent fallback anymore.
 func applyEmbedDefaults(cfg EmbedConfig) EmbedConfig {
 	if cfg.DataDir == "" {
 		cfg.DataDir = envOr("KMS_DATA_DIR", "/data/hanzo-kms")
@@ -333,33 +337,25 @@ func applyEmbedDefaults(cfg EmbedConfig) EmbedConfig {
 	if cfg.Env == "" {
 		cfg.Env = envOr("KMS_ENV", "dev")
 	}
-	// IAMEndpoint resolution order: explicit field > KMS_IAM_ENDPOINT >
-	// IAM_ENDPOINT > (dev only) in-cluster default. Non-dev with no
-	// explicit value falls through with empty IAMEndpoint and is rejected
-	// by validateProdConfigAtBoot below.
+	// Identity-coupled config is read from env only — never defaulted.
+	// validateProdConfigAtBoot rejects boot if any of these are empty
+	// regardless of KMS_ENV. There is no permissive mode: every Hanzo
+	// user gets the same boot contract so a misconfig fails loud at the
+	// dev box, not silently at staging.
 	if cfg.IAMEndpoint == "" {
 		cfg.IAMEndpoint = strings.TrimSpace(os.Getenv("KMS_IAM_ENDPOINT"))
 	}
 	if cfg.IAMEndpoint == "" {
 		cfg.IAMEndpoint = strings.TrimSpace(os.Getenv("IAM_ENDPOINT"))
 	}
-	if cfg.IAMEndpoint == "" && isPermissiveEnv(cfg.Env) {
-		cfg.IAMEndpoint = "http://liquid-iam.liquidity.svc.cluster.local:8000"
-	}
 	if cfg.ExpectedIssuer == "" {
 		cfg.ExpectedIssuer = strings.TrimSpace(os.Getenv("KMS_EXPECTED_ISSUER"))
 	}
-	if cfg.ExpectedIssuer == "" && isPermissiveEnv(cfg.Env) {
-		cfg.ExpectedIssuer = cfg.IAMEndpoint
-	}
 	if cfg.ExpectedAudience == "" {
-		cfg.ExpectedAudience = envOr("KMS_EXPECTED_AUDIENCE", "kms")
+		cfg.ExpectedAudience = strings.TrimSpace(os.Getenv("KMS_EXPECTED_AUDIENCE"))
 	}
 	if cfg.JWKSURL == "" && cfg.JWTKeySource == "" {
 		cfg.JWKSURL = strings.TrimSpace(os.Getenv("KMS_JWKS_URL"))
-	}
-	if cfg.JWKSURL == "" && cfg.JWTKeySource == "" && isPermissiveEnv(cfg.Env) && cfg.IAMEndpoint != "" {
-		cfg.JWKSURL = strings.TrimRight(cfg.IAMEndpoint, "/") + "/.well-known/jwks"
 	}
 	if cfg.MPCAddr == "" {
 		cfg.MPCAddr = envOr("MPC_ADDR", "")
@@ -382,39 +378,29 @@ func applyEmbedDefaults(cfg EmbedConfig) EmbedConfig {
 	return cfg
 }
 
-// isPermissiveEnv reports whether KMS_ENV permits hard-coded defaults
-// for identity-coupled config (IAMEndpoint / JWKSURL / ExpectedIssuer).
-// Test/main/prod must always carry an explicit value or Embed refuses
-// to boot.
-func isPermissiveEnv(env string) bool {
-	switch strings.ToLower(strings.TrimSpace(env)) {
-	case "", "dev", "devnet", "local":
-		return true
-	}
-	return false
-}
-
-// validateProdConfigAtBoot enforces that identity-coupled config is
-// explicit (env or field) when KMS_ENV is not dev/devnet/local. The
-// hard-coded https://hanzo.id default silently routed every Liquidity
-// service-account login to the wrong IAM; a missing config now refuses
-// to boot with a descriptive error rather than masking the misconfig.
+// validateProdConfigAtBoot rejects boot if identity-coupled config is
+// missing. The hard-coded https://hanzo.id default silently routed
+// every Liquidity service-account login to the wrong IAM and rejected
+// every token, masking real outages. There is no dev escape hatch —
+// every Hanzo user (laptop, devnet, prod) gets the same contract:
+// supply IAM_ENDPOINT, KMS_EXPECTED_ISSUER, KMS_EXPECTED_AUDIENCE,
+// and KMS_JWKS_URL or refuse to boot.
 func validateProdConfigAtBoot(cfg EmbedConfig) error {
-	if isPermissiveEnv(cfg.Env) {
-		return nil
-	}
 	if strings.TrimSpace(cfg.IAMEndpoint) == "" {
-		return fmt.Errorf("KMS_IAM_ENDPOINT or IAM_ENDPOINT required in env=%q; refusing to boot with hardcoded default", cfg.Env)
+		return fmt.Errorf("KMS_IAM_ENDPOINT or IAM_ENDPOINT is required (no default) — point at the IAM you want this KMS to trust")
 	}
 	if strings.TrimSpace(cfg.ExpectedIssuer) == "" {
-		return fmt.Errorf("KMS_EXPECTED_ISSUER required in env=%q; refusing to boot with hardcoded default", cfg.Env)
+		return fmt.Errorf("KMS_EXPECTED_ISSUER is required (no default) — set to the issuer URL the IAM stamps in its JWTs")
+	}
+	if strings.TrimSpace(cfg.ExpectedAudience) == "" {
+		return fmt.Errorf("KMS_EXPECTED_AUDIENCE is required (no default) — set to this KMS's audience claim")
 	}
 	jwks := strings.TrimSpace(cfg.JWKSURL)
 	if jwks == "" {
 		jwks = strings.TrimSpace(cfg.JWTKeySource)
 	}
 	if jwks == "" {
-		return fmt.Errorf("KMS_JWKS_URL required in env=%q; refusing to boot with hardcoded default", cfg.Env)
+		return fmt.Errorf("KMS_JWKS_URL or KMS_JWT_KEY_SOURCE is required (no default) — set to where IAM publishes its signing keys")
 	}
 	return nil
 }
