@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"path/filepath"
-	"strings"
 	"testing"
 	"time"
 )
@@ -25,12 +24,25 @@ func TestEmbed(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
+	// Stand up a fake JWKS so Embed has somewhere to point ExpectedIssuer
+	// and JWKSURL. There is no permissive env any more — every Hanzo
+	// user supplies these four fields or Embed refuses to boot.
+	jwks := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"keys":[]}`))
+	}))
+	t.Cleanup(jwks.Close)
+
 	em, err := Embed(ctx, EmbedConfig{
-		DataDir:    filepath.Join(t.TempDir(), "kms"),
-		AuditDB:    filepath.Join(t.TempDir(), "audit.db"),
-		Env:        "dev", // skips JWT-config validation
-		SkipListen: true,  // mount via httptest.Server
-		ZAPPort:    -1,    // disable ZAP (no master key in env)
+		DataDir:          filepath.Join(t.TempDir(), "kms"),
+		AuditDB:          filepath.Join(t.TempDir(), "audit.db"),
+		Env:              "dev",
+		IAMEndpoint:      jwks.URL,
+		ExpectedIssuer:   jwks.URL,
+		ExpectedAudience: "kms-test",
+		JWKSURL:          jwks.URL + "/.well-known/jwks",
+		SkipListen:       true, // mount via httptest.Server
+		ZAPPort:          -1,   // disable ZAP (no master key in env)
 	})
 	if err != nil {
 		t.Fatalf("Embed: %v", err)
