@@ -63,7 +63,7 @@ func newTestServerWithAudit(t *testing.T) (*httptest.Server, string, func()) {
 // mintTokenWithIss builds a signed RS256 JWT carrying iss/owner/sub/roles.
 // Post-Red-Part-5 this always signs against the shared test JWKS; the
 // `iss` parameter is placed into the claim but still must equal the
-// configured KMS_EXPECTED_ISSUER for verification to succeed (tests that
+// configured IAM_ISSUER for verification to succeed (tests that
 // exercise cross-env rejection call this with the attacker issuer and
 // expect 401).
 func mintTokenWithIss(t *testing.T, iss, owner, sub string, roles ...string) string {

@@ -51,9 +51,9 @@ func TestMain(m *testing.M) {
 		w.Write(jwksJSON)
 	}))
 
-	os.Setenv("KMS_EXPECTED_ISSUER", sharedIssuer)
-	os.Setenv("KMS_EXPECTED_AUDIENCE", sharedAudience)
-	os.Setenv("KMS_JWKS_URL", sharedJWKS.URL)
+	os.Setenv("IAM_ISSUER", sharedIssuer)
+	os.Setenv("IAM_AUDIENCE", sharedAudience)
+	os.Setenv("IAM_KEYS_URL", sharedJWKS.URL)
 	os.Setenv("KMS_ENV", "dev")
 
 	applyAuthConfig(loadAuthConfig())
