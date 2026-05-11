@@ -91,18 +91,17 @@ type EmbedConfig struct {
 	// ZAP service discovery. Empty → "hanzo-kms-0".
 	NodeID string
 
-	// Env names the deployment environment. "dev"/"devnet"/"local"
-	// tolerate missing JWT config; anything else refuses to boot
-	// without KMS_EXPECTED_ISSUER, KMS_EXPECTED_AUDIENCE, KMS_JWKS_URL.
+	// Env names the deployment environment. All envs (including dev)
+	// must supply IAM_ISSUER, IAM_AUDIENCE, IAM_KEYS_URL or boot fails.
 	// Empty → "dev".
 	Env string
 
 	// ExpectedIssuer is the iss claim a JWT must carry. Empty →
-	// $KMS_EXPECTED_ISSUER.
+	// $IAM_ISSUER.
 	ExpectedIssuer string
 
 	// ExpectedAudience is the aud claim a JWT must carry (comma list
-	// allowed). Empty → $KMS_EXPECTED_AUDIENCE or "kms".
+	// allowed). Empty → $IAM_AUDIENCE.
 	ExpectedAudience string
 
 	// MPCAddr is the MPC daemon network address. Empty → mDNS only.
@@ -338,24 +337,23 @@ func applyEmbedDefaults(cfg EmbedConfig) EmbedConfig {
 		cfg.Env = envOr("KMS_ENV", "dev")
 	}
 	// Identity-coupled config is read from env only — never defaulted.
-	// validateProdConfigAtBoot rejects boot if any of these are empty
-	// regardless of KMS_ENV. There is no permissive mode: every Hanzo
-	// user gets the same boot contract so a misconfig fails loud at the
-	// dev box, not silently at staging.
+	// One canonical name per concept across every Hanzo service:
+	//   IAM_URL        — the IAM origin
+	//   IAM_ISSUER     — iss claim in JWTs (usually = IAM_URL)
+	//   IAM_AUDIENCE   — aud claim this service accepts
+	//   IAM_KEYS_URL   — JWKS URL (usually = IAM_URL/.well-known/jwks)
+	// validateProdConfigAtBoot rejects boot if any are empty.
 	if cfg.IAMEndpoint == "" {
-		cfg.IAMEndpoint = strings.TrimSpace(os.Getenv("KMS_IAM_ENDPOINT"))
-	}
-	if cfg.IAMEndpoint == "" {
-		cfg.IAMEndpoint = strings.TrimSpace(os.Getenv("IAM_ENDPOINT"))
+		cfg.IAMEndpoint = strings.TrimSpace(os.Getenv("IAM_URL"))
 	}
 	if cfg.ExpectedIssuer == "" {
-		cfg.ExpectedIssuer = strings.TrimSpace(os.Getenv("KMS_EXPECTED_ISSUER"))
+		cfg.ExpectedIssuer = strings.TrimSpace(os.Getenv("IAM_ISSUER"))
 	}
 	if cfg.ExpectedAudience == "" {
-		cfg.ExpectedAudience = strings.TrimSpace(os.Getenv("KMS_EXPECTED_AUDIENCE"))
+		cfg.ExpectedAudience = strings.TrimSpace(os.Getenv("IAM_AUDIENCE"))
 	}
 	if cfg.JWKSURL == "" && cfg.JWTKeySource == "" {
-		cfg.JWKSURL = strings.TrimSpace(os.Getenv("KMS_JWKS_URL"))
+		cfg.JWKSURL = strings.TrimSpace(os.Getenv("IAM_KEYS_URL"))
 	}
 	if cfg.MPCAddr == "" {
 		cfg.MPCAddr = envOr("MPC_ADDR", "")
@@ -383,24 +381,24 @@ func applyEmbedDefaults(cfg EmbedConfig) EmbedConfig {
 // every service-account login to the wrong IAM and rejected
 // every token, masking real outages. There is no dev escape hatch —
 // every Hanzo user (laptop, devnet, prod) gets the same contract:
-// supply IAM_ENDPOINT, KMS_EXPECTED_ISSUER, KMS_EXPECTED_AUDIENCE,
-// and KMS_JWKS_URL or refuse to boot.
+// supply IAM_URL, IAM_ISSUER, IAM_AUDIENCE, IAM_KEYS_URL or refuse
+// to boot.
 func validateProdConfigAtBoot(cfg EmbedConfig) error {
 	if strings.TrimSpace(cfg.IAMEndpoint) == "" {
-		return fmt.Errorf("KMS_IAM_ENDPOINT or IAM_ENDPOINT is required (no default) — point at the IAM you want this KMS to trust")
+		return fmt.Errorf("IAM_URL is required (no default) — point at the IAM you want this KMS to trust")
 	}
 	if strings.TrimSpace(cfg.ExpectedIssuer) == "" {
-		return fmt.Errorf("KMS_EXPECTED_ISSUER is required (no default) — set to the issuer URL the IAM stamps in its JWTs")
+		return fmt.Errorf("IAM_ISSUER is required (no default) — set to the issuer URL the IAM stamps in its JWTs")
 	}
 	if strings.TrimSpace(cfg.ExpectedAudience) == "" {
-		return fmt.Errorf("KMS_EXPECTED_AUDIENCE is required (no default) — set to this KMS's audience claim")
+		return fmt.Errorf("IAM_AUDIENCE is required (no default) — set to this KMS's audience claim")
 	}
 	jwks := strings.TrimSpace(cfg.JWKSURL)
 	if jwks == "" {
 		jwks = strings.TrimSpace(cfg.JWTKeySource)
 	}
 	if jwks == "" {
-		return fmt.Errorf("KMS_JWKS_URL or KMS_JWT_KEY_SOURCE is required (no default) — set to where IAM publishes its signing keys")
+		return fmt.Errorf("IAM_KEYS_URL is required (no default) — set to where IAM publishes its signing keys")
 	}
 	return nil
 }
