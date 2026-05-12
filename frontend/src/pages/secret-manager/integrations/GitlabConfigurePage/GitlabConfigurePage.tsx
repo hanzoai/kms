@@ -495,7 +495,7 @@ export const GitlabConfigurePage = () => {
                     isError={Boolean(error)}
                     errorText={error?.message}
                   >
-                    <Input {...field} placeholder="_INFISICAL" />
+                    <Input {...field} placeholder="_HANZO_KMS" />
                   </FormControl>
                 )}
               />
