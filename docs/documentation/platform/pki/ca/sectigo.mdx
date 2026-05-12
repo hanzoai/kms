@@ -1,15 +1,15 @@
 ---
 title: "Sectigo"
-description: "Learn how to connect Infisical to Sectigo to issue certificates via ACME."
+description: "Learn how to connect Hanzo KMS to Sectigo to issue certificates via ACME."
 ---
 
 ## Concept
 
-Infisical can connect to [Sectigo](https://www.sectigo.com/) using the [ACME-compatible CA integration](/documentation/platform/pki/ca/acme-ca) to issue certificates back to your end-entities.
+Hanzo KMS can connect to [Sectigo](https://www.sectigo.com/) using the [ACME-compatible CA integration](/documentation/platform/pki/ca/acme-ca) to issue certificates back to your end-entities.
 
-Sectigo Certificate Manager (SCM) supports the ACME protocol and requires **External Account Binding (EAB)** for all ACME registrations. You will need to obtain the ACME Directory URL, a Key Identifier (KID), and an HMAC Key from your Sectigo account before registering the ACME CA in Infisical.
+Sectigo Certificate Manager (SCM) supports the ACME protocol and requires **External Account Binding (EAB)** for all ACME registrations. You will need to obtain the ACME Directory URL, a Key Identifier (KID), and an HMAC Key from your Sectigo account before registering the ACME CA in Hanzo KMS.
 
-## Guide to Connecting Infisical to Sectigo
+## Guide to Connecting Hanzo KMS to Sectigo
 
 <Steps>
   <Step title="Retrieve ACME credentials from Sectigo">
@@ -24,14 +24,14 @@ Sectigo Certificate Manager (SCM) supports the ACME protocol and requires **Exte
 
     ![Sectigo ACME Account Details](/images/platform/pki/sectigo/sectigo-acme-account-details.png)
   </Step>
-  <Step title="Create an External CA in Infisical">
-    Follow the steps in the [ACME-compatible CA integration](/documentation/platform/pki/ca/acme-ca) guide to create an External CA in Infisical with the **ACME** CA type. When filling out the form, use the values from Sectigo:
+  <Step title="Create an External CA in Hanzo KMS">
+    Follow the steps in the [ACME-compatible CA integration](/documentation/platform/pki/ca/acme-ca) guide to create an External CA in Hanzo KMS with the **ACME** CA type. When filling out the form, use the values from Sectigo:
 
     - **Directory URL**: Paste the **Server** URL from Sectigo (e.g., `https://acme.sectigo.com/v2/DV`).
     - **EAB Key Identifier (KID)**: Paste the **Key ID** from Sectigo.
     - **EAB HMAC Key**: Paste the **HMAC Key** from Sectigo.
 
-    ![Create External CA with ACME](/images/platform/pki/sectigo/infisical-create-external-ca-acme.png)
+    ![Create External CA with ACME](/images/platform/pki/sectigo/hanzo-kms-create-external-ca-acme.png)
   </Step>
   <Step title="Issue certificates">
     Once the External CA is created, follow the rest of the [ACME-compatible CA integration](/documentation/platform/pki/ca/acme-ca) guide to create a Certificate Profile and start issuing certificates through Sectigo.
@@ -39,5 +39,5 @@ Sectigo Certificate Manager (SCM) supports the ACME protocol and requires **Exte
 </Steps>
 
 <Note>
-  Sectigo ACME accounts are tied to specific domains configured in SCM. Ensure the domains you want to issue certificates for are added to your ACME account in Sectigo before requesting certificates through Infisical.
+  Sectigo ACME accounts are tied to specific domains configured in SCM. Ensure the domains you want to issue certificates for are added to your ACME account in Sectigo before requesting certificates through Hanzo KMS.
 </Note>

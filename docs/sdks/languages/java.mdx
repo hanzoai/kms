@@ -110,13 +110,13 @@ sdk.Auth().UniversalAuthLogin(
 ```java
 // No-arg: revokes the current session token stored in the SDK
 public void RevokeToken()
-throws InfisicalException
+throws Hanzo KMSException
 
 // Explicit: revokes a specific access token
 public void RevokeToken(
   String accessToken
 )
-throws InfisicalException
+throws Hanzo KMSException
 ```
 
 The recommended approach is to call `RevokeToken()` without arguments, which revokes the token currently stored in the SDK session:

@@ -5,15 +5,15 @@ description: "Learn how to dynamically generate ClickHouse database user credent
 
 import DynamicSecretUsernameTemplateParamField from "/snippets/documentation/platform/dynamic-secrets/dynamic-secret-username-template-field.mdx";
 
-The Infisical ClickHouse dynamic secret allows you to generate ClickHouse database credentials on demand based on a configured role.
+The Hanzo KMS ClickHouse dynamic secret allows you to generate ClickHouse database credentials on demand based on a configured role.
 
 ## Prerequisite
 
 Create a user with the required permissions in your ClickHouse instance. This user will be used to create new accounts on-demand.
 
 ```sql
-CREATE USER 'infisical' IDENTIFIED WITH sha256_password BY '<strong-password>';
-GRANT CREATE USER, DROP USER, GRANT OPTION ON *.* TO 'infisical';
+CREATE USER 'hanzo-kms' IDENTIFIED WITH sha256_password BY '<strong-password>';
+GRANT CREATE USER, DROP USER, GRANT OPTION ON *.* TO 'hanzo-kms';
 ```
 
 <Note>
@@ -117,7 +117,7 @@ GRANT CREATE USER, DROP USER, GRANT OPTION ON *.* TO 'infisical';
     After submitting the form, you will see a dynamic secret created in the dashboard.
 
     <Note>
-      If this step fails, verify that the service user has the `CREATE USER`, `DROP USER`, and `GRANT OPTION` privileges, and that the host and port are reachable from Infisical.
+      If this step fails, verify that the service user has the `CREATE USER`, `DROP USER`, and `GRANT OPTION` privileges, and that the host and port are reachable from Hanzo KMS.
     </Note>
 
     ![Dynamic Secret](../../../images/platform/dynamic-secrets/dynamic-secret.png)

@@ -24,7 +24,7 @@ export const MongoRotationParametersFields = () => {
             errorText={error?.message}
             label="Database Username 1"
           >
-            <Input value={value} onChange={onChange} placeholder="infisical_user_1" />
+            <Input value={value} onChange={onChange} placeholder="hanzo_kms_user_1" />
           </FormControl>
         )}
         control={control}
@@ -37,7 +37,7 @@ export const MongoRotationParametersFields = () => {
             errorText={error?.message}
             label="Database Username 2"
           >
-            <Input value={value} onChange={onChange} placeholder="infisical_user_2" />
+            <Input value={value} onChange={onChange} placeholder="hanzo_kms_user_2" />
           </FormControl>
         )}
         control={control}
