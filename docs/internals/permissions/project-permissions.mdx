@@ -473,7 +473,7 @@ Create a custom role that can only read secrets in the production environment:
 
 ```bash
 curl --request POST \
-  --url https://app.infisical.com/api/v1/projects/{projectId}/roles \
+  --url https://kms.hanzo.ai/api/v1/projects/{projectId}/roles \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -497,7 +497,7 @@ Create a role that can only manage secrets under `/app/config/`:
 
 ```bash
 curl --request POST \
-  --url https://app.infisical.com/api/v1/projects/{projectId}/roles \
+  --url https://kms.hanzo.ai/api/v1/projects/{projectId}/roles \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -521,7 +521,7 @@ Create a role that grants PAM access only to specific database resources:
 
 ```bash
 curl --request POST \
-  --url https://app.infisical.com/api/v1/projects/{projectId}/roles \
+  --url https://kms.hanzo.ai/api/v1/projects/{projectId}/roles \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '{
