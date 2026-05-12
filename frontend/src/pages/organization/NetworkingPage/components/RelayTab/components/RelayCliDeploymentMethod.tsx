@@ -157,7 +157,7 @@ export const RelayCliDeploymentMethod = () => {
   };
 
   const command = useMemo(() => {
-    return `infisical relay start --name=${name} --domain=${siteURL} --host=${host} --token=${identityToken}`;
+    return `hanzo-kms relay start --name=${name} --domain=${siteURL} --host=${host} --token=${identityToken}`;
   }, [name, siteURL, host, identityToken]);
 
   if (step === "command") {

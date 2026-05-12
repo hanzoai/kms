@@ -22,7 +22,7 @@ import {
 
 import { TFormSchema } from "./ProjectRoleModifySection.utils";
 import { analyzeVaultPolicy, PolicyBlock, PolicyLine } from "./VaultPolicyAnalyzer.utils";
-import { parseVaultPolicyToInfisical } from "./VaultPolicyImportModal.utils";
+import { parseVaultPolicyToHanzo KMS } from "./VaultPolicyImportModal.utils";
 import { VaultPolicyPreview } from "./VaultPolicyPreview";
 
 type Props = {
@@ -132,7 +132,7 @@ const Content = ({ onClose }: ContentProps) => {
     }
 
     try {
-      const parsedPermissions = parseVaultPolicyToInfisical(hclPolicy, mounts);
+      const parsedPermissions = parseVaultPolicyToHanzo KMS(hclPolicy, mounts);
 
       if (!parsedPermissions || Object.keys(parsedPermissions).length === 0) {
         createNotification({

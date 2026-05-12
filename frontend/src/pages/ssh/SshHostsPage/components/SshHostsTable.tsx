@@ -53,7 +53,7 @@ export const SshHostsTable = ({ handlePopUpOpen }: Props) => {
   const handleDownloadUserCaKey = async (sshHostId: string) => {
     try {
       const publicKey = await fetchSshHostUserCaPublicKey(sshHostId);
-      downloadTxtFile("infisical_user_ca.pub", publicKey);
+      downloadTxtFile("hanzo_kms_user_ca.pub", publicKey);
     } catch (err) {
       console.error("Failed to download User CA public key", err);
       createNotification({

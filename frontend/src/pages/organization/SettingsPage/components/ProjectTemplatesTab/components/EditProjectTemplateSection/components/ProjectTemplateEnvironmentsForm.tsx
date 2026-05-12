@@ -25,7 +25,7 @@ import { slugSchema } from "@app/lib/schemas";
 
 type Props = {
   projectTemplate: TProjectTemplate;
-  isInfisicalTemplate: boolean;
+  isHanzo KMSTemplate: boolean;
 };
 
 const formSchema = z.object({
@@ -42,7 +42,7 @@ type TFormSchema = z.infer<typeof formSchema>;
 
 export const ProjectTemplateEnvironmentsForm = ({
   projectTemplate,
-  isInfisicalTemplate
+  isHanzo KMSTemplate
 }: Props) => {
   const {
     control,
@@ -95,13 +95,13 @@ export const ProjectTemplateEnvironmentsForm = ({
       <div className="mb-4 flex items-center justify-between border-b border-mineshaft-400 pb-4">
         <div>
           <h2 className="text-lg font-medium">Project Environments</h2>
-          {!isInfisicalTemplate && (
+          {!isHanzo KMSTemplate && (
             <p className="text-sm text-mineshaft-400">
               Add, rename, remove and reorder environments for this project template
             </p>
           )}
         </div>
-        {!isInfisicalTemplate && (
+        {!isHanzo KMSTemplate && (
           <OrgPermissionCan
             I={OrgPermissionActions.Edit}
             a={OrgPermissionSubjects.ProjectTemplates}
@@ -130,7 +130,7 @@ export const ProjectTemplateEnvironmentsForm = ({
             <Tr>
               <Th>Friendly Name</Th>
               <Th>Slug</Th>
-              {!isInfisicalTemplate && (
+              {!isHanzo KMSTemplate && (
                 <Th>
                   <div className="flex w-full justify-end normal-case">
                     <OrgPermissionCan
@@ -162,7 +162,7 @@ export const ProjectTemplateEnvironmentsForm = ({
             {environments.map(({ id, name, slug }, pos) => (
               <Tr key={id}>
                 <Td>
-                  {isInfisicalTemplate ? (
+                  {isHanzo KMSTemplate ? (
                     name
                   ) : (
                     <OrgPermissionCan
@@ -188,7 +188,7 @@ export const ProjectTemplateEnvironmentsForm = ({
                   )}
                 </Td>
                 <Td>
-                  {isInfisicalTemplate ? (
+                  {isHanzo KMSTemplate ? (
                     slug
                   ) : (
                     <OrgPermissionCan
@@ -213,7 +213,7 @@ export const ProjectTemplateEnvironmentsForm = ({
                     </OrgPermissionCan>
                   )}
                 </Td>
-                {!isInfisicalTemplate && (
+                {!isHanzo KMSTemplate && (
                   <Td className="flex items-center justify-end">
                     <OrgPermissionCan
                       I={OrgPermissionActions.Edit}

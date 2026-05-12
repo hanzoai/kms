@@ -31,14 +31,14 @@ DigiCert requires **External Account Binding (EAB)** for all ACME registrations.
       These credentials are **only displayed once**. Make sure to copy and save them in a secure location before dismissing the modal. If you lose your credentials, you will need to revoke them and generate new ones.
     </Note>
   </Step>
-  <Step title="Create an External CA in Infisical">
-    Follow the steps in the [ACME-compatible CA integration](/documentation/platform/pki/ca/acme-ca) guide to create an External CA in Infisical with the **ACME** CA type. When filling out the form, use the values from DigiCert:
+  <Step title="Create an External CA in Hanzo KMS">
+    Follow the steps in the [ACME-compatible CA integration](/documentation/platform/pki/ca/acme-ca) guide to create an External CA in Hanzo KMS with the **ACME** CA type. When filling out the form, use the values from DigiCert:
 
     - **Directory URL**: Paste the **ACME Directory URL** from DigiCert.
     - **EAB Key Identifier (KID)**: Paste the **Key Identifier** from DigiCert.
     - **EAB HMAC Key**: Paste the **HMAC Key** from DigiCert.
 
-    ![Create External CA with ACME](/images/platform/pki/sectigo/infisical-create-external-ca-acme.png)
+    ![Create External CA with ACME](/images/platform/pki/sectigo/hanzo-kms-create-external-ca-acme.png)
   </Step>
   <Step title="Issue certificates">
     Once the External CA is created, follow the rest of the [ACME-compatible CA integration](/documentation/platform/pki/ca/acme-ca) guide to create a Certificate Profile and start issuing certificates through DigiCert.
