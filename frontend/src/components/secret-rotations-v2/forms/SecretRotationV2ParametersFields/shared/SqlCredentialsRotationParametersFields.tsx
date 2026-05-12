@@ -45,8 +45,8 @@ export const SqlCredentialsRotationParametersFields = () => {
                 onChange={onChange}
                 placeholder={
                   rotationOption.connection === AppConnection.OracleDB
-                    ? "INFISICAL_USER_1"
-                    : "infisical_user_1"
+                    ? "KMS_USER_1"
+                    : "hanzo_kms_user_1"
                 }
               />
             </FormControl>
@@ -66,8 +66,8 @@ export const SqlCredentialsRotationParametersFields = () => {
                 onChange={onChange}
                 placeholder={
                   rotationOption.connection === AppConnection.OracleDB
-                    ? "INFISICAL_USER_2"
-                    : "infisical_user_2"
+                    ? "KMS_USER_2"
+                    : "hanzo_kms_user_2"
                 }
               />
             </FormControl>

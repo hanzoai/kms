@@ -68,7 +68,7 @@ export const GcpSecretManagerConfigurePage = () => {
       secretSuffix: "",
       shouldLabel: false,
       labelName: "managed-by",
-      labelValue: "infisical",
+      labelValue: "hanzo-kms",
       selectedSourceEnvironment: currentProject.environments[0].slug
     }
   });
@@ -93,7 +93,7 @@ export const GcpSecretManagerConfigurePage = () => {
   useEffect(() => {
     if (shouldLabel) {
       setValue("labelName", "managed-by");
-      setValue("labelValue", "infisical");
+      setValue("labelValue", "hanzo-kms");
       return;
     }
 
@@ -328,7 +328,7 @@ export const GcpSecretManagerConfigurePage = () => {
                     isError={Boolean(error)}
                     errorText={error?.message}
                   >
-                    <Input {...field} placeholder="INFISICAL_" />
+                    <Input {...field} placeholder="KMS_" />
                   </FormControl>
                 )}
               />
@@ -384,7 +384,7 @@ export const GcpSecretManagerConfigurePage = () => {
                         isError={Boolean(error)}
                         errorText={error?.message}
                       >
-                        <Input {...field} placeholder="infisical" />
+                        <Input {...field} placeholder="hanzo-kms" />
                       </FormControl>
                     )}
                   />
@@ -456,7 +456,7 @@ export const GcpSecretManagerConfigurePage = () => {
           src="/images/loading/loading.gif"
           height={70}
           width={120}
-          alt="infisical loading indicator"
+          alt="hanzo-kms loading indicator"
         />
       ) : (
         <div className="flex h-max max-w-md flex-col rounded-md border border-mineshaft-600 bg-mineshaft-800 p-6 text-center text-mineshaft-200">

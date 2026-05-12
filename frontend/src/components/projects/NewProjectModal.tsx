@@ -37,7 +37,7 @@ import { getProjectHomePage, getProjectLottieIcon } from "@app/helpers/project";
 import { useCreateWorkspace, useGetExternalKmsList, useGetUserProjects } from "@app/hooks/api";
 import { INTERNAL_KMS_KEY_ID } from "@app/hooks/api/kms/types";
 import { ProjectType } from "@app/hooks/api/projects/types";
-import { InfisicalProjectTemplate, useListProjectTemplates } from "@app/hooks/api/projectTemplates";
+import { Hanzo KMSProjectTemplate, useListProjectTemplates } from "@app/hooks/api/projectTemplates";
 
 const formSchema = z.object({
   name: z.string().trim().min(1, "Required").max(64, "Too long, maximum length is 64 characters"),
@@ -111,7 +111,7 @@ const NewProjectForm = ({ onOpenChange }: NewProjectFormProps) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       kmsKeyId: INTERNAL_KMS_KEY_ID,
-      template: InfisicalProjectTemplate.Default
+      template: Hanzo KMSProjectTemplate.Default
     }
   });
 
@@ -264,8 +264,8 @@ const NewProjectForm = ({ onOpenChange }: NewProjectFormProps) => {
                   }
                 >
                   <Select
-                    defaultValue={InfisicalProjectTemplate.Default}
-                    placeholder={InfisicalProjectTemplate.Default}
+                    defaultValue={Hanzo KMSProjectTemplate.Default}
+                    placeholder={Hanzo KMSProjectTemplate.Default}
                     isDisabled={!isAllowed || !subscription?.projectTemplates}
                     value={value}
                     onValueChange={onChange}
@@ -279,7 +279,7 @@ const NewProjectForm = ({ onOpenChange }: NewProjectFormProps) => {
                             {template.name}
                           </SelectItem>
                         ))
-                      : Object.values(InfisicalProjectTemplate).map((template) => (
+                      : Object.values(Hanzo KMSProjectTemplate).map((template) => (
                           <SelectItem key={template} value={template}>
                             {template}
                           </SelectItem>
