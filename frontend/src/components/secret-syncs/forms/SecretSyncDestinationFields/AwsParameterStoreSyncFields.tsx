@@ -43,11 +43,11 @@ export const AwsParameterStoreSyncFields = () => {
                 </code>{" "}
                 and a key schema of{" "}
                 <code className="rounded-sm bg-mineshaft-600 px-0.5 py-px text-sm text-mineshaft-300">
-                  INFISICAL_{"{{secretKey}}"}
+                  KMS_{"{{secretKey}}"}
                 </code>
                 , then the result will be{" "}
                 <code className="rounded-sm bg-mineshaft-600 px-0.5 py-px text-sm text-mineshaft-300">
-                  /demo/path/INFISICAL_{"{{secretKey}}"}
+                  /demo/path/KMS_{"{{secretKey}}"}
                 </code>
               </>
             }

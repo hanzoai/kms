@@ -224,7 +224,7 @@ export const SecretSyncOptionsFields = ({ hideInitialSync }: Props) => {
               </Tooltip>
             }
           >
-            <Input value={value} onChange={onChange} placeholder="INFISICAL_{{secretKey}}" />
+            <Input value={value} onChange={onChange} placeholder="KMS_{{secretKey}}" />
           </FormControl>
         )}
         control={control}

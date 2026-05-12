@@ -360,7 +360,7 @@ export const PkiSyncOptionsFields = ({ destination }: Props) => {
               value={value || ""}
               onChange={(e) => onChange(e.target.value || undefined)}
               placeholder={
-                syncOption?.defaultCertificateNameSchema || "INFISICAL_{{certificateId}}"
+                syncOption?.defaultCertificateNameSchema || "KMS_{{certificateId}}"
               }
             />
           </FormControl>
