@@ -3,7 +3,7 @@
 // Every mutating KMS request writes an audit row with:
 //
 //	actor_id   = "{iss}:{sub}"    // composite: issuer qualifies the subject
-//	iss        = JWT `iss` claim  // who issued the token (hanzo.id, casdoor, ...)
+//	iss        = JWT `iss` claim  // who issued the token (hanzo.id, iam.lux.network, ...)
 //	sub        = JWT `sub` claim  // subject (must match /^(usr|svc|api)_[a-z0-9_-]+$/ or it is stored verbatim with an "unverified:" tag)
 //	actor_role = best role claim
 //	owner      = JWT `owner` claim (org slug)
