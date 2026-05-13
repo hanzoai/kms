@@ -37,7 +37,7 @@ const qoveryScopes = [
 ];
 
 enum TabSections {
-  Hanzo KMSSettings = "hanzoKmsSettings",
+  HanzoKmsSettings = "hanzoKmsSettings",
   QoverySettings = "qoverySettings"
 }
 
@@ -221,14 +221,14 @@ export const QoveryConfigurePage = () => {
             </a>
           </div>
         </CardTitle>
-        <Tabs defaultValue={TabSections.Hanzo KMSSettings} className="px-6">
+        <Tabs defaultValue={TabSections.HanzoKmsSettings} className="px-6">
           <TabList>
             <div className="flex w-full flex-row border-b border-mineshaft-600">
-              <Tab value={TabSections.Hanzo KMSSettings}>KMS Settings</Tab>
+              <Tab value={TabSections.HanzoKmsSettings}>KMS Settings</Tab>
               <Tab value={TabSections.QoverySettings}>Qovery Settings</Tab>
             </div>
           </TabList>
-          <TabPanel value={TabSections.Hanzo KMSSettings}>
+          <TabPanel value={TabSections.HanzoKmsSettings}>
             <motion.div
               key="panel-1"
               transition={{ duration: 0.15 }}
