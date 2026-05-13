@@ -476,12 +476,12 @@ func TestJWT_F7_OwnerAdminCrossTenant_ReadRejected(t *testing.T) {
 		t.Fatalf("seed: want 201, got %d", resp.StatusCode)
 	}
 
-	// owner=admin MUST NOT bypass tenant scoping (F7). Casdoor client_credentials
-	// emits this for every service account — it is NOT a superuser flag.
+	// owner=admin MUST NOT bypass tenant scoping (F7). IAM client_credentials
+	// emits this for every service account — it is NOT a global-admin flag.
 	tokAdminOwner := e.mintSigned(jwt.MapClaims{
-		"sub":   "casdoor-sa",
-		"owner": "admin", // Casdoor superuser-app namespace — no longer special
-		// no roles claim — must NOT act as superadmin
+		"sub":   "iam-sa",
+		"owner": "admin", // admin-org app namespace — no longer special
+		// no roles claim — must NOT act as global admin
 	})
 	resp = mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/org-a/secrets/shared/key?env=dev", tokAdminOwner, nil)
 	if resp.StatusCode != http.StatusForbidden {
@@ -496,7 +496,7 @@ func TestJWT_F7_OwnerAdminCrossTenant_WriteRejected(t *testing.T) {
 
 	// owner=admin trying to WRITE org-a secrets without a real role.
 	tokAdminOwner := e.mintSigned(jwt.MapClaims{
-		"sub":   "casdoor-sa",
+		"sub":   "iam-sa",
 		"owner": "admin",
 	})
 	body, _ := json.Marshal(map[string]string{
