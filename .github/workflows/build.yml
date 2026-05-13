@@ -3,12 +3,15 @@ name: Build kms
 on:
   push:
     branches: [main]
+    tags: ['v*']
     paths:
       - 'cmd/**'
-      - 'internal/**'
+      - 'pkg/**'
+      - 'frontend/**'
       - 'go.mod'
       - 'go.sum'
       - 'Dockerfile'
+      - '.github/workflows/build.yml'
   workflow_dispatch:
 
 permissions:
