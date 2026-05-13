@@ -993,7 +993,7 @@ type jwtClaims struct {
 //  2. The bearer's verified `roles` claim contains "superadmin",
 //     "kms-admin", or "admin".
 //
-// There is no owner=="admin" shortcut. Casdoor emits owner="admin" for
+// There is no owner=="admin" shortcut. IAM emits owner="admin" for
 // every service account in its superuser-app namespace — treating that
 // string as a cross-tenant grant makes every IAM service account a root
 // key over every org. Red demonstrated this live on 2026-04-21.
