@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { Button, EmptyState, Spinner } from "@app/components/v2";
 import {
-  Hanzo KMSProjectTemplate,
+  HanzoKmsProjectTemplate,
   TProjectTemplate,
   useGetProjectTemplateById
 } from "@app/hooks/api/projectTemplates";
@@ -16,15 +16,15 @@ type Props = {
 };
 
 export const EditProjectTemplateSection = ({ template, onBack }: Props) => {
-  const isHanzo KMSTemplate = Object.values(Hanzo KMSProjectTemplate).includes(
-    template.name as Hanzo KMSProjectTemplate
+  const isHanzoKmsTemplate = Object.values(HanzoKmsProjectTemplate).includes(
+    template.name as HanzoKmsProjectTemplate
   );
 
   const { data: projectTemplate, isPending } = useGetProjectTemplateById(template.id, {
     initialData: template,
-    enabled: !isHanzo KMSTemplate
+    enabled: !isHanzoKmsTemplate
   });
-  const finalTemplate = isHanzo KMSTemplate ? template : projectTemplate;
+  const finalTemplate = isHanzoKmsTemplate ? template : projectTemplate;
 
   return (
     <div>
@@ -44,7 +44,7 @@ export const EditProjectTemplateSection = ({ template, onBack }: Props) => {
         </div>
       ) : finalTemplate ? (
         <EditProjectTemplate
-          isHanzo KMSTemplate={isHanzo KMSTemplate}
+          isHanzoKmsTemplate={isHanzoKmsTemplate}
           projectTemplate={finalTemplate}
           onBack={onBack}
         />

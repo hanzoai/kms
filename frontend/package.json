@@ -11,6 +11,16 @@
   "author": "Hanzo AI",
   "homepage": "https://kms.hanzo.ai",
   "type": "module",
+  "packageManager": "pnpm@9.15.4",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@swc/core",
+      "core-js",
+      "esbuild",
+      "protobufjs",
+      "unrs-resolver"
+    ]
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
