@@ -9,7 +9,7 @@ module github.com/hanzoai/kms
 // Wire-compatible with luxfi clients on both HTTP (/v1/kms/*) and ZAP
 // (opcodes 0x0040..0x0043).
 
-go 1.26.1
+go 1.26.3
 
 require (
 	github.com/golang-jwt/jwt/v5 v5.3.1
