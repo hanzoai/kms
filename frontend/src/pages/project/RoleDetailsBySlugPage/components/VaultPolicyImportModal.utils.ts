@@ -352,7 +352,7 @@ const addPermissionRuleIfUnique = <T extends SecretPermissionRule | FolderPermis
  * @param mounts - List of Vault mounts to match paths against
  * @returns Parsed permissions object ready for Hanzo KMS role creation
  */
-export const parseVaultPolicyToHanzo KMS = (
+export const parseVaultPolicyToHanzoKms = (
   hclPolicy: string,
   mounts: VaultMount[]
 ): Partial<TFormSchema["permissions"]> => {

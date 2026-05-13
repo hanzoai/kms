@@ -30,6 +30,6 @@ export type TDeleteProjectTemplateDTO = {
   templateId: string;
 };
 
-export enum Hanzo KMSProjectTemplate {
+export enum HanzoKmsProjectTemplate {
   Default = "default"
 }
