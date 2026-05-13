@@ -71,7 +71,7 @@ All routes live under `/v1/kms`. There is no `/api/`. There are no aliases.
 access token by proxying to IAM's OAuth token endpoint
 (`POST $IAM_ENDPOINT/api/login/oauth/access_token`). The response is a
 plain `{accessToken, expiresIn, tokenType}` envelope. Outbound `/api/`
-is the IAM (Casdoor) compatibility surface — not a route this service
+is the IAM compatibility surface — not a route this service
 exposes.
 
 ### Secrets (per-org, JWT-gated)
