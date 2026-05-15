@@ -495,7 +495,7 @@ func registerAuth(mux *http.ServeMux, iamEndpoint string) {
 			"client_id":     {req.ClientID},
 			"client_secret": {req.ClientSecret},
 		}
-		resp, err := iamClient.PostForm(iamEndpoint+"/api/login/oauth/access_token", form)
+		resp, err := iamClient.PostForm(iamEndpoint+"/v1/iam/login/oauth/access_token", form)
 		if err != nil {
 			writeJSON(w, http.StatusBadGateway, map[string]any{"statusCode": 502, "message": "identity provider unreachable"})
 			return
