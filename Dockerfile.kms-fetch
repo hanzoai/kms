@@ -1,0 +1,53 @@
+# Dockerfile.kms-fetch — init-container image for fetching secrets from KMS
+# over ZAP at pod boot. See ~/work/onyxplus/CLAUDE.md "kms-fetch" / k8s
+# Secrets → KMS-ZAP migration plan (task #29 / #33).
+#
+# Build:
+#   docker buildx build -f Dockerfile.kms-fetch \
+#       -t ghcr.io/hanzoai/kms-fetch:0.1.0 \
+#       --platform linux/amd64 \
+#       --build-arg GITHUB_TOKEN=... .
+#
+# Use (init container in a Deployment):
+#   initContainers:
+#     - name: kms-fetch
+#       image: ghcr.io/hanzoai/kms-fetch:0.1.0
+#       env:
+#         - { name: KMS_URL,       value: https://kms.{env}.vendor.com }
+#         - { name: KMS_PROJECT,   value: hanzo }
+#         - { name: KMS_ENV,       value: {env} }
+#         - { name: KMS_SECRETS,   value: "DB_URL=path/db_url,API_KEY=path/api_key" }
+#         - { name: IAM_CLIENT_ID, valueFrom: { secretKeyRef: { name: <svc>-iam-bootstrap, key: client_id }}}
+#         - { name: IAM_CLIENT_SECRET, valueFrom: { secretKeyRef: { name: <svc>-iam-bootstrap, key: client_secret }}}
+#       volumeMounts:
+#         - { name: secrets, mountPath: /secrets }
+
+FROM golang:1.26-bookworm AS build
+
+ARG GITHUB_TOKEN
+ARG TARGETARCH
+
+WORKDIR /src
+COPY go.mod go.sum ./
+RUN --mount=type=cache,target=/go/pkg/mod \
+    GOPRIVATE="github.com/luxfi/*,github.com/hanzoai/*" \
+    GONOSUMCHECK="github.com/luxfi/*,github.com/hanzoai/*" \
+    git config --global url."https://${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/" && \
+    go mod download
+
+COPY . .
+
+RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    CGO_ENABLED=0 GOOS=linux GOARCH=${TARGETARCH} \
+    go build -ldflags="-s -w" -o /kms-fetch ./cmd/kms-fetch/
+
+# Distroless static — no shell, no package manager, just the binary + CA
+# certs. The init container exits 0 on success and the main container
+# continues, so it doesn't need an interactive runtime.
+FROM gcr.io/distroless/static:nonroot
+
+COPY --from=build /kms-fetch /kms-fetch
+
+USER nonroot:nonroot
+ENTRYPOINT ["/kms-fetch"]
