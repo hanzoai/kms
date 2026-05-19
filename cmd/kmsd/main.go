@@ -26,7 +26,7 @@ import (
 	"github.com/hanzoai/zip/middleware"
 	"github.com/luxfi/log"
 
-	kms "github.com/hanzoai/kms/pkg/kms"
+	kms "github.com/hanzoai/kms"
 )
 
 // version is overridden at build time via -ldflags "-X main.version=...".

@@ -4,7 +4,7 @@
 //
 // Wire shape:
 //
-//	import _ "github.com/hanzoai/kms/pkg/kms"  // init() registers
+//	import _ "github.com/hanzoai/kms"  // init() registers
 //
 // The init() function below calls cloud.Register("kms", 10, …). At
 // startup the cloud binary iterates the registry and calls Mount() for
