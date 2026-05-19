@@ -13,8 +13,8 @@ go 1.26.3
 
 require (
 	github.com/golang-jwt/jwt/v5 v5.3.1
-	github.com/hanzoai/cloud v0.0.0
-	github.com/hanzoai/zip v0.1.0
+	github.com/hanzoai/cloud v0.1.1-0.20260519183759-098489930d01
+	github.com/hanzoai/zip v0.2.0
 	github.com/luxfi/kms v1.5.2
 	github.com/luxfi/log v1.4.3
 	github.com/luxfi/zap v0.3.1
@@ -77,11 +77,3 @@ require (
 
 // Local development: point at sibling lux/kms checkout. CI overrides with
 // the published version via GOPROXY.
-
-// HIP-0106 cloud Mount() — point at sibling cloud + zip checkouts. CI
-// overrides via GOPROXY once cloud is published. zip is co-versioned
-// with cloud and shares the same replace target shape.
-replace (
-	github.com/hanzoai/cloud => ../cloud
-	github.com/hanzoai/zip => ../zip
-)
