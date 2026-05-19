@@ -43,7 +43,9 @@ FROM debian:bookworm-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates curl && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    groupadd --system --gid 1000 hanzo && \
+    useradd  --system --uid 1000 --gid hanzo --home-dir /data/hanzo-kms --shell /sbin/nologin hanzo
 
 COPY --from=build /kmsd /usr/local/bin/kmsd
 COPY --from=build /kms  /usr/local/bin/kms
@@ -58,7 +60,10 @@ ENV KMS_LISTEN=:8443 \
     KMS_FRONTEND_DIR=/app/frontend \
     BRAND_NAME=Hanzo
 
-RUN mkdir -p /data/hanzo-kms
+RUN mkdir -p /data/hanzo-kms && chown -R hanzo:hanzo /data/hanzo-kms /app/frontend
+
+USER 1000
+WORKDIR /data/hanzo-kms
 
 EXPOSE 8443 9653
 HEALTHCHECK --interval=10s --timeout=3s --start-period=5s --retries=3 \

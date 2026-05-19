@@ -1,0 +1,209 @@
+name: Release
+
+# Multi-arch release pipeline triggered by semver tags.
+#
+# Produces:
+#   * kms-{linux,darwin}-{amd64,arm64}    — admin CLI (cmd/kms)
+#   * kmsd-{linux,darwin}-{amd64,arm64}   — server daemon (cmd/kmsd)
+#   * ghcr.io/hanzoai/kms:vX.Y.Z           — multi-arch manifest
+#
+# Uses GitHub-hosted runners exclusively (ubuntu-24.04 / ubuntu-24.04-arm /
+# macos-14 / macos-14). The legacy backend/ kms-core binaries are still
+# produced by build-binaries.yml — this workflow only covers the Go CLI
+# + daemon.
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to release (e.g. v1.0.0). Must already exist.'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+
+jobs:
+  binaries:
+    name: Build binaries (${{ matrix.goos }}/${{ matrix.goarch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+            runner: ubuntu-24.04
+          - goos: linux
+            goarch: arm64
+            runner: ubuntu-24.04-arm
+          - goos: darwin
+            goarch: amd64
+            runner: macos-14
+          - goos: darwin
+            goarch: arm64
+            runner: macos-14
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache-dependency-path: go.sum
+
+      - name: Resolve version
+        id: version
+        run: |
+          ref="${{ inputs.tag || github.ref_name }}"
+          echo "tag=${ref}" >> "$GITHUB_OUTPUT"
+
+      - name: Build kms + kmsd (${{ matrix.goos }}/${{ matrix.goarch }})
+        env:
+          CGO_ENABLED: '0'
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          GOEXPERIMENT: jsonv2
+          VERSION: ${{ steps.version.outputs.tag }}
+        run: |
+          mkdir -p dist
+          go build -trimpath \
+            -ldflags="-s -w -X main.version=${VERSION}" \
+            -o "dist/kms-${GOOS}-${GOARCH}" ./cmd/kms
+          go build -trimpath \
+            -ldflags="-s -w -X main.version=${VERSION}" \
+            -o "dist/kmsd-${GOOS}-${GOARCH}" ./cmd/kmsd
+          # shasum is available on both linux and macos runners
+          (cd dist && shasum -a 256 "kms-${GOOS}-${GOARCH}" "kmsd-${GOOS}-${GOARCH}" \
+            > "kms-${GOOS}-${GOARCH}.sha256")
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: binaries-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 7
+
+  github-release:
+    name: GitHub Release
+    needs: [binaries]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+          fetch-depth: 0
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Resolve version
+        id: version
+        run: |
+          ref="${{ inputs.tag || github.ref_name }}"
+          echo "tag=${ref}" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: ${{ steps.version.outputs.tag }}
+          generate_release_notes: true
+          files: |
+            dist/kms-linux-amd64
+            dist/kms-linux-arm64
+            dist/kms-darwin-amd64
+            dist/kms-darwin-arm64
+            dist/kmsd-linux-amd64
+            dist/kmsd-linux-arm64
+            dist/kmsd-darwin-amd64
+            dist/kmsd-darwin-arm64
+            dist/kms-linux-amd64.sha256
+            dist/kms-linux-arm64.sha256
+            dist/kms-darwin-amd64.sha256
+            dist/kms-darwin-arm64.sha256
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  docker:
+    name: Multi-arch Docker (ghcr.io/hanzoai/kms)
+    needs: [binaries]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - name: Resolve version
+        id: version
+        run: |
+          ref="${{ inputs.tag || github.ref_name }}"
+          echo "tag=${ref}" >> "$GITHUB_OUTPUT"
+          echo "semver=${ref#v}" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push multi-arch image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          platforms: linux/amd64,linux/arm64
+          provenance: false
+          push: true
+          tags: |
+            ghcr.io/hanzoai/kms:${{ steps.version.outputs.tag }}
+            ghcr.io/hanzoai/kms:${{ steps.version.outputs.semver }}
+            ghcr.io/hanzoai/kms:latest
+          build-args: |
+            GO_EXPERIMENT=jsonv2
+            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  notify-universe:
+    name: Notify universe (auto-bump pin)
+    needs: [docker]
+    runs-on: ubuntu-24.04
+    if: github.repository == 'hanzoai/kms'
+    continue-on-error: true
+    steps:
+      - name: Resolve version
+        id: version
+        run: |
+          ref="${{ inputs.tag || github.ref_name }}"
+          echo "tag=${ref}" >> "$GITHUB_OUTPUT"
+
+      - name: Repository dispatch
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.UNIVERSE_DISPATCH_TOKEN }}
+          repository: hanzoai/universe
+          event-type: kms
+          client-payload: |
+            {
+              "service": "kms",
+              "version": "${{ steps.version.outputs.tag }}",
+              "image":   "ghcr.io/hanzoai/kms:${{ steps.version.outputs.tag }}",
+              "sha":     "${{ github.sha }}"
+            }
