@@ -1,3 +1,46 @@
+# kms
+
+Secrets and signing for the Hanzo platform. Per-org namespaces, AI-aware approval policies, dynamic secrets, SSH/PKI/certificate management.
+
+[![Status](https://img.shields.io/badge/status-stable-green)]()
+[![License](https://img.shields.io/badge/license-MIT-blue)]()
+
+## Quick start
+
+```bash
+docker run -p 80:80 ghcr.io/hanzoai/kms:latest
+```
+
+Open `http://localhost:80`.
+
+## What this is
+
+`kms` is the canonical secret store and signing service for every Hanzo deployment. Holds per-tenant DEKs that back `base`, provider API keys consumed by `ai` and `gateway`, certificate material, and signing keys. AI agents are first-class identities: every secret has a policy controlling whether Claude / GPT / any agent can read it (auto-approve, requires-approval, blocked) with full per-agent audit trail.
+
+## Specs
+
+Implements:
+- HIP-0027 KMS
+- HIP-0106 Unified Cloud Binary (kms subsystem)
+- HIP-0302 Encrypted SQLite + ZapDB Durability (DEK source)
+
+## Architecture
+
+```
+   service / agent  ->  kms (zip.App)  ->  per-org namespace
+                              |
+                  IAM identity (HIP-0026 JWT)
+                              |
+              policy gate: auto-approve | requires-approval | blocked
+                              |
+   master DEK -> HKDF per-org -> per-record DEK   (base / replicate)
+                              |
+                  audit log: who, what secret, when, why
+```
+
+
+---
+
 <h1 align="center">
   KMS
 </h1>
