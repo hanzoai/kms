@@ -26,6 +26,12 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 
 COPY . .
 
+# Per SCALE_STANDARD.md §2 — GOEXPERIMENT=jsonv2 is mandatory in every
+# production Dockerfile that builds Go code emitting JSON to clients.
+# Verified -12% time / -23% allocs on the edge POST roundtrip.
+ARG GO_EXPERIMENT=jsonv2
+ENV GOEXPERIMENT=${GO_EXPERIMENT}
+
 # Pure Go build — no CGO required (luxfi/kms uses ZapDB, not SQLCipher).
 RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
