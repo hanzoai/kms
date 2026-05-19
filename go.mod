@@ -13,13 +13,13 @@ go 1.26.3
 
 require (
 	github.com/golang-jwt/jwt/v5 v5.3.1
-	github.com/hanzoai/cloud v0.0.0
-	github.com/hanzoai/zip v0.0.0
+	github.com/hanzoai/cloud v0.1.1-0.20260519183759-098489930d01
+	github.com/hanzoai/zip v0.2.0
 	github.com/luxfi/kms v1.5.2
 	github.com/luxfi/log v1.4.3
-	github.com/luxfi/zap v0.2.1
+	github.com/luxfi/zap v0.3.1
 	github.com/luxfi/zapdb v1.9.0
-	modernc.org/sqlite v1.49.1
+	modernc.org/sqlite v1.50.0
 )
 
 require (
@@ -41,7 +41,7 @@ require (
 	github.com/klauspost/compress v1.18.5 // indirect
 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
 	github.com/klauspost/crc32 v1.3.0 // indirect
-	github.com/luxfi/age v1.4.0 // indirect
+	github.com/luxfi/age v1.5.0 // indirect
 	github.com/luxfi/mdns v0.1.0 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.21 // indirect
@@ -57,9 +57,9 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.70.0 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
-	go.opentelemetry.io/otel v1.40.0 // indirect
-	go.opentelemetry.io/otel/metric v1.40.0 // indirect
-	go.opentelemetry.io/otel/trace v1.40.0 // indirect
+	go.opentelemetry.io/otel v1.43.0 // indirect
+	go.opentelemetry.io/otel/metric v1.43.0 // indirect
+	go.opentelemetry.io/otel/trace v1.43.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/crypto v0.50.0 // indirect
 	golang.org/x/mod v0.34.0 // indirect
@@ -77,11 +77,3 @@ require (
 
 // Local development: point at sibling lux/kms checkout. CI overrides with
 // the published version via GOPROXY.
-
-// HIP-0106 cloud Mount() — point at sibling cloud + zip checkouts. CI
-// overrides via GOPROXY once cloud is published. zip is co-versioned
-// with cloud and shares the same replace target shape.
-replace (
-	github.com/hanzoai/cloud => ../cloud
-	github.com/hanzoai/zip => ../zip
-)
