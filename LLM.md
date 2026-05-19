@@ -4,6 +4,8 @@
 **Repo**: github.com/hanzoai/kms
 **Module**: github.com/hanzoai/kms (Go 1.26.1)
 
+**Upstream lineage**: LICENSE attests Infisical (MIT) derivation. The Infisical-era code path was deleted; current request path is a thin wrapper over `github.com/luxfi/kms`. The copyright header is retained for legal accuracy, but no Infisical code remains on the wire.
+
 ## What this is
 
 A thin Hanzo-branded wrapper over `github.com/luxfi/kms`. The Go server,
