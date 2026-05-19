@@ -1,13 +1,17 @@
 # Security Policy
 
-## Supported versions
+## Reporting a vulnerability
 
-We always recommend using the latest version of Hanzo KMS to ensure you get all security updates.
+Email security@hanzo.ai with details. Encrypt with our PGP key (fingerprint TBD).
 
-## Reporting vulnerabilities
+We respond within 48 hours. Critical issues receive same-day acknowledgment.
 
-Please do not file GitHub issues or post on our public forum for security vulnerabilities, as they are public!
+## Scope
 
-Hanzo KMS takes security issues very seriously. If you have any concerns about Hanzo KMS or believe you have uncovered a vulnerability, please get in touch via the e-mail address security@hanzo.ai. In the message, try to provide a description of the issue and ideally a way of reproducing it. The security team will get back to you as soon as possible.
+This policy covers code in this repository. For the broader Hanzo platform threat model, see [hanzoai/HIPs](https://github.com/hanzoai/HIPs).
 
-Note that this security address should be used only for undisclosed vulnerabilities. Please report any security problems to us before disclosing it publicly.
+## Sandbox boundary
+
+`kms` is the root of trust for every secret in the Hanzo platform and is treated as such — master keys are sealed, all access is policy-gated and audited, and AI agents are subject to per-secret approval policies (auto-approve, requires-approval, blocked). Tenants are isolated by per-org namespace; cross-namespace access is impossible without an explicit cross-org grant.
+
+For runtime sandbox guarantees, see HIP-0105 (in-process extension runtimes).
