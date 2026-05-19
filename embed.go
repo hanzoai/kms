@@ -38,7 +38,7 @@ import (
 )
 
 // Version is overridden at build time via -ldflags "-X
-// github.com/hanzoai/kms/pkg/kms.Version=...".
+// github.com/hanzoai/kms.Version=...".
 var Version = "dev"
 
 // maxBodyBytes caps every POST body to prevent OOM via slowloris-style upload.
