@@ -2,26 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="
-    default-src 'self';
-    connect-src 'self' http://127.0.0.1:* https://checkout.stripe.com https://api.stripe.com https://api.pwnedpasswords.com https://hcaptcha.com https://*.hcaptcha.com;
-    script-src 'self' https://js.stripe.com https://api.stripe.com https://hcaptcha.com https://*.hcaptcha.com 'unsafe-inline' 'unsafe-eval';
-    style-src 'self' 'unsafe-inline' https://hcaptcha.com https://*.hcaptcha.com;
-    child-src https://api.stripe.com;
-    frame-src https://js.stripe.com/ https://api.stripe.com https://hcaptcha.com https://*.hcaptcha.com;
-    img-src 'self' https://*.stripe.com data:;
-    media-src 'self';
-    font-src 'self' https://fonts.gstatic.com;
-  "
-    />
-    <title>KMS</title>
-    <script src="/runtime-ui-env.js"></script>
+    <meta name="color-scheme" content="dark" />
+    <title>Hanzo KMS</title>
   </head>
-  <body>
+  <body class="bg-neutral-950 text-neutral-100 antialiased">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

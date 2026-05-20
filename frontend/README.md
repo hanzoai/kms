@@ -1,50 +1,64 @@
-# React + TypeScript + Vite
+# @hanzo/kms-frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Hanzo KMS admin SPA.
 
-Currently, two official plugins are available:
+- Vite + React 19 + TypeScript + Tailwind v4
+- `@hanzo/brand` for brand tokens
+- `@tanstack/react-query` for fetch state
+- `wouter` with hash routing for deep links
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Talks to `/v1/kms/*` on the kmsd HTTP server. No backend coupling
+beyond that.
 
-## Expanding the ESLint configuration
+## Layout
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```
+src/
+  components/
+    AdminShell.tsx     — sidebar + topbar + content chrome
+    CollectionCRUD.tsx — flat-collection table primitive
+    Button.tsx         — buttons + inputs + cards + badges
+  lib/
+    api.ts             — typed fetch wrapper + auth helpers
+    cn.ts              — clsx classname join
+  pages/
+    Login.tsx          — POST /v1/kms/auth/login
+    Secrets.tsx        — bespoke path-tree browser
+    Keys.tsx           — flat CollectionCRUD over GET /v1/kms/keys
+    Audit.tsx          — GET /v1/kms/audit/stats
+    Status.tsx         — GET /v1/kms/health + /v1/kms/status
+    EndpointGap.tsx    — honest stub for unbacked admin pages
+  App.tsx              — router + AdminShell wiring
+  main.tsx             — entrypoint
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## Decisions
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+- **No tree listing for secrets.** The canonical surface is
+  path-addressed CRUD only. The "tree view" is a session-local history
+  of paths the operator has opened. Persisted to localStorage so
+  reloads don't lose context.
+- **Hash routing.** kmsd serves the SPA from `/` and ingress is
+  path-stripped at root. Hash routing keeps deep links resilient to
+  proxy reconfiguration.
+- **Token in localStorage.** `/v1/kms/auth/login` exchanges
+  `clientId`/`clientSecret` for an IAM access token. The token sits in
+  `localStorage.KMS_TOKEN` and is sent as `Authorization: Bearer …` on
+  every request.
+- **Pages with no backing endpoints** (projects, workspaces,
+  identities, integrations, certificates) render a single `EndpointGap`
+  component that lists the routes the backend will need.
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+## Commands
+
+```bash
+pnpm install
+pnpm dev                       # http://localhost:5173 — proxies /v1/kms to :8443
+pnpm build                     # → dist/, picked up by kmsd via KMS_FRONTEND_DIR
+pnpm preview
+pnpm typecheck
 ```
+
+The image build copies `dist/` to `/app/frontend` and kmsd serves it
+from `KMS_FRONTEND_DIR`. API paths are SPA-fallthrough-protected by
+kmsd's mux.

@@ -1,79 +1,44 @@
-import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
-import react from "@vitejs/plugin-react-swc";
-import { defineConfig, loadEnv, PluginOption } from "vite";
-import topLevelAwait from "vite-plugin-top-level-await";
-import wasm from "vite-plugin-wasm";
-import tsconfigPaths from "vite-tsconfig-paths";
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/postcss'
+import path from 'node:path'
 
-const virtualRouteFileChangeReloadPlugin: PluginOption = {
-  name: "watch-config-restart",
-  configureServer(server) {
-    server.watcher.add("./src/routes.ts");
-    server.watcher.on("change", (path) => {
-      if (path.endsWith("src/routes.ts")) {
-        console.log("Virtual route changed");
-        server.restart();
-      }
-    });
-  }
-};
-
-// https://vite.dev/config/
-export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd());
-  const allowedHosts = env.VITE_ALLOWED_HOSTS?.split(",") ?? [];
-  const version = (
-    env.INFISICAL_PLATFORM_VERSION ||
-    env.VITE_INFISICAL_PLATFORM_VERSION ||
-    "0.0.1"
-  ).replaceAll(".", "-");
-
-  return {
-    define: {
-      "process.env": "{}",
-      "process.version": '"v22.0.0"',
-      "process.browser": "true",
+// Hanzo KMS admin SPA.
+//
+// Single-page React app served from KMS_FRONTEND_DIR by kmsd's mux.
+// All API calls go to /v1/kms/* — same origin as the SPA in production.
+// In dev, Vite proxies /v1/kms to the local kmsd listener on :8443.
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
     },
-    server: {
-      allowedHosts,
-      host: true,
-      port: 3000
-      // proxy: {
-      //   "/api": {
-      //     target: "http://localhost:8080",
-      //     changeOrigin: true,
-      //     secure: false,
-      //     ws: true
-      //   }
-      // }
+  },
+  css: {
+    postcss: {
+      plugins: [tailwindcss()],
     },
-    build: {
-      rollupOptions: {
-        output: {
-          entryFileNames: `assets/[name]-${version}-[hash].js`,
-          chunkFileNames: `assets/[name]-${version}-[hash].js`,
-          assetFileNames: `assets/[name]-${version}-[hash].[ext]`
-        }
-      }
+  },
+  build: {
+    outDir: 'dist',
+    emptyOutDir: true,
+    sourcemap: false,
+    target: 'es2022',
+  },
+  server: {
+    port: 5173,
+    proxy: {
+      '/v1/kms': {
+        target: 'http://127.0.0.1:8443',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/healthz': {
+        target: 'http://127.0.0.1:8443',
+        changeOrigin: true,
+        secure: false,
+      },
     },
-    experimental: {
-      renderBuiltUrl(filename, { hostType }) {
-        if (hostType === "js") {
-          return { runtime: `window.__toCdnUrl(${JSON.stringify(filename)})` };
-        }
-
-        return { relative: true };
-      }
-    },
-    plugins: [
-      tsconfigPaths(),
-      wasm(),
-      topLevelAwait(),
-      TanStackRouterVite({
-        virtualRouteConfig: "./src/routes.ts"
-      }),
-      react(),
-      virtualRouteFileChangeReloadPlugin
-    ]
-  };
-});
+  },
+})

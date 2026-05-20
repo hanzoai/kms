@@ -9,7 +9,7 @@ WORKDIR /src/frontend
 COPY frontend/package.json frontend/pnpm-lock.yaml ./
 RUN corepack enable pnpm && pnpm install --frozen-lockfile
 COPY frontend/ .
-RUN pnpm vite build
+RUN pnpm build
 
 FROM golang:1.26-bookworm AS build
 
