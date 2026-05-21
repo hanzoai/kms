@@ -15,8 +15,8 @@ jobs:
     with:
       service: kms
       image: ghcr.io/hanzoai/kms
-      dockerfile: Dockerfile.standalone-kms
-      port: "8080"
-      health-path: /api/status
+      dockerfile: Dockerfile
+      port: "8443"
+      health-path: /healthz
       e2e-dir: frontend/e2e
     secrets: inherit

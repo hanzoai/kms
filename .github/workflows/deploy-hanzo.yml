@@ -88,7 +88,7 @@ jobs:
     uses: hanzoai/.github/.github/workflows/docker-build.yml@main
     with:
       image: ghcr.io/hanzoai/kms
-      dockerfile: Dockerfile.standalone-kms
+      dockerfile: Dockerfile
       platforms: "linux/amd64"
       deploy: false
     secrets: inherit
