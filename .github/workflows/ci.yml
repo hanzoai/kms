@@ -8,26 +8,12 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: hanzo-build-linux-amd64
 
     steps:
-      - name: Checkout hanzoai/kms
-        uses: actions/checkout@v4
-        with:
-          path: hanzo/kms
+      - uses: actions/checkout@v4
 
-      # The hanzo/kms go.mod uses a relative `replace github.com/luxfi/kms
-      # => ../../lux/kms` directive for local development. CI checks out
-      # the canonical luxfi/kms repo at the matching relative path so the
-      # replace resolves identically to local dev.
-      - name: Checkout luxfi/kms (canonical)
-        uses: actions/checkout@v4
-        with:
-          repository: luxfi/kms
-          path: lux/kms
-
-      - name: Set up Go
-        uses: actions/setup-go@v5
+      - uses: actions/setup-go@v5
         with:
           go-version: "1.26"
 
@@ -37,20 +23,17 @@ jobs:
           path: |
             ~/.cache/go-build
             ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('hanzo/kms/go.sum') }}
+          key: ${{ runner.os }}-go-${{ hashFiles('go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
 
       - name: Download dependencies
-        working-directory: hanzo/kms
         run: go mod download
 
       - name: Run unit tests
-        working-directory: hanzo/kms
         run: go test -v -race ./...
 
       - name: Build
-        working-directory: hanzo/kms
         run: |
           CGO_ENABLED=0 go build -v ./cmd/kmsd
           CGO_ENABLED=0 go build -v ./cmd/kms

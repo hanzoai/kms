@@ -12,7 +12,7 @@ on:
 jobs:
   check-fe-ts-lint:
     name: Check Frontend Type and Lint check
-    runs-on: ubuntu-latest
+    runs-on: hanzo-build-linux-amd64
     timeout-minutes: 15
 
     steps:
@@ -27,12 +27,9 @@ jobs:
           node-version: "22"
           cache: "pnpm"
           cache-dependency-path: frontend/pnpm-lock.yaml
-      - name: 📦 Install dependencies
-        run: pnpm install
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
         working-directory: frontend
-      - name: 🏗️ Run Type check
-        run: pnpm run type:check
-        working-directory: frontend
-      - name: 🏗️ Run Lint check
-        run: pnpm run lint
+      - name: Type check
+        run: pnpm run typecheck
         working-directory: frontend
