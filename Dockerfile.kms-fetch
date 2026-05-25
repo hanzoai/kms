@@ -13,7 +13,7 @@
 #     - name: kms-fetch
 #       image: ghcr.io/hanzoai/kms-fetch:0.1.0
 #       env:
-#         - { name: KMS_URL,       value: https://kms.{env}.satschel.com }
+#         - { name: KMS_URL,       value: https://kms.{env}.<tenant-domain> }
 #         - { name: KMS_PROJECT,   value: liquidity }
 #         - { name: KMS_ENV,       value: {env} }
 #         - { name: KMS_SECRETS,   value: "DB_URL=path/db_url,API_KEY=path/api_key" }
