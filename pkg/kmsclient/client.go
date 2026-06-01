@@ -5,7 +5,7 @@
 //
 //	http://kms.hanzo.svc.cluster.local:8443     → HTTP/JSON (IAM bearer)
 //	https://kms.hanzo.ai                        → HTTP/JSON (IAM bearer)
-//	zap://kms.hanzo.svc.cluster.local:9999      → ZAP native binary (NodeID ACL)
+//	zap://kms.hanzo.svc.cluster.local:9999      → ZAP native binary
 //	zap+mdns://_kms._tcp                        → ZAP via mDNS discovery
 //
 // ZAP is the production default for in-cluster service-to-service traffic
@@ -17,21 +17,26 @@
 //	HTTP: clientId+clientSecret → IAM client_credentials → bearer JWT
 //	      verified by kmsd against IAM JWKS. Org scoped via JWT `owner`.
 //
-//	ZAP:  caller NodeID (advertised at mDNS / direct dial) → authorised
-//	      by the kmsd-side ACL file (KMS_ZAP_ACL). The caller's clientId
-//	      and clientSecret are accepted on the API for source compat
-//	      but ignored on the wire.
+//	ZAP:  caller signs every envelope with a mnemonic-derived
+//	      *Identity (luxfi/keys.ServiceIdentity). The server verifies
+//	      the envelope and asks consensus "is this NodeID authorized
+//	      for op on path?". There is no per-pod NodeID string —
+//	      identity is derived deterministically from the mnemonic +
+//	      service path.
 //
 // Both transports converge on the same exported API: New, Get, Put,
 // Delete, List, GetJSON, FetchEnv.
 //
-// Example:
+// Example (ZAP, mnemonic-derived identity):
 //
+//	ident, err := kmsclient.IdentityFromEnv("hanzo/auto")
+//	if err != nil { return err }
+//	defer ident.Wipe()
 //	c, err := kmsclient.New(kmsclient.Config{
-//	    Endpoint:     "zap://kms.hanzo.svc.cluster.local:9999",
-//	    NodeID:       "hanzo-auto",       // must match KMS_ZAP_ACL
-//	    Org:          "hanzo",
-//	    Env:          "prod",
+//	    Endpoint: "zap://kms.hanzo.svc.cluster.local:9999",
+//	    Identity: ident,
+//	    Org:      "hanzo",
+//	    Env:      "prod",
 //	})
 //	val, err := c.Get(ctx, "providers/alpaca/dev", "api_key")
 package kmsclient
@@ -59,17 +64,17 @@ import (
 //     ClientSecret + Org. The Env field is sent as a query param on
 //     each call; default "default".
 //
-//   - zap://host:port — ZAP transport, direct dial. Requires Org (used
-//     by GetAt/PutAt as the prefix when callers omit a path). NodeID is
-//     advertised on the wire; if empty a deterministic
-//     "kmsclient-<pid>" is used. The kmsd ACL must list this NodeID.
+//   - zap://host:port — ZAP transport, direct dial. Requires Identity
+//     (mnemonic-derived). The kmsd verifies the envelope signature
+//     and asks consensus whether the identity's NodeID is authorized
+//     for the request's op + path.
 //
 //   - zap+mdns://… — ZAP transport, mDNS discovery. Same as zap:// minus
 //     the explicit address.
 //
 // IAMEndpoint / ClientID / ClientSecret are accepted on the ZAP path so
 // callers can ship the same config struct between transports, but
-// they are unused on the wire — the ACL is the only gate.
+// they are unused on the wire — the envelope signature is the only gate.
 type Config struct {
 	// Endpoint is the KMS server URL.
 	//
@@ -103,13 +108,20 @@ type Config struct {
 	// the ZAP path (which has no query string).
 	Env string
 
-	// NodeID is the ZAP peer identity. Required on the ZAP path —
-	// kmsd's ACL file matches against this exact string. Ignored on
-	// the HTTP path.
+	// Identity is the mnemonic-derived service identity that signs
+	// every ZAP envelope. Required on the ZAP path; the wire fails
+	// fast on the first call when nil. The Identity owns its private
+	// key; caller is responsible for Wipe() at shutdown.
 	//
-	// Empty defaults to "kmsclient-<pid>"; that node will be rejected
-	// by any ACL that does not explicitly grant it.
-	NodeID string
+	// Build it via NewIdentity(mnemonic, servicePath) or
+	// IdentityFromEnv(servicePath). Ignored on the HTTP path.
+	Identity *Identity
+
+	// TransportNodeID is the ZAP node label used by the transport
+	// layer to register itself in the mesh (mDNS / direct-dial peer
+	// table). It is NOT the authentication identity — that is
+	// Identity (mnemonic-derived). Empty defaults to "kmsclient".
+	TransportNodeID string
 
 	// HTTPClient is an optional custom HTTP client. If nil, a default
 	// with 15-second timeout is used. Honoured only on the HTTP path.
@@ -136,9 +148,9 @@ type Client struct {
 	tokenExpiry time.Time
 
 	// ZAP fields. Populated when transport == "zap".
-	zap     *zapclient.Client
-	zapHost string // for diagnostics
-	nodeID  string
+	zap      *zapclient.Client
+	zapHost  string // for diagnostics
+	identity *Identity
 
 	// transport is "http" or "zap" — set at New() time, immutable.
 	transport string
@@ -147,9 +159,9 @@ type Client struct {
 // New creates a KMS client. Validation depends on the Endpoint scheme.
 //
 // HTTP requires Endpoint + IAMEndpoint + ClientID + ClientSecret + Org.
-// ZAP requires Endpoint + Org. ZAP additionally needs NodeID populated
-// for the kmsd ACL to match — empty NodeID is allowed only when the
-// server runs in open mode (no ACL file).
+// ZAP requires Endpoint + Org + Identity. The mnemonic-derived
+// Identity signs every envelope the server verifies; the consensus
+// authorizer then decides on the request.
 func New(cfg Config) (*Client, error) {
 	if cfg.Endpoint == "" {
 		return nil, errors.New("kmsclient: endpoint is required")
@@ -205,11 +217,20 @@ func newHTTP(cfg Config, env string) (*Client, error) {
 // We dial eagerly so callers see the dial failure at construction time
 // rather than on first Get. The connection is reused for every call.
 func newZAP(cfg Config, env string) (*Client, error) {
+	if cfg.Identity == nil {
+		return nil, errors.New("kmsclient: identity is required (zap transport)")
+	}
 	host, mdns := parseZAPEndpoint(cfg.Endpoint)
+	transportNodeID := cfg.TransportNodeID
+	if transportNodeID == "" {
+		transportNodeID = "kmsclient"
+	}
 	zcfg := zapclient.Config{
-		NodeID:      cfg.NodeID,
-		ServiceType: "_kms._tcp",
-		DefaultPath: cfg.Org, // unused by GetAt/PutAt below; harmless
+		NodeID:         transportNodeID,
+		ServiceType:    "_kms._tcp",
+		DefaultPath:    cfg.Org, // unused by GetAt/PutAt below; harmless
+		IdentityHeader: cfg.Identity.Header,
+		Signer:         cfg.Identity.ServiceIdentity,
 	}
 	if !mdns {
 		zcfg.PeerAddr = host
@@ -220,10 +241,6 @@ func newZAP(cfg Config, env string) (*Client, error) {
 	if err != nil {
 		return nil, fmt.Errorf("kmsclient: zap dial %q: %w", cfg.Endpoint, err)
 	}
-	nodeID := cfg.NodeID
-	if nodeID == "" {
-		nodeID = "kmsclient"
-	}
 	return &Client{
 		transport: "zap",
 		endpoint:  cfg.Endpoint,
@@ -231,7 +248,7 @@ func newZAP(cfg Config, env string) (*Client, error) {
 		env:       env,
 		zap:       zc,
 		zapHost:   host,
-		nodeID:    nodeID,
+		identity:  cfg.Identity,
 	}, nil
 }
 

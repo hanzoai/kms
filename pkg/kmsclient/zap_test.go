@@ -17,12 +17,29 @@ import (
 	"testing"
 	"time"
 
+	"github.com/luxfi/ids"
 	"github.com/luxfi/kms/pkg/store"
 	"github.com/luxfi/kms/pkg/zapserver"
 	"github.com/luxfi/log"
 	"github.com/luxfi/zap"
 	badger "github.com/luxfi/zapdb"
 )
+
+const testZAPMnemonic = "abandon abandon abandon abandon abandon abandon " +
+	"abandon abandon abandon abandon abandon about"
+
+// allowAuthorizer is a test-only ConsensusAuthorizer that lets every
+// signed envelope through. The kmsclient ZAP tests are about transport
+// round-trip, not authority.
+type allowAuthorizer struct{}
+
+func (allowAuthorizer) Authorize(_ context.Context, _ zapserver.Identity, _ string, _ zapserver.Op) (zapserver.Decision, error) {
+	return zapserver.Allow("test-allow-all"), nil
+}
+
+// ensureUnusedID silences linter when ids isn't referenced in this
+// build (defensive — ids may be needed by future cases).
+var _ = ids.EmptyNodeID
 
 // pickEphemeralPort grabs a free TCP port without binding it; the
 // caller passes it to the ZAP Node which then binds for real. There is
@@ -61,9 +78,10 @@ func startTestZAPServer(t *testing.T) (addr string, teardown func()) {
 	_ = base64.StdEncoding.EncodeToString(mk) // silence linter on unused import
 
 	srv := zapserver.New(zapserver.Config{
-		Store:     store.NewSecretStore(db),
-		MasterKey: mk,
-		Logger:    log.Root(),
+		Store:      store.NewSecretStore(db),
+		MasterKey:  mk,
+		Authorizer: allowAuthorizer{},
+		Logger:     log.Root(),
 	})
 
 	port := pickEphemeralPort(t)
@@ -90,11 +108,17 @@ func TestZAP_DialAndGetPut(t *testing.T) {
 	addr, teardown := startTestZAPServer(t)
 	defer teardown()
 
+	ident, err := NewIdentity(testZAPMnemonic, "hanzo/test-client")
+	if err != nil {
+		t.Fatalf("NewIdentity: %v", err)
+	}
+	defer ident.Wipe()
 	c, err := New(Config{
-		Endpoint: "zap://" + addr,
-		Org:      "hanzo",
-		Env:      "test",
-		NodeID:   "test-client-nodeid",
+		Endpoint:        "zap://" + addr,
+		Org:             "hanzo",
+		Env:             "test",
+		Identity:        ident,
+		TransportNodeID: "test-client-transport",
 	})
 	if err != nil {
 		t.Fatalf("New(zap): %v", err)
@@ -168,5 +192,15 @@ func TestZAP_New_RequiresOrg(t *testing.T) {
 	if _, err := New(Config{Endpoint: "zap://x:1"}); err == nil ||
 		!strings.Contains(err.Error(), "org is required") {
 		t.Fatalf("want org-required error, got %v", err)
+	}
+}
+
+// Ensure ZAP transport refuses to construct without an Identity.
+// (Identity is the only authentication carrier on ZAP — there is no
+// fallback that the wire would accept.)
+func TestZAP_New_RequiresIdentity(t *testing.T) {
+	if _, err := New(Config{Endpoint: "zap://x:1", Org: "hanzo"}); err == nil ||
+		!strings.Contains(err.Error(), "identity is required") {
+		t.Fatalf("want identity-required error, got %v", err)
 	}
 }

@@ -45,7 +45,6 @@ import (
 	"time"
 
 	"github.com/hanzoai/kms/pkg/kmsclient"
-	"github.com/luxfi/kms/pkg/zapclient"
 )
 
 const (
@@ -174,13 +173,34 @@ func run(ctx context.Context) error {
 // back to the HTTP path. The decision is per-process: there is no per-call
 // fallback so failures fail loud (a partial mix would mask configuration
 // drift).
+//
+// ZAP requires LUX_MNEMONIC + KMS_SERVICE_PATH for the consensus-native
+// envelope path; HTTP requires the IAM client_credentials pair.
 func newFetcher(ctx context.Context, kmsEnv string) (fetcher, error) {
 	if addr := os.Getenv("KMS_ZAP"); addr != "" {
-		c, err := zapclient.Dial(ctx, addr, "" /* DefaultPath: we always pass full path */)
-		if err != nil {
-			return nil, fmt.Errorf("zap dial %s: %w", addr, err)
+		org := os.Getenv("IAM_ORG")
+		if org == "" {
+			org = "hanzo"
 		}
-		return &zapFetcher{c: c, env: kmsEnv}, nil
+		servicePath := os.Getenv("KMS_SERVICE_PATH")
+		if servicePath == "" {
+			return nil, fmt.Errorf("KMS_ZAP set but KMS_SERVICE_PATH is missing (need a service path for envelope identity)")
+		}
+		ident, err := kmsclient.IdentityFromEnv(servicePath)
+		if err != nil {
+			return nil, fmt.Errorf("kms-fetch: identity: %w", err)
+		}
+		cli, err := kmsclient.New(kmsclient.Config{
+			Endpoint:        "zap://" + addr,
+			Org:             org,
+			Env:             kmsEnv,
+			Identity:        ident,
+			TransportNodeID: "kms-fetch",
+		})
+		if err != nil {
+			return nil, fmt.Errorf("kms-fetch: zap dial %s: %w", addr, err)
+		}
+		return &kmsclientFetcher{c: cli, identity: ident}, nil
 	}
 	// HTTP fallback. Requires the full IAM credential pair.
 	endpoint := os.Getenv("KMS_ENDPOINT")
@@ -197,25 +217,23 @@ func newFetcher(ctx context.Context, kmsEnv string) (fetcher, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &httpFetcher{c: cli}, nil
+	return &kmsclientFetcher{c: cli}, nil
 }
 
-type zapFetcher struct {
-	c   *zapclient.Client
-	env string
+type kmsclientFetcher struct {
+	c        *kmsclient.Client
+	identity *kmsclient.Identity // owns the private key; wiped on Close
 }
 
-func (z *zapFetcher) Get(ctx context.Context, path, name string) (string, error) {
-	return z.c.GetAt(ctx, path, name, z.env)
+func (z *kmsclientFetcher) Get(ctx context.Context, path, name string) (string, error) {
+	return z.c.Get(ctx, path, name)
 }
-func (z *zapFetcher) Close() error { z.c.Close(); return nil }
-
-type httpFetcher struct{ c *kmsclient.Client }
-
-func (h *httpFetcher) Get(ctx context.Context, path, name string) (string, error) {
-	return h.c.Get(ctx, path, name)
+func (z *kmsclientFetcher) Close() error {
+	if z.identity != nil {
+		z.identity.Wipe()
+	}
+	return z.c.Close()
 }
-func (h *httpFetcher) Close() error { return nil }
 
 // parseSpecs accepts the same format already established by the bd
 // container's KMS_SECRETS env:
