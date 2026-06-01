@@ -15,7 +15,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/hanzoai/cloud v0.1.1-0.20260519183759-098489930d01
 	github.com/hanzoai/zip v0.2.0
-	github.com/luxfi/kms v1.5.2
+	github.com/luxfi/kms v1.9.13
 	github.com/luxfi/log v1.4.3
 	github.com/luxfi/zap v0.3.1
 	github.com/luxfi/zapdb v1.9.0
@@ -27,6 +27,7 @@ require (
 	github.com/andybalholm/brotli v1.2.1 // indirect
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
+	github.com/cloudflare/circl v1.6.3 // indirect
 	github.com/dgraph-io/ristretto/v2 v2.4.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/go-ini/ini v1.67.0 // indirect
