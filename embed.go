@@ -1103,8 +1103,14 @@ func safeEnvName(n string) bool {
 // --- ZAP secrets server ---
 
 // startZAPSecretServer brings up the binary ZAP transport for in-cluster
-// secret CRUD. Disabled when KMS_MASTER_KEY_B64 is unset or the port
-// resolves to <=0. Returns the running node so Stop can shut it down.
+// secret CRUD. Disabled when:
+//   - KMS_MASTER_KEY_B64 unset or invalid (no transport encryption key)
+//   - KMS_ZAP_PORT/KMS_ZAP resolves to <=0
+//   - no consensus authority snapshot configured (fail-soft: HTTP path
+//     still up; ZAP comes online when kms-operator drops the snapshot)
+//
+// A configured-but-malformed snapshot is fatal (fail-closed on bad input).
+// Returns the running node so Stop can shut it down.
 func startZAPSecretServer(secStore *store.SecretStore, cfg EmbedConfig) *zap.Node {
 	masterKeyB64 := envOr("KMS_MASTER_KEY_B64", "")
 	if masterKeyB64 == "" || cfg.ZAPPort <= 0 {
@@ -1114,6 +1120,16 @@ func startZAPSecretServer(secStore *store.SecretStore, cfg EmbedConfig) *zap.Nod
 	masterKey, err := base64.StdEncoding.DecodeString(masterKeyB64)
 	if err != nil || len(masterKey) != 32 {
 		log.Info("kms.Embed: KMS_MASTER_KEY_B64 invalid (need 32 raw bytes base64); ZAP server disabled")
+		return nil
+	}
+	authorizer, err := buildConsensusAuthorizer()
+	if err != nil {
+		log.Crit("kms.Embed: consensus authorizer config invalid (refusing to fail open)", "err", err)
+		return nil
+	}
+	if authorizer == nil {
+		log.Info("kms.Embed: no consensus authority snapshot configured; ZAP secrets-server disabled (HTTP path still up)",
+			"file_env", envConsensusFile, "validators_env", envConsensusValidators, "operators_env", envConsensusOperators)
 		return nil
 	}
 	n := zap.NewNode(zap.NodeConfig{
@@ -1126,9 +1142,10 @@ func startZAPSecretServer(secStore *store.SecretStore, cfg EmbedConfig) *zap.Nod
 		return nil
 	}
 	zs := zapserver.New(zapserver.Config{
-		Store:     secStore,
-		MasterKey: masterKey,
-		Logger:    log.Root(),
+		Store:      secStore,
+		MasterKey:  masterKey,
+		Logger:     log.Root(),
+		Authorizer: authorizer,
 	})
 	zs.Register(n)
 	log.Info("kms.Embed: ZAP secrets-server listening", "port", cfg.ZAPPort, "service", "_kms._tcp")
