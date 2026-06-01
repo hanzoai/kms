@@ -12,25 +12,22 @@ module github.com/hanzoai/kms
 go 1.26.3
 
 // luxfi/keys + luxfi/kms drive the consensus-native ZAP secret surface.
-// Local replaces while ServiceIdentity / envelope / consensus_auth land
-// upstream; drop the replaces once both repos publish tagged releases
-// carrying the new surface.
-replace (
-	github.com/luxfi/keys => ../../lux/keys
-	github.com/luxfi/kms => ../../lux/kms
-)
-
+// Tagged upstream:
+//   luxfi/keys v1.0.10  — ServiceIdentity + CoinTypeUTXO/CoinTypeEVM rename
+//   luxfi/kms  v1.10.0  — consensus-native authorization replaces CSV ACL
 require (
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/hanzoai/cloud v0.1.1-0.20260519183759-098489930d01
 	github.com/hanzoai/zip v0.2.0
-	github.com/luxfi/keys v1.0.9
-	github.com/luxfi/kms v1.9.13
+	github.com/luxfi/keys v1.0.10
+	github.com/luxfi/kms v1.10.0
 	github.com/luxfi/log v1.4.3
 	github.com/luxfi/zap v0.3.1
 	github.com/luxfi/zapdb v1.9.0
 	modernc.org/sqlite v1.50.0
 )
+
+require github.com/luxfi/ids v1.2.13
 
 require (
 	filippo.io/hpke v0.4.0 // indirect
@@ -69,7 +66,6 @@ require (
 	github.com/luxfi/geth v1.16.79 // indirect
 	github.com/luxfi/go-bip32 v1.0.2 // indirect
 	github.com/luxfi/go-bip39 v1.1.2 // indirect
-	github.com/luxfi/ids v1.2.13 // indirect
 	github.com/luxfi/math v1.4.0 // indirect
 	github.com/luxfi/math/big v0.1.0 // indirect
 	github.com/luxfi/mdns v0.1.0 // indirect
@@ -115,6 +111,3 @@ require (
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.11.0 // indirect
 )
-
-// Local development: point at sibling lux/kms checkout. CI overrides with
-// the published version via GOPROXY.
