@@ -1,0 +1,418 @@
+# Kubernetes Deployment for KMS with Zymbit HSM
+# Designed for edge/IoT deployments with Zymbit hardware
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kms-zymbit
+  labels:
+    name: kms-zymbit
+
+---
+# ConfigMap for non-sensitive configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kms-config
+  namespace: kms-zymbit
+data:
+  # HSM Configuration
+  HSM_ENABLED: "true"
+  HSM_PROVIDER: "zymbit"
+  HSM_LIB_PATH: "/usr/lib/libzk_pkcs11.so"
+  HSM_SLOT: "0"
+  HSM_KEY_LABEL: "lux-kms-key"
+  ZYMBIT_DEVICE_PATH: "/dev/zymkey"
+  ZYMBIT_TAMPER_CHECK: "true"
+
+  # Application Configuration
+  NODE_ENV: "production"
+  PORT: "8080"
+  LOG_LEVEL: "info"
+  JWT_EXPIRATION: "1h"
+
+  # Database Configuration
+  DB_HOST: "postgres-service"
+  DB_PORT: "5432"
+  DB_NAME: "kms"
+  DB_USER: "kms"
+
+  # Redis Configuration
+  REDIS_HOST: "redis-service"
+  REDIS_PORT: "6379"
+
+---
+# Secret for sensitive configuration
+apiVersion: v1
+kind: Secret
+metadata:
+  name: kms-secrets
+  namespace: kms-zymbit
+type: Opaque
+stringData:
+  # IMPORTANT: Replace these with actual values
+  # Do not commit actual secrets to version control
+
+  # Zymbit HSM PIN
+  HSM_PIN: "your-zymbit-pin"
+
+  # KMS Encryption Key (32 bytes hex)
+  # Generate: openssl rand -hex 32
+  ENCRYPTION_KEY: "your-32-byte-hex-encryption-key"
+
+  # Authentication Secret
+  # Generate: openssl rand -hex 32
+  AUTH_SECRET: "your-random-auth-secret"
+
+  # Database Password
+  DB_PASSWORD: "your-secure-db-password"
+
+  # Database Connection URI
+  DB_CONNECTION_URI: "postgresql://kms:your-secure-db-password@postgres-service:5432/kms"
+
+---
+# PostgreSQL Database Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: kms-zymbit
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: ghcr.io/hanzoai/sql:latest
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: kms-config
+              key: DB_NAME
+        - name: POSTGRES_USER
+          valueFrom:
+            configMapKeyRef:
+              name: kms-config
+              key: DB_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: kms-secrets
+              key: DB_PASSWORD
+        volumeMounts:
+        - name: postgres-storage
+          mountPath: /var/lib/postgresql/data
+        livenessProbe:
+          exec:
+            command: ["pg_isready", "-U", "kms"]
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          exec:
+            command: ["pg_isready", "-U", "kms"]
+          initialDelaySeconds: 5
+          periodSeconds: 10
+      volumes:
+      - name: postgres-storage
+        persistentVolumeClaim:
+          claimName: postgres-pvc
+
+---
+# PostgreSQL Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+  namespace: kms-zymbit
+spec:
+  selector:
+    app: postgres
+  ports:
+  - protocol: TCP
+    port: 5432
+    targetPort: 5432
+  type: ClusterIP
+
+---
+# PostgreSQL PVC
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  namespace: kms-zymbit
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+# Redis Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: kms-zymbit
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:7-alpine
+        ports:
+        - containerPort: 6379
+        command: ["redis-server", "--appendonly", "yes"]
+        volumeMounts:
+        - name: redis-storage
+          mountPath: /data
+        livenessProbe:
+          exec:
+            command: ["redis-cli", "ping"]
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          exec:
+            command: ["redis-cli", "ping"]
+          initialDelaySeconds: 5
+          periodSeconds: 10
+      volumes:
+      - name: redis-storage
+        persistentVolumeClaim:
+          claimName: redis-pvc
+
+---
+# Redis Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-service
+  namespace: kms-zymbit
+spec:
+  selector:
+    app: redis
+  ports:
+  - protocol: TCP
+    port: 6379
+    targetPort: 6379
+  type: ClusterIP
+
+---
+# Redis PVC
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-pvc
+  namespace: kms-zymbit
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+
+---
+# KMS Deployment with Zymbit HSM
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kms
+  namespace: kms-zymbit
+  labels:
+    app: kms
+spec:
+  replicas: 1  # Single replica due to HSM hardware binding
+  selector:
+    matchLabels:
+      app: kms
+  template:
+    metadata:
+      labels:
+        app: kms
+    spec:
+      # IMPORTANT: Target nodes with Zymbit hardware
+      # Label nodes: kubectl label nodes <node-name> hardware.zymbit.com/hsm=true
+      nodeSelector:
+        hardware.zymbit.com/hsm: "true"
+
+      containers:
+      - name: kms
+        image: kms/kms-fips:latest
+        ports:
+        - containerPort: 8080
+          name: http
+
+        # Environment from ConfigMap
+        envFrom:
+        - configMapRef:
+            name: kms-config
+        - secretRef:
+            name: kms-secrets
+
+        # Security context (privileged for device access)
+        securityContext:
+          privileged: true
+          capabilities:
+            add: ["SYS_RAWIO"]  # For I2C access
+
+        # Volume mounts
+        volumeMounts:
+        # Zymbit PKCS#11 library
+        - name: zymbit-lib
+          mountPath: /usr/lib/libzk_pkcs11.so
+          readOnly: true
+        # Zymbit device
+        - name: zymbit-device
+          mountPath: /dev/zymkey
+        # I2C bus
+        - name: i2c-device
+          mountPath: /dev/i2c-1
+
+        # Health checks
+        livenessProbe:
+          httpGet:
+            path: /api/status/health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+
+        readinessProbe:
+          httpGet:
+            path: /api/status/health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+
+        # Resource limits
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+
+      # Volumes
+      volumes:
+      # Zymbit PKCS#11 library (from host)
+      - name: zymbit-lib
+        hostPath:
+          path: /usr/lib/libzk_pkcs11.so
+          type: File
+      # Zymbit device (character device)
+      - name: zymbit-device
+        hostPath:
+          path: /dev/zymkey
+          type: CharDevice
+      # I2C bus (character device)
+      - name: i2c-device
+        hostPath:
+          path: /dev/i2c-1
+          type: CharDevice
+
+      # Termination grace period
+      terminationGracePeriodSeconds: 30
+
+---
+# KMS Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: kms-service
+  namespace: kms-zymbit
+  labels:
+    app: kms
+spec:
+  type: LoadBalancer  # Or NodePort for edge deployments
+  selector:
+    app: kms
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+    name: http
+
+---
+# Horizontal Pod Autoscaler (optional, limited by HSM hardware)
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: kms-hpa
+  namespace: kms-zymbit
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: kms
+  minReplicas: 1
+  maxReplicas: 1  # Limited to 1 due to HSM hardware binding
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+
+---
+# Network Policy (optional security)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: kms-network-policy
+  namespace: kms-zymbit
+spec:
+  podSelector:
+    matchLabels:
+      app: kms
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector: {}  # Allow from all namespaces
+    ports:
+    - protocol: TCP
+      port: 8080
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: postgres
+    ports:
+    - protocol: TCP
+      port: 5432
+  - to:
+    - podSelector:
+        matchLabels:
+          app: redis
+    ports:
+    - protocol: TCP
+      port: 6379
+  - to:  # Allow DNS
+    - namespaceSelector:
+        matchLabels:
+          name: kube-system
+    ports:
+    - protocol: UDP
+      port: 53
