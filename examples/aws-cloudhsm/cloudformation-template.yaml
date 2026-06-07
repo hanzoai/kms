@@ -1,0 +1,287 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'AWS CloudHSM Cluster for Lux KMS - Production-Ready Configuration'
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: "Network Configuration"
+        Parameters:
+          - VpcId
+          - PrivateSubnetIds
+      - Label:
+          default: "CloudHSM Configuration"
+        Parameters:
+          - HsmType
+          - NumberOfHsms
+          - Environment
+      - Label:
+          default: "Tagging"
+        Parameters:
+          - ProjectName
+          - CostCenter
+
+Parameters:
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: VPC for CloudHSM cluster (must have private subnets)
+    ConstraintDescription: Must be a valid VPC ID
+
+  PrivateSubnetIds:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: Private subnets in different AZs (minimum 2 for HA, 3 recommended)
+    ConstraintDescription: Must specify at least 2 subnets in different availability zones
+
+  HsmType:
+    Type: String
+    Default: hsm1.medium
+    AllowedValues:
+      - hsm1.medium
+    Description: HSM instance type (hsm1.medium is the only available type)
+
+  NumberOfHsms:
+    Type: Number
+    Default: 2
+    MinValue: 1
+    MaxValue: 28
+    Description: Number of HSMs to create (2-3 recommended for HA)
+    ConstraintDescription: Must be between 1 and 28
+
+  Environment:
+    Type: String
+    Default: production
+    AllowedValues:
+      - development
+      - staging
+      - production
+    Description: Environment name
+
+  ProjectName:
+    Type: String
+    Default: lux-kms
+    Description: Project name for resource tagging
+
+  CostCenter:
+    Type: String
+    Default: security
+    Description: Cost center for billing allocation
+
+Conditions:
+  CreateSecondHsm: !Not [!Equals [!Ref NumberOfHsms, 1]]
+  CreateThirdHsm: !Not [!Or [!Equals [!Ref NumberOfHsms, 1], !Equals [!Ref NumberOfHsms, 2]]]
+
+Resources:
+  # CloudHSM Cluster
+  CloudHSMCluster:
+    Type: AWS::CloudHSM::Cluster
+    Properties:
+      HsmType: !Ref HsmType
+      SubnetIds: !Ref PrivateSubnetIds
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-cluster-${Environment}'
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: CostCenter
+          Value: !Ref CostCenter
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  # HSM 1 (Primary)
+  CloudHSM1:
+    Type: AWS::CloudHSM::Hsm
+    Properties:
+      ClusterId: !Ref CloudHSMCluster
+      AvailabilityZone: !Select [0, !GetAZs '']
+
+  # HSM 2 (High Availability)
+  CloudHSM2:
+    Type: AWS::CloudHSM::Hsm
+    Condition: CreateSecondHsm
+    Properties:
+      ClusterId: !Ref CloudHSMCluster
+      AvailabilityZone: !Select [1, !GetAZs '']
+
+  # HSM 3 (Optional - Enhanced HA)
+  CloudHSM3:
+    Type: AWS::CloudHSM::Hsm
+    Condition: CreateThirdHsm
+    Properties:
+      ClusterId: !Ref CloudHSMCluster
+      AvailabilityZone: !Select [2, !GetAZs '']
+
+  # Security Group for KMS Application
+  KMSSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub '${ProjectName}-kms-sg-${Environment}'
+      GroupDescription: Security group for Lux KMS application accessing CloudHSM
+      VpcId: !Ref VpcId
+      SecurityGroupEgress:
+        # Allow outbound to CloudHSM (port 2223-2225)
+        - IpProtocol: tcp
+          FromPort: 2223
+          ToPort: 2225
+          DestinationSecurityGroupId: !GetAtt CloudHSMCluster.SecurityGroup
+          Description: CloudHSM cluster communication
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-kms-sg-${Environment}'
+        - Key: Environment
+          Value: !Ref Environment
+
+  # IAM Role for KMS Application (EC2)
+  KMSInstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub '${ProjectName}-kms-role-${Environment}'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - !Ref CloudHSMAccessPolicy
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-kms-role-${Environment}'
+        - Key: Environment
+          Value: !Ref Environment
+
+  # IAM Instance Profile
+  KMSInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      InstanceProfileName: !Sub '${ProjectName}-kms-profile-${Environment}'
+      Roles:
+        - !Ref KMSInstanceRole
+
+  # IAM Policy for CloudHSM Access
+  CloudHSMAccessPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub '${ProjectName}-cloudhsm-access-${Environment}'
+      Description: Grants KMS application access to CloudHSM cluster
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          # Read-only access to cluster info
+          - Sid: DescribeCluster
+            Effect: Allow
+            Action:
+              - cloudhsm:DescribeClusters
+              - cloudhsm:ListTags
+            Resource: !Sub 'arn:aws:cloudhsm:${AWS::Region}:${AWS::AccountId}:cluster/*'
+
+          # Management access (create/delete HSMs)
+          - Sid: ManageHSMs
+            Effect: Allow
+            Action:
+              - cloudhsm:CreateHsm
+              - cloudhsm:DeleteHsm
+            Resource: !Sub 'arn:aws:cloudhsm:${AWS::Region}:${AWS::AccountId}:cluster/${CloudHSMCluster}'
+            Condition:
+              StringEquals:
+                aws:RequestedRegion: !Ref AWS::Region
+
+  # CloudWatch Log Group for HSM Logs
+  HSMLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/cloudhsm/${ProjectName}-${Environment}'
+      RetentionInDays: 30
+
+  # CloudWatch Alarm - Unhealthy HSMs
+  UnhealthyHSMAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${ProjectName}-cloudhsm-unhealthy-${Environment}'
+      AlarmDescription: Alert when HSMs are unhealthy
+      MetricName: HSMUnhealthyCount
+      Namespace: AWS/CloudHSM
+      Statistic: Maximum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      Dimensions:
+        - Name: ClusterId
+          Value: !Ref CloudHSMCluster
+      TreatMissingData: notBreaching
+
+  # CloudWatch Alarm - Active HSM Count
+  ActiveHSMCountAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${ProjectName}-cloudhsm-active-count-${Environment}'
+      AlarmDescription: Alert when active HSM count drops below minimum
+      MetricName: HSMActiveCount
+      Namespace: AWS/CloudHSM
+      Statistic: Minimum
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: !If [CreateSecondHsm, 2, 1]
+      ComparisonOperator: LessThanThreshold
+      Dimensions:
+        - Name: ClusterId
+          Value: !Ref CloudHSMCluster
+      TreatMissingData: breaching
+
+Outputs:
+  ClusterId:
+    Description: CloudHSM Cluster ID (use in AWS_CLOUDHSM_CLUSTER_ID)
+    Value: !Ref CloudHSMCluster
+    Export:
+      Name: !Sub '${AWS::StackName}-ClusterId'
+
+  ClusterState:
+    Description: Current state of the CloudHSM cluster
+    Value: !GetAtt CloudHSMCluster.State
+
+  ClusterSecurityGroup:
+    Description: Security Group ID for CloudHSM cluster
+    Value: !GetAtt CloudHSMCluster.SecurityGroup
+    Export:
+      Name: !Sub '${AWS::StackName}-ClusterSecurityGroup'
+
+  KMSSecurityGroup:
+    Description: Security Group ID for KMS application
+    Value: !Ref KMSSecurityGroup
+    Export:
+      Name: !Sub '${AWS::StackName}-KMSSecurityGroup'
+
+  KMSInstanceRoleArn:
+    Description: IAM Role ARN for KMS application
+    Value: !GetAtt KMSInstanceRole.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-KMSRoleArn'
+
+  KMSInstanceProfileArn:
+    Description: IAM Instance Profile ARN for KMS EC2 instances
+    Value: !GetAtt KMSInstanceProfile.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-InstanceProfileArn'
+
+  NumberOfHSMs:
+    Description: Number of HSMs created in cluster
+    Value: !Ref NumberOfHsms
+
+  DeploymentRegion:
+    Description: AWS Region where CloudHSM is deployed
+    Value: !Ref AWS::Region
+
+  NextSteps:
+    Description: Next steps to complete setup
+    Value: |
+      1. Wait for cluster state to become UNINITIALIZED
+      2. Initialize cluster: aws cloudhsmv2 describe-clusters --filters clusterIds=<CLUSTER_ID>
+      3. Download cluster certificate
+      4. Install CloudHSM client on KMS host
+      5. Configure client with cluster certificate
+      6. Create Crypto User (CU)
+      7. Generate keys
+      8. Deploy KMS with cluster ID and CU PIN
