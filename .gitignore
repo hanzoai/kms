@@ -1,0 +1,87 @@
+# backend
+node_modules
+.env
+.env.test
+.env.dev
+.env.gamma
+.env.prod
+.env.kms
+.env.migration
+*~
+*.swp
+*.swo
+
+.DS_Store
+
+/dist
+/completions/
+/manpages/
+
+# frontend
+
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+.env
+
+# testing
+coverage
+reports
+junit.xml
+
+# next.js
+.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.vercel
+.env.kms
+
+# KMS init
+.kms.json
+.kms.json
+
+.kmsignore
+
+# Editor specific
+.vscode/*
+.idea/*
+
+frontend-build
+
+*.tgz
+cli/kms-merge
+cli/test/kms-merge
+/backend/binary
+backend/bdd/.bdd-kms-bootstrap-result.json
+
+/npm/bin
+__pycache__
+
+# AI assistant symlinks (LLM.md is committed, these symlink to it)
+CLAUDE.md
+QWEN.md
+GEMINI.md
+.AGENTS.md
+/kmsd
+/kms-cli
+/mpc-node/mpc-node

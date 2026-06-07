@@ -1,0 +1,29 @@
+name: Build kms-fetch
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'cmd/kms-fetch/**'
+      - 'pkg/kmsclient/**'
+      - 'pkg/iamclient/**'
+      - 'Dockerfile.kms-fetch'
+      - 'go.mod'
+      - 'go.sum'
+      - '.github/workflows/build-kms-fetch.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+jobs:
+  build:
+    uses: hanzoai/.github/.github/workflows/docker-build.yml@main
+    with:
+      dockerfile: Dockerfile.kms-fetch
+      image: ghcr.io/hanzoai/kms-fetch
+      # arm64 paused — DOKS no arm64 droplets; mirror sibling repos.
+      platforms: linux/amd64
+    secrets: inherit
