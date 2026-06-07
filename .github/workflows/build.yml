@@ -1,0 +1,33 @@
+name: Build kms
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+    paths:
+      - 'cmd/**'
+      - 'pkg/**'
+      - 'frontend/**'
+      - 'go.mod'
+      - 'go.sum'
+      - 'Dockerfile'
+      - '.github/workflows/build.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+jobs:
+  build:
+    uses: hanzoai/.github/.github/workflows/docker-build.yml@main
+    with:
+      dockerfile: Dockerfile
+      image: ghcr.io/hanzoai/kms
+      # arm64 paused — DOKS has no arm64 droplets (catalog is amd64
+      # Intel/AMD only). Re-enable `linux/amd64,linux/arm64` when DO
+      # ships arm64 instances and the `hanzo-build-linux-arm64` ARC
+      # scale set is reinstalled on hanzo-k8s.
+      platforms: linux/amd64
+    secrets: inherit
