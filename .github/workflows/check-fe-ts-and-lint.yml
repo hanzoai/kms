@@ -1,0 +1,35 @@
+name: Check Frontend Type and Lint check
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - "frontend/**"
+      - "!frontend/README.md"
+      - "!frontend/.*"
+      - "frontend/.eslintrc.js"
+
+jobs:
+  check-fe-ts-lint:
+    name: Check Frontend Type and Lint check
+    runs-on: hanzo-build-linux-amd64
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.4
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        working-directory: frontend
+      - name: Type check
+        run: pnpm run typecheck
+        working-directory: frontend
