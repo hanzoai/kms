@@ -9,7 +9,7 @@ module github.com/hanzoai/kms
 // Wire-compatible with luxfi clients on both HTTP (/v1/kms/*) and ZAP
 // (opcodes 0x0040..0x0043).
 
-go 1.26.3
+go 1.26.4
 
 // luxfi/keys + luxfi/kms drive the consensus-native ZAP secret surface.
 // Tagged upstream:
@@ -22,12 +22,12 @@ require (
 	github.com/luxfi/keys v1.1.0
 	github.com/luxfi/kms v1.11.0
 	github.com/luxfi/log v1.4.3
-	github.com/luxfi/zap v0.3.1
-	github.com/luxfi/zapdb v1.9.0
+	github.com/luxfi/zap v0.7.2
+	github.com/luxfi/zapdb v1.10.0
 	modernc.org/sqlite v1.50.0
 )
 
-require github.com/luxfi/ids v1.2.13
+require github.com/luxfi/ids v1.2.15
 
 require (
 	filippo.io/hpke v0.4.0 // indirect
@@ -54,27 +54,27 @@ require (
 	github.com/klauspost/compress v1.18.5 // indirect
 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
 	github.com/klauspost/crc32 v1.3.0 // indirect
-	github.com/luxfi/accel v1.0.7 // indirect
+	github.com/luxfi/accel v1.1.9 // indirect
 	github.com/luxfi/address v1.0.1 // indirect
 	github.com/luxfi/age v1.5.0 // indirect
 	github.com/luxfi/cache v1.2.1 // indirect
 	github.com/luxfi/codec v1.1.4 // indirect
-	github.com/luxfi/constants v1.4.7 // indirect
+	github.com/luxfi/constants v1.5.8-0.20260603055356-93c2c2ceb9ca // indirect
 	github.com/luxfi/container v0.0.4 // indirect
-	github.com/luxfi/crypto v1.19.0 // indirect
+	github.com/luxfi/crypto v1.19.17 // indirect
 	github.com/luxfi/formatting v1.0.1 // indirect
-	github.com/luxfi/geth v1.16.79 // indirect
+	github.com/luxfi/geth v1.16.98 // indirect
 	github.com/luxfi/go-bip32 v1.0.2 // indirect
 	github.com/luxfi/go-bip39 v1.1.2 // indirect
-	github.com/luxfi/math v1.4.0 // indirect
+	github.com/luxfi/math v1.4.1 // indirect
 	github.com/luxfi/math/big v0.1.0 // indirect
-	github.com/luxfi/mdns v0.1.0 // indirect
-	github.com/luxfi/metric v1.5.1 // indirect
+	github.com/luxfi/mdns v0.1.1 // indirect
+	github.com/luxfi/metric v1.5.7 // indirect
 	github.com/luxfi/mock v0.1.1 // indirect
 	github.com/luxfi/proto v1.0.0 // indirect
-	github.com/luxfi/sampler v1.0.0 // indirect
+	github.com/luxfi/sampler v1.1.0 // indirect
 	github.com/luxfi/tls v1.0.3 // indirect
-	github.com/luxfi/vm v1.0.40 // indirect
+	github.com/luxfi/vm v1.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.21 // indirect
 	github.com/miekg/dns v1.1.72 // indirect
@@ -96,14 +96,14 @@ require (
 	go.opentelemetry.io/otel/trace v1.43.0 // indirect
 	go.uber.org/mock v0.6.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
-	golang.org/x/crypto v0.50.0 // indirect
+	golang.org/x/crypto v0.52.0 // indirect
 	golang.org/x/exp v0.0.0-20260312153236-7ab1446f8b90 // indirect
-	golang.org/x/mod v0.34.0 // indirect
-	golang.org/x/net v0.53.0 // indirect
+	golang.org/x/mod v0.36.0 // indirect
+	golang.org/x/net v0.55.0 // indirect
 	golang.org/x/sync v0.20.0 // indirect
-	golang.org/x/sys v0.43.0 // indirect
-	golang.org/x/text v0.36.0 // indirect
-	golang.org/x/tools v0.43.0 // indirect
+	golang.org/x/sys v0.45.0 // indirect
+	golang.org/x/text v0.37.0 // indirect
+	golang.org/x/tools v0.45.0 // indirect
 	gonum.org/v1/gonum v0.17.0 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect

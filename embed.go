@@ -931,10 +931,10 @@ func registerKeyRoutes(mux *http.ServeMux, db *badger.DB, cfg EmbedConfig) {
 		switch req.KeyType {
 		case "bls":
 			resp, err = mgr.SignWithBLS(r.Context(), id, req.Message)
-		case "ringtail":
-			resp, err = mgr.SignWithRingtail(r.Context(), id, req.Message)
+		case "corona", "ringtail": // ringtail = legacy academic name for the corona lattice scheme
+			resp, err = mgr.SignWithCorona(r.Context(), id, req.Message)
 		default:
-			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "key_type must be bls or ringtail"})
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "key_type must be bls or corona"})
 			return
 		}
 		if err != nil {
