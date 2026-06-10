@@ -1,6 +1,5 @@
 # Dockerfile.kms-fetch — init-container image for fetching secrets from KMS
-# over ZAP at pod boot. See ~/work/onyxplus/CLAUDE.md "kms-fetch" / k8s
-# Secrets → KMS-ZAP migration plan (task #29 / #33).
+# over ZAP at pod boot. See k8s Secrets → KMS-ZAP migration plan.
 #
 # Build:
 #   docker buildx build -f Dockerfile.kms-fetch \
@@ -14,7 +13,7 @@
 #       image: ghcr.io/hanzoai/kms-fetch:0.1.0
 #       env:
 #         - { name: KMS_URL,       value: https://kms.{env}.<tenant-domain> }
-#         - { name: KMS_PROJECT,   value: liquidity }
+#         - { name: KMS_PROJECT,   value: hanzo }
 #         - { name: KMS_ENV,       value: {env} }
 #         - { name: KMS_SECRETS,   value: "DB_URL=path/db_url,API_KEY=path/api_key" }
 #         - { name: IAM_CLIENT_ID, valueFrom: { secretKeyRef: { name: <svc>-iam-bootstrap, key: client_id }}}

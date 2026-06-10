@@ -320,9 +320,9 @@ func (e *Embedded) Stop(ctx context.Context) error {
 // ExpectedAudience — are read from env only and never defaulted.
 // validateProdConfigAtBoot rejects boot if any are empty, in every
 // environment. The historical IAMEndpoint=https://hanzo.id default
-// silently routed every Liquidity service-account login to a foreign
-// IAM and rejected every token, masking real outages — no env (dev,
-// devnet, prod) gets a silent fallback anymore.
+// silently routed every white-label tenant service-account login to a
+// foreign IAM and rejected every token, masking real outages — no env
+// (dev, devnet, prod) gets a silent fallback anymore.
 func applyEmbedDefaults(cfg EmbedConfig) EmbedConfig {
 	if cfg.DataDir == "" {
 		cfg.DataDir = envOr("KMS_DATA_DIR", "/data/hanzo-kms")
@@ -378,11 +378,11 @@ func applyEmbedDefaults(cfg EmbedConfig) EmbedConfig {
 
 // validateProdConfigAtBoot rejects boot if identity-coupled config is
 // missing. The hard-coded https://hanzo.id default silently routed
-// every Liquidity service-account login to the wrong IAM and rejected
-// every token, masking real outages. There is no dev escape hatch —
-// every Hanzo user (laptop, devnet, prod) gets the same contract:
-// supply IAM_URL, IAM_ISSUER, IAM_AUDIENCE, IAM_KEYS_URL or refuse
-// to boot.
+// every white-label tenant service-account login to the wrong IAM and
+// rejected every token, masking real outages. There is no dev escape
+// hatch — every Hanzo user (laptop, devnet, prod) gets the same
+// contract: supply IAM_URL, IAM_ISSUER, IAM_AUDIENCE, IAM_KEYS_URL or
+// refuse to boot.
 func validateProdConfigAtBoot(cfg EmbedConfig) error {
 	if strings.TrimSpace(cfg.IAMEndpoint) == "" {
 		return fmt.Errorf("IAM_URL is required (no default) — point at the IAM you want this KMS to trust")
