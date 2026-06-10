@@ -1,6 +1,5 @@
 # Dockerfile.kms-fetch — init-container image for fetching secrets from KMS
-# over ZAP at pod boot. See ~/work/onyxplus/CLAUDE.md "kms-fetch" / k8s
-# Secrets → KMS-ZAP migration plan (task #29 / #33).
+# over ZAP at pod boot. See k8s Secrets → KMS-ZAP migration plan.
 #
 # Build:
 #   docker buildx build -f Dockerfile.kms-fetch \
