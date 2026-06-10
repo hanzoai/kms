@@ -120,6 +120,29 @@ KMS is reachable.
 All require admin role. Threshold signing delegates to luxfi/mpc over ZAP
 (or HTTP fallback) at `MPC_ADDR`.
 
+## Deploy-mnemonic — one seed, four orgs
+
+`kms.hanzo.ai` is the single KMS endpoint serving four Lux-derived
+chains: `hanzo`, `zoo`, `pars` (plus Lux at `kms.lux.network`, same
+code, separate instance). The same 12-word BIP39 deploy mnemonic is
+stored under each org's KMS path:
+
+| Org | Path | Envs |
+|-----|------|------|
+| hanzo | providers/hanzo/deploy-mnemonic | dev, test, main |
+| zoo   | providers/zoo/deploy-mnemonic   | dev, test, main |
+| pars  | providers/pars/deploy-mnemonic  | dev, test, main |
+
+The bytes are identical across orgs (and identical to the bytes Lux
+keeps at `providers/lux/deploy-mnemonic` on `kms.lux.network`). Each
+chain derives its own validator keys via
+`m/9000'/<networkId>'/<envID>'/<i>`. See `~/work/lux/CLAUDE.md`
+§"Mnemonic + Key Derivation" for the canonical reference.
+
+Jurisdictionally separate white-label tenants do NOT share this
+mnemonic — each keeps its own under `providers/<tenant>/*` in its
+own KMS deployment.
+
 ## Auth contract (`cmd/kmsd/auth.go`)
 
 Full RFC 7519 enforcement, no escape hatches:
