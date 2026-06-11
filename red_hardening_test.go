@@ -84,7 +84,7 @@ func TestRed3_PatchVersionReplayProtection(t *testing.T) {
 	srv, _, cleanup := newTestServerWithAudit(t)
 	defer cleanup()
 
-	tok := mintTokenWithIss(t, sharedIssuer, "hanzo", "usr_hanzo-dev")
+	tok := mintTokenWithIss(t, sharedIssuer, "hanzo", "usr_hanzo_dev")
 
 	// Initial POST → version 1.
 	body, _ := json.Marshal(map[string]string{
@@ -181,7 +181,7 @@ func TestRed3_PatchRequiresExistingSecret(t *testing.T) {
 	srv, _, cleanup := newTestServerWithAudit(t)
 	defer cleanup()
 
-	tok := mintTokenWithIss(t, sharedIssuer, "hanzo", "usr_hanzo-dev")
+	tok := mintTokenWithIss(t, sharedIssuer, "hanzo", "usr_hanzo_dev")
 	body, _ := json.Marshal(map[string]any{"value": "created-via-patch", "version": 0, "env": "dev"})
 	req, _ := http.NewRequest("PATCH",
 		srv.URL+"/v1/kms/orgs/hanzo/secrets/nonexistent/key",
@@ -199,7 +199,7 @@ func TestRed3_PostUpsertBumpsVersion(t *testing.T) {
 	srv, _, cleanup := newTestServerWithAudit(t)
 	defer cleanup()
 
-	tok := mintTokenWithIss(t, sharedIssuer, "hanzo", "usr_hanzo-dev")
+	tok := mintTokenWithIss(t, sharedIssuer, "hanzo", "usr_hanzo_dev")
 	for i := 1; i <= 3; i++ {
 		body, _ := json.Marshal(map[string]string{
 			"path": "seq", "name": "y", "env": "dev", "value": fmt.Sprintf("v%d", i),
@@ -252,7 +252,7 @@ func TestRed12_AuditTrail_CompositeActorID(t *testing.T) {
 	defer cleanup()
 
 	// Clean IAM token → 201 Created, audit row carries verified iss:sub.
-	tok := mintTokenWithIss(t, sharedIssuer, "hanzo", "usr_hanzo-dev")
+	tok := mintTokenWithIss(t, sharedIssuer, "hanzo", "usr_hanzo_dev")
 	body, _ := json.Marshal(map[string]string{
 		"path": "audit/test", "name": "k", "env": "dev", "value": "redacted",
 	})
@@ -303,7 +303,7 @@ func TestRed12_AuditTrail_CompositeActorID(t *testing.T) {
 	// attacker-controlled iss claim into audit actor_id post-verify).
 	foundClean, found401 := false, false
 	for i, a := range actors {
-		if a == sharedIssuer+":usr_hanzo-dev" && results[i] == http.StatusCreated {
+		if a == sharedIssuer+":usr_hanzo_dev" && results[i] == http.StatusCreated {
 			foundClean = true
 		}
 		if results[i] == http.StatusUnauthorized {
@@ -325,7 +325,7 @@ func TestRed12_AuditActorIDNotJustSub(t *testing.T) {
 	srv, auditPath, cleanup := newTestServerWithAudit(t)
 	defer cleanup()
 
-	tok := mintTokenWithIss(t, sharedIssuer, "hanzo", "usr_hanzo-dev")
+	tok := mintTokenWithIss(t, sharedIssuer, "hanzo", "usr_hanzo_dev")
 	for range []int{1, 2, 3} {
 		body, _ := json.Marshal(map[string]string{
 			"path": "audit/trail", "name": "w", "env": "dev", "value": "x",
@@ -354,7 +354,7 @@ func TestRed12_AuditActorIDNotJustSub(t *testing.T) {
 		if !strings.Contains(a, ":") {
 			t.Errorf("actor_id %q is bare subject — must be composite iss:sub", a)
 		}
-		if a == "usr_hanzo-dev" {
+		if a == "usr_hanzo_dev" {
 			t.Errorf("actor_id must NOT be just the sub; got %q", a)
 		}
 	}
