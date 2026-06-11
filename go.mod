@@ -17,7 +17,7 @@ go 1.26.4
 //   luxfi/kms  v1.11.0  — anti-replay nonce ledger closes 5min window
 require (
 	github.com/golang-jwt/jwt/v5 v5.3.1
-	github.com/hanzoai/cloud v0.1.1-0.20260519183759-098489930d01
+	github.com/hanzoai/cloud v0.1.1
 	github.com/hanzoai/zip v0.2.0
 	github.com/luxfi/keys v1.2.0 // indirect
 	github.com/luxfi/kms v1.11.4
@@ -60,7 +60,7 @@ require (
 	github.com/luxfi/address v1.0.1 // indirect
 	github.com/luxfi/age v1.5.0 // indirect
 	github.com/luxfi/cache v1.2.1 // indirect
-	github.com/luxfi/constants v1.5.8-0.20260603055356-93c2c2ceb9ca // indirect
+	github.com/luxfi/constants v1.5.8 // indirect
 	github.com/luxfi/container v0.0.4 // indirect
 	github.com/luxfi/crypto v1.19.17 // indirect
 	github.com/luxfi/formatting v1.0.1 // indirect
