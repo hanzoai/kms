@@ -44,7 +44,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hanzoai/kms/pkg/kmsclient"
+	"github.com/hanzoai/kms/sdk/go/kmsclient"
 )
 
 const (
