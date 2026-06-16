@@ -30,9 +30,6 @@ services:
       # Database Configuration
       - DB_CONNECTION_URI=${DB_CONNECTION_URI}
 
-      # Redis Configuration
-      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
-
       # Monitoring
       - ENABLE_METRICS=${ENABLE_METRICS:-true}
       - METRICS_PORT=9090
@@ -56,7 +53,6 @@ services:
 
     depends_on:
       - postgres
-      - redis
 
     networks:
       - lux-kms-network
@@ -88,25 +84,6 @@ services:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-lux_kms}"]
       interval: 10s
       timeout: 5s
-      retries: 5
-
-  redis:
-    image: redis:7-alpine
-    container_name: lux-kms-redis
-    restart: unless-stopped
-
-    command: redis-server --appendonly yes
-
-    volumes:
-      - redis-data:/data
-
-    networks:
-      - lux-kms-network
-
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 3s
       retries: 5
 
   # Optional: Prometheus for metrics collection
@@ -172,8 +149,6 @@ volumes:
   lux-kms-logs:
     driver: local
   postgres-data:
-    driver: local
-  redis-data:
     driver: local
   prometheus-data:
     driver: local
