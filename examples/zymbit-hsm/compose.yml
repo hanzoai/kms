@@ -38,9 +38,6 @@ services:
       # Database
       DB_CONNECTION_URI: "postgresql://kms:password@postgres:5432/kms"
 
-      # Redis (optional)
-      REDIS_URL: "redis://redis:6379"
-
     # Secrets (use Docker secrets in production)
     env_file:
       - .env.secrets  # Contains HSM_PIN, ENCRYPTION_KEY, AUTH_SECRET
@@ -52,8 +49,6 @@ services:
     # Dependencies
     depends_on:
       postgres:
-        condition: service_healthy
-      redis:
         condition: service_healthy
 
     # Health check
@@ -84,27 +79,8 @@ services:
       timeout: 5s
       retries: 5
 
-  # Redis Cache
-  redis:
-    image: redis:7-alpine
-    container_name: kms-redis
-    restart: unless-stopped
-
-    command: redis-server --appendonly yes
-
-    volumes:
-      - redis-data:/data
-
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
 volumes:
   postgres-data:
-    driver: local
-  redis-data:
     driver: local
 
 networks:
