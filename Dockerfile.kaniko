@@ -16,7 +16,7 @@ ARG TARGETARCH
 
 WORKDIR /src
 COPY go.mod go.sum ./
-ENV GOPRIVATE="github.com/luxfi/*,github.com/hanzoai/*"
+ENV GOPRIVATE="github.com/hanzoai/*"
 RUN git config --global url."https://${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/" && \
     go mod download
 
