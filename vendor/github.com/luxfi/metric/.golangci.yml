@@ -1,0 +1,12 @@
+version: "2"
+
+linters:
+  disable:
+    - unused  # Registry methods implement exported interfaces; false positives on private type methods
+    - errcheck  # Metrics code intentionally ignores fmt.Fprintf and io.Closer errors
+
+linters-settings:
+  errcheck:
+    exclude-functions:
+      - (github.com/prometheus/client_golang/prometheus.Registerer).Register
+      - (github.com/prometheus/client_golang/prometheus.Registerer).MustRegister

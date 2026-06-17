@@ -1,0 +1,14 @@
+version: "2"
+
+linters:
+  default: standard
+  disable:
+    - depguard
+
+run:
+  timeout: 5m
+  modules-download-mode: readonly
+
+formatters:
+  enable:
+    - gofmt

@@ -1,0 +1,157 @@
+// PROPOSAL: Unified Logger Interface Design
+//
+// Problem: Two incompatible Logger types causing type mismatches across the codebase
+// Solution: Single interface-based design with internal implementations
+
+package log
+
+import (
+	"context"
+	"io"
+)
+
+// =============================================================================
+// PUBLIC INTERFACE - What consumers use
+// =============================================================================
+
+// Logger is the primary logging interface used throughout the codebase.
+// All logging implementations satisfy this interface.
+type Logger interface {
+	// Logging methods (geth-style variadic)
+	Trace(msg string, args ...any)
+	Debug(msg string, args ...any)
+	Info(msg string, args ...any)
+	Warn(msg string, args ...any)
+	Error(msg string, args ...any)
+	Fatal(msg string, args ...any)
+	Crit(msg string, args ...any) // Alias for Fatal
+
+	// Context/child loggers
+	With(args ...any) Logger
+	New(ctx ...any) Logger // Alias for With (geth compat)
+
+	// Level control
+	Level(lvl Level) Logger
+	GetLevel() Level
+	Enabled(ctx context.Context, level Level) bool
+
+	// Zero-allocation event-based logging (optional, for hot paths)
+	TraceEvent() *Event
+	DebugEvent() *Event
+	InfoEvent() *Event
+	WarnEvent() *Event
+	ErrorEvent() *Event
+}
+
+// =============================================================================
+// CONSTRUCTORS - Simple, clear API
+// =============================================================================
+
+// Noop is a disabled logger - use for optional logger parameters
+var Noop Logger = &noopLogger{}
+
+// New creates a new logger with optional context fields
+// Usage: log.New("component", "api", "version", "1.0")
+func New(ctx ...any) Logger {
+	return newZeroLogger(ctx...)
+}
+
+// NewWithOutput creates a logger writing to a specific output
+func NewWithOutput(w io.Writer, ctx ...any) Logger {
+	return newZeroLoggerWithOutput(w, ctx...)
+}
+
+// NewWithConfig creates a logger from configuration
+func NewWithConfig(cfg Config) Logger {
+	return newZeroLoggerWithConfig(cfg)
+}
+
+// =============================================================================
+// INTERNAL IMPLEMENTATIONS - Private, users don't see these
+// =============================================================================
+
+// zeroLogger is the high-performance zerolog-based implementation
+type zeroLogger struct {
+	w       LevelWriter
+	level   Level
+	context []byte
+	hooks   []Hook
+}
+
+func newZeroLogger(ctx ...any) Logger {
+	// ... implementation
+	return &zeroLogger{}
+}
+
+// noopLogger is a no-op implementation
+type noopLogger struct{}
+
+func (noopLogger) Trace(string, ...any)                       {}
+func (noopLogger) Debug(string, ...any)                       {}
+func (noopLogger) Info(string, ...any)                        {}
+func (noopLogger) Warn(string, ...any)                        {}
+func (noopLogger) Error(string, ...any)                       {}
+func (noopLogger) Fatal(string, ...any)                       {}
+func (noopLogger) Crit(string, ...any)                        {}
+func (n noopLogger) With(...any) Logger                       { return n }
+func (n noopLogger) New(...any) Logger                        { return n }
+func (n noopLogger) Level(Level) Logger                       { return n }
+func (noopLogger) GetLevel() Level                            { return Disabled }
+func (noopLogger) Enabled(context.Context, Level) bool        { return false }
+func (noopLogger) TraceEvent() *Event                         { return nil }
+func (noopLogger) DebugEvent() *Event                         { return nil }
+func (noopLogger) InfoEvent() *Event                          { return nil }
+func (noopLogger) WarnEvent() *Event                          { return nil }
+func (noopLogger) ErrorEvent() *Event                         { return nil }
+
+// =============================================================================
+// USAGE EXAMPLES
+// =============================================================================
+
+/*
+// Simple usage - interface everywhere, nil checks work naturally
+func DoSomething(logger log.Logger) {
+    if logger == nil {
+        logger = log.Noop  // Simple!
+    }
+    logger.Info("doing something", "key", "value")
+}
+
+// Optional logger in struct
+type Service struct {
+    Logger log.Logger  // Interface type, can be nil
+}
+
+func (s *Service) Run() {
+    if s.Logger != nil {
+        s.Logger.Info("service started")
+    }
+}
+
+// Creating loggers
+appLogger := log.New("app", "myservice")
+dbLogger := appLogger.With("component", "database")
+*/
+
+// =============================================================================
+// BENEFITS
+// =============================================================================
+//
+// 1. Single Logger type - no confusion between struct/interface
+// 2. Can use == nil checks - no IsZero() needed
+// 3. Noop is a simple variable - no function call needed
+// 4. Internal implementations are hidden - can swap zerolog for slog later
+// 5. No subpackage needed - everything in one place
+// 6. Generics not needed - interfaces solve the problem cleanly
+//
+
+// =============================================================================
+// MIGRATION PATH
+// =============================================================================
+//
+// 1. Add Logger interface alongside existing struct
+// 2. Make existing struct implement interface
+// 3. Change exported functions to return interface
+// 4. Update consumers one package at a time
+// 5. Eventually remove struct export, keep only interface
+//

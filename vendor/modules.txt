@@ -1,0 +1,503 @@
+# filippo.io/hpke v0.4.0
+## explicit; go 1.24.0
+filippo.io/hpke
+filippo.io/hpke/crypto
+filippo.io/hpke/crypto/ecdh
+filippo.io/hpke/internal/byteorder
+# github.com/ProjectZKM/Ziren/crates/go-runtime/zkvm_runtime v0.0.0-20260311194731-d5b7577c683d
+## explicit; go 1.24.0
+github.com/ProjectZKM/Ziren/crates/go-runtime/zkvm_runtime
+# github.com/andybalholm/brotli v1.2.1
+## explicit; go 1.22
+github.com/andybalholm/brotli
+github.com/andybalholm/brotli/flate
+github.com/andybalholm/brotli/matchfinder
+# github.com/btcsuite/btcd/btcutil v1.1.6
+## explicit; go 1.16
+github.com/btcsuite/btcd/btcutil/bech32
+# github.com/cenkalti/backoff v2.2.1+incompatible
+## explicit
+github.com/cenkalti/backoff
+# github.com/cespare/xxhash/v2 v2.3.0
+## explicit; go 1.11
+github.com/cespare/xxhash/v2
+# github.com/cloudflare/circl v1.6.3
+## explicit; go 1.22.0
+github.com/cloudflare/circl/ecc/bls12381
+github.com/cloudflare/circl/ecc/bls12381/ff
+github.com/cloudflare/circl/expander
+github.com/cloudflare/circl/internal/conv
+github.com/cloudflare/circl/internal/sha3
+github.com/cloudflare/circl/kem
+github.com/cloudflare/circl/kem/mlkem/mlkem768
+github.com/cloudflare/circl/pke/kyber/internal/common
+github.com/cloudflare/circl/pke/kyber/internal/common/params
+github.com/cloudflare/circl/pke/kyber/kyber768
+github.com/cloudflare/circl/pke/kyber/kyber768/internal
+github.com/cloudflare/circl/sign
+github.com/cloudflare/circl/sign/bls
+github.com/cloudflare/circl/sign/internal/dilithium
+github.com/cloudflare/circl/sign/internal/dilithium/params
+github.com/cloudflare/circl/sign/mldsa/mldsa44
+github.com/cloudflare/circl/sign/mldsa/mldsa44/internal
+github.com/cloudflare/circl/sign/mldsa/mldsa65
+github.com/cloudflare/circl/sign/mldsa/mldsa65/internal
+github.com/cloudflare/circl/sign/mldsa/mldsa87
+github.com/cloudflare/circl/sign/mldsa/mldsa87/internal
+github.com/cloudflare/circl/simd/keccakf1600
+github.com/cloudflare/circl/xof
+github.com/cloudflare/circl/xof/k12
+# github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.1
+## explicit; go 1.17
+github.com/decred/dcrd/dcrec/secp256k1/v4
+github.com/decred/dcrd/dcrec/secp256k1/v4/ecdsa
+# github.com/dgraph-io/ristretto/v2 v2.4.0
+## explicit; go 1.24.0
+github.com/dgraph-io/ristretto/v2
+github.com/dgraph-io/ristretto/v2/z
+github.com/dgraph-io/ristretto/v2/z/simd
+# github.com/dustin/go-humanize v1.0.1
+## explicit; go 1.16
+github.com/dustin/go-humanize
+# github.com/go-ini/ini v1.67.0
+## explicit
+github.com/go-ini/ini
+# github.com/go-logr/logr v1.4.3
+## explicit; go 1.18
+github.com/go-logr/logr
+github.com/go-logr/logr/funcr
+# github.com/go-logr/stdr v1.2.2
+## explicit; go 1.16
+github.com/go-logr/stdr
+# github.com/gofiber/fiber/v3 v3.2.0
+## explicit; go 1.25.0
+github.com/gofiber/fiber/v3
+github.com/gofiber/fiber/v3/binder
+github.com/gofiber/fiber/v3/log
+github.com/gofiber/fiber/v3/middleware/adaptor
+# github.com/gofiber/schema v1.7.1
+## explicit; go 1.25
+github.com/gofiber/schema
+# github.com/gofiber/utils/v2 v2.0.4
+## explicit; go 1.24.0
+github.com/gofiber/utils/v2
+github.com/gofiber/utils/v2/bytes
+github.com/gofiber/utils/v2/internal/caseconv
+github.com/gofiber/utils/v2/internal/unsafeconv
+github.com/gofiber/utils/v2/strings
+# github.com/golang-jwt/jwt/v5 v5.3.1
+## explicit; go 1.21
+github.com/golang-jwt/jwt/v5
+# github.com/google/flatbuffers v25.12.19+incompatible
+## explicit
+github.com/google/flatbuffers/go
+# github.com/google/uuid v1.6.0
+## explicit
+github.com/google/uuid
+# github.com/gorilla/rpc v1.2.1
+## explicit; go 1.20
+github.com/gorilla/rpc/v2
+# github.com/grandcat/zeroconf v1.0.0
+## explicit; go 1.13
+github.com/grandcat/zeroconf
+# github.com/hanzoai/cloud v0.1.1-0.20260519183759-098489930d01
+## explicit; go 1.26.3
+github.com/hanzoai/cloud
+github.com/hanzoai/cloud/clients
+github.com/hanzoai/cloud/types
+# github.com/hanzoai/zip v0.2.0
+## explicit; go 1.26.3
+github.com/hanzoai/zip
+github.com/hanzoai/zip/internal/jsonenc
+github.com/hanzoai/zip/internal/runtime
+github.com/hanzoai/zip/middleware
+github.com/hanzoai/zip/runtime
+github.com/hanzoai/zip/zaprpc
+# github.com/holiman/uint256 v1.3.2
+## explicit; go 1.19
+github.com/holiman/uint256
+# github.com/klauspost/compress v1.18.5
+## explicit; go 1.24
+github.com/klauspost/compress
+github.com/klauspost/compress/flate
+github.com/klauspost/compress/fse
+github.com/klauspost/compress/gzip
+github.com/klauspost/compress/huff0
+github.com/klauspost/compress/internal/cpuinfo
+github.com/klauspost/compress/internal/le
+github.com/klauspost/compress/internal/race
+github.com/klauspost/compress/internal/snapref
+github.com/klauspost/compress/s2
+github.com/klauspost/compress/snappy
+github.com/klauspost/compress/zlib
+github.com/klauspost/compress/zstd
+github.com/klauspost/compress/zstd/internal/xxhash
+# github.com/klauspost/cpuid/v2 v2.3.0
+## explicit; go 1.22
+github.com/klauspost/cpuid/v2
+# github.com/klauspost/crc32 v1.3.0
+## explicit; go 1.23.0
+github.com/klauspost/crc32
+# github.com/luxfi/accel v1.0.7
+## explicit; go 1.26.1
+github.com/luxfi/accel
+github.com/luxfi/accel/internal/capi
+# github.com/luxfi/address v1.0.1
+## explicit; go 1.25.5
+github.com/luxfi/address
+# github.com/luxfi/age v1.5.0
+## explicit; go 1.24.0
+github.com/luxfi/age
+github.com/luxfi/age/internal/bech32
+github.com/luxfi/age/internal/format
+github.com/luxfi/age/internal/stream
+# github.com/luxfi/cache v1.2.1
+## explicit; go 1.25.5
+github.com/luxfi/cache
+github.com/luxfi/cache/lru
+# github.com/luxfi/codec v1.1.4
+## explicit; go 1.25.5
+github.com/luxfi/codec/wrappers
+# github.com/luxfi/constants v1.4.7
+## explicit; go 1.26.1
+github.com/luxfi/constants
+# github.com/luxfi/container v0.0.4
+## explicit; go 1.25.5
+github.com/luxfi/container
+# github.com/luxfi/crypto v1.19.0
+## explicit; go 1.26.3
+github.com/luxfi/crypto
+github.com/luxfi/crypto/backend
+github.com/luxfi/crypto/bls
+github.com/luxfi/crypto/bls/signer/localsigner
+github.com/luxfi/crypto/cb58
+github.com/luxfi/crypto/common
+github.com/luxfi/crypto/hash
+github.com/luxfi/crypto/internal/gpuhost
+github.com/luxfi/crypto/mldsa
+github.com/luxfi/crypto/rlp
+github.com/luxfi/crypto/secp256k1
+github.com/luxfi/crypto/secp256k1/libsecp256k1/include
+github.com/luxfi/crypto/secp256k1/libsecp256k1/src
+github.com/luxfi/crypto/secp256k1/libsecp256k1/src/modules/recovery
+github.com/luxfi/crypto/secret
+# github.com/luxfi/formatting v1.0.1
+## explicit; go 1.25.5
+github.com/luxfi/formatting
+# github.com/luxfi/geth v1.16.79
+## explicit; go 1.26.1
+github.com/luxfi/geth/common
+github.com/luxfi/geth/common/hexutil
+# github.com/luxfi/go-bip32 v1.0.2
+## explicit; go 1.23.5
+github.com/luxfi/go-bip32
+# github.com/luxfi/go-bip39 v1.1.2
+## explicit; go 1.25
+github.com/luxfi/go-bip39
+github.com/luxfi/go-bip39/wordlists
+# github.com/luxfi/ids v1.2.13
+## explicit; go 1.26.3
+github.com/luxfi/ids
+# github.com/luxfi/keys v1.0.10
+## explicit; go 1.26.3
+github.com/luxfi/keys
+# github.com/luxfi/kms v1.10.0
+## explicit; go 1.26.3
+github.com/luxfi/kms/pkg/envelope
+github.com/luxfi/kms/pkg/keys
+github.com/luxfi/kms/pkg/mpc
+github.com/luxfi/kms/pkg/store
+github.com/luxfi/kms/pkg/zap
+github.com/luxfi/kms/pkg/zapclient
+github.com/luxfi/kms/pkg/zapserver
+# github.com/luxfi/log v1.4.3
+## explicit; go 1.26.3
+github.com/luxfi/log
+github.com/luxfi/log/internal/json
+# github.com/luxfi/math v1.4.0
+## explicit; go 1.26.1
+github.com/luxfi/math
+github.com/luxfi/math/heap
+github.com/luxfi/math/linked
+github.com/luxfi/math/set
+# github.com/luxfi/math/big v0.1.0
+## explicit; go 1.24.0
+github.com/luxfi/math/big
+# github.com/luxfi/mdns v0.1.0
+## explicit; go 1.23.0
+github.com/luxfi/mdns
+# github.com/luxfi/metric v1.5.1
+## explicit; go 1.25.5
+github.com/luxfi/metric
+github.com/luxfi/metric/client
+# github.com/luxfi/mock v0.1.1
+## explicit; go 1.25.5
+github.com/luxfi/mock/gomock
+# github.com/luxfi/proto v1.0.0
+## explicit; go 1.26.3
+github.com/luxfi/proto/p/signer
+# github.com/luxfi/sampler v1.0.0
+## explicit; go 1.25.5
+github.com/luxfi/sampler
+# github.com/luxfi/tls v1.0.3
+## explicit; go 1.25.5
+github.com/luxfi/tls
+# github.com/luxfi/vm v1.0.40
+## explicit; go 1.26.1
+github.com/luxfi/vm/components/verify
+# github.com/luxfi/zap v0.3.1
+## explicit; go 1.26
+github.com/luxfi/zap
+# github.com/luxfi/zapdb v1.9.0
+## explicit; go 1.26.1
+github.com/luxfi/zapdb
+github.com/luxfi/zapdb/fb
+github.com/luxfi/zapdb/options
+github.com/luxfi/zapdb/pb
+github.com/luxfi/zapdb/skl
+github.com/luxfi/zapdb/table
+github.com/luxfi/zapdb/trie
+github.com/luxfi/zapdb/y
+# github.com/mattn/go-colorable v0.1.14
+## explicit; go 1.18
+github.com/mattn/go-colorable
+# github.com/mattn/go-isatty v0.0.21
+## explicit; go 1.21
+github.com/mattn/go-isatty
+# github.com/miekg/dns v1.1.72
+## explicit; go 1.24.0
+github.com/miekg/dns
+# github.com/minio/crc64nvme v1.1.1
+## explicit; go 1.22
+github.com/minio/crc64nvme
+# github.com/minio/md5-simd v1.1.2
+## explicit; go 1.14
+github.com/minio/md5-simd
+# github.com/minio/minio-go/v7 v7.0.100
+## explicit; go 1.25
+github.com/minio/minio-go/v7
+github.com/minio/minio-go/v7/pkg/cors
+github.com/minio/minio-go/v7/pkg/credentials
+github.com/minio/minio-go/v7/pkg/encrypt
+github.com/minio/minio-go/v7/pkg/kvcache
+github.com/minio/minio-go/v7/pkg/lifecycle
+github.com/minio/minio-go/v7/pkg/notification
+github.com/minio/minio-go/v7/pkg/replication
+github.com/minio/minio-go/v7/pkg/s3utils
+github.com/minio/minio-go/v7/pkg/set
+github.com/minio/minio-go/v7/pkg/signer
+github.com/minio/minio-go/v7/pkg/singleflight
+github.com/minio/minio-go/v7/pkg/sse
+github.com/minio/minio-go/v7/pkg/tags
+# github.com/mr-tron/base58 v1.2.0
+## explicit; go 1.12
+github.com/mr-tron/base58/base58
+# github.com/ncruces/go-strftime v1.0.0
+## explicit; go 1.17
+github.com/ncruces/go-strftime
+# github.com/philhofer/fwd v1.2.0
+## explicit; go 1.20
+github.com/philhofer/fwd
+# github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec
+## explicit; go 1.12
+github.com/remyoudompheng/bigfft
+# github.com/rs/xid v1.6.0
+## explicit; go 1.16
+github.com/rs/xid
+# github.com/supranational/blst v0.3.16
+## explicit; go 1.11
+github.com/supranational/blst/bindings/go
+# github.com/tinylib/msgp v1.6.4
+## explicit; go 1.24
+github.com/tinylib/msgp/msgp
+github.com/tinylib/msgp/msgp/setof
+# github.com/valyala/bytebufferpool v1.0.0
+## explicit
+github.com/valyala/bytebufferpool
+# github.com/valyala/fasthttp v1.70.0
+## explicit; go 1.24.0
+github.com/valyala/fasthttp
+github.com/valyala/fasthttp/fasthttpadaptor
+github.com/valyala/fasthttp/fasthttputil
+github.com/valyala/fasthttp/reuseport
+github.com/valyala/fasthttp/stackless
+github.com/valyala/fasthttp/tcplisten
+# go.opentelemetry.io/auto/sdk v1.2.1
+## explicit; go 1.24.0
+go.opentelemetry.io/auto/sdk
+go.opentelemetry.io/auto/sdk/internal/telemetry
+# go.opentelemetry.io/otel v1.43.0
+## explicit; go 1.25.0
+go.opentelemetry.io/otel
+go.opentelemetry.io/otel/attribute
+go.opentelemetry.io/otel/attribute/internal
+go.opentelemetry.io/otel/attribute/internal/xxhash
+go.opentelemetry.io/otel/baggage
+go.opentelemetry.io/otel/codes
+go.opentelemetry.io/otel/internal/baggage
+go.opentelemetry.io/otel/internal/errorhandler
+go.opentelemetry.io/otel/internal/global
+go.opentelemetry.io/otel/propagation
+go.opentelemetry.io/otel/semconv/v1.37.0
+go.opentelemetry.io/otel/semconv/v1.40.0
+# go.opentelemetry.io/otel/metric v1.43.0
+## explicit; go 1.25.0
+go.opentelemetry.io/otel/metric
+go.opentelemetry.io/otel/metric/embedded
+# go.opentelemetry.io/otel/trace v1.43.0
+## explicit; go 1.25.0
+go.opentelemetry.io/otel/trace
+go.opentelemetry.io/otel/trace/embedded
+go.opentelemetry.io/otel/trace/internal/telemetry
+go.opentelemetry.io/otel/trace/noop
+# go.uber.org/mock v0.6.0
+## explicit; go 1.23.0
+go.uber.org/mock/gomock
+# go.yaml.in/yaml/v3 v3.0.4
+## explicit; go 1.16
+go.yaml.in/yaml/v3
+# golang.org/x/crypto v0.50.0
+## explicit; go 1.25.0
+golang.org/x/crypto/acme
+golang.org/x/crypto/acme/autocert
+golang.org/x/crypto/argon2
+golang.org/x/crypto/blake2b
+golang.org/x/crypto/blake2s
+golang.org/x/crypto/chacha20
+golang.org/x/crypto/chacha20poly1305
+golang.org/x/crypto/cryptobyte
+golang.org/x/crypto/cryptobyte/asn1
+golang.org/x/crypto/curve25519
+golang.org/x/crypto/hkdf
+golang.org/x/crypto/internal/alias
+golang.org/x/crypto/internal/poly1305
+golang.org/x/crypto/pbkdf2
+golang.org/x/crypto/ripemd160
+golang.org/x/crypto/scrypt
+golang.org/x/crypto/sha3
+# golang.org/x/exp v0.0.0-20260312153236-7ab1446f8b90
+## explicit; go 1.25.0
+golang.org/x/exp/constraints
+# golang.org/x/mod v0.34.0
+## explicit; go 1.25.0
+golang.org/x/mod/semver
+# golang.org/x/net v0.53.0
+## explicit; go 1.25.0
+golang.org/x/net/bpf
+golang.org/x/net/http/httpguts
+golang.org/x/net/idna
+golang.org/x/net/internal/iana
+golang.org/x/net/internal/socket
+golang.org/x/net/ipv4
+golang.org/x/net/ipv6
+golang.org/x/net/publicsuffix
+# golang.org/x/sync v0.20.0
+## explicit; go 1.25.0
+golang.org/x/sync/errgroup
+# golang.org/x/sys v0.43.0
+## explicit; go 1.25.0
+golang.org/x/sys/cpu
+golang.org/x/sys/unix
+golang.org/x/sys/windows
+# golang.org/x/text v0.36.0
+## explicit; go 1.25.0
+golang.org/x/text/secure/bidirule
+golang.org/x/text/transform
+golang.org/x/text/unicode/bidi
+golang.org/x/text/unicode/norm
+# golang.org/x/tools v0.43.0
+## explicit; go 1.25.0
+golang.org/x/tools/go/ast/edge
+golang.org/x/tools/go/ast/inspector
+golang.org/x/tools/go/gcexportdata
+golang.org/x/tools/go/packages
+golang.org/x/tools/go/types/objectpath
+golang.org/x/tools/go/types/typeutil
+golang.org/x/tools/internal/aliases
+golang.org/x/tools/internal/event
+golang.org/x/tools/internal/event/core
+golang.org/x/tools/internal/event/keys
+golang.org/x/tools/internal/event/label
+golang.org/x/tools/internal/gcimporter
+golang.org/x/tools/internal/gocommand
+golang.org/x/tools/internal/packagesinternal
+golang.org/x/tools/internal/pkgbits
+golang.org/x/tools/internal/stdlib
+golang.org/x/tools/internal/typeparams
+golang.org/x/tools/internal/typesinternal
+golang.org/x/tools/internal/versions
+# gonum.org/v1/gonum v0.17.0
+## explicit; go 1.24.0
+gonum.org/v1/gonum/mathext/prng
+# google.golang.org/protobuf v1.36.11
+## explicit; go 1.23
+google.golang.org/protobuf/encoding/prototext
+google.golang.org/protobuf/encoding/protowire
+google.golang.org/protobuf/internal/descfmt
+google.golang.org/protobuf/internal/descopts
+google.golang.org/protobuf/internal/detrand
+google.golang.org/protobuf/internal/editiondefaults
+google.golang.org/protobuf/internal/encoding/defval
+google.golang.org/protobuf/internal/encoding/messageset
+google.golang.org/protobuf/internal/encoding/tag
+google.golang.org/protobuf/internal/encoding/text
+google.golang.org/protobuf/internal/errors
+google.golang.org/protobuf/internal/filedesc
+google.golang.org/protobuf/internal/filetype
+google.golang.org/protobuf/internal/flags
+google.golang.org/protobuf/internal/genid
+google.golang.org/protobuf/internal/impl
+google.golang.org/protobuf/internal/order
+google.golang.org/protobuf/internal/pragma
+google.golang.org/protobuf/internal/protolazy
+google.golang.org/protobuf/internal/set
+google.golang.org/protobuf/internal/strs
+google.golang.org/protobuf/internal/version
+google.golang.org/protobuf/proto
+google.golang.org/protobuf/reflect/protoreflect
+google.golang.org/protobuf/reflect/protoregistry
+google.golang.org/protobuf/runtime/protoiface
+google.golang.org/protobuf/runtime/protoimpl
+google.golang.org/protobuf/types/known/timestamppb
+# gopkg.in/natefinch/lumberjack.v2 v2.2.1
+## explicit; go 1.13
+gopkg.in/natefinch/lumberjack.v2
+# modernc.org/libc v1.72.0
+## explicit; go 1.25.0
+modernc.org/libc
+modernc.org/libc/errno
+modernc.org/libc/fcntl
+modernc.org/libc/fts
+modernc.org/libc/grp
+modernc.org/libc/honnef.co/go/netdb
+modernc.org/libc/langinfo
+modernc.org/libc/limits
+modernc.org/libc/netdb
+modernc.org/libc/netinet/in
+modernc.org/libc/poll
+modernc.org/libc/pthread
+modernc.org/libc/pwd
+modernc.org/libc/signal
+modernc.org/libc/stdio
+modernc.org/libc/stdlib
+modernc.org/libc/sys/socket
+modernc.org/libc/sys/stat
+modernc.org/libc/sys/types
+modernc.org/libc/termios
+modernc.org/libc/time
+modernc.org/libc/unistd
+modernc.org/libc/utime
+modernc.org/libc/uuid
+modernc.org/libc/uuid/uuid
+modernc.org/libc/wctype
+# modernc.org/mathutil v1.7.1
+## explicit; go 1.21
+modernc.org/mathutil
+# modernc.org/memory v1.11.0
+## explicit; go 1.23.0
+modernc.org/memory
+# modernc.org/sqlite v1.50.0
+## explicit; go 1.25.0
+modernc.org/sqlite
+modernc.org/sqlite/lib
+modernc.org/sqlite/vtab
