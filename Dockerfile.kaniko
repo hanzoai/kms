@@ -12,6 +12,9 @@ ENV GOEXPERIMENT=${GO_EXPERIMENT}
 ENV GOFLAGS=-mod=vendor
 ENV GOPROXY=off
 ENV GOTOOLCHAIN=local
+ENV CGO_ENABLED=0
+ENV GOOS=linux
+ENV GOARCH=amd64
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=${TARGETARCH} \
     go build -ldflags="-s -w" -o /kmsd ./cmd/kmsd/ && \
     go build -ldflags="-s -w" -o /kms ./cmd/kms/
