@@ -132,7 +132,18 @@ func verifyJWT(authHeader string) (jwtClaims, error) {
 	if issPtr == nil || *issPtr == "" || authConfig.jwks == nil {
 		return jwtClaims{}, errAuthNoConfig
 	}
-	expectedIssuer := strings.TrimRight(*issPtr, "/")
+	// Multi-issuer allowlist: IAM_ISSUER may be a comma-separated list
+	// (e.g. "https://hanzo.id,https://iam.hanzo.ai") so the KMS accepts
+	// tokens from either issuer host; the same JWKS validates signatures.
+	var expectedIssuers []string
+	for _, _ei := range strings.Split(*issPtr, ",") {
+		if _ei = strings.TrimRight(strings.TrimSpace(_ei), "/"); _ei != "" {
+			expectedIssuers = append(expectedIssuers, _ei)
+		}
+	}
+	if len(expectedIssuers) == 0 {
+		return jwtClaims{}, errAuthNoConfig
+	}
 
 	// Asymmetric alg allowlist — HS* and none are NEVER accepted.
 	allowed := []string{
@@ -150,7 +161,6 @@ func verifyJWT(authHeader string) (jwtClaims, error) {
 
 	parser := jwt.NewParser(
 		jwt.WithValidMethods(allowed),
-		jwt.WithIssuer(expectedIssuer),
 		jwt.WithExpirationRequired(),
 		// Leeway 0 — Red's prod attack used exp=Sep 2001; we honour real time.
 		jwt.WithLeeway(0),
@@ -194,7 +204,15 @@ func verifyJWT(authHeader string) (jwtClaims, error) {
 	if gotIss == "" {
 		return jwtClaims{}, errAuthMissingIss
 	}
-	if strings.TrimRight(gotIss, "/") != expectedIssuer {
+	gotIssNorm := strings.TrimRight(gotIss, "/")
+	issuerOK := false
+	for _, _ei := range expectedIssuers {
+		if gotIssNorm == _ei {
+			issuerOK = true
+			break
+		}
+	}
+	if !issuerOK {
 		return jwtClaims{}, errAuthWrongIss
 	}
 
