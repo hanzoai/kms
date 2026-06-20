@@ -7,7 +7,7 @@ on:
 jobs:
   validate-pr-title:
     name: Validate PR Title Format
-    runs-on: ubuntu-latest
+    runs-on: hanzo-build-linux-amd64
     steps:
       - name: Check PR Title Format
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
