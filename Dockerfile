@@ -13,15 +13,22 @@ RUN pnpm vite build
 
 FROM golang:1.26-bookworm AS build
 
+# GITHUB_TOKEN reaches the build for private go-module access (hanzoai/*).
+# Two callers, one git-config: the platform/arcd BuildKit Job mounts it as a
+# secret (`--secret=id=GIT_AUTH_TOKEN`, never in image metadata); the legacy
+# build-arg path (.github/workflows/build.yml) passes ARG GITHUB_TOKEN. The
+# RUN below prefers the mounted secret and falls back to the ARG.
 ARG GITHUB_TOKEN
 ARG TARGETARCH
 
 WORKDIR /src
 COPY go.mod go.sum ./
 RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=secret,id=GIT_AUTH_TOKEN \
+    TOKEN="$(cat /run/secrets/GIT_AUTH_TOKEN 2>/dev/null || echo "${GITHUB_TOKEN}")" && \
     GOPRIVATE="github.com/luxfi/*,github.com/hanzoai/*" \
     GONOSUMCHECK="github.com/luxfi/*,github.com/hanzoai/*" \
-    git config --global url."https://${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/" && \
+    git config --global url."https://${TOKEN}@github.com/".insteadOf "https://github.com/" && \
     go mod download
 
 COPY . .
