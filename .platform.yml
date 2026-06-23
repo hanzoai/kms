@@ -1,0 +1,17 @@
+# Platform-native CI/CD — hanzoai/kms
+#
+# Lets platform.hanzo.ai own the build+deploy lifecycle (GHA-escape) by
+# dispatching to the self-hosted arcd pool (hanzo-build-linux-amd64) — no
+# github.com-hosted builders. See platform docs/PLATFORM_CI.md.
+#
+# amd64-only: DOKS has no arm64 droplets (the catalog is amd64 Intel/AMD).
+# The `hanzo-build-linux-arm64` ARC scale set is paused on hanzo-k8s — keep
+# this in lockstep with .github/workflows/build.yml until DO ships arm64.
+build:
+  matrix:
+    - { os: linux, arch: amd64 }
+  dockerfile: ./Dockerfile
+  context: .
+  image: ghcr.io/hanzoai/kms
+  tag-pattern: "{{git.tag}}"
+  push: true
