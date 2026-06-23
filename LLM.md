@@ -6,6 +6,38 @@
 
 **Upstream lineage**: LICENSE attests Infisical (MIT) derivation. The Infisical-era code path was deleted; current request path is a thin wrapper over `github.com/luxfi/kms`. The copyright header is retained for legal accuracy, but no Infisical code remains on the wire.
 
+## Multi-issuer 2.5.3 + KMS-sync state (2026-06-23)
+
+- **Live**: `kms:2.4.3` on hanzo-k8s (single-issuer `https://hanzo.id`, runAsUser:0). 1/1, healthy.
+- **2.5.3 (multi-issuer) prepared, not yet built**: branch `release/v2.5.0-multi-issuer`
+  (`a7e290f39a`) = main `32f21a7e26` (has PR-#17 token-path fix `/v1/iam/oauth/access_token`)
+  + cherry-pick `4db2780649` (auth.go: `IAM_ISSUER` comma-split, drops `jwt.WithIssuer`,
+  manual `expectedIssuers` membership = sole iss gate; mirrors `checkAudience`) + a
+  multi-issuer test (`TestJWT_F1_MultiIssuer_Accepted`, green) + `.platform.yml`. Tag to cut: **`v2.5.3`**
+  (2.5.0/1/2 already taken in GHCR by unrelated 06-01 builds).
+  - The pre-existing GHCR `multi-issuer` tag (`sha256:b6f0adf`, branch `build/kms-mi-251`) is
+    **SUPERSEDED / unusable**: it lacks the token-path fix (still posts `/v1/iam/login/oauth/access_token`)
+    and ships `USER 1000`. Do NOT deploy it.
+  - Build path: MUST go via platform.hanzo.ai native arcd (BuildKit long-poll worker `arcbuild`
+    in ns hanzo; `POST /api/v1/arcd/poll`), NOT github.com Actions. `workflow_dispatch` on the ARC
+    pool is broken by a label collision: ~50 offline `evo-hanzoai-*` static runners share the
+    `hanzo-build-linux-amd64` label with the live ARC scale set, so dispatched jobs strand on the
+    offline pool (`assigned job=0`). amd64-only (DOKS has no arm64).
+- **Deploy artifact staged (not applied/committed)**: universe `infra/k8s/kms/deployment.yaml`
+  (image→2.5.3, `IAM_ISSUER`/`KMS_EXPECTED_ISSUER`→`"https://hanzo.id,https://iam.hanzo.ai"`,
+  runAsUser:0 kept) + `kustomization.yaml` (`newTag: "2.5.3"`, dropped stale b6f0adf digest).
+  kms is raw-kustomize-managed (no live operator CR), so deploy = apply that manifest. Rollback =
+  re-apply 2.4.3 (snapshot in /tmp/kms-backup/kms-deploy-2.4.3.yaml at authoring time).
+- **KMS-sync**: 86/102 `ReadyToSyncSecrets=True`. The 2 assigned stragglers are resolved:
+  `paas-nodes-kms-sync` migrated to canonical (`credentialsRef: hanzo-platform-iam-creds`,
+  `projectSlug: hanzo`, `secretsPath: /nodes`, explicit `keys[]`; the 4 SSH-key secrets were
+  re-seeded into KMS at `orgs/hanzo/secrets/nodes/`) → True; `registry-kms-sync` was a dead
+  orphan (path `/`, empty keys+creds, managed `registry-secrets` consumed by nobody, function
+  covered by 4 live `registry-*` sibling CRs) → deleted (+ empty `registry-kms-auth`). The
+  canonical kms-sync identity for the paas+registry family is **`hanzo-platform`** (authenticates
+  vs IAM, in the audience allowlist). Remaining 15 failures are OTHER lanes' (10× empty-keys,
+  4× key-not-found, 1× cross-ns policy `team/front`).
+
 ## What this is
 
 A thin Hanzo-branded wrapper over `github.com/luxfi/kms`. The Go server,
