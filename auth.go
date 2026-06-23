@@ -198,8 +198,9 @@ func verifyJWT(authHeader string) (jwtClaims, error) {
 		return jwtClaims{}, errAuthBadSig
 	}
 
-	// Issuer sanity — WithIssuer enforces this, but we re-check to be
-	// explicit and to handle missing iss.
+	// Issuer enforcement — the parser no longer pins a single issuer (we
+	// dropped jwt.WithIssuer to support the comma-list allowlist), so this
+	// manual membership check against expectedIssuers is the sole iss gate.
 	gotIss, _ := mc["iss"].(string)
 	if gotIss == "" {
 		return jwtClaims{}, errAuthMissingIss
