@@ -460,6 +460,52 @@ func TestJWT_F4_MultiAudience_Accepted(t *testing.T) {
 	}
 }
 
+// ── F1 — comma-separated expected issuer allowlist ─────────────────────
+
+// A comma-separated IAM_ISSUER lets one KMS instance accept tokens minted
+// by either IAM issuer host during a hostname cutover — e.g. the legacy
+// "https://hanzo.id" and the new "https://iam.hanzo.ai" — without
+// re-patching the pod. The same JWKS validates signatures for both; only
+// the iss claim differs. KMS accepts any iss in the configured list and
+// rejects everything else (no wildcards).
+func TestJWT_F1_MultiIssuer_Accepted(t *testing.T) {
+	e := newJWTTestEnv(t)
+	defer e.cleanup()
+
+	// e.issuer is the JWKS-backed primary; add a second host to the list.
+	const secondary = "https://iam.hanzo.ai"
+	t.Setenv("IAM_ISSUER", e.issuer+", "+secondary+" ,") // whitespace + trailing comma must be tolerated
+	reloadAuthConfigForTest()
+
+	// A token stamped with EITHER issuer must authenticate. Trailing-slash
+	// normalisation must also hold (iss with a trailing "/" == without).
+	for _, iss := range []string{e.issuer, secondary, secondary + "/"} {
+		tok := e.mintSigned(jwt.MapClaims{
+			"iss":   iss,
+			"sub":   "user-x",
+			"owner": "hanzo",
+			"aud":   e.audience,
+		})
+		resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
+		// Not-found or ok — auth passed. The key check is that 401 is not returned.
+		if resp.StatusCode == http.StatusUnauthorized {
+			t.Fatalf("iss=%q rejected but should be in expected list", iss)
+		}
+	}
+
+	// An issuer outside the list is still rejected (wrong_iss).
+	tok := e.mintSigned(jwt.MapClaims{
+		"iss":   "https://attacker.evil",
+		"sub":   "user-x",
+		"owner": "hanzo",
+		"aud":   e.audience,
+	})
+	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
+	if resp.StatusCode != http.StatusUnauthorized {
+		t.Fatalf("iss=https://attacker.evil: want 401, got %d", resp.StatusCode)
+	}
+}
+
 // ── F7 CRITICAL — owner=="admin" must NOT grant cross-tenant power ─────
 
 func TestJWT_F7_OwnerAdminCrossTenant_ReadRejected(t *testing.T) {
