@@ -6,29 +6,31 @@
 
 **Upstream lineage**: LICENSE attests Infisical (MIT) derivation. The Infisical-era code path was deleted; current request path is a thin wrapper over `github.com/luxfi/kms`. The copyright header is retained for legal accuracy, but no Infisical code remains on the wire.
 
-## Multi-issuer 2.5.3 + KMS-sync state (2026-06-23)
+## Multi-issuer 2.5.3 + KMS-sync state (2026-06-23) — DONE
 
-- **Live**: `kms:2.4.3` on hanzo-k8s (single-issuer `https://hanzo.id`, runAsUser:0). 1/1, healthy.
-- **2.5.3 (multi-issuer) prepared, not yet built**: branch `release/v2.5.0-multi-issuer`
-  (`a7e290f39a`) = main `32f21a7e26` (has PR-#17 token-path fix `/v1/iam/oauth/access_token`)
-  + cherry-pick `4db2780649` (auth.go: `IAM_ISSUER` comma-split, drops `jwt.WithIssuer`,
-  manual `expectedIssuers` membership = sole iss gate; mirrors `checkAudience`) + a
-  multi-issuer test (`TestJWT_F1_MultiIssuer_Accepted`, green) + `.platform.yml`. Tag to cut: **`v2.5.3`**
-  (2.5.0/1/2 already taken in GHCR by unrelated 06-01 builds).
-  - The pre-existing GHCR `multi-issuer` tag (`sha256:b6f0adf`, branch `build/kms-mi-251`) is
-    **SUPERSEDED / unusable**: it lacks the token-path fix (still posts `/v1/iam/login/oauth/access_token`)
-    and ships `USER 1000`. Do NOT deploy it.
-  - Build path: MUST go via platform.hanzo.ai native arcd (BuildKit long-poll worker `arcbuild`
-    in ns hanzo; `POST /api/v1/arcd/poll`), NOT github.com Actions. `workflow_dispatch` on the ARC
-    pool is broken by a label collision: ~50 offline `evo-hanzoai-*` static runners share the
-    `hanzo-build-linux-amd64` label with the live ARC scale set, so dispatched jobs strand on the
-    offline pool (`assigned job=0`). amd64-only (DOKS has no arm64).
-- **Deploy artifact staged (not applied/committed)**: universe `infra/k8s/kms/deployment.yaml`
-  (image→2.5.3, `IAM_ISSUER`/`KMS_EXPECTED_ISSUER`→`"https://hanzo.id,https://iam.hanzo.ai"`,
-  runAsUser:0 kept) + `kustomization.yaml` (`newTag: "2.5.3"`, dropped stale b6f0adf digest).
-  kms is raw-kustomize-managed (no live operator CR), so deploy = apply that manifest. Rollback =
-  re-apply 2.4.3 (snapshot in /tmp/kms-backup/kms-deploy-2.4.3.yaml at authoring time).
-- **KMS-sync**: 86/102 `ReadyToSyncSecrets=True`. The 2 assigned stragglers are resolved:
+- **LIVE**: `kms:2.5.3` on hanzo-k8s (multi-issuer `https://hanzo.id,https://iam.hanzo.ai`,
+  runAsUser:0). pod 1/1, restarts=0, healthz 200. Verified: a token stamped `iss=https://iam.hanzo.ai`
+  is now **ACCEPTED (200)** where 2.4.3 rejected it (`wrong_iss`/401); `hanzo.id` tokens still 200.
+- **2.5.3 image**: `ghcr.io/hanzoai/kms:2.5.3` @ `sha256:154a775bd93c93cd41d8d92d733cc77c6dbf271e805ecd36f2e6d9889922873a`.
+  git tag **`v2.5.3`** → commit `d058658f04`. Carries BOTH fixes:
+  - PR-#17 token-path fix `/v1/iam/oauth/access_token` (inherited from main `32f21a7e26`).
+  - comma-list issuer (cherry-pick `4db2780649`): auth.go splits `IAM_ISSUER` on ",", drops
+    `jwt.WithIssuer`, manual `expectedIssuers` membership = sole iss gate (mirrors `checkAudience`).
+    Test `TestJWT_F1_MultiIssuer_Accepted` (green).
+  - root Dockerfile (no USER 1000) + BuildKit `--secret=id=GIT_AUTH_TOKEN` for private-module fetch.
+- **BUILD path used**: platform/arcd **in-cluster BuildKit Job** (`kms-build-253-arcd`, `moby/buildkit`,
+  on DOKS node-pool, pushed to GHCR) — **NO GitHub Actions, no github.com builders**. This is the
+  canonical in-cluster build other lanes use (id/iam/console/esign kaniko+buildkit jobs).
+  - `workflow_dispatch` on the ARC pool is BROKEN by a label collision: ~50 offline `evo-hanzoai-*`
+    static runners share the `hanzo-build-linux-amd64` label with the live ARC scale set, so
+    dispatched jobs strand (`assigned job=0`). Don't use it until the offline evo-* pool is
+    decommissioned. (Self-hosted-pool-lane fix.)
+  - The pre-existing GHCR `multi-issuer` tag (`sha256:b6f0adf`, branch `build/kms-mi-251`) was
+    **SUPERSEDED / unusable**: it lacked the token-path fix and shipped `USER 1000`.
+- **Deploy = applied universe `infra/k8s/kms/deployment.yaml`** (image 2.5.3, both issuers→comma-list,
+  runAsUser:0). kms is raw-kustomize-managed (no live operator CR). Source committed on branch
+  `chore/kms-2.5.3-multi-issuer` (universe). Rollback = re-apply `/tmp/kms-backup/kms-deploy-2.4.3.yaml`.
+- **KMS-sync**: 86/102 `ReadyToSyncSecrets=True` (held across the 2.5.3 upgrade). The 2 assigned stragglers are resolved:
   `paas-nodes-kms-sync` migrated to canonical (`credentialsRef: hanzo-platform-iam-creds`,
   `projectSlug: hanzo`, `secretsPath: /nodes`, explicit `keys[]`; the 4 SSH-key secrets were
   re-seeded into KMS at `orgs/hanzo/secrets/nodes/`) → True; `registry-kms-sync` was a dead
