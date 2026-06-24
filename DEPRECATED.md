@@ -9,7 +9,7 @@ lives at:
 
 This repo is archived as `kms-v1` for historical reference. The active
 implementation is **Go-native, MPC-backed, ZapDB-storage** — replacing
-the Infisical fork entirely.
+the legacy Node.js fork entirely.
 
 ## Migration
 
@@ -17,7 +17,7 @@ the Infisical fork entirely.
 |---|---|
 | `ghcr.io/hanzoai/kms:*` | `ghcr.io/luxfi/kms:server` |
 | `github.com/hanzoai/kms` (Go import) | `github.com/luxfi/kms` |
-| `kms.hanzo.ai` (Infisical UI) | `api.kms.svc.cluster.local` (HTTP) |
+| `kms.hanzo.ai` (legacy web UI) | `api.kms.svc.cluster.local` (HTTP) |
 | In-cluster KMS HTTP | `kms.lux-kms-go.svc.cluster.local` |
 | In-cluster ZAP transport | `zap.kms.svc.cluster.local:9999` |
 
@@ -40,7 +40,7 @@ all, err := kms.GetSecrets(ctx)
 
 ## Why
 
-The Infisical fork (Node.js + PostgreSQL + Redis + complex web UI) was
+The legacy fork (Node.js + PostgreSQL + Redis + complex web UI) was
 incompatible with the "one and only one way" architectural principle.
 The Go-native implementation:
 

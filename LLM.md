@@ -4,7 +4,7 @@
 **Repo**: github.com/hanzoai/kms
 **Module**: github.com/hanzoai/kms (Go 1.26.1)
 
-**Upstream lineage**: LICENSE attests Infisical (MIT) derivation. The Infisical-era code path was deleted; current request path is a thin wrapper over `github.com/luxfi/kms`. The copyright header is retained for legal accuracy, but no Infisical code remains on the wire.
+**Upstream lineage**: see `LICENSE` for the required upstream MIT attribution. The legacy fork's code path was deleted; the current request path is a thin wrapper over `github.com/luxfi/kms`. The copyright header is retained for legal accuracy, but none of the original upstream code remains on the wire.
 
 ## What this is
 
@@ -19,7 +19,7 @@ from luxfi/kms. This module owns three things:
 3. `pkg/kmsclient` — the Go client used by every other Hanzo service to
    fetch secrets at runtime (HTTP + ZAP fallback).
 
-There is **no Infisical** in this repo. There is **no Base/SQLite**. There
+There is **no legacy Node.js fork** in this repo. There is **no Base/SQLite**. There
 is **no PostgreSQL** in the canonical Go module. Everything that used to
 live in `internal/handler/`, `internal/store/`, `internal/server/` has been
 deleted in favour of the upstream `github.com/luxfi/kms/pkg/{store,keys,
@@ -248,7 +248,7 @@ resources (`secrets.lux.network/v1alpha1`) with:
 - `spec.hostAPI: http://kms.hanzo.svc.cluster.local/api`
 - `spec.authentication.universalAuth.secretsScope.{projectSlug,envSlug,secretsPath}`
 
-This shape was minted for the Infisical era. The current `kmsd` only
+This shape was minted for the legacy era. The current `kmsd` only
 serves `/v1/kms/*` and uses `org/secrets/{path}/{name}?env=…` — there is
 no `/api/v3/secrets/raw` and no `projectSlug`/`envSlug` model. The
 operator that reconciles `KMSSecret` resources must be updated to call
@@ -264,4 +264,4 @@ separately — this module does not touch the operator.
 - All secrets at rest are encrypted (envelope DEK + master key).
 - Passwords are never stored in this service. Identity lives in IAM.
   When IAM stores a password, it is bcrypt-hashed (cost ≥ 12).
-- No backwards compatibility. No env flags for "use Infisical instead."
+- No backwards compatibility. No env flags for "use the legacy backend instead."

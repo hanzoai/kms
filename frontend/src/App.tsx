@@ -112,7 +112,7 @@ export function App() {
           <Route path="/workspaces">
             <EndpointGap
               title="Workspaces"
-              description="Per-environment workspace shape (legacy Infisical terminology)."
+              description="Per-environment workspace shape (legacy KMS terminology)."
               endpoints={['GET /v1/kms/orgs/{org}/workspaces']}
               rationale="Workspaces are not a first-class concept on the canonical surface — environments are passed per-secret via ?env=. Kept here for migration tooling that maps legacy workspace IDs."
             />
