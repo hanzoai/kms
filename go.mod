@@ -15,7 +15,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/hanzoai/cloud v0.1.1-0.20260519183759-098489930d01
 	github.com/hanzoai/zip v0.2.0
-	github.com/luxfi/kms v1.5.2
+	github.com/luxfi/kms v1.11.7
 	github.com/luxfi/log v1.4.3
 	github.com/luxfi/zap v0.3.1
 	github.com/luxfi/zapdb v1.9.0
