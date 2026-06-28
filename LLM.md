@@ -225,6 +225,13 @@ CI: `hanzoai/.github/.github/workflows/docker-build.yml@main` builds
 `ghcr.io/hanzoai/kms:<branch>` for `linux/amd64` + `linux/arm64` on
 native runners (DO+GKE), no QEMU.
 
+Releases: a semver tag (`vX.Y.Z` matching `VERSION`) triggers
+`.github/workflows/release.yml`, which publishes the multi-arch
+`ghcr.io/hanzoai/kms:vX.Y.Z` + `:X.Y.Z` + `:latest` manifest and
+dispatches `hanzoai/universe` to bump the pin. The universe manifest
+pins the released tag (`ghcr.io/hanzoai/kms:2.5.5`) — never a DOCR
+one-off. `VERSION` (`2.5.5`) wraps canonical `luxfi/kms v1.11.7`.
+
 ## Where things live
 
 ```
