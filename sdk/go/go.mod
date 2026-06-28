@@ -37,7 +37,7 @@ require (
 	github.com/luxfi/address v1.0.1 // indirect
 	github.com/luxfi/age v1.5.0 // indirect
 	github.com/luxfi/cache v1.2.1 // indirect
-	github.com/luxfi/constants v1.5.8-0.20260603055356-93c2c2ceb9ca // indirect
+	github.com/luxfi/constants v1.5.8 // indirect
 	github.com/luxfi/container v0.0.4 // indirect
 	github.com/luxfi/formatting v1.0.1 // indirect
 	github.com/luxfi/geth v1.16.98 // indirect
