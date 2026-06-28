@@ -13,8 +13,8 @@ go 1.26.4
 
 // luxfi/keys + luxfi/kms drive the consensus-native ZAP secret surface.
 // Tagged upstream:
-//   luxfi/keys v1.1.0   — BBF-bound hybrid signature (secp256k1+ML-DSA-65)
-//   luxfi/kms  v1.11.0  — anti-replay nonce ledger closes 5min window
+//   luxfi/keys v1.2.0   — BBF-bound hybrid signature (secp256k1+ML-DSA-65)
+//   luxfi/kms  v1.11.7  — anti-replay nonce ledger closes 5min window
 require (
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/hanzoai/cloud v0.1.1
