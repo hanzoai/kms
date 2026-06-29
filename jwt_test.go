@@ -460,6 +460,45 @@ func TestJWT_F4_MultiAudience_Accepted(t *testing.T) {
 	}
 }
 
+// ── Multi-issuer — comma-separated IAM_ISSUER allowlist ────────────────
+//
+// One KMS may trust several IAM issuers (https://hanzo.id,
+// https://iam.hanzo.ai, https://hanzo.ai) so a token minted by ANY of them
+// is accepted without re-patching the pod — mirrors the multi-audience
+// contract. Regression guard: the 0.159.x server line briefly compared the
+// `iss` claim against the WHOLE comma-string and rejected every real token
+// as wrong_iss (a production KMS auth outage).
+func TestJWT_MultiIssuer_Accepted(t *testing.T) {
+	e := newJWTTestEnv(t)
+	defer e.cleanup()
+
+	t.Setenv("IAM_ISSUER", "https://hanzo.id, https://iam.hanzo.ai ,https://hanzo.ai")
+	reloadAuthConfigForTest()
+
+	for _, iss := range []string{"https://hanzo.id", "https://iam.hanzo.ai", "https://hanzo.ai"} {
+		tok := e.mintSigned(jwt.MapClaims{
+			"sub":   "svc-x",
+			"owner": "hanzo",
+			"iss":   iss,
+		})
+		resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets", tok, nil)
+		if resp.StatusCode == http.StatusUnauthorized {
+			t.Fatalf("iss=%q rejected but is in the configured allowlist", iss)
+		}
+	}
+
+	// An issuer outside the list is still rejected.
+	tok := e.mintSigned(jwt.MapClaims{
+		"sub":   "svc-x",
+		"owner": "hanzo",
+		"iss":   "https://evil.example",
+	})
+	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets", tok, nil)
+	if resp.StatusCode != http.StatusUnauthorized {
+		t.Fatalf("iss=evil: want 401, got %d", resp.StatusCode)
+	}
+}
+
 // ── F7 CRITICAL — owner=="admin" must NOT grant cross-tenant power ─────
 
 func TestJWT_F7_OwnerAdminCrossTenant_ReadRejected(t *testing.T) {
