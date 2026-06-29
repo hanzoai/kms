@@ -1,3 +1,5 @@
+<p align="center"><img src=".github/hero.svg" alt="kms" width="880"></p>
+
 # kms
 
 Secrets and signing for the Hanzo platform. Per-org namespaces, AI-aware approval policies, dynamic secrets, SSH/PKI/certificate management.
