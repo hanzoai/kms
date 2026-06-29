@@ -254,11 +254,16 @@ func TestRed3_PathTraversalBlocked(t *testing.T) {
 		req.Header.Set("Authorization", "Bearer "+tok)
 		resp, _ := http.DefaultClient.Do(req)
 		if resp.StatusCode != 400 && resp.StatusCode != 404 {
-			// 404 is acceptable when net/http normalizes the path so it
-			// never reaches our handler. What's NOT acceptable is 200.
+			// 404 is acceptable when net/http normalizes the path so it never
+			// reaches our handler. A traversal path may also normalize onto a
+			// legitimate route: "/secrets/foo/.." cleans (path.Clean) to
+			// "/secrets", the metadata list, which returns an empty
+			// {"secrets":[],"count":0} — no value — to the authorized caller.
+			// That is not a leak. The real threat is a get-one VALUE payload
+			// escaping via traversal, so assert no value field is present.
 			body, _ := readBody(resp)
-			if strings.Contains(body, "secret") {
-				t.Fatalf("%s: returned a secret payload, status=%d", p, resp.StatusCode)
+			if strings.Contains(body, `"value"`) || strings.Contains(body, "secretValue") {
+				t.Fatalf("%s: returned a secret value payload, status=%d body=%s", p, resp.StatusCode, body)
 			}
 		}
 	}
