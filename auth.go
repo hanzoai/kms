@@ -132,7 +132,6 @@ func verifyJWT(authHeader string) (jwtClaims, error) {
 	if issPtr == nil || *issPtr == "" || authConfig.jwks == nil {
 		return jwtClaims{}, errAuthNoConfig
 	}
-	expectedIssuer := strings.TrimRight(*issPtr, "/")
 
 	// Asymmetric alg allowlist — HS* and none are NEVER accepted.
 	allowed := []string{
@@ -150,7 +149,9 @@ func verifyJWT(authHeader string) (jwtClaims, error) {
 
 	parser := jwt.NewParser(
 		jwt.WithValidMethods(allowed),
-		jwt.WithIssuer(expectedIssuer),
+		// Issuer is enforced post-parse by checkIssuer, which accepts a
+		// comma-separated allowlist. jwt.WithIssuer only matches a single
+		// value and would reject every token when IAM_ISSUER is a list.
 		jwt.WithExpirationRequired(),
 		// Leeway 0 — Red's prod attack used exp=Sep 2001; we honour real time.
 		jwt.WithLeeway(0),
@@ -188,14 +189,15 @@ func verifyJWT(authHeader string) (jwtClaims, error) {
 		return jwtClaims{}, errAuthBadSig
 	}
 
-	// Issuer sanity — WithIssuer enforces this, but we re-check to be
-	// explicit and to handle missing iss.
+	// Issuer — accept a comma-separated allowlist (mirrors checkAudience)
+	// so one KMS can trust multiple IAM issuers (hanzo.id, iam.hanzo.ai,
+	// hanzo.ai) without re-patching the pod. Trailing slashes normalized.
 	gotIss, _ := mc["iss"].(string)
 	if gotIss == "" {
 		return jwtClaims{}, errAuthMissingIss
 	}
-	if strings.TrimRight(gotIss, "/") != expectedIssuer {
-		return jwtClaims{}, errAuthWrongIss
+	if err := checkIssuer(gotIss, *issPtr); err != nil {
+		return jwtClaims{}, err
 	}
 
 	// Audience — jwt/v5 doesn't enforce unless we check explicitly.
@@ -289,6 +291,21 @@ func checkAudience(mc jwt.MapClaims, expected string) error {
 		}
 	}
 	return errAuthWrongAud
+}
+
+// checkIssuer enforces that the JWT `iss` matches one of the expected
+// issuers. `expected` may be a single issuer ("https://hanzo.id") or a
+// comma-separated list ("https://hanzo.id,https://iam.hanzo.ai,https://hanzo.ai")
+// so one KMS can trust multiple IAM issuers without re-patching the pod.
+// Trailing slashes are normalized on both sides. Mirrors checkAudience.
+func checkIssuer(got, expected string) error {
+	got = strings.TrimRight(got, "/")
+	for _, e := range strings.Split(expected, ",") {
+		if s := strings.TrimRight(strings.TrimSpace(e), "/"); s != "" && s == got {
+			return nil
+		}
+	}
+	return errAuthWrongIss
 }
 
 func numericClaim(mc jwt.MapClaims, k string) (float64, bool) {
