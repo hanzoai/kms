@@ -588,7 +588,11 @@ func (c *Client) getToken(ctx context.Context) (string, error) {
 		return c.accessToken, nil
 	}
 
-	tokenURL := c.iamEndpoint + "/v1/iam/login/oauth/access_token"
+	// Canonical IAM machine-token endpoint (HIP-0111). The legacy
+	// `/v1/iam/login/oauth/access_token` spelling 404s on current IAM
+	// (v1.18.7+); `/v1/iam/oauth/access_token` is the advertised
+	// client_credentials endpoint and matches notify's kmsbridge.
+	tokenURL := c.iamEndpoint + "/v1/iam/oauth/access_token"
 	form := url.Values{
 		"grant_type":    {"client_credentials"},
 		"client_id":     {c.clientID},
