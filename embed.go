@@ -606,6 +606,9 @@ func registerSecretRoutes(mux *http.ServeMux, secStore *store.SecretStore, db *b
 		if verErr != nil {
 			log.Warn("kms: version bump failed after put", "err", verErr)
 		}
+		if mErr := writeMtime(db, req.Path, req.Name, req.Env); mErr != nil {
+			log.Warn("kms: mtime write failed after put", "err", mErr)
+		}
 		writeJSON(w, http.StatusCreated, map[string]any{"ok": true, "version": newVer})
 		recordAudit(claims, r, req.Path, req.Name, req.Env, http.StatusCreated, newVer)
 	}
@@ -710,6 +713,9 @@ func registerSecretRoutes(mux *http.ServeMux, secStore *store.SecretStore, db *b
 			recordAudit(claims, r, path, name, env, http.StatusInternalServerError, 0)
 			return
 		}
+		if mErr := writeMtime(db, path, name, env); mErr != nil {
+			log.Warn("kms: mtime write failed after patch", "err", mErr)
+		}
 		writeJSON(w, http.StatusOK, map[string]any{"ok": true, "version": newVer})
 		recordAudit(claims, r, path, name, env, http.StatusOK, newVer)
 	}
@@ -741,13 +747,84 @@ func registerSecretRoutes(mux *http.ServeMux, secStore *store.SecretStore, db *b
 			recordAudit(claims, r, path, name, env, http.StatusNotFound, 0)
 			return
 		}
-		// Clear version record so a re-create starts from 1 again.
+		// Clear version + mtime records so a re-create starts clean.
 		_ = deleteVersion(db, path, name, env)
+		_ = deleteMtime(db, path, name, env)
 		writeJSON(w, http.StatusOK, map[string]any{"ok": true})
 		recordAudit(claims, r, path, name, env, http.StatusOK, 0)
 	}
 
+	// list (R-LIST): metadata-only browse of an org's secret KEYS. By
+	// construction it cannot return a value — see listSecretMetadata
+	// (keys-only scan, no value field on the row type). Authorization is the
+	// IDENTICAL authorize()+canActOnOrg() gate the other secret ops use: a
+	// caller who cannot read the org's secrets cannot list them.
+	list := func(w http.ResponseWriter, r *http.Request) {
+		claims, ok := authorize(w, r)
+		if !ok {
+			recordAudit(claims, r, "", "", "", http.StatusUnauthorized, 0)
+			return
+		}
+		orgURL := r.PathValue("org")
+		if !claims.canActOnOrg(orgURL) {
+			writeJSON(w, http.StatusForbidden, map[string]any{"message": "org claim does not match URL"})
+			recordAudit(claims, r, "", "", "", http.StatusForbidden, 0)
+			return
+		}
+		if !safePath(orgURL) {
+			writeJSON(w, http.StatusBadRequest, map[string]any{"message": "invalid org"})
+			recordAudit(claims, r, "", "", "", http.StatusBadRequest, 0)
+			return
+		}
+		// Structural org confinement: the scan is rooted at the org's canonical
+		// brand/<org> namespace and cannot escape it. This is STRICTER than
+		// get-one (it can never enumerate another tenant's secret names) while
+		// using the SAME authorize()+canActOnOrg() gate — never weaker.
+		// orgRoot carries no trailing slash; listSecretMetadata appends the
+		// boundary slash so brand/<org> never matches brand/<org>foo.
+		orgRoot := "brand/" + orgURL
+		listPath := orgRoot
+		if qp := r.URL.Query().Get("prefix"); qp != "" {
+			qp = strings.TrimSuffix(qp, "/") // accept the directory-style brand/<org>/ form
+			if qp == "" || !safePath(qp) {
+				writeJSON(w, http.StatusBadRequest, map[string]any{"message": "invalid prefix"})
+				recordAudit(claims, r, qp, "", "", http.StatusBadRequest, 0)
+				return
+			}
+			// Containment: the prefix must be the org root or strictly within it.
+			if qp != orgRoot && !strings.HasPrefix(qp, orgRoot+"/") {
+				writeJSON(w, http.StatusForbidden, map[string]any{"message": "prefix must be within brand/" + orgURL + "/"})
+				recordAudit(claims, r, qp, "", "", http.StatusForbidden, 0)
+				return
+			}
+			listPath = qp
+		}
+		envFilter := r.URL.Query().Get("env")
+		if envFilter != "" && (!safePath(envFilter) || strings.Contains(envFilter, "/")) {
+			writeJSON(w, http.StatusBadRequest, map[string]any{"message": "invalid env"})
+			recordAudit(claims, r, listPath, "", envFilter, http.StatusBadRequest, 0)
+			return
+		}
+		rows, truncated := listSecretMetadata(db, listPath, envFilter)
+		resp := map[string]any{"secrets": rows, "count": len(rows)}
+		if truncated {
+			resp["truncated"] = true
+		}
+		writeJSON(w, http.StatusOK, resp)
+		recordAudit(claims, r, listPath, "", envFilter, http.StatusOK, 0)
+	}
+
 	// Canonical (lux native).
+	//
+	// Routing precedence (Go 1.22+ net/http ServeMux): the bare pattern
+	// ".../secrets" and the wildcard ".../secrets/{rest...}" do NOT conflict —
+	// no request path matches both (the wildcard requires a literal "/secrets/"
+	// prefix; the bare matches exactly "/secrets"). Registering the explicit
+	// bare GET also suppresses any subtree redirect to ".../secrets/". Net
+	// effect: GET on the bare path hits list; GET on ".../secrets/<path>/<name>"
+	// still hits get-one and returns its value. Confirmed by
+	// TestList_RoutingPrecedence_NoShadowGetOne.
+	mux.HandleFunc("GET /v1/kms/orgs/{org}/secrets", list)
 	mux.HandleFunc("GET /v1/kms/orgs/{org}/secrets/{rest...}", get)
 	mux.HandleFunc("POST /v1/kms/orgs/{org}/secrets", put)
 	mux.HandleFunc("PATCH /v1/kms/orgs/{org}/secrets/{rest...}", patch)
