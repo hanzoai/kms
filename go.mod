@@ -19,7 +19,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/hanzoai/cloud v0.1.1
 	github.com/hanzoai/zip v0.2.0
-	github.com/luxfi/keys v1.2.0 // indirect
+	github.com/luxfi/keys v1.4.0 // indirect
 	github.com/luxfi/kms v1.11.8
 	github.com/luxfi/log v1.4.3
 	github.com/luxfi/zap v0.8.1
@@ -29,7 +29,7 @@ require (
 
 require (
 	github.com/hanzoai/kms/sdk/go v1.1.0
-	github.com/luxfi/ids v1.2.15
+	github.com/luxfi/ids v1.3.0
 )
 
 require (
@@ -53,26 +53,27 @@ require (
 	github.com/gorilla/rpc v1.2.1 // indirect
 	github.com/grandcat/zeroconf v1.0.0 // indirect
 	github.com/holiman/uint256 v1.3.2 // indirect
-	github.com/klauspost/compress v1.18.5 // indirect
+	github.com/klauspost/compress v1.18.6 // indirect
 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
 	github.com/klauspost/crc32 v1.3.0 // indirect
-	github.com/luxfi/accel v1.1.9 // indirect
+	github.com/luxfi/accel v1.2.4 // indirect
 	github.com/luxfi/address v1.0.1 // indirect
-	github.com/luxfi/age v1.5.0 // indirect
+	github.com/luxfi/age v1.6.0 // indirect
 	github.com/luxfi/cache v1.2.1 // indirect
 	github.com/luxfi/constants v1.5.8 // indirect
 	github.com/luxfi/container v0.0.4 // indirect
-	github.com/luxfi/crypto v1.19.17 // indirect
+	github.com/luxfi/crypto v1.20.0 // indirect
 	github.com/luxfi/formatting v1.0.1 // indirect
 	github.com/luxfi/geth v1.16.98 // indirect
-	github.com/luxfi/go-bip32 v1.0.2 // indirect
-	github.com/luxfi/go-bip39 v1.1.2 // indirect
+	github.com/luxfi/go-bip32 v1.1.0 // indirect
+	github.com/luxfi/go-bip39 v1.2.0 // indirect
 	github.com/luxfi/math v1.4.1 // indirect
 	github.com/luxfi/math/big v0.1.0 // indirect
 	github.com/luxfi/mdns v0.1.1 // indirect
 	github.com/luxfi/metric v1.5.7 // indirect
 	github.com/luxfi/mock v0.1.1 // indirect
 	github.com/luxfi/proto v1.0.0 // indirect
+	github.com/luxfi/protocol v0.0.2 // indirect
 	github.com/luxfi/sampler v1.1.0 // indirect
 	github.com/luxfi/tls v1.0.3 // indirect
 	github.com/luxfi/vm v1.2.0 // indirect
