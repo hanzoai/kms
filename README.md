@@ -176,7 +176,7 @@ hanzo-kms scan install --pre-commit-hook
 
 ## Open-source vs. paid
 
-This repo is available under the [MIT expat license](https://github.com/hanzoai/kms/blob/main/LICENSE), with the exception of the `ee` directory which contains premium enterprise features requiring a license.
+This repo is available under the [MIT license](https://github.com/hanzoai/kms/blob/main/LICENSE) in its entirety. Portions are derived from Infisical (MIT, Copyright 2022 Infisical Inc.); see `NOTICE`.
 
 If you are interested in managed KMS Cloud or self-hosted Enterprise offering, visit [kms.hanzo.ai](https://kms.hanzo.ai) or [contact us](https://hanzo.ai/contact).
 
