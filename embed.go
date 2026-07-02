@@ -1405,7 +1405,15 @@ func registerFrontend(mux *http.ServeMux) {
 		// API paths starting with /v1/ or /healthz never reach here —
 		// ServeMux fires the more-specific handler first. Defense in
 		// depth: bail out if the path looks like an API route.
-		if strings.HasPrefix(r.URL.Path, "/v1/") || r.URL.Path == "/healthz" || r.URL.Path == "/health" {
+		//
+		// /api/ is explicitly 404'd: this service has ZERO /api/ surface
+		// (the ONE canonical prefix is /v1/kms). Without this guard the SPA
+		// fallback below would answer GET /api/v1/... with index.html (200),
+		// masquerading as a live legacy /api/ backend. There is no /api/;
+		// make that unambiguous at the wire.
+		if strings.HasPrefix(r.URL.Path, "/v1/") ||
+			strings.HasPrefix(r.URL.Path, "/api/") || r.URL.Path == "/api" ||
+			r.URL.Path == "/healthz" || r.URL.Path == "/health" {
 			http.NotFound(w, r)
 			return
 		}
