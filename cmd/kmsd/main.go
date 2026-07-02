@@ -22,8 +22,8 @@ import (
 	"time"
 
 	"github.com/hanzoai/cloud"
-	"github.com/hanzoai/zip"
-	"github.com/hanzoai/zip/middleware"
+	"github.com/zap-proto/zip"
+	"github.com/zap-proto/zip/middleware"
 	"github.com/luxfi/log"
 
 	kms "github.com/hanzoai/kms"
@@ -62,7 +62,7 @@ func main() {
 	listenErr := make(chan error, 1)
 	go func() {
 		log.Info("kms: listening", "addr", cfg.ListenAddr)
-		listenErr <- app.Listen(cfg.ListenAddr)
+		listenErr <- app.ListenHTTP(cfg.ListenAddr)
 	}()
 
 	sig := make(chan os.Signal, 1)
