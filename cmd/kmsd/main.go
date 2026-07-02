@@ -62,7 +62,7 @@ func main() {
 	listenErr := make(chan error, 1)
 	go func() {
 		log.Info("kms: listening", "addr", cfg.ListenAddr)
-		listenErr <- app.ListenHTTP(cfg.ListenAddr)
+		listenErr <- app.Listen("http://" + cfg.ListenAddr)
 	}()
 
 	sig := make(chan os.Signal, 1)
