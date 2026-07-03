@@ -37,6 +37,10 @@ var version = "dev"
 func main() {
 	kms.Version = version
 
+	ctx := context.Background()
+	shutdown := initTelemetry(ctx, "hanzo-kms")
+	defer shutdown(ctx)
+
 	cfg := cloud.LoadConfig()
 	if err := cfg.Validate(); err != nil {
 		fmt.Fprintf(os.Stderr, "config: %v\n", err)
