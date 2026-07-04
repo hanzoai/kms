@@ -4,7 +4,7 @@
 # required). The TS dashboard ships as a static asset built in a separate
 # stage and copied verbatim.
 
-FROM node:22-alpine AS frontend
+FROM ghcr.io/hanzoai/nodejs:v24.18.0 AS frontend
 WORKDIR /src/frontend
 COPY frontend/package.json frontend/pnpm-lock.yaml ./
 RUN corepack enable pnpm && pnpm install --frozen-lockfile
