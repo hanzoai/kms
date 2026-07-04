@@ -18,13 +18,14 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
 	"github.com/hanzoai/cloud"
+	"github.com/luxfi/log"
 	"github.com/zap-proto/zip"
 	"github.com/zap-proto/zip/middleware"
-	"github.com/luxfi/log"
 
 	kms "github.com/hanzoai/kms"
 )
@@ -55,7 +56,13 @@ func main() {
 	})
 	app.Use(middleware.Recover())
 	app.Use(middleware.RequestID())
-	app.Use(middleware.Logger(deps.Logger))
+	// Per-request access log is DEBUG-only. At the default (info) it emitted one
+	// Info "request" line per call — ~4k lines/min, the KMS producer's entire
+	// log volume. Startup, shutdown, authz-denials, and handler errors are
+	// logged elsewhere and stay at info. Opt back in with KMS_LOG_LEVEL=debug.
+	if strings.EqualFold(os.Getenv("KMS_LOG_LEVEL"), "debug") {
+		app.Use(middleware.Logger(deps.Logger))
+	}
 
 	if err := kms.Mount(app, deps); err != nil {
 		log.Crit("kms: mount", "err", err)
