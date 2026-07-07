@@ -30,7 +30,7 @@ func newSPATestServer(t *testing.T) (*httptest.Server, func()) {
 	t.Setenv("KMS_FRONTEND_DIR", dir)
 
 	mux := http.NewServeMux()
-	registerHealth(mux)
+	registerHealth(mux, rolePrimary)
 	registerFrontend(mux)
 
 	srv := httptest.NewServer(mux)

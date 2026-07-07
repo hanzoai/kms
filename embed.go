@@ -131,6 +131,7 @@ type Embedded struct {
 
 	db          *badger.DB
 	replicator  *badger.Replicator
+	role        replicaRole // primary (writer+push) | follower (read-only+restore)
 	auditCancel context.CancelFunc
 	zapNode     *zap.Node // nil when ZAP server disabled
 
@@ -191,9 +192,19 @@ func Embed(ctx context.Context, cfg EmbedConfig) (*Embedded, error) {
 	}
 	log.Info("kms.Embed: zapdb opened", "dir", cfg.DataDir, "version", Version)
 
-	em := &Embedded{cfg: cfg, db: db}
+	role := resolveRole()
+	em := &Embedded{cfg: cfg, db: db, role: role}
 
-	em.replicator = startReplicator(db, cfg.NodeID)
+	// HA replication (primary push / follower restore) + the age-encrypted
+	// S3 backup that makes the store durable. A fatal misconfig (e.g.
+	// REPLICATE_REQUIRE_ENCRYPTION without a recipient) refuses boot rather
+	// than push secrets to S3 in the clear.
+	rep, repErr := startReplication(ctx, db, cfg.NodeID, role)
+	if repErr != nil {
+		_ = db.Close()
+		return nil, fmt.Errorf("kms.Embed: replication: %w", repErr)
+	}
+	em.replicator = rep
 
 	auditCtx, auditCancel := context.WithCancel(context.Background())
 	em.auditCancel = auditCancel
@@ -202,7 +213,7 @@ func Embed(ctx context.Context, cfg EmbedConfig) (*Embedded, error) {
 	secStore := store.NewSecretStore(db)
 
 	mux := http.NewServeMux()
-	registerHealth(mux)
+	registerHealth(mux, role)
 	registerAuth(mux, cfg.IAMEndpoint)
 	registerSecretRoutes(mux, secStore, db)
 
@@ -222,7 +233,10 @@ func Embed(ctx context.Context, cfg EmbedConfig) (*Embedded, error) {
 	registerFrontend(mux)
 
 	em.mux = mux
-	em.handler = methodAllowlist(stripIdentityHeaders(mux))
+	// followerReadOnly is a pass-through on a primary (default/single-node),
+	// so this changes nothing for non-HA deploys; on a follower it refuses
+	// mutating verbs (fail-closed read replica).
+	em.handler = methodAllowlist(followerReadOnly(role, stripIdentityHeaders(mux)))
 
 	if zapNode := startZAPSecretServer(secStore, cfg); zapNode != nil {
 		em.zapNode = zapNode
@@ -456,24 +470,20 @@ func methodAllowlist(next http.Handler) http.Handler {
 
 // --- Routes ---
 
-func registerHealth(mux *http.ServeMux) {
-	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) {
+func registerHealth(mux *http.ServeMux, role replicaRole) {
+	health := func(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusOK, map[string]any{
 			"status":  "ok",
 			"service": "kms",
 			"version": Version,
+			"role":    role.String(),
 		})
-	})
+	}
+	mux.HandleFunc("GET /healthz", health)
 	// Canonical lux health path also gets a binding for parity with the
 	// luxfi/kms surface; the standalone kmsd binary served only /healthz
 	// historically, but the Hanzo gateway probes /v1/kms/health.
-	mux.HandleFunc("GET /v1/kms/health", func(w http.ResponseWriter, r *http.Request) {
-		writeJSON(w, http.StatusOK, map[string]any{
-			"status":  "ok",
-			"service": "kms",
-			"version": Version,
-		})
-	})
+	mux.HandleFunc("GET /v1/kms/health", health)
 }
 
 func registerAuth(mux *http.ServeMux, iamEndpoint string) {
@@ -1230,49 +1240,10 @@ func startZAPSecretServer(secStore *store.SecretStore, cfg EmbedConfig) *zap.Nod
 }
 
 // --- Replicator ---
-
-func startReplicator(db *badger.DB, nodeID string) *badger.Replicator {
-	rawEndpoint := os.Getenv("REPLICATE_S3_ENDPOINT")
-	if rawEndpoint == "" {
-		log.Info("kms.Embed: S3 replication disabled (set REPLICATE_S3_ENDPOINT to enable)")
-		return nil
-	}
-	endpoint, useSSL := normalizeS3Endpoint(rawEndpoint)
-	access := firstNonEmpty(
-		os.Getenv("REPLICATE_S3_ACCESS_KEY_ID"),
-		os.Getenv("AWS_ACCESS_KEY_ID"),
-		os.Getenv("REPLICATE_S3_ACCESS_KEY"),
-	)
-	secret := firstNonEmpty(
-		os.Getenv("REPLICATE_S3_SECRET_ACCESS_KEY"),
-		os.Getenv("AWS_SECRET_ACCESS_KEY"),
-		os.Getenv("REPLICATE_S3_SECRET_KEY"),
-	)
-	cfg := badger.ReplicatorConfig{
-		Endpoint:  endpoint,
-		Bucket:    envOr("REPLICATE_S3_BUCKET", "hanzo-kms-backups"),
-		Region:    envOr("REPLICATE_S3_REGION", "us-central1"),
-		AccessKey: access,
-		SecretKey: secret,
-		UseSSL:    useSSL,
-		Path:      envOr("REPLICATE_S3_PATH", envOr("REPLICATE_PATH", fmt.Sprintf("kms/%s", nodeID))),
-		Interval:  time.Second,
-	}
-	if os.Getenv("REPLICATE_AGE_RECIPIENT") != "" {
-		log.Info("kms.Embed: S3 replication with age encryption enabled")
-	}
-	r, err := badger.NewReplicator(db, cfg)
-	if err != nil {
-		log.Warn("kms.Embed: S3 replicator init failed — replication disabled", "err", err)
-		return nil
-	}
-	go r.Start(context.Background())
-	log.Info("kms.Embed: S3 replication started",
-		"endpoint", endpoint,
-		"bucket", cfg.Bucket,
-		"path", cfg.Path)
-	return r
-}
+//
+// Replication (primary push / follower restore), role resolution, and the
+// age-encryption wiring live in replication.go. startReplication(...) is
+// called from Embed. normalizeS3Endpoint below is shared by both.
 
 // --- Helpers ---
 

@@ -98,7 +98,7 @@ func newJWTTestEnv(t *testing.T) *jwtTestEnv {
 	secStore := store.NewSecretStore(db)
 
 	mux := http.NewServeMux()
-	registerHealth(mux)
+	registerHealth(mux, rolePrimary)
 	registerSecretRoutes(mux, secStore, db)
 
 	srv := httptest.NewServer(methodAllowlist(stripIdentityHeaders(mux)))
