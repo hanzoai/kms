@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"sync/atomic"
 	"testing"
+	"time"
 )
 
 // TestReadyzGatesOnHydrate (MEDIUM-2) proves liveness and readiness are
@@ -73,7 +74,9 @@ func TestReadyzNilPredicateAlwaysReady(t *testing.T) {
 func TestCanPushGate(t *testing.T) {
 	held := &writerLease{}
 	held.held.Store(true)
-	notHeld := &writerLease{} // Held() == false
+	future := time.Now().Add(time.Minute)
+	held.heldUntil.Store(&future) // Fix 3: "held" now requires an unexpired validity window
+	notHeld := &writerLease{}     // Held() == false (flag unset, no deadline)
 
 	cases := []struct {
 		name     string

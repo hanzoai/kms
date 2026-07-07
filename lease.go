@@ -67,8 +67,9 @@ type leaseObject struct {
 	Spec       leaseSpec `json:"spec"`
 }
 
-// writerLease fences the primary's push loop. Held() reflects the last renew;
-// it is authoritative only while run() is renewing.
+// writerLease fences the primary's push loop. Held() is true only while the last
+// renew succeeded AND its validity window (renewInstant+duration) has not lapsed
+// on the monotonic clock — it is authoritative only while run() is renewing.
 type writerLease struct {
 	base       string // https://host:port
 	namespace  string
@@ -77,8 +78,13 @@ type writerLease struct {
 	duration   time.Duration
 	renewEvery time.Duration
 	client     *http.Client
-	token      string
+	tokenPath  string // SA token file; re-read on every request (kubelet rotates it in place)
 	held       atomic.Bool
+	// heldUntil is the monotonic-clock deadline bought by the last successful
+	// renew (renewInstant + duration). Held() gates pushes on it so a >lease-
+	// duration STW pause fences this node BEFORE the next tick runs — a zombie
+	// primary cannot slip one post-pause push past the gate. nil until first renew.
+	heldUntil atomic.Pointer[time.Time]
 }
 
 // newWriterLease builds the in-cluster fence from the ServiceAccount projection.
@@ -91,8 +97,11 @@ func newWriterLease(holder string) (*writerLease, error) {
 		return nil, fmt.Errorf("KMS_WRITER_LEASE=true but not in a cluster (KUBERNETES_SERVICE_HOST unset)")
 	}
 	port := envOr("KUBERNETES_SERVICE_PORT", "443")
-	token, err := os.ReadFile(saTokenPath)
-	if err != nil {
+	// Validate the SA token is present at boot (fail-fast: never start a fence
+	// that cannot authenticate). do() re-reads it FRESH on every request, so
+	// kubelet token rotation is tracked in place — we deliberately do not cache
+	// the value here.
+	if _, err := os.ReadFile(saTokenPath); err != nil {
 		return nil, fmt.Errorf("read ServiceAccount token: %w", err)
 	}
 	caPEM, err := os.ReadFile(saCAPath)
@@ -116,12 +125,12 @@ func newWriterLease(holder string) (*writerLease, error) {
 	}
 	return newWriterLeaseWith(fmt.Sprintf("https://%s:%s", host, port), ns,
 		envOr("KMS_WRITER_LEASE_NAME", "kms-luxfi-writer"), holder, dur,
-		client, strings.TrimSpace(string(token))), nil
+		client, saTokenPath), nil
 }
 
 // newWriterLeaseWith is the dependency-injected constructor (tests point base at
-// an httptest server with a plain client + token).
-func newWriterLeaseWith(base, namespace, name, holder string, dur time.Duration, client *http.Client, token string) *writerLease {
+// an httptest server with a plain client + a token file path).
+func newWriterLeaseWith(base, namespace, name, holder string, dur time.Duration, client *http.Client, tokenPath string) *writerLease {
 	if dur <= 0 {
 		dur = defaultLeaseDuration
 	}
@@ -131,11 +140,24 @@ func newWriterLeaseWith(base, namespace, name, holder string, dur time.Duration,
 	}
 	return &writerLease{
 		base: strings.TrimRight(base, "/"), namespace: namespace, name: name,
-		holder: holder, duration: dur, renewEvery: renew, client: client, token: token,
+		holder: holder, duration: dur, renewEvery: renew, client: client, tokenPath: tokenPath,
 	}
 }
 
-func (l *writerLease) Held() bool { return l.held.Load() }
+// Held reports whether this node currently owns a FRESH lease: the last renew
+// succeeded AND we are still inside the validity window it bought
+// (renewInstant+duration), measured on the monotonic clock. The deadline is the
+// push-path fencing token: a STW-paused/CPU-starved primary whose lease has
+// expired reads Held()==false the instant it resumes — before the next (failing)
+// renew tick runs — so it cannot push once over the S3 log after a standby was
+// promoted, regardless of goroutine scheduling order on resume.
+func (l *writerLease) Held() bool {
+	if !l.held.Load() {
+		return false
+	}
+	u := l.heldUntil.Load()
+	return u != nil && time.Now().Before(*u)
+}
 
 // run renews the lease on a cadence tighter than its duration and keeps Held()
 // current. It fails CLOSED: any error or a lost lease drops Held() to false so
@@ -158,6 +180,11 @@ func (l *writerLease) run(ctx context.Context) {
 }
 
 func (l *writerLease) tick(ctx context.Context) {
+	// Capture the monotonic instant BEFORE the renew: if it succeeds, the lease
+	// we just stamped (RenewTime≈now) is valid to start+duration. Using the
+	// pre-call instant is conservative — it spends the round-trip against our
+	// own validity window, never beyond it (fail-secure).
+	start := time.Now()
 	held, err := l.acquireOrRenew(ctx)
 	if err != nil {
 		if l.held.Load() {
@@ -171,6 +198,12 @@ func (l *writerLease) tick(ctx context.Context) {
 		log.Info("kms: writer-lease ACQUIRED — primary may push", "holder", l.holder, "lease", l.name)
 	case !held && l.held.Load():
 		log.Warn("kms: writer-lease LOST to another holder — FENCING writes", "holder", l.holder, "lease", l.name)
+	}
+	if held {
+		// Store the validity deadline BEFORE the held flag: a concurrent Held()
+		// that observes held==true then also observes a fresh (non-nil) deadline.
+		u := start.Add(l.duration)
+		l.heldUntil.Store(&u)
 	}
 	l.held.Store(held)
 }
@@ -325,7 +358,32 @@ func (l *writerLease) update(ctx context.Context, obj *leaseObject) (bool, error
 	}
 }
 
+// bearer reads the ServiceAccount token FRESH from disk on every request.
+// kubelet rotates the projected SA token in place (atomic ..data symlink swap),
+// so a value cached at construction goes stale; with default ~1yr tokens that is
+// invisible for a year, but a short projected-token TTL (or
+// --service-account-extend-token-expiration=false) would then 401 the primary
+// into a SILENT self-fence (replication halts while /readyz stays green).
+// Re-reading each call tracks rotation with nothing to go stale; the SA token is
+// tmpfs-backed so the read is a memory copy. Any error is returned so the caller
+// fails CLOSED (drops Held) rather than sending a blank or stale credential.
+func (l *writerLease) bearer() (string, error) {
+	b, err := os.ReadFile(l.tokenPath)
+	if err != nil {
+		return "", fmt.Errorf("read ServiceAccount token %s: %w", l.tokenPath, err)
+	}
+	t := strings.TrimSpace(string(b))
+	if t == "" {
+		return "", fmt.Errorf("ServiceAccount token %s is empty", l.tokenPath)
+	}
+	return t, nil
+}
+
 func (l *writerLease) do(ctx context.Context, method, url string, body []byte) ([]byte, int, error) {
+	tok, err := l.bearer()
+	if err != nil {
+		return nil, 0, err
+	}
 	var r io.Reader
 	if body != nil {
 		r = bytes.NewReader(body)
@@ -334,7 +392,7 @@ func (l *writerLease) do(ctx context.Context, method, url string, body []byte) (
 	if err != nil {
 		return nil, 0, err
 	}
-	req.Header.Set("Authorization", "Bearer "+l.token)
+	req.Header.Set("Authorization", "Bearer "+tok)
 	req.Header.Set("Accept", "application/json")
 	if body != nil {
 		req.Header.Set("Content-Type", "application/json")
