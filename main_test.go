@@ -31,7 +31,7 @@ func newTestServer(t *testing.T) (*httptest.Server, func()) {
 	secStore := store.NewSecretStore(db)
 
 	mux := http.NewServeMux()
-	registerHealth(mux, rolePrimary)
+	registerHealth(mux, rolePrimary, nil)
 	registerSecretRoutes(mux, secStore, db, nil)
 
 	srv := httptest.NewServer(methodAllowlist(stripIdentityHeaders(mux)))

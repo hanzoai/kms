@@ -25,6 +25,7 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	badger "github.com/luxfi/zapdb"
@@ -135,6 +136,13 @@ type Embedded struct {
 	auditCancel context.CancelFunc
 	zapNode     *zap.Node // nil when ZAP server disabled
 
+	// hydrated reports whether the node's store reflects the authoritative
+	// state (a durable non-empty PVC, or a completed initial S3 Restore).
+	// /readyz gates on it (MEDIUM-2): the process is LIVE immediately but not
+	// READY until hydrated, and a bootstrapping primary never pushes an empty
+	// store over the S3 log until hydration completes.
+	hydrated atomic.Bool
+
 	httpAddr string // bound listener address (post-:0 resolution)
 }
 
@@ -211,7 +219,7 @@ func Embed(ctx context.Context, cfg EmbedConfig) (*Embedded, error) {
 	// S3 backup that makes the store durable. A fatal misconfig (e.g.
 	// REPLICATE_REQUIRE_ENCRYPTION without a recipient) refuses boot rather
 	// than push secrets to S3 in the clear.
-	rep, repErr := startReplication(ctx, db, cfg.NodeID, role)
+	rep, repErr := startReplication(ctx, db, cfg.NodeID, role, &em.hydrated)
 	if repErr != nil {
 		_ = db.Close()
 		return nil, fmt.Errorf("kms.Embed: replication: %w", repErr)
@@ -225,7 +233,7 @@ func Embed(ctx context.Context, cfg EmbedConfig) (*Embedded, error) {
 	secStore := store.NewSecretStore(db)
 
 	mux := http.NewServeMux()
-	registerHealth(mux, role)
+	registerHealth(mux, role, em.hydrated.Load)
 	registerAuth(mux, cfg.IAMEndpoint)
 	registerSecretRoutes(mux, secStore, db, masterKey)
 
@@ -482,7 +490,13 @@ func methodAllowlist(next http.Handler) http.Handler {
 
 // --- Routes ---
 
-func registerHealth(mux *http.ServeMux, role replicaRole) {
+// registerHealth wires LIVENESS (/healthz, always 200 while the process is up)
+// and READINESS (/readyz, 200 only when ready() reports the store is hydrated).
+// Decoupling the two (MEDIUM-2) means a slow initial S3 Restore no longer
+// starves the liveness probe into a CrashLoop, while K8s still withholds
+// traffic/promotion from a not-yet-hydrated node. ready may be nil (always
+// ready) for callers with no replication (tests, single-node).
+func registerHealth(mux *http.ServeMux, role replicaRole, ready func() bool) {
 	health := func(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusOK, map[string]any{
 			"status":  "ok",
@@ -496,6 +510,25 @@ func registerHealth(mux *http.ServeMux, role replicaRole) {
 	// luxfi/kms surface; the standalone kmsd binary served only /healthz
 	// historically, but the Hanzo gateway probes /v1/kms/health.
 	mux.HandleFunc("GET /v1/kms/health", health)
+
+	readyH := func(w http.ResponseWriter, r *http.Request) {
+		hydrated := ready == nil || ready()
+		code := http.StatusOK
+		status := "ready"
+		if !hydrated {
+			code = http.StatusServiceUnavailable
+			status = "hydrating"
+		}
+		writeJSON(w, code, map[string]any{
+			"status":   status,
+			"service":  "kms",
+			"version":  Version,
+			"role":     role.String(),
+			"hydrated": hydrated,
+		})
+	}
+	mux.HandleFunc("GET /readyz", readyH)
+	mux.HandleFunc("GET /v1/kms/ready", readyH)
 }
 
 func registerAuth(mux *http.ServeMux, iamEndpoint string) {
