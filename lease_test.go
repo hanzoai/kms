@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
@@ -95,8 +97,16 @@ func (f *fakeLeaseAPI) holder() string {
 	return *f.obj.Spec.HolderIdentity
 }
 
-func newTestLease(base, holder string) *writerLease {
-	return newWriterLeaseWith(base, "hanzo", "kms-luxfi-writer", holder, 15*time.Second, http.DefaultClient, "test-token")
+// newTestLease writes the bearer token to a real file (the writer lease now
+// re-reads its token from disk each request, so tests must exercise that path
+// rather than inject a constant string).
+func newTestLease(t *testing.T, base, holder string) *writerLease {
+	t.Helper()
+	tokenPath := filepath.Join(t.TempDir(), "token")
+	if err := os.WriteFile(tokenPath, []byte("test-token"), 0o600); err != nil {
+		t.Fatalf("write token: %v", err)
+	}
+	return newWriterLeaseWith(base, "hanzo", "kms-luxfi-writer", holder, 15*time.Second, http.DefaultClient, tokenPath)
 }
 
 // TestWriterLeaseAcquireRenewTakeover (HIGH-3) walks the fence decision through
@@ -106,7 +116,7 @@ func TestWriterLeaseAcquireRenewTakeover(t *testing.T) {
 	srv := httptest.NewServer(api.handler())
 	defer srv.Close()
 	ctx := context.Background()
-	a := newTestLease(srv.URL, "kms-luxfi-0")
+	a := newTestLease(t, srv.URL, "kms-luxfi-0")
 
 	// 1. absent → create → held.
 	if held, err := a.acquireOrRenew(ctx); err != nil || !held {
@@ -150,8 +160,8 @@ func TestWriterLeaseMutualExclusion(t *testing.T) {
 	ctx := context.Background()
 	api.seed("dead-primary", time.Now().Add(-time.Hour), 15) // expired, up for grabs
 
-	a := newTestLease(srv.URL, "kms-luxfi-0")
-	b := newTestLease(srv.URL, "kms-luxfi-1")
+	a := newTestLease(t, srv.URL, "kms-luxfi-0")
+	b := newTestLease(t, srv.URL, "kms-luxfi-1")
 
 	// Both observe the same (stale) resourceVersion, then both try to take over.
 	curA, _, err := a.get(ctx)
@@ -182,7 +192,7 @@ func TestWriterLeaseFailsClosed(t *testing.T) {
 	base := srv.URL
 	srv.Close() // now unreachable
 
-	l := newTestLease(base, "kms-luxfi-0")
+	l := newTestLease(t, base, "kms-luxfi-0")
 	l.held.Store(true) // pretend we held it
 	l.tick(context.Background())
 	if l.Held() {
@@ -211,6 +221,107 @@ func TestLeaseExpired(t *testing.T) {
 				t.Fatalf("leaseExpired=%v, want %v", got, c.want)
 			}
 		})
+	}
+}
+
+// TestWriterLeaseRereadsRotatedToken (Fix 1) proves the writer lease re-reads
+// its ServiceAccount token from disk on EVERY request, so a kubelet token
+// rotation is picked up in place. A value cached at construction (the prior
+// behaviour) would keep sending the OLD token until the API 401'd the primary
+// into a SILENT self-fence — replication halts while /readyz stays green. Red's
+// constant "test-token" could not catch this; a rotating file can.
+func TestWriterLeaseRereadsRotatedToken(t *testing.T) {
+	var mu sync.Mutex
+	var seen string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		mu.Lock()
+		seen = r.Header.Get("Authorization")
+		mu.Unlock()
+		http.Error(w, `{"code":404}`, http.StatusNotFound) // status is irrelevant; we assert the header
+	}))
+	defer srv.Close()
+	lastSeen := func() string { mu.Lock(); defer mu.Unlock(); return seen }
+
+	dir := t.TempDir()
+	tokenPath := filepath.Join(dir, "token")
+	if err := os.WriteFile(tokenPath, []byte("token-v1\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	l := newWriterLeaseWith(srv.URL, "hanzo", "kms-luxfi-writer", "kms-luxfi-0", 15*time.Second, srv.Client(), tokenPath)
+
+	if _, _, err := l.get(context.Background()); err != nil {
+		t.Fatalf("get v1: %v", err)
+	}
+	if got := lastSeen(); got != "Bearer token-v1" {
+		t.Fatalf("first request Authorization=%q, want %q", got, "Bearer token-v1")
+	}
+
+	// kubelet rotates the projected token in place.
+	if err := os.WriteFile(tokenPath, []byte("token-v2\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if _, _, err := l.get(context.Background()); err != nil {
+		t.Fatalf("get v2: %v", err)
+	}
+	if got := lastSeen(); got != "Bearer token-v2" {
+		t.Fatalf("after rotation Authorization=%q, want %q (token must be re-read from disk)", got, "Bearer token-v2")
+	}
+
+	// Fail-closed: a vanished token file must ERROR (drives the tick to drop
+	// Held) rather than send a blank bearer.
+	if err := os.Remove(tokenPath); err != nil {
+		t.Fatal(err)
+	}
+	if _, _, err := l.get(context.Background()); err == nil {
+		t.Fatal("get with a missing token file must fail closed (error), not send an empty bearer")
+	}
+}
+
+// TestWriterLeaseHeldUntilDeadline (Fix 3) proves the push gate fences a zombie
+// primary whose renew loop was STW-paused past the lease duration: even with the
+// cached held flag still true, Held() is false once the monotonic validity
+// deadline has lapsed — so no post-pause push slips through before the next
+// (failing) renew tick runs.
+func TestWriterLeaseHeldUntilDeadline(t *testing.T) {
+	l := newTestLease(t, "http://127.0.0.1:1", "kms-luxfi-0")
+	l.held.Store(true)
+
+	future := time.Now().Add(10 * time.Second)
+	l.heldUntil.Store(&future)
+	if !l.Held() {
+		t.Fatal("Held must be true while within the renew validity window")
+	}
+
+	// Simulate a STW pause past the lease duration: the deadline is now in the
+	// past while the cached flag is still true (the failing tick hasn't run).
+	past := time.Now().Add(-time.Second)
+	l.heldUntil.Store(&past)
+	if l.Held() {
+		t.Fatal("Held must be FALSE once the validity deadline has lapsed, even with held=true (zombie-primary push window)")
+	}
+
+	// A nil deadline (never successfully renewed) is never held.
+	l.heldUntil.Store(nil)
+	if l.Held() {
+		t.Fatal("Held must be false with no recorded renew deadline")
+	}
+}
+
+// TestWriterLeaseTickSetsDeadline (Fix 3) proves a successful tick records a
+// fresh, future validity deadline so Held() — which now gates on it — reports
+// true on the healthy path. Exercises the file-backed token (Fix 1) too.
+func TestWriterLeaseTickSetsDeadline(t *testing.T) {
+	api := &fakeLeaseAPI{}
+	srv := httptest.NewServer(api.handler())
+	defer srv.Close()
+	l := newTestLease(t, srv.URL, "kms-luxfi-0")
+
+	l.tick(context.Background())
+	if !l.Held() {
+		t.Fatal("after a successful tick the primary must hold a fresh, in-window lease")
+	}
+	if u := l.heldUntil.Load(); u == nil || !time.Now().Before(*u) {
+		t.Fatalf("tick must record a future validity deadline; got %v", u)
 	}
 }
 
