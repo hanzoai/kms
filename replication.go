@@ -151,23 +151,21 @@ func buildReplicatorConfig(nodeID string) (cfg badger.ReplicatorConfig, enabled 
 		Path:     envOr("REPLICATE_S3_PATH", envOr("REPLICATE_PATH", fmt.Sprintf("kms/%s", nodeID))),
 		Interval: replicationInterval(),
 		// SnapshotInterval drives full Backup(0) uploads. The full snapshot
-		// is the DURABILITY FLOOR and is always EXACT (it reflects every
-		// live key, and a deleted key is simply absent). It does NOT depend
-		// on the incremental sinceVersion cursor — see the note below — so a
-		// short snapshot interval bounds worst-case RPO independently of the
-		// upstream Replicator's incremental off-by-one.
+		// is the DURABILITY FLOOR and is always EXACT (it reflects every live
+		// key, and a deleted key is simply absent). It does NOT depend on the
+		// incremental sinceVersion cursor, so a short snapshot interval bounds
+		// worst-case RPO on its own.
 		//
-		// UPSTREAM NOTE (luxfi/zapdb v1.10.0 replicate.go): db.Backup(w,
-		// since) emits versions STRICTLY GREATER than `since`, but both
-		// Incremental and Snapshot advance the cursor as
-		// `sinceVersion = maxVersion + 1`. The write landing exactly at
-		// maxVersion+1 is therefore skipped by INCREMENTALS until the next
-		// full snapshot re-captures it via Backup(0). kms-luxfi sets a short
-		// REPLICATE_SNAPSHOT_INTERVAL so that floor is minutes, not the 1h
-		// default; consumer reads never touch replicated state (they hit the
-		// primary's authoritative PVC), so this only bounds catastrophic-
-		// dual-loss RPO. The one-line upstream fix is `sinceVersion =
-		// maxVersion` (make Backup's `since` inclusive-consistent).
+		// UPSTREAM (luxfi/zapdb): the incremental off-by-one is FIXED as of
+		// v1.10.2 — db.Backup(w, since) emits versions strictly greater than
+		// `since` and the Replicator now resumes the cursor AT maxVersion
+		// (was maxVersion+1), so no boundary write is dropped between
+		// snapshots. kms-luxfi is pinned to v1.10.2 (go.mod). The short
+		// REPLICATE_SNAPSHOT_INTERVAL is retained as defence-in-depth: it
+		// keeps the exact-snapshot floor tight regardless of the incremental
+		// path, and consumer reads never touch replicated state (they hit the
+		// primary's authoritative PVC), so replication only bounds
+		// catastrophic dual-loss RPO.
 		SnapshotInterval: snapshotInterval(),
 	}
 
