@@ -32,6 +32,9 @@ package kms
 
 import (
 	"context"
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/base64"
 	"fmt"
 	"net/http"
 	"os"
@@ -171,24 +174,86 @@ func buildReplicatorConfig(nodeID string) (cfg badger.ReplicatorConfig, enabled 
 	}
 
 	requireEnc := boolEnv("REPLICATE_REQUIRE_ENCRYPTION")
-	if rcpt := strings.TrimSpace(os.Getenv("REPLICATE_AGE_RECIPIENT")); rcpt != "" {
+	// Backup encryption + AUTHENTICATION (MEDIUM-4). Precedence:
+	//
+	//  1. Explicit X25519 recipient (REPLICATE_AGE_RECIPIENT). Public-key mode:
+	//     CONFIDENTIAL but NOT authenticated — anyone with the (public)
+	//     recipient can forge a backup our identity will decrypt. Kept as an
+	//     override for deployments that want an explicit keypair.
+	//  2. Master-key-derived scrypt passphrase (default for kms-luxfi). age's
+	//     scrypt mode is SYMMETRIC-authenticated: the file key is wrapped under
+	//     scrypt(passphrase), so ONLY a holder of the passphrase can produce a
+	//     backup our identity loads. The passphrase is derived from the master
+	//     key (KMS_ENCRYPTION_KEY_B64) which an S3-write-only attacker does NOT
+	//     have — so they can neither read NOR forge/substitute a backup. This
+	//     is the "sign the stream with a KMS-held key" control, via age's own
+	//     AEAD rather than a bolt-on MAC.
+	//  3. Neither available + require-encryption → fatal (never plaintext).
+	switch {
+	case strings.TrimSpace(os.Getenv("REPLICATE_AGE_RECIPIENT")) != "":
+		rcpt := strings.TrimSpace(os.Getenv("REPLICATE_AGE_RECIPIENT"))
 		r, perr := age.ParseX25519Recipient(rcpt)
 		if perr != nil {
 			return badger.ReplicatorConfig{}, false, fmt.Errorf("REPLICATE_AGE_RECIPIENT invalid: %w", perr)
 		}
 		cfg.AgeRecipient = r
-	} else if requireEnc {
-		return badger.ReplicatorConfig{}, false, fmt.Errorf(
-			"REPLICATE_REQUIRE_ENCRYPTION=true but REPLICATE_AGE_RECIPIENT is empty — refusing to replicate secrets to S3 in the clear")
-	}
-	if idn := strings.TrimSpace(os.Getenv("REPLICATE_AGE_IDENTITY")); idn != "" {
-		id, perr := age.ParseX25519Identity(idn)
-		if perr != nil {
-			return badger.ReplicatorConfig{}, false, fmt.Errorf("REPLICATE_AGE_IDENTITY invalid: %w", perr)
+		if idn := strings.TrimSpace(os.Getenv("REPLICATE_AGE_IDENTITY")); idn != "" {
+			id, perr := age.ParseX25519Identity(idn)
+			if perr != nil {
+				return badger.ReplicatorConfig{}, false, fmt.Errorf("REPLICATE_AGE_IDENTITY invalid: %w", perr)
+			}
+			cfg.AgeIdentity = id
 		}
-		cfg.AgeIdentity = id
+	case len(masterKeyFromEnv()) == 32:
+		rr, ri, derr := deriveScryptBackupKeys(masterKeyFromEnv())
+		if derr != nil {
+			return badger.ReplicatorConfig{}, false, fmt.Errorf("derive authenticated backup key: %w", derr)
+		}
+		cfg.AgeRecipient = rr
+		cfg.AgeIdentity = ri
+	case requireEnc:
+		return badger.ReplicatorConfig{}, false, fmt.Errorf(
+			"REPLICATE_REQUIRE_ENCRYPTION=true but neither REPLICATE_AGE_RECIPIENT nor a 32-byte KMS_ENCRYPTION_KEY_B64 is set — refusing to replicate secrets to S3 unauthenticated/in the clear")
 	}
 	return cfg, true, nil
+}
+
+// deriveReplicationPassphrase derives the age scrypt passphrase for
+// authenticated backups from the master key, domain-separated so it is
+// independent of the at-rest DEK-wrapping use of the same key. A single
+// HMAC-SHA256 over a fixed label is a sound KDF for one 256-bit output.
+func deriveReplicationPassphrase(masterKey []byte) string {
+	m := hmac.New(sha256.New, masterKey)
+	m.Write([]byte("kms-luxfi/replication/age/v1"))
+	return base64.RawStdEncoding.EncodeToString(m.Sum(nil))
+}
+
+// deriveScryptBackupKeys builds the age scrypt recipient/identity pair for
+// authenticated S3 backups from the master key. The passphrase is full-entropy
+// (a 256-bit HMAC output), so the scrypt work factor is not a brute-force
+// defence here — it is kept modest (KMS_REPLICATE_SCRYPT_LOGN, default 15) to
+// bound per-object CPU; scrypt runs only when an actual write is backed up.
+func deriveScryptBackupKeys(masterKey []byte) (age.Recipient, age.Identity, error) {
+	pass := deriveReplicationPassphrase(masterKey)
+	r, err := age.NewScryptRecipient(pass)
+	if err != nil {
+		return nil, nil, err
+	}
+	r.SetWorkFactor(scryptWorkFactor())
+	id, err := age.NewScryptIdentity(pass)
+	if err != nil {
+		return nil, nil, err
+	}
+	return r, id, nil
+}
+
+func scryptWorkFactor() int {
+	if v := strings.TrimSpace(os.Getenv("KMS_REPLICATE_SCRYPT_LOGN")); v != "" {
+		if n, err := strconv.Atoi(v); err == nil && n >= 10 && n <= 22 {
+			return n
+		}
+	}
+	return 15
 }
 
 func replicationInterval() time.Duration {
