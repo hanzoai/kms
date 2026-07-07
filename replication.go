@@ -37,6 +37,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"github.com/luxfi/age"
@@ -236,12 +237,14 @@ func durationEnv(k string) (time.Duration, bool) {
 //	           Restore PULL loop on KMS_FOLLOWER_RESTORE_INTERVAL to track
 //	           the primary. Reads are served from its local encrypted
 //	           store; mutating verbs are refused by followerReadOnly.
-func startReplication(ctx context.Context, db *badger.DB, nodeID string, role replicaRole) (*badger.Replicator, error) {
+func startReplication(ctx context.Context, db *badger.DB, nodeID string, role replicaRole, hydrated *atomic.Bool) (*badger.Replicator, error) {
 	cfg, enabled, err := buildReplicatorConfig(nodeID)
 	if err != nil {
 		return nil, err
 	}
 	if !enabled {
+		// No S3 → the local PVC is authoritative; the node is hydrated now.
+		hydrated.Store(true)
 		log.Info("kms.Embed: S3 replication disabled (set REPLICATE_S3_ENDPOINT to enable)", "role", role.String())
 		return nil, nil
 	}
@@ -249,28 +252,33 @@ func startReplication(ctx context.Context, db *badger.DB, nodeID string, role re
 	if err != nil {
 		// Non-fatal: a node can run on its durable PVC without offsite
 		// backup. Log loudly; do not crash the secret path.
+		hydrated.Store(true)
 		log.Warn("kms.Embed: S3 replicator init failed — replication disabled", "err", err)
 		return nil, nil
 	}
 
 	switch role {
 	case roleFollower:
-		// Hydrate before serving, best-effort. A brand-new follower with
-		// an empty S3 log simply starts empty and catches up on the loop.
-		if rerr := r.Restore(ctx); rerr != nil {
-			log.Warn("kms.Embed: follower initial restore failed (will retry on loop)", "err", rerr)
-		}
-		go followerLoop(ctx, r)
+		// MEDIUM-2: hydrate ASYNC + bounded, never blocking boot. followerLoop
+		// does an immediate bounded Restore (flips hydrated on first success)
+		// then keeps pulling. Readiness (/readyz) reflects hydrated; liveness
+		// (/healthz) is up immediately so a slow/large S3 restore cannot
+		// CrashLoop the pod.
+		go followerLoop(ctx, r, hydrated)
 		log.Info("kms.Embed: S3 replication started (FOLLOWER: pull/restore only, read-only)",
 			"endpoint", cfg.Endpoint, "bucket", cfg.Bucket, "path", cfg.Path,
 			"restore_interval", followerRestoreInterval().String(),
 			"age_encrypted", cfg.AgeRecipient != nil)
 	default: // rolePrimary
 		if dbIsEmpty(db) {
-			log.Info("kms.Embed: local store empty — restoring from S3 before assuming primary (self-heal after PVC loss)")
-			if rerr := r.Restore(ctx); rerr != nil {
-				log.Warn("kms.Embed: primary bootstrap restore failed (starting empty)", "err", rerr)
-			}
+			// Self-heal after PVC loss: restore ASYNC + bounded. The push loop
+			// gates on hydrated, so we NEVER push an empty store over the S3
+			// log before the restore completes.
+			log.Info("kms.Embed: local store empty — hydrating from S3 before assuming primary (self-heal after PVC loss)")
+			hydrateAsync(ctx, r, hydrated, "primary-bootstrap")
+		} else {
+			// Durable non-empty PVC is already authoritative.
+			hydrated.Store(true)
 		}
 		// HIGH-3: writer fence. When KMS_WRITER_LEASE=true the primary may push
 		// only while it holds a fresh K8s Lease, closing the different-ordinal-
@@ -282,20 +290,46 @@ func startReplication(ctx context.Context, db *badger.DB, nodeID string, role re
 		}
 		if fence != nil {
 			go fence.run(ctx)
-			go primaryPushLoop(ctx, r, fence)
-			log.Info("kms.Embed: S3 replication started (PRIMARY: FENCED incremental push)",
-				"endpoint", cfg.Endpoint, "bucket", cfg.Bucket, "path", cfg.Path,
-				"interval", cfg.Interval.String(), "lease", envOr("KMS_WRITER_LEASE_NAME", "kms-luxfi-writer"),
-				"age_encrypted", cfg.AgeRecipient != nil)
-		} else {
-			go r.Start(ctx)
-			log.Info("kms.Embed: S3 replication started (PRIMARY: incremental push)",
-				"endpoint", cfg.Endpoint, "bucket", cfg.Bucket, "path", cfg.Path,
-				"interval", cfg.Interval.String(),
-				"age_encrypted", cfg.AgeRecipient != nil)
 		}
+		// Always drive the push via primaryPushLoop (fence may be nil): it
+		// gates every push on BOTH hydrated and, when set, the fence — so the
+		// hydrate-before-push safety holds on the non-fenced path too.
+		go primaryPushLoop(ctx, r, fence, hydrated)
+		log.Info("kms.Embed: S3 replication started (PRIMARY: incremental push)",
+			"endpoint", cfg.Endpoint, "bucket", cfg.Bucket, "path", cfg.Path,
+			"interval", cfg.Interval.String(), "fenced", fence != nil,
+			"age_encrypted", cfg.AgeRecipient != nil)
 	}
 	return r, nil
+}
+
+// hydrateAsync runs a bounded initial Restore in the background, retrying on
+// failure, and flips hydrated true on the first success. Bounding each attempt
+// (KMS_RESTORE_TIMEOUT) keeps a hung S3 from wedging the goroutine forever;
+// retrying means a transient S3 blip at boot does not leave the node
+// permanently un-hydrated.
+func hydrateAsync(ctx context.Context, r *badger.Replicator, hydrated *atomic.Bool, label string) {
+	go func() {
+		for {
+			if ctx.Err() != nil {
+				return
+			}
+			rctx, cancel := context.WithTimeout(ctx, restoreTimeout())
+			err := r.Restore(rctx)
+			cancel()
+			if err == nil {
+				hydrated.Store(true)
+				log.Info("kms: initial hydrate complete", "role", label)
+				return
+			}
+			log.Warn("kms: initial hydrate failed — retrying", "role", label, "err", err)
+			select {
+			case <-ctx.Done():
+				return
+			case <-time.After(hydrateRetryInterval()):
+			}
+		}
+	}()
 }
 
 // maybeWriterLease builds the primary's K8s Lease fence when KMS_WRITER_LEASE is
@@ -319,7 +353,7 @@ func maybeWriterLease(nodeID string) (*writerLease, error) {
 // this node holds the Lease. The moment the fence drops (renew failure, lost
 // lease), pushes stop — so a partitioned ex-primary cannot keep writing the S3
 // log after a standby has been promoted.
-func primaryPushLoop(ctx context.Context, r *badger.Replicator, fence *writerLease) {
+func primaryPushLoop(ctx context.Context, r *badger.Replicator, fence *writerLease, hydrated *atomic.Bool) {
 	inc := time.NewTicker(replicationInterval())
 	defer inc.Stop()
 	snap := time.NewTicker(snapshotInterval())
@@ -329,14 +363,14 @@ func primaryPushLoop(ctx context.Context, r *badger.Replicator, fence *writerLea
 		case <-ctx.Done():
 			return
 		case <-inc.C:
-			if !fence.Held() {
+			if !canPush(hydrated, fence) {
 				continue
 			}
 			if err := r.Incremental(ctx); err != nil {
 				log.Warn("kms: primary incremental push failed", "err", err)
 			}
 		case <-snap.C:
-			if !fence.Held() {
+			if !canPush(hydrated, fence) {
 				continue
 			}
 			if err := r.Snapshot(ctx); err != nil {
@@ -346,10 +380,50 @@ func primaryPushLoop(ctx context.Context, r *badger.Replicator, fence *writerLea
 	}
 }
 
-// followerLoop periodically Restores from S3 so a standby stays current
-// with the primary and can be promoted with a bounded RPO (≈ the primary
-// push interval). Exits when ctx is cancelled (graceful shutdown).
-func followerLoop(ctx context.Context, r *badger.Replicator) {
+// canPush is the primary's push gate: it may push only when the store is
+// hydrated (never push an un-restored/empty store over the S3 log) AND, when a
+// writer fence is configured, while it holds the Lease. Both conditions
+// fail-closed — a false from either stops the push.
+func canPush(hydrated *atomic.Bool, fence *writerLease) bool {
+	return hydrated.Load() && (fence == nil || fence.Held())
+}
+
+// restoreTimeout bounds a single initial/loop Restore so a hung S3 cannot wedge
+// the hydrate/pull goroutine. Generous by default (large snapshots); override
+// with KMS_RESTORE_TIMEOUT.
+func restoreTimeout() time.Duration {
+	if d, ok := durationEnv("KMS_RESTORE_TIMEOUT"); ok {
+		return d
+	}
+	return 2 * time.Minute
+}
+
+// hydrateRetryInterval is the backoff between failed initial-hydrate attempts.
+func hydrateRetryInterval() time.Duration {
+	if d, ok := durationEnv("KMS_HYDRATE_RETRY_INTERVAL"); ok {
+		return d
+	}
+	return 5 * time.Second
+}
+
+// followerLoop hydrates then periodically Restores from S3 so a standby stays
+// current with the primary and can be promoted with a bounded RPO (≈ the
+// primary push interval). The FIRST Restore is a bounded hydrate that flips
+// hydrated (→ /readyz 200); subsequent Restores keep it current. Each attempt
+// is timeout-bounded so a hung S3 can't wedge the loop. Exits on ctx cancel.
+func followerLoop(ctx context.Context, r *badger.Replicator, hydrated *atomic.Bool) {
+	restore := func() {
+		rctx, cancel := context.WithTimeout(ctx, restoreTimeout())
+		defer cancel()
+		if err := r.Restore(rctx); err != nil {
+			log.Warn("kms: follower restore failed", "err", err, "hydrated", hydrated.Load())
+			return
+		}
+		if hydrated.CompareAndSwap(false, true) {
+			log.Info("kms: follower initial hydrate complete (ready)")
+		}
+	}
+	restore() // immediate hydrate, don't wait a full interval
 	t := time.NewTicker(followerRestoreInterval())
 	defer t.Stop()
 	for {
@@ -357,9 +431,7 @@ func followerLoop(ctx context.Context, r *badger.Replicator) {
 		case <-ctx.Done():
 			return
 		case <-t.C:
-			if err := r.Restore(ctx); err != nil {
-				log.Warn("kms: follower restore failed", "err", err)
-			}
+			restore()
 		}
 	}
 }
