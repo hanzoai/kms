@@ -274,13 +274,78 @@ func startReplication(ctx context.Context, db *badger.DB, nodeID string, role re
 				log.Warn("kms.Embed: primary bootstrap restore failed (starting empty)", "err", rerr)
 			}
 		}
-		go r.Start(ctx)
-		log.Info("kms.Embed: S3 replication started (PRIMARY: incremental push)",
-			"endpoint", cfg.Endpoint, "bucket", cfg.Bucket, "path", cfg.Path,
-			"interval", cfg.Interval.String(),
-			"age_encrypted", cfg.AgeRecipient != nil)
+		// HIGH-3: writer fence. When KMS_WRITER_LEASE=true the primary may push
+		// only while it holds a fresh K8s Lease, closing the different-ordinal-
+		// promote-during-partition split-brain. When off, the StatefulSet
+		// ordinal invariant is the sole guarantee (unchanged behaviour).
+		fence, ferr := maybeWriterLease(nodeID)
+		if ferr != nil {
+			return nil, ferr // asked for the fence, cannot provide it → refuse to boot unfenced
+		}
+		if fence != nil {
+			go fence.run(ctx)
+			go primaryPushLoop(ctx, r, fence)
+			log.Info("kms.Embed: S3 replication started (PRIMARY: FENCED incremental push)",
+				"endpoint", cfg.Endpoint, "bucket", cfg.Bucket, "path", cfg.Path,
+				"interval", cfg.Interval.String(), "lease", envOr("KMS_WRITER_LEASE_NAME", "kms-luxfi-writer"),
+				"age_encrypted", cfg.AgeRecipient != nil)
+		} else {
+			go r.Start(ctx)
+			log.Info("kms.Embed: S3 replication started (PRIMARY: incremental push)",
+				"endpoint", cfg.Endpoint, "bucket", cfg.Bucket, "path", cfg.Path,
+				"interval", cfg.Interval.String(),
+				"age_encrypted", cfg.AgeRecipient != nil)
+		}
 	}
 	return r, nil
+}
+
+// maybeWriterLease builds the primary's K8s Lease fence when KMS_WRITER_LEASE is
+// set, else returns (nil, nil). A requested-but-unbuildable fence is a FATAL
+// error: we must never run an unfenced writer once the operator has asked for
+// the fence.
+func maybeWriterLease(nodeID string) (*writerLease, error) {
+	if !boolEnv("KMS_WRITER_LEASE") {
+		return nil, nil
+	}
+	holder := firstNonEmpty(os.Getenv("POD_NAME"), os.Getenv("HOSTNAME"), nodeID)
+	f, err := newWriterLease(holder)
+	if err != nil {
+		return nil, fmt.Errorf("KMS_WRITER_LEASE=true but the writer fence could not initialise (refusing to run an unfenced writer): %w", err)
+	}
+	return f, nil
+}
+
+// primaryPushLoop mirrors Replicator.Start's two-ticker loop but gates every
+// push on the writer fence: an incremental or snapshot upload happens only while
+// this node holds the Lease. The moment the fence drops (renew failure, lost
+// lease), pushes stop — so a partitioned ex-primary cannot keep writing the S3
+// log after a standby has been promoted.
+func primaryPushLoop(ctx context.Context, r *badger.Replicator, fence *writerLease) {
+	inc := time.NewTicker(replicationInterval())
+	defer inc.Stop()
+	snap := time.NewTicker(snapshotInterval())
+	defer snap.Stop()
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-inc.C:
+			if !fence.Held() {
+				continue
+			}
+			if err := r.Incremental(ctx); err != nil {
+				log.Warn("kms: primary incremental push failed", "err", err)
+			}
+		case <-snap.C:
+			if !fence.Held() {
+				continue
+			}
+			if err := r.Snapshot(ctx); err != nil {
+				log.Warn("kms: primary snapshot push failed", "err", err)
+			}
+		}
+	}
 }
 
 // followerLoop periodically Restores from S3 so a standby stays current
