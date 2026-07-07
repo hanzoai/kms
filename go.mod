@@ -22,7 +22,7 @@ require (
 	github.com/luxfi/kms v1.11.8
 	github.com/luxfi/log v1.4.3
 	github.com/luxfi/zap v0.8.1
-	github.com/luxfi/zapdb v1.10.0
+	github.com/luxfi/zapdb v1.10.2
 	modernc.org/sqlite v1.50.0
 )
 
@@ -41,6 +41,7 @@ require (
 	github.com/go-sourcemap/sourcemap v2.1.4+incompatible // indirect
 	github.com/google/pprof v0.0.0-20260302011040-a15ffb7f9dcc // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.28.0 // indirect
+	github.com/hanzos3/go-sdk v1.0.2 // indirect
 	github.com/zap-proto/go v1.3.0 // indirect
 	github.com/zap-proto/http v0.1.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.43.0 // indirect
@@ -76,7 +77,7 @@ require (
 	github.com/klauspost/crc32 v1.3.0 // indirect
 	github.com/luxfi/accel v1.2.4 // indirect
 	github.com/luxfi/address v1.0.1 // indirect
-	github.com/luxfi/age v1.6.0 // indirect
+	github.com/luxfi/age v1.6.0
 	github.com/luxfi/cache v1.2.1 // indirect
 	github.com/luxfi/constants v1.5.8 // indirect
 	github.com/luxfi/container v0.0.4 // indirect
