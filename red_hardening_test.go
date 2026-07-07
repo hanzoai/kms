@@ -49,7 +49,7 @@ func newTestServerWithAudit(t *testing.T) (*httptest.Server, string, func()) {
 
 	mux := http.NewServeMux()
 	registerHealth(mux, rolePrimary)
-	registerSecretRoutes(mux, secStore, db)
+	registerSecretRoutes(mux, secStore, db, nil)
 	srv := httptest.NewServer(methodAllowlist(stripIdentityHeaders(mux)))
 	cleanup := func() {
 		srv.Close()

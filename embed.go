@@ -178,21 +178,33 @@ func Embed(ctx context.Context, cfg EmbedConfig) (*Embedded, error) {
 		"jwks", auth.jwksURL,
 		"env", cfg.Env)
 
+	role := resolveRole()
+
+	// At-rest sealing key. Secrets are protected two ways: a per-secret Seal
+	// envelope (registerSecretRoutes, DEK-under-master) AND ZapDB block
+	// encryption under this key. masterKey is nil only when
+	// KMS_ENCRYPTION_KEY_B64 is unset/malformed; requireEncryptionKeyAtBoot
+	// then REFUSES to boot in prod/HA rather than let badger.Open write a
+	// PLAINTEXT KEYREGISTRY + plaintext secrets to the RETAIN volume.
+	masterKey := masterKeyFromEnv()
+	if err := requireEncryptionKeyAtBoot(cfg.Env, role, masterKey); err != nil {
+		return nil, fmt.Errorf("kms.Embed: %w", err)
+	}
+
 	if err := os.MkdirAll(cfg.DataDir, 0o700); err != nil {
 		return nil, fmt.Errorf("kms.Embed: create data dir %s: %w", cfg.DataDir, err)
 	}
 
 	dbOpts := badger.DefaultOptions(cfg.DataDir).
 		WithLogger(zapdbLogger{}).
-		WithEncryptionKey(masterKeyFromEnv()).
+		WithEncryptionKey(masterKey).
 		WithIndexCacheSize(64 << 20)
 	db, err := badger.Open(dbOpts)
 	if err != nil {
 		return nil, fmt.Errorf("kms.Embed: open zapdb at %s: %w", cfg.DataDir, err)
 	}
-	log.Info("kms.Embed: zapdb opened", "dir", cfg.DataDir, "version", Version)
+	log.Info("kms.Embed: zapdb opened", "dir", cfg.DataDir, "version", Version, "at_rest_encrypted", len(masterKey) == 32)
 
-	role := resolveRole()
 	em := &Embedded{cfg: cfg, db: db, role: role}
 
 	// HA replication (primary push / follower restore) + the age-encrypted
@@ -215,7 +227,7 @@ func Embed(ctx context.Context, cfg EmbedConfig) (*Embedded, error) {
 	mux := http.NewServeMux()
 	registerHealth(mux, role)
 	registerAuth(mux, cfg.IAMEndpoint)
-	registerSecretRoutes(mux, secStore, db)
+	registerSecretRoutes(mux, secStore, db, masterKey)
 
 	if cfg.MPCVaultID != "" {
 		registerKeyRoutes(mux, db, cfg)
@@ -238,7 +250,7 @@ func Embed(ctx context.Context, cfg EmbedConfig) (*Embedded, error) {
 	// mutating verbs (fail-closed read replica).
 	em.handler = methodAllowlist(followerReadOnly(role, stripIdentityHeaders(mux)))
 
-	if zapNode := startZAPSecretServer(secStore, cfg); zapNode != nil {
+	if zapNode := startZAPSecretServer(secStore, cfg, role); zapNode != nil {
 		em.zapNode = zapNode
 	}
 
@@ -531,7 +543,16 @@ func registerAuth(mux *http.ServeMux, iamEndpoint string) {
 //
 // R-12 (audit trail): every request emits one audit row with composite
 // actor_id "iss:sub". See audit.go for details.
-func registerSecretRoutes(mux *http.ServeMux, secStore *store.SecretStore, db *badger.DB) {
+//
+// masterKey (32 bytes) is the app-side Seal envelope key: PUT/PATCH seal the
+// value under a fresh per-secret DEK wrapped by masterKey BEFORE it reaches
+// the store, and GET opens it. This is defense-in-depth ATOP the ZapDB block
+// encryption, and means db.Backup exports SEALED ciphertext to S3 (not the
+// plaintext value). masterKey is nil only in dev/keyless mode (the prod boot
+// guard forbids that in prod/HA); nil falls back to raw storage so existing
+// keyless dev/tests are unchanged. openValue transparently reads BOTH sealed
+// and legacy-raw records.
+func registerSecretRoutes(mux *http.ServeMux, secStore *store.SecretStore, db *badger.DB, masterKey []byte) {
 	get := func(w http.ResponseWriter, r *http.Request) {
 		claims, ok := authorize(w, r)
 		if !ok {
@@ -560,9 +581,17 @@ func registerSecretRoutes(mux *http.ServeMux, secStore *store.SecretStore, db *b
 			recordAudit(claims, r, path, name, env, http.StatusNotFound, 0)
 			return
 		}
+		value, err := openValue(masterKey, sec)
+		if err != nil {
+			// A decrypt failure is fail-closed: never echo raw/undecryptable
+			// bytes. Signals a key mismatch or corruption.
+			writeJSON(w, http.StatusInternalServerError, map[string]any{"message": "unable to open secret"})
+			recordAudit(claims, r, path, name, env, http.StatusInternalServerError, 0)
+			return
+		}
 		curVer, _ := readVersion(db, path, name, env)
 		writeJSON(w, http.StatusOK, map[string]any{
-			"secret":  map[string]any{"value": string(sec.Ciphertext)},
+			"secret":  map[string]any{"value": value},
 			"version": curVer,
 		})
 		recordAudit(claims, r, path, name, env, http.StatusOK, 0)
@@ -600,11 +629,11 @@ func registerSecretRoutes(mux *http.ServeMux, secStore *store.SecretStore, db *b
 		if req.Env == "" {
 			req.Env = "default"
 		}
-		sec := &store.Secret{
-			Name:       req.Name,
-			Path:       req.Path,
-			Env:        req.Env,
-			Ciphertext: []byte(req.Value),
+		sec, err := sealValue(masterKey, req.Path, req.Name, req.Env, req.Value)
+		if err != nil {
+			writeJSON(w, http.StatusInternalServerError, map[string]any{"message": "unable to seal secret"})
+			recordAudit(claims, r, req.Path, req.Name, req.Env, http.StatusInternalServerError, 0)
+			return
 		}
 		if err := secStore.Put(sec); err != nil {
 			writeJSON(w, http.StatusInternalServerError, map[string]any{"message": err.Error()})
@@ -712,11 +741,11 @@ func registerSecretRoutes(mux *http.ServeMux, secStore *store.SecretStore, db *b
 			recordAudit(claims, r, path, name, env, http.StatusInternalServerError, 0)
 			return
 		}
-		sec := &store.Secret{
-			Name:       name,
-			Path:       path,
-			Env:        env,
-			Ciphertext: []byte(req.Value),
+		sec, err := sealValue(masterKey, path, name, env, req.Value)
+		if err != nil {
+			writeJSON(w, http.StatusInternalServerError, map[string]any{"message": "unable to seal secret"})
+			recordAudit(claims, r, path, name, env, http.StatusInternalServerError, 0)
+			return
 		}
 		if err := secStore.Put(sec); err != nil {
 			writeJSON(w, http.StatusInternalServerError, map[string]any{"message": err.Error()})
@@ -1198,7 +1227,16 @@ func safeEnvName(n string) bool {
 //
 // A configured-but-malformed snapshot is fatal (fail-closed on bad input).
 // Returns the running node so Stop can shut it down.
-func startZAPSecretServer(secStore *store.SecretStore, cfg EmbedConfig) *zap.Node {
+func startZAPSecretServer(secStore *store.SecretStore, cfg EmbedConfig, role replicaRole) *zap.Node {
+	// MEDIUM-1: the ZAP transport is a WRITE path (opcodes include
+	// OpSecretPut/OpSecretDelete) and the followerReadOnly guard only covers
+	// HTTP. A follower must NEVER expose a ZAP write listener, or an authorized
+	// caller could write divergent phantom state to the standby that becomes
+	// authoritative on promote. Fail closed: no ZAP server on a follower.
+	if role != rolePrimary {
+		log.Info("kms.Embed: ZAP secrets-server disabled on follower (read-only replica)")
+		return nil
+	}
 	masterKeyB64 := envOr("KMS_MASTER_KEY_B64", "")
 	if masterKeyB64 == "" || cfg.ZAPPort <= 0 {
 		log.Info("kms.Embed: ZAP secrets-server disabled (set KMS_MASTER_KEY_B64 + KMS_ZAP_PORT/KMS_ZAP)")
@@ -1258,6 +1296,52 @@ func masterKeyFromEnv() []byte {
 		return nil
 	}
 	return key
+}
+
+// requireEncryptionKeyAtBoot (HIGH-2) refuses to boot without a 32-byte
+// at-rest key in production or HA. Without it, badger.Open writes a PLAINTEXT
+// KEYREGISTRY and every secret in the clear to the (RETAIN) volume — a silent
+// plaintext-at-rest disaster the moment the migration writes secrets. Mirrors
+// validateAuthConfigAtBoot (auth.go): dev/devnet/local may run keyless (the
+// existing keyless test/dev path), everything else must supply the key.
+func requireEncryptionKeyAtBoot(env string, role replicaRole, masterKey []byte) error {
+	if len(masterKey) == 32 {
+		return nil
+	}
+	switch strings.ToLower(strings.TrimSpace(env)) {
+	case "dev", "devnet", "local", "test", "":
+		if role != rolePrimary || !boolEnv("KMS_HA") {
+			return nil // keyless dev/test single node — tolerated
+		}
+	}
+	return fmt.Errorf("KMS_ENCRYPTION_KEY_B64 must decode to 32 bytes in %q/HA — refusing to boot with plaintext at-rest storage", env)
+}
+
+// sealValue produces the *store.Secret to persist. With a 32-byte masterKey it
+// uses the real per-secret Seal envelope (DEK-under-master, AEAD, AAD-bound),
+// so db.Backup exports SEALED ciphertext, not the plaintext value. Without a
+// key (dev/keyless, forbidden in prod by the boot guard) it falls back to raw
+// storage, preserving the pre-existing keyless dev/test behaviour.
+func sealValue(masterKey []byte, path, name, env, value string) (*store.Secret, error) {
+	if len(masterKey) == 32 {
+		return store.Seal(masterKey, path, name, env, []byte(value))
+	}
+	return &store.Secret{Name: name, Path: path, Env: env, Ciphertext: []byte(value)}, nil
+}
+
+// openValue inverts sealValue, transparently reading BOTH sealed records
+// (WrappedDEK set → Open under masterKey) and legacy/dev raw records
+// (WrappedDEK empty → Ciphertext is the plaintext). Fails closed on a
+// decrypt error rather than echoing undecryptable bytes.
+func openValue(masterKey []byte, sec *store.Secret) (string, error) {
+	if len(sec.WrappedDEK) > 0 {
+		pt, err := store.Open(masterKey, sec)
+		if err != nil {
+			return "", err
+		}
+		return string(pt), nil
+	}
+	return string(sec.Ciphertext), nil
 }
 
 func writeJSON(w http.ResponseWriter, code int, v any) {

@@ -32,7 +32,7 @@ func newTestServer(t *testing.T) (*httptest.Server, func()) {
 
 	mux := http.NewServeMux()
 	registerHealth(mux, rolePrimary)
-	registerSecretRoutes(mux, secStore, db)
+	registerSecretRoutes(mux, secStore, db, nil)
 
 	srv := httptest.NewServer(methodAllowlist(stripIdentityHeaders(mux)))
 	return srv, func() { srv.Close(); db.Close() }
