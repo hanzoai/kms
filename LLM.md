@@ -150,8 +150,8 @@ Full RFC 7519 enforcement, no escape hatches:
 1. `Authorization: Bearer <token>` else 401.
 2. `alg ∈ {RS256, RS384, RS512, ES256, ES384, ES512, PS256, PS384, PS512, EdDSA}`. **No HS\*. No `none`.**
 3. Signature verifies against JWKS by `kid`.
-4. `iss == $KMS_EXPECTED_ISSUER`.
-5. `aud` ⊇ one of `$KMS_EXPECTED_AUDIENCE` (comma list ok).
+4. `iss == $IAM_ISSUER`.
+5. `aud` ⊇ one of `$IAM_AUDIENCE` (comma list ok).
 6. `exp > now`, leeway 0.
 7. `nbf ≤ now` if present.
 8. `sub` (or `id`) present.
@@ -162,7 +162,7 @@ log records the failure class (`alg_not_allowed`, `expired`, `wrong_iss`,
 No claim is echoed to the client body or logs.
 
 `KMS_ENV ∈ {dev,devnet,local}` is the **only** mode where missing
-`KMS_EXPECTED_ISSUER`/`KMS_EXPECTED_AUDIENCE`/`KMS_JWKS_URL` is tolerated.
+`IAM_ISSUER`/`IAM_AUDIENCE`/`IAM_KEYS_URL` is tolerated.
 In any other mode `validateAuthConfigAtBoot` refuses to start.
 
 ### Header hygiene
@@ -176,11 +176,15 @@ headers include `X-User-Id`, `X-Org-Id`, `X-Roles`, `X-Hanzo-*`,
 
 ## Storage
 
-- **At rest**: ZapDB (Badger-derived LSM) at `$KMS_DATA_DIR`. Optional
-  AES-GCM encryption via `KMS_ENCRYPTION_KEY_B64` (32 raw bytes b64).
-- **Replication**: in-process `badger.Replicator` streaming age-encrypted
-  incremental + snapshot backups to S3. Off when `REPLICATE_S3_ENDPOINT`
-  is empty.
+- **At rest**: ZapDB (Badger-derived LSM) at `$KMS_DATA_DIR`. AES-GCM
+  encryption via `KMS_ENCRYPTION_KEY_B64` (32 raw bytes b64) — **required in
+  `prod`/HA**: boot is fail-closed (`requireEncryptionKeyAtBoot`) so the store
+  is never written in plaintext.
+- **Replication**: in-process `badger.Replicator` streaming age-encrypted **and
+  authenticated** incremental + snapshot backups to S3. The backup key is
+  DERIVED from the master key (age symmetric scrypt), so an attacker with S3
+  write access but not the master key can neither read nor forge a backup. Off
+  when `REPLICATE_S3_ENDPOINT` is empty.
 - **Audit**: side-table SQLite at `$KMS_AUDIT_DB` (default
   `/tmp/kms-aux.db`). Buffered, single writer, never blocks request path.
 
@@ -203,16 +207,41 @@ checks. Service discovery via mDNS (`_kms._tcp`).
 | `KMS_DATA_DIR`               | `/data/hanzo-kms`                | no                |
 | `KMS_NODE_ID`                | `hanzo-kms-0`                    | no                |
 | `KMS_ENV`                    | `dev`                            | yes (`prod`/`main`) |
-| `KMS_EXPECTED_ISSUER`        | —                                | yes (non-dev)     |
-| `KMS_EXPECTED_AUDIENCE`      | `kms`                            | yes (non-dev)     |
-| `KMS_JWKS_URL`               | —                                | yes (non-dev)     |
-| `KMS_ENCRYPTION_KEY_B64`     | —                                | recommended       |
+| `IAM_URL`                    | —                                | yes (non-dev)     |
+| `IAM_ISSUER`                 | —                                | yes (non-dev)     |
+| `IAM_AUDIENCE`               | `kms`                            | yes (non-dev)     |
+| `IAM_KEYS_URL`               | `$IAM_URL/.well-known/jwks`      | yes (non-dev)     |
+| `KMS_ENCRYPTION_KEY_B64`     | —                                | **required in `prod`/HA** (fail-closed boot) |
 | `KMS_MASTER_KEY_B64`         | —                                | required for ZAP  |
 | `KMS_AUDIT_DB`               | `/tmp/kms-aux.db`                | no                |
-| `IAM_ENDPOINT`               | `https://hanzo.id`               | no                |
 | `MPC_ADDR`                   | mDNS                             | no (mDNS-discoverable) |
 | `MPC_VAULT_ID`               | —                                | no (key routes off) |
 | `REPLICATE_S3_*`             | —                                | no (replication off) |
+| `REPLICATE_REQUIRE_ENCRYPTION` | —                              | recommended (fatal if no backup key) |
+
+Note: the JWT verifier reads `IAM_ISSUER`/`IAM_AUDIENCE`/`IAM_KEYS_URL`
+(and `IAM_URL`) — `applyEmbedDefaults` maps them to
+`ExpectedIssuer`/`ExpectedAudience`/`JWKSURL`. There is no `KMS_EXPECTED_*`.
+
+### HA (kms-luxfi StatefulSet — see `infra/k8s/kms-luxfi/`)
+
+| Var                          | Default             | Meaning |
+|------------------------------|---------------------|---------|
+| `KMS_HA`                     | off                 | derive role from the pod ordinal |
+| `KMS_PRIMARY_ORDINAL`        | `0`                 | which ordinal is the writer/primary |
+| `KMS_REPLICA_ROLE`           | (ordinal)           | explicit `primary`/`follower` override |
+| `KMS_WRITER_LEASE`           | off                 | primary pushes only while holding the K8s Lease (split-brain fence) |
+| `KMS_WRITER_LEASE_NAME`      | `kms-luxfi-writer`  | the coordination.k8s.io Lease name |
+| `KMS_WRITER_LEASE_DURATION`  | `15s`               | lease TTL; renew at TTL/3 |
+| `KMS_FOLLOWER_RESTORE_INTERVAL` | `10s`            | follower S3 pull cadence |
+| `KMS_RESTORE_TIMEOUT`        | `2m`                | bound on a single initial/loop Restore |
+| `REPLICATE_SNAPSHOT_INTERVAL`| `1h`                | full-snapshot (durability floor) cadence |
+
+Role split: the **primary** is the single writer and pushes age-encrypted +
+**authenticated** (master-key-derived scrypt) incremental/snapshot backups to
+S3; **followers** are read-only hot standbys that Restore-loop and refuse
+mutating verbs (503). `/healthz` = liveness (process up); `/readyz` = readiness
+(store hydrated). See `infra/k8s/kms-luxfi/` for the full topology + runbook.
 
 ## Build
 
