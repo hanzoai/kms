@@ -301,6 +301,14 @@ func (c *Client) secretPath(path, name string) string {
 	)
 }
 
+// secretURL is secretPath plus the ?env= query the server keys the record
+// on. c.env defaults to "default" (see New) and is sent explicitly so reads
+// and deletes target the configured env instead of relying on the server's
+// legacy default — the same one-way discipline the write path enforces.
+func (c *Client) secretURL(path, name string) string {
+	return c.secretPath(path, name) + "?env=" + url.QueryEscape(c.env)
+}
+
 // Get fetches a single secret value by path and name.
 //
 // On the HTTP path: GET /v1/kms/orgs/{org}/secrets/{path}/{name}.
@@ -317,7 +325,7 @@ func (c *Client) httpGet(ctx context.Context, path, name string) (string, error)
 	if err != nil {
 		return "", fmt.Errorf("kmsclient: auth: %w", err)
 	}
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, c.secretPath(path, name), nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, c.secretURL(path, name), nil)
 	if err != nil {
 		return "", fmt.Errorf("kmsclient: build request: %w", err)
 	}
@@ -460,9 +468,16 @@ func (c *Client) httpPut(ctx context.Context, path, name, value string) error {
 		c.endpoint,
 		url.PathEscape(c.org),
 	)
+	// env is REQUIRED by the server on writes (no silent "default"): send
+	// c.env explicitly so the write lands in the same env-keyed record that
+	// project/env/path readers resolve. Historically this body omitted env
+	// and the server defaulted it to "default" — silently diverting a client
+	// configured for env=prod into the wrong bucket. That is the bug this
+	// fixes end to end.
 	payload, _ := json.Marshal(map[string]string{
 		"path":  path,
 		"name":  name,
+		"env":   c.env,
 		"value": value,
 	})
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, u, strings.NewReader(string(payload)))
@@ -499,7 +514,7 @@ func (c *Client) httpDelete(ctx context.Context, path, name string) error {
 	if err != nil {
 		return fmt.Errorf("kmsclient: auth: %w", err)
 	}
-	req, err := http.NewRequestWithContext(ctx, http.MethodDelete, c.secretPath(path, name), nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodDelete, c.secretURL(path, name), nil)
 	if err != nil {
 		return fmt.Errorf("kmsclient: build request: %w", err)
 	}
