@@ -94,6 +94,17 @@ IAM use `/v1/iam/*` — not a route this service exposes, and never
   Mismatch → 409 with the current version. Replay defence is structural,
   not advisory.
 - DELETE wipes the version record so a recreate restarts from 1.
+- **R-ENV (one-way env):** `env` is a first-class component of the storage
+  key (`kms/secrets/{path}/{env}/{name}`) — it can never be aliased. The
+  value-writing mutations **POST and PATCH require an explicit `env`** (in
+  the request body); omitting it is a fail-loud `400`, never a silent
+  `default`. A silent default is exactly what let an IAM z-password land in
+  `env=default` while the operator's `project/env/path` read (env=prod) kept
+  serving the stale value. GET/DELETE/LIST keep a backward-compatible
+  `default` for legacy readers (a read/delete can't plant a value another
+  reader trusts). The canonical `sdk/go/kmsclient` now always sends `env`
+  explicitly on every HTTP op, so new callers are one-way by construction;
+  the server default is a legacy-compat shim, not the intended path.
 
 ### Admin-only
 
