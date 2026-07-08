@@ -512,6 +512,27 @@ func registerAuth(mux *http.ServeMux, iamEndpoint string) {
 	})
 }
 
+// envRequired enforces that a value-writing secret mutation names its
+// environment explicitly. env is a first-class component of the storage
+// key (kms/secrets/{path}/{env}/{name}), so it can never be aliased: a
+// silent "default" commits the write to one bucket while a project/env/path
+// reader (the kms-operator, cluster syncs) resolves a different record. That
+// split is exactly what let an IAM z-password land in env=default while prod
+// kept serving the stale value. Writes fail loud; reads keep a
+// backward-compatible default (a read cannot plant a value another reader
+// later trusts, and legacy readers that omit env must keep working). Returns
+// false — after writing the 400 — when env is empty; the caller records the
+// audit row and returns.
+func envRequired(w http.ResponseWriter, env string) bool {
+	if strings.TrimSpace(env) == "" {
+		writeJSON(w, http.StatusBadRequest, map[string]any{
+			"message": `env is required — set "env" in the request body; there is no default. A silent default would split this write from the project/env/path record readers resolve.`,
+		})
+		return false
+	}
+	return true
+}
+
 // registerSecretRoutes mounts the canonical lux/kms HTTP secret CRUD at
 // /v1/kms/orgs/{org}/secrets/... — one path, one way.
 //
@@ -521,6 +542,10 @@ func registerAuth(mux *http.ServeMux, iamEndpoint string) {
 //
 // R-12 (audit trail): every request emits one audit row with composite
 // actor_id "iss:sub". See audit.go for details.
+//
+// R-ENV (one-way env): value-writing mutations (POST, PATCH) require an
+// explicit env via envRequired — no silent "default". GET/DELETE/LIST keep a
+// compat default (see envRequired) for legacy readers.
 func registerSecretRoutes(mux *http.ServeMux, secStore *store.SecretStore, db *badger.DB) {
 	get := func(w http.ResponseWriter, r *http.Request) {
 		claims, ok := authorize(w, r)
@@ -542,6 +567,9 @@ func registerSecretRoutes(mux *http.ServeMux, secStore *store.SecretStore, db *b
 		}
 		env := r.URL.Query().Get("env")
 		if env == "" {
+			// Read keeps a compat default (see envRequired): a read cannot
+			// plant a value another reader trusts, and legacy readers that
+			// omit env must keep working. Only writes fail loud.
 			env = "default"
 		}
 		sec, err := secStore.Get(path, name, env)
@@ -587,8 +615,9 @@ func registerSecretRoutes(mux *http.ServeMux, secStore *store.SecretStore, db *b
 			recordAudit(claims, r, req.Path, req.Name, req.Env, http.StatusBadRequest, 0)
 			return
 		}
-		if req.Env == "" {
-			req.Env = "default"
+		if !envRequired(w, req.Env) {
+			recordAudit(claims, r, req.Path, req.Name, "", http.StatusBadRequest, 0)
+			return
 		}
 		sec := &store.Secret{
 			Name:       req.Name,
@@ -646,8 +675,9 @@ func registerSecretRoutes(mux *http.ServeMux, secStore *store.SecretStore, db *b
 		if env == "" {
 			env = r.URL.Query().Get("env")
 		}
-		if env == "" {
-			env = "default"
+		if !envRequired(w, env) {
+			recordAudit(claims, r, path, name, "", http.StatusBadRequest, 0)
+			return
 		}
 		// Version CAS: require EITHER If-Match header OR body.version. If
 		// both are present they must agree. Missing both → 428 Precondition
@@ -740,6 +770,9 @@ func registerSecretRoutes(mux *http.ServeMux, secStore *store.SecretStore, db *b
 		}
 		env := r.URL.Query().Get("env")
 		if env == "" {
+			// Compat default (see envRequired): DELETE without env removes the
+			// default-env record only — it 404s if that env holds nothing, so
+			// it cannot silently touch another env's value.
 			env = "default"
 		}
 		if err := secStore.Delete(path, name, env); err != nil {

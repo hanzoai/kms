@@ -223,6 +223,69 @@ func TestPut_SendsCanonicalPayload(t *testing.T) {
 	if gotBody["path"] != "providers/square/dev" || gotBody["name"] != "access_token" || gotBody["value"] != "sq_abc" {
 		t.Errorf("body = %+v, want path=providers/square/dev name=access_token value=sq_abc", gotBody)
 	}
+	// env MUST be on the write body — the server now rejects omitted env. With
+	// no Config.Env set it defaults to "default" and is sent explicitly.
+	if gotBody["env"] != "default" {
+		t.Errorf("body env = %q, want default (sent explicitly, never omitted)", gotBody["env"])
+	}
+}
+
+// A client configured for a specific env sends it on the write body, so the
+// write lands in that env's record rather than the server's legacy default.
+func TestPut_SendsConfiguredEnv(t *testing.T) {
+	iam := mockIAM(t, "tok")
+	defer iam.Close()
+
+	var gotBody map[string]string
+	kms := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_ = json.NewDecoder(r.Body).Decode(&gotBody)
+		w.WriteHeader(http.StatusCreated)
+		_ = json.NewEncoder(w).Encode(map[string]any{"ok": true})
+	}))
+	defer kms.Close()
+
+	c, _ := New(Config{Endpoint: kms.URL, IAMEndpoint: iam.URL, ClientID: "i", ClientSecret: "s", Org: "hanzo", Env: "prod"})
+	if err := c.Put(context.Background(), "iam-passwords", "Z_PASSWORD", "s3cr3t"); err != nil {
+		t.Fatalf("Put: %v", err)
+	}
+	if gotBody["env"] != "prod" {
+		t.Errorf("body env = %q, want prod", gotBody["env"])
+	}
+}
+
+// Reads and deletes carry ?env= too, so they target the configured env
+// instead of relying on any server default.
+func TestGetDelete_SendEnvQuery(t *testing.T) {
+	iam := mockIAM(t, "tok")
+	defer iam.Close()
+
+	var gotQuery, gotMethod string
+	kms := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		gotQuery = r.URL.RawQuery
+		gotMethod = r.Method
+		if r.Method == http.MethodGet {
+			_ = json.NewEncoder(w).Encode(map[string]any{"secret": map[string]any{"value": "v"}})
+			return
+		}
+		w.WriteHeader(http.StatusNoContent)
+	}))
+	defer kms.Close()
+
+	c, _ := New(Config{Endpoint: kms.URL, IAMEndpoint: iam.URL, ClientID: "i", ClientSecret: "s", Org: "hanzo", Env: "prod"})
+
+	if _, err := c.Get(context.Background(), "iam-passwords", "Z_PASSWORD"); err != nil {
+		t.Fatalf("Get: %v", err)
+	}
+	if gotMethod != http.MethodGet || gotQuery != "env=prod" {
+		t.Errorf("GET query = %q (method %s), want env=prod", gotQuery, gotMethod)
+	}
+
+	if err := c.Delete(context.Background(), "iam-passwords", "Z_PASSWORD"); err != nil {
+		t.Fatalf("Delete: %v", err)
+	}
+	if gotMethod != http.MethodDelete || gotQuery != "env=prod" {
+		t.Errorf("DELETE query = %q (method %s), want env=prod", gotQuery, gotMethod)
+	}
 }
 
 func TestList_UsesCanonicalPath(t *testing.T) {
