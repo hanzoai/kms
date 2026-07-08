@@ -131,3 +131,11 @@ require (
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.11.0 // indirect
 )
+
+// The kmsclient library lives in this repo (sdk/go) and is released together
+// with the server. Build the in-tree copy so cmd/kms and cmd/kms-fetch pick up
+// the fix that sends env explicitly on the HTTP path (see sdk/go/kmsclient).
+// The require above stays at the last published tag so dropping this replace
+// falls back to a real version, never a missing one; publish sdk/go/v1.1.1 and
+// bump the require when cutting the next SDK release.
+replace github.com/hanzoai/kms/sdk/go => ./sdk/go

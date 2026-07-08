@@ -28,6 +28,10 @@ ARG TARGETARCH
 
 WORKDIR /src
 COPY go.mod go.sum ./
+# kmsclient is an in-repo module built via a local replace (see go.mod).
+# Stage its go.mod/go.sum so `go mod download` can read the replaced module's
+# graph before the full source tree is copied.
+COPY sdk/go/go.mod sdk/go/go.sum ./sdk/go/
 RUN --mount=type=cache,target=/go/pkg/mod \
     GOPRIVATE="github.com/luxfi/*,github.com/hanzoai/*" \
     GONOSUMCHECK="github.com/luxfi/*,github.com/hanzoai/*" \
