@@ -13,7 +13,7 @@
 // limitations under the License.
 
 // OTel telemetry bootstrap — installs the global tracer provider that ships this
-// service's spans to the shared o11y backend (SigNoz) over OTLP. This is the ONE
+// service's spans to the shared o11y backend over OTLP. This is the ONE
 // way a Hanzo Go daemon emits OpenTelemetry: one call, one service.name, so the
 // console's per-product Monitoring tab (which filters by service.name) lights up
 // for this product.
