@@ -7,3 +7,19 @@ Copyright (c) 2022 Infisical Inc.
 
 The MIT License permission notice for the derived portions is retained in the
 LICENSE file of this repository, as required by that license.
+
+PROVENANCE
+
+Derived from Infisical (https://github.com/Infisical/infisical), MIT — concepts/data-model reimplemented in Go; no upstream source vendored.
+
+DEVIATIONS
+
+- Go server built over luxfi/kms primitives; no Infisical (Node/TypeScript) source is vendored (see go.mod).
+- KMS is the source of truth for secrets: it holds the per-tenant DEKs that back Hanzo Base, the provider API keys consumed by ai and gateway, certificate material, and signing keys.
+- Client authentication uses luxfi/keys ServiceIdentity: SDK callers sign requests with a keys.ServiceIdentity over the native ZAP transport (sdk/go/kmsclient).
+- End-user and service authentication is Hanzo IAM: bearer JWTs from Hanzo IAM issuers (hanzo.id, iam.hanzo.ai, hanzo.ai), RS256-verified via cached JWKS with multi-issuer trust (auth.go, jwks.go).
+- Per-org namespace isolation: secrets are scoped to a brand/<org> namespace taken from the JWT owner claim, with per-org DEKs derived from a master key via HKDF-SHA256 (embed.go, sdk/go/cek.go).
+- Native ZAP secret surface: a consensus-native ZAP listener serves secrets alongside the HTTP /v1/kms/* API, wire-compatible with luxfi clients (embed.go, cmd/kms-fetch).
+- AI-aware approval policies: every secret carries a per-agent policy (auto-approve, requires-approval, blocked) with a full per-agent audit trail (audit.go).
+- Secrets and keys are persisted through the luxfi/kms store over an embedded BadgerDB (embed.go).
+- Runs embedded as a zip.App subsystem inside the unified Hanzo cloud binary, not as a standalone Node service (HIP-0106; embed.go).
