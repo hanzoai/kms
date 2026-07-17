@@ -22,7 +22,7 @@ import (
 	badger "github.com/luxfi/zapdb"
 
 	"github.com/luxfi/kms/pkg/store"
-	_ "modernc.org/sqlite"
+	_ "github.com/hanzoai/sqlite"
 )
 
 // newTestServerWithAudit wires the full handler chain + an isolated
