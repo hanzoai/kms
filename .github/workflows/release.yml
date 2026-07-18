@@ -71,7 +71,19 @@ jobs:
           GOARCH: ${{ matrix.goarch }}
           GOEXPERIMENT: jsonv2
           VERSION: ${{ steps.version.outputs.tag }}
+          # luxfi (+ hanzoai) modules are first-party/private: resolve them
+          # directly via git and skip the public checksum DB — force-moved
+          # upstream tags never match sum.golang.org. GH_PAT carries luxfi read
+          # access; the repo GITHUB_TOKEN is the fallback for public modules.
+          GOPRIVATE: github.com/luxfi/*,github.com/hanzoai/*
+          GONOSUMDB: github.com/luxfi/*,github.com/hanzoai/*
+          GH_PAT: ${{ secrets.GH_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          token="${GH_PAT:-$GITHUB_TOKEN}"
+          if [ -n "$token" ]; then
+            git config --global url."https://x-access-token:${token}@github.com/".insteadOf "https://github.com/"
+          fi
           mkdir -p dist
           go build -trimpath \
             -ldflags="-s -w -X main.version=${VERSION}" \
@@ -177,7 +189,7 @@ jobs:
             ghcr.io/hanzoai/kms:latest
           build-args: |
             GO_EXPERIMENT=jsonv2
-            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+            GITHUB_TOKEN=${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

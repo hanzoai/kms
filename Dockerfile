@@ -23,9 +23,11 @@ COPY go.mod go.sum ./
 # graph before the full source tree is copied.
 COPY sdk/go/go.mod sdk/go/go.sum ./sdk/go/
 RUN --mount=type=cache,target=/go/pkg/mod \
+    if [ -n "${GITHUB_TOKEN}" ]; then \
+      git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"; \
+    fi && \
     GOPRIVATE="github.com/luxfi/*,github.com/hanzoai/*" \
-    GONOSUMCHECK="github.com/luxfi/*,github.com/hanzoai/*" \
-    git config --global url."https://${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/" && \
+    GONOSUMDB="github.com/luxfi/*,github.com/hanzoai/*" \
     go mod download
 
 COPY . .
