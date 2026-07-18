@@ -133,8 +133,6 @@ type Embedded struct {
 	replicator  *badger.Replicator
 	auditCancel context.CancelFunc
 	zapNode     *zap.Node // nil when ZAP server disabled
-
-	httpAddr string // bound listener address (post-:0 resolution)
 }
 
 // Embed boots the Hanzo KMS server in-process and returns a handle.
@@ -237,7 +235,6 @@ func Embed(ctx context.Context, cfg EmbedConfig) (*Embedded, error) {
 			WriteTimeout:      60 * time.Second,
 			IdleTimeout:       120 * time.Second,
 		}
-		em.httpAddr = cfg.HTTPAddr
 		go func() {
 			log.Info("kms.Embed: HTTP listening", "addr", cfg.HTTPAddr)
 			if err := em.httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
@@ -262,15 +259,6 @@ func (e *Embedded) HTTPHandler() http.Handler {
 		return http.NotFoundHandler()
 	}
 	return e.handler
-}
-
-// HTTPAddr returns the bound listen address. Returns "" when
-// SkipListen=true or before the listener has been wired.
-func (e *Embedded) HTTPAddr() string {
-	if e == nil || e.cfg.SkipListen {
-		return ""
-	}
-	return e.httpAddr
 }
 
 // ZAPPort returns the ZAP secrets-server port (0 when disabled).
