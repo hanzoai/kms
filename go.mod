@@ -12,14 +12,15 @@ module github.com/hanzoai/kms
 go 1.26.4
 
 // luxfi/keys + luxfi/kms drive the consensus-native ZAP secret surface.
-// Tagged upstream:
-//   luxfi/keys v1.1.0   — BBF-bound hybrid signature (secp256k1+ML-DSA-65)
-//   luxfi/kms  v1.11.0  — anti-replay nonce ledger closes 5min window
+// Threshold signing is delegated over ZAP to an external luxfi/mpc daemon
+// (cfg.MPCAddr / MPCVaultID); this module links luxfi/kms's pkg/mpc client
+// only — never the standalone luxfi/mpc daemon module. Versions live in the
+// require block below (single source of truth).
 require (
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/hanzoai/cloud v0.1.1
 	github.com/luxfi/keys v1.4.1 // indirect
-	github.com/luxfi/kms v1.11.8
+	github.com/luxfi/kms v1.12.4
 	github.com/luxfi/log v1.4.3
 	github.com/luxfi/zap v1.2.6
 	github.com/luxfi/zapdb v1.10.0
