@@ -23,11 +23,12 @@ require (
 	github.com/luxfi/log v1.4.3
 	github.com/luxfi/zap v1.2.6
 	github.com/luxfi/zapdb v1.10.0
-	modernc.org/sqlite v1.50.0
+	modernc.org/sqlite v1.50.0 // indirect
 )
 
 require (
 	github.com/hanzoai/kms/sdk/go v1.1.0
+	github.com/hanzoai/sqlite v0.3.0
 	github.com/luxfi/ids v1.3.2
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.43.0
 	go.opentelemetry.io/otel/sdk v1.43.0
@@ -41,6 +42,7 @@ require (
 	github.com/go-sourcemap/sourcemap v2.1.4+incompatible // indirect
 	github.com/google/pprof v0.0.0-20260302011040-a15ffb7f9dcc // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.28.0 // indirect
+	github.com/hanzoai/csqlite v0.1.0 // indirect
 	github.com/zap-proto/go v1.3.0 // indirect
 	github.com/zap-proto/http v0.1.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.43.0 // indirect
@@ -111,9 +113,9 @@ require (
 	github.com/valyala/fasthttp v1.70.0 // indirect
 	github.com/zap-proto/zip v1.1.0
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
-	go.opentelemetry.io/otel v1.43.0
-	go.opentelemetry.io/otel/metric v1.43.0 // indirect
-	go.opentelemetry.io/otel/trace v1.43.0 // indirect
+	go.opentelemetry.io/otel v1.44.0
+	go.opentelemetry.io/otel/metric v1.44.0 // indirect
+	go.opentelemetry.io/otel/trace v1.44.0 // indirect
 	go.uber.org/mock v0.6.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/crypto v0.52.0 // indirect

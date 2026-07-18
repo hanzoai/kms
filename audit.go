@@ -22,7 +22,7 @@
 // expected grammar we PREPEND `unverified:` to the stored value so a
 // reviewer cannot mistake it for an IAM-issued ID.
 //
-// Storage: modernc.org/sqlite (pure Go, no CGO) at the path resolved from
+// Storage: hanzoai/sqlite (pure-Go modernc backend, no CGO) at the path resolved from
 // KMS_AUDIT_DB (defaults to /tmp/kms-aux.db — matching the smoke test). A
 // single-writer goroutine drains a bounded channel; burst traffic does
 // not back-pressure requests. Dropped entries increment an atomic counter
@@ -39,7 +39,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	_ "modernc.org/sqlite"
+	_ "github.com/hanzoai/sqlite"
 )
 
 // subPattern is the canonical IAM subject format. hanzo.id mints user
