@@ -110,13 +110,13 @@ function KeyDetail({ item, onClose }: { item: ValidatorKeySet; onClose: () => vo
         <div className="mt-4 flex flex-col gap-2">
           {item.bls_public_key && (
             <div>
-              <div className="text-[11px] font-medium text-neutral-400">BLS public key</div>
+              <div className="text-[11px] font-medium text-neutral-400">BLS slot public key (secp256k1 / CGGMP21 — not bls12-381)</div>
               <CodeBlock>{String(item.bls_public_key)}</CodeBlock>
             </div>
           )}
           {item.corona_public_key && (
             <div>
-              <div className="text-[11px] font-medium text-neutral-400">Corona public key</div>
+              <div className="text-[11px] font-medium text-neutral-400">Corona slot public key (ed25519 / FROST — not post-quantum)</div>
               <CodeBlock>{String(item.corona_public_key)}</CodeBlock>
             </div>
           )}
