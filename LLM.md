@@ -1,278 +1,101 @@
-# Hanzo KMS
+# Hanzo KMS — agent guide
 
-**Last Updated**: 2026-04-23
-**Repo**: github.com/hanzoai/kms
-**Module**: github.com/hanzoai/kms (Go 1.26.1)
-
-**Upstream lineage**: see `LICENSE` for the required upstream MIT attribution. The legacy fork's code path was deleted; the current request path is a thin wrapper over `github.com/luxfi/kms`. The copyright header is retained for legal accuracy, but none of the original upstream code remains on the wire.
+**Repo**: `github.com/hanzoai/kms` · **Module**: `github.com/hanzoai/kms` (Go 1.26)
 
 ## What this is
 
-A thin Hanzo-branded wrapper over `github.com/luxfi/kms`. The Go server,
-secret store, MPC client, ZAP secrets server, and S3 replicator all come
-from luxfi/kms. This module owns three things:
+The canonical secret store + threshold-signing service for every Hanzo deployment.
+A **thin Go wrapper over `github.com/luxfi/kms`** (v1.11.x) + `luxfi/mpc` — all server
+logic lives upstream; this module wires those primitives with Hanzo defaults and adds
+JWT verification, the audit ledger, version CAS, and header hygiene. The root package
+`kms` mounts into the unified cloud binary via `kms.Mount(app, deps)` (HIP-0106) and
+also ships as the standalone `cmd/kmsd` daemon. There is **no** Node fork, **no**
+PostgreSQL, **no** Base — the legacy `internal/{handler,store,server}` tree is gone.
 
-1. `cmd/kmsd` — the daemon. Wires luxfi/kms primitives with Hanzo defaults
-   (port 8443, `/data/hanzo-kms`, IAM at `https://hanzo.id`) and adds
-   Hanzo-specific JWT verification, audit log, version CAS, header hygiene.
-2. `cmd/kms` — the admin CLI (`kms put|get|list|rotate|status`).
-3. `pkg/kmsclient` — the Go client used by every other Hanzo service to
-   fetch secrets at runtime (HTTP + ZAP fallback).
+## Canonical role (Hanzo SDK model)
 
-There is **no legacy Node.js fork** in this repo. There is **no Base/SQLite**. There
-is **no PostgreSQL** in the canonical Go module. Everything that used to
-live in `internal/handler/`, `internal/store/`, `internal/server/` has been
-deleted in favour of the upstream `github.com/luxfi/kms/pkg/{store,keys,
-mpc,zapserver}` packages. The `frontend/` and `ui/` trees are legacy React
-assets shipped as static files; they do not affect the API surface.
+This is a **product/service repo** (`hanzoai/<product>`) — the canonical impl of KMS.
+Its Go client lives in-repo at `sdk/go` (module `github.com/hanzoai/kms/sdk/go`) and is
+what every other Hanzo service imports to fetch secrets. Full model:
+`~/work/hanzo/SDK-ARCHITECTURE.md` (one impl one place; discovery repos link out).
 
-## Architecture
+## Brand rules (hard)
 
-```
-                     ┌──────────────────────────────┐
-                     │   Hanzo IAM (hanzo.id)       │
-                     │   RFC 6749 + OIDC, JWKS      │
-                     └──────────────┬───────────────┘
-                          OAuth2 / JWT (RS256)
-                                    │
-        ┌───────────────────────────▼──────────────────────────┐
-        │                        kmsd                          │
-        │  HTTP :8443    (mux: /v1/kms/* only)                 │
-        │  ZAP  :9999    (binary, opcodes 0x0040..0x0043)      │
-        │                                                       │
-        │  cmd/kmsd/main.go      ← wiring + routes              │
-        │  cmd/kmsd/auth.go      ← JWT verify (RFC 7519)        │
-        │  cmd/kmsd/jwks.go      ← JWKS cache + RSA resolve     │
-        │  cmd/kmsd/audit.go     ← per-request audit ledger     │
-        │  cmd/kmsd/versioning.go← per-secret version CAS       │
-        │                                                       │
-        │  github.com/luxfi/kms/pkg/store    ← secret CRUD      │
-        │  github.com/luxfi/kms/pkg/keys     ← MPC key mgr      │
-        │  github.com/luxfi/kms/pkg/mpc      ← MPC client       │
-        │  github.com/luxfi/kms/pkg/zapserver← ZAP transport    │
-        └──────────────┬───────────────────────────────────────┘
-                       │
-        ┌──────────────▼─────────────┐    ┌─────────────────────┐
-        │   ZapDB (encrypted, LSM)   │───▶│   S3 (age-encrypted)│
-        │   $KMS_DATA_DIR            │    │   1s incremental    │
-        └────────────────────────────┘    └─────────────────────┘
+- Never call Hanzo an "LLM gateway" and never position against LiteLLM — it is a full
+  **AI cloud**, not a proxy. Purge that framing on sight.
+- Paths are `/v1/…` only — **never** `/api/`. One canonical path per op, no aliases.
+- Zen models are our own family — never name upstream models.
+- Voice: "Hanzo — the Open AI Cloud." Modern, crisp, developer-first.
+
+## Build / run
+
+```bash
+make kmsd kms          # ./kmsd (daemon) + ./kms (admin CLI: put|get|list|rotate|status)
+make test              # go test ./...
+KMS_ENV=dev ./kmsd     # HTTP :8443, ZAP :9999 (dev tolerates missing JWT config)
 ```
 
-## Routes (canonical, exhaustive)
+Non-`dev`/`devnet`/`local` `KMS_ENV` refuses to boot without
+`KMS_EXPECTED_ISSUER` + `KMS_EXPECTED_AUDIENCE` + `KMS_JWKS_URL`. Fail-closed.
+CI: `hanzoai/.github/.github/workflows/docker-build.yml@main` → `ghcr.io/hanzoai/kms`,
+`linux/amd64` on the `hanzo-build-linux-amd64` ARC pool, semver `v*` tags (never `:latest`).
 
-All routes live under `/v1/kms`. There is no `/api/`. There are no aliases.
+## Entry points
 
-### Public
+```
+cmd/kmsd/       production daemon (config via cloud.LoadConfig → kms.Mount)
+cmd/kms/        admin CLI
+cmd/kms-fetch/  one-shot bootstrap fetch (see Dockerfile.kms-fetch)
+cmd/smoke-zap/  ZAP transport smoke test
+sdk/go/         kmsclient — Go client (HTTP + ZAP fallback) used by all services
+frontend/       static TS dashboard (built in a separate Docker stage)
+embed.go        root pkg: server assembly, routes, embedded frontend
+auth.go jwks.go per-request JWT verify (RFC 7519) + JWKS cache
+audit.go        buffered audit ledger (SQLite side-table, never blocks the path)
+```
 
-| Method | Path                  | Notes                                  |
-|--------|-----------------------|----------------------------------------|
-| GET    | `/healthz`            | Liveness, no auth                      |
-| POST   | `/v1/kms/auth/login`  | Machine-identity client credentials    |
+## Routes — all under `/v1/kms`, no `/api/`, no aliases
 
-`POST /v1/kms/auth/login` exchanges `clientId`+`clientSecret` for an IAM
-access token by proxying to IAM's OAuth token endpoint
-(`POST $IAM_ENDPOINT/v1/iam/oauth/token`). The response is a
-plain `{accessToken, expiresIn, tokenType}` envelope. Outbound calls to
-IAM use `/v1/iam/*` — not a route this service exposes, and never
-`/api/*` (legacy Casdoor compat surface).
+| Method | Path | Notes |
+|--------|------|-------|
+| GET  | `/healthz` | liveness, no auth |
+| POST | `/v1/kms/auth/login` | machine-identity client creds → IAM token (proxies `POST $IAM_ENDPOINT/v1/iam/oauth/token`) |
+| GET/POST/PATCH/DELETE | `/v1/kms/orgs/{org}/secrets/{path…}/{name}?env=…` | per-org, JWT-gated (token `owner` must equal `{org}` or carry an admin role) |
+| GET  | `/v1/kms/secrets/{name}` · `/v1/kms/audit/stats` | admin-only: env-backed bootstrap fetch + auditor counters |
+| POST | `/v1/kms/keys/generate` · `/{id}/sign` · `/{id}/rotate` | MPC DKG / threshold sign / reshare (admin; only when `MPC_VAULT_ID` set) |
+| GET  | `/v1/kms/keys` · `/{id}` · `/v1/kms/status` | MPC key sets + liveness |
 
-### Secrets (per-org, JWT-gated)
+- **R-ENV (one-way env):** `env` is part of the storage key (`kms/secrets/{path}/{env}/{name}`)
+  and can never be aliased. POST/PATCH **require an explicit `env`** — omitting it is a
+  fail-loud `400`, never a silent `default`. `sdk/go` always sends `env`.
+- **POST** = upsert (bumps version). **PATCH** = update-only, **requires** version CAS
+  (`If-Match: <int>` or `body.version`): missing → 428, mismatch → 409 with current version.
 
-| Method | Path                                                  |
-|--------|-------------------------------------------------------|
-| GET    | `/v1/kms/orgs/{org}/secrets/{path...}/{name}?env=…`   |
-| POST   | `/v1/kms/orgs/{org}/secrets`                          |
-| PATCH  | `/v1/kms/orgs/{org}/secrets/{path...}/{name}`         |
-| DELETE | `/v1/kms/orgs/{org}/secrets/{path...}/{name}?env=…`   |
+## Auth contract (`auth.go`) — RFC 7519, no escape hatches
 
-- Authorization: `Authorization: Bearer <jwt>` from Hanzo IAM. Token's
-  verified `owner` claim must equal the URL `{org}` segment, OR the token
-  must carry an admin role (`superadmin`, `kms-admin`, `admin`).
-- POST is upsert: bumps version, no CAS.
-- PATCH is update-only and **requires** version CAS via either the
-  `If-Match: <int>` header or `body.version`. Missing both → 428.
-  Mismatch → 409 with the current version. Replay defence is structural,
-  not advisory.
-- DELETE wipes the version record so a recreate restarts from 1.
-- **R-ENV (one-way env):** `env` is a first-class component of the storage
-  key (`kms/secrets/{path}/{env}/{name}`) — it can never be aliased. The
-  value-writing mutations **POST and PATCH require an explicit `env`** (in
-  the request body); omitting it is a fail-loud `400`, never a silent
-  `default`. A silent default is exactly what let an IAM z-password land in
-  `env=default` while the operator's `project/env/path` read (env=prod) kept
-  serving the stale value. GET/DELETE/LIST keep a backward-compatible
-  `default` for legacy readers (a read/delete can't plant a value another
-  reader trusts). The canonical `sdk/go/kmsclient` now always sends `env`
-  explicitly on every HTTP op, so new callers are one-way by construction;
-  the server default is a legacy-compat shim, not the intended path.
-
-### Admin-only
-
-| Method | Path                       | Use                                  |
-|--------|----------------------------|--------------------------------------|
-| GET    | `/v1/kms/secrets/{name}`   | Process env-var fetch (env-backed)   |
-| GET    | `/v1/kms/audit/stats`      | Background auditor counters          |
-
-These require an admin role claim. The env-backed fetch is intended only
-for in-cluster bootstrap of services that read their own env vars before
-KMS is reachable.
-
-### MPC keys (only when `MPC_VAULT_ID` is set)
-
-| Method | Path                            | Use                          |
-|--------|---------------------------------|------------------------------|
-| POST   | `/v1/kms/keys/generate`         | DKG a validator key set      |
-| GET    | `/v1/kms/keys`                  | List validator key sets      |
-| GET    | `/v1/kms/keys/{id}`             | Get one key set              |
-| POST   | `/v1/kms/keys/{id}/sign`        | Threshold sign (BLS or RT)   |
-| POST   | `/v1/kms/keys/{id}/rotate`      | Reshare keys                 |
-| GET    | `/v1/kms/status`                | KMS+MPC liveness             |
-
-All require admin role. Threshold signing delegates to luxfi/mpc over ZAP
-(or HTTP fallback) at `MPC_ADDR`.
-
-## Deploy-mnemonic — one seed, four orgs
-
-`kms.hanzo.ai` is the single KMS endpoint serving four Lux-derived
-chains: `hanzo`, `zoo`, `pars` (plus Lux at `kms.lux.network`, same
-code, separate instance). The same 12-word BIP39 deploy mnemonic is
-stored under each org's KMS path:
-
-| Org | Path | Envs |
-|-----|------|------|
-| hanzo | providers/hanzo/deploy-mnemonic | dev, test, main |
-| zoo   | providers/zoo/deploy-mnemonic   | dev, test, main |
-| pars  | providers/pars/deploy-mnemonic  | dev, test, main |
-
-The bytes are identical across orgs (and identical to the bytes Lux
-keeps at `providers/lux/deploy-mnemonic` on `kms.lux.network`). Each
-chain derives its own validator keys via
-`m/9000'/<networkId>'/<envID>'/<i>`. See `~/work/lux/CLAUDE.md`
-§"Mnemonic + Key Derivation" for the canonical reference.
-
-Jurisdictionally separate white-label tenants do NOT share this
-mnemonic — each keeps its own under `providers/<tenant>/*` in its
-own KMS deployment.
-
-## Auth contract (`cmd/kmsd/auth.go`)
-
-Full RFC 7519 enforcement, no escape hatches:
-
-1. `Authorization: Bearer <token>` else 401.
-2. `alg ∈ {RS256, RS384, RS512, ES256, ES384, ES512, PS256, PS384, PS512, EdDSA}`. **No HS\*. No `none`.**
-3. Signature verifies against JWKS by `kid`.
-4. `iss == $KMS_EXPECTED_ISSUER`.
-5. `aud` ⊇ one of `$KMS_EXPECTED_AUDIENCE` (comma list ok).
-6. `exp > now`, leeway 0.
-7. `nbf ≤ now` if present.
-8. `sub` (or `id`) present.
-
-Failure → 401 with body `{"message":"unauthorized"}`. The structured audit
-log records the failure class (`alg_not_allowed`, `expired`, `wrong_iss`,
-`wrong_aud`, `sig_invalid`, `missing_sub`, `no_bearer`, `misconfigured`).
-No claim is echoed to the client body or logs.
-
-`KMS_ENV ∈ {dev,devnet,local}` is the **only** mode where missing
-`KMS_EXPECTED_ISSUER`/`KMS_EXPECTED_AUDIENCE`/`KMS_JWKS_URL` is tolerated.
-In any other mode `validateAuthConfigAtBoot` refuses to start.
-
-### Header hygiene
-
-`stripIdentityHeaders` deletes every inbound identity header before mux
-dispatch. The handler trusts only what the verified JWT says. Killed
-headers include `X-User-Id`, `X-Org-Id`, `X-Roles`, `X-Hanzo-*`,
-`X-IAM-*`, `X-Tenant-Id`, `X-Is-Admin`, `X-Gateway-*`, etc.
-
-`methodAllowlist` rejects `TRACE`, `CONNECT`, `OPTIONS` at the edge.
+Bearer JWT from Hanzo IAM (brand issuer, e.g. `hanzo.id`). `alg` ∈ RS/ES/PS/EdDSA — **no
+HS\*, no `none`**. Verify sig against JWKS by `kid`; check `iss`, `aud`, `exp`, `nbf`, `sub`.
+Failure → `401 {"message":"unauthorized"}`; no claim echoed. `stripIdentityHeaders` deletes
+every inbound `X-User-Id`/`X-Org-Id`/`X-Roles`/`X-*-*` before dispatch — the handler trusts
+only the verified JWT. `methodAllowlist` rejects TRACE/CONNECT/OPTIONS at the edge.
 
 ## Storage
 
-- **At rest**: ZapDB (Badger-derived LSM) at `$KMS_DATA_DIR`. Optional
-  AES-GCM encryption via `KMS_ENCRYPTION_KEY_B64` (32 raw bytes b64).
-- **Replication**: in-process `badger.Replicator` streaming age-encrypted
-  incremental + snapshot backups to S3. Off when `REPLICATE_S3_ENDPOINT`
-  is empty.
-- **Audit**: side-table SQLite at `$KMS_AUDIT_DB` (default
-  `/tmp/kms-aux.db`). Buffered, single writer, never blocks request path.
-
-The luxfi `pkg/store.SecretStore` handles the on-disk envelope:
-per-secret 256-bit DEK, DEK wrapped under master key (AES-256-GCM).
-
-## ZAP binary transport
-
-Sub-100µs in-cluster secret CRUD on port `KMS_ZAP_PORT` (default 9999).
-Disabled unless `KMS_MASTER_KEY_B64` is set (32 raw bytes b64). Same
-authorization model as HTTP — JWT via the same JWKS, identical role
-checks. Service discovery via mDNS (`_kms._tcp`).
-
-## Env vars
-
-| Var                          | Default                          | Required          |
-|------------------------------|----------------------------------|-------------------|
-| `KMS_LISTEN`                 | `:8443`                          | no                |
-| `KMS_ZAP_PORT` / `KMS_ZAP`   | `9999`                           | no                |
-| `KMS_DATA_DIR`               | `/data/hanzo-kms`                | no                |
-| `KMS_NODE_ID`                | `hanzo-kms-0`                    | no                |
-| `KMS_ENV`                    | `dev`                            | yes (`prod`/`main`) |
-| `KMS_EXPECTED_ISSUER`        | —                                | yes (non-dev)     |
-| `KMS_EXPECTED_AUDIENCE`      | `kms`                            | yes (non-dev)     |
-| `KMS_JWKS_URL`               | —                                | yes (non-dev)     |
-| `KMS_ENCRYPTION_KEY_B64`     | —                                | recommended       |
-| `KMS_MASTER_KEY_B64`         | —                                | required for ZAP  |
-| `KMS_AUDIT_DB`               | `/tmp/kms-aux.db`                | no                |
-| `IAM_ENDPOINT`               | `https://hanzo.id`               | no                |
-| `MPC_ADDR`                   | mDNS                             | no (mDNS-discoverable) |
-| `MPC_VAULT_ID`               | —                                | no (key routes off) |
-| `REPLICATE_S3_*`             | —                                | no (replication off) |
-
-## Build
-
-```bash
-make            # builds ./kmsd and ./kms
-make test       # go test ./...
-```
-
-CI: `hanzoai/.github/.github/workflows/docker-build.yml@main` builds
-`ghcr.io/hanzoai/kms:<branch>` for `linux/amd64` + `linux/arm64` on
-native runners (DO+GKE), no QEMU.
-
-## Where things live
-
-```
-cmd/kms/        admin CLI
-cmd/kmsd/       daemon (this is the production binary)
-pkg/kmsclient/  Go client used by other Hanzo services
-sdk/go/         legacy ZK client SDK (separate module)
-mpc-node/       standalone MPC node (separate module)
-frontend/       legacy React UI (static, served as-is)
-ui/             new admin UI (build artefact, optional)
-```
-
-Everything in `cmd/kmsd` and `pkg/kmsclient` is **the** active surface.
-Everything in `frontend/`, `ui/`, `docs/`, `examples/`, `mpc-node/`, and
-`sdk/go/` is supporting and not on the request path.
-
-## Operator protocol delta (open)
-
-`~/work/hanzo/universe/infra/k8s/paas/secrets.yaml` ships `KMSSecret`
-resources (`secrets.lux.network/v1alpha1`) with:
-- `spec.hostAPI: http://kms.hanzo.svc.cluster.local/api`
-- `spec.authentication.universalAuth.secretsScope.{projectSlug,envSlug,secretsPath}`
-
-This shape was minted for the legacy era. The current `kmsd` only
-serves `/v1/kms/*` and uses `org/secrets/{path}/{name}?env=…` — there is
-no `/api/v3/secrets/raw` and no `projectSlug`/`envSlug` model. The
-operator that reconciles `KMSSecret` resources must be updated to call
-the canonical surface; the KMS will not grow a back-compat shim. Tracked
-separately — this module does not touch the operator.
+ZapDB (LSM) at `$KMS_DATA_DIR`, per-secret 256-bit DEK wrapped under the master key
+(AES-256-GCM); optional volume encryption via `KMS_ENCRYPTION_KEY_B64`. Age-encrypted
+incremental + snapshot replication to S3 (`REPLICATE_S3_*`, off when unset). Audit is a
+buffered SQLite side-table (`$KMS_AUDIT_DB`). ZAP binary transport (`KMS_ZAP_PORT`, needs
+`KMS_MASTER_KEY_B64`) mirrors HTTP under the identical JWT + role model; mDNS `_kms._tcp`.
 
 ## Rules
 
-- One canonical path per operation. No aliases.
-- Every endpoint requires IAM JWT or an explicit admin role.
-- `KMS_ENV` other than `dev`/`devnet`/`local` refuses to boot without
-  full JWT config.
-- All secrets at rest are encrypted (envelope DEK + master key).
-- Passwords are never stored in this service. Identity lives in IAM.
-  When IAM stores a password, it is bcrypt-hashed (cost ≥ 12).
-- No backwards compatibility. No env flags for "use the legacy backend instead."
+- One canonical path per operation; every endpoint needs an IAM JWT or admin role.
+- All secrets encrypted at rest (envelope DEK + master key). No plaintext passwords —
+  identity lives in IAM (bcrypt cost ≥ 12 there).
+- No backwards-compat shims, no "use the legacy backend" flags. Forward-only.
+- Specs: HIP-0027 (KMS), HIP-0106 (unified cloud binary), HIP-0302 (encrypted durability),
+  HIP-0026 (IAM). Upstream attribution retained in `LICENSE` + `NOTICE` (Infisical, MIT).
+
+---
+
+Hanzo — the Open AI Cloud · [hanzo.ai](https://hanzo.ai) · [docs.hanzo.ai](https://docs.hanzo.ai) · umbrella [hanzoai/sdk](https://github.com/hanzoai/sdk)
