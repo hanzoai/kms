@@ -31,6 +31,27 @@ func TestEmbed(t *testing.T) {
 		w.Header().Set("Content-Type", "application/json")
 		_, _ = w.Write([]byte(`{"keys":[]}`))
 	}))
+
+	// Registered BEFORE jwks.Close so it runs LAST (t.Cleanup is LIFO).
+	//
+	// Embed applies its ExpectedIssuer/ExpectedAudience/JWKSURL to the
+	// PROCESS-GLOBAL authConfig — that is the whole point of Embed — and
+	// stopping the instance does not put it back. Without this, every test
+	// after TestEmbed mints tokens for sharedIssuer/sharedAudience, which the
+	// process no longer accepts, and verification reaches for a JWKS server
+	// this cleanup has already closed. They all 401, and none of them are
+	// broken: TestEnvRequired_* were failing exactly this way, and only because
+	// they happen to sort after TestEmbed.
+	//
+	// jwtTestEnv.cleanup already does this; the embedded path had been missed.
+	t.Cleanup(func() {
+		applyAuthConfig(authCfgValues{
+			issuer:   sharedIssuer,
+			audience: sharedAudience,
+			jwksURL:  sharedJWKS.URL,
+		})
+		resetJWKSCacheForTest()
+	})
 	t.Cleanup(jwks.Close)
 
 	em, err := Embed(ctx, EmbedConfig{

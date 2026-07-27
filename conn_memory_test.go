@@ -80,6 +80,13 @@ func TestConnMemory(t *testing.T) {
 
 	time.Sleep(200 * time.Millisecond)
 	var baseline, peak runtime.MemStats
+	// Goroutines get a baseline for the same reason heap does. NumGoroutine is
+	// PROCESS-wide, so when this runs inside the full package it also counts
+	// badger compactors, httptest servers and the embedded instance other tests
+	// left running — the ratio read 1.00 alone and 1.15 in the suite, and the
+	// test failed for goroutines it does not own. The delta is what "per
+	// connection" can mean.
+	baselineGoroutines := runtime.NumGoroutine()
 	runtime.GC()
 	runtime.ReadMemStats(&baseline)
 
@@ -131,7 +138,7 @@ func TestConnMemory(t *testing.T) {
 	delta := int64(peak.HeapAlloc) - int64(baseline.HeapAlloc)
 	perConn := float64(delta) / float64(n)
 	totalGoroutines := runtime.NumGoroutine()
-	goroutinesPerConn := float64(totalGoroutines) / float64(n)
+	goroutinesPerConn := float64(totalGoroutines-baselineGoroutines) / float64(n)
 
 	fmt.Printf("\n=== Per-connection memory profile (hanzoai/kms) ===\n")
 	fmt.Printf("conns held       : %d\n", n)
@@ -139,7 +146,8 @@ func TestConnMemory(t *testing.T) {
 	fmt.Printf("peak heap        : %s\n", humanBytes(int64(peak.HeapAlloc)))
 	fmt.Printf("delta            : %s\n", humanBytes(delta))
 	fmt.Printf("per-conn heap    : %.0f B (%.2f KiB)\n", perConn, perConn/1024)
-	fmt.Printf("goroutines total : %d\n", totalGoroutines)
+	fmt.Printf("goroutines total : %d (baseline %d, attributable %d)\n",
+		totalGoroutines, baselineGoroutines, totalGoroutines-baselineGoroutines)
 	fmt.Printf("goroutines / conn: %.2f\n", goroutinesPerConn)
 	fmt.Printf("==================================================\n\n")
 
