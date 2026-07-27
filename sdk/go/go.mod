@@ -1,6 +1,6 @@
 module github.com/hanzoai/kms/sdk/go
 
-go 1.26.4
+go 1.26.5
 
 require (
 	github.com/luxfi/crypto v1.20.2

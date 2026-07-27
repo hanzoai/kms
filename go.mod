@@ -9,7 +9,7 @@ module github.com/hanzoai/kms
 // Wire-compatible with luxfi clients on both HTTP (/v1/kms/*) and ZAP
 // (opcodes 0x0040..0x0043).
 
-go 1.26.4
+go 1.26.5
 
 // luxfi/keys + luxfi/kms drive the consensus-native ZAP secret surface.
 // Threshold signing is delegated over ZAP to an external luxfi/mpc daemon
