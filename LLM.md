@@ -37,8 +37,44 @@ KMS_ENV=dev ./kmsd     # HTTP :8443, ZAP :9999 (dev tolerates missing JWT config
 
 Non-`dev`/`devnet`/`local` `KMS_ENV` refuses to boot without
 `KMS_EXPECTED_ISSUER` + `KMS_EXPECTED_AUDIENCE` + `KMS_JWKS_URL`. Fail-closed.
-CI: `hanzoai/.github/.github/workflows/docker-build.yml@main` → `ghcr.io/hanzoai/kms`,
-`linux/amd64` on the `hanzo-build-linux-amd64` ARC pool, semver `v*` tags (never `:latest`).
+
+## How this ships
+
+One way, and it runs on our own stack:
+
+    push  ->  github.com/hanzoai/kms          (a mirror)
+              .github/workflows/sync.yml       carries refs onward
+      ->  git.hanzo.ai/hanzoai/kms             CANONICAL
+              .hanzo/workflows/ci.yml          go test -race + builds kmsd/kms
+              .hanzo/workflows/build.yml       ghcr.io/hanzoai/kms on main
+              .hanzo/workflows/release.yml     v* tags: binaries + release + image
+              .hanzo/workflows/build-kms-fetch.yml  ghcr.io/hanzoai/kms-fetch
+              .hanzo/workflows/check-fe-ts-and-lint.yml  frontend typecheck on PRs
+              .hanzo/workflows/pr-preview.yml  ephemeral PR preview env
+
+**git.hanzo.ai is canonical; GitHub is a mirror.** `.github/workflows/` holds
+exactly one file, `sync.yml`, and its only job is getting refs to the forge. Every
+build, check and deploy is a workflow under `.hanzo/workflows/`, which the forge
+reads. `.hanzo/workflows` uses GitHub Actions syntax, so a workflow moves between
+the two by changing directory and nothing else.
+
+`ci.yml`, `release.yml` and `check-fe-ts-and-lint.yml` had been deleted from
+`.github/workflows` with no replacement anywhere — which silently removed the
+repo's only gate and the only producer of the release binaries and semver image
+tags, with no red run to show it, because a workflow that does not exist cannot
+fail. They are restored here at the path the forge reads.
+
+`release.yml` is the heaviest lane: a 4-way binary matrix
+(linux/darwin × amd64/arm64) for `cmd/kms` + `cmd/kmsd`, a GitHub Release with
+12 assets, a multi-arch `ghcr.io/hanzoai/kms:{vX.Y.Z, X.Y.Z, latest}`, and a
+final best-effort `notify-universe` job. That last job is
+`continue-on-error: true`, so a missing `UNIVERSE_DISPATCH_TOKEN` on the forge
+degrades to a yellow job and never fails the release.
+
+`build.yml`, `build-kms-fetch.yml` and `pr-preview.yml` are thin callers of
+`hanzoai/.github/.github/workflows/*@main`. Those references resolve by path, so
+they break the day the reusable workflows themselves move to `.hanzo/workflows` —
+worth inlining then, not now.
 
 ## Entry points
 
