@@ -43,7 +43,7 @@ require (
 	github.com/hanzoai/csqlite v0.1.0 // indirect
 	github.com/zap-proto/fiber/v3 v3.2.1 // indirect
 	github.com/zap-proto/go v1.3.0 // indirect
-	github.com/zap-proto/http v0.2.2 // indirect
+	github.com/zap-proto/http v0.3.0 // indirect
 	go.opentelemetry.io/otel/sdk v1.43.0 // indirect
 )
 
@@ -105,7 +105,7 @@ require (
 	github.com/tinylib/msgp v1.6.4 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.70.0 // indirect
-	github.com/zap-proto/zip v1.9.0
+	github.com/zap-proto/zip v1.10.0
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/otel v1.44.0 // indirect
 	go.opentelemetry.io/otel/metric v1.44.0 // indirect
