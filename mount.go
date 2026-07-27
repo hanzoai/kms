@@ -90,12 +90,16 @@ func Mount(app *zip.App, deps cloud.Deps) error {
 	// router. zip.AdaptNetHTTP costs ~5% perf vs native fiber dispatch
 	// — acceptable migration cost. Subsequent passes can rewrite hot
 	// paths in native zip; for now the entire surface is preserved.
+	// (App.Mount is now prefix→remote-address proxying; a wildcard
+	// route carrying AdaptNetHTTP is the in-process bridge.)
 	//
-	// Two prefixes are mounted so the existing client libraries (which
+	// Two prefixes are attached so the existing client libraries (which
 	// hit /v1/kms/*) and the standalone /healthz probe both work
-	// unchanged.
-	app.Mount("/v1/kms", em.HTTPHandler())
-	app.Mount("/healthz", em.HTTPHandler())
+	// unchanged. The trailing wildcard is optional, so /healthz itself
+	// still resolves.
+	h := zip.AdaptNetHTTP(em.HTTPHandler())
+	app.All("/v1/kms/*", h)
+	app.All("/healthz/*", h)
 
 	return nil
 }
