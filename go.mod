@@ -135,3 +135,5 @@ require (
 // falls back to a real version, never a missing one; publish sdk/go/v1.1.1 and
 // bump the require when cutting the next SDK release.
 replace github.com/hanzoai/kms/sdk/go => ./sdk/go
+
+exclude github.com/luxfi/genesis v1.5.21
