@@ -74,7 +74,7 @@ access token by proxying to IAM's OAuth token endpoint
 (`POST $IAM_ENDPOINT/v1/iam/oauth/token`). The response is a
 plain `{accessToken, expiresIn, tokenType}` envelope. Outbound calls to
 IAM use `/v1/iam/*` — not a route this service exposes, and never
-`/api/*` (legacy Casdoor compat surface).
+the legacy `/api/*` prefix.
 
 ### Secrets (per-org, JWT-gated)
 
