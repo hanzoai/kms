@@ -598,6 +598,11 @@ func registerSecretRoutes(mux *http.ServeMux, secStore *store.SecretStore, db *b
 			recordAudit(claims, r, req.Path, req.Name, req.Env, http.StatusBadRequest, 0)
 			return
 		}
+		// Collapse the caller's spelling to the one stored form before anything
+		// keys off it: validation, storage, the version/mtime siblings and the
+		// audit row all address req.Path, so normalizing once here keeps all
+		// five pointing at the same record (see canonicalPath).
+		req.Path = canonicalPath(req.Path)
 		if !safePath(req.Path) || !safePath(req.Name) {
 			writeJSON(w, http.StatusBadRequest, map[string]any{"message": "invalid path or name"})
 			recordAudit(claims, r, req.Path, req.Name, req.Env, http.StatusBadRequest, 0)
@@ -1140,7 +1145,12 @@ func authorize(w http.ResponseWriter, r *http.Request) (jwtClaims, bool) {
 
 // splitSecretPath separates "rest" into (path, name) and rejects any
 // traversal/control-byte attempts. Returns ok=false after writing 400.
+//
+// "rest" arrives already percent-decoded, so a caller who wrote %2F to escape a
+// leading slash lands here with one; canonicalPath folds that back to the same
+// record the unprefixed spelling resolves.
 func splitSecretPath(w http.ResponseWriter, rest string) (string, string, bool) {
+	rest = canonicalPath(rest)
 	if !safePath(rest) {
 		writeJSON(w, http.StatusBadRequest, map[string]any{"message": "invalid path"})
 		return "", "", false
@@ -1151,6 +1161,25 @@ func splitSecretPath(w http.ResponseWriter, rest string) (string, string, bool) 
 		return "", "", false
 	}
 	return rest[:idx], rest[idx+1:], true
+}
+
+// canonicalPath reduces a secret path to the single form the store keys on.
+//
+// A path names a location; the surrounding "/" is notation, not part of the
+// name. The same location is legitimately spelled three ways: every
+// kms-operator CR writes "secretsPath: /datastore", the REST path-segment form
+// writes "datastore", and a caller escaping the separator sends "%2Fdatastore"
+// (which reaches the handler already decoded). Those must denote one record.
+//
+// They did not. The writer stored the caller's spelling verbatim while readers
+// resolved the stripped form, so POST {"path":"/x"} answered 201 and
+// GET .../x/NAME answered 404 — a write that reported success and could never
+// be read back. A consumer of that read sees an absent secret, not an error,
+// so the failure surfaces downstream as an empty credential. That is why this
+// normalizes at every boundary rather than rejecting at one: rejecting the
+// leading slash would 400 every operator CR, all of which spell it that way.
+func canonicalPath(p string) string {
+	return strings.Trim(p, "/")
 }
 
 // safePath rejects path-traversal, double-slash collapsing, and control bytes.
