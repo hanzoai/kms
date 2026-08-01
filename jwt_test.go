@@ -7,10 +7,18 @@
 //	F2 — expired JWT accepted (exp=Sep 2001)
 //	F3 — alg=none / forged signature accepted
 //	F4 — audience not validated
-//	F7 — owner=="admin" cross-tenant superuser shortcut
 //
-// Every case MUST return 401 from the KMS HTTP surface. A 200/201/403/404
-// is a regression and fails the test.
+// Every case MUST return 401. A 200 is a regression and fails the test.
+//
+// The target is registerAuthProbe: a route whose whole body is
+// authorize(). These cases used to aim at the secret CRUD routes, which
+// are deleted — secret authorization belongs to cloud (apps/kms), which
+// keys storage by org. What they actually assert is a property of
+// verifyJWT, so they now exercise it through its real entry point.
+//
+// F7 (the owner=="admin" cross-tenant shortcut) is absent by
+// construction: KMS derives no permission from any claim. Its regression
+// guard is TestSecretHTTPPlaneIsAbsent.
 package kms
 
 import (
@@ -23,16 +31,11 @@ import (
 	"math/big"
 	"net/http"
 	"net/http/httptest"
-	"os"
-	"path/filepath"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	badger "github.com/luxfi/zapdb"
-
-	"github.com/luxfi/kms/pkg/store"
 )
 
 // jwtTestEnv bundles an RSA key, a mock JWKS server, and an HTTP test server
@@ -87,19 +90,9 @@ func newJWTTestEnv(t *testing.T) *jwtTestEnv {
 	resetJWKSCacheForTest()
 	reloadAuthConfigForTest()
 
-	dir := filepath.Join(t.TempDir(), "kms")
-	if err := os.MkdirAll(dir, 0o700); err != nil {
-		t.Fatalf("mkdir: %v", err)
-	}
-	db, err := badger.Open(badger.DefaultOptions(dir).WithLogger(nil))
-	if err != nil {
-		t.Fatalf("open: %v", err)
-	}
-	secStore := store.NewSecretStore(db)
-
 	mux := http.NewServeMux()
 	registerHealth(mux)
-	registerSecretRoutes(mux, secStore, db)
+	registerAuthProbe(mux)
 
 	srv := httptest.NewServer(methodAllowlist(stripIdentityHeaders(mux)))
 
@@ -113,7 +106,6 @@ func newJWTTestEnv(t *testing.T) *jwtTestEnv {
 		cleanup: func() {
 			srv.Close()
 			jwks.Close()
-			db.Close()
 			// t.Setenv will restore env vars; we restore authConfig to the
 			// shared TestMain-configured values so subsequent tests see a
 			// working JWKS server.
@@ -210,25 +202,9 @@ func TestJWT_F3_AlgNone_EmptySignature_Rejected(t *testing.T) {
 		"exp":   time.Now().Add(time.Hour).Unix(),
 	}, "")
 
-	// Write attempt — must be 401, not 201.
-	body, _ := json.Marshal(map[string]string{
-		"path": "pwn", "name": "k", "env": "dev", "value": "owned",
-	})
-	resp := mustReq(t, "POST", e.srv.URL+"/v1/kms/orgs/hanzo/secrets", tok, body)
+	resp := mustReq(t, "GET", e.srv.URL+probePath, tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
-		t.Fatalf("F3 alg=none empty-sig POST: want 401, got %d", resp.StatusCode)
-	}
-
-	// Read attempt — must be 401.
-	resp = mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/pwn/k?env=dev", tok, nil)
-	if resp.StatusCode != http.StatusUnauthorized {
-		t.Fatalf("F3 alg=none empty-sig GET: want 401, got %d", resp.StatusCode)
-	}
-
-	// Delete attempt — must be 401.
-	resp = mustReq(t, "DELETE", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/pwn/k?env=dev", tok, nil)
-	if resp.StatusCode != http.StatusUnauthorized {
-		t.Fatalf("F3 alg=none empty-sig DELETE: want 401, got %d", resp.StatusCode)
+		t.Fatalf("F3 alg=none empty-sig: want 401, got %d", resp.StatusCode)
 	}
 }
 
@@ -241,7 +217,7 @@ func TestJWT_F3_AlgNone_GarbageSignature_Rejected(t *testing.T) {
 		"aud": e.audience, "exp": time.Now().Add(time.Hour).Unix(),
 	}, "deadbeefdeadbeef")
 
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
+	resp := mustReq(t, "GET", e.srv.URL+probePath, tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("F3 alg=none garbage-sig: want 401, got %d", resp.StatusCode)
 	}
@@ -259,7 +235,7 @@ func TestJWT_F3_HS256Forged_Rejected(t *testing.T) {
 		"aud": e.audience, "exp": time.Now().Add(time.Hour).Unix(),
 	}, "forged-shared-secret-xyz")
 
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
+	resp := mustReq(t, "GET", e.srv.URL+probePath, tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("F3 HS256 forged: want 401, got %d", resp.StatusCode)
 	}
@@ -278,7 +254,7 @@ func TestJWT_F2_Expired_2001_Rejected(t *testing.T) {
 		"exp":   int64(1000000000),
 	})
 
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
+	resp := mustReq(t, "GET", e.srv.URL+probePath, tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("F2 exp=2001: want 401, got %d", resp.StatusCode)
 	}
@@ -294,7 +270,7 @@ func TestJWT_F2_ExpiredOneSecondAgo_Rejected(t *testing.T) {
 		"exp":   time.Now().Add(-time.Second).Unix(),
 	})
 
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
+	resp := mustReq(t, "GET", e.srv.URL+probePath, tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("F2 exp=-1s: want 401, got %d", resp.StatusCode)
 	}
@@ -317,7 +293,7 @@ func TestJWT_F2_MissingExp_Rejected(t *testing.T) {
 	token.Header["kid"] = e.kid
 	tok, _ := token.SignedString(e.priv)
 
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
+	resp := mustReq(t, "GET", e.srv.URL+probePath, tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("F2 missing exp: want 401, got %d", resp.StatusCode)
 	}
@@ -340,7 +316,7 @@ func TestJWT_F1_DevIssuerOnMain_Rejected(t *testing.T) {
 		"aud":   "kms",
 	})
 
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
+	resp := mustReq(t, "GET", e.srv.URL+probePath, tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("F1 dev iss on main: want 401, got %d", resp.StatusCode)
 	}
@@ -356,7 +332,7 @@ func TestJWT_F1_AttackerIssuer_Rejected(t *testing.T) {
 		"owner": "hanzo",
 	})
 
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
+	resp := mustReq(t, "GET", e.srv.URL+probePath, tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("F1 attacker iss: want 401, got %d", resp.StatusCode)
 	}
@@ -377,7 +353,7 @@ func TestJWT_F1_MissingIss_Rejected(t *testing.T) {
 	token.Header["kid"] = e.kid
 	tok, _ := token.SignedString(e.priv)
 
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
+	resp := mustReq(t, "GET", e.srv.URL+probePath, tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("F1 missing iss: want 401, got %d", resp.StatusCode)
 	}
@@ -395,7 +371,7 @@ func TestJWT_F4_WrongAudience_Rejected(t *testing.T) {
 		"aud":   "ats", // wrong — expected "kms"
 	})
 
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
+	resp := mustReq(t, "GET", e.srv.URL+probePath, tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("F4 wrong aud: want 401, got %d", resp.StatusCode)
 	}
@@ -416,7 +392,7 @@ func TestJWT_F4_MissingAudience_Rejected(t *testing.T) {
 	token.Header["kid"] = e.kid
 	tok, _ := token.SignedString(e.priv)
 
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
+	resp := mustReq(t, "GET", e.srv.URL+probePath, tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("F4 missing aud: want 401, got %d", resp.StatusCode)
 	}
@@ -441,7 +417,7 @@ func TestJWT_F4_MultiAudience_Accepted(t *testing.T) {
 			"owner": "hanzo",
 			"aud":   aud,
 		})
-		resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
+		resp := mustReq(t, "GET", e.srv.URL+probePath, tok, nil)
 		// Not-found or ok — auth passed. The key check is that 401 is not returned.
 		if resp.StatusCode == http.StatusUnauthorized {
 			t.Fatalf("aud=%q rejected but should be in expected list", aud)
@@ -454,7 +430,7 @@ func TestJWT_F4_MultiAudience_Accepted(t *testing.T) {
 		"owner": "hanzo",
 		"aud":   "hanzo-ats",
 	})
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
+	resp := mustReq(t, "GET", e.srv.URL+probePath, tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("aud=hanzo-ats: want 401, got %d", resp.StatusCode)
 	}
@@ -481,7 +457,7 @@ func TestJWT_MultiIssuer_Accepted(t *testing.T) {
 			"owner": "hanzo",
 			"iss":   iss,
 		})
-		resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets", tok, nil)
+		resp := mustReq(t, "GET", e.srv.URL+probePath, tok, nil)
 		if resp.StatusCode == http.StatusUnauthorized {
 			t.Fatalf("iss=%q rejected but is in the configured allowlist", iss)
 		}
@@ -493,88 +469,9 @@ func TestJWT_MultiIssuer_Accepted(t *testing.T) {
 		"owner": "hanzo",
 		"iss":   "https://evil.example",
 	})
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets", tok, nil)
+	resp := mustReq(t, "GET", e.srv.URL+probePath, tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("iss=evil: want 401, got %d", resp.StatusCode)
-	}
-}
-
-// ── F7 CRITICAL — owner=="admin" must NOT grant cross-tenant power ─────
-
-func TestJWT_F7_OwnerAdminCrossTenant_ReadRejected(t *testing.T) {
-	e := newJWTTestEnv(t)
-	defer e.cleanup()
-
-	// Seed a secret in org-a via a properly signed org-a token.
-	tokA := e.mintSigned(jwt.MapClaims{"sub": "usr-a", "owner": "org-a"})
-	body, _ := json.Marshal(map[string]string{
-		"path": "shared", "name": "key", "env": "dev", "value": "A-SECRET",
-	})
-	resp := mustReq(t, "POST", e.srv.URL+"/v1/kms/orgs/org-a/secrets", tokA, body)
-	if resp.StatusCode != http.StatusCreated {
-		t.Fatalf("seed: want 201, got %d", resp.StatusCode)
-	}
-
-	// owner=admin MUST NOT bypass tenant scoping (F7). IAM client_credentials
-	// emits this for every service account — it is NOT a global-admin flag.
-	tokAdminOwner := e.mintSigned(jwt.MapClaims{
-		"sub":   "iam-sa",
-		"owner": "admin", // admin-org app namespace — no longer special
-		// no roles claim — must NOT act as global admin
-	})
-	resp = mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/org-a/secrets/shared/key?env=dev", tokAdminOwner, nil)
-	if resp.StatusCode != http.StatusForbidden {
-		t.Fatalf("F7 owner=admin cross-tenant read: want 403, got %d", resp.StatusCode)
-	}
-
-}
-
-func TestJWT_F7_OwnerAdminCrossTenant_WriteRejected(t *testing.T) {
-	e := newJWTTestEnv(t)
-	defer e.cleanup()
-
-	// owner=admin trying to WRITE org-a secrets without a real role.
-	tokAdminOwner := e.mintSigned(jwt.MapClaims{
-		"sub":   "iam-sa",
-		"owner": "admin",
-	})
-	body, _ := json.Marshal(map[string]string{
-		"path": "pwn", "name": "k", "env": "dev", "value": "POISON",
-	})
-	resp := mustReq(t, "POST", e.srv.URL+"/v1/kms/orgs/org-a/secrets", tokAdminOwner, body)
-	if resp.StatusCode != http.StatusForbidden {
-		t.Fatalf("F7 owner=admin cross-tenant write: want 403, got %d", resp.StatusCode)
-	}
-
-	resp = mustReq(t, "DELETE", e.srv.URL+"/v1/kms/orgs/org-a/secrets/pwn/k?env=dev", tokAdminOwner, nil)
-	if resp.StatusCode != http.StatusForbidden {
-		t.Fatalf("F7 owner=admin cross-tenant delete: want 403, got %d", resp.StatusCode)
-	}
-}
-
-func TestJWT_F7_SuperadminRoleStillWorks(t *testing.T) {
-	e := newJWTTestEnv(t)
-	defer e.cleanup()
-
-	// Seed a secret in org-a.
-	tokA := e.mintSigned(jwt.MapClaims{"sub": "usr-a", "owner": "org-a"})
-	body, _ := json.Marshal(map[string]string{
-		"path": "shared", "name": "key", "env": "dev", "value": "A-SECRET",
-	})
-	resp := mustReq(t, "POST", e.srv.URL+"/v1/kms/orgs/org-a/secrets", tokA, body)
-	if resp.StatusCode != http.StatusCreated {
-		t.Fatalf("seed: want 201, got %d", resp.StatusCode)
-	}
-
-	// Explicit superadmin role MUST work — but via roles claim, NOT owner.
-	tokSuper := e.mintSigned(jwt.MapClaims{
-		"sub":   "ops-admin",
-		"owner": "ops",
-		"roles": []string{"superadmin"},
-	})
-	resp = mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/org-a/secrets/shared/key?env=dev", tokSuper, nil)
-	if resp.StatusCode != http.StatusOK {
-		t.Fatalf("superadmin role cross-tenant: want 200, got %d", resp.StatusCode)
 	}
 }
 
@@ -589,39 +486,9 @@ func TestJWT_ValidRS256_Accepted(t *testing.T) {
 		"owner": "hanzo",
 	})
 
-	body, _ := json.Marshal(map[string]string{
-		"path": "providers/alpaca/dev", "name": "api_key",
-		"env": "dev", "value": "PK_LIVE",
-	})
-	resp := mustReq(t, "POST", e.srv.URL+"/v1/kms/orgs/hanzo/secrets", tok, body)
-	if resp.StatusCode != http.StatusCreated {
-		t.Fatalf("valid JWT POST: want 201, got %d", resp.StatusCode)
-	}
-
-	resp = mustReq(t, "GET",
-		e.srv.URL+"/v1/kms/orgs/hanzo/secrets/providers/alpaca/dev/api_key?env=dev",
-		tok, nil)
+	resp := mustReq(t, "GET", e.srv.URL+probePath, tok, nil)
 	if resp.StatusCode != http.StatusOK {
-		t.Fatalf("valid JWT GET: want 200, got %d", resp.StatusCode)
-	}
-}
-
-func TestJWT_HappyPathTenantScope_Accepted(t *testing.T) {
-	e := newJWTTestEnv(t)
-	defer e.cleanup()
-
-	// Owner matches URL org — exactly one way this works.
-	tok := e.mintSigned(jwt.MapClaims{"sub": "u", "owner": "org-a"})
-	body, _ := json.Marshal(map[string]string{
-		"path": "shared", "name": "key", "env": "dev", "value": "A",
-	})
-	resp := mustReq(t, "POST", e.srv.URL+"/v1/kms/orgs/org-a/secrets", tok, body)
-	if resp.StatusCode != http.StatusCreated {
-		t.Fatalf("tenant-scoped POST: want 201, got %d", resp.StatusCode)
-	}
-	resp = mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/org-a/secrets/shared/key?env=dev", tok, nil)
-	if resp.StatusCode != http.StatusOK {
-		t.Fatalf("tenant-scoped GET: want 200, got %d", resp.StatusCode)
+		t.Fatalf("valid JWT: want 200, got %d", resp.StatusCode)
 	}
 }
 
@@ -642,7 +509,7 @@ func TestJWT_WrongSigningKey_Rejected(t *testing.T) {
 	token.Header["kid"] = e.kid
 	tok, _ := token.SignedString(wrongKey)
 
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
+	resp := mustReq(t, "GET", e.srv.URL+probePath, tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("wrong signing key: want 401, got %d", resp.StatusCode)
 	}
@@ -661,7 +528,7 @@ func TestJWT_UnknownKid_Rejected(t *testing.T) {
 	token.Header["kid"] = "unknown-kid-zzz" // not in JWKS
 	tok, _ := token.SignedString(e.priv)
 
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
+	resp := mustReq(t, "GET", e.srv.URL+probePath, tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("unknown kid: want 401, got %d", resp.StatusCode)
 	}
@@ -680,71 +547,9 @@ func TestJWT_MissingKid_Rejected(t *testing.T) {
 	// explicitly no kid
 	tok, _ := token.SignedString(e.priv)
 
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", tok, nil)
+	resp := mustReq(t, "GET", e.srv.URL+probePath, tok, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("missing kid: want 401, got %d", resp.StatusCode)
-	}
-}
-
-// ── F5 MEDIUM — registerKeyRoutes must require auth ────────────────────
-//
-// The key-route handlers are only registered when MPC_VAULT_ID is set, so
-// we build a smaller server here with the key routes mounted directly to
-// test the gating without spinning up MPC.
-
-func TestJWT_F5_KeyRoutes_RequireAuth(t *testing.T) {
-	e := newJWTTestEnv(t)
-	defer e.cleanup()
-
-	dir := filepath.Join(t.TempDir(), "kms-keys")
-	if err := os.MkdirAll(dir, 0o700); err != nil {
-		t.Fatalf("mkdir: %v", err)
-	}
-	db, err := badger.Open(badger.DefaultOptions(dir).WithLogger(nil))
-	if err != nil {
-		t.Fatalf("open: %v", err)
-	}
-	defer db.Close()
-
-	mux := http.NewServeMux()
-	registerKeyRouteAuthGatesForTest(mux)
-
-	srv := httptest.NewServer(methodAllowlist(stripIdentityHeaders(mux)))
-	defer srv.Close()
-
-	// No auth header — must be 401.
-	for _, p := range []string{
-		"/v1/kms/keys",
-		"/v1/kms/keys/abc",
-		"/v1/kms/status",
-	} {
-		resp, _ := http.Get(srv.URL + p)
-		if resp.StatusCode != http.StatusUnauthorized {
-			t.Fatalf("F5 %s: want 401, got %d", p, resp.StatusCode)
-		}
-	}
-
-	// alg=none must be 401 (F3 applies here too).
-	evil := mintAlgNone(map[string]any{
-		"iss": "https://attacker.evil", "owner": "admin", "sub": "root",
-	}, "")
-	resp := mustReq(t, "GET", srv.URL+"/v1/kms/keys", evil, nil)
-	if resp.StatusCode != http.StatusUnauthorized {
-		t.Fatalf("F5 keys alg=none: want 401, got %d", resp.StatusCode)
-	}
-
-	// POST /v1/kms/keys/generate without auth → 401 (write side).
-	genBody, _ := json.Marshal(map[string]any{"validator_id": "v1", "threshold": 2, "parties": 3})
-	resp = mustReq(t, "POST", srv.URL+"/v1/kms/keys/generate", "", genBody)
-	if resp.StatusCode != http.StatusUnauthorized {
-		t.Fatalf("F5 keys/generate no-auth: want 401, got %d", resp.StatusCode)
-	}
-
-	// Regular tenant → 403 (needs admin role).
-	tenant := e.mintSigned(jwt.MapClaims{"sub": "usr", "owner": "hanzo"})
-	resp = mustReq(t, "GET", srv.URL+"/v1/kms/keys", tenant, nil)
-	if resp.StatusCode != http.StatusForbidden {
-		t.Fatalf("F5 keys tenant-role: want 403, got %d", resp.StatusCode)
 	}
 }
 
@@ -757,7 +562,7 @@ func TestJWT_ErrorBodyContract(t *testing.T) {
 	evil := mintAlgNone(map[string]any{
 		"iss": "https://attacker.evil", "owner": "admin", "sub": "root",
 	}, "")
-	resp := mustReq(t, "GET", e.srv.URL+"/v1/kms/orgs/hanzo/secrets/a/b?env=dev", evil, nil)
+	resp := mustReq(t, "GET", e.srv.URL+probePath, evil, nil)
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("status: want 401, got %d", resp.StatusCode)
 	}
