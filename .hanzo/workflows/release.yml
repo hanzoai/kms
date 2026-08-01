@@ -95,7 +95,12 @@ jobs:
           (cd dist && shasum -a 256 "kms-${GOOS}-${GOARCH}" "kmsd-${GOOS}-${GOARCH}" \
             > "kms-${GOOS}-${GOARCH}.sha256")
 
-      - uses: actions/upload-artifact@v4
+      # v3, not v4+: this workflow runs on git.hanzo.ai, which presents as GHES.
+      # The v4 action refuses outright — "GHESNotSupportedError: @actions/artifact
+      # v2.0.0+ ... not currently supported on GHES" — so the job builds its
+      # artifact and then discards it at the last step, and reads as a build
+      # failure when the build actually succeeded.
+      - uses: actions/upload-artifact@v3
         with:
           name: binaries-${{ matrix.goos }}-${{ matrix.goarch }}
           path: dist/*
@@ -112,7 +117,12 @@ jobs:
           ref: ${{ inputs.tag || github.ref }}
           fetch-depth: 0
 
-      - uses: actions/download-artifact@v4
+      # v3, not v4+: this workflow runs on git.hanzo.ai, which presents as GHES.
+      # The v4 action refuses outright — "GHESNotSupportedError: @actions/artifact
+      # v2.0.0+ ... not currently supported on GHES" — so the job builds its
+      # artifact and then discards it at the last step, and reads as a build
+      # failure when the build actually succeeded.
+      - uses: actions/download-artifact@v3
         with:
           path: dist
           merge-multiple: true
