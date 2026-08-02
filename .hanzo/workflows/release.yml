@@ -206,9 +206,11 @@ jobs:
           build-args: |
             GO_EXPERIMENT=jsonv2
             GITHUB_TOKEN=${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
+          # Registry cache, not type=gha: git.hanzo.ai issues no Actions runtime
+          # token buildx can parse, and the exporter is configured during the
+          # solve, so type=gha fails the BUILD instead of skipping the cache.
+          cache-from: type=registry,ref=ghcr.io/hanzoai/kms:buildcache,ignore-error=true
+          cache-to: type=registry,ref=ghcr.io/hanzoai/kms:buildcache,mode=max,ignore-error=true
   notify-universe:
     name: Notify universe (auto-bump pin)
     needs: [docker]
