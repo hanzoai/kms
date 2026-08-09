@@ -1,3 +1,8 @@
+> **Archived.** The canonical KMS is [luxfi/kms](https://github.com/luxfi/kms)
+> (`ghcr.io/luxfi/kms`). This repository is kept read-only for history, and because
+> `sdk/go` v1.1.1 is still resolvable from it. Nothing new should depend on it. What
+> follows describes the retired server.
+
 <p align="center"><img src=".github/hero.svg" alt="Hanzo KMS" width="880"></p>
 
 # Hanzo KMS
