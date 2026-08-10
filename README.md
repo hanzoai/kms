@@ -19,7 +19,7 @@ Hanzo KMS is the canonical secret store and signing service for every Hanzo depl
 
 AI agents are first-class identities: every secret carries a policy that controls whether an agent may read it — `auto-approve`, `requires-approval`, or `blocked` — with a full per-agent audit trail.
 
-All server logic lives in `luxfi/kms`. This module wires those primitives with Hanzo defaults (IAM at `hanzo.id`, encrypted-at-rest storage, S3 replication) and adds JWT verification, the audit ledger, version CAS, and header hygiene. It mounts into the unified cloud binary (`kms.Mount`) and also ships as a standalone daemon.
+All server logic lives in `luxfi/kms`. This module wires those primitives with Hanzo defaults (IAM at `hanzo.id`, encrypted-at-rest storage, S3 replication) and adds JWT verification, the audit ledger, version CAS, and header hygiene. It builds as its own app (`kms.App`), which any host composes, and also ships as a standalone daemon.
 
 ## Quick start
 

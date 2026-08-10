@@ -1,28 +1,24 @@
-// Hanzo KMS daemon — HIP-0106 thin shim.
+// Hanzo KMS daemon.
 //
-// All assembly logic, route handlers, JWT verification, audit log,
-// version CAS, and ZAP transport live in pkg/kms. This binary just:
+// All assembly logic, route handlers, JWT verification, audit log, version CAS
+// and ZAP transport live in package kms. This binary composes kms.App under a
+// listener of its own and drains it on a signal. The unified cloud binary
+// composes the same kms.App the same way; standalone exists for deploys where
+// running the whole cloud surface is overkill.
 //
-//   - Loads config via cloud.LoadConfig() (env + flags).
-//   - Builds shared deps via cloud.BuildDeps(cfg).
-//   - Spins up a zip.App, calls kms.Mount(app, deps) — the same Mount
-//     the unified cloud binary calls — and listens on cfg.ListenAddr.
-//
-// The fused cloud binary mounts pkg/kms via blank import + init()
-// registration. This shim exists for standalone deploys (Dockerfile,
-// k8s sidecars) where running the whole cloud surface is overkill.
+// It reads no host's config. It used to call cloud.LoadConfig, which meant the
+// daemon bound $CLOUD_LISTEN (default :8080) while its own image documents
+// KMS_LISTEN=:8443 and its HEALTHCHECK curls 8443 — the container's stated
+// configuration was not the one the process used.
 package main
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 	"time"
 
-	"github.com/hanzoai/cloud"
 	"github.com/luxfi/log"
 	"github.com/zap-proto/zip"
 	"github.com/zap-proto/zip/middleware"
@@ -42,38 +38,24 @@ func main() {
 	shutdown := initTelemetry(ctx, "hanzo-kms")
 	defer shutdown(ctx)
 
-	cfg := cloud.LoadConfig()
-	if err := cfg.Validate(); err != nil {
-		fmt.Fprintf(os.Stderr, "config: %v\n", err)
-		os.Exit(1)
+	kmsApp, err := kms.App("")
+	if err != nil {
+		log.Crit("kms: build", "err", err)
 	}
 
-	deps := cloud.BuildDeps(cfg)
-
-	app := zip.New(zip.Config{
-		Logger:  deps.Logger,
-		AppName: "kms",
-	})
+	app := zip.New(zip.Config{AppName: "kmsd"})
 	app.Use(middleware.Recover())
 	app.Use(middleware.RequestID())
-	// Per-request access log is DEBUG-only. At the default (info) it emitted one
-	// Info "request" line per call — ~4k lines/min, the KMS producer's entire
-	// log volume. Startup, shutdown, authz-denials, and handler errors are
-	// logged elsewhere and stay at info. Opt back in with KMS_LOG_LEVEL=debug.
-	if strings.EqualFold(os.Getenv("KMS_LOG_LEVEL"), "debug") {
-		app.Use(middleware.Logger(deps.Logger))
-	}
+	app.Use(kmsApp)
 
-	if err := kms.Mount(app, deps); err != nil {
-		log.Crit("kms: mount", "err", err)
-	}
-
-	// Listen in a goroutine so we can intercept SIGINT/SIGTERM and
-	// drain the in-process server gracefully via kms.Shutdown.
+	// Listen in a goroutine so we can intercept SIGINT/SIGTERM and drain the
+	// in-process server gracefully. Shutting the outer app down drains the
+	// composed one, which drains Embed.
+	addr := kms.ListenAddr()
 	listenErr := make(chan error, 1)
 	go func() {
-		log.Info("kms: listening", "addr", cfg.ListenAddr)
-		listenErr <- app.Listen("http://" + cfg.ListenAddr)
+		log.Info("kms: listening", "addr", addr)
+		listenErr <- app.Listen("http://" + addr)
 	}()
 
 	sig := make(chan os.Signal, 1)
@@ -88,6 +70,5 @@ func main() {
 
 	stopCtx, stopCancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer stopCancel()
-	_ = kms.Shutdown(stopCtx)
 	_ = app.ShutdownWithContext(stopCtx)
 }
