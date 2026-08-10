@@ -11,9 +11,10 @@ import (
 
 	luxlog "github.com/luxfi/log"
 	"github.com/zap-proto/zip"
+	"github.com/zap-proto/zip/middleware"
 )
 
-// TestMountBridge_NetHTTPOverZIP exercises the exact bridge mount.go builds:
+// TestBridge_NetHTTPOverZIP exercises the exact bridge app.go builds:
 // a net/http handler fronted on a zip wildcard route via zip.AdaptNetHTTP,
 // served over a real TCP listener and driven by a real net/http client.
 //
@@ -22,7 +23,12 @@ import (
 // the response headers/status/body have to survive the trip back out. A
 // framing regression in zap-proto/http shows up here and nowhere else in
 // this module's tests, since every other suite calls the handler directly.
-func TestMountBridge_NetHTTPOverZIP(t *testing.T) {
+//
+// It runs the bridge where a host puts it: on KMS's OWN app, composed into a
+// host app under the host's middleware, which is what App returns and what
+// cmd/kmsd and the cloud binary both do with it. Routes are absolute, so
+// composition must not move or shadow them.
+func TestBridge_NetHTTPOverZIP(t *testing.T) {
 	// The adapted subtree: echoes back everything it received so the
 	// assertions can compare both directions of the frame.
 	inner := http.NewServeMux()
@@ -43,16 +49,28 @@ func TestMountBridge_NetHTTPOverZIP(t *testing.T) {
 		})
 	})
 
-	app := zip.New(zip.Config{
-		Logger:                luxlog.New("test", "kms-mount-bridge"),
+	// Same shape as App: native health route + adapted wildcard subtree, on an
+	// app of KMS's own.
+	kmsApp := zip.New(zip.Config{
+		Logger:                luxlog.New("test", "kms-bridge"),
 		DisableStartupMessage: true,
 		AppName:               "kms",
 	})
-	// Same shape as mount.go: native health route + adapted wildcard subtree.
-	app.Get("/v1/kms/health", func(c *zip.Ctx) error {
+	kmsApp.Get("/v1/kms/health", func(c *zip.Ctx) error {
 		return c.JSON(http.StatusOK, map[string]any{"status": "ok", "service": "kms"})
 	})
-	app.All("/v1/kms/*", zip.AdaptNetHTTP(inner))
+	kmsApp.All("/v1/kms/*", zip.AdaptNetHTTP(inner))
+
+	// Same shape as cmd/kmsd: a host app that owns the listener, with its own
+	// middleware in front of the composed subsystem.
+	app := zip.New(zip.Config{
+		Logger:                luxlog.New("test", "kms-host"),
+		DisableStartupMessage: true,
+		AppName:               "kmsd",
+	})
+	app.Use(middleware.Recover())
+	app.Use(middleware.RequestID())
+	app.Use(kmsApp)
 
 	ln, err := net.Listen("tcp", "127.0.0.1:0")
 	if err != nil {

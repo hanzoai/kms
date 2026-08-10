@@ -300,6 +300,12 @@ func (e *Embedded) Stop(ctx context.Context) error {
 	return nil
 }
 
+// ListenAddr is where the KMS HTTP surface binds: $KMS_LISTEN, else :8443.
+//
+// Exported because Embed runs with SkipListen under a host that owns the
+// listener, so the address is resolved in one place and read by both.
+func ListenAddr() string { return envOr("KMS_LISTEN", ":8443") }
+
 // applyEmbedDefaults resolves process-shape EmbedConfig fields
 // (DataDir, HTTPAddr, NodeID, ZAPPort, AuditDB, MPC*) to the canonical
 // kmsd container defaults. Env vars override empty fields.
@@ -316,7 +322,7 @@ func applyEmbedDefaults(cfg EmbedConfig) EmbedConfig {
 		cfg.DataDir = envOr("KMS_DATA_DIR", "/data/hanzo-kms")
 	}
 	if cfg.HTTPAddr == "" {
-		cfg.HTTPAddr = envOr("KMS_LISTEN", ":8443")
+		cfg.HTTPAddr = ListenAddr()
 	}
 	if cfg.NodeID == "" {
 		cfg.NodeID = envOr("KMS_NODE_ID", "hanzo-kms-0")

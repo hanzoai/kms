@@ -8,8 +8,9 @@ The canonical secret store + threshold-signing service for every Hanzo deploymen
 A **thin Go wrapper over `github.com/luxfi/kms`** (v1.11.x) + `luxfi/mpc` — all server
 logic lives upstream; this module wires those primitives with Hanzo defaults and adds
 JWT verification, the audit ledger, version CAS, and header hygiene. The root package
-`kms` mounts into the unified cloud binary via `kms.Mount(app, deps)` (HIP-0106) and
-also ships as the standalone `cmd/kmsd` daemon. There is **no** Node fork, **no**
+`kms` builds the whole surface as its own app — `kms.App(root) (*zip.App, error)` — so a
+host composes it with `app.Use(kmsApp)` and no host type crosses into this module. The
+standalone `cmd/kmsd` daemon composes the same app under a listener of its own. There is **no** Node fork, **no**
 PostgreSQL, **no** Base — the legacy `internal/{handler,store,server}` tree is gone.
 
 ## Canonical role (Hanzo SDK model)
@@ -79,7 +80,7 @@ worth inlining then, not now.
 ## Entry points
 
 ```
-cmd/kmsd/       production daemon (config via cloud.LoadConfig → kms.Mount)
+cmd/kmsd/       production daemon (kms.App under a listener at kms.ListenAddr)
 cmd/kms/        admin CLI
 cmd/kms-fetch/  one-shot bootstrap fetch (see Dockerfile.kms-fetch)
 cmd/smoke-zap/  ZAP transport smoke test

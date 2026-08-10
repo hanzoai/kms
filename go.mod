@@ -18,11 +18,10 @@ go 1.26.5
 // require block below (single source of truth).
 require (
 	github.com/golang-jwt/jwt/v5 v5.3.1
-	github.com/hanzoai/cloud v0.1.1
 	github.com/luxfi/keys v1.4.1 // indirect
 	github.com/luxfi/kms v1.12.4
 	github.com/luxfi/log v1.4.3
-	github.com/luxfi/zap v1.2.6
+	github.com/luxfi/zap v1.2.7
 	github.com/luxfi/zapdb v1.10.0
 	modernc.org/sqlite v1.50.0 // indirect
 )
@@ -35,16 +34,12 @@ require (
 )
 
 require (
-	github.com/dlclark/regexp2/v2 v2.2.1 // indirect
-	github.com/dop251/goja v0.0.0-20260607120635-348e6bea910d // indirect
-	github.com/evanw/esbuild v0.28.1 // indirect
-	github.com/go-sourcemap/sourcemap v2.1.4+incompatible // indirect
-	github.com/google/pprof v0.0.0-20260302011040-a15ffb7f9dcc // indirect
 	github.com/hanzoai/csqlite v0.1.0 // indirect
 	github.com/zap-proto/fiber/v3 v3.2.1 // indirect
 	github.com/zap-proto/go v1.3.0 // indirect
-	github.com/zap-proto/http v0.3.0 // indirect
-	go.opentelemetry.io/otel/sdk v1.43.0 // indirect
+	github.com/zap-proto/http v0.3.1 // indirect
+	github.com/zap-proto/mcp v1.0.5 // indirect
+	go.opentelemetry.io/otel/sdk v1.44.0 // indirect
 )
 
 require (
@@ -84,7 +79,7 @@ require (
 	github.com/luxfi/math v1.5.1 // indirect
 	github.com/luxfi/math/big v0.1.0 // indirect
 	github.com/luxfi/mdns v0.1.1 // indirect
-	github.com/luxfi/metric v1.8.1 // indirect
+	github.com/luxfi/metric v1.10.0 // indirect
 	github.com/luxfi/mock v0.1.1 // indirect
 	github.com/luxfi/protocol v0.0.2 // indirect
 	github.com/luxfi/sampler v1.1.0 // indirect
@@ -105,7 +100,7 @@ require (
 	github.com/tinylib/msgp v1.6.4 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.70.0 // indirect
-	github.com/zap-proto/zip v1.10.0
+	github.com/zap-proto/zip v1.27.2
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/otel v1.44.0 // indirect
 	go.opentelemetry.io/otel/metric v1.44.0 // indirect
