@@ -78,10 +78,10 @@ require (
 	github.com/luxfi/age v1.6.0 // indirect
 	github.com/luxfi/cache v1.3.1 // indirect
 	github.com/luxfi/constants v1.6.2 // indirect
-	github.com/luxfi/container v0.2.1 // indirect
+	github.com/luxfi/container v0.2.2 // indirect
 	github.com/luxfi/crypto v1.20.2 // indirect
 	github.com/luxfi/formatting v1.1.1 // indirect
-	github.com/luxfi/geth v1.20.1 // indirect
+	github.com/luxfi/geth v1.20.2 // indirect
 	github.com/luxfi/go-bip32 v1.1.0 // indirect
 	github.com/luxfi/go-bip39 v1.2.0 // indirect
 	github.com/luxfi/math v1.5.1 // indirect
@@ -92,7 +92,7 @@ require (
 	github.com/luxfi/protocol v0.0.2 // indirect
 	github.com/luxfi/sampler v1.1.0 // indirect
 	github.com/luxfi/tls v1.1.1 // indirect
-	github.com/luxfi/vm v1.3.1 // indirect
+	github.com/luxfi/vm v1.3.7 // indirect
 	github.com/mattn/go-colorable v0.1.15 // indirect
 	github.com/mattn/go-isatty v0.0.22 // indirect
 	github.com/miekg/dns v1.1.72 // indirect
