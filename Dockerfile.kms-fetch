@@ -32,9 +32,13 @@ COPY go.mod go.sum ./
 # Stage its go.mod/go.sum so `go mod download` can read the replaced module's
 # graph before the full source tree is copied.
 COPY sdk/go/go.mod sdk/go/go.sum ./sdk/go/
+# The GOPRIVATE/GONOSUMCHECK that used to sit here bound to `git config`, not to
+# `go mod download`, so this graph has always come through the proxy — and that
+# is why this build kept working when Dockerfile forced a direct fetch of a
+# github.com/hanzoai/cloud tag that no longer exists. Deleted rather than
+# repaired: nothing here is private, and repairing it would have moved this
+# build onto the same missing tag.
 RUN --mount=type=cache,target=/go/pkg/mod \
-    GOPRIVATE="github.com/luxfi/*,github.com/hanzoai/*" \
-    GONOSUMCHECK="github.com/luxfi/*,github.com/hanzoai/*" \
     git config --global url."https://${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/" && \
     go mod download
 
