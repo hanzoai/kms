@@ -22,7 +22,7 @@ require (
 	github.com/luxfi/kms v1.12.4
 	github.com/luxfi/log v1.4.3
 	github.com/luxfi/zap v1.2.7
-	github.com/luxfi/zapdb v1.10.0
+	github.com/luxfi/zapdb v1.10.6
 	modernc.org/sqlite v1.50.0 // indirect
 )
 
@@ -35,6 +35,9 @@ require (
 
 require (
 	github.com/hanzoai/csqlite v0.1.0 // indirect
+	github.com/hanzos3/crc64nvme v1.1.2 // indirect
+	github.com/hanzos3/go v1.0.2 // indirect
+	github.com/hanzos3/md5-simd v1.1.3 // indirect
 	github.com/zap-proto/fiber/v3 v3.2.1 // indirect
 	github.com/zap-proto/go v1.3.0 // indirect
 	github.com/zap-proto/http v0.3.1 // indirect
@@ -70,10 +73,10 @@ require (
 	github.com/luxfi/age v1.6.0 // indirect
 	github.com/luxfi/cache v1.3.1 // indirect
 	github.com/luxfi/constants v1.6.2 // indirect
-	github.com/luxfi/container v0.2.1 // indirect
+	github.com/luxfi/container v0.2.2 // indirect
 	github.com/luxfi/crypto v1.20.2 // indirect
 	github.com/luxfi/formatting v1.1.1 // indirect
-	github.com/luxfi/geth v1.20.1 // indirect
+	github.com/luxfi/geth v1.20.2 // indirect
 	github.com/luxfi/go-bip32 v1.1.0 // indirect
 	github.com/luxfi/go-bip39 v1.2.0 // indirect
 	github.com/luxfi/math v1.5.1 // indirect
@@ -84,13 +87,10 @@ require (
 	github.com/luxfi/protocol v0.0.2 // indirect
 	github.com/luxfi/sampler v1.1.0 // indirect
 	github.com/luxfi/tls v1.1.1 // indirect
-	github.com/luxfi/vm v1.3.1 // indirect
+	github.com/luxfi/vm v1.3.7 // indirect
 	github.com/mattn/go-colorable v0.1.15 // indirect
 	github.com/mattn/go-isatty v0.0.22 // indirect
 	github.com/miekg/dns v1.1.72 // indirect
-	github.com/minio/crc64nvme v1.1.1 // indirect
-	github.com/minio/md5-simd v1.1.2 // indirect
-	github.com/minio/minio-go/v7 v7.0.100 // indirect
 	github.com/mr-tron/base58 v1.3.0 // indirect
 	github.com/ncruces/go-strftime v1.0.0 // indirect
 	github.com/philhofer/fwd v1.2.0 // indirect
@@ -130,3 +130,5 @@ require (
 // falls back to a real version, never a missing one; publish sdk/go/v1.1.1 and
 // bump the require when cutting the next SDK release.
 replace github.com/hanzoai/kms/sdk/go => ./sdk/go
+
+exclude github.com/luxfi/genesis v1.5.21
