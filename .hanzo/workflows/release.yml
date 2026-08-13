@@ -95,7 +95,12 @@ jobs:
           (cd dist && shasum -a 256 "kms-${GOOS}-${GOARCH}" "kmsd-${GOOS}-${GOARCH}" \
             > "kms-${GOOS}-${GOARCH}.sha256")
 
-      - uses: actions/upload-artifact@v4
+      # v3, not v4+: this workflow runs on git.hanzo.ai, which presents as GHES.
+      # The v4 action refuses outright — "GHESNotSupportedError: @actions/artifact
+      # v2.0.0+ ... not currently supported on GHES" — so the job builds its
+      # artifact and then discards it at the last step, and reads as a build
+      # failure when the build actually succeeded.
+      - uses: actions/upload-artifact@v3
         with:
           name: binaries-${{ matrix.goos }}-${{ matrix.goarch }}
           path: dist/*
@@ -112,7 +117,12 @@ jobs:
           ref: ${{ inputs.tag || github.ref }}
           fetch-depth: 0
 
-      - uses: actions/download-artifact@v4
+      # v3, not v4+: this workflow runs on git.hanzo.ai, which presents as GHES.
+      # The v4 action refuses outright — "GHESNotSupportedError: @actions/artifact
+      # v2.0.0+ ... not currently supported on GHES" — so the job builds its
+      # artifact and then discards it at the last step, and reads as a build
+      # failure when the build actually succeeded.
+      - uses: actions/download-artifact@v3
         with:
           path: dist
           merge-multiple: true
@@ -128,7 +138,13 @@ jobs:
         with:
           tag_name: ${{ steps.version.outputs.tag }}
           name: ${{ steps.version.outputs.tag }}
-          generate_release_notes: true
+          # generate_release_notes is NOT set: it makes the action call
+          #   POST <api>/repos/<o>/<r>/releases/generate-notes
+          # which is a GitHub-only endpoint. This forge does not route it and
+          # answers Go's bare `404 page not found`, which the action surfaces
+          # verbatim as `::error::404 page not found`. Everything builds, and
+          # then the release step alone fails -- so the run reads as a release
+          # problem when it is one unsupported flag.
           files: |
             dist/kms-linux-amd64
             dist/kms-linux-arm64
@@ -168,12 +184,18 @@ jobs:
       - uses: docker/setup-qemu-action@v3
       - uses: docker/setup-buildx-action@v3
 
+      # ghcr.io wants a GitHub credential, and this job runs on a hanzo
+      # self-hosted pool -- so `secrets.GITHUB_TOKEN` is git.hanzo.ai's token,
+      # which ghcr.io has never seen (`denied: denied`). orgs/hanzoai provisions
+      # GHCR_USER + GHCR_TOKEN; naming them directly rather than through a `||`
+      # chain, because a missing org secret is "" and the fallback then swaps
+      # credentials without saying so.
       - name: Login to GHCR
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ secrets.GHCR_USER }}
+          password: ${{ secrets.GHCR_TOKEN }}
 
       - name: Build and push multi-arch image
         uses: docker/build-push-action@v6
@@ -190,9 +212,11 @@ jobs:
           build-args: |
             GO_EXPERIMENT=jsonv2
             GITHUB_TOKEN=${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
+          # Registry cache, not type=gha: git.hanzo.ai issues no Actions runtime
+          # token buildx can parse, and the exporter is configured during the
+          # solve, so type=gha fails the BUILD instead of skipping the cache.
+          cache-from: type=registry,ref=ghcr.io/hanzoai/kms:buildcache,ignore-error=true
+          cache-to: type=registry,ref=ghcr.io/hanzoai/kms:buildcache,mode=max,ignore-error=true
   notify-universe:
     name: Notify universe (auto-bump pin)
     needs: [docker]

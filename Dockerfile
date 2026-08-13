@@ -22,12 +22,24 @@ COPY go.mod go.sum ./
 # Stage its go.mod/go.sum so `go mod download` can read the replaced module's
 # graph before the full source tree is copied.
 COPY sdk/go/go.mod sdk/go/go.sum ./sdk/go/
+# NO GOPRIVATE. Nothing in this graph is private, and GOPRIVATE implies
+# GONOPROXY — it forced every luxfi and hanzoai module to come straight from a
+# git remote. github.com/hanzoai/cloud no longer carries the v0.x tags it was
+# published under (GitHub holds v1.801.31 and nothing else), so a direct fetch
+# of the v0.1.1 this module requires answers "unknown revision" and the build
+# dies here.
+#
+# The proxy still serves v0.1.1 and serves the same bytes: its zip hashes to the
+# h1: already in go.sum, which go verifies on the way in. Surviving a tag that
+# vanished upstream is the whole reason the proxy exists.
+#
+# Dockerfile.kms-fetch has fetched this graph through the proxy all along — its
+# env assignments bind to the `git config` they precede, never to `go mod
+# download` — and that is the build that stayed green while this one broke.
 RUN --mount=type=cache,target=/go/pkg/mod \
     if [ -n "${GITHUB_TOKEN}" ]; then \
       git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"; \
     fi && \
-    GOPRIVATE="github.com/luxfi/*,github.com/hanzoai/*" \
-    GONOSUMDB="github.com/luxfi/*,github.com/hanzoai/*" \
     go mod download
 
 COPY . .
