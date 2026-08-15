@@ -85,8 +85,9 @@ func TestGet_WithMockServer(t *testing.T) {
 	iam := mockIAM(t, "test-token-123")
 	defer iam.Close()
 
-	// Server: implements canonical GET /v1/kms/orgs/{org}/secrets/{path}/{name}.
-	const wantPath = "/v1/kms/orgs/hanzo/secrets/providers/alpaca/dev/api_key"
+	// Server: implements canonical GET /v1/kms/secrets/{path}/{name}. The org is
+	// not a segment — the server reads it from the credential.
+	const wantPath = "/v1/kms/secrets/providers/alpaca/dev/api_key"
 	kms := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("Authorization") != "Bearer test-token-123" {
 			http.Error(w, "unauthorized", http.StatusUnauthorized)
@@ -217,8 +218,8 @@ func TestPut_SendsCanonicalPayload(t *testing.T) {
 	if err := c.Put(context.Background(), "providers/square/dev", "access_token", "sq_abc"); err != nil {
 		t.Fatalf("Put: %v", err)
 	}
-	if gotPath != "/v1/kms/orgs/hanzo/secrets" {
-		t.Errorf("path = %q, want /v1/kms/orgs/hanzo/secrets", gotPath)
+	if gotPath != "/v1/kms/secrets" {
+		t.Errorf("path = %q, want /v1/kms/secrets", gotPath)
 	}
 	if gotBody["path"] != "providers/square/dev" || gotBody["name"] != "access_token" || gotBody["value"] != "sq_abc" {
 		t.Errorf("body = %+v, want path=providers/square/dev name=access_token value=sq_abc", gotBody)
@@ -310,8 +311,8 @@ func TestList_UsesCanonicalPath(t *testing.T) {
 	if err != nil {
 		t.Fatalf("List: %v", err)
 	}
-	if gotPath != "/v1/kms/orgs/hanzo/secrets" {
-		t.Errorf("path = %q, want /v1/kms/orgs/hanzo/secrets", gotPath)
+	if gotPath != "/v1/kms/secrets" {
+		t.Errorf("path = %q, want /v1/kms/secrets", gotPath)
 	}
 	if gotQuery != "prefix=providers%2Fsquare" {
 		t.Errorf("query = %q, want prefix=providers%%2Fsquare", gotQuery)
@@ -339,8 +340,8 @@ func TestDelete_UsesCanonicalPath(t *testing.T) {
 	if gotMethod != http.MethodDelete {
 		t.Errorf("method = %q, want DELETE", gotMethod)
 	}
-	if gotPath != "/v1/kms/orgs/hanzo/secrets/providers/square/dev/access_token" {
-		t.Errorf("path = %q, want canonical orgs path", gotPath)
+	if gotPath != "/v1/kms/secrets/providers/square/dev/access_token" {
+		t.Errorf("path = %q, want the canonical secrets path", gotPath)
 	}
 }
 
@@ -348,7 +349,7 @@ func TestSecretPath_EscapesSegments(t *testing.T) {
 	c := &Client{endpoint: "http://kms:8443", org: "liq/uid"}
 	got := c.secretPath("foo bar/baz", "k+q")
 	// Segments individually escaped; "/" preserved as separator. Org escaped once.
-	want := "http://kms:8443/v1/kms/orgs/liq%2Fuid/secrets/foo%20bar/baz/k+q"
+	want := "http://kms:8443/v1/kms/secrets/foo%20bar/baz/k+q"
 	if got != want {
 		t.Errorf("secretPath = %q, want %q", got, want)
 	}
@@ -364,8 +365,8 @@ func TestFetchEnv(t *testing.T) {
 	}
 
 	kms := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Path: /v1/kms/orgs/org/secrets/<path>/<name>
-		const prefix = "/v1/kms/orgs/org/secrets/"
+		// Path: /v1/kms/secrets/<path>/<name>
+		const prefix = "/v1/kms/secrets/"
 		if !strings.HasPrefix(r.URL.Path, prefix) {
 			http.Error(w, "nf", http.StatusNotFound)
 			return
