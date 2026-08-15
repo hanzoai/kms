@@ -217,13 +217,16 @@ func newHTTP(cfg Config, env string) (*Client, error) {
 // We dial eagerly so callers see the dial failure at construction time
 // rather than on first Get. The connection is reused for every call.
 //
-// The dial requires an AEAD session from the X25519 + ML-KEM-768 hybrid
-// handshake, and requires that session to have run ML-KEM rather than
-// X25519 alone. That is a constant here, not a setting: everything this
-// client carries is a secret, so there is no caller for whom a plaintext
-// or classical-only channel is the right answer, and a setting is a thing
-// an on-path adversary gets to influence by making the handshake fail.
-// A peer that will not agree a hybrid session does not get the request.
+// The dial agrees an X25519 + ML-KEM-768 hybrid session or it fails, and
+// a peer that answers classical-only is refused. Neither is a setting:
+// everything this client carries is a secret, so there is no caller for
+// whom a plaintext or classical-only channel is the right answer, and a
+// setting is a thing an on-path adversary gets to influence by making
+// the handshake fail.
+//
+// The session is also what the request is addressed to. Every envelope
+// names the channel it goes out on and is honoured only there, so a
+// request carried to some other peer buys that peer nothing.
 func newZAP(cfg Config, env string) (*Client, error) {
 	if cfg.Identity == nil {
 		return nil, errors.New("kmsclient: identity is required (zap transport)")
@@ -239,7 +242,6 @@ func newZAP(cfg Config, env string) (*Client, error) {
 		DefaultPath:    cfg.Org, // unused by GetAt/PutAt below; harmless
 		IdentityHeader: cfg.Identity.Header,
 		Signer:         cfg.Identity.ServiceIdentity,
-		RequireSession: true,
 	}
 	if !mdns {
 		zcfg.PeerAddr = host
@@ -388,21 +390,23 @@ func (c *Client) GetJSON(ctx context.Context, path, name string, dst any) error 
 // caller under the given prefix.
 //
 // On the HTTP path: GET /v1/kms/secrets?prefix=…
-// On the ZAP path: OpSecretList (0x0042) — names only, no path
-// information is surfaced; we prepend the requested prefix so callers
-// see identical output across transports.
+// On the ZAP path: OpSecretList (0x0042), which answers with each
+// record's own coordinate. A path prefix is a subtree root, so a result
+// can sit below it; each answer is built from the path it came back
+// with rather than the one that was asked for, or a record one segment
+// deeper would be named somewhere it is not.
 func (c *Client) List(ctx context.Context, pathPrefix string) ([]string, error) {
 	if c.transport == "zap" {
-		names, err := c.zap.ListAt(ctx, pathPrefix, c.env)
+		refs, err := c.zap.ListAt(ctx, pathPrefix, c.env)
 		if err != nil {
 			return nil, err
 		}
-		out := make([]string, 0, len(names))
-		for _, n := range names {
-			if pathPrefix != "" {
-				out = append(out, pathPrefix+"/"+n)
+		out := make([]string, 0, len(refs))
+		for _, ref := range refs {
+			if ref.Path != "" {
+				out = append(out, ref.Path+"/"+ref.Name)
 			} else {
-				out = append(out, n)
+				out = append(out, ref.Name)
 			}
 		}
 		return out, nil
