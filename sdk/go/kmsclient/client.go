@@ -289,9 +289,14 @@ func (c *Client) Close() error {
 	return nil
 }
 
-// secretPath joins org/path/name into the canonical HTTP URL:
+// secretPath joins path/name into the canonical HTTP URL:
 //
-//	{endpoint}/v1/kms/orgs/{org}/secrets/{path}/{name}
+//	{endpoint}/v1/kms/secrets/{path}/{name}
+//
+// The org is NOT a segment. The server reads it from the credential the request
+// is made with, which is the only place it can be trusted from: a segment is a
+// name the caller picks, and one identity naming another org's secrets is the
+// request this client should not be able to compose.
 func (c *Client) secretPath(path, name string) string {
 	p := strings.Trim(path, "/")
 	n := strings.Trim(name, "/")
@@ -303,9 +308,8 @@ func (c *Client) secretPath(path, name string) string {
 	for i, s := range segs {
 		segs[i] = url.PathEscape(s)
 	}
-	return fmt.Sprintf("%s/v1/kms/orgs/%s/secrets/%s",
+	return fmt.Sprintf("%s/v1/kms/secrets/%s",
 		c.endpoint,
-		url.PathEscape(c.org),
 		strings.Join(segs, "/"),
 	)
 }
@@ -320,7 +324,7 @@ func (c *Client) secretURL(path, name string) string {
 
 // Get fetches a single secret value by path and name.
 //
-// On the HTTP path: GET /v1/kms/orgs/{org}/secrets/{path}/{name}.
+// On the HTTP path: GET /v1/kms/secrets/{path}/{name}.
 // On the ZAP path: OpSecretGet (0x0040).
 func (c *Client) Get(ctx context.Context, path, name string) (string, error) {
 	if c.transport == "zap" {
@@ -383,7 +387,7 @@ func (c *Client) GetJSON(ctx context.Context, path, name string, dst any) error 
 // List returns "path/name" strings for all secrets visible to the
 // caller under the given prefix.
 //
-// On the HTTP path: GET /v1/kms/orgs/{org}/secrets?prefix=…
+// On the HTTP path: GET /v1/kms/secrets?prefix=…
 // On the ZAP path: OpSecretList (0x0042) — names only, no path
 // information is surfaced; we prepend the requested prefix so callers
 // see identical output across transports.
@@ -411,10 +415,7 @@ func (c *Client) httpList(ctx context.Context, pathPrefix string) ([]string, err
 	if err != nil {
 		return nil, fmt.Errorf("kmsclient: auth: %w", err)
 	}
-	u := fmt.Sprintf("%s/v1/kms/orgs/%s/secrets",
-		c.endpoint,
-		url.PathEscape(c.org),
-	)
+	u := c.endpoint + "/v1/kms/secrets"
 	if pathPrefix != "" {
 		u += "?prefix=" + url.QueryEscape(pathPrefix)
 	}
@@ -457,7 +458,7 @@ func (c *Client) httpList(ctx context.Context, pathPrefix string) ([]string, err
 
 // Put creates or updates a secret.
 //
-// On the HTTP path: POST /v1/kms/orgs/{org}/secrets (upsert).
+// On the HTTP path: POST /v1/kms/secrets (upsert).
 // On the ZAP path: OpSecretPut (0x0041).
 //
 // Requires admin role on the respective auth path.
@@ -473,10 +474,7 @@ func (c *Client) httpPut(ctx context.Context, path, name, value string) error {
 	if err != nil {
 		return fmt.Errorf("kmsclient: auth: %w", err)
 	}
-	u := fmt.Sprintf("%s/v1/kms/orgs/%s/secrets",
-		c.endpoint,
-		url.PathEscape(c.org),
-	)
+	u := c.endpoint + "/v1/kms/secrets"
 	// env is REQUIRED by the server on writes (no silent "default"): send
 	// c.env explicitly so the write lands in the same env-keyed record that
 	// project/env/path readers resolve. Historically this body omitted env
@@ -509,7 +507,7 @@ func (c *Client) httpPut(ctx context.Context, path, name, value string) error {
 
 // Delete removes a secret.
 //
-// On the HTTP path: DELETE /v1/kms/orgs/{org}/secrets/{path}/{name}.
+// On the HTTP path: DELETE /v1/kms/secrets/{path}/{name}.
 // On the ZAP path: OpSecretDelete (0x0043).
 func (c *Client) Delete(ctx context.Context, path, name string) error {
 	if c.transport == "zap" {
