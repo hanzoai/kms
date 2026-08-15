@@ -5,8 +5,8 @@ go 1.26.5
 require (
 	github.com/luxfi/crypto v1.20.2
 	github.com/luxfi/ids v1.3.2
-	github.com/luxfi/keys v1.4.1
-	github.com/luxfi/kms v1.11.4
+	github.com/luxfi/keys v1.4.2
+	github.com/luxfi/kms v1.12.15
 	github.com/luxfi/log v1.4.3
 	github.com/luxfi/zap v1.2.6
 	github.com/luxfi/zapdb v1.10.6

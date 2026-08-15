@@ -216,6 +216,14 @@ func newHTTP(cfg Config, env string) (*Client, error) {
 //
 // We dial eagerly so callers see the dial failure at construction time
 // rather than on first Get. The connection is reused for every call.
+//
+// The dial requires an AEAD session from the X25519 + ML-KEM-768 hybrid
+// handshake, and requires that session to have run ML-KEM rather than
+// X25519 alone. That is a constant here, not a setting: everything this
+// client carries is a secret, so there is no caller for whom a plaintext
+// or classical-only channel is the right answer, and a setting is a thing
+// an on-path adversary gets to influence by making the handshake fail.
+// A peer that will not agree a hybrid session does not get the request.
 func newZAP(cfg Config, env string) (*Client, error) {
 	if cfg.Identity == nil {
 		return nil, errors.New("kmsclient: identity is required (zap transport)")
@@ -231,6 +239,7 @@ func newZAP(cfg Config, env string) (*Client, error) {
 		DefaultPath:    cfg.Org, // unused by GetAt/PutAt below; harmless
 		IdentityHeader: cfg.Identity.Header,
 		Signer:         cfg.Identity.ServiceIdentity,
+		RequireSession: true,
 	}
 	if !mdns {
 		zcfg.PeerAddr = host
