@@ -3,10 +3,13 @@ package kmsclient
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	kms "github.com/hanzoai/kms/sdk/go"
 )
 
 func TestNew_Validation(t *testing.T) {
@@ -144,13 +147,13 @@ func TestGet_NotFound(t *testing.T) {
 	iam := mockIAM(t, "tok")
 	defer iam.Close()
 
-	kms := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+	kmsSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		http.Error(w, "not found", http.StatusNotFound)
 	}))
-	defer kms.Close()
+	defer kmsSrv.Close()
 
 	c, _ := New(Config{
-		Endpoint:     kms.URL,
+		Endpoint:     kmsSrv.URL,
 		IAMEndpoint:  iam.URL,
 		ClientID:     "id",
 		ClientSecret: "sec",
@@ -161,8 +164,39 @@ func TestGet_NotFound(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected error for missing secret")
 	}
-	if !strings.Contains(err.Error(), "not found") {
-		t.Errorf("error = %q, want substring 'not found'", err)
+	if !errors.Is(err, kms.ErrSecretNotFound) {
+		t.Errorf("error = %q, want errors.Is(err, kms.ErrSecretNotFound)", err)
+	}
+}
+
+// A store that answers but cannot serve is not an absent secret. The two carry
+// opposite instructions — fall through to another custody, or stop — so a
+// caller must be able to tell them apart by identity rather than by wording.
+// The body is echoed into the error, so a fault whose text happens to say "not
+// found" is the case that used to be misread.
+func TestGet_StoreFaultIsNotAbsence(t *testing.T) {
+	iam := mockIAM(t, "tok")
+	defer iam.Close()
+
+	kmsSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		http.Error(w, `{"error":"upstream tenant not found"}`, http.StatusInternalServerError)
+	}))
+	defer kmsSrv.Close()
+
+	c, _ := New(Config{
+		Endpoint:     kmsSrv.URL,
+		IAMEndpoint:  iam.URL,
+		ClientID:     "id",
+		ClientSecret: "sec",
+		Org:          "org",
+	})
+
+	_, err := c.Get(context.Background(), "some/path", "secret")
+	if err == nil {
+		t.Fatal("expected error for a store fault")
+	}
+	if errors.Is(err, kms.ErrSecretNotFound) {
+		t.Errorf("a 500 was classified as an absent secret: %q", err)
 	}
 }
 
