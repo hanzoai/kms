@@ -14,7 +14,9 @@ Hanzo KMS is the canonical secret store and signing service for every Hanzo depl
 
 AI agents are first-class identities: every secret carries a policy that controls whether an agent may read it — `auto-approve`, `requires-approval`, or `blocked` — with a full per-agent audit trail.
 
-All server logic lives in `luxfi/kms`. This module wires those primitives with Hanzo defaults (IAM at `hanzo.id`, encrypted-at-rest storage, S3 replication) and adds JWT verification, the audit ledger, version CAS, and header hygiene. It mounts into the unified cloud binary (`kms.Mount`) and also ships as a standalone daemon.
+All server logic lives in `luxfi/kms`. This module wires those primitives with Hanzo defaults (IAM at `hanzo.id`, encrypted-at-rest storage, S3 replication) and adds JWT verification and header hygiene. It mounts into the unified cloud binary (`kms.Mount`) and also ships as a standalone daemon.
+
+**Secrets over HTTP are served by cloud, not here.** `cloud/apps/kms` owns `/v1/kms/orgs/{org}/secrets/…` and folds the caller's org into the storage key, so one tenant's path cannot name another's record. This module keeps the ZAP secret transport (authorized by a signed consensus-authority snapshot) and makes no authorization decision of its own: IAM owns identity and permissions.
 
 ## Quick start
 
@@ -51,22 +53,22 @@ Secret: STRIPE_LIVE_KEY
 
 ## API surface
 
-Everything is served under `/v1/kms` — one canonical path per operation, no aliases, no `/api/`. Every endpoint requires a Hanzo IAM JWT (RS/ES/PS/EdDSA — never HS\*, never `none`) or an explicit admin role.
+Everything is served under `/v1/kms` — one canonical path per operation, no aliases, no `/api/`.
 
 | Group | Endpoints |
 |-------|-----------|
 | Auth | `POST /v1/kms/auth/login` — machine-identity client credentials → IAM token |
-| Secrets (per-org) | `GET / POST / PATCH / DELETE /v1/kms/orgs/{org}/secrets/…` — `env` is a first-class key component; writes require an explicit `env`; `PATCH` requires version CAS via `If-Match` |
-| MPC keys | `POST /v1/kms/keys/generate` · `/{id}/sign` · `/{id}/rotate` · `GET /v1/kms/keys` · `/v1/kms/status` — threshold BLS / round signing via `luxfi/mpc` |
-| Health | `GET /healthz` — liveness, no auth |
+| Health | `GET /healthz` · `GET /v1/kms/health` — liveness, no auth |
+| Dashboard | `GET /` — SPA (its secret views call cloud's `/v1/kms/orgs/{org}/secrets/…`) |
 
-A sub-100µs binary **ZAP** transport (default `:9999`) mirrors the HTTP surface for in-cluster callers under the identical JWT + role model. The Go client at [`sdk/go`](sdk/go) (HTTP with ZAP fallback) is what every other Hanzo service uses to fetch secrets at runtime.
+There is deliberately no secret or key endpoint on this surface, and no route reads a `roles` claim — IAM mints none, and permission is not a secret store's decision.
+
+Secrets reach this process over the sub-100µs binary **ZAP** transport (default `:9999`), which stays disabled unless a signed consensus-authority snapshot is configured. The Go client at [`sdk/go`](sdk/go) is what every other Hanzo service uses to fetch secrets at runtime; its HTTP path targets cloud.
 
 ## Storage & durability
 
 - **At rest** — ZapDB (LSM) at `$KMS_DATA_DIR`; per-secret 256-bit DEK wrapped under the master key (AES-256-GCM).
 - **Replication** — age-encrypted incremental + snapshot backups streamed to S3 (off when unset).
-- **Audit** — buffered SQLite side-table; single writer, never blocks the request path.
 
 ## Specs
 

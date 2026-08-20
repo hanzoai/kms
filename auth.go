@@ -233,23 +233,9 @@ func verifyJWT(authHeader string) (jwtClaims, error) {
 	if v, ok := mc["owner"].(string); ok {
 		c.Owner = v
 	}
-	// Roles may be []any or string — normalize to []string.
-	switch v := mc["roles"].(type) {
-	case string:
-		for _, r := range strings.Split(v, ",") {
-			if rr := strings.TrimSpace(r); rr != "" {
-				c.Roles = append(c.Roles, rr)
-			}
-		}
-	case []any:
-		for _, item := range v {
-			if s, ok := item.(string); ok {
-				if rr := strings.TrimSpace(s); rr != "" {
-					c.Roles = append(c.Roles, rr)
-				}
-			}
-		}
-	}
+	// A `roles` claim is deliberately NOT read. IAM mints no such claim,
+	// and a permission decision does not belong to a secret store — see
+	// jwtClaims (embed.go).
 
 	return c, nil
 }
@@ -394,45 +380,6 @@ func peerIP(r *http.Request) string {
 		return strings.TrimSpace(xff)
 	}
 	return r.RemoteAddr
-}
-
-// registerKeyRouteAuthGatesForTest is test-only wiring so jwt_test.go
-// can exercise F5 (key-route gating) without spinning up an MPC cluster.
-// It mounts the same authorize() gate that registerKeyRoutes uses but
-// with stub handlers that return 200. Any production caller must use
-// registerKeyRoutes (which composes authorize() + mgr handlers).
-func registerKeyRouteAuthGatesForTest(mux *http.ServeMux) {
-	adminOnly := func(next http.HandlerFunc) http.HandlerFunc {
-		return func(w http.ResponseWriter, r *http.Request) {
-			claims, ok := authorize(w, r)
-			if !ok {
-				return
-			}
-			if !claims.isAdmin() {
-				writeJSON(w, http.StatusForbidden, map[string]any{"message": "admin role required"})
-				return
-			}
-			next(w, r)
-		}
-	}
-	mux.HandleFunc("GET /v1/kms/keys", adminOnly(func(w http.ResponseWriter, r *http.Request) {
-		writeJSON(w, http.StatusOK, []string{})
-	}))
-	mux.HandleFunc("GET /v1/kms/keys/{id}", adminOnly(func(w http.ResponseWriter, r *http.Request) {
-		writeJSON(w, http.StatusOK, map[string]any{"id": r.PathValue("id")})
-	}))
-	mux.HandleFunc("POST /v1/kms/keys/generate", adminOnly(func(w http.ResponseWriter, r *http.Request) {
-		writeJSON(w, http.StatusCreated, map[string]any{"ok": true})
-	}))
-	mux.HandleFunc("POST /v1/kms/keys/{id}/sign", adminOnly(func(w http.ResponseWriter, r *http.Request) {
-		writeJSON(w, http.StatusOK, map[string]any{"sig": "test"})
-	}))
-	mux.HandleFunc("POST /v1/kms/keys/{id}/rotate", adminOnly(func(w http.ResponseWriter, r *http.Request) {
-		writeJSON(w, http.StatusOK, map[string]any{"ok": true})
-	}))
-	mux.HandleFunc("GET /v1/kms/status", adminOnly(func(w http.ResponseWriter, r *http.Request) {
-		writeJSON(w, http.StatusOK, map[string]any{"kms": "ok"})
-	}))
 }
 
 // Compile-time guard that rsa.PublicKey implements crypto.PublicKey the
