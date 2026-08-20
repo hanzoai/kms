@@ -71,19 +71,11 @@ jobs:
           GOARCH: ${{ matrix.goarch }}
           GOEXPERIMENT: jsonv2
           VERSION: ${{ steps.version.outputs.tag }}
-          # luxfi (+ hanzoai) modules are first-party/private: resolve them
-          # directly via git and skip the public checksum DB — force-moved
-          # upstream tags never match sum.golang.org. GH_PAT carries luxfi read
-          # access; the repo GITHUB_TOKEN is the fallback for public modules.
-          GOPRIVATE: github.com/luxfi/*,github.com/hanzoai/*
-          GONOSUMDB: github.com/luxfi/*,github.com/hanzoai/*
-          GH_PAT: ${{ secrets.GH_PAT }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # Every module in this graph is public and notarized, so the release
+        # binaries resolve through the module proxy and verify against
+        # sum.golang.org under the h1: hashes in go.sum — no credential, and
+        # the checksum database stays authoritative for every dependency.
         run: |
-          token="${GH_PAT:-$GITHUB_TOKEN}"
-          if [ -n "$token" ]; then
-            git config --global url."https://x-access-token:${token}@github.com/".insteadOf "https://github.com/"
-          fi
           mkdir -p dist
           go build -trimpath \
             -ldflags="-s -w -X main.version=${VERSION}" \
@@ -211,7 +203,6 @@ jobs:
             ghcr.io/hanzoai/kms:latest
           build-args: |
             GO_EXPERIMENT=jsonv2
-            GITHUB_TOKEN=${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
           # Registry cache, not type=gha: git.hanzo.ai issues no Actions runtime
           # token buildx can parse, and the exporter is configured during the
           # solve, so type=gha fails the BUILD instead of skipping the cache.
