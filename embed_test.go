@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 )
@@ -56,7 +57,6 @@ func TestEmbed(t *testing.T) {
 
 	em, err := Embed(ctx, EmbedConfig{
 		DataDir:          filepath.Join(t.TempDir(), "kms"),
-		AuditDB:          filepath.Join(t.TempDir(), "audit.db"),
 		Env:              "dev",
 		IAMEndpoint:      jwks.URL,
 		ExpectedIssuer:   jwks.URL,
@@ -101,17 +101,28 @@ func TestEmbed(t *testing.T) {
 		}
 	})
 
-	t.Run("secret_route_requires_auth", func(t *testing.T) {
-		// Sanity check: even though Env=dev tolerates missing JWT config
-		// at boot, every secret route still demands a verified bearer
-		// token at request time. Unauthenticated → 401.
-		resp, err := http.Get(srv.URL + "/v1/kms/orgs/hanzo/secrets/foo/bar")
-		if err != nil {
-			t.Fatalf("GET secrets: %v", err)
-		}
-		defer resp.Body.Close()
-		if resp.StatusCode != http.StatusUnauthorized {
-			t.Fatalf("unauthenticated GET: status %d, want 401", resp.StatusCode)
+	t.Run("no_secret_route_on_the_assembled_handler", func(t *testing.T) {
+		// The end-to-end shape of the fix: a booted Embedded serves no
+		// HTTP secret plane, so there is nothing to authorize. This runs
+		// against em.HTTPHandler() — the same handler mount.go bridges
+		// into the cloud binary — so a re-registration would fail here
+		// even if it bypassed the unit-level route assembly.
+		for _, p := range []string{
+			"/v1/kms/orgs/hanzo/secrets/foo/bar",
+			"/v1/kms/orgs/hanzo/secrets",
+			"/v1/kms/secrets/KMS_MASTER_KEY_B64",
+		} {
+			resp, err := http.Get(srv.URL + p)
+			if err != nil {
+				t.Fatalf("GET %s: %v", p, err)
+			}
+			body, _ := readBody(resp)
+			if resp.StatusCode != http.StatusNotFound {
+				t.Errorf("GET %s: status %d, want 404 (route absent)", p, resp.StatusCode)
+			}
+			if strings.Contains(body, `"value"`) || strings.Contains(body, "secretValue") {
+				t.Errorf("GET %s: returned a secret payload: %s", p, body)
+			}
 		}
 	})
 
