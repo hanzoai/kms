@@ -18,8 +18,8 @@ go 1.26.5
 // require block below (single source of truth).
 require (
 	github.com/golang-jwt/jwt/v5 v5.3.1
-	github.com/luxfi/keys v1.4.1 // indirect
-	github.com/luxfi/kms v1.12.4
+	github.com/luxfi/keys v1.4.2 // indirect
+	github.com/luxfi/kms v1.12.16
 	github.com/luxfi/log v1.4.3
 	github.com/luxfi/zap v1.2.7
 	github.com/luxfi/zapdb v1.10.6
@@ -74,8 +74,7 @@ require (
 	github.com/luxfi/cache v1.3.1 // indirect
 	github.com/luxfi/constants v1.6.2 // indirect
 	github.com/luxfi/container v0.2.2 // indirect
-	github.com/luxfi/crypto v1.20.2 // indirect
-	github.com/luxfi/formatting v1.1.1 // indirect
+	github.com/luxfi/crypto v1.20.5 // indirect
 	github.com/luxfi/geth v1.20.2 // indirect
 	github.com/luxfi/go-bip32 v1.1.0 // indirect
 	github.com/luxfi/go-bip39 v1.2.0 // indirect
@@ -84,10 +83,8 @@ require (
 	github.com/luxfi/mdns v0.1.1 // indirect
 	github.com/luxfi/metric v1.10.0 // indirect
 	github.com/luxfi/mock v0.1.1 // indirect
-	github.com/luxfi/protocol v0.0.2 // indirect
 	github.com/luxfi/sampler v1.1.0 // indirect
 	github.com/luxfi/tls v1.1.1 // indirect
-	github.com/luxfi/vm v1.3.7 // indirect
 	github.com/mattn/go-colorable v0.1.15 // indirect
 	github.com/mattn/go-isatty v0.0.22 // indirect
 	github.com/miekg/dns v1.1.72 // indirect

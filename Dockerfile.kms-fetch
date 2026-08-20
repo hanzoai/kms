@@ -4,8 +4,7 @@
 # Build:
 #   docker buildx build -f Dockerfile.kms-fetch \
 #       -t ghcr.io/hanzoai/kms-fetch:0.1.0 \
-#       --platform linux/amd64 \
-#       --build-arg GITHUB_TOKEN=... .
+#       --platform linux/amd64 .
 #
 # Use (init container in a Deployment):
 #   initContainers:
@@ -23,7 +22,6 @@
 
 FROM golang:1.26-bookworm AS build
 
-ARG GITHUB_TOKEN
 ARG TARGETARCH
 
 WORKDIR /src
@@ -32,14 +30,11 @@ COPY go.mod go.sum ./
 # Stage its go.mod/go.sum so `go mod download` can read the replaced module's
 # graph before the full source tree is copied.
 COPY sdk/go/go.mod sdk/go/go.sum ./sdk/go/
-# The GOPRIVATE/GONOSUMCHECK that used to sit here bound to `git config`, not to
-# `go mod download`, so this graph has always come through the proxy — and that
-# is why this build kept working when Dockerfile forced a direct fetch of a
-# github.com/hanzoai/cloud tag that no longer exists. Deleted rather than
-# repaired: nothing here is private, and repairing it would have moved this
-# build onto the same missing tag.
+# Every module in this graph is public. They resolve through the module proxy
+# and verify against the checksum database under the h1: hashes already in
+# go.sum, so this build carries no credential and sets no GOPRIVATE — the
+# checksum database stays authoritative for every dependency.
 RUN --mount=type=cache,target=/go/pkg/mod \
-    git config --global url."https://${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/" && \
     go mod download
 
 COPY . .
