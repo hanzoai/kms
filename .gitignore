@@ -85,3 +85,4 @@ GEMINI.md
 /kmsd
 /kms-cli
 /mpc-node/mpc-node
+.worktrees/

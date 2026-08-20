@@ -2,53 +2,38 @@ package kms
 
 import (
 	"bytes"
-	"encoding/json"
 	"net/http"
 	"net/http/httptest"
-	"os"
-	"path/filepath"
-	"strings"
 	"testing"
 
 	"github.com/golang-jwt/jwt/v5"
-	badger "github.com/luxfi/zapdb"
-
-	"github.com/luxfi/kms/pkg/store"
 )
 
-// newTestServer wires the same handlers as main() against an in-memory
-// ZapDB, so we can exercise the routing + auth without booting the binary.
+// newTestServer wires the same handlers as main() so we can exercise the
+// routing + authentication without booting the binary. registerAuthProbe
+// stands in for a route behind authorize(): the KMS HTTP surface itself
+// has no authenticated route left, because the secret plane it used to
+// gate now lives in cloud (apps/kms), org-scoped in the storage key.
 func newTestServer(t *testing.T) (*httptest.Server, func()) {
 	t.Helper()
-	dir := filepath.Join(t.TempDir(), "kms")
-	if err := os.MkdirAll(dir, 0o700); err != nil {
-		t.Fatalf("mkdir: %v", err)
-	}
-	db, err := badger.Open(badger.DefaultOptions(dir).WithLogger(nil))
-	if err != nil {
-		t.Fatalf("open: %v", err)
-	}
-	secStore := store.NewSecretStore(db)
-
 	mux := http.NewServeMux()
 	registerHealth(mux)
-	registerSecretRoutes(mux, secStore, db)
+	registerAuthProbe(mux)
 
 	srv := httptest.NewServer(methodAllowlist(stripIdentityHeaders(mux)))
-	return srv, func() { srv.Close(); db.Close() }
+	return srv, srv.Close
 }
 
 // mintToken builds a properly signed RS256 JWT using the shared test JWKS
-// keypair. Post-Red-Part-5 KMS requires full JWT verification — unsigned
-// tokens return 401. Callers that want cross-env or expired tokens should
-// use mintTestJWTSigned directly.
-func mintToken(t *testing.T, owner, sub string, roles ...string) string {
+// keypair. KMS requires full JWT verification — unsigned tokens return
+// 401. Callers that want cross-env or expired tokens should use
+// mintTestJWTSigned directly.
+//
+// There is no roles variant: KMS reads no `roles` claim, because it makes
+// no permission decision.
+func mintToken(t *testing.T, owner, sub string) string {
 	t.Helper()
-	claims := jwt.MapClaims{"owner": owner, "sub": sub}
-	if len(roles) > 0 {
-		claims["roles"] = roles
-	}
-	return mintTestJWTSigned(t, claims)
+	return mintTestJWTSigned(t, jwt.MapClaims{"owner": owner, "sub": sub})
 }
 
 func TestHealth(t *testing.T) {
@@ -64,51 +49,11 @@ func TestHealth(t *testing.T) {
 	}
 }
 
-func TestSecretRoundTrip_Canonical(t *testing.T) {
-	srv, cleanup := newTestServer(t)
-	defer cleanup()
-
-	tok := mintToken(t, "hanzo", "user-1")
-
-	body, _ := json.Marshal(map[string]string{
-		"path":  "providers/alpaca/dev",
-		"name":  "api_key",
-		"env":   "dev",
-		"value": "PK_LIVE",
-	})
-	req, _ := http.NewRequest("POST", srv.URL+"/v1/kms/orgs/hanzo/secrets", bytes.NewReader(body))
-	req.Header.Set("Authorization", "Bearer "+tok)
-	req.Header.Set("Content-Type", "application/json")
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if resp.StatusCode != 201 {
-		t.Fatalf("PUT want 201, got %d", resp.StatusCode)
-	}
-
-	req, _ = http.NewRequest("GET",
-		srv.URL+"/v1/kms/orgs/hanzo/secrets/providers/alpaca/dev/api_key?env=dev", nil)
-	req.Header.Set("Authorization", "Bearer "+tok)
-	resp, err = http.DefaultClient.Do(req)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if resp.StatusCode != 200 {
-		t.Fatalf("GET want 200, got %d", resp.StatusCode)
-	}
-	var got map[string]map[string]string
-	json.NewDecoder(resp.Body).Decode(&got)
-	if got["secret"]["value"] != "PK_LIVE" {
-		t.Fatalf("want PK_LIVE, got %q", got["secret"]["value"])
-	}
-}
-
 func TestUnauthorized(t *testing.T) {
 	srv, cleanup := newTestServer(t)
 	defer cleanup()
 
-	resp, _ := http.Get(srv.URL + "/v1/kms/orgs/hanzo/secrets/foo/bar")
+	resp, _ := http.Get(srv.URL + probePath)
 	if resp.StatusCode != 401 {
 		t.Fatalf("want 401, got %d", resp.StatusCode)
 	}
@@ -119,17 +64,15 @@ func TestStripIdentityHeaders(t *testing.T) {
 	defer cleanup()
 	tok := mintToken(t, "hanzo", "user-1")
 
-	body, _ := json.Marshal(map[string]string{
-		"path": "x", "name": "y", "env": "dev", "value": "v",
-	})
-	req, _ := http.NewRequest("POST", srv.URL+"/v1/kms/orgs/hanzo/secrets", bytes.NewReader(body))
+	req, _ := http.NewRequest("GET", srv.URL+probePath, nil)
 	req.Header.Set("Authorization", "Bearer "+tok)
 	// Canonical 3 — stripped.
 	req.Header.Set("X-User-Id", "attacker")
 	req.Header.Set("X-Org-Id", "evil-org")
 	req.Header.Set("X-Roles", "admin")
 	// Every legacy variant — stripped. If any of these survived into the
-	// handler, the request would be misauthorized as an admin in a foreign org.
+	// handler, a downstream reader could take the request for an admin in a
+	// foreign org.
 	req.Header.Set("X-Hanzo-User-Id", "attacker")
 	req.Header.Set("X-Hanzo-Org-Id", "evil-org")
 	req.Header.Set("X-Hanzo-User-Role", "superadmin")
@@ -144,139 +87,76 @@ func TestStripIdentityHeaders(t *testing.T) {
 	req.Header.Set("X-Is-Admin", "true")
 
 	resp, _ := http.DefaultClient.Do(req)
-	if resp.StatusCode != 201 {
-		t.Fatalf("PUT want 201, got %d", resp.StatusCode)
-	}
-}
-
-// --- Red-fix regression tests ---
-
-// R-01 (CRITICAL): cross-tenant read via JWT owner mismatch.
-// A token issued for org A must NOT be able to access org B's URL.
-func TestRed1_CrossTenantBlocked(t *testing.T) {
-	srv, cleanup := newTestServer(t)
-	defer cleanup()
-
-	// Org A seeds a secret.
-	tokA := mintToken(t, "org-a", "user-a")
-	body, _ := json.Marshal(map[string]string{
-		"path": "shared", "name": "key", "env": "dev", "value": "A-SECRET",
-	})
-	req, _ := http.NewRequest("POST", srv.URL+"/v1/kms/orgs/org-a/secrets", bytes.NewReader(body))
-	req.Header.Set("Authorization", "Bearer "+tokA)
-	if resp, _ := http.DefaultClient.Do(req); resp.StatusCode != 201 {
-		t.Fatalf("seed want 201, got %d", resp.StatusCode)
-	}
-
-	// Org B's token tries to read org-a's URL.
-	tokB := mintToken(t, "org-b", "user-b")
-	req, _ = http.NewRequest("GET", srv.URL+"/v1/kms/orgs/org-a/secrets/shared/key?env=dev", nil)
-	req.Header.Set("Authorization", "Bearer "+tokB)
-	resp, _ := http.DefaultClient.Do(req)
-	if resp.StatusCode != 403 {
-		t.Fatalf("cross-tenant read: want 403, got %d", resp.StatusCode)
-	}
-
-	// Cross-tenant write (POST) blocked.
-	body, _ = json.Marshal(map[string]string{"path": "shared", "name": "key", "value": "POISON"})
-	req, _ = http.NewRequest("POST", srv.URL+"/v1/kms/orgs/org-a/secrets", bytes.NewReader(body))
-	req.Header.Set("Authorization", "Bearer "+tokB)
-	resp, _ = http.DefaultClient.Do(req)
-	if resp.StatusCode != 403 {
-		t.Fatalf("cross-tenant write: want 403, got %d", resp.StatusCode)
-	}
-
-	// Super-admin bypass works.
-	tokAdmin := mintToken(t, "ops", "admin-1", "superadmin")
-	req, _ = http.NewRequest("GET", srv.URL+"/v1/kms/orgs/org-a/secrets/shared/key?env=dev", nil)
-	req.Header.Set("Authorization", "Bearer "+tokAdmin)
-	resp, _ = http.DefaultClient.Do(req)
 	if resp.StatusCode != 200 {
-		t.Fatalf("admin bypass: want 200, got %d", resp.StatusCode)
+		t.Fatalf("want 200, got %d", resp.StatusCode)
+	}
+	// The identity that reached the handler is the token's, not a header's.
+	body, _ := readBody(resp)
+	if !bytes.Contains([]byte(body), []byte(`"user-1"`)) {
+		t.Fatalf("handler saw a header-supplied identity, not the token's: %s", body)
 	}
 }
 
-// R-02 (CRITICAL): /v1/kms/secrets/{name} env-var read must require admin.
-// Without a role claim a tenant must not be able to read DEPLOYER_PRIVATE_KEY.
-func TestRed2_EnvVarReadRequiresAdmin(t *testing.T) {
+// The KMS HTTP secret plane is deleted, not gated.
+//
+// It authorized on the {org} URL segment while the ZapDB key
+// (kms/secrets/{path}/{env}/{name}) carried no org, so any authenticated
+// tenant could read AND overwrite any other tenant's record by naming it
+// in the path — and GET /v1/kms/secrets/{name} returned any process env
+// var. Both are gone; cloud (apps/kms) serves secrets over HTTP with the
+// org folded into the storage key.
+//
+// This asserts absence, so it fails if anyone re-registers the routes
+// here — including the live proof-of-concept path.
+func TestSecretHTTPPlaneIsAbsent(t *testing.T) {
 	srv, cleanup := newTestServer(t)
 	defer cleanup()
-	t.Setenv("KMS_TEST_DEPLOYER_KEY", "0xDEADBEEF")
 
-	// Tenant token — must be denied.
-	tok := mintToken(t, "hanzo", "user-1")
-	req, _ := http.NewRequest("GET", srv.URL+"/v1/kms/secrets/KMS_TEST_DEPLOYER_KEY", nil)
-	req.Header.Set("Authorization", "Bearer "+tok)
-	resp, _ := http.DefaultClient.Do(req)
-	if resp.StatusCode != 403 {
-		t.Fatalf("env read without admin: want 403, got %d", resp.StatusCode)
-	}
+	// A fully valid bearer for owner=lux. Authentication is not the
+	// control here — there is nothing to reach.
+	tok := mintToken(t, "lux", "user-lux")
 
-	// Missing auth = 401, not 200.
-	req, _ = http.NewRequest("GET", srv.URL+"/v1/kms/secrets/KMS_TEST_DEPLOYER_KEY", nil)
-	resp, _ = http.DefaultClient.Do(req)
-	if resp.StatusCode != 401 {
-		t.Fatalf("env read without auth: want 401, got %d", resp.StatusCode)
-	}
-
-	// Admin can read.
-	admin := mintToken(t, "ops", "admin", "superadmin")
-	req, _ = http.NewRequest("GET", srv.URL+"/v1/kms/secrets/KMS_TEST_DEPLOYER_KEY", nil)
-	req.Header.Set("Authorization", "Bearer "+admin)
-	resp, _ = http.DefaultClient.Do(req)
-	if resp.StatusCode != 200 {
-		t.Fatalf("env read with admin: want 200, got %d", resp.StatusCode)
-	}
-
-	// Invalid env-name (path-injection attempt) → 400.
-	req, _ = http.NewRequest("GET", srv.URL+"/v1/kms/secrets/..%2Fetc%2Fpasswd", nil)
-	req.Header.Set("Authorization", "Bearer "+admin)
-	resp, _ = http.DefaultClient.Do(req)
-	if resp.StatusCode != 400 && resp.StatusCode != 404 {
-		t.Fatalf("malicious env name: want 400/404, got %d", resp.StatusCode)
-	}
-}
-
-// R-03 (HIGH): path traversal via {rest...}.
-func TestRed3_PathTraversalBlocked(t *testing.T) {
-	srv, cleanup := newTestServer(t)
-	defer cleanup()
-	tok := mintToken(t, "hanzo", "user-1")
-
-	cases := []string{
-		"/v1/kms/orgs/hanzo/secrets/../etc/passwd",
-		"/v1/kms/orgs/hanzo/secrets/foo/..",
-		"/v1/kms/orgs/hanzo/secrets/foo//bar",
-		"/v1/kms/orgs/hanzo/secrets/foo/bar%00",
-	}
-	for _, p := range cases {
-		req, _ := http.NewRequest("GET", srv.URL+p, nil)
+	for _, tc := range []struct{ method, path string }{
+		// The live PoC: a non-admin owner=lux bearer naming hanzo's secret.
+		{"GET", "/v1/kms/orgs/lux/secrets/brand/hanzo/plivo/AUTH_TOKEN"},
+		{"GET", "/v1/kms/orgs/lux/secrets"},
+		{"POST", "/v1/kms/orgs/lux/secrets"},
+		{"PATCH", "/v1/kms/orgs/lux/secrets/brand/hanzo/plivo/AUTH_TOKEN"},
+		{"DELETE", "/v1/kms/orgs/lux/secrets/brand/hanzo/plivo/AUTH_TOKEN"},
+		// Env-var disclosure, including the master key.
+		{"GET", "/v1/kms/secrets/KMS_MASTER_KEY_B64"},
+		// Surfaces whose only gate was the roles claim IAM never mints.
+		{"GET", "/v1/kms/audit/stats"},
+		{"GET", "/v1/kms/keys"},
+		{"GET", "/v1/kms/status"},
+		{"POST", "/v1/kms/keys/generate"},
+	} {
+		req, _ := http.NewRequest(tc.method, srv.URL+tc.path, nil)
 		req.Header.Set("Authorization", "Bearer "+tok)
-		resp, _ := http.DefaultClient.Do(req)
-		if resp.StatusCode != 400 && resp.StatusCode != 404 {
-			// 404 is acceptable when net/http normalizes the path so it never
-			// reaches our handler. A traversal path may also normalize onto a
-			// legitimate route: "/secrets/foo/.." cleans (path.Clean) to
-			// "/secrets", the metadata list, which returns an empty
-			// {"secrets":[],"count":0} — no value — to the authorized caller.
-			// That is not a leak. The real threat is a get-one VALUE payload
-			// escaping via traversal, so assert no value field is present.
-			body, _ := readBody(resp)
-			if strings.Contains(body, `"value"`) || strings.Contains(body, "secretValue") {
-				t.Fatalf("%s: returned a secret value payload, status=%d body=%s", p, resp.StatusCode, body)
-			}
+		resp, err := http.DefaultClient.Do(req)
+		if err != nil {
+			t.Fatalf("%s %s: %v", tc.method, tc.path, err)
+		}
+		if resp.StatusCode != http.StatusNotFound {
+			t.Errorf("%s %s: want 404 (route absent), got %d",
+				tc.method, tc.path, resp.StatusCode)
+		}
+		body, _ := readBody(resp)
+		if bytes.Contains([]byte(body), []byte(`"value"`)) ||
+			bytes.Contains([]byte(body), []byte("secretValue")) {
+			t.Errorf("%s %s: returned a secret payload: %s", tc.method, tc.path, body)
 		}
 	}
 }
 
-// R-04 (MEDIUM): TRACE/CONNECT/OPTIONS rejected at the edge.
+// TRACE/CONNECT/OPTIONS rejected at the edge.
 func TestRed4_MethodAllowlist(t *testing.T) {
 	srv, cleanup := newTestServer(t)
 	defer cleanup()
 	tok := mintToken(t, "hanzo", "user-1")
 
 	for _, m := range []string{http.MethodTrace, http.MethodOptions} {
-		req, _ := http.NewRequest(m, srv.URL+"/v1/kms/orgs/hanzo/secrets/x/y", nil)
+		req, _ := http.NewRequest(m, srv.URL+probePath, nil)
 		req.Header.Set("Authorization", "Bearer "+tok)
 		resp, _ := http.DefaultClient.Do(req)
 		if resp.StatusCode != http.StatusMethodNotAllowed {
@@ -285,52 +165,22 @@ func TestRed4_MethodAllowlist(t *testing.T) {
 	}
 }
 
-// R-07 (LOW): POST body capped at maxBodyBytes.
+// The login proxy is the one remaining body-taking route; its body stays
+// capped at maxBodyBytes.
 func TestRed7_PostBodyCap(t *testing.T) {
-	srv, cleanup := newTestServer(t)
-	defer cleanup()
-	tok := mintToken(t, "hanzo", "user-1")
+	mux := http.NewServeMux()
+	registerAuth(mux, "http://127.0.0.1:1") // IAM unreachable: we never get that far
+	srv := httptest.NewServer(methodAllowlist(stripIdentityHeaders(mux)))
+	defer srv.Close()
 
-	// 2 MiB body — exceeds 1 MiB cap.
+	// 2 MiB body — exceeds the 1 MiB cap.
 	huge := bytes.Repeat([]byte("A"), (maxBodyBytes*2)+8)
-	req, _ := http.NewRequest("POST", srv.URL+"/v1/kms/orgs/hanzo/secrets", bytes.NewReader(huge))
-	req.Header.Set("Authorization", "Bearer "+tok)
+	req, _ := http.NewRequest("POST", srv.URL+"/v1/kms/auth/login", bytes.NewReader(huge))
 	req.Header.Set("Content-Type", "application/json")
 	resp, _ := http.DefaultClient.Do(req)
-	// Either 400 (json decode fails on truncated input) or 413; never 201.
-	if resp.StatusCode == http.StatusCreated {
+	// 400 (decode fails on truncated input) or 413; never 200.
+	if resp.StatusCode == http.StatusOK {
 		t.Fatalf("oversize body accepted: status=%d", resp.StatusCode)
-	}
-}
-
-// safePath unit coverage — the function gates everything.
-func TestSafePath(t *testing.T) {
-	good := []string{"", "foo", "foo/bar", "providers/alpaca/dev/api_key", "a-b_c.d"}
-	bad := []string{"..", "foo/..", "../etc", "foo//bar", "foo/\x00bar", "foo/$x", "foo/ bar"}
-	for _, g := range good {
-		if !safePath(g) {
-			t.Errorf("safePath(%q) want true", g)
-		}
-	}
-	for _, b := range bad {
-		if safePath(b) {
-			t.Errorf("safePath(%q) want false", b)
-		}
-	}
-}
-
-func TestSafeEnvName(t *testing.T) {
-	good := []string{"FOO", "FOO_BAR", "_X", "X1", "ats_settlement_key"}
-	bad := []string{"", "1FOO", "FOO-BAR", "FOO/BAR", "FOO BAR", "../X"}
-	for _, g := range good {
-		if !safeEnvName(g) {
-			t.Errorf("safeEnvName(%q) want true", g)
-		}
-	}
-	for _, b := range bad {
-		if safeEnvName(b) {
-			t.Errorf("safeEnvName(%q) want false", b)
-		}
 	}
 }
 

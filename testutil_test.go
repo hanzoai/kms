@@ -64,6 +64,30 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
+// probePath is the route the JWT suite authenticates against.
+const probePath = "/v1/kms/probe"
+
+// registerAuthProbe mounts a test-only route whose entire body is the
+// production authentication seam: authorize() decides, and a verified
+// bearer gets 200.
+//
+// The JWT suite used to aim at the secret CRUD routes. Those are gone —
+// authorization for secrets belongs to cloud, which folds the caller's
+// org into the storage key. The verification contract they were really
+// exercising (signature, alg allowlist, iss, aud, exp, kid) is a
+// property of authorize(), so the probe targets it directly instead of
+// through a route that no longer exists. Same assertions, no production
+// surface required to host them.
+func registerAuthProbe(mux *http.ServeMux) {
+	mux.HandleFunc("GET "+probePath, func(w http.ResponseWriter, r *http.Request) {
+		claims, ok := authorize(w, r)
+		if !ok {
+			return // authorize() already wrote 401
+		}
+		writeJSON(w, http.StatusOK, map[string]any{"sub": claims.Sub})
+	})
+}
+
 // mintTestJWTSigned produces an RS256-signed JWT using the shared test
 // keypair + kid + JWKS. Defaults iss/aud/exp/iat to the shared test
 // fixtures unless the caller overrides them.
