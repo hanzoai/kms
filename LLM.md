@@ -7,7 +7,7 @@
 The canonical secret store + threshold-signing service for every Hanzo deployment.
 A **thin Go wrapper over `github.com/luxfi/kms`** (v1.11.x) + `luxfi/mpc` — all server
 logic lives upstream; this module wires those primitives with Hanzo defaults and adds
-JWT verification, the audit ledger, version CAS, and header hygiene. The root package
+JWT verification and header hygiene. The root package
 `kms` mounts into the unified cloud binary via `kms.Mount(app, deps)` (HIP-0106) and
 also ships as the standalone `cmd/kmsd` daemon. There is **no** Node fork, **no**
 PostgreSQL, **no** Base — the legacy `internal/{handler,store,server}` tree is gone.
@@ -87,7 +87,7 @@ sdk/go/         kmsclient — Go client (HTTP + ZAP fallback) used by all servic
 frontend/       static TS dashboard (built in a separate Docker stage)
 embed.go        root pkg: server assembly, routes, embedded frontend
 auth.go jwks.go per-request JWT verify (RFC 7519) + JWKS cache
-audit.go        buffered audit ledger (SQLite side-table, never blocks the path)
+consensus.go    signed consensus-authority snapshot → ZAP authorizer (fail-closed)
 ```
 
 ## Routes — all under `/v1/kms`, no `/api/`, no aliases
@@ -96,16 +96,23 @@ audit.go        buffered audit ledger (SQLite side-table, never blocks the path)
 |--------|------|-------|
 | GET  | `/healthz` | liveness, no auth |
 | POST | `/v1/kms/auth/login` | machine-identity client creds → IAM token (proxies `POST $IAM_ENDPOINT/v1/iam/oauth/token`) |
-| GET/POST/PATCH/DELETE | `/v1/kms/orgs/{org}/secrets/{path…}/{name}?env=…` | per-org, JWT-gated (token `owner` must equal `{org}` or carry an admin role) |
-| GET  | `/v1/kms/secrets/{name}` · `/v1/kms/audit/stats` | admin-only: env-backed bootstrap fetch + auditor counters |
-| POST | `/v1/kms/keys/generate` · `/{id}/sign` · `/{id}/rotate` | MPC DKG / threshold sign / reshare (admin; only when `MPC_VAULT_ID` set) |
-| GET  | `/v1/kms/keys` · `/{id}` · `/v1/kms/status` | MPC key sets + liveness |
+| GET  | `/v1/kms/health` | liveness, no auth |
+| GET  | `/` | dashboard SPA (its secret views call cloud) |
 
-- **R-ENV (one-way env):** `env` is part of the storage key (`kms/secrets/{path}/{env}/{name}`)
-  and can never be aliased. POST/PATCH **require an explicit `env`** — omitting it is a
-  fail-loud `400`, never a silent `default`. `sdk/go` always sends `env`.
-- **POST** = upsert (bumps version). **PATCH** = update-only, **requires** version CAS
-  (`If-Match: <int>` or `body.version`): missing → 428, mismatch → 409 with current version.
+**No secret plane, no key plane, no `roles` claim.** The HTTP secret CRUD that used to live
+here authorized on the `{org}` URL segment while the ZapDB key
+(`kms/secrets/{path}/{env}/{name}`) carried no org — so any authenticated tenant could read
+and overwrite any other tenant's record by naming it in the path, and `GET
+/v1/kms/secrets/{name}` returned any process env var including the master key. Both are
+deleted, along with the `isAdmin()`/`roles` predicate that gated the env read, the audit-stats
+route, and the MPC key routes (whose only gate was that same predicate).
+
+Secrets over HTTP are `cloud/apps/kms`: `/v1/kms/orgs/{org}/secrets/…`, org folded into the
+storage key via `orgPath()` so a path cannot escape its tenant. Authorization is IAM's, per
+the architecture rule — a secret store does not invent its own. In-cluster reads use the ZAP
+transport, whose authorizer is a signed consensus-authority snapshot (`consensus.go`) and
+which stays off unless that snapshot is present. `TestSecretHTTPPlaneIsAbsent` is the
+regression guard.
 
 ## Auth contract (`auth.go`) — RFC 7519, no escape hatches
 
@@ -119,13 +126,15 @@ only the verified JWT. `methodAllowlist` rejects TRACE/CONNECT/OPTIONS at the ed
 
 ZapDB (LSM) at `$KMS_DATA_DIR`, per-secret 256-bit DEK wrapped under the master key
 (AES-256-GCM); optional volume encryption via `KMS_ENCRYPTION_KEY_B64`. Age-encrypted
-incremental + snapshot replication to S3 (`REPLICATE_S3_*`, off when unset). Audit is a
-buffered SQLite side-table (`$KMS_AUDIT_DB`). ZAP binary transport (`KMS_ZAP_PORT`, needs
-`KMS_MASTER_KEY_B64`) mirrors HTTP under the identical JWT + role model; mDNS `_kms._tcp`.
+incremental + snapshot replication to S3 (`REPLICATE_S3_*`, off when unset). ZAP binary transport (`KMS_ZAP_PORT`, needs
+`KMS_MASTER_KEY_B64`) carries the secret plane, gated by the consensus authorizer; mDNS
+`_kms._tcp`.
 
 ## Rules
 
-- One canonical path per operation; every endpoint needs an IAM JWT or admin role.
+- One canonical path per operation. This surface authorizes nothing: IAM owns identity and
+  permissions, so no route here reads a `roles` claim or compares an org. Secret
+  authorization is cloud's (`apps/kms`, org folded into the storage key).
 - All secrets encrypted at rest (envelope DEK + master key). No plaintext passwords —
   identity lives in IAM (bcrypt cost ≥ 12 there).
 - No backwards-compat shims, no "use the legacy backend" flags. Forward-only.
