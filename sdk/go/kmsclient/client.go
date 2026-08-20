@@ -53,6 +53,7 @@ import (
 	"sync"
 	"time"
 
+	kms "github.com/hanzoai/kms/sdk/go"
 	"github.com/luxfi/kms/pkg/zapclient"
 )
 
@@ -352,7 +353,7 @@ func (c *Client) httpGet(ctx context.Context, path, name string) (string, error)
 	defer resp.Body.Close()
 	body, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode == http.StatusNotFound {
-		return "", fmt.Errorf("kmsclient: secret %s/%s not found", path, name)
+		return "", fmt.Errorf("kmsclient: secret %s/%s: %w", path, name, kms.ErrSecretNotFound)
 	}
 	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf("kmsclient: status %d: %s", resp.StatusCode, body)
@@ -536,7 +537,7 @@ func (c *Client) httpDelete(ctx context.Context, path, name string) error {
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode == http.StatusNotFound {
-		return fmt.Errorf("kmsclient: secret %s/%s not found", path, name)
+		return fmt.Errorf("kmsclient: secret %s/%s: %w", path, name, kms.ErrSecretNotFound)
 	}
 	if resp.StatusCode != http.StatusNoContent && resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)

@@ -8,6 +8,8 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+
+	kms "github.com/hanzoai/kms/sdk/go"
 )
 
 // Secret is the spec-shape secret metadata (no value in list responses).
@@ -54,7 +56,7 @@ func (c *Client) ReadSecret(ctx context.Context, secretID string) (*Secret, erro
 	defer resp.Body.Close()
 	body, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode == http.StatusNotFound {
-		return nil, fmt.Errorf("kmsclient: secret %s not found", secretID)
+		return nil, fmt.Errorf("kmsclient: secret %s: %w", secretID, kms.ErrSecretNotFound)
 	}
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("kmsclient: status %d: %s", resp.StatusCode, body)
