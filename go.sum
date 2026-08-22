@@ -52,6 +52,8 @@ github.com/dgryski/go-farm v0.0.0-20240924180020-3414d57e47da h1:aIftn67I1fkbMa5
 github.com/dgryski/go-farm v0.0.0-20240924180020-3414d57e47da/go.mod h1:SqUrOPUnsFjfmXRMNPybcSiG0BgUW2AuFH8PAnS2iTw=
 github.com/dustin/go-humanize v1.0.1 h1:GzkhY7T5VNhEkwH0PVJgjz+fX1rhBrR7pRT3mDkpeCY=
 github.com/dustin/go-humanize v1.0.1/go.mod h1:Mu1zIs6XwVuF/gI1OepvI0qD18qycQx+mFykh5fBlto=
+github.com/fasthttp/websocket v1.5.12 h1:e4RGPpWW2HTbL3zV0Y/t7g0ub294LkiuXXUuTOUInlE=
+github.com/fasthttp/websocket v1.5.12/go.mod h1:I+liyL7/4moHojiOgUOIKEWm9EIxHqxZChS+aMFltyg=
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
 github.com/fsnotify/fsnotify v1.4.9/go.mod h1:znqG4EE+3YCdAaPaxE2ZRY/06pZUdp0tY4IgpuI1SZQ=
 github.com/fxamacker/cbor/v2 v2.9.1 h1:2rWm8B193Ll4VdjsJY28jxs70IdDsHRWgQYAI80+rMQ=
@@ -196,6 +198,8 @@ github.com/rogpeppe/go-internal v1.14.1 h1:UQB4HGPB6osV0SQTLymcB4TgvyWu6ZyliaW0t
 github.com/rogpeppe/go-internal v1.14.1/go.mod h1:MaRKkUm5W0goXpeCfT7UZI6fk/L7L7so1lCWt35ZSgc=
 github.com/rs/xid v1.6.0 h1:fV591PaemRlL6JfRxGDEPl69wICngIQ3shQtzfy2gxU=
 github.com/rs/xid v1.6.0/go.mod h1:7XoLgs4eV+QndskICGsho+ADou8ySMSjJKDIan90Nz0=
+github.com/savsgio/gotils v0.0.0-20240704082632-aef3928b8a38 h1:D0vL7YNisV2yqE55+q0lFuGse6U8lxlg7fYTctlT5Gc=
+github.com/savsgio/gotils v0.0.0-20240704082632-aef3928b8a38/go.mod h1:sM7Mt7uEoCeFSCBM+qBrqvEo+/9vdmj19wzp3yzUhmg=
 github.com/shamaton/msgpack/v3 v3.1.0 h1:jsk0vEAqVvvS9+fTZ5/EcQ9tz860c9pWxJ4Iwecz8gU=
 github.com/shamaton/msgpack/v3 v3.1.0/go.mod h1:DcQG8jrdrQCIxr3HlMYkiXdMhK+KfN2CitkyzsQV4uc=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
@@ -224,12 +228,12 @@ github.com/zap-proto/fiber/v3 v3.2.1 h1:k45oKyTwySPtGt8sPz2Ao8OUHc7pDEhai8Np2Ym6
 github.com/zap-proto/fiber/v3 v3.2.1/go.mod h1:eDm2z+ufJrkuE4MeX0Mea4oc/p7/HpXiZjVB+BXCKOA=
 github.com/zap-proto/go v1.3.0 h1:S3rMoawwhH/BbSZ4G8zG05hJoQnMSMDPzIq75diCTqE=
 github.com/zap-proto/go v1.3.0/go.mod h1:914SNGTH6Rv3Yu1MweWJBPEN8FZlo5C39QyhaB0C7Q0=
-github.com/zap-proto/http v0.3.1 h1:A2rCPWYCX866eAsdiWuns0dvWnBmViZtGm4pwX7jwlY=
-github.com/zap-proto/http v0.3.1/go.mod h1:UYfGhDDCetgxs65XSev8Lpf65COg5vKQK+cWwZGh4zQ=
+github.com/zap-proto/http v0.3.5 h1:ezSuUbF05jxFGpfmScBnzIVTeH1ZGhcDSm7d5yL8Byc=
+github.com/zap-proto/http v0.3.5/go.mod h1:UYfGhDDCetgxs65XSev8Lpf65COg5vKQK+cWwZGh4zQ=
 github.com/zap-proto/mcp v1.0.5 h1:1Hi0KNi4YlWW2zkQUMDK9n3jP3wZaRJ1rseMW9p9F0c=
 github.com/zap-proto/mcp v1.0.5/go.mod h1:cYOsq+33NyW4X8nUVtIs/qtezVovYazw1s0V7mrQBYA=
-github.com/zap-proto/zip v1.27.2 h1:TFFEZ+tqUX+ZNMtT7UUsctCSM/hnvDv/xLy2Opnzp4I=
-github.com/zap-proto/zip v1.27.2/go.mod h1:lzvmUHIJG3cO9r6HJ4a3Cuk4FHb3LtzWa76ef2rJW84=
+github.com/zap-proto/zip v1.34.1 h1:BRpQWyonc8PXSV80t8eyDBdWIDzjON/tZaGIIwK1yik=
+github.com/zap-proto/zip v1.34.1/go.mod h1:k0CQcj6Ro+gfNdREF3WOc9/KeXidzI0WPVnzxUjVR/s=
 go.opentelemetry.io/auto/sdk v1.2.1 h1:jXsnJ4Lmnqd11kwkBV2LgLoFMZKizbCi5fNZ/ipaZ64=
 go.opentelemetry.io/auto/sdk v1.2.1/go.mod h1:KRTj+aOaElaLi+wW1kO/DZRXwkF4C5xPbEe3ZiIhN7Y=
 go.opentelemetry.io/otel v1.44.0 h1:JjwHmHpA4iZ3wBxluu2fbbE7j4kqlE8jXyAyPXH7HqU=
