@@ -43,17 +43,48 @@ RUN --mount=type=cache,target=/go/pkg/mod \
     go build -ldflags="-s -w" -o /kmsd ./cmd/kmsd/ && \
     go build -ldflags="-s -w" -o /kms ./cmd/kms/
 
-FROM debian:bookworm-slim
+# What the scratch stage copies in place of useradd and mkdir, which it does not have.
+RUN printf 'hanzo:x:1000:1000::/data/hanzo-kms:/sbin/nologin\n' > /etc/passwd.kms && \
+    printf 'hanzo:x:1000:\n' > /etc/group.kms && \
+    mkdir -p /emptydir
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates curl && \
-    rm -rf /var/lib/apt/lists/* && \
-    groupadd --system --gid 1000 hanzo && \
-    useradd  --system --uid 1000 --gid hanzo --home-dir /data/hanzo-kms --shell /sbin/nologin hanzo
+# THE IMAGE IS THE TWO BINARIES.
+#
+# Both are CGO_ENABLED=0 and statically linked, so they take nothing from a host.
+# Debian was supplying ca-certificates (data the binary reads), an account
+# (/etc/passwd, which the kernel reads to name a uid it already enforces), and
+# curl — which existed for one line, the HEALTHCHECK.
+#
+# That matters more here than in most images. This is the service that holds the
+# estate's secrets, and a base image is the largest thing in it that nobody here
+# wrote: apt, dpkg, a shell, coreutils, glibc, each on its own upstream and its
+# own CVE feed, none of it ever executed by kmsd. A credential store should be
+# the smallest reviewable surface in the fleet, not the largest.
+#
+# The HEALTHCHECK is deleted rather than given a static curl: every deployment
+# runs under Kubernetes, whose readinessProbe and livenessProbe ask
+# /healthz from outside the container. Shipping an HTTP client inside a secret
+# store so it can ask itself a question the orchestrator already asks is a poor
+# trade.
+FROM scratch
+
+# Data, read by the binaries, executed by nothing.
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+
+# The account. scratch has no useradd, so the two files it would have written are
+# written in the builder and copied. The uid is what the kernel enforces; these
+# only let something later put a name to it.
+COPY --from=build /etc/passwd.kms /etc/passwd
+COPY --from=build /etc/group.kms /etc/group
+
+# The data directory, owned by the account, created in the builder because there
+# is no mkdir here. A mounted volume replaces it; this is what the image holds
+# when nothing is mounted.
+COPY --from=build --chown=1000:1000 /emptydir /data/hanzo-kms
 
 COPY --from=build /kmsd /usr/local/bin/kmsd
 COPY --from=build /kms  /usr/local/bin/kms
-COPY --from=frontend /src/frontend/dist /app/frontend
+COPY --from=frontend --chown=1000:1000 /src/frontend/dist /app/frontend
 
 # Hanzo defaults — the binary already defaults to these, env vars only
 # document them for operators inspecting the image.
@@ -64,13 +95,7 @@ ENV KMS_LISTEN=:8443 \
     KMS_FRONTEND_DIR=/app/frontend \
     BRAND_NAME=Hanzo
 
-RUN mkdir -p /data/hanzo-kms && chown -R hanzo:hanzo /data/hanzo-kms /app/frontend
-
-USER 1000
+USER 1000:1000
 WORKDIR /data/hanzo-kms
-
 EXPOSE 8443 9653
-HEALTHCHECK --interval=10s --timeout=3s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8443/healthz || exit 1
-
-ENTRYPOINT ["kmsd"]
+ENTRYPOINT ["/usr/local/bin/kmsd"]
