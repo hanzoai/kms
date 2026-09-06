@@ -1,0 +1,448 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{hyperref}
+\usepackage{enumitem}
+
+\newcommand{\code}[1]{\texttt{#1}}
+
+\title{Node Identity Custody in the Hanzo KMS}
+\author{Hanzo Industries}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+A Hanzo node is identified by a wallet: a secp256k1 keypair whose address names
+the node on the Hanzo settlement L1, bonds its stake, receives its work rewards,
+and indexes it in the fleet view. A key that can be copied is therefore an
+identity that can be forged and a stake that can be spent by someone else. This
+document specifies how the Hanzo KMS holds that keypair on the node's behalf:
+the key is generated inside the KMS, sealed under associated data that names the
+node and the image it is running, and returned to no caller. A node does not
+hold its key; it asks for signatures. We state precisely what the image binding
+enforces on hardware without a CPU trusted execution environment (TEE), and what
+changes when one is present. We give the wire contract the node daemon calls.
+\end{abstract}
+
+\section{Problem}
+
+A decentralized compute network has to answer four questions about a machine
+that offers it capacity, and normally answers them with four different
+identifiers: a host name for attestation, a validator key for consensus
+participation, a payment account for settlement, and an inventory row for
+operations. Four identifiers means three mappings that can disagree, and every
+disagreement is either an outage or an accounting error.
+
+Collapsing them into one wallet removes the mappings. It also concentrates
+risk: possession of that one private key is possession of the node's identity,
+its stake and its earnings. So the question the design has to answer is not
+``where do we store the key'' but ``how do we make sure nothing --- including
+the node itself --- ever possesses it.''
+
+\section{What the KMS already provides}
+
+The statements in this section are observed in the implementation at
+\code{github.com/hanzoai/kms}, which composes the primitives in
+\code{github.com/luxfi/kms}.
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Record envelope.} \code{store.Seal} draws a fresh 256-bit data
+    encryption key (DEK), encrypts the payload under AES-256-GCM with the
+    record's coordinates as associated data, and wraps the DEK under a 32-byte
+    master key. \code{store.Open} inverts it. Associated data is
+    $\mathit{path} \Vert \texttt{"/"} \Vert \mathit{name} \Vert \texttt{"/"}
+    \Vert \mathit{env}$ for the payload and $\mathit{name}$ for the DEK wrap.
+  \item \textbf{Two independent keys.} \code{KMS\_ENCRYPTION\_KEY\_B64} encrypts
+    the ZapDB volume; \code{KMS\_MASTER\_KEY\_B64} is the record master the
+    envelope above and the ZAP transport use. They are distinct, so a leaked
+    volume key alone does not open a sealed record.
+  \item \textbf{Storage.} ZapDB, an embedded log-structured store, with
+    age-encrypted incremental replication to S3 when configured.
+  \item \textbf{Identity.} Every HTTP request carries a Hanzo IAM bearer, verified
+    per request under RFC 7519 with an asymmetric algorithm allowlist. Claims
+    read: \code{iss}, \code{sub}, \code{owner} (the tenant), \code{roles}.
+  \item \textbf{Attestation vocabulary.} \code{luxfi/kms/pkg/attestation} defines
+    \code{NodeAttestation} --- CPU TEE measurement, GPU report, driver and binary
+    hashes, policy root, node identity, epoch, TEE family, I/O level --- together
+    with a composite root over their canonical serialization and a baseline
+    check. It is used today to gate release of epoch keys.
+  \item \textbf{Threshold signing.} \code{keys.Manager} delegates validator BLS and
+    Ed25519 signing to an external \code{luxfi/mpc} $t$-of-$n$ cluster; the KMS
+    holds a wallet handle rather than key material for those keys.
+\end{itemize}
+
+\section{Design}
+
+\subsection{Custody, not distribution}
+
+Node custody extends the existing store rather than introducing a second one.
+Its records live in the same ZapDB, seal under the same record master, and are
+audited through the same ledger. Two properties distinguish them.
+
+\paragraph{Disjoint keyspaces.} A node's public record is stored at
+\code{kms/nodes/\{org\}/\{address\}} and its sealed key at
+\code{kms/custody/\{org\}/\{address\}}. Neither the secret API's keyspace
+(\code{kms/secrets/}) nor an enumeration of node records can reach key material.
+The record type carries no field for key material at all, so no serialization of
+it can leak one.
+
+\paragraph{Binding through associated data.} A node's key is sealed with
+\code{store.Seal} at the coordinates
+\[
+  \mathit{path} = \texttt{"node"}, \qquad
+  \mathit{name} = \mathit{address}, \qquad
+  \mathit{env}  = \mathit{measurement},
+\]
+so the AEAD authenticates the key against the identity it is and the image it may
+be used from. The unseal path overwrites those three coordinates with the values
+the \emph{caller} presents before calling \code{store.Open}; it never reads them
+from the stored record. A mismatched measurement is therefore a GCM
+authentication failure rather than a comparison, and an edit that dropped a
+policy check would still not produce plaintext under the wrong image.
+
+\subsection{One definition of the contract}
+
+The KMS mints a signature, the node daemon carries it, and the settlement
+chain's indexer settles on it. Three programs in three repositories must agree
+on a preimage byte for byte, and a preimage reimplemented from prose is a second
+definition that can drift from the first.
+
+The statements, the wire types and the verification routine therefore live in a
+single package, \code{github.com/hanzoai/kms/sdk/go/node}, which all three
+import. It depends only on a secp256k1 and keccak-256 library: it has no store,
+no transport and no server dependency, so importing it does not pull in the KMS.
+The custody package in the server holds what the others must not --- the key,
+and the rules about when it may be used --- and constructs its digests by calling
+the same package a verifier does. There is no second implementation to drift.
+
+The client for the surface below ships alongside it in the same module, so a
+caller obtains both the calls and the checker from one import and never
+constructs a request by hand.
+
+\subsection{The signing surface is a closed set of statements}
+
+The key is a wallet, so an interface that signs caller-supplied bytes is an
+interface that spends the wallet. The KMS signs only digests it constructs
+itself, over fixed-length preimages whose first field is a purpose tag:
+\begin{align}
+  d_{\mathrm{attest}} &= H\big(H(\text{``hanzo.node.attest.v1''}) \Vert a \Vert m \Vert e \Vert H(p)\big), \label{eq:attest}\\
+  d_{\mathrm{succ}}   &= H\big(H(\text{``hanzo.node.succession.v1''}) \Vert a_{\mathrm{prev}} \Vert a_{\mathrm{next}} \Vert e\big), \label{eq:succ}
+\end{align}
+where $H$ is keccak-256, $a$ is the 20-byte signing address, $m$ the 32-byte
+measurement the key is sealed to, $e$ a 64-bit big-endian epoch, and $p$ the
+payload the node wants attested. Every field is fixed length, so the encoding is
+injective and the two purposes cannot collide.
+
+Two consequences follow. First, an Ethereum transaction hash is
+$H(\mathrm{RLP}(\mathit{tx}))$ with no such prefix, so a signature minted here
+cannot be a valid transaction signature other than by second preimage on
+keccak-256. The node key controls funds, and this interface cannot move them.
+Second, \eqref{eq:attest} always commits to the node's own address and to the
+measurement its key is sealed to; a node cannot obtain a signature that omits
+which image produced it.
+
+\subsection{Epoch monotonicity}
+
+The KMS records the last epoch it signed for an identity and refuses any epoch
+that does not exceed it. A captured signature is therefore not replayable into a
+later epoch. The epoch is an opaque unsigned 64-bit value supplied by the caller;
+the settlement chain's height is the intended source, with wall-clock seconds as
+a floor.
+
+\section{Lifecycle}
+
+\paragraph{Enrolment} mints one active identity per IAM subject per tenant. A
+repeat enrolment presenting the same measurement returns the existing record, so
+a node that restarts recovers its own address without holding any state. A
+repeat presenting a \emph{different} measurement is refused: an image that was
+not approved must not be able to walk away with a fresh wallet. Revoked and
+superseded records are excluded from this lookup, so a decommissioned node's
+operator can bring up a new identity without an administrator.
+
+\paragraph{Rotation} replaces the keypair. A wallet's private key cannot change
+while its address stays fixed, so rotation is a change of identity and has to be
+provable as one. The outgoing key signs \eqref{eq:succ} naming its successor;
+that statement is recorded on the outgoing record, where it can be read again;
+the outgoing material is then destroyed. Successor creation, succession
+recording and predecessor destruction commit in one store transaction, because
+both intermediate states are wrong --- two active identities for one subject, or
+a node with no usable key. The settlement L1 moves a stake by verifying the
+succession against the address it already knows.
+
+\paragraph{Rebinding} re-seals an existing key under a new measurement. It is
+what an image upgrade requires and the only thing that provides it: a key bound
+to one measurement stops working the moment the node boots a different image,
+which is the property the binding exists for. Rebinding requires the current
+evidence, because the key is recoverable only under it, and it is
+administrative: the new measurement asserts which image the fleet may now run,
+and a node must not make that assertion about itself.
+
+\paragraph{Revocation} ends an identity. The material is destroyed, so the
+identity cannot sign again even if the master key later leaks; the record
+survives as a tombstone, so a slashed node stays attributable in the fleet view
+and to the settlement L1. Revocation is terminal; the path back is a fresh
+enrolment.
+
+\section{Authority, and where it is decided}
+
+Custody is a library. It holds keys and enforces what is a property of a key;
+it derives no permission from a credential, and it never sees one. That division
+follows the one the secret plane already makes: this repository answers who
+signed a token, and the org-scoped HTTP plane and its authorization live in the
+cloud repository (\code{apps/kms}). The two obligations are:
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+\textbf{The serving side} & \textbf{Custody} \\
+\midrule
+verifies the bearer & takes org and subject as given \\
+derives $(\mathit{org}, \mathit{subject}, \mathit{administrator})$ from it & seals under the presented image \\
+passes org and subject in & confines an identity to its subject \\
+refuses rebind and revoke without the role & refuses a non-increasing epoch \\
+reads no tenant from the URL & keeps tenants disjoint in the keyspace \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The right column holds whether or not the left one is correct. A mount that
+forgot the role check could rebind an identity, but it could not sign as a
+node that did not enrol, produce a signature under an image the key was not
+sealed to, replay an epoch, or reach another tenant's rows --- those refusals
+are the cipher's and the store's, not a policy's.
+
+The subject binding is the one that stops a compromised node signing as its
+neighbour: a fleet credential is valid for the whole tenant, and without the
+binding any node holding one could keep a decommissioned sibling looking alive.
+It is in custody rather than in the mount precisely because it must not be
+something a serving side can forget.
+
+\code{custody/mount\_test.go} is the reference mount, written out in full and
+exercised against the real client, so the serving side has a worked example
+rather than a description.
+
+\section{What the image binding enforces}
+
+This is the part of the design whose strength depends on hardware, so we state
+it separately from the mechanism.
+
+The measurement is \code{NodeAttestation}'s \code{CpuTeeMeasurement}. On a host
+running AMD SEV-SNP or Intel TDX it is the launch measurement the CPU computes
+over the guest image and signs into an attestation report: an unforgeable
+statement of which image is running. On hardware without such a facility ---
+Apple Silicon under the Virtualization framework, and x86-64 or arm64 hosts with
+no SEV-SNP or TDX --- no report exists, and the node \emph{declares} the value:
+the digest of the microVM kernel and root filesystem it booted.
+
+\paragraph{Enforced today, on any hardware.} The private key is generated inside
+the KMS and never returned. It is sealed at rest under a master key distinct
+from the volume key. Signing is confined to \eqref{eq:attest} and
+\eqref{eq:succ}, and every signature is canonical, so a statement has one
+encoding. Epochs are strictly increasing per identity. Only the subject
+an identity was enrolled to may use it. Tenants are isolated: the tenant is part
+of every store key, and an administrator of one tenant cannot reach another's
+fleet. Revocation and rotation destroy key
+material irrecoverably. The key is usable from exactly one measurement, and a
+change of image makes every unseal and every signature fail until an
+administrator rebinds it.
+
+\paragraph{Not enforced today.} That the declared measurement is the image
+actually running. The value is chosen by the node, so the binding detects drift
+--- an image change cannot silently continue using the identity --- but it does
+not prove the image. An adversary with code execution on the host can present
+the measurement of the image it is impersonating.
+
+\paragraph{What a TEE adds, and what it does not change.} With SEV-SNP or TDX the
+same field carries a hardware-signed launch measurement, and the property
+upgrades from \emph{declared and pinned} to \emph{proven}. No other part of this
+design changes: the binding, the closed signing surface, the epoch rule, the
+lifecycle and the wire contract are identical. What has to be added is a
+verifier that checks the attestation report against the vendor's root (the
+AMD VCEK chain, or Intel's provisioning certification service) and extracts the
+measurement from the verified report.
+
+Until such a verifier is linked, an evidence submission naming a hardware TEE is
+\emph{refused}, not downgraded to declared. This is deliberate and is the
+fail-closed direction: accepting an unchecked report would let any caller mark
+its node as TEE-backed in the fleet view, which is worse than declaring nothing,
+because a reader would then treat an unverified claim as a verified one.
+
+\paragraph{On the strength of the cryptographic binding.} Because the KMS stores
+the measurement beside the record, an honest KMS could in principle unseal
+without the caller's assertion. The associated-data binding is therefore not an
+authenticity claim about the caller; it is a structural one about the code: the
+only implemented unseal path takes the measurement from the presented evidence,
+so no code path exists that can produce plaintext under a measurement nobody
+presented. When the measurement becomes hardware-attested, that same path
+becomes an authenticity claim with no change.
+
+\section{Wire contract}
+
+All paths are under \code{/v1/kms}; there is no \code{/api/} segment and no
+alias. Every request carries a Hanzo IAM bearer. Hashes and addresses are
+\code{0x}-prefixed hexadecimal; byte strings (\code{quote}, \code{payload}) are
+base64.
+
+The path carries no tenant. The server takes the org from the credential the
+request is made with and folds it into the storage key, which is what the secret
+plane does after an org in the path was measured against the live edge and found
+to reach nothing. An org in the URL would be a second answer to a question the
+bearer already settles, and the two could disagree.
+
+\begin{longtable}{p{0.06\textwidth}p{0.40\textwidth}p{0.46\textwidth}}
+\toprule
+\textbf{Verb} & \textbf{Path} & \textbf{Meaning} \\
+\midrule
+\endhead
+POST   & \code{/v1/kms/nodes}                    & enrol; 201 new, 200 existing \\
+GET    & \code{/v1/kms/nodes}                    & the tenant's fleet, by wallet \\
+GET    & \code{/v1/kms/nodes/\{address\}}        & one identity \\
+POST   & \code{/v1/kms/nodes/\{address\}/sign}   & one attestation signature \\
+POST   & \code{/v1/kms/nodes/\{address\}/rotate} & successor plus signed succession \\
+POST   & \code{/v1/kms/nodes/\{address\}/rebind} & re-seal under a new image (admin) \\
+POST   & \code{/v1/kms/nodes/\{address\}/revoke} & destroy the key (admin) \\
+\bottomrule
+\end{longtable}
+
+\paragraph{Evidence} is the object every request that touches key material
+carries:
+\begin{verbatim}
+{ "tee": "none", "measurement": "0x<32 bytes>", "quote": "<base64>" }
+\end{verbatim}
+\code{tee} is one of \code{none}, \code{sev-snp}, \code{tdx}, \code{sgx}; empty
+reads as \code{none}. \code{quote} is the hardware report and is present only
+with a hardware family; supplying one under \code{none} is a contradiction and
+is refused.
+
+\paragraph{Bodies.}
+\begin{itemize}[leftmargin=*]
+  \item enrol: \code{\{"evidence": E\}}
+  \item sign: \code{\{"evidence": E, "epoch": u64, "payload": base64\}}
+  \item rotate: \code{\{"evidence": E, "epoch": u64\}}
+  \item rebind: \code{\{"from": E, "to": E\}}
+  \item revoke: \code{\{"reason": string\}}
+\end{itemize}
+
+\paragraph{Record} is what enrol, read, rebind and revoke return: \code{address},
+\code{org}, \code{subject}, \code{public\_key}, \code{measurement}, \code{tee},
+\code{attested}, \code{status} (\code{active}, \code{superseded},
+\code{revoked}), \code{epoch}, \code{prev}, \code{next}, \code{succession},
+\code{reason}, \code{created\_at}, \code{updated\_at}.
+
+\paragraph{Receipt} is what sign returns: \code{address}, \code{measurement},
+\code{epoch}, \code{digest}, and \code{signature} --- 65 bytes, $r \Vert s \Vert
+v$ with $v \in \{0,1\}$, so \code{ecrecover} yields the signing address directly.
+It carries the measurement so a verifier learns which image signed without a
+second lookup, and it does \emph{not} carry the payload: the verifier already
+holds the bytes it wants checked, and echoing them back would invite checking
+against the server's copy rather than its own.
+
+Verification recomputes \eqref{eq:attest} from the receipt's fields and the
+caller's payload, requires the result to equal the stated \code{digest}, and
+requires the recovered address to equal the stated \code{address}. Both halves
+are necessary: checking the signature against the stated digest alone would
+establish only that some node signed something.
+
+\paragraph{Canonical signatures.} A recovered signature is accepted only in
+canonical form: $v \in \{0,1\}$, $r$ and $s$ in range, and $s$ in the lower half
+of the group order. secp256k1 admits $(r,s)$ and $(r, n-s)$ as signatures by the
+same key over the same digest, so without this rule one statement has two valid
+encodings and a verifier that deduplicates by signature bytes can be shown the
+same statement twice. The signer never produces the high-$s$ form, so rejecting
+it costs nothing.
+
+\paragraph{Status codes.} 401 no or invalid bearer; 403 wrong tenant, wrong
+subject, or an administrative operation attempted without the role; 404 unknown
+identity; 409 measurement drift, non-increasing epoch, or an identity that is not
+active; 410 key material destroyed; 400 malformed input, including an evidence
+submission naming a TEE for which no verifier is linked.
+
+\section{What the node daemon calls}
+
+The daemon imports \code{github.com/hanzoai/kms/sdk/go/kmsclient} and configures
+it for HTTP with its own IAM machine credentials. The node surface is HTTP only:
+a node asks for its identity before it has joined the cluster, so the in-cluster
+binary transport is not yet reachable to it, and a client configured for that
+transport is refused rather than left to fail later.
+
+\begin{verbatim}
+c, _ := kmsclient.New(kmsclient.Config{
+        Endpoint: "https://api.hanzo.ai", IAMEndpoint: "https://hanzo.id",
+        ClientID: ..., ClientSecret: ..., Org: "hanzo"})
+// Org configures the secret calls' paths; the node calls do not use it,
+// because the server reads the tenant from the credential.
+
+ev := node.Declare(measurement)               // no CPU TEE: declared digest
+rec, created, err := c.Enroll(ctx, ev)        // idempotent per IAM subject
+receipt, err := c.Sign(ctx, rec.Address, ev, epoch, report)
+err = receipt.Verify(report)                  // anyone can run this
+next, handover, err := c.Rotate(ctx, rec.Address, ev, epoch)
+rec, err = c.Rebind(ctx, addr, from, to)      // administrator
+rec, err = c.Revoke(ctx, addr, reason)        // administrator
+fleet, err := c.Fleet(ctx)                    // the tenant's nodes by wallet
+\end{verbatim}
+
+Every refusal arrives as a \code{*kmsclient.Failure} carrying the status, so a
+daemon branches on the distinction the surface draws --- 409 for a measurement
+that no longer matches the sealed image or an epoch that did not advance, 403 for
+a credential that does not own the identity, 410 for material already destroyed
+--- rather than on message text.
+
+Two obligations fall on the caller. Each node needs its own IAM machine
+identity, because the subject binding is what confines a node to its own key;
+a credential shared across a fleet collapses the fleet onto one wallet. And the
+epoch must strictly increase per identity, which is what makes a captured
+receipt unreplayable; the settlement chain's height is the intended source.
+
+\section{Assumptions and limitations}
+
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{The KMS is trusted.} It holds every node key in the fleet. Its
+    compromise is a fleet compromise. Node identity keys are deliberately not
+    threshold-held: a $t$-of-$n$ ring signing every node's boot report would make
+    node liveness depend on ring liveness, and the threat this design addresses
+    is copying of a per-node key rather than misuse of a systemic one. Keys whose
+    compromise is systemic --- the settlement L1's own validators --- stay in the
+    existing MPC path.
+  \item \textbf{Each node needs its own IAM machine identity.} The subject
+    binding is what confines a node to its own key. A credential shared across a
+    fleet degrades the guarantee to ``any node in this tenant may sign as any
+    other node in this tenant.''
+  \item \textbf{No approved-measurement set is enforced.} Enrolment pins whatever
+    measurement is first presented; rebinding requires an administrator. There is
+    no per-tenant baseline of measurements the KMS will accept. Where the fleet's
+    approved images should be enumerated --- here, in the staking contract, or in
+    the operator's declared state --- is an open question, not an oversight.
+  \item \textbf{Epoch source.} Monotonicity is enforced; the meaning of the
+    epoch is the caller's. Two nodes may use unrelated epoch scales without the
+    KMS noticing.
+  \item \textbf{Zeroing is best effort.} Byte buffers holding a private scalar are
+    overwritten after use. The big-integer representation inside the reconstructed
+    key cannot be wiped in place, so the copy's lifetime is bounded rather than
+    its existence eliminated.
+\end{enumerate}
+
+\section{Next steps}
+
+\begin{enumerate}[leftmargin=*]
+  \item A verifier for SEV-SNP and TDX reports, checking the vendor certificate
+    chain and extracting the measurement from the verified report. This is the
+    one change that moves the image binding from declared to proven.
+  \item An approved-measurement set per tenant, so an enrolment or a rebinding
+    can be checked against the images the fleet is allowed to run rather than
+    against an administrator's assertion alone.
+  \item An on-chain verifier for \eqref{eq:attest} and \eqref{eq:succ}, so
+    registration, attestation freshness and stake succession are checked by the
+    settlement L1 rather than off chain. The digests and the recovery rule are
+    already shared as a library; what remains is the contract that reads them,
+    and a decision on where the epoch comes from so that freshness means the
+    same thing to every node.
+\end{enumerate}
+
+\end{document}

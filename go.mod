@@ -26,7 +26,7 @@ require (
 )
 
 require (
-	github.com/hanzoai/kms/sdk/go v1.1.0
+	github.com/hanzoai/kms/sdk/go v1.1.6
 	github.com/luxfi/ids v1.3.2
 	github.com/luxfi/trace v1.3.0
 )
@@ -116,8 +116,9 @@ require (
 // with the server. Build the in-tree copy so cmd/kms and cmd/kms-fetch pick up
 // the fix that sends env explicitly on the HTTP path (see sdk/go/kmsclient).
 // The require above stays at the last published tag so dropping this replace
-// falls back to a real version, never a missing one; publish sdk/go/v1.1.1 and
-// bump the require when cutting the next SDK release.
+// falls back to a real version, never a missing one; publish the sdk/go tag and
+// bump the require when cutting the next SDK release. It is v1.1.6 here because
+// custody imports sdk/go/node, which first appears in that tag.
 replace github.com/hanzoai/kms/sdk/go => ./sdk/go
 
 exclude github.com/luxfi/genesis v1.5.21
