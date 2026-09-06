@@ -85,11 +85,55 @@ cmd/kms/        admin CLI
 cmd/kms-fetch/  one-shot bootstrap fetch (see Dockerfile.kms-fetch)
 cmd/smoke-zap/  ZAP transport smoke test
 sdk/go/         kmsclient — Go client (HTTP + ZAP fallback) used by all services
+sdk/go/node/    node identity protocol: statements, wire types, verification
 frontend/       static TS dashboard (built in a separate Docker stage)
 embed.go        root pkg: server assembly, routes, embedded frontend
 auth.go jwks.go per-request JWT verify (RFC 7519) + JWKS cache
-audit.go        buffered audit ledger (SQLite side-table, never blocks the path)
+custody/        node identity keypairs held for nodes: seal, sign, rotate, revoke
+docs/custody.tex  the spec the node daemon is written against
 ```
+
+## Node identity custody (`custody/`) — spec: `docs/custody.tex`
+
+A Hanzo node is named by a **wallet**: a secp256k1 keypair whose address is its
+identity on the settlement L1, the account it stakes from and is paid to, and the
+row the fleet view lists it under. The KMS generates that key, seals it, and
+returns it to nobody — a node asks for signatures instead of holding a key.
+
+`custody` is a **library**, not a surface. It holds keys and enforces what is a
+property of a key; it derives no permission from a credential and never sees one.
+The org-scoped HTTP plane and its authorization live in cloud (`apps/kms`), the
+same place the secret plane moved to. `custody/mount_test.go` is the reference
+mount, written out in full and exercised against the real client.
+
+- **Keyspaces are disjoint.** Record at `kms/nodes/{org}/{address}`, sealed key at
+  `kms/custody/{org}/{address}`. Neither the secret keyspace nor an enumeration of
+  node records can reach material; `node.Record` has no field for it.
+- **The image binding is the cipher, not a check.** The key is sealed with
+  `store.Seal` at `path="node"`, `name=address`, `env=measurement`, and unseal
+  overwrites all three with what the CALLER presents. A wrong measurement is a GCM
+  authentication failure. Seals under `KMS_MASTER_KEY_B64` (the record master),
+  never the volume key.
+- **Signing is a closed set.** `keccak256(H(tag) ‖ address ‖ measurement ‖ epoch ‖
+  H(payload))` for attestation, and a succession tag for rotation. Fixed-length
+  fields, so no digest here can be an RLP transaction hash: the wallet cannot be
+  spent through this surface. Epochs must strictly increase per identity, and
+  signatures are canonical (low-s), so one statement has one encoding.
+- **The contract has one definition.** `sdk/go/node` holds the statements, wire
+  types and verification — no store, transport or server dependency — and the KMS,
+  hanzod and the chain indexer all import it; `custody` builds its digests by
+  calling the same package a verifier does. Callers reach the surface through
+  `sdk/go/kmsclient` (`Enroll`/`Sign`/`Rotate`/`Rebind`/`Revoke`/`Fleet`/`Node`)
+  and refusals arrive as `*kmsclient.Failure` carrying the status.
+- **Verify against what you expect.** `Receipt.Verify(payload)` takes the payload
+  the caller holds rather than one the server echoed — a receipt carries the
+  measurement it attests but never the payload. `Handover.Verify()` is
+  self-contained. Paths carry no tenant: the server reads it from the credential.
+- **TEE.** The measurement is `attestation.NodeAttestation.CpuTeeMeasurement`. With
+  SEV-SNP/TDX it is a hardware launch measurement; on this fleet's hardware the node
+  DECLARES it. Declared evidence records `attested: false` and still pins the key to
+  one image. A claim of a hardware TEE with no linked verifier is REFUSED (400), not
+  downgraded — recording "attested" on a claim would make the fleet view a lie.
 
 ## Routes — all under `/v1/kms`, no `/api/`, no aliases
 
