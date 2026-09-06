@@ -32,10 +32,12 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"sync"
 	"time"
 
 	badger "github.com/luxfi/zapdb"
 
+	"github.com/hanzoai/kms/custody"
 	"github.com/luxfi/kms/pkg/store"
 	"github.com/luxfi/kms/pkg/zapserver"
 	"github.com/luxfi/log"
@@ -118,6 +120,13 @@ type Embedded struct {
 	db         *badger.DB
 	replicator *badger.Replicator
 	zapNode    *zap.Node // nil when ZAP server disabled
+
+	// Node identity custody, built on first use. One store per Embedded, because
+	// the store's lock is what serializes the read-modify-write paths; a second
+	// store over the same database would let two rotations interleave.
+	custodyOnce  sync.Once
+	custodyStore *custody.Store
+	custodyErr   error
 }
 
 // Embed boots the Hanzo KMS server in-process and returns a handle.

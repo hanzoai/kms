@@ -106,6 +106,11 @@ The org-scoped HTTP plane and its authorization live in cloud (`apps/kms`), the
 same place the secret plane moved to. `custody/mount_test.go` is the reference
 mount, written out in full and exercised against the real client.
 
+`(*Embedded).Custody()` (`custody.go`) is the one way to reach the store: it hands
+out the store, never the database it lives in and never the master key, and
+refuses when `KMS_MASTER_KEY_B64` is absent or malformed — a custody surface that
+cannot seal must refuse rather than degrade.
+
 - **Keyspaces are disjoint.** Record at `kms/nodes/{org}/{address}`, sealed key at
   `kms/custody/{org}/{address}`. Neither the secret keyspace nor an enumeration of
   node records can reach material; `node.Record` has no field for it.
