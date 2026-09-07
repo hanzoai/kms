@@ -40,13 +40,13 @@ jobs:
             runner: hanzo-build-linux-amd64
           - goos: linux
             goarch: arm64
-            runner: ubuntu-24.04-arm
+            runner: hanzo-build-linux-arm64
           - goos: darwin
             goarch: amd64
-            runner: macos-14
+            runner: hanzo-build-macos-arm64
           - goos: darwin
             goarch: arm64
-            runner: macos-14
+            runner: hanzo-build-macos-arm64
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v4
