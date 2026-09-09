@@ -27,7 +27,7 @@ jobs:
       image: ghcr.io/hanzoai/kms
       # arm64 paused — DOKS has no arm64 droplets (catalog is amd64
       # Intel/AMD only). Re-enable `linux/amd64,linux/arm64` when DO
-      # ships arm64 instances and the `hanzo-build-linux-arm64` ARC
+      # ships arm64 instances and the `linux-arm64` ARC
       # scale set is reinstalled on hanzo-k8s.
       platforms: linux/amd64
     secrets: inherit
