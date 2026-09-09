@@ -37,16 +37,16 @@ jobs:
         include:
           - goos: linux
             goarch: amd64
-            runner: hanzo-build-linux-amd64
+            runner: linux-amd64
           - goos: linux
             goarch: arm64
-            runner: hanzo-build-linux-arm64
+            runner: linux-arm64
           - goos: darwin
             goarch: amd64
-            runner: hanzo-build-macos-arm64
+            runner: macos-arm64
           - goos: darwin
             goarch: arm64
-            runner: hanzo-build-macos-arm64
+            runner: macos-arm64
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v4
@@ -102,7 +102,7 @@ jobs:
   github-release:
     name: GitHub Release
     needs: [binaries]
-    runs-on: [hanzo-build-linux-amd64]
+    runs-on: [linux-amd64]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -156,7 +156,7 @@ jobs:
   docker:
     name: Multi-arch Docker (ghcr.io/hanzoai/kms)
     needs: [binaries]
-    runs-on: [hanzo-build-linux-amd64]
+    runs-on: [linux-amd64]
     permissions:
       contents: read
       packages: write
@@ -211,7 +211,7 @@ jobs:
   notify-universe:
     name: Notify universe (auto-bump pin)
     needs: [docker]
-    runs-on: [hanzo-build-linux-amd64]
+    runs-on: [linux-amd64]
     if: github.repository == 'hanzoai/kms'
     continue-on-error: true
     steps:
