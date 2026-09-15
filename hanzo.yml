@@ -1,0 +1,24 @@
+# Read by hanzoai/ci build.yml@v1 (.hanzo/workflows/cicd.yml) on the forge.
+
+test:
+  - name: go
+    run: go test ./...
+  - name: console
+    run: cd frontend && pnpm install --frozen-lockfile && pnpm test && pnpm typecheck
+
+images:
+  - name: kms
+    context: .
+    dockerfile: Dockerfile
+    repo: ghcr.io/hanzoai/kms
+  - name: kms-fetch
+    context: .
+    dockerfile: Dockerfile.kms-fetch
+    repo: ghcr.io/hanzoai/kms-fetch
+
+# The console at kms.hanzo.ai: s3://hanzo-sites/hanzo/kms.
+site:
+  slug: kms
+  dir: frontend/dist
+  build: cd frontend && pnpm install --frozen-lockfile && pnpm build
+  on: [main]
