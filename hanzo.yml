@@ -6,15 +6,19 @@ test:
   - name: console
     run: cd frontend && pnpm install --frozen-lockfile && pnpm test && pnpm typecheck
 
+# Each image states its version: the next patch after the newest tag published
+# to its repository, so a build never lands on a tag that already names bytes.
 images:
   - name: kms
     context: .
     dockerfile: Dockerfile
     repo: ghcr.io/hanzoai/kms
+    version: 2.6.8
   - name: kms-fetch
     context: .
     dockerfile: Dockerfile.kms-fetch
     repo: ghcr.io/hanzoai/kms-fetch
+    version: 0.1.1
 
 # The console at kms.hanzo.ai: s3://hanzo-sites/hanzo/kms.
 site:
