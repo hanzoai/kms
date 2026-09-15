@@ -1,15 +1,5 @@
-# Hanzo KMS — thin wrapper over luxfi/kms.
-#
-# Build is now pure Go (no SQLCipher, no Base, no TS frontend toolchain
-# required). The TS dashboard ships as a static asset built in a separate
-# stage and copied verbatim.
-
-FROM ghcr.io/hanzoai/nodejs:v24.18.0 AS frontend
-WORKDIR /src/frontend
-COPY frontend/package.json frontend/pnpm-lock.yaml ./
-RUN corepack enable pnpm && pnpm install --frozen-lockfile
-COPY frontend/ .
-RUN pnpm build
+# Hanzo KMS: a thin wrapper over luxfi/kms, built in pure Go. The console in
+# frontend/ is a static site published on its own and is not part of this image.
 
 FROM golang:1.26-bookworm AS build
 
@@ -84,7 +74,6 @@ COPY --from=build --chown=1000:1000 /emptydir /data/hanzo-kms
 
 COPY --from=build /kmsd /usr/local/bin/kmsd
 COPY --from=build /kms  /usr/local/bin/kms
-COPY --from=frontend --chown=1000:1000 /src/frontend/dist /app/frontend
 
 # Hanzo defaults — the binary already defaults to these, env vars only
 # document them for operators inspecting the image.
@@ -92,7 +81,6 @@ ENV KMS_LISTEN=:8443 \
     KMS_ZAP_PORT=9653 \
     KMS_DATA_DIR=/data/hanzo-kms \
     KMS_NODE_ID=hanzo-kms-0 \
-    KMS_FRONTEND_DIR=/app/frontend \
     BRAND_NAME=Hanzo
 
 USER 1000:1000

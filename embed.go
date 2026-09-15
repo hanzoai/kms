@@ -11,15 +11,16 @@
 // (consensus.go) and which is disabled unless that snapshot is present.
 //
 // There is no HTTP secret plane here. Secret reads and writes over HTTP
-// are served by cloud (apps/kms) on /v1/kms/orgs/{org}/secrets, which
-// folds the caller's org into the storage key so one tenant's path
-// cannot name another's record. This package therefore makes no
-// authorization decision at all: IAM owns identity and permissions, and
-// verifyJWT answers only "who signed this token".
+// are served by cloud (apps/kms) on /v1/kms/secrets, which takes the
+// org from the caller's token and folds it into the storage key, so one
+// tenant's path cannot name another's record. This package therefore
+// makes no authorization decision at all: IAM owns identity and
+// permissions, and verifyJWT answers only "who signed this token".
 //
-// The HTTP surface is health, the IAM client-credentials login proxy,
-// and the dashboard SPA. embed.go owns that route assembly plus the
-// transport wiring, and exposes Embed(ctx, cfg) (*Embedded, error).
+// The HTTP surface is health and the IAM client-credentials login proxy.
+// The console is a static site (frontend/) that calls cloud. embed.go
+// owns the route assembly plus the transport wiring, and exposes
+// Embed(ctx, cfg) (*Embedded, error).
 package kms
 
 import (
@@ -192,15 +193,6 @@ func Embed(ctx context.Context, cfg EmbedConfig) (*Embedded, error) {
 	mux := http.NewServeMux()
 	registerHealth(mux)
 	registerAuth(mux, cfg.IAMEndpoint)
-
-	// Frontend SPA. The Dockerfile builds frontend/ → /app/frontend and
-	// sets KMS_FRONTEND_DIR. When the env var resolves to a directory
-	// containing index.html, register a catch-all handler at "/" that
-	// serves static assets directly and falls back to index.html for
-	// SPA client-side routes (/login, /dashboard, etc.). Anything that
-	// hits an API path (/healthz, /v1/kms/**) takes the more-specific
-	// route registered above; the SPA only fires on the catch-all.
-	registerFrontend(mux)
 
 	em.mux = mux
 	em.handler = methodAllowlist(stripIdentityHeaders(mux))
@@ -694,81 +686,4 @@ func (zapdbLogger) Infof(format string, args ...interface{}) {
 }
 func (zapdbLogger) Debugf(format string, args ...interface{}) {
 	log.Debug(fmt.Sprintf(format, args...))
-}
-
-// registerFrontend adds a catch-all `/` handler that serves the React
-// SPA from KMS_FRONTEND_DIR (set by the Dockerfile to /app/frontend).
-//
-// The mux is already populated with explicit API routes (/healthz,
-// /v1/kms/**, /v1/mpc/**) — those take precedence because Go's
-// ServeMux longest-match-wins rule fires the more-specific pattern
-// before this one.
-//
-// Static assets resolve directly from disk. Anything else (e.g.
-// /login, /dashboard) returns index.html so the React Router can
-// handle client-side routing without a server round-trip.
-//
-// If KMS_FRONTEND_DIR is unset OR doesn't contain index.html, the
-// handler returns a tiny JSON status object — preserves the
-// "no UI here, but the service is alive" signal we used to get
-// from the bare 404 without surprising operators.
-func registerFrontend(mux *http.ServeMux) {
-	dir := strings.TrimSpace(os.Getenv("KMS_FRONTEND_DIR"))
-	indexPath := ""
-	if dir != "" {
-		candidate := dir + "/index.html"
-		if _, err := os.Stat(candidate); err == nil {
-			indexPath = candidate
-		}
-	}
-
-	if indexPath == "" {
-		// Fallback: tiny JSON service banner for when the SPA isn't bundled.
-		mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-			if r.URL.Path != "/" {
-				http.NotFound(w, r)
-				return
-			}
-			w.Header().Set("Content-Type", "application/json")
-			_ = json.NewEncoder(w).Encode(map[string]string{
-				"service": "kms",
-				"version": Version,
-				"status":  "ok",
-				"docs":    "/v1/kms",
-			})
-		})
-		return
-	}
-
-	fileServer := http.FileServer(http.Dir(dir))
-	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		// API paths starting with /v1/ or /healthz never reach here —
-		// ServeMux fires the more-specific handler first. Defense in
-		// depth: bail out if the path looks like an API route.
-		//
-		// /api/ is explicitly 404'd: this service has ZERO /api/ surface
-		// (the ONE canonical prefix is /v1/kms). Without this guard the SPA
-		// fallback below would answer GET /api/v1/... with index.html (200),
-		// masquerading as a live legacy /api/ backend. There is no /api/;
-		// make that unambiguous at the wire.
-		if strings.HasPrefix(r.URL.Path, "/v1/") ||
-			strings.HasPrefix(r.URL.Path, "/api/") || r.URL.Path == "/api" ||
-			r.URL.Path == "/healthz" || r.URL.Path == "/health" {
-			http.NotFound(w, r)
-			return
-		}
-		// SPA fallback: serve index.html for any path that isn't a
-		// concrete file on disk. This is the standard React Router
-		// pattern (matches Vite's default dev-server behaviour).
-		clean := strings.TrimPrefix(r.URL.Path, "/")
-		if clean == "" {
-			http.ServeFile(w, r, indexPath)
-			return
-		}
-		if _, err := os.Stat(dir + "/" + clean); err != nil {
-			http.ServeFile(w, r, indexPath)
-			return
-		}
-		fileServer.ServeHTTP(w, r)
-	})
 }

@@ -1,11 +1,10 @@
 # Build artifacts and dependencies
-backend/node_modules
-frontend/node_modules
-backend/frontend-build
 **/node_modules
 **/.next
 **/dist
-!frontend/dist
+
+# The console is a static site, built and published outside this image
+frontend
 
 # Docker files
 .dockerignore

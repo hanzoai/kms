@@ -1,175 +1,115 @@
-import { useEffect, useState } from 'react'
-import { Router, Route, Switch } from 'wouter'
-import { useHashLocation } from 'wouter/use-hash-location'
-import { decodeToken, getOrg, getToken, setOrg, setToken } from '@/lib/api'
-import { AdminShell, type NavSection } from '@/components/AdminShell'
-import { Badge, Button } from '@/components/Button'
-import { LoginPage } from '@/pages/Login'
+import { useEffect, useState, type ReactNode } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { Link, Route, Switch, useLocation } from 'wouter'
+import { fetchConfig } from '@/lib/api'
+import type { Config } from '@/lib/kms'
+import { callbackPath, configure, finishSignIn, signIn, signOut, signedIn, who } from '@/lib/session'
+import { Shell } from '@/components/Shell'
+import { Button, Card, Notice } from '@/components/ui'
 import { SecretsPage } from '@/pages/Secrets'
-import { KeysPage } from '@/pages/Keys'
-import { AuditPage } from '@/pages/Audit'
 import { StatusPage } from '@/pages/Status'
-import { EndpointGap } from '@/pages/EndpointGap'
 
-const sections: NavSection[] = [
-  {
-    title: 'Secrets',
-    items: [{ href: '/', label: 'Browser' }],
-  },
-  {
-    title: 'Cryptography',
-    items: [
-      { href: '/keys', label: 'MPC keys' },
-      { href: '/certificates', label: 'Certificates' },
-    ],
-  },
-  {
-    title: 'Identity',
-    items: [
-      { href: '/identities', label: 'Identities' },
-      { href: '/projects', label: 'Projects' },
-      { href: '/workspaces', label: 'Workspaces' },
-      { href: '/integrations', label: 'Integrations' },
-    ],
-  },
-  {
-    title: 'Observability',
-    items: [
-      { href: '/audit', label: 'Audit' },
-      { href: '/status', label: 'Status' },
-    ],
-  },
-]
+// The console loads its configuration, finishes a sign-in that returned to the
+// callback path, and shows either the sign-in screen or the pages.
 
 export function App() {
-  // Force a re-render after sign-in/sign-out so AdminShell flips on the
-  // token presence. The hash router handles the deep links itself.
-  const [, setTick] = useState(0)
-  const refresh = () => setTick((v) => v + 1)
+  const config = useQuery({ queryKey: ['config'], queryFn: fetchConfig, staleTime: Infinity })
+  if (config.isPending) return <Centered>Loading</Centered>
+  if (config.isError) {
+    return (
+      <Centered>
+        <Notice>{config.error.message}</Notice>
+      </Centered>
+    )
+  }
+  return <Console config={config.data} />
+}
 
-  const token = getToken()
-  const claims = decodeToken(token)
+function Console({ config }: { config: Config }) {
+  const [, navigate] = useLocation()
+  const [ready, setReady] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const product = `${config.brand.charAt(0).toUpperCase()}${config.brand.slice(1)} KMS`
 
   useEffect(() => {
-    // Auto sign-out when the cached token is expired. The server would
-    // reject the next request anyway; this just bounces faster.
-    if (claims?.exp && claims.exp * 1000 < Date.now()) {
-      setToken(null)
-      refresh()
+    document.title = product
+    configure(config)
+    if (window.location.pathname !== callbackPath) {
+      setReady(true)
+      return
     }
-  }, [claims?.exp])
+    finishSignIn()
+      .then((to) => navigate(to, { replace: true }))
+      .catch((e: Error) => {
+        setError(e.message)
+        navigate('/', { replace: true })
+      })
+      .finally(() => setReady(true))
+  }, [config])
 
-  if (!token) {
-    return <LoginPage onSuccess={refresh} />
+  if (!ready) return <Centered>Signing in</Centered>
+  if (!signedIn()) return <SignIn product={product} issuer={config.issuer} error={error} />
+
+  return (
+    <Shell product={product} user={who()} onSignOut={() => void signOut()}>
+      <Switch>
+        <Route path="/">
+          <SecretsPage />
+        </Route>
+        <Route path="/status">
+          <StatusPage config={config} />
+        </Route>
+        <Route>
+          <div className="p-6 text-[13px] text-neutral-400">
+            No page here. <Link href="/" className="text-neutral-100 underline">Go to secrets</Link>
+          </div>
+        </Route>
+      </Switch>
+    </Shell>
+  )
+}
+
+function SignIn({ product, issuer, error }: { product: string; issuer: string; error: string | null }) {
+  const [busy, setBusy] = useState(false)
+  const [failed, setFailed] = useState<string | null>(null)
+  const host = issuer.replace(/^https?:\/\//, '')
+
+  function start() {
+    setBusy(true)
+    setFailed(null)
+    signIn().catch((e: Error) => {
+      setFailed(e.message)
+      setBusy(false)
+    })
   }
 
   return (
-    <Router hook={useHashLocation}>
-      <AdminShell
-        sections={sections}
-        title="Hanzo KMS"
-        topRight={<TopRight subject={claims?.sub} onSignOut={refresh} />}
-      >
-        <Switch>
-          <Route path="/" component={SecretsPage} />
-          <Route path="/keys" component={KeysPage} />
-          <Route path="/audit" component={AuditPage} />
-          <Route path="/status" component={StatusPage} />
-          <Route path="/certificates">
-            <EndpointGap
-              title="Certificates"
-              description="X.509 issuance, sync, lifecycle alerts."
-              endpoints={[
-                'GET /v1/kms/orgs/{org}/certs',
-                'POST /v1/kms/orgs/{org}/certs',
-                'GET /v1/kms/orgs/{org}/certs/{id}',
-              ]}
-              rationale="kmsd serves the ZAP-encoded certificate primitives via the in-process server, but the HTTP surface has not been wired yet. Read-only view ships first; CA issuance follows once the storage shape lands."
-            />
-          </Route>
-          <Route path="/identities">
-            <EndpointGap
-              title="Identities"
-              description="Universal Auth machine identities — clientId/clientSecret pairs that exchange for IAM access tokens."
-              endpoints={[
-                'POST /v1/iam/users/identities (managed via IAM)',
-                'GET /v1/iam/users/identities',
-              ]}
-              rationale="Machine identities live in Hanzo IAM, not in kmsd. Use the IAM admin UI to mint and revoke clients; KMS only enforces the issued tokens."
-            />
-          </Route>
-          <Route path="/projects">
-            <EndpointGap
-              title="Projects"
-              description="Project / namespace organisation for secrets."
-              endpoints={[
-                'GET /v1/kms/orgs/{org}/projects',
-                'POST /v1/kms/orgs/{org}/projects',
-              ]}
-              rationale="The current secrets API is path-addressed (the path itself is the namespace). A formal projects resource is on the HIP-0027 roadmap; for now, treat the first segment of the secret path as the project."
-            />
-          </Route>
-          <Route path="/workspaces">
-            <EndpointGap
-              title="Workspaces"
-              description="Per-environment workspace shape (legacy KMS terminology)."
-              endpoints={['GET /v1/kms/orgs/{org}/workspaces']}
-              rationale="Workspaces are not a first-class concept on the canonical surface — environments are passed per-secret via ?env=. Kept here for migration tooling that maps legacy workspace IDs."
-            />
-          </Route>
-          <Route path="/integrations">
-            <EndpointGap
-              title="Integrations"
-              description="Secret syncs to GitHub, Vercel, AWS, Terraform, etc."
-              endpoints={['GET /v1/kms/orgs/{org}/integrations']}
-              rationale="Integrations are operator-side jobs that read from KMS via the kmsclient. They are not modelled on the kmsd HTTP surface — register them through the platform operator's CRDs."
-            />
-          </Route>
-        </Switch>
-      </AdminShell>
-    </Router>
-  )
-}
-
-function TopRight({ subject, onSignOut }: { subject?: string; onSignOut: () => void }) {
-  const org = getOrg()
-  return (
-    <div className="flex items-center gap-3">
-      <div className="flex items-center gap-2 text-[12px]">
-        <span className="text-neutral-500">org</span>
-        <OrgSwitcher
-          value={org}
-          onChange={(v) => {
-            setOrg(v)
-            window.location.reload()
-          }}
-        />
-      </div>
-      {subject && (
-        <div className="flex items-center gap-2 text-[12px]">
-          <span className="text-neutral-500">subject</span>
-          <Badge>{subject}</Badge>
+    <Centered>
+      <Card className="w-full max-w-sm p-6">
+        <div className="mb-5 flex items-center gap-2">
+          <img src="/favicon.svg" alt="" className="h-7 w-7" />
+          <div className="text-base font-semibold text-neutral-50">{product}</div>
         </div>
-      )}
-      <Button
-        variant="ghost"
-        onClick={() => {
-          setToken(null)
-          onSignOut()
-        }}
-      >
-        Sign out
-      </Button>
-    </div>
+        <p className="mb-5 text-[13px] text-neutral-400">
+          Your organization's secrets, sealed at rest. Sign in with your account at {host} to see them.
+        </p>
+        {(error || failed) && (
+          <div className="mb-4">
+            <Notice>{failed ?? error}</Notice>
+          </div>
+        )}
+        <Button variant="primary" className="w-full" onClick={start} disabled={busy}>
+          {busy ? 'Opening sign-in' : `Sign in with ${host}`}
+        </Button>
+      </Card>
+    </Centered>
   )
 }
 
-function OrgSwitcher({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+function Centered({ children }: { children: ReactNode }) {
   return (
-    <input
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className="w-28 rounded-md border border-neutral-800 bg-neutral-950 px-2 py-1 font-mono text-[12px] text-neutral-100 focus:border-[color:var(--color-brand)] focus:outline-none"
-    />
+    <div className="flex min-h-screen items-center justify-center bg-black p-6 text-[13px] text-neutral-400">
+      {children}
+    </div>
   )
 }

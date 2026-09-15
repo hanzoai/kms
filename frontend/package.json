@@ -2,17 +2,18 @@
   "name": "@hanzo/kms-frontend",
   "private": true,
   "version": "3.0.0",
-  "description": "Hanzo KMS admin SPA \u2014 composed from an in-app AdminShell + CollectionCRUD over @hanzo/brand. Talks to /v1/kms/* on the kmsd binary.",
+  "description": "Hanzo KMS console: a static app that signs in with Hanzo IAM and manages an organization's secrets over /v1/kms.",
   "type": "module",
   "packageManager": "pnpm@9.15.4",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b --emitDeclarationOnly false && vite build",
+    "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "node --test --test-reporter=tap --experimental-strip-types src/lib/kms.test.ts"
   },
   "dependencies": {
-    "@hanzo/brand": "^1.4.8",
+    "@hanzo/iam": "^0.21.18",
     "@tanstack/react-query": "^5.62.7",
     "clsx": "^2.1.1",
     "react": "^19.0.0",

@@ -1,127 +1,63 @@
 import { useQuery } from '@tanstack/react-query'
-import { fetchHealth, fetchStatus, getToken, decodeToken, ApiError } from '@/lib/api'
-import { Badge, Card, CodeBlock } from '@/components/Button'
+import { fetchHealth } from '@/lib/api'
+import type { Config } from '@/lib/kms'
+import { who } from '@/lib/session'
+import { Badge, Card } from '@/components/ui'
+import { Failure } from '@/components/Failure'
 
-// Status — combines /v1/kms/health (always served) and /v1/kms/status
-// (admin-only, surfaces MPC connectivity). Also decodes the active JWT
-// locally so operators can confirm the issuer/audience/owner they're
+// Status: readiness from GET /v1/kms/health, and the configuration this console
 // signed in with.
 
-export function StatusPage() {
-  const health = useQuery({
-    queryKey: ['health'],
-    queryFn: fetchHealth,
-    refetchInterval: 5000,
-    retry: false,
-  })
-  const status = useQuery({
-    queryKey: ['status'],
-    queryFn: fetchStatus,
-    refetchInterval: 10000,
-    retry: false,
-  })
-
-  const claims = decodeToken(getToken())
+export function StatusPage({ config }: { config: Config }) {
+  const health = useQuery({ queryKey: ['health'], queryFn: fetchHealth, refetchInterval: 10_000 })
 
   return (
-    <div className="p-6">
-      <header className="mb-4">
+    <div className="mx-auto max-w-5xl p-6">
+      <header className="mb-5">
         <h1 className="text-lg font-semibold text-neutral-50">Status</h1>
-        <p className="text-[13px] text-neutral-400">
-          Liveness from <code>/v1/kms/health</code>, MPC connectivity from <code>/v1/kms/status</code>.
-        </p>
+        <p className="text-[13px] text-neutral-400">Whether the store can serve secrets right now.</p>
       </header>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Card className="p-5">
-          <header className="mb-2 flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-neutral-200">KMS</h2>
-            <Badge variant={health.data?.status === 'ok' ? 'success' : 'danger'}>
-              {health.isLoading ? '…' : health.data?.status || 'unknown'}
-            </Badge>
+          <header className="mb-3 flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-neutral-200">Store</h2>
+            {health.data && (
+              <Badge variant={health.data.ready ? 'success' : 'danger'}>{health.data.ready ? 'ready' : 'not ready'}</Badge>
+            )}
           </header>
-          <dl className="grid grid-cols-3 gap-1 text-[12px]">
-            <dt className="text-neutral-500">service</dt>
-            <dd className="col-span-2 text-neutral-200">{health.data?.service || '—'}</dd>
-            <dt className="text-neutral-500">version</dt>
-            <dd className="col-span-2 font-mono text-neutral-200">{health.data?.version || '—'}</dd>
-          </dl>
-        </Card>
-
-        <Card className="p-5">
-          <header className="mb-2 flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-neutral-200">MPC</h2>
-            <Badge variant={mpcVariant(status.data, status.error)}>
-              {mpcLabel(status.data, status.error, status.isLoading)}
-            </Badge>
-          </header>
-          {status.error && status.error instanceof ApiError && status.error.status === 403 ? (
-            <p className="text-[12px] text-neutral-500">
-              Admin role required to view MPC status.
-            </p>
-          ) : (
-            <pre className="overflow-auto rounded-md border border-neutral-900 bg-neutral-925/60 p-3 font-mono text-[11px] text-neutral-200">
-              {status.isLoading
-                ? 'loading…'
-                : JSON.stringify(status.data?.mpc ?? status.error, null, 2)}
-            </pre>
+          {health.isPending && <p className="text-[13px] text-neutral-500">Checking</p>}
+          {health.isError && <Failure error={health.error} />}
+          {health.data && (
+            <dl className="grid grid-cols-3 gap-y-1 text-[13px]">
+              <Field label="Service" value={health.data.service} />
+              <Field label="Status" value={health.data.status} />
+              {health.data.signing !== undefined && (
+                <Field label="Signing" value={health.data.signing ? 'configured' : 'not configured'} />
+              )}
+              {health.data.error && <Field label="Reason" value={health.data.error} />}
+            </dl>
           )}
         </Card>
-      </div>
 
-      {claims && (
-        <Card className="mt-6 p-5">
-          <h2 className="mb-2 text-sm font-semibold text-neutral-200">Active token</h2>
-          <p className="text-[12px] text-neutral-500">
-            Decoded locally — signature is verified by kmsd on every request, not by the browser.
-          </p>
-          <dl className="mt-3 grid grid-cols-3 gap-2 text-[12px]">
-            <Field label="iss" value={claims.iss} />
-            <Field label="aud" value={Array.isArray(claims.aud) ? claims.aud.join(', ') : claims.aud} />
-            <Field label="sub" value={claims.sub} />
-            <Field label="owner" value={claims.owner} />
-            <Field label="roles" value={(claims.roles || []).join(', ') || '—'} />
-            <Field label="expires" value={claims.exp ? new Date(claims.exp * 1000).toISOString() : '—'} />
+        <Card className="p-5">
+          <h2 className="mb-3 text-sm font-semibold text-neutral-200">Session</h2>
+          <dl className="grid grid-cols-3 gap-y-1 text-[13px]">
+            <Field label="Signed in as" value={who()} />
+            <Field label="Issuer" value={config.issuer} />
+            <Field label="API" value={config.apiBase} />
           </dl>
-          <CodeBlock>{JSON.stringify(claims, null, 2)}</CodeBlock>
         </Card>
-      )}
+      </div>
     </div>
   )
 }
 
-function Field({ label, value }: { label: string; value?: string }) {
+function Field({ label, value }: { label: string; value: string }) {
   return (
     <>
       <dt className="text-neutral-500">{label}</dt>
-      <dd className="col-span-2 font-mono text-neutral-200">{value || '—'}</dd>
+      <dd className="col-span-2 break-all font-mono text-neutral-200">{value || 'none'}</dd>
     </>
   )
-}
-
-function mpcLabel(
-  d: { mpc: unknown; details?: string } | undefined,
-  err: unknown,
-  loading: boolean,
-): string {
-  if (loading) return 'loading'
-  if (err instanceof ApiError && err.status === 403) return 'forbidden'
-  if (err) return 'error'
-  if (typeof d?.mpc === 'string') return d.mpc
-  if (d?.mpc && typeof d.mpc === 'object' && 'Ready' in d.mpc) {
-    return (d.mpc as { Ready: boolean }).Ready ? 'ready' : 'unready'
-  }
-  return 'unknown'
-}
-
-function mpcVariant(
-  d: { mpc: unknown } | undefined,
-  err: unknown,
-): 'success' | 'warn' | 'danger' | 'neutral' {
-  if (err) return 'danger'
-  if (typeof d?.mpc === 'string' && d.mpc !== 'unreachable') return 'success'
-  if (d?.mpc && typeof d.mpc === 'object' && 'Ready' in d.mpc) {
-    return (d.mpc as { Ready: boolean }).Ready ? 'success' : 'warn'
-  }
-  return 'neutral'
 }

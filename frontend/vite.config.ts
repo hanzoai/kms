@@ -3,11 +3,9 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/postcss'
 import path from 'node:path'
 
-// Hanzo KMS admin SPA.
-//
-// Single-page React app served from KMS_FRONTEND_DIR by kmsd's mux.
-// All API calls go to /v1/kms/* — same origin as the SPA in production.
-// In dev, Vite proxies /v1/kms to the local kmsd listener on :8443.
+// The console is a static bundle. In production the same host routes /v1 to
+// cloud, which serves the KMS API; in development Vite proxies /v1 to a local
+// cloud on :8000.
 export default defineConfig({
   plugins: [react()],
   resolve: {
@@ -29,15 +27,9 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      '/v1/kms': {
-        target: 'http://127.0.0.1:8443',
+      '/v1': {
+        target: 'http://127.0.0.1:8000',
         changeOrigin: true,
-        secure: false,
-      },
-      '/healthz': {
-        target: 'http://127.0.0.1:8443',
-        changeOrigin: true,
-        secure: false,
       },
     },
   },

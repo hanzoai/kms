@@ -1,64 +1,36 @@
-# @hanzo/kms-frontend
+# Hanzo KMS console
 
-Hanzo KMS admin SPA.
+The app at kms.hanzo.ai. It signs in with Hanzo IAM and manages the signed-in
+organization's secrets over the KMS API that cloud serves on the same host.
 
-- Vite + React 19 + TypeScript + Tailwind v4
-- `@hanzo/brand` for brand tokens
-- `@tanstack/react-query` for fetch state
-- `wouter` with hash routing for deep links
+- Vite, React 19, TypeScript, Tailwind v4
+- `@hanzo/iam/browser` for sign-in: authorization code with PKCE against the
+  issuer `GET /v1/kms/config` names, as the `<brand>-kms` client
+- `@tanstack/react-query` for fetch state, `wouter` for routes
 
-Talks to `/v1/kms/*` on the kmsd HTTP server. No backend coupling
-beyond that.
+## API it calls
 
-## Layout
+| Method | Path | Page |
+|--------|------|------|
+| GET | `/v1/kms/config` | before sign-in |
+| GET | `/v1/kms/health` | Status |
+| GET | `/v1/kms/secrets?path=&env=` | Secrets |
+| GET, DELETE | `/v1/kms/secrets/{path}/{name}?env=` | Secrets |
+| POST | `/v1/kms/secrets` | Secrets |
 
-```
-src/
-  components/
-    AdminShell.tsx     — sidebar + topbar + content chrome
-    CollectionCRUD.tsx — flat-collection table primitive
-    Button.tsx         — buttons + inputs + cards + badges
-  lib/
-    api.ts             — typed fetch wrapper + auth helpers
-    cn.ts              — clsx classname join
-  pages/
-    Login.tsx          — POST /v1/kms/auth/login
-    Secrets.tsx        — bespoke path-tree browser
-    Keys.tsx           — flat CollectionCRUD over GET /v1/kms/keys
-    Audit.tsx          — GET /v1/kms/audit/stats
-    Status.tsx         — GET /v1/kms/health + /v1/kms/status
-    EndpointGap.tsx    — honest stub for unbacked admin pages
-  App.tsx              — router + AdminShell wiring
-  main.tsx             — entrypoint
-```
-
-## Decisions
-
-- **No tree listing for secrets.** The canonical surface is
-  path-addressed CRUD only. The "tree view" is a session-local history
-  of paths the operator has opened. Persisted to localStorage so
-  reloads don't lose context.
-- **Hash routing.** kmsd serves the SPA from `/` and ingress is
-  path-stripped at root. Hash routing keeps deep links resilient to
-  proxy reconfiguration.
-- **Token in localStorage.** `/v1/kms/auth/login` exchanges
-  `clientId`/`clientSecret` for an IAM access token. The token sits in
-  `localStorage.KMS_TOKEN` and is sent as `Authorization: Bearer …` on
-  every request.
-- **Pages with no backing endpoints** (projects, workspaces,
-  identities, integrations, certificates) render a single `EndpointGap`
-  component that lists the routes the backend will need.
+The org is never in a URL: cloud reads it from the token.
 
 ## Commands
 
 ```bash
 pnpm install
-pnpm dev                       # http://localhost:5173 — proxies /v1/kms to :8443
-pnpm build                     # → dist/, picked up by kmsd via KMS_FRONTEND_DIR
-pnpm preview
-pnpm typecheck
+pnpm dev         # http://localhost:5173, proxies /v1 to a local cloud on :8000
+pnpm test        # node:test over src/lib/kms.ts
+pnpm build       # typecheck, then dist/
 ```
 
-The image build copies `dist/` to `/app/frontend` and kmsd serves it
-from `KMS_FRONTEND_DIR`. API paths are SPA-fallthrough-protected by
-kmsd's mux.
+## Shipping
+
+`hanzo.yml` declares the site: the forge runs `.hanzo/workflows/cicd.yml`,
+which builds `dist/` and publishes it to the Sites plane as `kms`. The ingress
+serves it on kms.hanzo.ai and sends `/v1` to cloud.
