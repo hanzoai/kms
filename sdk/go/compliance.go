@@ -80,8 +80,8 @@ type RetainedRecord struct {
 // RegulatorPackage is the encrypted export package for regulatory examination.
 type RegulatorPackage struct {
 	EncryptedSecrets []byte    `json:"encrypted_secrets"`
-	EscrowMaterial   []byte    `json:"escrow_material"`   // wrapped with regulator's HPKE key
-	AuditTrail       []byte    `json:"audit_trail"`       // chain-hashed audit entries
+	EscrowMaterial   []byte    `json:"escrow_material"` // wrapped with regulator's HPKE key
+	AuditTrail       []byte    `json:"audit_trail"`     // chain-hashed audit entries
 	ExportTimestamp  time.Time `json:"export_timestamp"`
 }
 

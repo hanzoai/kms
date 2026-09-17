@@ -53,7 +53,7 @@ func TestConnMemory(t *testing.T) {
 	})
 
 	// Mirror the canonical /v1/kms/health route shape (see mount.go).
-	app.Get("/v1/kms/health", func(c *zip.Ctx) error {
+	app.Raw(http.MethodGet, "/v1/kms/health", func(c *zip.Ctx) error {
 		return c.JSON(http.StatusOK, map[string]any{
 			"status":  "ok",
 			"service": "kms",
@@ -63,7 +63,7 @@ func TestConnMemory(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	var holding atomic.Int64
-	app.Get("/hold", func(c *zip.Ctx) error {
+	app.Raw(http.MethodGet, "/hold", func(c *zip.Ctx) error {
 		holding.Add(1)
 		defer holding.Add(-1)
 		<-ctx.Done()

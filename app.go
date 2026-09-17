@@ -69,16 +69,16 @@ func App(root string) (*zip.App, error) {
 			})
 		}
 	}
-	app.Get("/v1/kms/health", probe("ok"))
-	app.Get("/v1/kms/readyz", probe("ready"))
+	app.Raw(http.MethodGet, "/v1/kms/health", probe("ok"))
+	app.Raw(http.MethodGet, "/v1/kms/readyz", probe("ready"))
 
 	// Everything else, over the net/http bridge. AdaptNetHTTP costs ~5% against
 	// native dispatch and preserves the surface exactly. Two prefixes so the
 	// client libraries (/v1/kms/*) and the container probe (/healthz) both work
 	// unchanged; the trailing wildcard is optional, so /healthz itself resolves.
 	h := zip.AdaptNetHTTP(em.HTTPHandler())
-	app.All("/v1/kms/*", h)
-	app.All("/healthz/*", h)
+	app.Raw(zip.MethodAll, "/v1/kms/*", h)
+	app.Raw(zip.MethodAll, "/healthz/*", h)
 
 	return app, nil
 }

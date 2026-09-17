@@ -56,10 +56,10 @@ func TestBridge_NetHTTPOverZIP(t *testing.T) {
 		DisableStartupMessage: true,
 		AppName:               "kms",
 	})
-	kmsApp.Get("/v1/kms/health", func(c *zip.Ctx) error {
+	kmsApp.Raw(http.MethodGet, "/v1/kms/health", func(c *zip.Ctx) error {
 		return c.JSON(http.StatusOK, map[string]any{"status": "ok", "service": "kms"})
 	})
-	kmsApp.All("/v1/kms/*", zip.AdaptNetHTTP(inner))
+	kmsApp.Raw(zip.MethodAll, "/v1/kms/*", zip.AdaptNetHTTP(inner))
 
 	// Same shape as cmd/kmsd: a host app that owns the listener, with its own
 	// middleware in front of the composed subsystem.

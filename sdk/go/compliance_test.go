@@ -16,11 +16,11 @@ import (
 func mockComplianceServer(t *testing.T) (*httptest.Server, *mockComplianceState) {
 	t.Helper()
 	state := &mockComplianceState{
-		retained:    make(map[string]RetainedRecord),
-		breakGlass:  make(map[string]*BreakGlassToken),
-		auditLog:    make([]AuditEntry, 0),
-		secrets:     make(map[string][]byte),
-		auditValid:  true,
+		retained:   make(map[string]RetainedRecord),
+		breakGlass: make(map[string]*BreakGlassToken),
+		auditLog:   make([]AuditEntry, 0),
+		secrets:    make(map[string][]byte),
+		auditValid: true,
 	}
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

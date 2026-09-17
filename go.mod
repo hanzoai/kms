@@ -26,7 +26,7 @@ require (
 	github.com/luxfi/trace v1.3.0
 	github.com/luxfi/zap v1.2.7
 	github.com/luxfi/zapdb v1.10.6
-	github.com/zap-proto/zip v1.36.50
+	github.com/zap-proto/zip v1.37.3
 )
 
 require (

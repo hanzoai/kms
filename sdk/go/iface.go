@@ -13,11 +13,11 @@ import (
 
 // Typed errors. Callers branch via errors.Is.
 var (
-	ErrSecretNotFound      = errors.New("kms: secret not found")
-	ErrVersionMismatch     = errors.New("kms: version mismatch")
-	ErrVersionNotFound     = errors.New("kms: version not found")
-	ErrSecretLocked        = errors.New("kms: secret locked")
-	ErrRotateUnsupported   = errors.New("kms: rotation unsupported by backend")
+	ErrSecretNotFound    = errors.New("kms: secret not found")
+	ErrVersionMismatch   = errors.New("kms: version mismatch")
+	ErrVersionNotFound   = errors.New("kms: version not found")
+	ErrSecretLocked      = errors.New("kms: secret locked")
+	ErrRotateUnsupported = errors.New("kms: rotation unsupported by backend")
 )
 
 // Vault is the secrets-storage surface. Namespaced at construction;
@@ -69,9 +69,9 @@ type PutOpts struct {
 
 // Rotation is the result of a Rotate call.
 type Rotation struct {
-	Name           string
-	NewValue       []byte
-	NewVersion     string
+	Name            string
+	NewValue        []byte
+	NewVersion      string
 	PreviousVersion string
 	// PreviousValidUntil names when the prior version stops resolving
 	// via Get/GetWithMeta (still readable via GetVersion). Zero means
