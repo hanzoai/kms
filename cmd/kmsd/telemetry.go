@@ -58,10 +58,8 @@ func initTelemetry(_ context.Context, serviceName string) func(context.Context) 
 	}
 
 	tracer, err := trace.New(trace.Config{
-		ExporterConfig: trace.ExporterConfig{
-			Type:     trace.ZAP,
-			Endpoint: endpoint,
-		},
+		Type:            trace.ZAP,
+		Endpoint:        endpoint,
 		TraceSampleRate: 1,
 		AppName:         serviceName,
 	})

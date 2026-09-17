@@ -675,15 +675,15 @@ func normalizeS3Endpoint(raw string) (host string, useSSL bool) {
 
 type zapdbLogger struct{}
 
-func (zapdbLogger) Errorf(format string, args ...interface{}) {
+func (zapdbLogger) Errorf(format string, args ...any) {
 	log.Error(fmt.Sprintf(format, args...))
 }
-func (zapdbLogger) Warningf(format string, args ...interface{}) {
+func (zapdbLogger) Warningf(format string, args ...any) {
 	log.Warn(fmt.Sprintf(format, args...))
 }
-func (zapdbLogger) Infof(format string, args ...interface{}) {
+func (zapdbLogger) Infof(format string, args ...any) {
 	log.Info(fmt.Sprintf(format, args...))
 }
-func (zapdbLogger) Debugf(format string, args ...interface{}) {
+func (zapdbLogger) Debugf(format string, args ...any) {
 	log.Debug(fmt.Sprintf(format, args...))
 }

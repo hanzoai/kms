@@ -245,7 +245,7 @@ func (z *kmsclientFetcher) Close() error {
 // kmsclient.Get(path, name) and zapclient.GetAt(path, name, env).
 func parseSpecs(raw string) ([]spec, error) {
 	var out []spec
-	for _, item := range strings.Split(raw, ",") {
+	for item := range strings.SplitSeq(raw, ",") {
 		item = strings.TrimSpace(item)
 		if item == "" {
 			continue

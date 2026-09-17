@@ -214,8 +214,6 @@ func zero(b []byte) {
 	}
 }
 
-func ptr(a node.Address) *node.Address { return &a }
-
 // Enroll mints a node identity for subject in org, or returns the one it
 // already has.
 //
@@ -597,7 +595,7 @@ func (s *Store) Rotate(org string, address node.Address, subject string, ev node
 	}
 	defer returnKey(successor)
 
-	nextRec, sealed, err := s.mint(org, subject, successor, prev.Measurement, prev.TEE, prev.Attested, ptr(prev.Address))
+	nextRec, sealed, err := s.mint(org, subject, successor, prev.Measurement, prev.TEE, prev.Attested, new(prev.Address))
 	if err != nil {
 		return nil, nil, err
 	}
@@ -612,7 +610,7 @@ func (s *Store) Rotate(org string, address node.Address, subject string, ev node
 	handover := &node.Handover{Succession: statement, Digest: digest, Signature: sig}
 
 	prev.Status = node.Superseded
-	prev.Next = ptr(nextRec.Address)
+	prev.Next = new(nextRec.Address)
 	prev.Succession = handover
 	prev.Epoch = epoch
 	prev.UpdatedAt = time.Now().UTC()

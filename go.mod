@@ -9,7 +9,7 @@ module github.com/hanzoai/kms
 // Wire-compatible with luxfi clients on both HTTP (/v1/kms/*) and ZAP
 // (opcodes 0x0040..0x0043).
 
-go 1.26.8
+go 1.27.1
 
 // luxfi/keys + luxfi/kms drive the consensus-native ZAP secret surface.
 // Threshold signing is delegated over ZAP to an external luxfi/mpc daemon
@@ -18,28 +18,15 @@ go 1.26.8
 // require block below (single source of truth).
 require (
 	github.com/golang-jwt/jwt/v5 v5.3.1
-	github.com/luxfi/keys v1.4.2 // indirect
+	github.com/hanzoai/kms/sdk/go v1.1.6
+	github.com/luxfi/crypto v1.20.5
+	github.com/luxfi/ids v1.3.2
 	github.com/luxfi/kms v1.12.26
 	github.com/luxfi/log v1.4.3
+	github.com/luxfi/trace v1.3.0
 	github.com/luxfi/zap v1.2.7
 	github.com/luxfi/zapdb v1.10.6
-)
-
-require (
-	github.com/hanzoai/kms/sdk/go v1.1.6
-	github.com/luxfi/ids v1.3.2
-	github.com/luxfi/trace v1.3.0
-)
-
-require (
-	github.com/hanzos3/crc64nvme v1.1.2 // indirect
-	github.com/hanzos3/go v1.0.2 // indirect
-	github.com/hanzos3/md5-simd v1.1.3 // indirect
-	github.com/zap-proto/fiber/v3 v3.2.1 // indirect
-	github.com/zap-proto/go v1.8.3 // indirect
-	github.com/zap-proto/http v0.3.9 // indirect
-	github.com/zap-proto/mcp v1.0.5 // indirect
-	go.opentelemetry.io/otel/sdk v1.44.0 // indirect
+	github.com/zap-proto/zip v1.36.48
 )
 
 require (
@@ -61,6 +48,9 @@ require (
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/rpc v1.2.1 // indirect
 	github.com/grandcat/zeroconf v1.0.0 // indirect
+	github.com/hanzos3/crc64nvme v1.1.2 // indirect
+	github.com/hanzos3/go v1.0.2 // indirect
+	github.com/hanzos3/md5-simd v1.1.3 // indirect
 	github.com/holiman/uint256 v1.3.2 // indirect
 	github.com/klauspost/compress v1.18.6 // indirect
 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
@@ -71,10 +61,10 @@ require (
 	github.com/luxfi/cache v1.3.1 // indirect
 	github.com/luxfi/constants v1.6.2 // indirect
 	github.com/luxfi/container v0.2.2 // indirect
-	github.com/luxfi/crypto v1.20.5
 	github.com/luxfi/geth v1.20.2 // indirect
 	github.com/luxfi/go-bip32 v1.1.0 // indirect
 	github.com/luxfi/go-bip39 v1.2.0 // indirect
+	github.com/luxfi/keys v1.4.2 // indirect
 	github.com/luxfi/math v1.5.1 // indirect
 	github.com/luxfi/math/big v0.1.0 // indirect
 	github.com/luxfi/mdns v0.1.1 // indirect
@@ -92,10 +82,14 @@ require (
 	github.com/tinylib/msgp v1.6.4 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.70.0 // indirect
-	github.com/zap-proto/zip v1.36.48
+	github.com/zap-proto/fiber/v3 v3.2.1 // indirect
+	github.com/zap-proto/go v1.8.3 // indirect
+	github.com/zap-proto/http v0.3.9 // indirect
+	github.com/zap-proto/mcp v1.0.5 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/otel v1.44.0 // indirect
 	go.opentelemetry.io/otel/metric v1.44.0 // indirect
+	go.opentelemetry.io/otel/sdk v1.44.0 // indirect
 	go.opentelemetry.io/otel/trace v1.44.0 // indirect
 	go.uber.org/mock v0.6.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect

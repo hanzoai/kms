@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"slices"
 
 	"github.com/hanzoai/kms/sdk/go/node"
 )
@@ -110,12 +111,7 @@ func (c *Client) ask(ctx context.Context, method, suffix string, body, out any, 
 }
 
 func accepted(status int, want []int) bool {
-	for _, w := range want {
-		if status == w {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(want, status)
 }
 
 // message pulls the KMS's explanation out of a refusal body, falling back to the

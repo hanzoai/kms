@@ -254,7 +254,7 @@ func checkAudience(mc jwt.MapClaims, expected string) error {
 	// Expand comma-separated expected list into a set. Empty entries and
 	// surrounding whitespace are ignored.
 	want := make(map[string]struct{})
-	for _, e := range strings.Split(expected, ",") {
+	for e := range strings.SplitSeq(expected, ",") {
 		if s := strings.TrimSpace(e); s != "" {
 			want[s] = struct{}{}
 		}
@@ -286,7 +286,7 @@ func checkAudience(mc jwt.MapClaims, expected string) error {
 // Trailing slashes are normalized on both sides. Mirrors checkAudience.
 func checkIssuer(got, expected string) error {
 	got = strings.TrimRight(got, "/")
-	for _, e := range strings.Split(expected, ",") {
+	for e := range strings.SplitSeq(expected, ",") {
 		if s := strings.TrimRight(strings.TrimSpace(e), "/"); s != "" && s == got {
 			return nil
 		}
@@ -374,8 +374,8 @@ func authFailReason(err error) string {
 // Honours X-Forwarded-For when present (gateway is trusted upstream).
 func peerIP(r *http.Request) string {
 	if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
-		if i := strings.IndexByte(xff, ','); i >= 0 {
-			return strings.TrimSpace(xff[:i])
+		if before, _, ok := strings.Cut(xff, ","); ok {
+			return strings.TrimSpace(before)
 		}
 		return strings.TrimSpace(xff)
 	}

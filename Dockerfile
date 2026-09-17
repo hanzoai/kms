@@ -1,7 +1,7 @@
 # Hanzo KMS: a thin wrapper over luxfi/kms, built in pure Go. The console in
 # frontend/ is a static site published on its own and is not part of this image.
 
-FROM golang:1.26-bookworm AS build
+FROM golang:1.27.1-bookworm AS build
 
 ARG TARGETARCH
 
