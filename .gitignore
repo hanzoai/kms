@@ -85,3 +85,7 @@ GEMINI.md
 /kms-cli
 /mpc-node/mpc-node
 .worktrees/
+
+# Local symlinks to LLM.md
+CLAUDE.md
+AGENTS.md
