@@ -1,4 +1,4 @@
-# Read by hanzoai/ci build.yml@v1 (.hanzo/workflows/cicd.yml) on the forge.
+# Read by hanzoai/ci build.yml@v2 (.github/workflows/cicd.yml).
 
 test:
   - name: go

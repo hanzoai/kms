@@ -1,0 +1,23 @@
+# The one caller. hanzoai/* repos build on the GitHub plane, whose queued jobs the
+# platform serves with one ephemeral runner pod per job; the forge mirror of this
+# repo runs no workflows, so a caller under .hanzo/workflows built nothing. The
+# reusable lives at hanzoai/ci/.github/workflows/build.yml, and all config is in
+# /hanzo.yml: the gate, the kms and kms-fetch images (built at the door in-cluster,
+# mode delegate) and the console site.
+#
+# No pull_request trigger: a run holds the org's site deploy token, so a branch's
+# code does not run here before it is merged.
+name: CI/CD
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    tags: ['v*']
+jobs:
+  cicd:
+    uses: hanzoai/ci/.github/workflows/build.yml@v2
+    with:
+      mode: delegate
+    secrets:
+      KMS_CLIENT_ID: ${{ secrets.KMS_CLIENT_ID }}
+      KMS_CLIENT_SECRET: ${{ secrets.KMS_CLIENT_SECRET }}

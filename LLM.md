@@ -41,41 +41,22 @@ Non-`dev`/`devnet`/`local` `KMS_ENV` refuses to boot without
 
 ## How this ships
 
-One way, and it runs on our own stack:
+One caller, `.github/workflows/cicd.yml`, which uses
+`hanzoai/ci/.github/workflows/build.yml@v2` with `mode: delegate` and the org's KMS
+client pair. It reads `hanzo.yml`: the gate (`go test ./...`, the console's tests and
+typecheck), the `kms` and `kms-fetch` images (built at the build door in-cluster;
+deploying one is a universe pin), and the console site (`frontend/dist`, Sites slug
+`kms`, main only, served at kms.hanzo.ai by universe `static-sites.yaml`).
 
-    push  ->  github.com/hanzoai/kms          (a mirror)
-              .github/workflows/sync.yml       carries refs onward
-      ->  git.hanzo.ai/hanzoai/kms             CANONICAL
-              .hanzo/workflows/ci.yml          go test -race + builds kmsd/kms
-              .hanzo/workflows/build.yml       ghcr.io/hanzoai/kms on main
-              .hanzo/workflows/release.yml     v* tags: binaries + release + image
-              .hanzo/workflows/build-kms-fetch.yml  ghcr.io/hanzoai/kms-fetch
-              .hanzo/workflows/check-fe-ts-and-lint.yml  frontend typecheck on PRs
-              .hanzo/workflows/pr-preview.yml  ephemeral PR preview env
+GitHub is where it runs. The forge mirror of a hanzoai/* repo runs no workflows, so
+the caller that sat under `.hanzo/workflows` from 6ba3f6d83c (2026-09-15) built
+nothing: no gate, no image and no site publish for a month, with no red run to show
+it. Check what is live by the served bundle:
 
-**git.hanzo.ai is canonical; GitHub is a mirror.** `.github/workflows/` holds
-exactly one file, `sync.yml`, and its only job is getting refs to the forge. Every
-build, check and deploy is a workflow under `.hanzo/workflows/`, which the forge
-reads. `.hanzo/workflows` uses GitHub Actions syntax, so a workflow moves between
-the two by changing directory and nothing else.
-
-`ci.yml`, `release.yml` and `check-fe-ts-and-lint.yml` had been deleted from
-`.github/workflows` with no replacement anywhere — which silently removed the
-repo's only gate and the only producer of the release binaries and semver image
-tags, with no red run to show it, because a workflow that does not exist cannot
-fail. They are restored here at the path the forge reads.
-
-`release.yml` is the heaviest lane: a 4-way binary matrix
-(linux/darwin × amd64/arm64) for `cmd/kms` + `cmd/kmsd`, a GitHub Release with
-12 assets, a multi-arch `ghcr.io/hanzoai/kms:{vX.Y.Z, X.Y.Z, latest}`, and a
-final best-effort `notify-universe` job. That last job is
-`continue-on-error: true`, so a missing `UNIVERSE_DISPATCH_TOKEN` on the forge
-degrades to a yellow job and never fails the release.
-
-`build.yml`, `build-kms-fetch.yml` and `pr-preview.yml` are thin callers of
-`hanzoai/.github/.github/workflows/*@main`. Those references resolve by path, so
-they break the day the reusable workflows themselves move to `.hanzo/workflows` —
-worth inlining then, not now.
+```sh
+B=$(curl -s https://kms.hanzo.ai/ | grep -oE '/assets/index-[A-Za-z0-9_-]+\.js')
+curl -s "https://kms.hanzo.ai$B" | grep -c 'hanzo_kms_return'
+```
 
 ## Console sign-in (`frontend/src/lib/session.ts`)
 
