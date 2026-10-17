@@ -20,9 +20,12 @@ images:
     repo: ghcr.io/hanzoai/kms-fetch
     version: 0.1.1
 
-# The console at kms.hanzo.ai: s3://hanzo-sites/hanzo/kms.
+# The console at kms.hanzo.ai: s3://hanzo-sites/hanzo/hanzo-kms, which universe
+# static-sites.yaml `kms-static` serves. `hanzo-kms`, as the admin console is
+# `hanzo-admin`: `kms` is a reserved subdomain, and /v1/projects refuses it as a
+# slug ("slug is a reserved subdomain and cannot be used").
 site:
-  slug: kms
+  slug: hanzo-kms
   dir: frontend/dist
   build: cd frontend && pnpm install --frozen-lockfile && pnpm build
   on: [main]

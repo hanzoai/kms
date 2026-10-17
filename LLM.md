@@ -46,7 +46,9 @@ One caller, `.github/workflows/cicd.yml`, which uses
 client pair. It reads `hanzo.yml`: the gate (`go test ./...`, the console's tests and
 typecheck), the `kms` and `kms-fetch` images (built at the build door in-cluster;
 deploying one is a universe pin), and the console site (`frontend/dist`, Sites slug
-`kms`, main only, served at kms.hanzo.ai by universe `static-sites.yaml`).
+`hanzo-kms`, main only, served at kms.hanzo.ai by universe `static-sites.yaml`
+`kms-static` from `s3://hanzo-sites/hanzo/hanzo-kms`). Not `kms`: that is a reserved
+subdomain, and `/v1/projects` refuses it as a slug.
 
 GitHub is where it runs. The forge mirror of a hanzoai/* repo runs no workflows, so
 the caller that sat under `.hanzo/workflows` from 6ba3f6d83c (2026-09-15) built
