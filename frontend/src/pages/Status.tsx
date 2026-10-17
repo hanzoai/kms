@@ -5,8 +5,7 @@ import { who } from '@/lib/session'
 import { Badge, Card } from '@/components/ui'
 import { Failure } from '@/components/Failure'
 
-// Status: readiness from GET /v1/kms/health, and the configuration this console
-// signed in with.
+// Status: readiness from GET /v1/kms/health, and who this console is signed in as.
 
 export function StatusPage({ config }: { config: Config }) {
   const health = useQuery({ queryKey: ['health'], queryFn: fetchHealth, refetchInterval: 10_000 })
@@ -44,7 +43,6 @@ export function StatusPage({ config }: { config: Config }) {
           <h2 className="mb-3 text-sm font-semibold text-neutral-200">Session</h2>
           <dl className="grid grid-cols-3 gap-y-1 text-[13px]">
             <Field label="Signed in as" value={who()} />
-            <Field label="Issuer" value={config.issuer} />
             <Field label="API" value={config.apiBase} />
           </dl>
         </Card>

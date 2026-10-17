@@ -77,6 +77,26 @@ degrades to a yellow job and never fails the release.
 they break the day the reusable workflows themselves move to `.hanzo/workflows` —
 worth inlining then, not now.
 
+## Console sign-in (`frontend/src/lib/session.ts`)
+
+kms.hanzo.ai signs in on hanzo.ai, one way. Signed out, the console draws nothing and
+leaves at once: the SDK mints its own request (`getLoginUrl`: client `hanzo-kms`,
+redirect `https://kms.hanzo.ai/auth/callback`, an S256 challenge, no nonce; the verifier
+stays on this origin) and the page is replaced by `https://hanzo.ai/login` + that query
+(`kms.ts` `home`, `signinAddress`). hanzo.ai finishes it; `/auth/callback` redeems the
+code on this origin's `/v1/iam` (the host routes `/v1` to cloud) and lands on the page
+stashed under `hanzo_kms_return` (`back` keeps it on this origin). Sign-out is the SDK's
+`end()` (revoke both tokens, end the session, all on this origin), then `/`, which
+leaves for hanzo.ai again.
+
+- Nothing calls or names hanzo.id: discovery is read from `https://api.hanzo.ai`, the
+  token calls ride `proxyBaseUrl` = this origin, and `/v1/kms/config`'s `issuer` is used
+  only by a brand with no `home` (it signs in at its own issuer). The CSP is universe
+  `static-sites.yaml` `kms-headers`, `connect-src 'self' https://api.hanzo.ai`.
+- Any hanzo-org account signs in; reading secrets takes an admin of the org or a grant
+  there (`/v1/kms/secrets` 403 "takes an admin of the org or a grant there" otherwise).
+  Measured 2026-10-16 with a throwaway.
+
 ## Entry points
 
 ```

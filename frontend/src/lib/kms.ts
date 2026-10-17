@@ -53,6 +53,44 @@ export function clientId(brand: string): string {
   return `${brand}-kms`
 }
 
+/** Where a brand's people sign in, and where its console reads IAM's discovery.
+ *  Only Hanzo signs in on its own site (hanzo.ai/login finishes this console's own
+ *  request); a brand absent here signs in at its issuer, as the server names it.
+ *  Brands never cross. */
+export interface Home {
+  /** The page that finishes this console's authorize request. */
+  signin: string
+  /** IAM's public endpoints (discovery). */
+  api: string
+}
+
+const HOMES: Readonly<Record<string, Home>> = {
+  hanzo: { signin: 'https://hanzo.ai/login', api: 'https://api.hanzo.ai' },
+}
+
+export function home(brand: string): Home | null {
+  return Object.hasOwn(HOMES, brand) ? HOMES[brand] : null
+}
+
+/** The address that finishes an authorize request: the brand's sign-in page carrying
+ *  the request's own query, or the authorize address itself where there is none. */
+export function signinAddress(page: string | null, authorize: string): string {
+  return page ? `${page}${new URL(authorize).search}` : authorize
+}
+
+/** A same-origin path to come back to, or `/`: one leading slash and nothing the
+ *  URL parser would read as another host. */
+export function back(path: string | null): string {
+  if (!path || !path.startsWith('/')) return '/'
+  try {
+    const base = 'https://kms.invalid'
+    const u = new URL(path, base)
+    return u.origin === base ? `${u.pathname}${u.search}${u.hash}` : '/'
+  } catch {
+    return '/'
+  }
+}
+
 /** A path as the API stores it: `/a/b`, or empty for the org root. */
 export function cleanPath(path: string): string {
   const parts = path

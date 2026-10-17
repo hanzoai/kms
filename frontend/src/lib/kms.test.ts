@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert'
 import { describe, it } from 'node:test'
-import { cleanPath, clientId, draftBody, failure, listUrl, secretUrl, subject } from './kms.ts'
+import { back, cleanPath, clientId, draftBody, failure, home, listUrl, secretUrl, signinAddress, subject } from './kms.ts'
 
 describe('addresses', () => {
   it('names the IAM client <org>-kms', () => {
@@ -48,5 +48,40 @@ describe('responses', () => {
     assert.equal(subject(`h.${payload}.s`), 'z@hanzo.ai')
     assert.equal(subject(null), '')
     assert.equal(subject('not-a-jwt'), '')
+  })
+})
+
+describe('sign-in', () => {
+  it('signs Hanzo in on hanzo.ai and reads IAM at the API, never hanzo.id', () => {
+    assert.deepEqual(home('hanzo'), { signin: 'https://hanzo.ai/login', api: 'https://api.hanzo.ai' })
+    assert.ok(!JSON.stringify(home('hanzo')).includes('hanzo.id'))
+  })
+
+  it('leaves every other brand at its own issuer', () => {
+    assert.equal(home('lux'), null)
+    assert.equal(home('zoo'), null)
+    assert.equal(home('constructor'), null)
+    assert.equal(home('__proto__'), null)
+  })
+
+  it("carries the console's own authorize query whole to the sign-in page", () => {
+    const authorize =
+      'https://hanzo.id/v1/iam/oauth/authorize?client_id=hanzo-kms&redirect_uri=https%3A%2F%2Fkms.hanzo.ai%2Fauth%2Fcallback&response_type=code&scope=openid+profile+email&state=S&code_challenge=C&code_challenge_method=S256'
+    const to = new URL(signinAddress('https://hanzo.ai/login', authorize))
+    assert.equal(to.origin + to.pathname, 'https://hanzo.ai/login')
+    assert.equal(to.searchParams.get('client_id'), 'hanzo-kms')
+    assert.equal(to.searchParams.get('redirect_uri'), 'https://kms.hanzo.ai/auth/callback')
+    assert.equal(to.searchParams.get('code_challenge'), 'C')
+    assert.equal(to.searchParams.get('code_challenge_method'), 'S256')
+    assert.equal(to.searchParams.get('state'), 'S')
+    assert.equal(signinAddress(null, authorize), authorize)
+  })
+
+  it('comes back only to a path on this origin', () => {
+    assert.equal(back('/status?x=1'), '/status?x=1')
+    assert.equal(back(null), '/')
+    for (const bad of ['https://evil.example/', '//evil.example/x', '/\\evil.example/x', '/\t/evil.example/x', 'status']) {
+      assert.equal(back(bad), '/', bad)
+    }
   })
 })

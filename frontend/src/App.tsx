@@ -10,7 +10,7 @@ import { SecretsPage } from '@/pages/Secrets'
 import { StatusPage } from '@/pages/Status'
 
 // The console loads its configuration, finishes a sign-in that returned to the
-// callback path, and shows either the sign-in screen or the pages.
+// callback path, and shows the pages, or leaves for sign-in.
 
 export function App() {
   const config = useQuery({ queryKey: ['config'], queryFn: fetchConfig, staleTime: Infinity })
@@ -48,7 +48,7 @@ function Console({ config }: { config: Config }) {
   }, [config])
 
   if (!ready) return <Centered>Signing in</Centered>
-  if (!signedIn()) return <SignIn product={product} issuer={config.issuer} error={error} />
+  if (!signedIn()) return <SignIn product={product} error={error} />
 
   return (
     <Shell product={product} user={who()} onSignOut={() => void signOut()}>
@@ -69,19 +69,28 @@ function Console({ config }: { config: Config }) {
   )
 }
 
-function SignIn({ product, issuer, error }: { product: string; issuer: string; error: string | null }) {
-  const [busy, setBusy] = useState(false)
+// Signed out, the console leaves at once for the brand's sign-in page with its own
+// request. Only a sign-in that failed, or could not start, stays here to say so.
+let leaving = false
+
+function SignIn({ product, error }: { product: string; error: string | null }) {
   const [failed, setFailed] = useState<string | null>(null)
-  const host = issuer.replace(/^https?:\/\//, '')
 
   function start() {
-    setBusy(true)
+    if (leaving) return
+    leaving = true
     setFailed(null)
     signIn().catch((e: Error) => {
+      leaving = false
       setFailed(e.message)
-      setBusy(false)
     })
   }
+
+  useEffect(() => {
+    if (!error) start()
+  }, [error])
+
+  if (!error && !failed) return <Centered>Opening sign-in</Centered>
 
   return (
     <Centered>
@@ -90,16 +99,11 @@ function SignIn({ product, issuer, error }: { product: string; issuer: string; e
           <img src="/favicon.svg" alt="" className="h-7 w-7" />
           <div className="text-base font-semibold text-neutral-50">{product}</div>
         </div>
-        <p className="mb-5 text-[13px] text-neutral-400">
-          Your organization's secrets, sealed at rest. Sign in with your account at {host} to see them.
-        </p>
-        {(error || failed) && (
-          <div className="mb-4">
-            <Notice>{failed ?? error}</Notice>
-          </div>
-        )}
-        <Button variant="primary" className="w-full" onClick={start} disabled={busy}>
-          {busy ? 'Opening sign-in' : `Sign in with ${host}`}
+        <div className="mb-4">
+          <Notice>{failed ?? error}</Notice>
+        </div>
+        <Button variant="primary" className="w-full" onClick={start}>
+          Sign in again
         </Button>
       </Card>
     </Centered>

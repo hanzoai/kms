@@ -13,7 +13,7 @@
     "test": "node --test --test-reporter=tap --experimental-strip-types src/lib/kms.test.ts"
   },
   "dependencies": {
-    "@hanzo/iam": "^0.21.18",
+    "@hanzo/iam": "^0.21.31",
     "@tanstack/react-query": "^5.62.7",
     "clsx": "^2.1.1",
     "react": "^19.0.0",
