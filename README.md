@@ -7,6 +7,8 @@
 
 # Hanzo KMS
 
+[![Open in Hanzo](https://hanzo.app/badges/open-in-hanzo.svg)](https://hanzo.app/dev/open?repo=github.com/hanzoai/kms&ref=main&action=open) [![Edit with Hanzo](https://hanzo.app/badges/edit-with-hanzo.svg)](https://hanzo.app/dev/open?repo=github.com/hanzoai/kms&ref=main&action=edit) [![Deploy with Hanzo](https://hanzo.app/badges/deploy-with-hanzo.svg)](https://hanzo.app/dev/open?repo=github.com/hanzoai/kms&ref=main&action=deploy)
+
 Secrets, keys, and threshold signing for the Hanzo platform — per-org namespaces, IAM-gated, ZAP-native, MPC-backed. A thin Go server over the canonical [`luxfi/kms`](https://github.com/luxfi/kms) primitives.
 
 [![Status](https://img.shields.io/badge/status-stable-green)]()
