@@ -463,15 +463,18 @@ func TestJWT_MultiIssuer_Accepted(t *testing.T) {
 		}
 	}
 
-	// An issuer outside the list is still rejected.
-	tok := e.mintSigned(jwt.MapClaims{
-		"sub":   "svc-x",
-		"owner": "hanzo",
-		"iss":   "https://evil.example",
-	})
-	resp := mustReq(t, "GET", e.srv.URL+probePath, tok, nil)
-	if resp.StatusCode != http.StatusUnauthorized {
-		t.Fatalf("iss=evil: want 401, got %d", resp.StatusCode)
+	// An issuer outside the list is still rejected, and so is an organization's own
+	// issuer, which sits one path segment under a platform origin.
+	for _, iss := range []string{"https://evil.example", "https://hanzo.ai/acme", "https://hanzo.ai.evil.test"} {
+		tok := e.mintSigned(jwt.MapClaims{
+			"sub":   "svc-x",
+			"owner": "hanzo",
+			"iss":   iss,
+		})
+		resp := mustReq(t, "GET", e.srv.URL+probePath, tok, nil)
+		if resp.StatusCode != http.StatusUnauthorized {
+			t.Fatalf("iss=%s: want 401, got %d", iss, resp.StatusCode)
+		}
 	}
 }
 
